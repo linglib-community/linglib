@@ -2,6 +2,8 @@ module
 
 public import Linglib.Core.InformationTheory.BinaryEntropy
 public import Linglib.Core.Probability.UniformOn
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Questions.Partition.OfProps
 
 /-!
@@ -30,6 +32,10 @@ A minimizer such as *lift a finger* presupposes, as *even* does, that the questi
 each salient alternative, while the question itself must be open. Since each alternative entails
 the minimal value, [every alternative is settled
 negatively](##VanRooy2003a.measure_alternative_eq_zero), which is the rhetorical reading.
+
+A question is not downward entailing in the position of the item, so the strengths of negation do
+not say which items stand in one: [the verdicts on *ever* and on *lift a finger* are those of no
+strength class](##VanRooy2003a.not_fitsStrength).
 
 ## Main definitions
 
@@ -219,5 +225,16 @@ example : entropy (uniformOn Set.univ) (Setoid.polar ({0, 1, 2} : Set (Fin 4))) 
   norm_num
 
 end Example
+
+/-! ### Questions and the strengths of negation
+
+A question is downward entailing only in the domain of its wh-phrase, so it carries no strength
+of negation, and an item that stands in a question has the verdicts of no strength class. -/
+
+-- (8b), (9b), (12)
+theorem not_fitsStrength (s : Negation.Strength) :
+    ¬ English.PolarityItems.ever.FitsStrength s ∧
+      ¬ English.PolarityItems.liftAFinger.FitsStrength s := by
+  cases s <;> decide
 
 end VanRooy2003a

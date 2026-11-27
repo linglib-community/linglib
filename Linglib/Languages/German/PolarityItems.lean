@@ -28,10 +28,10 @@ is the positive polarity *until* of Karttunen's chart.
 
 ## TODO
 
-The licensing theory licenses every weak negative polarity item in a question, whatever the
-questioner expects. It therefore admits *brauchen* in the positive polar question that Büring and
-Gunlogson star, whereas the rating study reserves questions for superweak items. Van Rooy ties an
-item in a question to a questioner who expects the negative answer.
+The rating study finds *vielleicht* 'maybe' no better a host than a positive assertion, and finds
+items that are acceptable only under *nicht* and in a question. Its sixty items and their median
+ratings are not entered here. Van Rooy ties an item in a question to a questioner who expects the
+negative answer.
 
 ## References
 
@@ -50,11 +50,14 @@ namespace German.PolarityItems
 
 open PolarityItem
 
-/-- *Irgendein* is an existential indefinite with free-choice effects. -/
+/-- *Irgendein* is an existential indefinite with free-choice effects. It stands in an embedded
+polar question, *Der Lehrer hat gefragt, ob Hans irgendein Buch gelesen hat* 'The teacher asked
+whether Hans read any book' ([kratzer-shimoyama-2002] (22)). -/
 def irgendein : PolarityItem :=
   { form := "irgendein"
   , licensor := some .weak
-  , freeChoice := true }
+  , freeChoice := true
+  , contexts := [(.polarQuestion, .optional)] }
 
 /-! ### NPI -/
 
@@ -63,10 +66,14 @@ Frau wird sich zu verantworten brauchen* 'At most one woman need justify herself
 solch eine Prüfung durchzustehen brauchen* 'No one need go through such an ordeal' ([zwarts-1998]
 (3a), (3b)). The rating study of Schaebbicke, Seeliger, and Repp finds it intermediate under the
 merely downward-entailing *kaum*, with a median of 4 of 7, between 5.5 under *kein* and 1.5 in a
-positive question. -/
+positive question. It is out in a positive assertion, *Sie braucht eine Entschuldigung
+mitzubringen* 'She needs to bring an excuse', and in a positive polar question, *Braucht sie eine
+Entschuldigung mitzubringen?*, and fine under *niemand* ([buring-gunlogson-2000] (15)). -/
 def brauchen : PolarityItem :=
   { form := "brauchen"
-  , licensor := some .weak }
+  , licensor := some .weak
+  , contexts := [(.positiveAssertion, .excluded), (.nobody, .optional), (.atMost, .optional),
+      (.polarQuestion, .excluded)] }
 
 /-- *Ausstehen können* 'can stand', a weak negative polarity item ([zwarts-1998]). -/
 def ausstehenKoennen : PolarityItem :=

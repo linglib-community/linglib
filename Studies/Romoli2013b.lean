@@ -353,7 +353,7 @@ private theorem admits_iff (l : Datum × Link) (hl : l ∈ links) :
     l.2.environment.licenser.Admits l.2.item ↔
       l.2.environment.licenser.Carries .antiAdditive :=
   have ⟨hs, ha, hf⟩ := links_strict l hl
-  Licenser.admits_iff_carries hs (by decide) ha hf
+  Licenser.admits_iff_carries hs ha hf
 
 private theorem links_carries :
     ∀ p ∈ links, (p.2.environment ≠ .named .universalRestrictor →

@@ -37,6 +37,7 @@ anti-licensor, anti-morphic strength, which every positive polarity item has by 
 ## References
 
 * [ladusaw-1979]
+* [van-rooy-2003a]
 * [israel-2011]
 * [gajewski-2011]
 * [chierchia-2006]
@@ -60,10 +61,13 @@ def any : PolarityItem :=
   , licensor := some .weak
   , freeChoice := true }
 
-/-- *ever*, a temporal negative polarity item. -/
+/-- *ever*, a temporal negative polarity item. It stands in a polar question, *Have you ever been
+to China?*, and in a constituent question, *Who has ever been to China?* ([van-rooy-2003a] (9b),
+(8b)). -/
 def ever : PolarityItem :=
   { form := "ever"
-  , licensor := some .weak }
+  , licensor := some .weak
+  , contexts := [(.polarQuestion, .optional), (.constituentQuestion, .optional)] }
 
 /-- *yet*, a temporal negative polarity item. -/
 def yet : PolarityItem :=
@@ -97,10 +101,15 @@ def whatsoever : PolarityItem :=
 
 /-! ### Strong NPIs -/
 
-/-- *lift a finger*, an idiomatic minimizer needing an anti-additive licenser. -/
+/-- *lift a finger*, an idiomatic minimizer needing an anti-additive licenser. It stands under
+negation, *John didn't lift a finger to help Mary*, in a polar question, *Did John lift a finger to
+help Mary?*, and in a constituent question, *Who lifted a finger to help Mary?*
+([van-rooy-2003a] (26a), (12a), (12b)). -/
 def liftAFinger : PolarityItem :=
   { form := "lift a finger"
-  , licensor := some .antiAdditive }
+  , licensor := some .antiAdditive
+  , contexts := [(.negation, .optional), (.polarQuestion, .optional),
+      (.constituentQuestion, .optional)] }
 
 /-- *budge an inch*, an idiomatic minimizer needing an anti-additive licenser. -/
 def budgeAnInch : PolarityItem :=

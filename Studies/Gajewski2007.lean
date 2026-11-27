@@ -453,7 +453,7 @@ theorem judgments_predicted :
       (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Admits p.2.item) :=
   fun p hp hs h74 ↦
     have ⟨hl, ha, hf⟩ := links_strict p hp
-    (links_carries p hp hs h74).trans (Licenser.admits_iff_carries hl (by decide) ha hf).symm
+    (links_carries p hp hs h74).trans (Licenser.admits_iff_carries hl ha hf).symm
 
 /-- Strict NPIs are acceptable in superlative relative clauses, which are Strawson downward
 entailing and not anti-additive, the exception the paper leaves open (132). -/

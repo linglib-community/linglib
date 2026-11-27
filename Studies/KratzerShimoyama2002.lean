@@ -306,7 +306,7 @@ open PolarityItem
 /-- `contextOf? r` is the licensing environment a row of the *irgendein* paradigm names. -/
 def contextOf? (r : Datum) : Option LicensingContext :=
   (Examples.context r).map fun
-    | .question => .question
+    | .question => .polarQuestion
     | .doubtVerb => .doubtVerb
     | .modalPossibility => .modalPossibility
     | .modalNecessity => .modalNecessity
@@ -314,10 +314,12 @@ def contextOf? (r : Datum) : Option LicensingContext :=
     | .negation => .negation
 
 /-- The library's licensing theory admits *irgendein* exactly where the paper finds it acceptable,
-(12), (13), (16)–(18) and (22), inflectional negation (21) aside. -/
+(12), (13) and (16)–(18), inflectional negation (21) and the embedded question (22) aside. A
+question places no operator over the item, and the entry of *irgendein* records (22). -/
 theorem rows_admits :
     ∀ r ∈ Examples.all, ∀ c ∈ contextOf? r, c ≠ .negation →
-      (r.judgment = .acceptable ↔ c.licenser.Admits German.PolarityItems.irgendein) := by
+      (r.judgment = .acceptable ↔ c.licenser.Admits German.PolarityItems.irgendein ∨
+        c = .polarQuestion ∧ German.PolarityItems.irgendein.verdict c = some .optional) := by
   decide
 
 /-- Under a negative operator, *irgendein* is acceptable exactly when that operator closes its scope

@@ -64,8 +64,8 @@ theorem admits_ofPolarity_iff [Nonempty W] {e : PolarityItem} (hf : ¬e.IsFCI) :
       hne (Set.subset_empty_iff.1
         (ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨⟩) (Set.empty_subset Set.univ)))
     have hL : ¬(ofPolarity W .positive).Licenses e := by
-      rintro (⟨r, -, hr⟩ | ⟨h, -⟩ | ⟨h, -⟩)
-      exacts [(carries_ofOperator_iff.1 hr).2 fun _ _ h ↦ h, h, h]
+      rintro (⟨r, -, hr⟩ | ⟨h, -⟩)
+      exacts [(carries_ofOperator_iff.1 hr).2 fun _ _ h ↦ h, h]
     simp [Polarity.Admits, Admits, AntiLicenses, hL, hf, not_holds_toProjectivitySignature hH]
   · have hH : (ofPolarity W .negative).Holds .antiAddMult := fun _ ↦
       ProjectivitySignature.holdsFor_antiAddMult_compl

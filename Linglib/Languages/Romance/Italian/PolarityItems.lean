@@ -58,14 +58,16 @@ follows *senza*, *senza incontrare nessuno* 'without meeting anyone', and colloq
 'anybody' in a question, *C'è nessuno lì dentro?* 'Is there anybody in there?'. -/
 def nessuno : PolarityItem :=
   { form := Indefinites.nessuno.form
-  , licensor := some .weak }
+  , licensor := some .weak
+  , contexts := [(.polarQuestion, .optional)] }
 
 /-- *niente*, or *nulla*, 'nothing', as in *Non ho detto niente a nessuno* 'I haven't said
 anything to anybody', *senza niente che mi aiutasse* 'without anything to help me', and colloquially
 *Hai dimenticato niente?* 'Have you forgotten anything?'. -/
 def niente : PolarityItem :=
   { form := "niente/nulla"
-  , licensor := some .weak }
+  , licensor := some .weak
+  , contexts := [(.polarQuestion, .optional)] }
 
 /-- *neanche* 'not even' has the variants *nemmeno* and *neppure*, as in *Non si comporta bene
 neanche a scuola* 'He doesn't behave well even at school', *Neanche a scuola si comporta bene*
@@ -83,7 +85,8 @@ più dolce e più grande che abbia mai incontrato* 'the sweetest and greatest ma
 encountered', *Piove più che mai* 'It rains more than ever'. -/
 def mai : PolarityItem :=
   { form := "mai"
-  , licensor := some .weak }
+  , licensor := some .weak
+  , contexts := [(.polarQuestion, .optional)] }
 
 /-- *alcuno* 'any' is a weak NPI of formal and bureaucratic styles without free choice uses, as in
 *Non ho comprato alcun libro* 'I didn't buy any book', *senza aver visto alcuno* 'without having

@@ -202,8 +202,7 @@ private theorem admits_hoeven_iff {F : Licenser.OperatorFamily} :
     (Licenser.classical F).Admits Dutch.PolarityItems.hoeven ↔
       (Licenser.classical F).Carries .weak := by
   rw [Licenser.admits_iff_licenses rfl (Or.inl rfl)]
-  simp [Licenser.Licenses, Dutch.PolarityItems.hoeven, Licenser.LicensesFreeChoice,
-    Licenser.IsQuestion]
+  simp [Licenser.Licenses, Dutch.PolarityItems.hoeven, Licenser.LicensesFreeChoice]
 
 /-! ### The modifiers -/
 

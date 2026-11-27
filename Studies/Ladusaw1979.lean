@@ -122,9 +122,9 @@ theorem isDownwardEntailing_of_mem_environments : ∀ c ∈ environments, IsDown
     (holds_tooTo_iff (s := .weak)).2 (by decide),
     (holds_clausalComparative_iff (s := .weak)).2 (by decide)⟩
 
--- by construction: `Licenser.Holds` is `False` at the question licenser, which licenses by
--- relevance rather than by entailment
-theorem not_isDownwardEntailing_question : ¬ IsDownwardEntailing question.licenser := id
+-- by construction: `Licenser.Holds` is `False` at the question licenser, which places no operator
+-- over the item
+theorem not_isDownwardEntailing_question : ¬ IsDownwardEntailing polarQuestion.licenser := id
 
 theorem licenses_of_isDownwardEntailing {L : Licenser} {e : PolarityItem}
     (hc : IsDownwardEntailing L) (hn : ¬ L.IsStrawsonUE) (he : e.licensor = some .weak) :

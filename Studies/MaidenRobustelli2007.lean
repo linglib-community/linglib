@@ -46,14 +46,15 @@ structure Link where
 
 /-- The links of the examples. -/
 def links : List (Datum × Link) :=
-  [(haiDimenticato, ⟨niente, .question, "niente"⟩), (ceNessuno, ⟨nessuno, .question, "nessuno"⟩),
-    (ceNiente, ⟨niente, .question, "niente"⟩),
+  [(haiDimenticato, ⟨niente, .polarQuestion, "niente"⟩),
+    (ceNessuno, ⟨nessuno, .polarQuestion, "nessuno"⟩),
+    (ceNiente, ⟨niente, .polarQuestion, "niente"⟩),
     (nonCredo, ⟨nessuno, .superordinateNegation, "nessuno"⟩),
     (senzaNiente, ⟨niente, .withoutClause, "niente"⟩),
     (senzaDentroNessuno, ⟨nessuno, .withoutClause, "nessuno"⟩),
     (nonHaAlcun, ⟨alcuno, .negation, "alcun"⟩), (nonHoVistoAlcuno, ⟨alcuno, .negation, "alcuno"⟩),
     (senzaAlcuno, ⟨alcuno, .withoutClause, "alcuno"⟩), (nonGlieloDaro, ⟨mai, .negation, "mai"⟩),
-    (haiMaiLetto, ⟨mai, .question, "mai"⟩), (piuDolce, ⟨mai, .superlative, "mai"⟩),
+    (haiMaiLetto, ⟨mai, .polarQuestion, "mai"⟩), (piuDolce, ⟨mai, .superlative, "mai"⟩),
     (affattoSparito, ⟨affatto, .negation, "affatto"⟩),
     (affattoFascista, ⟨affatto, .negation, "affatto"⟩),
     (piuCheMai, ⟨mai, .clausalComparative, "mai"⟩),
@@ -70,9 +71,13 @@ theorem links_attested :
       p.2.word.toList <:+: p.2.item.form.toList := by
   decide +kernel
 
-/-- The licensing theory admits the item of every example in the context in which it stands. -/
+/-- The licensing theory admits the item of every example in the context in which it stands, the
+questions aside. A question places no operator over the item, and the entry of the item records
+that it stands in one. -/
 theorem acceptable_admitted :
-    ∀ p ∈ links, p.1.judgment = .acceptable ∧ p.2.context.licenser.Admits p.2.item := by
+    ∀ p ∈ links, p.1.judgment = .acceptable ∧
+      (p.2.context.licenser.Admits p.2.item ∨
+        p.2.context = .polarQuestion ∧ p.2.item.verdict p.2.context = some .optional) := by
   decide +kernel
 
 end MaidenRobustelli2007

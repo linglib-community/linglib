@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Negation.Strength
+public import Linglib.Semantics.PolarityItem.Context
+public import Linglib.Syntax.Obligatoriness
 
 /-!
 # Polarity items
@@ -44,8 +46,14 @@ structure PolarityItem where
   antiLicensor : Option Negation.Strength := none
   /-- Whether the generic contexts license the item. -/
   freeChoice : Bool := false
+  /-- What the sources of the item say of single contexts: the item is excluded there, or it is
+  possible there. A context that no source mentions for the item is absent. -/
+  contexts : List (PolarityItem.LicensingContext × Obligatoriness) := []
 
 namespace PolarityItem
+
+/-- What the sources of an item say of a context, if anything. -/
+def verdict (e : PolarityItem) (c : LicensingContext) : Option Obligatoriness := e.contexts.lookup c
 
 /-- An item is a **negative polarity item** when some strength of negation licenses it. -/
 abbrev IsNPI (e : PolarityItem) : Prop := e.licensor.isSome

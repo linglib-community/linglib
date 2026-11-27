@@ -658,52 +658,65 @@ def theoryRegion (e : PolarityItem) : Finset HaspelmathFunction :=
 def regionOf (ss : List Series) (e : PolarityItem) : Option (Finset HaspelmathFunction) :=
   (ss.find? fun s ↦ ∃ p ∈ s.members, p.form = e.form).map (·.functions)
 
--- The theory reproduces the regions of the negative concord series, of Korean *-to* once it
--- requires an anti-additive context, and of the general series of Quechua and Hindi.
+-- The theory reproduces the regions of the negative concord series and of Korean *-to* once it
+-- requires an anti-additive context.
 theorem regionOf_eq_theoryRegion :
     ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki), (mandarin, Mandarin.PolarityItems.sheiDou),
-      (russian, Russian.PolarityItems.nikto), (korean, Korean.PolarityItems.nwukwuTo),
-      (quechua, Quechua.PolarityItems.piPis), (hindi, HindiUrdu.PolarityItems.koiiBhii),
+      (russian, Russian.PolarityItems.nikto), (korean, Korean.PolarityItems.nwukwuTo)],
+      regionOf p.1 p.2 = some (theoryRegion p.2) := by
+  decide +kernel
+
+-- A question places no operator over an item, so the theory admits no item in the question
+-- function. It reproduces the rest of the regions of the general series of Quechua and Hindi and
+-- of the French negative series, which the book draws over questions as well.
+theorem regionOf_eq_theoryRegion_union_question :
+    ∀ p ∈ [(quechua, Quechua.PolarityItems.piPis), (hindi, HindiUrdu.PolarityItems.koiiBhii),
       (hindi, HindiUrdu.PolarityItems.kuchBhii), (french, French.PolarityItems.personne),
       (french, French.PolarityItems.rien), (french, French.PolarityItems.jamais)],
-      regionOf p.1 p.2 = some (theoryRegion p.2) := by
+      regionOf p.1 p.2 = some (theoryRegion p.2 ∪ {.question}) := by
   decide +kernel
 
 -- The free-choice route admits every free-choice item under necessity, which realizes the irrealis
 -- function, where the book finds free-choice series unacceptable. For these items this is the only
 -- difference between the two regions.
 theorem regionOf_eq_theoryRegion_sdiff_irrealis :
-    ∀ p ∈ [(english, English.PolarityItems.any), (japanese, Japanese.PolarityItems.dareDemo),
-      (korean, Korean.PolarityItems.nwukwuNa), (russian, Russian.PolarityItems.ktoUgodno)],
+    (∀ p ∈ [(japanese, Japanese.PolarityItems.dareDemo), (korean, Korean.PolarityItems.nwukwuNa),
+      (russian, Russian.PolarityItems.ktoUgodno)],
       .irrealis ∈ theoryRegion p.2 ∧
-        regionOf p.1 p.2 = some (theoryRegion p.2 \ {.irrealis}) := by
+        regionOf p.1 p.2 = some (theoryRegion p.2 \ {.irrealis})) ∧
+    .irrealis ∈ theoryRegion English.PolarityItems.any ∧
+      regionOf english English.PolarityItems.any =
+        some (theoryRegion English.PolarityItems.any \ {.irrealis} ∪ {.question}) := by
   decide +kernel
 
--- The weak class admits an item in every downward-entailing context and in questions. The
--- book, however, excludes some of these series from direct negation, which the negative series
--- take (Hungarian *sem-*, Russian *ni-*, and German *kein*), and others from questions,
--- conditionals, or comparatives. The weak class does not admit a weak negative polarity item in
--- the irrealis function, where Russian *-libo* and the Mandarin bare interrogatives occur, and it
--- admits no item in the specific functions, which no named context realizes.
+-- The weak class admits an item in every downward-entailing context. The book, however, excludes
+-- some of these series from direct negation, which the negative series take (Hungarian *sem-*,
+-- Russian *ni-*, and German *kein*), and others from conditionals or comparatives. The weak class
+-- does not admit a weak negative polarity item in the question function, where six of these series
+-- occur, nor in the irrealis function, where Russian *-libo* and the Mandarin bare interrogatives
+-- occur, and it admits no item in the specific functions, which no named context realizes.
 theorem regionOf_eq_theoryRegion_sdiff_union :
     regionOf hungarian Hungarian.PolarityItems.akárki =
-        some (theoryRegion Hungarian.PolarityItems.akárki \ {.irrealis, .question, .directNeg}) ∧
+        some (theoryRegion Hungarian.PolarityItems.akárki \ {.irrealis, .directNeg}) ∧
     regionOf hungarian Hungarian.PolarityItems.bárki =
-        some (theoryRegion Hungarian.PolarityItems.bárki \ {.irrealis, .question, .directNeg}) ∧
+        some (theoryRegion Hungarian.PolarityItems.bárki \ {.irrealis, .directNeg}) ∧
     regionOf mandarin Mandarin.PolarityItems.renhe =
-        some (theoryRegion Mandarin.PolarityItems.renhe \ {.irrealis, .question, .conditional}) ∧
+        some (theoryRegion Mandarin.PolarityItems.renhe \ {.irrealis, .conditional}) ∧
     regionOf finnish Finnish.PolarityItems.kukaan =
-        some (theoryRegion Finnish.PolarityItems.kukaan \ {.conditional}) ∧
+        some (theoryRegion Finnish.PolarityItems.kukaan \ {.conditional} ∪ {.question}) ∧
     regionOf italian Italian.PolarityItems.nessuno =
-        some (theoryRegion Italian.PolarityItems.nessuno \ {.conditional, .comparative}) ∧
+        some (theoryRegion Italian.PolarityItems.nessuno \ {.conditional, .comparative} ∪
+          {.question}) ∧
     regionOf russian Russian.PolarityItems.ktoLibo =
-        some (theoryRegion Russian.PolarityItems.ktoLibo \ {.directNeg} ∪ {.irrealis}) ∧
+        some (theoryRegion Russian.PolarityItems.ktoLibo \ {.directNeg} ∪ {.irrealis, .question}) ∧
     regionOf mandarin Mandarin.PolarityItems.shei =
-        some (theoryRegion Mandarin.PolarityItems.shei \ {.comparative} ∪ {.irrealis}) ∧
+        some (theoryRegion Mandarin.PolarityItems.shei \ {.comparative} ∪ {.irrealis, .question}) ∧
     regionOf mandarin Mandarin.PolarityItems.shenme =
-        some (theoryRegion Mandarin.PolarityItems.shenme \ {.comparative} ∪ {.irrealis}) ∧
+        some (theoryRegion Mandarin.PolarityItems.shenme \ {.comparative} ∪
+          {.irrealis, .question}) ∧
     regionOf german German.PolarityItems.irgendein =
-        some (theoryRegion German.PolarityItems.irgendein \ {.directNeg} ∪ {.specificUnknown}) := by
+        some (theoryRegion German.PolarityItems.irgendein \ {.directNeg} ∪
+          {.specificUnknown, .question}) := by
   decide +kernel
 
 -- In the sources of the language file, Japanese *dare-mo* is a strict negative concord item

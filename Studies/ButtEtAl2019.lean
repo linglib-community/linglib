@@ -55,13 +55,14 @@ def links : List (Datum × Link) :=
     (haceMucho, ⟨nadie, .sinceTemporal⟩), (sinNadaNiNadie, ⟨nada, .withoutClause⟩),
     (sinNadaNiNadie, ⟨nadie, .withoutClause⟩), (seNego, ⟨nadie, .denyVerb⟩),
     (demasiado, ⟨nadie, .tooTo⟩), (pocos, ⟨nada, .few⟩), (horrible, ⟨nadie, .adversative⟩),
-    (preguntado, ⟨nada, .question⟩), (quienHaVisto, ⟨nadie, .question⟩),
-    (despedirme, ⟨nada, .question⟩), (despedirme, ⟨nadie, .question⟩),
-    (pensar, ⟨nada, .question⟩), (julia, ⟨nunca, .question⟩), (juliaJamas, ⟨jamás, .question⟩),
+    (preguntado, ⟨nada, .constituentQuestion⟩), (quienHaVisto, ⟨nadie, .constituentQuestion⟩),
+    (despedirme, ⟨nada, .constituentQuestion⟩), (despedirme, ⟨nadie, .constituentQuestion⟩),
+    (pensar, ⟨nada, .constituentQuestion⟩), (julia, ⟨nunca, .constituentQuestion⟩),
+    (juliaJamas, ⟨jamás, .constituentQuestion⟩),
     (sinNada, ⟨nada, .withoutClause⟩), (sinNadie, ⟨nadie, .withoutClause⟩),
     (antesQueNadie, ⟨nadie, .beforeClause⟩), (antesDe, ⟨nada, .beforeClause⟩),
     (insincero, ⟨ninguno, .conditionalAntecedent⟩), (noSaleNunca, ⟨nunca, .negation⟩),
-    (noSaleJamas, ⟨jamás, .negation⟩), (seVio, ⟨jamás, .question⟩)]
+    (noSaleJamas, ⟨jamás, .negation⟩), (seVio, ⟨jamás, .polarQuestion⟩)]
 
 -- The item of each link is a word of its example, so a link to the wrong item fails.
 theorem links_attested :
@@ -69,9 +70,13 @@ theorem links_attested :
   decide +kernel
 
 /-- The licensing theory admits the item of every acceptable example in the context in which it
-stands. -/
+stands, the questions aside. A question places no operator over the item, and the entry of the
+item records that it stands in one. -/
 theorem acceptable_admitted :
-    ∀ p ∈ links, p.1.judgment = .acceptable → p.2.context.licenser.Admits p.2.item := by
+    ∀ p ∈ links, p.1.judgment = .acceptable →
+      p.2.context.licenser.Admits p.2.item ∨
+        p.2.context ∈ [.polarQuestion, .constituentQuestion] ∧
+          p.2.item.verdict p.2.context = some .optional := by
   decide +kernel
 
 /-- *Jamás* cannot follow a comparison. The licensing theory nevertheless admits it there, since it

@@ -37,16 +37,17 @@ the stronger *no* and *at most n − 1*, which is the determiner exhaustificatio
 non-trivially, and not merely by being constant. Focus *only*, adversatives, superlatives,
 conditional antecedents, and temporal *since* are downward entailing only modulo their
 presuppositions. The modals, imperatives, generics, and free relatives are modal licensers, and
-a question licenses a weak item. A study may state the theory of a licenser of its own. The named
-constructions are the shared inventory that lexical entries cite.
+a question licenses no item. A positive assertion places the identity over the item. A study may
+state the theory of a licenser of its own. The named constructions are the shared inventory that
+lexical entries cite.
 
 ## Main declarations
 
-* `PolarityItem.LicensingContext`: the named constructions.
 * `PolarityItem.LicensingContext.licenser`, `PolarityItem.LicensingContext.haspelmath`: the
   operator that a construction places over the item, and the function of Haspelmath's map that
   the construction realizes.
 * `Quantifier.Det.exhaustified`: a determiner exhaustified against its scale-mates.
+* `PolarityItem.FitsStrength`: the verdicts on an item are those of a strength class.
 * `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
   `not_holds_exhaustified_few`, …: the certificates of the licenser of each context, from which
   the decidability instances compute what it carries and holds.
@@ -136,73 +137,6 @@ namespace PolarityItem
 
 open NaturalLogic Presupposition Quantifier Quantifier.Det Tense Indefinite
 
-/-- A licensing context is a construction that can host a polarity item. Its effect on the item is
-the licenser that it places over the position of the item (`LicensingContext.licenser`), and its
-typological position is the function of [haspelmath-1997]'s implicational map that it realizes
-(`LicensingContext.haspelmath`). Distinct constructions can share a licenser, as the necessity
-modal, the imperative, the generic, and the free relative do. -/
-inductive LicensingContext where
-  /-- Clausal negation, as in *not*, which is complementation over predicates. -/
-  | negation
-  /-- A negative quantifier, as in *nobody*, over a restrictor that is true of something. -/
-  | nobody
-  /-- *Few* NP, in the proportional reading of the English language file, which lies below the
-  stronger
-  *no* on its scale. -/
-  | few
-  /-- *At most n* NP, which lies below the stronger *at most n − 1* on its scale. -/
-  | atMost
-  /-- The restrictor of a universal, as in *everyone who*, over a scope that is false of
-  something. -/
-  | universalRestrictor
-  /-- The restrictor of a negative quantifier, as in *no one who*, over a scope that is true of
-  something. -/
-  | noRestrictor
-  /-- A *without*-phrase, in which the matrix predicate holds without the predicate of the
-  phrase. -/
-  | withoutClause
-  /-- A *before*-clause, in Anscombe's universal reading of *before*. -/
-  | beforeClause
-  /-- A clausal comparative, as in *taller than S*, which places the individual above every degree
-  of the clause. -/
-  | clausalComparative
-  /-- *Too* ADJ *to* VP, which places the individual above every degree at which the infinitive
-  holds. -/
-  | tooTo
-  /-- A verb of doubting, as in *I doubt that*, whose subject does not believe the complement. -/
-  | doubtVerb
-  /-- A verb of denying, as in *she denied that*, whose subject asserts the negation of the
-  complement. -/
-  | denyVerb
-  /-- Negation over a neg-raising attitude in a superordinate clause, as in *I don't think that*.
-  The attitude presupposes the excluded middle, so its negation is true where the attitude holds
-  of the negated complement ([gajewski-2007]). -/
-  | superordinateNegation
-  /-- The scope of focus *only*, in von Fintel's analysis. -/
-  | onlyFocus
-  /-- An adversative predicate, as in *sorry*, *surprised*, and *regret*. -/
-  | adversative
-  /-- A superlative, in its comparison class. -/
-  | superlative
-  /-- The antecedent of a conditional, analysed as the modal-horizon counterfactual. -/
-  | conditionalAntecedent
-  /-- Temporal *since*, as in *it's been five years since*. -/
-  | sinceTemporal
-  /-- A question. -/
-  | question
-  /-- A possibility modal. -/
-  | modalPossibility
-  /-- A necessity modal. -/
-  | modalNecessity
-  /-- An imperative, read as a necessity over what is commanded. -/
-  | imperative
-  /-- A generic sentence, read as a necessity over normal worlds. -/
-  | generic
-  /-- A free relative, as in *whatever* and *whoever*, read as a necessity over its
-  alternatives. -/
-  | freeRelative
-  deriving DecidableEq, Fintype, Repr
-
 /-- The function of [haspelmath-1997]'s implicational map that a construction realizes, if any.
 The necessity modal and the imperative are irrealis non-specific environments. The book finds
 free-choice items unacceptable under necessity, in contrast to possibility, and acceptable in
@@ -212,11 +146,11 @@ def LicensingContext.haspelmath : LicensingContext → Option HaspelmathFunction
   | withoutClause | doubtVerb | denyVerb | superordinateNegation => some .indirectNeg
   | clausalComparative => some .comparative
   | conditionalAntecedent => some .conditional
-  | question => some .question
+  | polarQuestion | constituentQuestion => some .question
   | modalNecessity | imperative => some .irrealis
   | modalPossibility | generic | freeRelative => some .freeChoice
-  | nobody | few | atMost | universalRestrictor | noRestrictor | beforeClause | tooTo | onlyFocus
-  | adversative | superlative | sinceTemporal => none
+  | positiveAssertion | nobody | few | atMost | universalRestrictor | noRestrictor | beforeClause
+  | tooTo | onlyFocus | adversative | superlative | sinceTemporal => none
 
 namespace LicensingContext
 
@@ -407,7 +341,8 @@ noncomputable def licenser : LicensingContext → Licenser
   | conditionalAntecedent => .strawson ⟨Horizon, fun p ↦ Set p.W, fun p ↦ p.I,
       fun p P ↦ Conditional.horizonCounterfactual p.horizon P p.q⟩
   | sinceTemporal => .strawson ⟨Ago, fun p ↦ Set p.T, fun p ↦ p.T, fun p ↦ since p.ago⟩
-  | question => .question
+  | positiveAssertion => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ id⟩
+  | polarQuestion | constituentQuestion => .question
   | modalPossibility => .modal ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.preimage⟩
   | modalNecessity | imperative | generic | freeRelative => .modal necessityFamily
 
@@ -755,6 +690,10 @@ theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .an
     have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
     simp [Set.subset_def, SetRel.preimage] at this
 
+/-- The identity is not downward entailing. -/
+theorem not_holds_anti_positiveAssertion : ¬ positiveAssertion.licenser.Holds .anti := fun h ↦
+  ProjectivitySignature.holdsFor_anti_iff.1 (h Unit) (bot_le (a := ⊤)) () trivial
+
 /-! ### Deciding the licensers of the named contexts -/
 
 instance (c : LicensingContext) : DecidablePred c.licenser.Carries := fun _ ↦
@@ -796,7 +735,8 @@ instance (c : LicensingContext) : DecidablePred c.licenser.Carries := fun _ ↦
       not_holds_conditionalAntecedent)
   | sinceTemporal => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_sinceTemporal
       not_isStrawsonUE_sinceTemporal not_holds_sinceTemporal)
-  | question => isFalse fun h ↦ h.weak.1
+  | positiveAssertion => isFalse fun h ↦ h.weak.2 fun _ ↦ monotone_id
+  | polarQuestion | constituentQuestion => isFalse fun h ↦ h.weak.1
   | modalPossibility => isFalse fun h ↦ h.weak.2 isStrawsonUE_modalPossibility
   | modalNecessity | imperative | generic | freeRelative =>
     isFalse fun h ↦ h.weak.2 isStrawsonUE_necessityFamily
@@ -822,7 +762,9 @@ instance (c : LicensingContext) (s : Negation.Strength) :
   | conditionalAntecedent =>
     isFalse (not_holds_toProjectivitySignature not_holds_conditionalAntecedent)
   | sinceTemporal => isFalse (not_holds_toProjectivitySignature not_holds_sinceTemporal)
-  | question => isFalse id
+  | positiveAssertion =>
+    isFalse (not_holds_toProjectivitySignature not_holds_anti_positiveAssertion)
+  | polarQuestion | constituentQuestion => isFalse id
   | modalPossibility => isFalse (not_holds_toProjectivitySignature not_holds_anti_modalPossibility)
   | modalNecessity | imperative | generic | freeRelative =>
     isFalse (not_holds_toProjectivitySignature not_holds_anti_necessityFamily)
@@ -835,16 +777,8 @@ instance (c : LicensingContext) : Decidable c.licenser.LicensesFreeChoice :=
   | negation | nobody | few | atMost | universalRestrictor | noRestrictor | withoutClause
   | beforeClause | clausalComparative | tooTo | doubtVerb | denyVerb | superordinateNegation
   | onlyFocus | adversative | superlative
-  | conditionalAntecedent | sinceTemporal | question => isFalse id
-
-instance (c : LicensingContext) : Decidable c.licenser.IsQuestion :=
-  match c with
-  | question => isTrue trivial
-  | negation | nobody | few | atMost | universalRestrictor | noRestrictor | withoutClause
-  | beforeClause | clausalComparative | tooTo | doubtVerb | denyVerb | superordinateNegation
-  | onlyFocus | adversative | superlative
-  | conditionalAntecedent | sinceTemporal | modalPossibility | modalNecessity | imperative
-  | generic | freeRelative => isFalse id
+  | conditionalAntecedent | sinceTemporal | positiveAssertion | polarQuestion
+  | constituentQuestion => isFalse id
 
 /-! ### Deciding licensing at the named contexts
 
@@ -852,7 +786,7 @@ The instances are indexed by the context rather than by its licenser, so that a 
 definition that decides an item against a named context does not compute the licenser. -/
 
 instance (c : LicensingContext) : DecidablePred c.licenser.Licenses :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 instance (c : LicensingContext) : DecidablePred c.licenser.AntiLicenses :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -861,5 +795,17 @@ instance (c : LicensingContext) : DecidablePred c.licenser.Admits :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 end LicensingContext
+
+/-! ### The strength class of an item, read from its contexts -/
+
+/-- The verdicts on an item are those of the class of strength `s` when the item is possible in
+each context whose licenser carries `s` and excluded from each of the others
+([zwarts-1998]). An item on which the sources are silent fits every strength, and an item that
+stands in a question fits none, since a question carries no strength. -/
+def FitsStrength (e : PolarityItem) (s : Negation.Strength) : Prop :=
+  ∀ p ∈ e.contexts, p.2 = if p.1.licenser.Carries s then .optional else .excluded
+
+instance (e : PolarityItem) (s : Negation.Strength) : Decidable (e.FitsStrength s) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 end PolarityItem

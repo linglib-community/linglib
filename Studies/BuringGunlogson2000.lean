@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Languages.German.PolarityItems
@@ -153,5 +154,11 @@ theorem polarity_eq_negative_of_isNPI {d : Determiner} {e : PolarityItem} (he : 
 theorem polarity_eq_positive_of_isPPI {d : Determiner} {e : PolarityItem} (he : e.IsPPI)
     (h : (Question.mk d (some e)).WellFormed) : d.polarity = .positive :=
   (h e rfl).1 he
+
+-- (15): *brauchen* is out in a positive assertion and in a positive polar question and fine under
+-- *niemand*, which with its acceptability under *höchstens* are the verdicts of the weak class.
+theorem brauchen_fitsStrength :
+    brauchen.FitsStrength .weak ∧ ¬ brauchen.FitsStrength .antiAdditive := by
+  decide
 
 end BuringGunlogson2000
