@@ -34,6 +34,8 @@ a complete lattice.
   admits an update iff its states above `k` have a least member, and the update is then the
   restriction to the states above `k`.
 * `Commitment.Space.coe_update_sSup`: the update by a join is the conjunction of the updates.
+* `Commitment.Space.update_question_of_mem`: taking up one of the proposals of a question is the
+  act itself.
 * `Commitment.Space.sdiff_coe_denegate`, `Commitment.Space.coe_denegate_inter`: two denegations
   cancel, and de Morgan's laws hold for them.
 
@@ -218,6 +220,12 @@ theorem le_root_update (k : S) : k ≤ (C.update k).root := le_sInf fun _ hd ↦
 theorem root_le_root_update (k : S) : C.root ≤ (C.update k).root :=
   le_sInf fun _ hd ↦ C.root_le hd.1
 
+theorem le_of_mem_update (h : d ∈ C.update k) : k ≤ d :=
+  h.elim (fun e ↦ e ▸ C.le_root_update k) And.right
+
+theorem root_le_of_mem_update (h : d ∈ C.update k) : C.root ≤ d :=
+  h.elim (fun e ↦ e ▸ C.root_le_root_update k) fun h ↦ C.root_le h.1
+
 /-- The space admits an update, in that the new root is one of its states, iff its states above
 `k` have a least member. -/
 theorem root_update_mem_iff : (C.update k).root ∈ C ↔ ∃ r, IsLeast (↑C ∩ Set.Ici k) r := by
@@ -276,6 +284,10 @@ theorem update_restrict_of_subset (h : ↑C ∩ Set.Ici k ⊆ D) :
   update_congr _ <| Set.ext fun _ ↦
     ⟨fun ⟨hd, hk⟩ ↦ ⟨hd.elim (fun e ↦ e ▸ C.root_mem) And.left, hk⟩,
       fun hd ↦ ⟨Or.inr ⟨hd.1, h hd⟩, hd.2⟩⟩
+
+/-- Taking up one of the proposals of a question is the act itself. -/
+theorem update_question_of_mem {P : Set S} (hk : k ∈ P) : (C.question P).update k = C.update k :=
+  C.update_restrict_of_subset fun _ hd ↦ ⟨k, hk, hd.2⟩
 
 /-- The update by a join is the conjunction of the updates ([cohen-krifka-2014] (31)), when the
 space admits it. -/
