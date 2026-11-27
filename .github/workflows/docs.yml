@@ -208,9 +208,9 @@ jobs:
           # /docs-new/, where the study pages were previewed, forwards to them.
           python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs --check \
             --redirect .lake/build/doc-site/docs-new --checks .lake/build/checks.json
-          # The wiki: a source's items as a text to read, at /wiki/papers/<bib-key>/, and the
-          # files they rest on at /wiki/<path>/, each item with the Lean that states it. No page
-          # links there and the pages ask not to be indexed.
+          # The wiki: a source's items as a text to read, at its study's path under /wiki/, and
+          # the files they rest on at /wiki/<path>/, each item with the Lean that states it. No
+          # page links there and the pages ask not to be indexed.
           python3 scripts/gen_checks_pages.py --checks .lake/build/checks.json \
             --out .lake/build/doc-site
           # The dependency map at /taproot/, a development page that nothing links to and that asks

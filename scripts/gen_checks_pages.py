@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Write the pages of `/wiki/`, which read as a text: a source's items at
-`/wiki/papers/<bib-key>/`, and each file those items rest on at `/wiki/<path>/`.
+"""Write the pages of `/wiki/`, which read as a text, each at its file's path as in the API docs:
+a source's items at the path of the study that formalizes it, `/wiki/Studies/<Study>/`, and each
+file those items rest on at `/wiki/<path>/`.
 
 `checks/<bib-key>.toml` lists the items of a source (`checks/README.md`). A source's page shows
 the claims under the source's sections, each headed by its kind and the source's name for it,
@@ -208,8 +209,9 @@ class Site:
 
     def unit_path(self, unit):
         """The page of a source or of a module: its text if it has one, else the API docs."""
-        if unit in self.sources:
-            return f"wiki/papers/{unit}/"
+        if unit in self.sources:   # at its study's path, or by its key where it has no study
+            return (self.text_path(self.study[unit]) if unit in self.study
+                    else f"wiki/papers/{unit}/")
         if plumbing(unit):
             return None
         return self.text_path(unit) if unit in self.shown else self.docs_path(unit)
@@ -224,7 +226,7 @@ class Site:
             return None
         for item in self.stated.get(name, ()):
             if item["source"] == self.source.get(node["module"]):
-                return f'wiki/papers/{item["source"]}/#{item["id"]}'
+                return f'{self.unit_path(item["source"])}#{item["id"]}'
         return self.unit_path(self.unit(node["module"]))
 
     @functools.lru_cache(None)
@@ -597,7 +599,7 @@ def example(row, item=None):
 
 
 def source_page(site, key, sha, lines):
-    page = Page(site, f"wiki/papers/{key}/")
+    page = Page(site, site.unit_path(key))
     its = site.sources[key]
     kind, f = site.bib[key]
     items = {f'{i["source"]}/{i["id"]}': i for i in its}
@@ -670,7 +672,7 @@ def source_page(site, key, sha, lines):
     chart = page.chart(key, label, [d for i in its for d in i["decls"]])
     site.routes[key] = page.route
     return page.path, page.render(
-        gb.tex_text(f.get("title", key)), f'<a href="../../">Wiki</a> / {esc(label)}',
+        gb.tex_text(f.get("title", key)), f'<a href="{page.href("wiki/")}">Wiki</a> / {esc(label)}',
         gb.tex_html(f.get("title", key)), cite, body + tail, links, chart, panel, sha)
 
 
@@ -746,7 +748,8 @@ def index_page(site, sha):
         count = f'{len(its)} item{"" if len(its) == 1 else "s"}'
         tally = f"{count}, {done} checked" if done else f"{count}, none checked yet"
         cls = "all" if done == len(its) else "some" if done else "none"
-        rows.append(f'<li class="source {cls}"><a href="papers/{esc(key, quote=True)}/">'
+        rows.append(f'<li class="source {cls}">'
+                    f'<a href="{esc(site.unit_path(key).removeprefix("wiki/"), quote=True)}">'
                     f'<strong>{esc(site.label(key))}</strong> '
                     f'{gb.tex_html(f.get("title", ""))}</a>'
                     f'<span class="tally">{tally}</span></li>')

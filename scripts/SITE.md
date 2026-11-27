@@ -23,8 +23,10 @@ wide, in light and dark mode, before opening a PR.
 
 ## The wiki pages
 
-`gen_checks_pages.py` writes `/wiki/papers/<bib-key>/` for each source with a record in `checks/`,
-`/wiki/`, which lists them, and `/wiki/<path>/` for each file the items of those sources rest on
+A wiki page is at its file's path, as in the API docs: `/wiki/Semantics/Dynamic/State/` beside
+`/docs/Linglib/Semantics/Dynamic/State.html`. `gen_checks_pages.py` writes one for each source
+with a record in `checks/`, at the path of the study that formalizes it
+(`/wiki/Studies/Elliott2023/`), `/wiki/`, which lists them, and `/wiki/<path>/` for each file the items of those sources rest on
 and each file those lead to in turn, so that no page links to a file without one. No menu item and no other page links to them, and they carry `noindex`, so they are reached
 by address only.
 
