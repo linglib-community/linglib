@@ -8,7 +8,6 @@ public import Linglib.Logic.Modal.Definability
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Discourse.Bias
 public import Linglib.Semantics.Questions.Inquisitive.Polar
-public import Linglib.Syntax.Negation
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -261,13 +260,6 @@ def _root_.RomeroHan2004.Examples.Bias.toSign : Examples.Bias → SignType
   | .negative => -1
   | .absent => 0
 
-/-- The position of a question's negation, if it has one. -/
-def _root_.RomeroHan2004.Examples.NegationPlacement.position :
-    Examples.NegationPlacement → Option Negation.Position
-  | .preposed => some .preposed
-  | .nonPreposed => some .nonPreposed
-  | .absent => none
-
 /-- The polarity item a row tests. -/
 def item (e : Datum) : Option PolarityItem :=
   e.parse? "item" [("too", English.PolarityItems.too), ("either", English.PolarityItems.either)]
@@ -307,7 +299,7 @@ theorem bias_eq_implicature :
 
 -- (1), (5), (14)–(18): Generalization 1 for preposed negation, under assumption (64)
 theorem bias_of_preposed :
-    ∀ e ∈ all, ∀ n ∈ (negation e).toList, n.position = some .preposed →
+    ∀ e ∈ all, ∀ n ∈ (negation e).toList, n = .preposed →
       ∀ b ∈ (bias e).toList, ∀ l : LF, l.outer * l.inner = .negative →
         b.toSign = l.implicature := by
   decide

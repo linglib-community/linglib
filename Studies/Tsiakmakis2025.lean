@@ -235,7 +235,7 @@ classed by the mood they negate. -/
 def negators (e : Datum) : List Negator :=
   (Datum.wordsOf e.primaryText).filterMap fun w ↦
     (Greek.StandardModern.Negation.negators.find? fun n ↦
-      n.marker.morphs.map (·.form.toList) = [w]).bind (Negator.ofMood ·.mood)
+      n.marker.form.toList = w).bind (Negator.ofMood ·.mood)
 
 /-- Each Greek host of expletive negation spells out the negator of its class, *dhen* in the
 apparent hosts and *min* in the hosts proper, (20), and canonical *dhen* follows expletive *min*

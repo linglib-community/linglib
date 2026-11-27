@@ -3,7 +3,6 @@ module
 public import Studies.BuringGunlogson2000
 public import Studies.GartnerGyuris2017
 public import Studies.RomeroHan2004
-public import Linglib.Syntax.Negation
 public import Mathlib.Algebra.Group.Action.Prod
 public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Logic.Trivalent.Proposition
@@ -121,12 +120,6 @@ inductive VerbPosition
   | nonV1
   deriving DecidableEq, Repr, Fintype
 
-/-- The position of a negation on the finite verb, in [romero-2024]'s forms: the clause-initial
-verb preposes it, giving a high negation question, and the verb in situ does not, a low one. -/
-def VerbPosition.negationPosition : VerbPosition → Negation.Position
-  | .v1 => .preposed
-  | .nonV1 => .nonPreposed
-
 /-- The chapter's grid of Czech polar-question forms, which crosses interrogative
 (verb-initial) or declarative word order with polarity. -/
 structure CzechPQForm where
@@ -149,10 +142,6 @@ def declPPQ : CzechPQForm := ⟨.nonV1, .positive⟩
 
 /-- The declarative negative question, DeclNPQ. -/
 def declNPQ : CzechPQForm := ⟨.nonV1, .negative⟩
-
-/-- The position of the negation of a form, `none` for a positive question. -/
-def negation (f : CzechPQForm) : Option Negation.Position :=
-  if f.polarity = .negative then some f.verb.negationPosition else none
 
 end CzechPQForm
 
@@ -376,11 +365,10 @@ def particle : SerbianPQForm → Clause.Marker
   | .jeLiPPQ | .lnpq => Serbian.QuestionParticles.jeLi
   | .hnpq => Serbian.QuestionParticles.li
 
-/-- The [romero-2024] form of each strategy. -/
-def negation : SerbianPQForm → Option Negation.Position
-  | .daLiPPQ | .jeLiPPQ => none
-  | .hnpq => some .preposed
-  | .lnpq => some .nonPreposed
+/-- The polarity of each strategy. -/
+def polarity : SerbianPQForm → Polarity
+  | .daLiPPQ | .jeLiPPQ => .positive
+  | .hnpq | .lnpq => .negative
 
 /-- The quiz question of (31) that exemplifies each strategy. -/
 def quizExample : SerbianPQForm → Examples.Example
@@ -414,7 +402,8 @@ theorem distribution_daLiPPQ_ssubset_jeLiPPQ :
   decide
 
 -- positive questions are incompatible with negative biases
-theorem distribution_subset_of_negation_eq_none {f : SerbianPQForm} (hf : f.negation = none) :
+theorem distribution_subset_of_polarity_eq_positive {f : SerbianPQForm}
+    (hf : f.polarity = .positive) :
     distribution serbianForms f ⊆
       (⟨.minus .negative, .minus .negative⟩ : BiasProfile).felicity := by
   revert hf; cases f <;> decide

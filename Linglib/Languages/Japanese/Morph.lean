@@ -108,7 +108,7 @@ def Exponent.morphs : Exponent σ → List Morph
   | .potential => [.suff "(r)are"]
   | .mas => [.suff "mas"]
   | .tai => [.suff "ta"]
-  | .na => Japanese.Negation.na.morphs
+  | .na => [Japanese.Negation.na]
   | .u => [.suff "(r)u"]
   | .ta => [.suff "ta"]
   | .yoo => [.suff "(y)oo"]

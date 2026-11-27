@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Negation
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Clause.Complementation
 
 /-!
@@ -22,29 +22,26 @@ in that study.
 
 @[expose] public section
 
-open Negation
-
 namespace Greek.StandardModern.Negation
+
+open Morphology (Morph)
 
 /-- A Greek sentential negator is given by its exponent and the mood of the clauses it
 negates. -/
 structure Negator where
   /-- The exponent. -/
-  marker : Marker
+  marker : Morph
   /-- The mood of the clauses the negator negates. -/
   mood : Clause.ComplementType
   deriving DecidableEq, Repr
 
 /-- *dhen* (δεν), the negator of indicative clauses. -/
-def dhen : Negator := { marker := { pieces := [[.free "dhen"]] }, mood := .indicative }
+def dhen : Negator := { marker := .free "dhen", mood := .indicative }
 
 /-- *min* (μην), the negator of subjunctive clauses, among them prohibitions. -/
-def min : Negator := { marker := { pieces := [[.free "min"]] }, mood := .subjunctive }
+def min : Negator := { marker := .free "min", mood := .subjunctive }
 
 /-- The sentential negators. -/
 def negators : List Negator := [dhen, min]
-
-/-- The standard negators. -/
-def standard : List Marker := [dhen.marker]
 
 end Greek.StandardModern.Negation
