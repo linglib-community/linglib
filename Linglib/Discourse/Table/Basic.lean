@@ -5,6 +5,7 @@ public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.List.TakeWhile
 public import Mathlib.Data.Set.Sups
 public import Mathlib.Order.Filter.Basic
+public import Mathlib.Order.Filter.Ker
 
 /-!
 # The Table
@@ -86,6 +87,13 @@ structure Table (A W I : Type*) where
   /-- The common ground, the filter of propositions that follow from the joint commitments. -/
   commonGround : Filter W
 
+/-- The commitment set of a holder is the kernel of the filter the holder's commitments
+generate. -/
+theorem State.ker_generate_contents {κ W : Type*} (K : State κ W) (k : κ) :
+    (Filter.generate (K.contents k)).ker = K.commitmentSet k := by
+  rw [Filter.generate_eq_biInf, State.commitmentSet, Set.sInter_eq_biInter]
+  simp
+
 initialize_simps_projections Table (as_prefix stack, as_prefix commitments, as_prefix commonGround)
 
 namespace Table
@@ -108,6 +116,11 @@ variable {ps : Set (Filter W)} {f : Filter W} {p q : Set W} {H H' : Set (Set W)}
   simp [project]
 
 theorem bot_notMem_project : ⊥ ∉ project ps H := fun h ↦ h.2 rfl
+
+/-- Projection is monotone in the set of common grounds. -/
+@[gcongr]
+theorem project_subset {ps' : Set (Filter W)} (h : ps ⊆ ps') : project ps H ⊆ project ps' H :=
+  Set.sdiff_subset_sdiff_left (Set.infs_subset_right h)
 
 theorem exists_le_of_mem_project (h : f ∈ project ps H) : ∃ g ∈ ps, f ≤ g :=
   let ⟨g, hg, _, _, e⟩ := (mem_project.1 h).1

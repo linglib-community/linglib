@@ -43,6 +43,12 @@ same operation, with the proposals `p` and `pᶜ` in the first case and `a`'s co
 and to `φᶜ` in the second. For an empty Table, moving a proposition to the common ground is the
 update by that proposition.
 
+The discourse commitments of a Table determine a state as well. The *state of a commitment list*
+contains the proposition that `k` is committed to `φ` for each commitment on the list, so a
+commitment on the Table is the update of that state by the proposition. Moving a proposition to
+the common ground removes it from the commitment lists and so removes commitments from the
+state, where an update of a commitment space only adds.
+
 ## Implementation notes
 
 In the source a commitment state is a set of propositions. Here it is the filter the set
@@ -65,9 +71,9 @@ projected commitments can be met.
 * The acceptability of questions by contextual evidence, the response *I don't know*, alternative
   and constituent questions, and question tags are not formalized, and the examples are not in
   `Data/Examples`.
-* The commitment space of a Table does not represent the discourse commitments of the
-  participants. Moving a proposition to the common ground is related to the update only for an
-  empty Table.
+* The commitment space of a Table and the state of its commitment list are related to the acts
+  separately and are not combined into one space. Moving a proposition to the common ground is
+  related to the update only for an empty Table.
 
 ## References
 
@@ -98,6 +104,15 @@ theorem stateOf_le_stateOf : stateOf q ≤ stateOf r ↔ r ⊆ q := principal_mo
 
 theorem stateOf_eq_toDual_top : stateOf q = toDual ⊤ ↔ q = Set.univ := by
   rw [stateOf, toDual_inj, ← principal_univ, principal_eq_iff_eq]
+
+/-- `stateOf` as an order embedding: a stronger proposition has a larger state. -/
+def stateOfEmbedding : (Set W)ᵒᵈ ↪o (Filter W)ᵒᵈ where
+  toFun q := stateOf (ofDual q)
+  inj' _ _ h := ofDual_inj.1 (principal_injective (toDual_inj.1 h))
+  map_rel_iff' := stateOf_le_stateOf
+
+@[simp] theorem stateOfEmbedding_apply (q : (Set W)ᵒᵈ) :
+    stateOfEmbedding q = stateOf (ofDual q) := rfl
 
 end State
 
@@ -336,6 +351,46 @@ example : ¬ ProjectsCommitment (Space.Ici (toDual ⊤)) (Index.access (F := Boo
   absurd ((projectsCommitment_Ici_iff Index.eq_of_committed_access_subset
     Index.committed_access_ne_univ).2.1 h) (by decide)
 
+/-! ### The state of a commitment list -/
+
+section CommitmentState
+
+variable {κ W : Type*} (O : κ → SetRel W W) (K L : State κ W) (k : κ) (φ : Set W)
+
+/-- The **state of a commitment list** contains, for each holder `k` committed to `φ`, the
+proposition `k ⊢[O] φ`. -/
+def commitmentState : (Filter W)ᵒᵈ :=
+  toDual (Filter.generate {q | ∃ k φ, k ~[K] φ ∧ q = (k ⊢[O] φ)})
+
+variable {K L} in
+theorem commitmentState_mono (h : K ⊆ L) : commitmentState O K ≤ commitmentState O L :=
+  toDual_le_toDual.2 <| le_generate_iff.2 fun _ ⟨k, φ, hk, e⟩ ↦
+    Filter.GenerateSets.basic ⟨k, φ, h hk, e⟩
+
+/-- `commitmentState` as a monotone map: a longer list has a larger state. -/
+def commitmentStateHom : State κ W →o (Filter W)ᵒᵈ :=
+  ⟨commitmentState O, fun _ _ h ↦ commitmentState_mono O h⟩
+
+-- committing `k` to `φ` adds the proposition that `k` is committed to `φ`
+theorem commitmentState_insert :
+    commitmentState O (insert (k, φ) K) = commitmentState O K ⊔ stateOf (k ⊢[O] φ) := by
+  have : {q | ∃ k' ψ, k' ~[insert (k, φ) K] ψ ∧ q = (k' ⊢[O] ψ)} =
+      insert (k ⊢[O] φ) {q | ∃ k' ψ, k' ~[K] ψ ∧ q = (k' ⊢[O] ψ)} := by
+    ext q
+    constructor
+    · rintro ⟨k', ψ, h | h, rfl⟩
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+        exact .inl rfl
+      · exact .inr ⟨k', ψ, h, rfl⟩
+    · rintro (rfl | ⟨k', ψ, h, rfl⟩)
+      · exact ⟨k, φ, .inl rfl, rfl⟩
+      · exact ⟨k', ψ, .inr h, rfl⟩
+  rw [commitmentState, this, Set.insert_eq, Filter.generate_union, Filter.generate_singleton,
+    inf_comm]
+  rfl
+
+end CommitmentState
+
 /-! ### The commitment space of a Table -/
 
 section Table
@@ -424,5 +479,39 @@ theorem toSpace_assert_compl_polarQuestion :
   tauto
 
 end Table
+
+/-! ### Commitments on the Table and in the state -/
+
+section TableCommitments
+
+variable {A W I : Type*} (O : A → SetRel W W) (K : Table A W I) (ans : I → Set (Set W)) (a : A)
+  (p : Set W)
+
+-- a commitment on the Table is the update of the state by the proposition `a ⊢[O] p`
+theorem commitmentState_commit :
+    commitmentState O (K.commit a p).commitments =
+      commitmentState O K.commitments ⊔ stateOf (a ⊢[O] p) :=
+  commitmentState_insert O K.commitments a p
+
+-- moving a proposition to the common ground can only remove commitments from the state
+theorem commitmentState_settle_le :
+    commitmentState O (K.settle ans p).commitments ≤ commitmentState O K.commitments :=
+  commitmentState_mono O fun _ h ↦ h.1
+
+-- and it does remove them: the commitment of `a` to `p` is in the state before and not after
+example (hp : (a ⊢[O] p) ≠ Set.univ) :
+    commitmentState O (((Table.empty : Table A W I).commit a p).settle ans p).commitments ≠
+      commitmentState O ((Table.empty : Table A W I).commit a p).commitments := by
+  have h₁ : (((Table.empty : Table A W I).commit a p).settle ans p).commitments = ∅ := by
+    ext ⟨b, q⟩
+    simp
+  have h₂ : commitmentState O (∅ : State A W) = toDual ⊤ := by
+    simp [commitmentState, Filter.generate_empty]
+  rw [h₁, commitmentState_commit, Table.commitments_empty, h₂]
+  intro e
+  refine hp (stateOf_eq_toDual_top.1 (le_antisymm ?_ (toDual_le_toDual.2 le_top)))
+  exact e ▸ le_sup_right
+
+end TableCommitments
 
 end Krifka2015

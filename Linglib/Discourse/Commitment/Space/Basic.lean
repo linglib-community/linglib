@@ -4,6 +4,7 @@ public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import Mathlib.Order.GaloisConnection.Defs
 public import Mathlib.Order.UpperLower.Closure
 
 /-!
@@ -29,6 +30,8 @@ outside `D`, and the *question* with proposals `P` keeps the members above some 
 
 ## Main results
 
+* `Space.gc_root_Ici`: the root and the space of all states above a state form a Galois
+  connection, `C ≤ Space.Ici c ↔ c ≤ C.root`.
 * `Space.root_update_mem_iff`: the root of `C.update k` is a member of `C` if and only if the
   members of `C` above `k` have a least element.
 * `Space.update_question_of_mem`: if `k ∈ P`, updating `C.question P` by `k` gives `C.update k`.
@@ -113,6 +116,25 @@ protected def Ici (c : S) : Space S := ⟨Set.Ici c, c, isLeast_Ici⟩
 @[simp] theorem mem_Ici : d ∈ Space.Ici c ↔ c ≤ d := Iff.rfl
 
 @[simp] theorem root_Ici (c : S) : (Space.Ici c).root = c := rfl
+
+/-- A space is contained in the space of all states above `c` if and only if its root is above
+`c`. -/
+theorem le_Ici_iff : C ≤ Space.Ici c ↔ c ≤ C.root :=
+  ⟨fun h ↦ h C.root_mem, fun h _ hd ↦ h.trans (C.root_le hd)⟩
+
+/-- A smaller space has a larger root. -/
+theorem root_le_root {C D : Space S} (h : C ≤ D) : D.root ≤ C.root := D.root_le (h C.root_mem)
+
+/-- The root and the space of all states above a state form a Galois connection. -/
+theorem gc_root_Ici : GaloisConnection (fun C : Space S ↦ OrderDual.toDual C.root)
+    (fun c : Sᵒᵈ ↦ Space.Ici (OrderDual.ofDual c)) :=
+  fun C c ↦ (C.le_Ici_iff (c := OrderDual.ofDual c)).symm
+
+/-- The Galois connection between the root and the space of all states above a state is an
+insertion: the root of `Space.Ici c` is `c`. -/
+def giRootIci : GaloisInsertion (fun C : Space S ↦ OrderDual.toDual C.root)
+    (fun c : Sᵒᵈ ↦ Space.Ici (OrderDual.ofDual c)) :=
+  gc_root_Ici.toGaloisInsertion fun _ ↦ le_rfl
 
 /-! ### Meta-speech acts -/
 
