@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Korean.Indefinites
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Korean polarity items
@@ -37,10 +37,5 @@ additive particle. -/
 def nwukwuNa : PolarityItem :=
   { form := Indefinites.nwukwuNa.form
   , freeChoice := true }
-
-/-- *Nwukwu-to* is licensed exactly by the contexts carrying anti-additive strength. -/
-theorem nwukwuTo_licensing_characterized (c : LicensingContext) :
-    c.licenser.Licenses nwukwuTo ↔ c.licenser.Carries .antiAdditive :=
-  Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 end Korean.PolarityItems

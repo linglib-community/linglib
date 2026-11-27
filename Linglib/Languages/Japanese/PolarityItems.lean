@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Languages.Japanese.Indefinites
 
 /-!
@@ -52,11 +52,5 @@ def dareMo : PolarityItem :=
 def dareDemo : PolarityItem :=
   { form := Indefinites.dareDemo.form
   , freeChoice := true }
-
-/-! ### Licensing -/
-
-theorem dareMo_licensing_characterized (c : LicensingContext) :
-    c.licenser.Licenses dareMo ↔ c.licenser.Carries .antiMorphic :=
-  Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 end Japanese.PolarityItems

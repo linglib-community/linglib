@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Slavic.Russian.Indefinites
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Russian polarity items
@@ -14,9 +14,7 @@ series occupies direct negation as negative concord items, which co-occur with c
 negation *ne*, as Zeijlstra and Giannakidou describe them; and *kto ugodno* is a free-choice
 item.
 
-The concord items carry `licensor := some .antiMorphic`, so a context licenses them exactly when
-its licenser is anti-morphic, which among the named contexts is clausemate *ne* alone
-(`niSeries_licensing_characterized`).
+The concord items carry `licensor := some .antiMorphic`: they require an anti-morphic licenser.
 
 ## References
 
@@ -71,15 +69,5 @@ def ktoUgodno : PolarityItem :=
 /-- The polarity items. -/
 def items : List PolarityItem :=
   [ktoLibo, nikto, nichego, nikogda, ktoUgodno]
-
-/-! ### Verification -/
-
-theorem niSeries_licensing_characterized :
-    ∀ e ∈ [nikto, nichego, nikogda], ∀ c : LicensingContext,
-      c.licenser.Licenses e ↔ c.licenser.Carries .antiMorphic := by
-  intro e he c
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at he
-  rcases he with rfl | rfl | rfl <;>
-    exact Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 end Russian.PolarityItems

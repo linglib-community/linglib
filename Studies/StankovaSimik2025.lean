@@ -2,6 +2,7 @@ module
 
 public import Linglib.Languages.Slavic.Czech.Particles
 public import Linglib.Languages.Slavic.Czech.PolarityItems
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Data.Examples.StankovaSimik2025
 public import Linglib.Data.Examples.Readers
@@ -256,5 +257,10 @@ theorem predicts_iff_significant :
       (t.model, t.effect) ∉
         [(Model.nonV1, Effect.indefinite), (.v1, .interaction), (.v1, .contextWithinPPI)] := by
   decide +kernel
+
+-- the positive polarity items *nějaký* and *někdo* are anti-licensed under clausal negation
+theorem neSeries_antiLicensed :
+    ∀ e ∈ Czech.PolarityItems.neSeries, LicensingContext.negation.licenser.AntiLicenses e := by
+  decide
 
 end StankovaSimik2025

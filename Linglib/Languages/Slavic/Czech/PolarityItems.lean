@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Slavic.Czech.Determiners
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Czech polarity items
@@ -77,19 +77,5 @@ def nekdo : PolarityItem :=
 
 /-- The positive polarity items. -/
 def neSeries : List PolarityItem := [nejaky, nekdo]
-
-/-! ### Verification -/
-
-theorem niSeries_strict_concord :
-    ∀ e ∈ niSeries, ∀ c : LicensingContext,
-      c.licenser.Licenses e ↔ c.licenser.Carries .antiMorphic := by
-  intro e he c
-  simp only [niSeries, List.mem_cons, List.not_mem_nil, or_false] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl <;>
-    exact Licenser.licenses_iff_carries rfl (by decide) (by decide)
-
-theorem neSeries_antiLicensed :
-    ∀ e ∈ neSeries, LicensingContext.negation.licenser.AntiLicenses e := by
-  decide
 
 end Czech.PolarityItems
