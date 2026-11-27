@@ -29,6 +29,10 @@ a predicate that fails only the converse inference, from the question to an answ
 
 ## Implementation notes
 
+The entry of a predicate records its valence and nothing of its distributivity. A meaning is a
+denotation of an entry when it compares degrees on declaratives and presupposes what the entry's
+valence does, so that distributivity is a property of the meaning.
+
 A class 1 predicate compares degrees on declaratives and relates the holder to a question by a
 parameter, since the article characterizes the class only as a relation to the question not
 reducible to one to any answer.
@@ -71,32 +75,42 @@ section LAnalyticity
 
 variable {D : Type*} [LinearOrder D]
 
-local notation "Family" =>
+variable (W E D) in
+/-- An assertion or a presupposition of a preferential predicate, a relation between a degree
+function, a threshold, a comparison class, a holder, a question and a world. -/
+abbrev Family : Type _ :=
   (E → W → Set W → D) → (Set (Set W) → D) → Set (Set W) → E → Set (Set W) → W → Prop
 
 /-- Composition with a question is true wherever it is defined, the case of L-analyticity Uegaki and
 Sudo derive. -/
-def TrueWhereDefined (V π : Family) : Prop :=
+def TrueWhereDefined (V π : Family W E D) : Prop :=
   ∀ μ θ C x Q w, C ⊆ Q → Q.Nontrivial → π μ θ C x Q w → V μ θ C x Q w
 
 /-- A family's declarative use compares degrees in every model, (4). -/
-def ComparesDegrees (V : Family) : Prop :=
+def ComparesDegrees (V : Family W E D) : Prop :=
   ∀ μ θ C x p w, V μ θ C x {p} w ↔ p ∈ preferred μ θ C x w
 
 /-- A positive preferential predicate presupposes threshold significance of a question, (18b). A
 negative one triggers no such presupposition and presupposes only that the question has an answer
 in the comparison class. -/
-def presupposition : Polarity → Family
+def presupposition : Polarity → Family W E D
   | .positive => thresholdSignificance
   | .negative => fun _ _ C _ Q _ ↦ (Q ∩ C).Nonempty
 
+/-- An assertion `V` with a presupposition `π` is a denotation of the entry `e` when `V` compares
+degrees on declaratives and `π` is the presupposition of the valence the entry records. -/
+structure Denotes (e : Clause.Embedding) (V π : Family W E D) : Prop where
+  comparesDegrees : ComparesDegrees V
+  presupposition_eq : ∀ v ∈ e.attitude.bind Attitude.valence, π = presupposition v
+
 omit [LinearOrder D] in
-theorem TrueWhereDefined.isLAnalytic {V π : Family} (h : TrueWhereDefined V π) : IsLAnalytic V π :=
+theorem TrueWhereDefined.isLAnalytic {V π : Family W E D} (h : TrueWhereDefined V π) :
+    IsLAnalytic V π :=
   ⟨True, fun μ θ C x Q w hCQ hQ hπ ↦ iff_of_true (h μ θ C x Q w hCQ hQ hπ) trivial⟩
 
 /-- With a declarative use that compares degrees, composition with a question is true wherever
 threshold significance holds exactly when the predicate is P-to-Q entailing on the question. -/
-theorem trueWhereDefined_positive_iff {V : Family} (hV : ComparesDegrees V) :
+theorem trueWhereDefined_positive_iff {V : Family W E D} (hV : ComparesDegrees V) :
     TrueWhereDefined V (presupposition .positive) ↔
       ∀ μ θ C Q, C ⊆ Q → Q.Nontrivial → IsPToQEntailing {Q} (V μ θ C) := by
   refine ⟨fun h μ θ C Q hCQ hQ Q' hQ' x w p hp hVp ↦ ?_, fun h μ θ C x Q w hCQ hQ ⟨p, hp, hlt⟩ ↦
@@ -110,7 +124,7 @@ theorem comparesDegrees_degreeComparison :
   degreeComparison_singleton
 
 -- class 3: Uegaki and Sudo's derivation, (19a)
-theorem trueWhereDefined_of_isClausallyDistributive {V : Family} (hV : ComparesDegrees V)
+theorem trueWhereDefined_of_isClausallyDistributive {V : Family W E D} (hV : ComparesDegrees V)
     (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C)) :
     TrueWhereDefined V (presupposition .positive) :=
   (trueWhereDefined_positive_iff hV).2 fun μ θ C _ _ _ Q _ ↦
@@ -118,7 +132,7 @@ theorem trueWhereDefined_of_isClausallyDistributive {V : Family} (hV : ComparesD
 
 -- class 2: without the presupposition the assertion stays contingent, (19b)
 theorem not_isLAnalytic_of_isClausallyDistributive [Nontrivial D] [Inhabited E] [Inhabited W]
-    {V : Family} (hV : ComparesDegrees V)
+    {V : Family W E D} (hV : ComparesDegrees V)
     (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C)) :
     ¬ IsLAnalytic V (presupposition .negative) := by
   rintro ⟨t, ht⟩
@@ -133,9 +147,22 @@ theorem not_isLAnalytic_of_isClausallyDistributive [Nontrivial D] [Inhabited E] 
     (ht (fun _ _ _ ↦ a) (fun _ ↦ a) Q default Q default subset_rfl hQ (hπ _ _)).2 ht₁
   exact lt_irrefl a ((hV ..).1 hp).2
 
+/-- A clausally distributive predicate is L-analytic with a question, and so antirogative, exactly
+when its entry records positive valence. -/
+theorem Denotes.isLAnalytic_iff [Nontrivial D] [Inhabited E] [Inhabited W] {e : Clause.Embedding}
+    {V π : Family W E D} {v : Polarity} (h : Denotes e V π)
+    (hv : v ∈ e.attitude.bind Attitude.valence)
+    (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C)) :
+    IsLAnalytic V π ↔ v = .positive := by
+  obtain rfl := h.presupposition_eq v hv
+  cases v
+  · exact iff_of_true
+      (trueWhereDefined_of_isClausallyDistributive h.comparesDegrees hd).isLAnalytic rfl
+  · exact iff_of_false (not_isLAnalytic_of_isClausallyDistributive h.comparesDegrees hd) nofun
+
 /-- A class 1 predicate compares degrees on declaratives, as (23) and (26) require, and relates its
 subject to a question by a relation `R` that does not consult the degrees. -/
-def relational (R : E → Set (Set W) → W → Prop) : Family :=
+def relational (R : E → Set (Set W) → W → Prop) : Family W E D :=
   fun μ θ C x Q w ↦ (Q.Subsingleton ∧ degreeComparison μ θ C x Q w) ∨ (Q.Nontrivial ∧ R x Q w)
 
 theorem comparesDegrees_relational (R : E → Set (Set W) → W → Prop) :
@@ -170,7 +197,7 @@ theorem not_isPToQEntailing_relational [Nontrivial D] (hT : ∃ x Q w, Q.Nontriv
     ((trueWhereDefined_positive_iff (comparesDegrees_relational R)).2 h).isLAnalytic
 
 /-- A degree comparison, or a relation `R` to the question. -/
-def degreeComparisonOr (R : E → Set (Set W) → W → Prop) : Family :=
+def degreeComparisonOr (R : E → Set (Set W) → W → Prop) : Family W E D :=
   fun μ θ C x Q w ↦ degreeComparison μ θ C x Q w ∨ R x Q w
 
 /-- A predicate can fail Q-to-P entailment and still be L-analytic. Where a relation `R` to a
@@ -211,7 +238,7 @@ def PredicateClass.valence : PredicateClass → Polarity
   | .distributivePositive => .positive
 
 /-- The meaning of a predicate of each class. -/
-def semantics (R : E → Set (Set W) → W → Prop) : PredicateClass → Family
+def semantics (R : E → Set (Set W) → W → Prop) : PredicateClass → Family W E D
   | .nonDistributive _ => relational R
   | .distributiveNegative | .distributivePositive => degreeComparison
 
@@ -277,6 +304,27 @@ def Examples.Lexeme.class? (l : Lexeme) : Option PredicateClass :=
       | .positive => .distributivePositive
       | .negative => .distributiveNegative
 
+theorem Examples.Lexeme.valence?_eq_of_mem_class? {l : Lexeme} {c : PredicateClass}
+    (h : c ∈ l.class?) : l.valence? = some c.valence := by
+  obtain ⟨v, hv, rfl⟩ := Option.map_eq_some_iff.1 h
+  rw [hv]
+  split_ifs
+  · rfl
+  · cases v <;> rfl
+
+-- the meaning Table 2 gives a predicate's class is a denotation of the predicate's entry
+theorem Examples.Lexeme.denotes_semantics {D : Type*} [LinearOrder D]
+    (R : E → Set (Set W) → W → Prop) {l : Lexeme} {c : PredicateClass} (h : c ∈ l.class?) :
+    Denotes (D := D) l.entry.toEmbedding (semantics R c) (presupposition c.valence) where
+  comparesDegrees := by
+    cases c
+    exacts [comparesDegrees_relational R, comparesDegrees_degreeComparison,
+      comparesDegrees_degreeComparison]
+  presupposition_eq v hv := by
+    obtain rfl : c.valence = v :=
+      Option.some.inj ((Lexeme.valence?_eq_of_mem_class? h).symm.trans hv)
+    rfl
+
 /-- The polarity of the valence the article gives a veridical preferential. -/
 def Examples.Valence.polarity : Valence → Polarity
   | .positive => .positive
@@ -310,12 +358,21 @@ theorem class3_valence :
 Mandarin *haipa* with a constituent question, (60) and footnote 10. -/
 def unexplained : List Example := [.es_58, .zh_60, .zh_fn10_i]
 
-/-- With an interrogative complement a predicate is acceptable exactly outside the distributive
-positive class (Table 2), the unexplained rows apart. -/
+-- Table 2, the unexplained rows apart
 theorem acceptable_iff_class :
     ∀ x : Example, x ∉ unexplained → x.clause ≠ some .declarative → ∀ c ∈ x.class?,
       (x.questionJudgment = .acceptable ↔ c ≠ .distributivePositive) := by
   decide +kernel
+
+/-- With an interrogative complement a predicate is acceptable exactly when the meaning of its
+class is not L-analytic, the unexplained rows apart. -/
+theorem acceptable_iff_not_isLAnalytic {D : Type*} [LinearOrder D] [Nontrivial D] [Inhabited E]
+    [Inhabited W] {R : E → Set (Set W) → W → Prop} (hT : ∃ x Q w, Q.Nontrivial ∧ R x Q w)
+    (hF : ∃ x Q w, Q.Nontrivial ∧ ¬ R x Q w) (x : Example) (hx : x ∉ unexplained)
+    (hc : x.clause ≠ some .declarative) (c : PredicateClass) (hcx : c ∈ x.class?) :
+    x.questionJudgment = .acceptable ↔
+      ¬ IsLAnalytic (D := D) (semantics R c) (presupposition c.valence) :=
+  (acceptable_iff_class x hx hc c hcx).trans (isLAnalytic_iff_class c hT hF).not.symm
 
 theorem unexplained_class :
     ∀ x ∈ unexplained,
