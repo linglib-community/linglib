@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Space.Semantics
+public import Linglib.Discourse.Table.Basic
 
 /-!
 # Krifka (2015): Bias in Commitment Space Semantics
@@ -20,7 +21,20 @@ consistent. A *no* to an assertion leads to states that hold `φ` and `a`'s comm
 whose worlds `a`'s commitments exclude every world of the state. After a rejection, the *no* to
 an assertion leaves `s`'s commitment to `φ` beside `a`'s commitment to `φᶜ`, without `φ`.
 
+The last stage of a development corresponds to the Table of Farkas and Bruce. A Table presents a
+commitment space whose root is its common ground and whose continuations are the bodies of
+information that refine the common ground and decide every issue on the Table; besides the root,
+these are the bodies of information below a projected common ground. Placing an issue on the Table
+is then the question that proposes each complete answer of the issue, so the assertion of the
+Table is a monopolar question on its content with the speaker's commitment recorded apart, and in
+a stable context the operation that makes a joint commitment common ground is the update by its
+content.
+
 ## Implementation notes
+
+* The commitment space of a Table has filters as states, where the acts of the paper are stated on
+  sets of propositions. A filter is a set of propositions closed under consequence, and with more
+  information it is smaller, so the states are ordered by the dual order.
 
 * A development records its initial space and its moves, the most recent first. The rejection of a
   development with fewer than two moves returns to the initial space.
@@ -32,16 +46,16 @@ an assertion leaves `s`'s commitment to `φ` beside `a`'s commitment to `φᶜ`,
 
 ## TODO
 
-* The high-negation question proposes that `a` not be committed to `φ`. Its being weaker than the
-  low-negation question, which proposes `a`'s commitment to `φᶜ`, needs states closed under
-  consequence: a set of propositions that contains `a ⊢[O] φᶜ` need not contain the weaker
-  proposition `(a ⊢[O] φ)ᶜ`.
+* The high-negation question proposes that `a` not be committed to `φ`. That it is weaker than the
+  low-negation question, which proposes `a`'s commitment to `φᶜ`, is proved for states closed
+  under consequence; the acts of a development are stated on sets of propositions, where a state
+  that contains `a ⊢[O] φᶜ` need not contain the weaker proposition `(a ⊢[O] φ)ᶜ`.
 * The acceptability of questions with no, low and high negation by contextual evidence, the
   response *I don't know*, alternative and constituent questions, and question tags are not
   formalized, and the paper's examples are not in `Data/Examples`.
-* The paper relates the last stage of a development to the Table of Farkas and Bruce. No map from
-  developments to Tables is defined; the Table's counterpart of the bipolar result is that a
-  negative answer to a polar question projects what the assertion alone would.
+* The commitment space of a Table does not represent the discourse commitments of the
+  participants, which the paper places in the state as propositions, and making a joint
+  commitment common ground is related to the update only for a stable context.
 
 ## References
 
@@ -57,7 +71,8 @@ an assertion leaves `s`'s commitment to `φ` beside `a`'s commitment to `φᶜ`,
 
 namespace Krifka2015
 
-open Commitment Commitment.Space ModalLogic
+open Commitment Commitment.Space ModalLogic Filter OrderDual
+open Inquisitive Inquisitive.Proposition
 open scoped SetRel
 
 /-- (8)–(9): A commitment space development records the spaces a conversation has led through,
@@ -178,5 +193,91 @@ theorem current_yes_monopolar :
   update_question_of_mem _ rfl
 
 end Development
+
+/-! ### The commitment space of a Table -/
+
+section Table
+
+variable {A W : Type*} (K : Table A W) (a : A) (p : Set W) (P : Proposition (Set W))
+  {d : (Filter W)ᵒᵈ}
+
+/-- The commitment space a Table presents has the common ground as its root and, as
+continuations, the bodies of information that refine the common ground and decide every issue on
+the Table. Its states are filters, ordered so that a state with more information is higher. -/
+def toSpace : Space (Filter W)ᵒᵈ :=
+  (Space.Ici (toDual K.commonGround)).restrict {g | ∀ P ∈ K.stack, P.DecidedBy (ofDual g)}
+
+@[simp] theorem root_toSpace : (toSpace K).root = toDual K.commonGround := rfl
+
+theorem mem_toSpace : d ∈ toSpace K ↔ d = toDual K.commonGround ∨
+    ofDual d ≤ K.commonGround ∧ ∀ P ∈ K.stack, P.DecidedBy (ofDual d) := Iff.rfl
+
+theorem exists_toDual_principal_le_iff :
+    (∃ k ∈ (fun q ↦ toDual (𝓟 q)) '' alt P, k ≤ d) ↔ P.DecidedBy (ofDual d) := by
+  simp only [Set.mem_image, exists_exists_and_eq_and, DecidedBy]
+  exact exists_congr fun q ↦ and_congr_right fun _ ↦ le_principal_iff
+
+/-- Placing an issue on the Table is the question that proposes each of its complete answers. -/
+theorem toSpace_push :
+    toSpace (K.push P) = (toSpace K).question ((fun q ↦ toDual (𝓟 q)) '' alt P) := by
+  ext d
+  rw [Space.mem_question, exists_toDual_principal_le_iff, mem_toSpace, mem_toSpace,
+    Table.stack_push, List.forall_mem_cons, root_toSpace, Table.commonGround_push]
+  tauto
+
+@[simp] theorem toSpace_commit : toSpace (K.commit a p) = toSpace K := rfl
+
+-- the assertion of the Table is a monopolar question on its content, with the commitment apart
+theorem toSpace_assert : toSpace (K.assert a p) = (toSpace K).question {toDual (𝓟 p)} := by
+  rw [Table.assert, toSpace_push, alt_ofSet, Set.image_singleton, toSpace_commit]
+
+-- a negative answer to a polar question leads where the assertion alone would
+theorem toSpace_assert_compl_polarQuestion (b : A) :
+    toSpace ((K.polarQuestion p).assert b pᶜ) = toSpace (K.assert b pᶜ) := by
+  ext d
+  simp only [mem_toSpace, Table.stack_assert, Table.stack_polarQuestion, List.forall_mem_cons,
+    decidedBy_ofSet, decidedBy_polar, Table.commonGround_assert, Table.commonGround_polarQuestion]
+  tauto
+
+variable {K} in
+-- making a joint commitment common ground is the update by its content
+theorem toSpace_settle_of_isStable (hK : K.IsStable) :
+    toSpace (K.settle p) = (toSpace K).update (toDual (𝓟 p)) := by
+  have hs : (K.settle p).stack = [] := Table.isStable_settle_of_isStable p hK
+  have hk : K.stack = [] := hK
+  have hmem : toDual (𝓟 p) ⊔ (toSpace K).root ∈ toSpace K :=
+    (mem_toSpace K).2 (.inr ⟨inf_le_right, by simp [hk]⟩)
+  ext d
+  rw [Space.mem_update, Space.root_update_of_mem _ hmem, mem_toSpace, mem_toSpace, hs, hk]
+  simp only [List.not_mem_nil, false_imp_iff, implies_true, and_true, Table.commonGround_settle,
+    root_toSpace]
+  constructor
+  · rintro (rfl | h)
+    · exact .inl (by rw [← toDual_inf, inf_comm])
+    · exact .inr ⟨.inr (h.trans inf_le_left), toDual_le.2 (h.trans inf_le_right)⟩
+  · rintro (rfl | ⟨hd, h⟩)
+    · exact .inl (by rw [← toDual_inf, inf_comm])
+    · exact .inr (le_inf (hd.elim (fun e ↦ e ▸ le_rfl) id) (toDual_le.1 h))
+
+variable {K} in
+-- the space is the root with everything below a projected common ground
+theorem toDual_mem_toSpace_iff {g : Filter W} (hg : g ≠ ⊥) :
+    toDual g ∈ toSpace K ↔ g = K.commonGround ∨ ∃ f ∈ K.projectedSet, g ≤ f := by
+  rw [mem_toSpace, Table.exists_le_mem_projectedSet_iff hg]
+  rfl
+
+end Table
+
+/-! ### Negation in questions -/
+
+-- Figure 14, on states closed under consequence
+theorem question_committed_compl_le {κ W : Type*} (O : κ → SetRel W W) (a : κ) (φ : Set W)
+    [IsSerial (O a)] (C : Space (Filter W)ᵒᵈ) :
+    C.question {toDual (𝓟 (a ⊢[O] φᶜ))} ≤ C.question {toDual (𝓟 (a ⊢[O] φ)ᶜ)} := by
+  intro d hd
+  rcases (Space.mem_question _).1 hd with rfl | ⟨hd, p, rfl, hle⟩
+  · exact Space.root_mem _
+  · exact (Space.mem_question _).2 (.inr ⟨hd, _, rfl, le_trans (toDual_le_toDual.2
+      (principal_mono.2 (Set.subset_compl_iff_disjoint_left.2 disjoint_committed_compl))) hle⟩)
 
 end Krifka2015
