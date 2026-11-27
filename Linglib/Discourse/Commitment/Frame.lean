@@ -2,7 +2,6 @@ module
 
 public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.Commitment.Proposition
-public import Linglib.Discourse.Commitment.Sincerity
 
 /-!
 # Belief–commitment frames
@@ -36,7 +35,7 @@ along these relations, `C_{a,b} π` holds exactly on the commitment proposition
 * `Frame.competent_iff`: Competence holds iff all agents share one belief relation.
 * `Frame.commitmentSet_toState_restrictCommitment`: on commitment states the update is the
   insertion of `a`'s commitment to `π`.
-* `Frame.sincere_iff_forall_sincere_toState`: Sincerity of a frame is `Commitment.Sincere` of
+* `Frame.sincere_iff_forall_sincere_toState`: Sincerity of a frame is `Commitment.State.Sincere` of
   every projected commitment state, relative to belief.
 
 ## Implementation notes
@@ -234,7 +233,7 @@ theorem commitmentSet_toState_restrictCommitment :
 variable {c}
 
 theorem sincere_iff_forall_sincere_toState :
-    c.Sincere ↔ ∀ y w, Commitment.Sincere (fun a v ↦ {π | c.Believes a π v}) (c.toState y w) w :=
+    c.Sincere ↔ ∀ y w, (c.toState y w).Sincere (fun a v ↦ {π | c.Believes a π v}) w :=
   ⟨fun hs _ _ _ _ hπ ↦ hs.believes_of_committed hπ,
     fun h x y p hp ↦ h y p.1 x {v | p.1 ~[c.commitment (x, y)] v} (fun _ ↦ id) p.2 hp⟩
 

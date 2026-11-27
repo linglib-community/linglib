@@ -12,25 +12,23 @@ committed to. The holders are whatever a framework distinguishes commitments by,
 participants, as for Gunlogson and for Farkas and Bruce, or a participant together with the
 attitude the commitment is to, belief or preference, as for Condoravdi and Lauer. A holder's
 commitment set is the set of worlds its commitments leave open, and adding a commitment narrows it
-by the content. A commitment as a proposition, which a common ground can contain without
+by the content. A commitment state is sincere when each holder privately holds, under the
+attitude of the commitment, what it is committed to. A commitment as a proposition, which a common ground can contain without
 containing its content, is the notation `k ⊢[O] φ` of `Commitment/Proposition.lean`.
 
 ## Main definitions
 
 * `Commitment.State κ W`: a commitment state, a relation from holders to propositions.
-* `Commitment.Force`: the attitude a commitment is to.
 * `Commitment.State.contents`: the propositions a holder is committed to.
 * `Commitment.State.commitmentSet`: the worlds a holder's commitments leave open, Gunlogson's
   commitment set.
-* `Commitment.State.jointContents`: the propositions every holder is committed to.
+* `Commitment.State.Sincere`: every holder holds, under its attitude, what it is committed to.
 
 ## Main results
 
 * `Commitment.State.commitmentSet_insert_self`, `Commitment.State.commitmentSet_insert_of_ne`:
   adding a commitment narrows its holder's commitment set by its content and leaves the other
   holders' alone.
-* `Commitment.State.commitmentSet_subset_of_mem_jointContents`: what every holder is committed to
-  holds throughout every commitment set.
 
 ## References
 
@@ -42,17 +40,13 @@ containing its content, is the notation `k ⊢[O] φ` of `Commitment/Proposition
   (2010)][farkas-bruce-2010]
 * [C. Condoravdi and S. Lauer, *Imperatives: Meaning and illocutionary force*
   (2012)][condoravdi-lauer-2012]
+* [T. van der Leer, *Commitments, beliefs and expectations in conversation*
+  (2026)][van-der-leer-2026]
 -/
 
 @[expose] public section
 
 namespace Commitment
-
-/-- The attitude a commitment is to, belief or preference. -/
-inductive Force
-  | doxastic
-  | preferential
-  deriving DecidableEq, Repr
 
 /-- A commitment state relates holders to the propositions they are committed to. -/
 abbrev State (κ W : Type*) := SetRel κ (Set W)
@@ -69,9 +63,6 @@ def contents : Set (Set W) := {p | k ~[K] p}
 /-- The commitment set of `k` in `K` is the set of worlds compatible with `k`'s commitments
 ([gunlogson-2001]'s `cs_k`). -/
 def commitmentSet : Set W := ⋂₀ K.contents k
-
-/-- The joint contents of `K` are the propositions every holder is committed to. -/
-def jointContents : Set (Set W) := ⋂ k, K.contents k
 
 variable {K k} {L : State κ W} {k' : κ} {p φ : Set W}
 
@@ -109,11 +100,20 @@ theorem commitmentSet_insert_of_ne (h : k' ≠ k) :
   rw [commitmentSet, contents_insert_of_ne h]
   rfl
 
-theorem mem_jointContents : p ∈ K.jointContents ↔ ∀ k, k ~[K] p := Set.mem_iInter
+/-! ### Sincerity -/
 
-theorem commitmentSet_subset_of_mem_jointContents (h : p ∈ K.jointContents) (k : κ) :
-    K.commitmentSet k ⊆ p :=
-  commitmentSet_subset (mem_jointContents.1 h k)
+/-- A commitment state is sincere at `w` relative to the attitudes `M` when every holder holds at
+`w`, under its attitude `M k`, each proposition it is committed to. -/
+def Sincere (K : State κ W) (M : κ → W → Set (Set W)) (w : W) : Prop :=
+  ∀ k p, k ~[K] p → p ∈ M k w
+
+variable {M : κ → W → Set (Set W)} {w : W}
+
+theorem Sincere.mono (hL : L.Sincere M w) (h : K ⊆ L) : K.Sincere M w :=
+  fun k p hp ↦ hL k p (h hp)
+
+theorem Sincere.mem (hs : K.Sincere M w) (h : k ~[K] p) : p ∈ M k w :=
+  hs k p h
 
 end State
 
