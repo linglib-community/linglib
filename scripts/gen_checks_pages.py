@@ -73,6 +73,12 @@ def generated(name):
             or last in ("mk", "casesOn", "recOn", "rec", "noConfusion"))
 
 
+def plumbing(module):
+    """Whether a module is example data or its schema, which the wiki shows as a source's
+    examples and not as a page or a mark in a chart."""
+    return module.startswith("Linglib.Data.")
+
+
 def display(node, name):
     """A definition as its file writes it; a theorem's statement, and what Lean generated, as Lean
     prints it, without the universe list after a name and with the last component of its own
@@ -119,7 +125,7 @@ class Site:
                                   if isinstance(row, dict) and row.get("source")}
         # A file's text has its documented declarations that a statement closure describes.
         self.shown = {m: [d for d in t["decls"] if d["doc"] and d["name"] in self.nodes]
-                      for m, t in self.texts.items() if m not in self.source}
+                      for m, t in self.texts.items() if m not in self.source and not plumbing(m)}
         self.home = {d["name"]: m for m, ds in self.shown.items() for d in ds}
         self.titles = {m: self.title(m) for m in {n["module"] for n in self.nodes.values()}}
         # The items of the sources that a declaration states.
@@ -175,6 +181,8 @@ class Site:
         """The page of a source or of a module: its text if it has one, else the API docs."""
         if unit in self.sources:
             return f"wiki/papers/{unit}/"
+        if plumbing(unit):
+            return None
         return self.text_path(unit) if unit in self.shown else self.docs_path(unit)
 
     def decl_path(self, name):
@@ -210,7 +218,7 @@ class Page:
     def href(self, target):
         return esc(self.root + target, quote=True)
 
-    def inline(self, text, titles=False):
+    def inline(self, text, titles=False, links=True):
         """Inline Markdown: code, emphasis, a bold term, and links to a declaration, to the
         bibliography, with the work's title in a list of references, or elsewhere."""
         out, at = [], 0
@@ -222,7 +230,9 @@ class Page:
                 out.append(f"<code>{esc(code)}</code>")
             elif label and decl:
                 inner, to = self.inline(label), self.site.decl_path(target)
-                if target in self.here or target in self.cover:
+                if not links:
+                    out.append(inner)
+                elif target in self.here or target in self.cover:
                     item = target if target in self.here else self.cover[target][0][0]
                     out.append(f'<a class="pick" href="#{esc(item, quote=True)}">{inner}</a>')
                 else:
@@ -244,14 +254,14 @@ class Page:
                 out.append(f"<em>{self.inline(em)}</em>")
         return "".join(out + [esc(text[at:])])
 
-    def blocks(self, text):
+    def blocks(self, text, links=True):
         """Markdown as `(kind, content)`: a heading with its title, or a paragraph, a list or a
         code block as HTML."""
         out, para, items, code, refs = [], [], [], None, False
 
         def flush():
             if para:
-                out.append(("p", "<p>" + self.inline(" ".join(para)) + "</p>"))
+                out.append(("p", "<p>" + self.inline(" ".join(para), links=links) + "</p>"))
                 para.clear()
             if items:
                 out.append(("ul", "<ul>" + "".join(f"<li>{self.inline(i, refs)}</li>"
@@ -302,7 +312,8 @@ class Page:
             used[n] = {"k": keyword(nodes[n]), "t": display(nodes[n], n),
                        "u": [u for u in nodes[n]["uses"]
                              if u in nodes and u != n and not generated(u)],
-                       "h": self.root + self.site.decl_path(n), "c": self.cover.get(n, []),
+                       "h": self.root + path if (path := self.site.decl_path(n)) else "",
+                       "c": self.cover.get(n, []),
                        "a": people(nodes[n].get("credit"))}
             todo += used[n]["u"]
         return used
@@ -322,6 +333,7 @@ class Page:
                 reached.add(d)
                 todo += [u for u in nodes[d]["uses"] if u in nodes]
         site = self.site
+        reached = {d for d in reached if not plumbing(nodes[d]["module"])}
         unit = {d: site.unit(nodes[d]["module"]) for d in reached}
         uses, named = {u: set() for u in unit.values()}, {}
         for d in reached:
@@ -331,7 +343,7 @@ class Page:
                     if not generated(u):
                         named.setdefault(unit[u], set()).add(u.split(".")[-1])
         uses.setdefault(focus, set())
-        uses[focus] |= {unit[r] for r in roots if r in nodes} - {focus}
+        uses[focus] |= {unit[r] for r in roots if r in unit} - {focus}
 
         @functools.lru_cache(None)
         def reach(m):
@@ -507,12 +519,12 @@ def head(i):
     return f'<span class="head">{name}</span>{mark}'
 
 
-def module_doc(page, doc):
+def module_doc(page, doc, opening=False):
     """A module docstring as the parts of a text: what belongs to its body, and the sections that
     close it. The title is left out, and so are the lists of main declarations, which the text
-    itself replaces."""
+    itself replaces. The paragraphs that open a page are plain prose, with no links."""
     body, tail, section = [], [], None
-    for kind, content in page.blocks(doc):
+    for kind, content in page.blocks(doc, links=not opening):
         if kind == "h1":
             continue
         if kind[0] == "h":
@@ -529,16 +541,20 @@ def module_doc(page, doc):
     return body, tail
 
 
-def example(row):
+def example(row, item=None):
     """An example as a paper sets it: its number, the mark of its judgment, the sentence, and
-    under it a translation and the readings the paper reports."""
+    under it a translation and the readings the paper reports. The number leads to `item`, the
+    item about the example, where there is one."""
     mark = MARK.get(row.get("judgment"), "")
     under = ([f'<p class="exr">\u2018{esc(row["translation"])}\u2019</p>']
              if row.get("translation") else [])
     for reading in row.get("readings", ()):
         under.append(f'<p class="exr">{esc(MARK.get(reading.get("judgment"), ""))}'
                      f'{esc(reading["name"])}</p>')
-    return (f'<div class="ex"><span class="exno">{esc(row["source"]["paperLabel"])}</span><div>'
+    number = esc(row["source"]["paperLabel"])
+    if item:
+        number = f'<a class="pick" href="#{esc(item, quote=True)}">{number}</a>'
+    return (f'<div class="ex"><span class="exno">{number}</span><div>'
             f'<p class="ext"><span class="exj">{esc(mark)}</span>{esc(row["primaryText"])}</p>'
             + "".join(under) + "</div></div>")
 
@@ -565,7 +581,7 @@ def source_page(site, key, sha, lines):
     # says that what follows is the source's own items, restated in the record, and who has
     # checked them.
     header = site.texts.get(study, {}).get("docs", [])[:1]
-    body, tail = module_doc(page, header[0]["doc"]) if header else ([], [])
+    body, tail = module_doc(page, header[0]["doc"], opening=True) if header else ([], [])
     checked = [i for i in its if i["status"] in ("checked", "relies")]
     signers = list(dict.fromkeys(who(i["check"]) for i in checked))
     count = f'{len(its)} item{"" if len(its) == 1 else "s"}'
@@ -607,11 +623,11 @@ def source_page(site, key, sha, lines):
         panel[i["id"]] = {"how": how + page.prose(i["notes"]), "decls": i["decls"],
                           "state": line}
 
-    rest = [row for label, row in examples.items() if label not in shown]
-    if rest:
-        body.append('<h2 class="sec">Other examples in the paper</h2>'
-                    + "".join(example(row) for row in rest)
-                    + '<p class="prov plain">No item of the record covers these yet.</p>')
+    # Every example of the paper, to browse; one an item is about leads to the item.
+    if examples:
+        about = {i["label"]: i["id"] for i in its if i["kind"] == "datum"}
+        body.append('<h2 class="sec" id="examples">Examples</h2>'
+                    + "".join(example(row, about.get(label)) for label, row in examples.items()))
     label = site.label(key)
     chart = page.chart(key, label, [d for i in its for d in i["decls"]])
     site.routes[key] = page.route
@@ -627,9 +643,10 @@ def module_page(site, module, sha):
     stream = sorted([(d["line"], "doc", d) for d in text["docs"]]
                     + [(d["line"], "decl", d) for d in shown], key=lambda t: t[0])
     body, tail, panel, count, title = [], [], {}, 0, site.titles[module]
+    first = min(text["docs"], key=lambda d: d["line"], default=None)
     for _, what, x in stream:
         if what == "doc":
-            more, closing = module_doc(page, x["doc"])
+            more, closing = module_doc(page, x["doc"], opening=x is first)
             body += more
             tail += closing
             continue
@@ -657,7 +674,7 @@ def module_page(site, module, sha):
         for i in site.stated.get(d["name"], ()):
             below.setdefault(i["source"], []).append(i["label"])
     below = {key: ", ".join(dict.fromkeys(labels)) for key, labels in below.items()}
-    for m in sorted(site.texts, key=lambda m: site.titles[m]):
+    for m in sorted(site.shown | site.source.keys(), key=lambda m: site.titles[m]):
         if module in site.uses[m] and not any(module in site.reach(c)
                                               for c in site.uses[m] if c != module):
             below.setdefault(site.unit(m), ", ".join(sorted(site.named.get((m, module), ()))))

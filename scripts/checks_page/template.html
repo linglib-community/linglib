@@ -217,8 +217,8 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
     for (const name of it.decls) {
       const n = N[name], d = el("div", "decl"), p = el("p", "name");
       if (!n) { p.append(el("code", null, name)); d.append(p); pane.append(d); continue; }
-      const a = el("a", null, name);
-      a.href = n.h; a.title = "In the API docs";
+      const a = el(n.h ? "a" : "span", null, name);
+      if (n.h) a.href = n.h;
       p.append(el("span", "kw", n.k + " "), a);
       if (n.a) p.append(el("span", "who", n.a));
       d.append(p, el("pre", null, n.t));
