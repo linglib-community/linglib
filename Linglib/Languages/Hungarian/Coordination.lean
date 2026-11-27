@@ -32,20 +32,20 @@ namespace Hungarian.Coordination
 
 /-- *és* 'and'. -/
 def es : Coordinator :=
-  { morph := .free "és", gloss := "and", role := .conjunctive }
+  { morph := .free "és", role := .conjunctive }
 
 /-- *is*, after each coordinand 'both … and', also the additive particle
 `Hungarian.FocusParticles.is_`. -/
 def is_ : Coordinator :=
-  { morph := Morphs.is_, gloss := "and", role := .conjunctive }
+  { morph := Morphs.is_, role := .conjunctive }
 
 /-- *vagy* 'or'. -/
 def vagy : Coordinator :=
-  { morph := .free "vagy", gloss := "or", role := .disjunctive }
+  { morph := .free "vagy", role := .disjunctive }
 
 /-- *de* 'but'. -/
 def de : Coordinator :=
-  { morph := .free "de", gloss := "but", role := .adversative }
+  { morph := .free "de", role := .adversative }
 
 /-- *mind … mind* 'both … and'. -/
 def mindMind : Coordinator.Correlative := ⟨[.free "mind"], [.free "mind"], es⟩

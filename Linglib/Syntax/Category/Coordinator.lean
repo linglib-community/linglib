@@ -15,15 +15,15 @@ public import Mathlib.Data.Fin.VecNotation
 
 A coordinator is a word or clitic that links the coordinands of a coordinate construction, such
 as *and*, *or*, *but* and *nor*. This file defines its lexical record, the morph, which says
-whether the coordinator is a free word or a bound clitic or affix, the gloss and the semantic
-type, and the relations that give the other uses its form has. What a coordinator denotes, an
+whether the coordinator is a free word or a bound clitic or affix, and the semantic type, and
+the relation of its form to a comitative marker of the language. What a coordinator denotes, an
 operation on the set of coordinands that its semantic type fixes, is `Coordinator.denote` in
 `Semantics/Coordinator.lean`.
 
 ## Main definitions
 
 * `Coordinator.Role`: the semantic type of a coordinator.
-* `Coordinator`: the morph, gloss and semantic type of a coordinator.
+* `Coordinator`: the morph and semantic type of a coordinator.
 * `Coordinator.Pattern`: the sides of each coordinand on which the coordinators of a binary
   coordination stand.
 * `Coordinator.Correlative`: a pair of correlative coordinators with the single coordinator
@@ -73,8 +73,6 @@ end Coordinator
 structure Coordinator where
   /-- The form, a free word or a clitic or affix bound on one side of its host. -/
   morph : Morphology.Morph
-  /-- The gloss. -/
-  gloss : String
   /-- The semantic type. -/
   role : Coordinator.Role
   deriving DecidableEq, Repr
