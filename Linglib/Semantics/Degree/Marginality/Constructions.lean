@@ -22,7 +22,6 @@ the group.
 ## Main definitions
 
 * `MarginalScale.lex`: the marginal scale of lexicographic pairs.
-* `MarginalScale.lexBlockOrderIso`: its blocks are the first coordinates.
 * `MarginalScale.ofAddSubgroup`: the marginal scale of an order-connected subgroup.
 * `MarginalScale.ofArchimedeanClass`: the marginal scale of an archimedean class, whose at most
   marginal differences are those of that class or a higher one.
@@ -95,19 +94,6 @@ theorem isML_lex [Nontrivial β] [Nonempty γ] [NoMaxOrder γ] [NoMinOrder γ] :
       let ⟨d, hd⟩ := exists_lt (ofLex y).2
       ⟨toLex ((ofLex y).1, d), Prod.Lex.lt_iff.2 (.inr ⟨rfl, hd⟩), rfl⟩⟩
 
-variable (β γ) in
-/-- The blocks of lexicographic pairs are their first coordinates. -/
-noncomputable def lexBlockOrderIso [Nonempty γ] : (lex β γ).Block ≃o β :=
-  StrictMono.orderIsoOfSurjective
-    (Quotient.lift (fun p : β ×ₗ γ ↦ (ofLex p).1) fun _ _ h ↦ h)
-    (fun a b ↦ Quotient.inductionOn₂ a b fun _ _ h ↦ lex_largelyLT_iff.1 (toBlock_lt_toBlock.1 h))
-    fun b ↦ let ⟨c⟩ := ‹Nonempty γ›; ⟨(lex β γ).toBlock (toLex (b, c)), rfl⟩
-
-@[simp]
-theorem lexBlockOrderIso_toBlock [Nonempty γ] (p : β ×ₗ γ) :
-    lexBlockOrderIso β γ ((lex β γ).toBlock p) = (ofLex p).1 :=
-  rfl
-
 end Lex
 
 section AddSubgroup
@@ -131,10 +117,6 @@ theorem ofAddSubgroup_atMostMarginal_iff :
 theorem ofAddSubgroup_marginallyLT_iff :
     (ofAddSubgroup H hconv).MarginallyLT x y ↔ x < y ∧ y - x ∈ H := by
   rw [MarginallyLT, ofAddSubgroup_atMostMarginal_iff]
-
-theorem ofAddSubgroup_largelyLT_iff :
-    (ofAddSubgroup H hconv).LargelyLT x y ↔ x < y ∧ y - x ∉ H := by
-  rw [largelyLT_iff_lt_and_not_atMostMarginal, ofAddSubgroup_atMostMarginal_iff]
 
 /-- The scale of an order-connected subgroup satisfies ML theory when the subgroup is neither
 trivial nor everything. -/

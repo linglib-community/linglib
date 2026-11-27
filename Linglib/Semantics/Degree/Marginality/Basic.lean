@@ -96,9 +96,6 @@ theorem ext {ml ml' : MarginalScale α} (h : ∀ x y, ml.AtMostMarginal x y ↔ 
   obtain rfl : s = s' := Setoid.ext h
   rfl
 
-@[simp]
-theorem atMostMarginal_mk {s : Setoid α} {hs} : (mk s hs).AtMostMarginal x y ↔ s x y := Iff.rfl
-
 theorem AtMostMarginal.refl (x : α) : ml.AtMostMarginal x x := ml.toSetoid.refl x
 
 theorem AtMostMarginal.symm (h : ml.AtMostMarginal x y) : ml.AtMostMarginal y x :=
@@ -212,11 +209,6 @@ def toBlockHom : α →o ml.Block := ⟨ml.toBlock, ml.toBlock_mono⟩
 
 instance [Countable α] : Countable ml.Block := ml.toBlock_surjective.countable
 
-/-- Two degrees differ at most marginally or one is largely smaller than the other. -/
-theorem largelyLT_or_atMostMarginal_or_largelyLT (x y : α) :
-    ml.LargelyLT x y ∨ ml.AtMostMarginal x y ∨ ml.LargelyLT y x := by
-  simpa using lt_trichotomy (ml.toBlock x) (ml.toBlock y)
-
 /-! ### Largely smaller than -/
 
 /-- The first half of Axiom 4 of ML theory: whatever is smaller than something largely smaller
@@ -228,9 +220,6 @@ theorem LargelyLT.of_lt_of_largelyLT (hxy : x < y) (h : ml.LargelyLT y z) : ml.L
 than `z` is largely smaller than `z`. -/
 theorem LargelyLT.trans_lt (h : ml.LargelyLT x y) (hyz : y < z) : ml.LargelyLT x z :=
   toBlock_lt_toBlock.1 ((toBlock_lt_toBlock.2 h).trans_le (ml.toBlock_mono hyz.le))
-
-theorem LargelyLT.trans (hxy : ml.LargelyLT x y) (hyz : ml.LargelyLT y z) : ml.LargelyLT x z :=
-  hxy.trans_lt hyz.lt
 
 theorem AtMostMarginal.largelyLT_congr_left (h : ml.AtMostMarginal x y) :
     ml.LargelyLT x z ↔ ml.LargelyLT y z := by
@@ -267,9 +256,6 @@ instance instIsStrictWeakOrderLargelyLT : IsStrictWeakOrder α ml.LargelyLT :=
 theorem atMostMarginal_iff_incompRel : ml.AtMostMarginal x y ↔ IncompRel ml.LargelyLT x y := by
   rw [← toBlock_eq_toBlock, le_antisymm_iff, toBlock_le_toBlock, toBlock_le_toBlock, and_comm]
   rfl
-
-theorem isUpperSet_setOf_largelyLT (x : α) : IsUpperSet {y | ml.LargelyLT x y} :=
-  fun _ _ hle h ↦ hle.eq_or_lt.elim (· ▸ h) h.trans_lt
 
 /-! ### Scales satisfying ML theory -/
 
@@ -317,10 +303,6 @@ namespace IsML
 
 variable (h : ml.IsML)
 include h
-
-theorem nontrivial_block : Nontrivial ml.Block :=
-  let ⟨_, _, hl⟩ := h.exists_largelyLT
-  ⟨_, _, (toBlock_lt_toBlock.2 hl).ne⟩
 
 theorem infinite_setOf (hxy : ml.LargelyLT x y) :
     {z | ml.MarginallyLT x z ∧ ml.LargelyLT z y}.Infinite := fun hfin ↦ by

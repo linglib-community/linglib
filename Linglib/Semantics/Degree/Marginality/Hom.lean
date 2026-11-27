@@ -10,11 +10,23 @@ public import Linglib.Semantics.Degree.Marginality.Constructions
 /-!
 # Homomorphisms of marginal scales
 
-A [homomorphism](##MarginalScale.IsHom) of marginal scales preserves and reflects smaller than and
-marginally smaller than, the representations of the measurement theory of [dinis-jacinto-2025]. It
-[embeds the blocks of one scale in those of the other](##MarginalScale.IsHom.mapBlock), and a
-homomorphism into lexicographic pairs is [an embedding of the blocks and of the degrees of each
-block](##MarginalScale.isHomLexEquiv).
+A homomorphism of marginal scales is a map that preserves and reflects smaller than and marginally
+smaller than; it then preserves and reflects largely smaller than and at most marginal
+difference. These are the representations of the measurement theory of Dinis and Jacinto.
+
+## Main definitions
+
+* `MarginalScale.IsHom`: the homomorphisms of marginal scales.
+
+## Main results
+
+* `MarginalScale.isHom_iff_atMostMarginal`: a map is a homomorphism exactly when it is strictly
+  monotone and preserves and reflects at most marginal difference.
+* `MarginalScale.isHom_lex_iff`: a map into lexicographic pairs is a homomorphism exactly when its
+  block coordinate pulls back largely smaller than and its location coordinate grows along
+  marginal steps.
+* `MarginalScale.isHom_toLex`: an embedding of the blocks together with an embedding of the
+  degrees of each block is a homomorphism into lexicographic pairs.
 
 ## References
 
@@ -48,8 +60,6 @@ theorem IsHom.atMostMarginal_iff (hf : ml.IsHom ml' f) :
     ml'.AtMostMarginal (f x) (f y) ↔ ml.AtMostMarginal x y := by
   simp only [atMostMarginal_iff_incompRel, IncompRel, hf.largelyLT_iff]
 
-theorem IsHom.injective (hf : ml.IsHom ml' f) : Function.Injective f := hf.strictMono.injective
-
 /-- A map is a homomorphism exactly when it is strictly monotone and preserves and reflects at
 most marginal difference. -/
 theorem isHom_iff_atMostMarginal : ml.IsHom ml' f ↔
@@ -64,28 +74,6 @@ protected theorem IsHom.id : ml.IsHom ml id := ⟨strictMono_id, fun _ _ ↦ Iff
 theorem IsHom.comp (hg : ml'.IsHom ml'' g) (hf : ml.IsHom ml' f) : ml.IsHom ml'' (g ∘ f) :=
   ⟨hg.strictMono.comp hf.strictMono,
     fun x y ↦ (hg.marginallyLT_iff _ _).trans (hf.marginallyLT_iff x y)⟩
-
-/-- A homomorphism of marginal scales embeds the blocks of one in the blocks of the other. -/
-noncomputable def IsHom.mapBlock (hf : ml.IsHom ml' f) : ml.Block ↪o ml'.Block :=
-  OrderEmbedding.ofStrictMono
-    (Quotient.lift (fun x ↦ ml'.toBlock (f x)) fun _ _ h ↦
-      toBlock_eq_toBlock.2 (hf.atMostMarginal_iff.2 (toBlock_eq_toBlock.1 (Quotient.sound h))))
-    fun a b ↦ Quotient.inductionOn₂ a b fun _ _ h ↦
-      toBlock_lt_toBlock.2 (hf.largelyLT_iff.2 (toBlock_lt_toBlock.1 h))
-
-@[simp]
-theorem IsHom.mapBlock_toBlock (hf : ml.IsHom ml' f) (x : α) :
-    hf.mapBlock (ml.toBlock x) = ml'.toBlock (f x) :=
-  rfl
-
-variable (ml) in
-@[simp]
-theorem IsHom.mapBlock_id : (IsHom.id ml).mapBlock = RelEmbedding.refl _ :=
-  DFunLike.ext _ _ <| Block.ind fun _ ↦ rfl
-
-theorem IsHom.mapBlock_comp (hg : ml'.IsHom ml'' g) (hf : ml.IsHom ml' f) :
-    (hg.comp hf).mapBlock = hf.mapBlock.trans hg.mapBlock :=
-  DFunLike.ext _ _ <| Block.ind fun _ ↦ rfl
 
 end IsHom
 
@@ -122,40 +110,6 @@ theorem isHom_toLex (e : ml.Block ↪o β) (g : ∀ q, {x // ml.toBlock x = q} �
     subst hq; rfl
   rw [ofLex_toLex, ofLex_toLex, hg _ (toBlock_eq_toBlock.2 h.atMostMarginal)]
   exact (g _).strictMono h.lt
-
-/-- The block coordinate of a homomorphism into lexicographic pairs embeds the blocks. -/
-noncomputable def IsHom.fstOrderEmbedding [Nonempty γ] (hf : ml.IsHom (lex β γ) f) :
-    ml.Block ↪o β :=
-  hf.mapBlock.trans (lexBlockOrderIso β γ).toOrderEmbedding
-
-@[simp]
-theorem IsHom.fstOrderEmbedding_toBlock [Nonempty γ] (hf : ml.IsHom (lex β γ) f) (x : α) :
-    hf.fstOrderEmbedding (ml.toBlock x) = (ofLex (f x)).1 :=
-  rfl
-
-/-- The location coordinate of a homomorphism into lexicographic pairs embeds the degrees of each
-block. -/
-def IsHom.sndOrderEmbedding (hf : ml.IsHom (lex β γ) f) (q : ml.Block) :
-    {x // ml.toBlock x = q} ↪o γ :=
-  OrderEmbedding.ofStrictMono (fun x ↦ (ofLex (f x)).2) fun a b hab ↦
-    (isHom_lex_iff.1 hf).2 <| marginallyLT_iff_lt_and_atMostMarginal.2
-      ⟨hab, toBlock_eq_toBlock.1 (a.2.trans b.2.symm)⟩
-
-@[simp]
-theorem IsHom.sndOrderEmbedding_apply (hf : ml.IsHom (lex β γ) f) (q : ml.Block)
-    (x : {x // ml.toBlock x = q}) : hf.sndOrderEmbedding q x = (ofLex (f x)).2 :=
-  rfl
-
-variable (ml β γ) in
-/-- A homomorphism into lexicographic pairs is an embedding of the blocks together with an
-embedding of the degrees of each block. -/
-noncomputable def isHomLexEquiv [Nonempty γ] : {f : α → β ×ₗ γ // ml.IsHom (lex β γ) f} ≃
-    (ml.Block ↪o β) × ∀ q, {x // ml.toBlock x = q} ↪o γ where
-  toFun f := (f.2.fstOrderEmbedding, f.2.sndOrderEmbedding)
-  invFun p := ⟨_, isHom_toLex p.1 p.2⟩
-  left_inv _ := rfl
-  right_inv p := Prod.ext (DFunLike.ext _ _ <| Block.ind fun _ ↦ rfl) <| funext fun q ↦
-    DFunLike.ext _ _ fun ⟨x, hx⟩ ↦ by subst hx; rfl
 
 end Lex
 
