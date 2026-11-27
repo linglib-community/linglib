@@ -319,7 +319,7 @@ class Page:
                 items.append(re.sub(r"^\s*[*-]\s+", "", line))
             elif not line.strip():
                 flush()
-            elif items and line.startswith(" "):
+            elif items:   # a list item runs on until a blank line, indented or not
                 items[-1] += " " + line.strip()
             else:
                 if items:

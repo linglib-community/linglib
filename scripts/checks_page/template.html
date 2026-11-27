@@ -15,11 +15,11 @@
   --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-/* Wider than the other pages, header included, so that Lean written to 100 columns fits beside
-   the text on a laptop screen. */
-.nav, .book { max-width: calc(1400px + var(--gap) * 2); }
+/* Wider than the other pages, header included: the text has the larger column, and the Lean
+   beside it room for most lines of source without scrolling. */
+.nav, .book { max-width: calc(1300px + var(--gap) * 2); }
 .book {
-  display: grid; grid-template-columns: minmax(0, 580px) minmax(0, 1fr); gap: 48px;
+  display: grid; grid-template-columns: minmax(0, 660px) minmax(0, 584px); gap: 56px;
   margin: 0 auto; padding: var(--gap); min-height: calc(100vh - 120px);
 }
 .text { font-family: var(--serif); font-size: 19px; line-height: 1.62; }
@@ -84,7 +84,7 @@ h2.sec .n { margin-right: 10px; color: var(--secondary); font-weight: 400; }
 .decl { margin: 0 0 16px; }
 
 /* What the page rests on: files as squares, a source as a circle, mathlib as the bar */
-.chart { display: block; width: 100%; height: auto; margin-top: 30px; }
+.chart { display: block; width: 100%; height: auto; margin-top: 30px; max-height: 420px; }
 .chart .ge { fill: none; stroke: var(--secondary); stroke-opacity: 0.45; stroke-width: 1.2; }
 .chart .gbase { stroke: var(--secondary); stroke-opacity: 0.5; stroke-width: 3; stroke-linecap: round; }
 .chart .gn.theory { fill: #4f6bd8; }

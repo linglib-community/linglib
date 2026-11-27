@@ -30,9 +30,9 @@ by address only.
 
 Each page is read as a text, and departs from the rules above to that end:
 
-- The page and its header are up to 1400px wide. The text is in the system serif, in a 580px
-  column at the left, and the rest of the width is the Lean's, so that source written to 100
-  columns fits beside the text on a laptop screen. A source's is
+- The page and its header are up to 1300px wide. The text is in the system serif, in the larger
+  column, 660px at the left; the Lean has up to 584px beside it, which holds most lines of source
+  and scrolls for the longest. A source's is
   its sections, and under each its items: the kind and the source's own number in bold, then the
   claim. A file's is its module docstring, its section headings and its documented declarations
   in the order of the source: the kind and a number in bold, then the docstring; its
