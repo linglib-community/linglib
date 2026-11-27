@@ -12,16 +12,14 @@ public import Mathlib.Probability.ConditionalProbability
 A type-shift process moves each language among the types of a typology, a language of type $T_k$
 being of type $T_i$ after a small interval with probability $p(T_k \to T_i)$. Its distributional
 universal is its stationary law, the one law that independently changing languages keep once they
-reach it, and a law is [stationary exactly when the languages leaving each type balance those
-entering it](##invariant_iff_flow). A typology [has a universal that gives every type a positive
-probability exactly when its types are strongly
-connected](##isIrreducible_iff_exists_isDistributionalUniversal). Where the shifts of a coarser
-typology depend on its own types alone, [summing the universal of a finer typology over each coarse
-type gives the coarser typology's own universal](##IsDistributionalUniversal.apply_eq_sum); for
-interdependent typologies that sum is the definition of the coarser universal. Of two types [the more
-probable is the one the process leaves with the lower probability](##lt_iff_of_invariant).
-Splitting and dying that ignore type [keep the expected frequency of a type among the surviving
-languages at its ancestral frequency](##integral_frequency_cond).
+reach it, and a law is stationary exactly when the languages leaving each type balance those
+entering it. A typology has a universal that gives every type a positive probability exactly when
+its types are strongly connected. Where the shifts of a coarser typology depend on its own types
+alone, summing the universal of a finer typology over each coarse type gives the coarser
+typology's own universal; for interdependent typologies that sum is the definition of the coarser
+universal. Of two types the more probable is the one the process leaves with the lower
+probability. Splitting and dying that ignore type keep the expected frequency of a type among the
+surviving languages at its ancestral frequency.
 
 ## Implementation notes
 

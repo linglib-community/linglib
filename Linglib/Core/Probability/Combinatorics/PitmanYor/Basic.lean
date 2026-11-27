@@ -18,32 +18,43 @@ public import Mathlib.MeasureTheory.Measure.Real
 In the Chinese restaurant process with the $(α, θ)$ seating plan the first customer sits alone,
 and when $n$ customers sit at $k$ tables, $n_i$ of them at table $i$, the next one joins table
 $i$ with probability $(n_i - α) / (n + θ)$ and opens a new table with probability
-$(θ + k α) / (n + θ)$. `pitmanYor α θ n` is the law of the partition of the first `n` customers
-by table. For $0 ≤ α ≤ 1$ and $-α < θ$ it is a probability measure that
-[gives each partition the probability](##ProbabilityTheory.pitmanYor_singleton) `pitmanYorEPPF`
-of its block sizes, so it is [exchangeable](##ProbabilityTheory.smulInvariantMeasure_pitmanYor),
-and [forgetting the last customer](##ProbabilityTheory.pitmanYor_succ_map) leaves the partition
-of the customers before. At $α = 0$ the probabilities are the
-[Ewens sampling formula](##ProbabilityTheory.pitmanYorEPPF_zero_left).
+$(θ + k α) / (n + θ)$. The *Pitman–Yor partition* is the law of the partition of the first $n$
+customers by table. For $0 ≤ α ≤ 1$ and $-α < θ$ it is a probability measure whose value at a
+partition depends only on the block sizes, so it is exchangeable, and forgetting the last
+customer leaves the Pitman–Yor partition of the customers before. At $α = 0$ the probabilities
+are the Ewens sampling formula.
+
+## Main definitions
+
+* `ProbabilityTheory.crpRule α θ`: the seating plan, as a prediction rule on table labels.
+* `ProbabilityTheory.pitmanYor α θ n`: the law of the partition of `n` customers by table.
+
+## Main results
+
+* `ProbabilityTheory.pitmanYor_singleton`: a partition has the probability `pitmanYorEPPF` of
+  its block sizes.
+* `ProbabilityTheory.smulInvariantMeasure_pitmanYor`: relabelling the customers by a permutation
+  does not change the law.
+* `ProbabilityTheory.pitmanYor_succ_map`: forgetting the last customer of `n + 1` gives the
+  partition of `n`.
 
 ## Implementation notes
 
-The seating is a sequence of table labels drawn from the prediction rule `crpRule`, each customer
-labelled by the first customer at their table, so a new table opened by customer `n` is labelled
-`n`. The label sequences of positive probability are the labellings of partitions by least
-elements (`Finpartition.minLabel_ofFun_eq_iff`), one for each partition, which gives the law of
-the partition from that of the labels. The rule for the first customer is the point mass at
-label `0`, where the general formula would read $θ / θ$. The measure is defined for all real `α`
-and `θ`, and the constraints are hypotheses of the theorems that need them.
+The seating is a sequence of table labels, each customer labelled by the first customer at their
+table, so a new table opened by customer `n` is labelled `n`. The label sequences of positive
+probability are the labellings of partitions by least elements, one for each partition, which
+gives the law of the partition from that of the labels. The rule for the first customer is the
+point mass at label `0`, where the general formula would read $θ / θ$. The measure is defined for
+all real `α` and `θ`, and the constraints are hypotheses of the theorems that need them.
 
 ## TODO
 
 * The parameters $α < 0$, $θ = m (-α)$ for a positive integer $m$ also give a probability
-  measure, on partitions with at most $m$ blocks. `crpRule` truncates a negative weight to `0`,
-  so there it is not a Markov kernel at seatings with more than $m$ tables, which have
+  measure, on partitions with at most $m$ blocks. The seating plan truncates a negative weight to
+  `0`, so there it is not a Markov kernel at seatings with more than $m$ tables, which have
   probability zero.
 * The consistent partitions are the restrictions of one exchangeable random partition of `ℕ`,
-  the image of `seqTrajectory (crpRule α θ)`.
+  the image of the law of the infinite sequence of labels.
 
 ## References
 
@@ -205,8 +216,8 @@ theorem seqLaw_crpRule_singleton : ∀ {n : ℕ} (s : Fin n → ℕ),
         push_cast
         rfl
 
-/-- **Pitman's Theorem 3.2**: the Pitman–Yor partition gives each partition of `Fin n` the
-probability `pitmanYorEPPF` of its block sizes ([pitman-2006] (3.6)). -/
+/-- The Pitman–Yor partition gives each partition of `Fin n` the probability `pitmanYorEPPF` of
+its block sizes ([pitman-2006] Theorem 3.2, (3.6)). -/
 theorem pitmanYor_singleton (P : Finpartition (univ : Finset (Fin n))) :
     pitmanYor α θ n {P} = ENNReal.ofReal (pitmanYorEPPF α θ P.partSizes) := by
   have hm : Finpartition.ofFun P.minLabel = P := Finpartition.ofFun_minLabel P
@@ -225,7 +236,7 @@ theorem pitmanYor_singleton (P : Finpartition (univ : Finset (Fin n))) :
   rw [pitmanYor, Measure.map_apply (measurable_of_countable _) (measurableSet_singleton P),
     measure_congr hae, seqLaw_crpRule_singleton hα₀ hα₁ hθ, hm, ite_eq_left rfl]
 
-/-- **Pitman's Theorem 3.2**, real form. -/
+/-- The probability of a partition under the Pitman–Yor partition, as a real number. -/
 theorem pitmanYor_real_singleton (P : Finpartition (univ : Finset (Fin n))) :
     (pitmanYor α θ n).real {P} = pitmanYorEPPF α θ P.partSizes := by
   rw [measureReal_def, pitmanYor_singleton hα₀ hα₁ hθ,

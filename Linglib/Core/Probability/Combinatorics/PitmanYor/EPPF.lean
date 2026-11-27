@@ -19,11 +19,19 @@ public import Mathlib.Tactic.Linarith
 `pitmanYorEPPF α θ s` is the probability the Pitman–Yor partition with discount `α` and
 concentration `θ` gives to a partition whose multiset of block sizes is `s`,
 $∏_{1 ≤ i < k} (θ + i α) ∏_i ∏_{1 ≤ j < n_i} (j - α) / ∏_{1 ≤ i < n} (θ + i)$ for `k` blocks of
-sizes $n_i$ summing to $n$. A new singleton block
-[multiplies it](##ProbabilityTheory.pitmanYorEPPF_cons_one) by $(θ + k α) / (n + θ)$ and one more
-element in a block of size $m$ [multiplies it](##ProbabilityTheory.pitmanYorEPPF_cons_succ_erase)
-by $(m - α) / (n + θ)$. At $α = 0$ it is the
-[Ewens sampling formula](##ProbabilityTheory.pitmanYorEPPF_zero_left).
+sizes $n_i$ summing to $n$. A new singleton block multiplies it by $(θ + k α) / (n + θ)$ and one
+more element in a block of size $m$ multiplies it by $(m - α) / (n + θ)$. At $α = 0$ it is the
+Ewens sampling formula.
+
+## Main definitions
+
+* `ProbabilityTheory.pitmanYorEPPF α θ s`: the probability of a partition with block sizes `s`.
+
+## Main results
+
+* `ProbabilityTheory.pitmanYorEPPF_cons_one`: the factor for a new singleton block.
+* `ProbabilityTheory.pitmanYorEPPF_cons_succ_erase`: the factor for one more element in a block.
+* `ProbabilityTheory.pitmanYorEPPF_zero_left`: the Ewens sampling formula at `α = 0`.
 
 ## Implementation notes
 

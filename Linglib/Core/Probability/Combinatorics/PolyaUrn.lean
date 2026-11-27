@@ -16,12 +16,11 @@ public import Mathlib.MeasureTheory.Measure.Real
 /-!
 # The Pólya urn
 
-This file defines the Pólya urn and the law of its draws. The urn holds balls of the colours in
-`α` with positive weights `θ`. After draws in which colour `c` came up `x c` times, the next draw
-is `c` with probability proportional to `θ c + x c`, and the law of the first `n` draws is the
-sequence law of this prediction rule. The probability of a sequence depends only on its counts,
-so the sequence is exchangeable. It is a ratio of rising factorials, and in Gamma functions the
-Dirichlet-multinomial formula.
+A Pólya urn holds balls of the colours in `α` with positive weights `θ`. After draws in which
+colour `c` came up `x c` times, the next draw is `c` with probability proportional to
+`θ c + x c`, and the law of the first `n` draws is the sequence law of this prediction rule. The
+probability of a sequence depends only on its counts, so the sequence is exchangeable. It is a
+ratio of rising factorials, and in Gamma functions the Dirichlet-multinomial formula.
 
 ## Main definitions
 
