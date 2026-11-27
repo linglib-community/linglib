@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.UniformOn
+public import Linglib.Core.Probability.WeightOfEvidence
 public import Linglib.Semantics.Attitudes.Preference.ExpectedValue
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Data.Examples.ChungMascarenhas2023
@@ -29,7 +30,10 @@ expected value of `ψ` up to that of `φ`. It depends on the prior only through 
 conditioned on the prejacent and on each alternative, so reweighting the prior by a density
 constant on each of them changes nothing, which is how the paper reads the neglect of base rates.
 A proposition of positive probability that entails every member of `R` has the greatest expected
-value, so nothing is a *must* against such an alternative.
+value, so nothing is a *must* against such an alternative. With one piece of evidence and the
+negation of the prejacent as alternative, *must* holds at some threshold exactly when the
+evidence has positive weight for the prejacent, and the paper's alternative analysis thresholds
+that weight, the logarithm of the likelihood ratio.
 
 In the miners puzzle the ideals are that more than `k` of the ten miners are saved, and the
 measure function is the number saved. On a prior that makes the miners as likely to be in either
@@ -70,8 +74,8 @@ against its negation and at none against the other people Kim might marry.
 
 ## TODO
 
-* The alternative analysis by differences of expected value, its logarithmic form with the
-  likelihood ratio measure, and the *might* that goes with it.
+* The alternative analysis by differences of expected value for alternatives other than the
+  negation of the prejacent.
 * The Korean construction is not built from entries of the Korean language file, whose modal
   inventory has *-ya ha-* and *-to toy-* and not *-(e)ya toy-*.
 * No theorem reads the rows for Linda, Jack, the cold and the helicopter. The plausibility
@@ -224,6 +228,50 @@ theorem mem_must_withDensity_iff {f : W → ℝ≥0∞}
     cond_withDensity_of_forall_mem_eq p .of_discrete hc₀ hc hfc
 
 end ExpectedValue
+
+/-! ### The likelihood ratio measure (§2, §6) -/
+
+section LikelihoodRatio
+
+variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {p : Measure W} {e φ : Set W} {θ : ℝ}
+
+/-- (14): on the alternative analysis with one piece of evidence and the polar alternative,
+*must* holds of `φ` when the likelihood ratio measure of `φ` on the evidence, the weight of
+evidence, exceeds the threshold. -/
+def mustLog (p : Measure W) (e : Set W) (θ : ℝ) : Set (Set W) :=
+  {φ | (θ : EReal) < weightOfEvidence p φ e}
+
+/-- (62): *might* on the alternative analysis is the dual of `mustLog`. -/
+def mightLog (p : Measure W) (e : Set W) (θ : ℝ) : Set (Set W) :=
+  {φ | φᶜ ∉ mustLog p e θ}
+
+-- (62)
+theorem mem_mightLog [IsFiniteMeasure p] :
+    φ ∈ mightLog p e θ ↔ ((-θ : ℝ) : EReal) ≤ weightOfEvidence p φ e := by
+  rw [mightLog, mem_ofPred_eq, mustLog, mem_ofPred_eq, not_lt, weightOfEvidence_compl .of_discrete,
+    EReal.neg_le, EReal.coe_neg]
+
+-- (14): where both likelihoods are positive the measure is the difference of their logarithms
+theorem weightOfEvidence_eq_log_sub_log (h : p[e | φ] ≠ 0) (h' : p[e | φᶜ] ≠ 0) :
+    weightOfEvidence p φ e =
+      (Real.log (expectedValue p μ_EVAL[![e]] φ) -
+        Real.log (expectedValue p μ_EVAL[![e]] φᶜ) : ℝ) := by
+  have hr {ψ : Set W} (hψ : p[e | ψ] ≠ 0) : p[|ψ].real e ≠ 0 :=
+    (ENNReal.toReal_pos hψ (measure_ne_top _ _)).ne'
+  rw [weightOfEvidence_eq_coe_log h h', Real.log_div (hr h) (hr h'), expectedValue_eq_sum_cond,
+    expectedValue_eq_sum_cond, Fin.sum_univ_one, Fin.sum_univ_one, Matrix.cons_val_zero]
+
+/-- With one piece of evidence and the polar alternative, *must* holds of `φ` at some threshold
+exactly when the evidence has positive weight for `φ`. -/
+theorem exists_mem_must_compl_iff :
+    (∃ θ, φ ∈ must p ![e] {φᶜ} θ) ↔ 0 < weightOfEvidence p φ e := by
+  rw [weightOfEvidence_pos_iff,
+    ← ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)]
+  simp only [mem_must_singleton, Fin.sum_univ_one, Matrix.cons_val_zero,
+    expectedValue_indicator_one MeasurableSet.of_discrete, measureReal_def]
+  exact ⟨fun ⟨_, h⟩ ↦ h.1.trans_lt h.2, fun h ↦ ⟨_, le_rfl, h⟩⟩
+
+end LikelihoodRatio
 
 /-! ### The words of the rows -/
 
@@ -400,7 +448,7 @@ theorem mem_must_block (s : Shaft) :
       linarith
     · simpa [saved] using h9
 
-/-- No threshold verifies both the unconditional *must* and a conditional one. -/
+-- no threshold verifies both the unconditional *must* and a conditional one
 theorem not_exists_must (s : Shaft) :
     ¬ ∃ θ, act .blockNeither ∈ must p ideals (others .blockNeither) θ ∧
       act (.block s) ∈ must p[|inShaft s] ideals (others (.block s)) θ := fun ⟨_, h₁, h₂⟩ ↦

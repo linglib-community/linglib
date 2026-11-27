@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Zheng2025
 public import Linglib.Languages.Mandarin.QuestionParticles
-public import Linglib.Pragmatics.DecisionTheoretic.Basic
+public import Linglib.Core.Probability.WeightOfEvidence
 public import Linglib.Semantics.Modality.Kernel
 public import Linglib.Semantics.Questions.Bias
 public import Studies.Theiler2021
@@ -53,14 +53,14 @@ paraphrases it.
 
 namespace Zheng2025
 
-open MeasureTheory Modality DTS Question Inquisitive Inquisitive.Proposition
+open MeasureTheory ProbabilityTheory Modality Question Inquisitive Inquisitive.Proposition
 open Theiler2021 (Property instantiations instantiations_zero Necessary Sufficient)
 
 /-! ### Felicity conditions, (11) and (13) -/
 
 section Felicity
 
-variable {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W] (μ : Measure W)
+variable {W : Type*} [MeasurableSpace W] (μ : Measure W)
   (K U : Set (Set W)) {D : Type*} {n : ℕ}
 
 /-- The evidence in `K` is unexpected given the prior state `U`, (11ii). -/
@@ -69,13 +69,13 @@ def Unexpected : Prop := Disjoint (⋂₀ K) (⋂₀ U)
 /-- *Nandao φ?* is felicitous iff some evidence in `K` is positively relevant to `φ` under the
 prior `μ`, the evidence is unexpected given `U`, and `φ` is not directly settled in `K`, (11). -/
 def NandaoFelicitous (φ : Set W) : Prop :=
-  (∃ X ∈ K, posRelevant ⟨φ, .of_discrete, μ⟩ X) ∧ Unexpected K U ∧ ¬ DirectlySettles K φ
+  (∃ X ∈ K, 0 < weightOfEvidence μ φ X) ∧ Unexpected K U ∧ ¬ DirectlySettles K φ
 
 /-- *Nandao Q?* is felicitous iff some evidence in `K` is positively relevant to every
 instantiation of the highlighted property `f` of `Q`, the evidence is unexpected, and no
 instantiation is directly settled in `K`, (13). -/
 def NandaoQFelicitous (f : Property D W n) : Prop :=
-  (∃ X ∈ K, ∀ φ ∈ instantiations f, posRelevant ⟨φ, .of_discrete, μ⟩ X) ∧
+  (∃ X ∈ K, ∀ φ ∈ instantiations f, 0 < weightOfEvidence μ φ X) ∧
     Unexpected K U ∧ ∀ φ ∈ instantiations f, ¬ DirectlySettles K φ
 
 /-- (13) for a polar question is (11), and §4 excludes a why-question with another sufficient
@@ -84,8 +84,8 @@ theorem nandaoQFelicitous_zero (f : Property D W 0) :
     NandaoQFelicitous μ K U f ↔ NandaoFelicitous μ K U (f default) := by
   simp [NandaoQFelicitous, NandaoFelicitous, instantiations_zero]
 
-theorem not_nandaoQFelicitous_of_not_posRelevant {f : Property D W n} {φ : Set W}
-    (hφ : φ ∈ instantiations f) (h : ∀ X ∈ K, ¬ posRelevant ⟨φ, .of_discrete, μ⟩ X) :
+theorem not_nandaoQFelicitous_of_not_pos {f : Property D W n} {φ : Set W}
+    (hφ : φ ∈ instantiations f) (h : ∀ X ∈ K, ¬ 0 < weightOfEvidence μ φ X) :
     ¬ NandaoQFelicitous μ K U f := by
   rintro ⟨⟨X, hX, hall⟩, -, -⟩
   exact h X hX (hall φ hφ)
@@ -93,7 +93,8 @@ theorem not_nandaoQFelicitous_of_not_posRelevant {f : Property D W n} {φ : Set 
 /-- Where a context sits in Sudo's grid for `φ`: the relevance signs of the evidence and of the
 speaker's beliefs. -/
 noncomputable def situation (φ : Set W) (beliefs : Set (Set W)) : Situation :=
-  (relevanceSign ⟨φ, .of_discrete, μ⟩ (⋂₀ K), relevanceSign ⟨φ, .of_discrete, μ⟩ (⋂₀ beliefs))
+  (SignType.sign (weightOfEvidence μ φ (⋂₀ K)),
+    SignType.sign (weightOfEvidence μ φ (⋂₀ beliefs)))
 
 end Felicity
 
@@ -214,20 +215,20 @@ def believesDryNoEvidence : RaincoatContext := ⟨∅, {notRaining}, {dryCoat}�
 /-- The dripping raincoat when A already expects a wet coat, as in context 2 of (6). -/
 def expectsWet : RaincoatContext := ⟨raincoatK, ∅, {wetCoat}⟩
 
-private theorem relevanceSign_isRaining (e : Set World) :
-    relevanceSign ⟨isRaining, .of_discrete, .count⟩ e =
+private theorem sign_weightOfEvidence_isRaining (e : Set World) :
+    SignType.sign (weightOfEvidence .count isRaining e) =
       SignType.sign ((isRaining ∩ e).ncard * isRainingᶜ.ncard -
         (isRainingᶜ ∩ e).ncard * isRaining.ncard : ℤ) :=
-  relevanceSign_count_eq (topic := isRaining) e ⟨.rain, rfl⟩ ⟨.dry, by simp⟩
+  sign_weightOfEvidence_count ⟨.rain, rfl⟩ ⟨.dry, by simp⟩ e
 
-private theorem posRelevant_wetCoat : posRelevant ⟨isRaining, .of_discrete, .count⟩ wetCoat := by
-  rw [← relevanceSign_eq_one_iff, relevanceSign_isRaining]
+private theorem weightOfEvidence_wetCoat_pos : 0 < weightOfEvidence .count isRaining wetCoat := by
+  rw [← sign_eq_one_iff, sign_weightOfEvidence_isRaining]
   simp only [Set.ncard_eq_toFinset_card']
   decide
 
 private theorem felicitous_of_unexpected {c : RaincoatContext} (hk : c.evidence = raincoatK)
     (hu : ∀ w ∈ wetCoat, w ∉ ⋂₀ (c.beliefs ∪ c.defaults)) : c.Felicitous := by
-  refine ⟨⟨wetCoat, by simp [hk, raincoatK], posRelevant_wetCoat⟩, ?_, ?_⟩
+  refine ⟨⟨wetCoat, by simp [hk, raincoatK], weightOfEvidence_wetCoat_pos⟩, ?_, ?_⟩
   · simpa [Unexpected, hk, raincoatK, Set.disjoint_left] using hu
   · simp [hk, raincoatK, Set.subset_def, Set.disjoint_left]
 
@@ -254,22 +255,22 @@ theorem not_felicitous_expectsWet : ¬ expectsWet.Felicitous := by
 
 theorem situation_believesDry : believesDry.situation = (1, -1) := by
   simp only [RaincoatContext.situation, situation, believesDry, raincoatK, Set.sInter_singleton,
-    relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+    sign_weightOfEvidence_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 theorem situation_noBelief : noBelief.situation = (1, 0) := by
   simp only [RaincoatContext.situation, situation, noBelief, raincoatK, Set.sInter_singleton,
-    Set.sInter_empty, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+    Set.sInter_empty, sign_weightOfEvidence_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 theorem situation_noEvidence : noEvidence.situation = (0, 0) := by
   simp only [RaincoatContext.situation, situation, noEvidence, Set.sInter_empty,
-    relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+    sign_weightOfEvidence_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 theorem situation_believesDryNoEvidence : believesDryNoEvidence.situation = (0, -1) := by
   simp only [RaincoatContext.situation, situation, believesDryNoEvidence, Set.sInter_empty,
-    Set.sInter_singleton, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+    Set.sInter_singleton, sign_weightOfEvidence_isRaining, Set.ncard_eq_toFinset_card']
   decide
 
 /-- In the contexts of (2), (3) and (5), the question is felicitous exactly when the context's

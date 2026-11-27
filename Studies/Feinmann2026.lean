@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Feinmann2026
-public import Linglib.Pragmatics.DecisionTheoretic.Basic
+public import Linglib.Core.Probability.WeightOfEvidence
 public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Semantics.Questions.Partition.Answer
@@ -180,28 +180,27 @@ end Probabilistic
 
 section Cancellation
 
-open DTS
-
-variable [MeasurableSpace W]
+variable [MeasurableSpace W] {μ : Measure W} {H a b e : Set W}
 
 -- Relevance to the polar question of a live issue is relevance to the issue in Merin's sense.
-theorem probabilisticRelevant_polar_topic_iff {ctx : Context W} [IsProbabilityMeasure ctx.prior]
-    [ctx.Nondegenerate] {e : Set W} (he : MeasurableSet e) :
-    ProbabilisticRelevant ctx.prior (polar ctx.topic) e ↔ ¬ irrelevant ctx e := by
-  rw [probabilisticRelevant_polar_iff he ctx.topicMeasurable, irrelevant_iff_indepSet he]
+theorem probabilisticRelevant_polar_iff_weightOfEvidence_ne_zero [IsProbabilityMeasure μ]
+    (hH : MeasurableSet H) (he : MeasurableSet e) (hcH : μ H ≠ 0) (hcH' : μ Hᶜ ≠ 0) :
+    ProbabilisticRelevant μ (polar H) e ↔ weightOfEvidence μ H e ≠ 0 := by
+  rw [probabilisticRelevant_polar_iff he hH, Ne,
+    weightOfEvidence_eq_zero_iff_indepSet hH he hcH hcH']
   exact not_congr ⟨IndepSet.symm, IndepSet.symm⟩
 
 /-- Two sentences that are independent given each answer and shift the odds in opposite
-directions with the same strength, so that their Bayes factors multiply to one, have a
+directions with the same strength, so that their likelihood ratios multiply to one, have a
 conjunction that is not relevant: the configuration of (3)B₁. -/
-theorem not_probabilisticRelevant_inter {ctx : Context W} [IsProbabilityMeasure ctx.prior]
-    [ctx.Nondegenerate] {a b : Set W} (ha : MeasurableSet a) (hb : MeasurableSet b)
-    (hind : CondIndepIssue ctx a b)
-    (h : ctx.prior[|ctx.topic] a * ctx.prior[|ctx.topic] b =
-      ctx.prior[|ctx.topicᶜ] a * ctx.prior[|ctx.topicᶜ] b) :
-    ¬ ProbabilisticRelevant ctx.prior (polar ctx.topic) (a ∩ b) := by
-  have hi := (condIndepIssue_iff ctx ha hb).1 hind
-  rw [probabilisticRelevant_polar_topic_iff (ha.inter hb), not_not, irrelevant, hi.1, hi.2, h]
+theorem not_probabilisticRelevant_inter [IsProbabilityMeasure μ] (hH : MeasurableSet H)
+    (ha : MeasurableSet a) (hb : MeasurableSet b) (hcH : μ H ≠ 0) (hcH' : μ Hᶜ ≠ 0)
+    (hind : IndepSet a b μ[|H]) (hind' : IndepSet a b μ[|Hᶜ])
+    (h : μ[|H] a * μ[|H] b = μ[|Hᶜ] a * μ[|Hᶜ] b) :
+    ¬ ProbabilisticRelevant μ (polar H) (a ∩ b) := by
+  rw [probabilisticRelevant_polar_iff_weightOfEvidence_ne_zero hH (ha.inter hb) hcH hcH',
+    not_not, weightOfEvidence_eq_zero_iff hH, hind.measure_inter_eq_mul,
+    hind'.measure_inter_eq_mul, h]
 
 end Cancellation
 
@@ -212,8 +211,6 @@ Bezos hates Gates. A parent reports the truth unless their coordinate is `2`, so
 has reliability two thirds, and all worlds are equally probable. -/
 
 section Model
-
-open DTS
 
 /-- The worlds of the model. -/
 structure World where
@@ -250,28 +247,28 @@ abbrev oppositeReports : Set World := fatherSaysComing ∩ motherSaysComingᶜ
 abbrev conflictingReports : Set World :=
   fatherSaysComing ∩ motherSaysComingᶜ ∪ fatherSaysComingᶜ ∩ motherSaysComing
 
-/-- The issue whether Mary is coming, all worlds being equally probable. -/
-noncomputable def issue : Context World := ⟨maryComing, .of_discrete, uniformOn Set.univ⟩
+/-- The prior on which all worlds are equally probable. -/
+noncomputable abbrev prior : Measure World := uniformOn Set.univ
 
-instance : IsProbabilityMeasure issue.prior :=
-  inferInstanceAs (IsProbabilityMeasure (uniformOn Set.univ))
+private theorem prior_maryComing_ne_zero : prior maryComing ≠ 0 :=
+  (uniformOn_ne_zero_iff Set.finite_univ).2 ⟨⟨true, 0, 0, true⟩, trivial, rfl⟩
 
-instance : issue.Nondegenerate :=
-  ⟨(uniformOn_ne_zero_iff Set.finite_univ).2 ⟨⟨true, 0, 0, true⟩, trivial, rfl⟩,
-    (uniformOn_ne_zero_iff Set.finite_univ).2 ⟨⟨false, 0, 0, true⟩, trivial, by simp [issue]⟩⟩
+private theorem prior_maryComing_compl_ne_zero : prior maryComingᶜ ≠ 0 :=
+  (uniformOn_ne_zero_iff Set.finite_univ).2 ⟨⟨false, 0, 0, true⟩, trivial, by simp⟩
 
 private theorem relevant_iff {φ : Set World} :
-    ProbabilisticRelevant issue.prior (polar maryComing) φ ↔
+    ProbabilisticRelevant prior (polar maryComing) φ ↔
       ¬ IndepSet φ maryComing (uniformOn Set.univ) :=
   probabilisticRelevant_polar_iff .of_discrete .of_discrete
 
 -- The reports of two parents are independent given each answer and equally reliable.
-private theorem condIndepIssue_reports :
-    CondIndepIssue issue fatherSaysComing motherSaysComingᶜ ∧
-      CondIndepIssue issue fatherSaysComingᶜ motherSaysComing := by
-  refine ⟨fun θ ↦ ?_, fun θ ↦ ?_⟩ <;> cases θ <;>
-    simp only [Context.conditional, issue, uniformOn_univ_cond, indepSet_uniformOn_iff,
-      Set.ncard_eq_toFinset_card'] <;> decide
+private theorem indepSet_reports :
+    (IndepSet fatherSaysComing motherSaysComingᶜ prior[|maryComing] ∧
+        IndepSet fatherSaysComing motherSaysComingᶜ prior[|maryComingᶜ]) ∧
+      IndepSet fatherSaysComingᶜ motherSaysComing prior[|maryComing] ∧
+        IndepSet fatherSaysComingᶜ motherSaysComing prior[|maryComingᶜ] := by
+  simp only [uniformOn_univ_cond, indepSet_uniformOn_iff, Set.ncard_eq_toFinset_card']
+  decide
 
 private theorem ncard_reports :
     (maryComing ∩ fatherSaysComing).ncard = (maryComingᶜ ∩ motherSaysComingᶜ).ncard ∧
@@ -284,8 +281,8 @@ private theorem ncard_reports :
 
 -- Each parent's report is relevant to whether Mary is coming.
 theorem relevant_reports :
-    ProbabilisticRelevant issue.prior (polar maryComing) fatherSaysComing ∧
-      ProbabilisticRelevant issue.prior (polar maryComing) motherSaysComingᶜ := by
+    ProbabilisticRelevant prior (polar maryComing) fatherSaysComing ∧
+      ProbabilisticRelevant prior (polar maryComing) motherSaysComingᶜ := by
   simp only [relevant_iff, indepSet_uniformOn_iff, Set.univ_inter, Set.ncard_eq_toFinset_card']
   decide
 
@@ -293,19 +290,23 @@ theorem relevant_reports :
 (3)B₁ and the conflicting reports of (4)B₁ cancel, and the sentence about Bezos is about
 something else, so all three leave the probability that Mary is coming where it was. -/
 theorem not_relevant :
-    ¬ ProbabilisticRelevant issue.prior (polar maryComing) oppositeReports ∧
-      ¬ ProbabilisticRelevant issue.prior (polar maryComing) conflictingReports ∧
-      ¬ ProbabilisticRelevant issue.prior (polar maryComing) bezosHatesGates := by
+    ¬ ProbabilisticRelevant prior (polar maryComing) oppositeReports ∧
+      ¬ ProbabilisticRelevant prior (polar maryComing) conflictingReports ∧
+      ¬ ProbabilisticRelevant prior (polar maryComing) bezosHatesGates := by
   obtain ⟨h₁, h₂, h₃, h₄, h₅⟩ := ncard_reports
   have hfin (s : Set World) : s.Finite := s.toFinite
-  have opp : ¬ ProbabilisticRelevant issue.prior (polar maryComing) oppositeReports :=
-    not_probabilisticRelevant_inter .of_discrete .of_discrete condIndepIssue_reports.1 <| by
-      simp only [issue, uniformOn_univ_cond, uniformOn_apply_of_finite (hfin _), h₁, h₂, h₅]
+  have opp : ¬ ProbabilisticRelevant prior (polar maryComing) oppositeReports :=
+    not_probabilisticRelevant_inter .of_discrete .of_discrete .of_discrete
+        prior_maryComing_ne_zero prior_maryComing_compl_ne_zero indepSet_reports.1.1
+        indepSet_reports.1.2 <| by
+      simp only [uniformOn_univ_cond, uniformOn_apply_of_finite (hfin _), h₁, h₂, h₅]
       exact mul_comm _ _
-  have opp' : ¬ ProbabilisticRelevant issue.prior (polar maryComing)
+  have opp' : ¬ ProbabilisticRelevant prior (polar maryComing)
       (fatherSaysComingᶜ ∩ motherSaysComing) :=
-    not_probabilisticRelevant_inter .of_discrete .of_discrete condIndepIssue_reports.2 <| by
-      simp only [issue, uniformOn_univ_cond, uniformOn_apply_of_finite (hfin _), h₃, h₄, h₅]
+    not_probabilisticRelevant_inter .of_discrete .of_discrete .of_discrete
+        prior_maryComing_ne_zero prior_maryComing_compl_ne_zero indepSet_reports.2.1
+        indepSet_reports.2.2 <| by
+      simp only [uniformOn_univ_cond, uniformOn_apply_of_finite (hfin _), h₃, h₄, h₅]
       exact mul_comm _ _
   refine ⟨opp, ?_, ?_⟩
   · rw [relevant_iff, not_not] at opp opp' ⊢
@@ -403,9 +404,9 @@ theorem accommodable_polar_inf_polar (hφ : MeasurableSet φ) (hψ : MeasurableS
 -- of its polar question with that of the father's report can be accommodated, though its own
 -- polar question cannot.
 theorem accommodable_bezos :
-    Accommodable issue.prior bezosHatesGates (polar maryComing)
+    Accommodable prior bezosHatesGates (polar maryComing)
         (polar bezosHatesGates ⊓ polar fatherSaysComing) ∧
-      ¬ Accommodable issue.prior bezosHatesGates (polar maryComing) (polar bezosHatesGates) := by
+      ¬ Accommodable prior bezosHatesGates (polar maryComing) (polar bezosHatesGates) := by
   refine ⟨accommodable_polar_inf_polar .of_discrete .of_discrete ?_ ?_ relevant_reports.1,
     not_accommodable_polar_self .of_discrete not_relevant.2.2⟩
   · exact (uniformOn_ne_zero_iff Set.finite_univ).2 ⟨⟨true, 0, 0, true⟩, trivial, rfl⟩

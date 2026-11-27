@@ -332,7 +332,6 @@ import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Register
 import Linglib.Pragmatics.Bidirectional
-import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
