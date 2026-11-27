@@ -89,7 +89,7 @@ constructions are the shared inventory that lexical entries cite.
 * [meier-2003]
 * [chierchia-2006]
 * [kadmon-landman-1993]
-* [van-rooy-2003-npi]
+* [van-rooy-2003a]
 * [haspelmath-1997]
 * [gajewski-2007]
 -/

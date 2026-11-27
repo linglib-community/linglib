@@ -89,7 +89,7 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 * [icard-2012]
 * [kadmon-landman-1993]
 * [chierchia-2006]
-* [van-rooy-2003-npi]
+* [van-rooy-2003a]
 -/
 
 @[expose] public section
@@ -169,7 +169,7 @@ inductive Licenser : Type 2 where
 
 /-- The route by which a context licenses polarity items. A context licenses by strengthening, as
 a generic context that licenses free choice items ([kadmon-landman-1993], [dayal-1996]), or by
-the entropy of a question ([van-rooy-2003-npi]). -/
+the entropy of a question ([van-rooy-2003a]). -/
 inductive LicensingMechanism where
   | strengthening
   | genericIndefinite
@@ -270,7 +270,7 @@ def LicensesFreeChoice : Licenser → Prop
   | .classical _ | .scalar _ | .strawson _ | .question => False
 
 /-- A licenser *is a question* when it is a question and not an operator. A question hosts a weak
-item whatever the questioner expects. In [van-rooy-2003-npi] the questioner uses the item when it
+item whatever the questioner expects. In [van-rooy-2003a] the questioner uses the item when it
 raises the entropy of the question, which depends on the questioner's prior. -/
 def IsQuestion : Licenser → Prop
   | .question => True

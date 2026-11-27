@@ -15,34 +15,34 @@ varies with what the questioner expects.
 
 For a polar question the entropy is the binary entropy of the probability of the positive answer.
 Weakening the positive answer therefore [raises the entropy exactly when it makes that answer more
-likely without carrying it past the old negative answer](##VanRooy2003NPI.entropy_polar_lt_iff).
+likely without carrying it past the old negative answer](##VanRooy2003a.entropy_polar_lt_iff).
 This holds only if the negative answer was the more likely one, which is the generalization of
 Borkin and of Krifka, and [it fails for every weakening when the positive answer was at least as
-likely](##VanRooy2003NPI.not_entropy_polar_lt_of_half_le). In that case [a positive polarity
+likely](##VanRooy2003a.not_entropy_polar_lt_of_half_le). In that case [a positive polarity
 item, which strengthens the positive answer, can raise the
-entropy](##VanRooy2003NPI.entropy_polar_lt_iff_of_superset). A question that is settled becomes
-[stronger whenever weakening leaves it open](##VanRooy2003NPI.entropy_polar_lt_of_measure_eq_zero),
+entropy](##VanRooy2003a.entropy_polar_lt_iff_of_superset). A question that is settled becomes
+[stronger whenever weakening leaves it open](##VanRooy2003a.entropy_polar_lt_of_measure_eq_zero),
 which is the comparison of Kadmon and Landman. In the subject position of a constituent question
 the item widens the domain of the wh-phrase, the wider question is finer, and [its entropy is at
-least as high under every prior](##VanRooy2003NPI.entropy_ofProps_image_mono).
+least as high under every prior](##VanRooy2003a.entropy_ofProps_image_mono).
 
 A minimizer such as *lift a finger* presupposes, as *even* does, that the question is settled for
 each salient alternative, while the question itself must be open. Since each alternative entails
 the minimal value, [every alternative is settled
-negatively](##VanRooy2003NPI.measure_alternative_eq_zero), which is the rhetorical reading.
+negatively](##VanRooy2003a.measure_alternative_eq_zero), which is the rhetorical reading.
 
 ## Main definitions
 
-* `VanRooy2003NPI.entropy`: the informativity value of a partition question under a prior.
+* `VanRooy2003a.entropy`: the informativity value of a partition question under a prior.
 
 ## Main statements
 
-* `VanRooy2003NPI.entropy_polar`: the entropy of a polar question is the binary entropy of the
+* `VanRooy2003a.entropy_polar`: the entropy of a polar question is the binary entropy of the
   probability of its positive answer.
-* `VanRooy2003NPI.entropy_anti`: a finer question has at least the entropy of a coarser one.
-* `VanRooy2003NPI.entropy_polar_lt_iff`: when weakening the positive answer of a polar question
+* `VanRooy2003a.entropy_anti`: a finer question has at least the entropy of a coarser one.
+* `VanRooy2003a.entropy_polar_lt_iff`: when weakening the positive answer of a polar question
   raises its entropy.
-* `VanRooy2003NPI.measure_alternative_eq_zero`: the alternatives of a minimizer in an open
+* `VanRooy2003a.measure_alternative_eq_zero`: the alternatives of a minimizer in an open
   question are settled negatively.
 
 ## Implementation notes
@@ -64,7 +64,7 @@ negatively](##VanRooy2003NPI.measure_alternative_eq_zero), which is the rhetoric
 
 ## References
 
-* [van-rooy-2003-npi]
+* [van-rooy-2003a]
 * [borkin-1971]
 * [krifka-1995a]
 * [kadmon-landman-1990]
@@ -73,7 +73,7 @@ negatively](##VanRooy2003NPI.measure_alternative_eq_zero), which is the rhetoric
 
 @[expose] public section
 
-namespace VanRooy2003NPI
+namespace VanRooy2003a
 
 open MeasureTheory ProbabilityTheory InformationTheory Real
 
@@ -230,4 +230,4 @@ example : entropy (uniformOn Set.univ) (Setoid.polar ({0, 1, 2} : Set (Fin 4))) 
 
 end Example
 
-end VanRooy2003NPI
+end VanRooy2003a
