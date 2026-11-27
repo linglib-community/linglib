@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.Commitment.Space
+public import Linglib.Discourse.Commitment.Space.Semantics
 public import Linglib.Discourse.Commitment.Frame
 public import Studies.Yamada2012
 

@@ -175,31 +175,12 @@ end Project
 
 variable (K : Table A W) (a : A) (p : Set W) (P : Proposition (Set W))
 
+/-! ### The initial context and the stack -/
+
 /-- The initial context has nothing on the Table, no commitments, and the trivial common ground. -/
 @[simps] def empty : Table A W := ⟨[], ∅, ⊤⟩
 
 instance : Inhabited (Table A W) := ⟨empty⟩
-
-/-- The current issue is the top of the Table, the trivial issue when the Table is empty. -/
-def issue : Proposition (Set W) := K.stack.headD ⊤
-
-/-- A conversation is stable when its Table is empty. -/
-def IsStable : Prop := K.stack = []
-
-/-- The discourse commitments `DC_a` are the propositions `a` has publicly committed to. -/
-def discourseCommitments : Set (Set W) := K.commitments.contents a
-
-/-! ### The projected set -/
-
-/-- The projected set consists of the common grounds that canonically settle what is at issue,
-rebuilt from the common ground by the issues on the Table, oldest first. -/
-def projectedSet : Set (Filter W) := K.stack.foldr (fun P ps ↦ project ps P) {K.commonGround}
-
-/-- A conversation is in crisis when its common ground or every projected common ground is
-inconsistent. -/
-def InCrisis : Prop := K.commonGround = ⊥ ∨ ∀ f ∈ K.projectedSet, f = ⊥
-
-/-! ### Moves -/
 
 /-- Place an issue on the Table. -/
 @[simps] def push : Table A W := { K with stack := P :: K.stack }
@@ -210,35 +191,17 @@ def InCrisis : Prop := K.commonGround = ⊥ ∨ ∀ f ∈ K.projectedSet, f = �
 /-- Commit `a` to `p`. -/
 @[simps] def commit : Table A W := { K with commitments := insert (a, p) K.commitments }
 
-/-- In the default assertion (9), `a` commits to `p` and places the declarative's issue on the
-Table. -/
-@[simps!] def assert : Table A W := (K.commit a p).push (ofSet p)
-
-/-- The default polar question (12) places the interrogative's issue on the Table. -/
-@[simps!] def polarQuestion : Table A W := K.push (polar p)
-
-open scoped Classical in
-/-- In the common-ground increasing operation M' (17), applied once `p` is on every commitment
-list, `p` enters the common ground and leaves the individual commitment lists, and the issues the
-new common ground decides are popped from the top of the Table. -/
-@[simps] noncomputable def settle : Table A W where
-  stack := K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p))
-  commitments := {(a, q) | a ~[K.commitments] q ∧ q ≠ p}
-  commonGround := K.commonGround ⊓ 𝓟 p
-
-/-- Agreeing to disagree (23), from a Table with the denial on top of the assertion it denies,
-removes the contradictory pair from the Table and keeps the commitments. -/
-@[simps!] def agreeToDisagree : Table A W := K.pop.pop
-
-/-! ### The current issue -/
+/-- The current issue is the top of the Table, the trivial issue when the Table is empty. -/
+def issue : Proposition (Set W) := K.stack.headD ⊤
 
 @[simp] theorem issue_empty : (empty : Table A W).issue = ⊤ := rfl
-@[simp] theorem issue_push : (K.push P).issue = P := rfl
-@[simp] theorem issue_commit : (K.commit a p).issue = K.issue := rfl
-@[simp] theorem issue_assert : (K.assert a p).issue = ofSet p := rfl
-@[simp] theorem issue_polarQuestion : (K.polarQuestion p).issue = polar p := rfl
 
-/-! ### Stability -/
+@[simp] theorem issue_push : (K.push P).issue = P := rfl
+
+@[simp] theorem issue_commit : (K.commit a p).issue = K.issue := rfl
+
+/-- A conversation is stable when its Table is empty. -/
+def IsStable : Prop := K.stack = []
 
 @[simp] theorem empty_isStable : (empty : Table A W).IsStable := rfl
 
@@ -248,23 +211,19 @@ variable {K} in
 theorem issue_eq_top_of_isStable (h : K.IsStable) : K.issue = ⊤ :=
   congrArg (List.headD · ⊤) h
 
-variable {K} in
-theorem isStable_settle_of_isStable (h : K.IsStable) : (K.settle p).IsStable :=
-  congrArg (List.dropWhile _) h
-
 /-! ### Discourse commitments -/
+
+/-- The discourse commitments `DC_a` are the propositions `a` has publicly committed to. -/
+def discourseCommitments : Set (Set W) := K.commitments.contents a
 
 @[simp] theorem discourseCommitments_empty : (empty : Table A W).discourseCommitments a = ∅ :=
   rfl
 
 @[simp] theorem discourseCommitments_push :
     (K.push P).discourseCommitments a = K.discourseCommitments a := rfl
+
 @[simp] theorem discourseCommitments_pop :
     K.pop.discourseCommitments a = K.discourseCommitments a := rfl
-@[simp] theorem discourseCommitments_polarQuestion :
-    (K.polarQuestion p).discourseCommitments a = K.discourseCommitments a := rfl
-@[simp] theorem discourseCommitments_agreeToDisagree :
-    K.agreeToDisagree.discourseCommitments a = K.discourseCommitments a := rfl
 
 @[simp] theorem discourseCommitments_commit_self :
     (K.commit a p).discourseCommitments a = insert p (K.discourseCommitments a) :=
@@ -284,73 +243,18 @@ theorem mem_discourseCommitments_commit_iff {b : A} {q : Set W} :
 theorem mem_discourseCommitments_commit_self : p ∈ (K.commit a p).discourseCommitments a := by
   simp
 
-@[simp] theorem discourseCommitments_assert :
-    (K.assert a p).discourseCommitments a = insert p (K.discourseCommitments a) :=
-  discourseCommitments_commit_self K a p
+/-! ### The projected set -/
 
-variable {K a p} in
-theorem discourseCommitments_assert_of_ne {b : A} (h : b ≠ a) :
-    (K.assert a p).discourseCommitments b = K.discourseCommitments b :=
-  discourseCommitments_commit_of_ne h
+/-- The projected set consists of the common grounds that canonically settle what is at issue,
+rebuilt from the common ground by the issues on the Table, oldest first. -/
+def projectedSet : Set (Filter W) := K.stack.foldr (fun P ps ↦ project ps P) {K.commonGround}
 
-theorem mem_discourseCommitments_assert :
-    p ∈ (K.assert a p).discourseCommitments a := mem_discourseCommitments_commit_self K a p
+@[simp] theorem projectedSet_empty : (empty : Table A W).projectedSet = {⊤} := rfl
 
-/-- M' strips the shared proposition from every commitment list. -/
-theorem discourseCommitments_settle :
-    (K.settle p).discourseCommitments a = K.discourseCommitments a \ {p} := by
-  ext
-  simp [discourseCommitments, State.contents]
+@[simp] theorem projectedSet_push : (K.push P).projectedSet = project K.projectedSet P := rfl
 
-/-! ### The moves on the Table -/
-
-variable {K p P} in
-/-- M' pops a decided issue from the top of the Table and goes on popping. -/
-theorem settle_push_of_decidedBy (h : P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
-    (K.push P).settle p = K.settle p :=
-  Table.ext (by
-    rw [stack_settle, stack_push, List.dropWhile_cons_of_pos (by simpa using h)]
-    rfl) rfl rfl
-
-variable {K p P} in
-theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
-    ((K.push P).settle p).stack = P :: K.stack := by
-  simp [h]
-
-theorem settle_commit_self : (K.commit a p).settle p = K.settle p :=
-  Table.ext rfl (Set.insert_inter_of_notMem (t := {q : A × Set W | q.2 ≠ p}) (not_not.2 rfl)) rfl
-
-/-- M' with the asserted proposition pops the assertion and strips its commitment. -/
-theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
-  (settle_push_of_decidedBy
-    (decidedBy_ofSet.2 (mem_inf_of_right (mem_principal_self p)))).trans
-    (settle_commit_self K a p)
-
-theorem settle_settle : (K.settle p).settle p = K.settle p := by
-  classical
-  refine Table.ext ?_ ?_ ?_
-  · simp [List.dropWhile_idempotent]
-  · ext ⟨a, q⟩
-    simp
-  · simp
-
-/-- A polar question and its negative counterpart place the same issue on the Table. -/
-@[simp] theorem polarQuestion_compl : K.polarQuestion pᶜ = K.polarQuestion p := by
-  rw [polarQuestion, polar_compl, polarQuestion]
-
-theorem settle_polarQuestion_self : (K.polarQuestion p).settle p = K.settle p :=
-  settle_push_of_decidedBy (decidedBy_polar.2 (.inl (mem_inf_of_right (mem_principal_self p))))
-
-/-- Agreeing to disagree after two assertions leaves the Table and common ground unchanged, with
-both commitments recorded. -/
-theorem agreeToDisagree_assert_assert (b : A) (q : Set W) :
-    ((K.assert a p).assert b q).agreeToDisagree = (K.commit a p).commit b q := rfl
-
-/-- Agreeing to disagree restores the crisis status of the context before the assertions. -/
-theorem inCrisis_agreeToDisagree_assert_assert (b : A) (q : Set W) :
-    ((K.assert a p).assert b q).agreeToDisagree.InCrisis ↔ K.InCrisis := Iff.rfl
-
-/-! ### Projected common grounds -/
+@[simp] theorem projectedSet_commit : (K.commit a p).projectedSet = K.projectedSet :=
+  rfl
 
 section
 
@@ -409,12 +313,49 @@ theorem exists_le_mem_projectedSet_iff {g : Filter W} (hg : g ≠ ⊥) :
     have hle : g ≤ f ⊓ 𝓟 q := le_inf hgf (le_principal_iff.2 hqg)
     exact ⟨f ⊓ 𝓟 q, mem_project.2 ⟨⟨f, hf, q, hq, rfl⟩, fun h ↦ hg (le_bot_iff.1 (h ▸ hle))⟩, hle⟩
 
-/-- Reaching a projected common ground empties the Table. -/
-theorem isStable_settle_of_mem_projectedSet (h : K.commonGround ⊓ 𝓟 p ∈ K.projectedSet) :
-    (K.settle p).IsStable := by
-  classical
-  rw [IsStable, stack_settle, List.dropWhile_eq_nil_iff]
-  exact fun P hP ↦ decide_eq_true (decidedBy_of_mem_projectedSet_of_mem_stack h hP)
+end
+
+/-! ### Assertions and polar questions -/
+
+/-- In the default assertion (9), `a` commits to `p` and places the declarative's issue on the
+Table. -/
+@[simps!] def assert : Table A W := (K.commit a p).push (ofSet p)
+
+/-- The default polar question (12) places the interrogative's issue on the Table. -/
+@[simps!] def polarQuestion : Table A W := K.push (polar p)
+
+@[simp] theorem issue_assert : (K.assert a p).issue = ofSet p := rfl
+
+@[simp] theorem issue_polarQuestion : (K.polarQuestion p).issue = polar p := rfl
+
+@[simp] theorem discourseCommitments_polarQuestion :
+    (K.polarQuestion p).discourseCommitments a = K.discourseCommitments a := rfl
+
+@[simp] theorem discourseCommitments_assert :
+    (K.assert a p).discourseCommitments a = insert p (K.discourseCommitments a) :=
+  discourseCommitments_commit_self K a p
+
+variable {K a p} in
+theorem discourseCommitments_assert_of_ne {b : A} (h : b ≠ a) :
+    (K.assert a p).discourseCommitments b = K.discourseCommitments b :=
+  discourseCommitments_commit_of_ne h
+
+theorem mem_discourseCommitments_assert :
+    p ∈ (K.assert a p).discourseCommitments a := mem_discourseCommitments_commit_self K a p
+
+/-- A polar question and its negative counterpart place the same issue on the Table. -/
+@[simp] theorem polarQuestion_compl : K.polarQuestion pᶜ = K.polarQuestion p := by
+  rw [polarQuestion, polar_compl, polarQuestion]
+
+@[simp] theorem projectedSet_assert :
+    (K.assert a p).projectedSet = project K.projectedSet (ofSet p) := rfl
+
+@[simp] theorem projectedSet_polarQuestion :
+    (K.polarQuestion p).projectedSet = project K.projectedSet (polar p) := rfl
+
+section
+
+variable {K a p P} {f : Filter W}
 
 theorem mem_of_mem_projectedSet_assert (h : f ∈ (K.assert a p).projectedSet) : p ∈ f :=
   decidedBy_ofSet.1 (decidedBy_of_mem_project h)
@@ -424,19 +365,6 @@ theorem mem_or_compl_mem_of_mem_projectedSet_polarQuestion
   decidedBy_polar.1 (decidedBy_of_mem_project h)
 
 end
-
-@[simp] theorem projectedSet_empty : (empty : Table A W).projectedSet = {⊤} := rfl
-
-@[simp] theorem projectedSet_push : (K.push P).projectedSet = project K.projectedSet P := rfl
-
-@[simp] theorem projectedSet_commit : (K.commit a p).projectedSet = K.projectedSet :=
-  rfl
-
-@[simp] theorem projectedSet_assert :
-    (K.assert a p).projectedSet = project K.projectedSet (ofSet p) := rfl
-
-@[simp] theorem projectedSet_polarQuestion :
-    (K.polarQuestion p).projectedSet = project K.projectedSet (polar p) := rfl
 
 variable {K p} in
 /-- An assertion in a stable context projects the common ground with its content (8). -/
@@ -451,12 +379,85 @@ theorem projectedSet_polarQuestion_of_isStable (hK : K.IsStable)
     (K.polarQuestion p).projectedSet = {K.commonGround ⊓ 𝓟 p, K.commonGround ⊓ 𝓟 pᶜ} := by
   rw [projectedSet_polarQuestion, projectedSet_of_isStable hK, project_singleton_polar hp hnp]
 
+/-! ### Settling a joint commitment -/
+
+open scoped Classical in
+/-- In the common-ground increasing operation M' (17), applied once `p` is on every commitment
+list, `p` enters the common ground and leaves the individual commitment lists, and the issues the
+new common ground decides are popped from the top of the Table. -/
+@[simps] noncomputable def settle : Table A W where
+  stack := K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p))
+  commitments := {(a, q) | a ~[K.commitments] q ∧ q ≠ p}
+  commonGround := K.commonGround ⊓ 𝓟 p
+
+variable {K} in
+theorem isStable_settle_of_isStable (h : K.IsStable) : (K.settle p).IsStable :=
+  congrArg (List.dropWhile _) h
+
+/-- M' strips the shared proposition from every commitment list. -/
+theorem discourseCommitments_settle :
+    (K.settle p).discourseCommitments a = K.discourseCommitments a \ {p} := by
+  ext
+  simp [discourseCommitments, State.contents]
+
+variable {K p P} in
+/-- M' pops a decided issue from the top of the Table and goes on popping. -/
+theorem settle_push_of_decidedBy (h : P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
+    (K.push P).settle p = K.settle p :=
+  Table.ext (by
+    rw [stack_settle, stack_push, List.dropWhile_cons_of_pos (by simpa using h)]
+    rfl) rfl rfl
+
+variable {K p P} in
+theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
+    ((K.push P).settle p).stack = P :: K.stack := by
+  simp [h]
+
+theorem settle_commit_self : (K.commit a p).settle p = K.settle p :=
+  Table.ext rfl (Set.insert_inter_of_notMem (t := {q : A × Set W | q.2 ≠ p}) (not_not.2 rfl)) rfl
+
+/-- M' with the asserted proposition pops the assertion and strips its commitment. -/
+theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
+  (settle_push_of_decidedBy
+    (decidedBy_ofSet.2 (mem_inf_of_right (mem_principal_self p)))).trans
+    (settle_commit_self K a p)
+
+theorem settle_settle : (K.settle p).settle p = K.settle p := by
+  classical
+  refine Table.ext ?_ ?_ ?_
+  · simp [List.dropWhile_idempotent]
+  · ext ⟨a, q⟩
+    simp
+  · simp
+
+theorem settle_polarQuestion_self : (K.polarQuestion p).settle p = K.settle p :=
+  settle_push_of_decidedBy (decidedBy_polar.2 (.inl (mem_inf_of_right (mem_principal_self p))))
+
+section
+
+variable {K a p P} {f : Filter W}
+
+/-- Reaching a projected common ground empties the Table. -/
+theorem isStable_settle_of_mem_projectedSet (h : K.commonGround ⊓ 𝓟 p ∈ K.projectedSet) :
+    (K.settle p).IsStable := by
+  classical
+  rw [IsStable, stack_settle, List.dropWhile_eq_nil_iff]
+  exact fun P hP ↦ decide_eq_true (decidedBy_of_mem_projectedSet_of_mem_stack h hP)
+
+end
+
 variable {K p} in
 /-- In a stable context, settling an assertion reaches the common ground it projected. -/
 theorem commonGround_settle_mem_projectedSet_assert (hK : K.IsStable)
     (hp : K.commonGround ⊓ 𝓟 p ≠ ⊥) :
     (K.settle p).commonGround ∈ (K.assert a p).projectedSet :=
   projectedSet_assert_of_isStable a hK hp ▸ rfl
+
+/-! ### Crisis -/
+
+/-- A conversation is in crisis when its common ground or every projected common ground is
+inconsistent. -/
+def InCrisis : Prop := K.commonGround = ⊥ ∨ ∀ f ∈ K.projectedSet, f = ⊥
 
 /-- With the projected set derived, a conversation is in crisis exactly when no projected common
 ground is consistent. -/
@@ -487,6 +488,24 @@ theorem projectedSet_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ
 theorem inCrisis_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).InCrisis :=
   (inCrisis_iff _).2 fun f hf ↦
     absurd (projectedSet_assert_assert_compl K a p b ▸ hf) (Set.notMem_empty f)
+
+/-! ### Agreeing to disagree -/
+
+/-- Agreeing to disagree (23), from a Table with the denial on top of the assertion it denies,
+removes the contradictory pair from the Table and keeps the commitments. -/
+@[simps!] def agreeToDisagree : Table A W := K.pop.pop
+
+@[simp] theorem discourseCommitments_agreeToDisagree :
+    K.agreeToDisagree.discourseCommitments a = K.discourseCommitments a := rfl
+
+/-- Agreeing to disagree after two assertions leaves the Table and common ground unchanged, with
+both commitments recorded. -/
+theorem agreeToDisagree_assert_assert (b : A) (q : Set W) :
+    ((K.assert a p).assert b q).agreeToDisagree = (K.commit a p).commit b q := rfl
+
+/-- Agreeing to disagree restores the crisis status of the context before the assertions. -/
+theorem inCrisis_agreeToDisagree_assert_assert (b : A) (q : Set W) :
+    ((K.assert a p).assert b q).agreeToDisagree.InCrisis ↔ K.InCrisis := Iff.rfl
 
 end Table
 

@@ -13,8 +13,9 @@ participants, as for Gunlogson and for Farkas and Bruce, or a participant togeth
 attitude the commitment is to, belief or preference, as for Condoravdi and Lauer. A holder's
 commitment set is the set of worlds its commitments leave open, and adding a commitment narrows it
 by the content. A commitment state is sincere when each holder privately holds, under the
-attitude of the commitment, what it is committed to. A commitment as a proposition, which a common ground can contain without
-containing its content, is the notation `k ⊢[O] φ` of `Commitment/Proposition.lean`.
+attitude of the commitment, what it is committed to. A commitment as a proposition, which a
+common ground can contain without containing its content, is the notation `k ⊢[O] φ` of
+`Commitment/Proposition.lean`.
 
 ## Main definitions
 

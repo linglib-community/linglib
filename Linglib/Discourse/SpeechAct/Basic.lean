@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.Commitment.Space
+public import Linglib.Discourse.Commitment.Space.Semantics
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Clause.Basic
 public import Mathlib.Order.Max
