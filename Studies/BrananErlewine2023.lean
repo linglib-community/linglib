@@ -4,7 +4,7 @@ public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Data.Examples.BrananErlewine2023
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Syntax.Minimalist.Category
-public import Linglib.Syntax.Spine.Hierarchy
+public import Linglib.Syntax.Spine.Label
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Data.Examples.Readers
@@ -137,15 +137,14 @@ variable {W : Type*}
 little v. -/
 def clausalProjection : Spine Cat := ⟨[.V, .v]⟩
 
-/-- A position is on the spine of a phase when its category and that of every node above it are
-no higher than the category of the phase in the hierarchy of `clausalProjection`, so that it
-belongs to the extended projection containing the phase head (115). -/
+/-- A position is on the spine of a phase when its category, and that of every node above it, is
+the category of the phase or is in the complement of the phase head on `clausalProjection`, so
+that it belongs to the extended projection containing the phase head (115). -/
 def OnSpine (t : Tree Cat W) (p : GornAddress) : Prop :=
-  ∀ q ∈ p.inits, ∃ s ∈ t[q]?,
-    Relation.ReflTransGen (Spine.Step {x | x ∈ [clausalProjection]}) (Tree.cat s) t.cat
+  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, Tree.cat s = t.cat ∨
+    t.cat ∈ clausalProjection ∧ Tree.cat s ∈ clausalProjection.below t.cat
 
 instance (t : Tree Cat W) (p : GornAddress) : Decidable (OnSpine t p) := by
-  have := Spine.decidableReflTransGenStep [clausalProjection]
   unfold OnSpine; infer_instance
 
 /-- The prominent phrases of a phase are the phrases off its spine other than the `skipped`

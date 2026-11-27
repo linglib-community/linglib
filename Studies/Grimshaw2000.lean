@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Spine.ExtendedProjection
-public import Linglib.Syntax.Spine.Hierarchy
+public import Linglib.Syntax.Spine.Label
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -17,8 +17,7 @@ extended projection with its complement exactly when the two share their categor
 and the head has the higher value, so a lexical head never forms one with its complement. A
 complementizer over inflection over a complementizer is no extended projection, and a
 complementizer over a complementizer is one only if the functional value may stay the same. The
-order on heads that the two structures determine is the order of functional values within a
-categorial specification.
+functional value of a head is its height in the clause or in the noun phrase.
 
 ## Implementation notes
 
@@ -125,14 +124,9 @@ theorem isExtendedProjection_le_V_V :
     (⟨[V, V]⟩ : Spine Head).IsExtendedProjection category (F · ≤ F ·) := by
   decide
 
-instance : DecidableRel (Relation.ReflTransGen (Spine.Step {s | s ∈ [clause, nominal]})) :=
-  Spine.decidableReflTransGenStep _
-
-/-- The hierarchy of the clause and the noun phrase is the order of functional values within a
-categorial specification. -/
-theorem reflTransGen_step_iff (x y : Head) :
-    Relation.ReflTransGen (Spine.Step {s | s ∈ [clause, nominal]}) x y ↔
-      x.category = y.category ∧ x.F ≤ y.F := by
-  cases x <;> cases y <;> decide +kernel
+/-- The functional value of a head is its height in the clause or in the noun phrase. -/
+theorem height_eq_F :
+    (∀ x ∈ clause, clause.height x = x.F) ∧ ∀ x ∈ nominal, nominal.height x = x.F := by
+  decide
 
 end Grimshaw2000

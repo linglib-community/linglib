@@ -254,7 +254,7 @@ end Reticules
 quantity head and the determiner. -/
 def spine : Spine Cat := ⟨[.N, .Q, .Num, .D]⟩
 
--- (27): the quantity head is above the dividing head.
-theorem height_Q_lt_height_Num : spine.height .Q < spine.height .Num := by decide
+-- (27): the dividing head is in the complement of the quantity head.
+theorem Q_mem_below_Num : Cat.Q ∈ spine.below .Num := by decide
 
 end Borer2005

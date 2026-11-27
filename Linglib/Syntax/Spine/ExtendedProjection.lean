@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Spine.Label
+public import Linglib.Syntax.Spine.Basic
+public import Mathlib.Data.List.Chain
 
 /-!
 # Extended projections
@@ -27,15 +28,12 @@ is not, since the functional value decreases, and `[V, I, C, D]` is not, since `
 
 ## Main results
 
-* `Spine.isExtendedProjection_iff_isChain`: if `r` only relates heads of the same family, a spine
-  is an extended projection if and only if it is a chain for `r`.
 * `Spine.isExtendedProjection_pair_iff`: a spine of two heads is an extended projection if and only
   if the heads have the same family and are related by `r`.
 
 ## Implementation notes
 
-The family and the ranking are parameters, since accounts differ on both. The ranking that a set of
-spines determines is defined in `Linglib/Syntax/Spine/Hierarchy.lean`.
+The family and the ranking are parameters, since accounts differ on both.
 
 Grimshaw defines projections on trees. A phrase is a projection of a head that it dominates if the
 two have the same categorial features, every node between them has those features, and no node
@@ -63,7 +61,7 @@ the map from a tree with a head relation to the spine of a node, which is not ye
 
 namespace Spine
 
-variable {H K : Type*} {family : H → K} {r : H → H → Prop} {s : Spine H} {c d : H}
+variable {H K : Type*} {family : H → K} {r : H → H → Prop} {s : Spine H}
 
 /-- A spine is an **extended projection** with respect to `family` and `r` if all its heads have
 the same family and each head is related by `r` to the next head up. -/
@@ -82,20 +80,6 @@ instance [DecidableEq H] [DecidableEq K] [DecidableRel r] (s : Spine H) :
     Decidable (s.IsExtendedProjection family r) :=
   decidable_of_iff _ isExtendedProjection_iff.symm
 
-theorem IsExtendedProjection.pairwise [IsTrans H r] (h : s.IsExtendedProjection family r) :
-    s.heads.Pairwise r :=
-  List.isChain_iff_pairwise.1 h.isChain
-
-/-- If `r` only relates heads of the same family, a spine is an extended projection if and only if
-it is a chain for `r`. -/
-theorem isExtendedProjection_iff_isChain [IsTrans H r] (hr : ∀ x y, r x y → family x = family y) :
-    s.IsExtendedProjection family r ↔ s.heads.IsChain r :=
-  ⟨IsExtendedProjection.isChain, fun h ↦
-    have hp := List.isChain_iff_pairwise.1 h
-    ⟨fun _ hc _ hd ↦ List.Pairwise.forall_of_forall_of_flip
-      (R := fun x y ↦ family x = family y) (fun _ _ ↦ rfl) (hp.imp (hr _ _))
-      (hp.imp fun h ↦ (hr _ _ h).symm) hc hd, h⟩⟩
-
 /-- A spine of two heads is an extended projection if and only if the heads have the same family
 and the lower is related by `r` to the higher. -/
 theorem isExtendedProjection_pair_iff {x y : H} :
@@ -105,18 +89,5 @@ theorem isExtendedProjection_pair_iff {x y : H} :
   simp only [mem_def, List.mem_cons, List.not_mem_nil, or_false] at hc hd
   rcases hc with rfl | rfl <;> rcases hd with rfl | rfl <;>
     first | rfl | exact h.1 | exact h.1.symm
-
-variable [DecidableEq H]
-
-/-- In an extended projection, a head `d` is in the complement of a head `c` or `r c d` holds. -/
-theorem IsExtendedProjection.mem_below_or_rel [Std.Refl r] [IsTrans H r]
-    (hs : s.IsExtendedProjection family r) (hc : c ∈ s) (hd : d ∈ s) : d ∈ s.below c ∨ r c d :=
-  Spine.mem_below_or_rel hs.pairwise hc hd
-
-/-- In an extended projection, `r d c` holds for every head `d` in the complement of a head
-`c`. -/
-theorem IsExtendedProjection.rel_of_mem_below [IsTrans H r]
-    (hs : s.IsExtendedProjection family r) (hc : c ∈ s) (hd : d ∈ s.below c) : r d c :=
-  Spine.rel_of_mem_below hs.pairwise hc hd
 
 end Spine

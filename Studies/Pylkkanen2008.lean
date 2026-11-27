@@ -493,20 +493,20 @@ inductive Layer where
   | phase
   deriving DecidableEq, Repr, Fintype
 
-/-- The highest head of a layer: the root is the lexical head, the verb v, and the phase Voice. -/
-def Layer.head : Layer → Cat
-  | .root => .V
-  | .verb => .v
-  | .phase => .Voice
-
 /-- The spine of the verbal architecture (12): the lexical head, v and Voice. -/
 def verbalSpine : Spine Cat := ⟨[.V, .v, .Voice]⟩
 
-/-- Layers are ordered by containment, as their highest heads stand on the verbal spine. -/
-instance : Preorder Layer := Preorder.lift fun l ↦ verbalSpine.height l.head
+/-- The spine of a layer: the root projects the lexical head, the verb adds v, and the phase adds
+Voice. -/
+def Layer.spine : Layer → Spine Cat
+  | .root => verbalSpine.take 1
+  | .verb => verbalSpine.take 2
+  | .phase => verbalSpine
 
-instance : DecidableLE Layer := fun l m ↦
-  inferInstanceAs (Decidable (verbalSpine.height l.head ≤ verbalSpine.height m.head))
+/-- Layers are ordered by containment of their spines. -/
+instance : Preorder Layer := Preorder.lift Layer.spine
+
+instance : DecidableLE Layer := fun l m ↦ inferInstanceAs (Decidable (l.spine ≤ m.spine))
 
 /-- A causative head is given by the largest layer its complement may contain (11) and whether
 Cause is bundled with Voice (10). -/

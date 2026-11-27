@@ -3,8 +3,7 @@ module
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Syntax.Minimalist.Category
-public import Linglib.Syntax.Spine.Label
+public import Linglib.Syntax.Minimalist.Spine
 public import Linglib.Languages.Romance.Italian.Verbs
 public import Linglib.Data.Examples.FuscoSgrizzi2026
 public import Studies.Grano2024
@@ -31,10 +30,10 @@ relation (`aP`). Both heads are necessity anchored to the state, the event-relat
 ([dowty-1979], [kratzer-2013]). This is the causal
 self-referentiality of intention ([searle-1983]): in every inertia world the intended event is
 caused by the attitude state, hence later than it, the future orientation of *a*-infinitives
-([wurmbrand-2014]; `intention_future`). The size of a complement is its highest head, and sizes
-are ordered as their highest heads stand in the clause (`clause`); the reading is read off the CP
-threshold, and the diagnostics of sections 3 and 3.1 are predicted by the heads the complement
-reaches (`rows_predicted`).
+([wurmbrand-2014]; `intention_future`). A complement is the spine it projects, a truncation of
+the clause (`clause`); the reading is read off whether it reaches the complementizer, and the
+diagnostics of sections 3 and 3.1 are predicted by the heads the complement contains
+(`rows_predicted`).
 
 ## Implementation notes
 
@@ -158,47 +157,27 @@ tense and the complementizer are those of (21); Voice and negation are placed be
 tense, and finiteness between tense and the complementizer. -/
 def clause : Spine Cat := ⟨[.V, .v, .Voice, .Neg, .T, .Fin, .C]⟩
 
-/-- A complement size is a complement measured by the highest head it projects. -/
-structure Size where
-  /-- The highest head of the complement. -/
-  highestHead : Cat
-  deriving DecidableEq
-
-/-- A size is no larger than another when its highest head stands no higher in the clause. -/
-instance : Preorder Size := Preorder.lift fun s ↦ clause.height s.highestHead
-
-instance : DecidableLE Size := fun s t ↦
-  inferInstanceAs (Decidable (clause.height s.highestHead ≤ clause.height t.highestHead))
-
-instance : DecidableLT Size := decidableLTOfDecidableLE
-
-/-- The size of a vP. -/
-def Size.vP : Size := ⟨.v⟩
-
-/-- The size of a clause that projects up to finiteness. -/
-def Size.finP : Size := ⟨.Fin⟩
-
-/-- The size of a CP. -/
-def Size.cP : Size := ⟨.C⟩
-
-/-- The reading a complement size yields, belief for a phase-sized complement, which carries the
-closure head, and intention for a smaller one. -/
-def readingFromSize (cs : Size) : Reading :=
-  if Size.cP ≤ cs then .belief else .intention
-
-/-- The *di*-infinitive is a CP (21). -/
-def diSize : Size := .cP
+/-- The *di*-infinitive is a CP (21): it projects the whole clause. -/
+def diComplement : Spine Cat := clause
 
 /-- The *a*-infinitive is a projection below tense with negation as its highest head (22). -/
-def aSize : Size := ⟨.Neg⟩
+def aComplement : Spine Cat := clause.below .T
+
+-- the vP is the clause below Voice
+theorem clause_below_Voice : clause.below .Voice = Spine.vP := by decide
+
+/-- The reading a complement yields, belief for one that reaches the complementizer, which carries
+the closure head, and intention for a smaller one. -/
+def readingOf (s : Spine Cat) : Reading :=
+  if Cat.C ∈ s then .belief else .intention
 
 /-- The complement an infinitival complementizer of the language file selects. -/
-def sizeOf (z : Complementizer) : Option Size :=
-  if z = di then some diSize else if z = a then some aSize else none
+def complementOf (z : Complementizer) : Option (Spine Cat) :=
+  if z = di then some diComplement else if z = a then some aComplement else none
 
 /-- The readings a verb's complementizers yield, in the order the language file lists them. -/
 def readings (v : Italian.Verb) : List Reading :=
-  v.clauseTypers.filterMap fun z ↦ (sizeOf z).map readingFromSize
+  v.clauseTypers.filterMap fun z ↦ (complementOf z).map readingOf
 
 -- (4)
 theorem convincere_pensare_readings :
@@ -207,42 +186,43 @@ theorem convincere_pensare_readings :
 
 /-! ### The diagnostics of sections 3 and 3.1 -/
 
-/-- What complement size predicts for a diagnostic, the readings by the phase threshold; truth
-assessment by propositionality; subject control by the finiteness head that hosts the logophoric
-centre ([rizzi-1997]); passive, low aspectual verbs and negation by the Voice, v and negation
-heads; a temporal domain of its own by structure above vP; clitic climbing by a complement no
-larger than vP. -/
-def Examples.Diagnostic.Predicted : Diagnostic → Size → Prop
-  | .belief, cs => readingFromSize cs = .belief
-  | .intention, cs => readingFromSize cs = .intention
-  | .truthAssessable, cs => .cP ≤ cs
-  | .subjectControl, cs => .finP ≤ cs
-  | .passive, cs => ⟨.Voice⟩ ≤ cs
-  | .aspectual, cs => .vP ≤ cs
-  | .negation, cs => ⟨.Neg⟩ ≤ cs
-  | .independentTime, cs => .vP < cs
-  | .cliticClimbing, cs => cs ≤ .vP
+/-- What a complement predicts for a diagnostic: the readings by whether it reaches the
+complementizer; truth assessment by the complementizer; subject control by the finiteness head
+that hosts the logophoric centre ([rizzi-1997]); passive, low aspectual verbs and negation by the
+Voice, v and negation heads; a temporal domain of its own by structure above vP; clitic climbing
+by a complement no larger than vP. -/
+def Examples.Diagnostic.Predicted : Diagnostic → Spine Cat → Prop
+  | .belief, s => readingOf s = .belief
+  | .intention, s => readingOf s = .intention
+  | .truthAssessable, s => Cat.C ∈ s
+  | .subjectControl, s => Cat.Fin ∈ s
+  | .passive, s => Cat.Voice ∈ s
+  | .aspectual, s => Cat.v ∈ s
+  | .negation, s => Cat.Neg ∈ s
+  | .independentTime, s => Spine.vP < s
+  | .cliticClimbing, s => s ≤ Spine.vP
 
-instance (d : Diagnostic) (cs : Size) : Decidable (d.Predicted cs) := by
+instance (d : Diagnostic) (s : Spine Cat) : Decidable (d.Predicted s) := by
   cases d <;> unfold Diagnostic.Predicted <;> infer_instance
 
-/-- A sentence of the paper carries the size of its infinitival complement, the diagnostic it
-tests and whether it is grammatical. -/
+/-- A sentence of the paper carries its infinitival complement, the diagnostic it tests and
+whether it is grammatical. -/
 structure Row where
-  size : Size
+  complement : Spine Cat
   diagnostic : Diagnostic
   grammatical : Bool
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let s ← ex.parse? "size" [("cP", diSize), ("aP", aSize), ("vP", Size.vP)]
+  let s ← ex.parse? "size" [("cP", diComplement), ("aP", aComplement), ("vP", Spine.vP)]
   let d ← (Examples.diagnostic ex)
   let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
   pure ⟨s, d, g⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-theorem rows_predicted : ∀ r ∈ rows, (r.grammatical = true ↔ r.diagnostic.Predicted r.size) := by
+theorem rows_predicted :
+    ∀ r ∈ rows, (r.grammatical = true ↔ r.diagnostic.Predicted r.complement) := by
   decide +kernel
 
 end FuscoSgrizzi2026
