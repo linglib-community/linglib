@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Spine.Label
 
 /-!
 # Krifka (2020): Layers of Assertive Clauses: Propositions, Judgements, Commitments, Acts
@@ -171,14 +172,12 @@ inductive Layer
   | actP
   deriving DecidableEq, Fintype, Repr
 
-/-- The height of a layer. -/
-def Layer.rank : Layer → ℕ
-  | .tp => 0
-  | .jp => 1
-  | .comP => 2
-  | .actP => 3
+/-- (10): the spine of an assertive clause, the tense phrase below the judge phrase below the
+commitment phrase below the act phrase. -/
+def clauseSpine : Spine Layer := ⟨[.tp, .jp, .comP, .actP]⟩
 
-instance : LinearOrder Layer := LinearOrder.lift' Layer.rank (by decide)
+/-- Layers are ordered by their height on the clause. -/
+instance : LinearOrder Layer := LinearOrder.lift' clauseSpine.height (by decide)
 
 /-- Modifiers of §3, with the layer they modify: subjective epistemics and evidentials the
 judgement, affirmatives the commitment, *offen gesagt* the act. -/

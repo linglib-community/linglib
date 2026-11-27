@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.Harley2014
 public import Linglib.Morphology.DistributedMorphology.RootCategorization
 public import Studies.Harley2014
 public import Linglib.Data.Examples.Readers
+public import Linglib.Syntax.Spine.Label
 
 /-!
 # van Craenenbroeck (2014): On diagnosing complement-taking roots
@@ -158,16 +159,13 @@ inductive Domain
   | root | v | voice
   deriving DecidableEq, Repr
 
-/-- The height of a domain's head on the clausal spine. -/
-def Domain.rank : Domain → ℕ
-  | .root => 0
-  | .v => 1
-  | .voice => 2
+/-- The verbal spine on which the domains lie: the root, v and Voice. -/
+def verbalSpine : Spine Domain := ⟨[.root, .v, .voice]⟩
 
-theorem Domain.rank_injective : Function.Injective Domain.rank := by
-  rintro (_ | _ | _) (_ | _ | _) h <;> first | rfl | cases h
-
-instance : LinearOrder Domain := LinearOrder.lift' Domain.rank Domain.rank_injective
+/-- Domains are ordered by the height of their head on the verbal spine. -/
+instance : LinearOrder Domain :=
+  LinearOrder.lift' verbalSpine.height fun a b h ↦ by
+    cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
 
 /-- The forms of an idiom in (18)–(22). -/
 inductive Form
