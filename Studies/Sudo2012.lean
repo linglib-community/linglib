@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Control.Monad.Writer
+public import Mathlib.Data.Part
 public import Mathlib.Basic.ExistsUnique
 public import Mathlib.Basic.Nontrivial.Defs
 
@@ -18,9 +19,9 @@ from it. The presupposition has to be a second dimension of meaning, as in Kartt
 
 ## Implementation notes
 
-A two-dimensional truth value is a computation of the writer monad over truth values, its log
-the presupposition, and the theories are compared along `Writer.toPart`. A partial truth value
-stands in for a three-valued one, the two being equivalent.
+A two-dimensional truth value is a value of the writer monad over truth values, its log the
+presupposition, and the theories are compared along the map to the partial value defined where
+the log holds. A partial truth value stands in for a three-valued one, the two being equivalent.
 
 ## TODO
 
@@ -37,7 +38,17 @@ stands in for a three-valued one, the two being equivalent.
 
 namespace Sudo2012
 
-variable {E : Type}
+variable {E α : Type}
+
+/-- A value with a logged truth value is the partial value defined where the log holds. -/
+def toPart (m : Writer Prop α) : Part α := ⟨m.log, fun _ ↦ m.val⟩
+
+theorem toPart_eq_iff {m n : Writer Prop α} :
+    toPart m = toPart n ↔ (m.log ↔ n.log) ∧ (m.log → m.val = n.val) := by
+  refine ⟨fun h ↦ ?_, fun ⟨hd, hv⟩ ↦ Part.ext' hd fun hx _ ↦ hv hx⟩
+  have hd : m.log ↔ n.log := iff_of_eq (congrArg Part.Dom h)
+  have hm (hx : m.log) : m.val ∈ toPart n := h ▸ (⟨hx, rfl⟩ : m.val ∈ toPart m)
+  exact ⟨hd, fun hx ↦ (hm hx).2.symm⟩
 
 /-- *Criticized herself* in two dimensions asserts that `x` criticized `x` and presupposes that
 `x` is female. -/
@@ -47,16 +58,16 @@ def criticizedHerself (criticized : E → E → Prop) (female : Set E) (x : E) :
 -- (186), (187)
 /-- As a partial predicate, *criticized herself* is *is female and criticized herself*. -/
 theorem toPart_criticizedHerself (criticized : E → E → Prop) (female : Set E) (x : E) :
-    (criticizedHerself criticized female x).toPart =
-      (Writer.mk (x ∈ female ∧ criticized x x) (x ∈ female)).toPart :=
-  Writer.toPart_eq_iff.2 ⟨Iff.rfl, fun hx ↦ propext ⟨fun h ↦ ⟨hx, h⟩, fun h ↦ h.2⟩⟩
+    toPart (criticizedHerself criticized female x) =
+      toPart (Writer.mk (x ∈ female ∧ criticized x x) (x ∈ female)) :=
+  toPart_eq_iff.2 ⟨Iff.rfl, fun hx ↦ propext ⟨fun h ↦ ⟨hx, h⟩, fun h ↦ h.2⟩⟩
 
 -- (185)
 /-- No quantifier over partial predicates computes, from the partial predicate of a
 two-dimensional one, whether exactly one individual satisfies its assertion. -/
 theorem not_existsUnique_factors_toPart [Nontrivial E] :
     ¬ ∃ Q : (E → Part Prop) → Prop, ∀ P : E → Writer Prop Prop,
-      Q (fun x ↦ (P x).toPart) ↔ ∃! x, (P x).val := by
+      Q (fun x ↦ toPart (P x)) ↔ ∃! x, (P x).val := by
   rintro ⟨Q, hQ⟩
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   have h₁ := hQ (criticizedHerself (fun _ _ ↦ True) {a})
