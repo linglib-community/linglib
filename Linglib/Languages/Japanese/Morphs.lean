@@ -7,8 +7,9 @@ public import Linglib.Morphology.Morph
 
 The enclitic *mo* is a coordinator 'and' on each conjunct, the additive particle 'also, too', and
 the particle of the universal indeterminate quantifiers, *dare-mo* 'everyone'. The enclitic *ka*
-is the coordinator 'or' and the particle of the existential indeterminate quantifiers, *dare-ka*
-'someone'. This file gives the two forms, which the entries for each use share.
+is the coordinator 'or', the question particle at the end of a clause, and the particle of the
+existential indeterminate quantifiers, *dare-ka* 'someone'. This file gives the two forms, which
+the entries for each use share.
 
 ## References
 
