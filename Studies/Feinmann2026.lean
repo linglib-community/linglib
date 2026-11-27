@@ -199,7 +199,7 @@ theorem not_probabilisticRelevant_inter [IsProbabilityMeasure μ] (hH : Measurab
     (h : μ[|H] a * μ[|H] b = μ[|Hᶜ] a * μ[|Hᶜ] b) :
     ¬ ProbabilisticRelevant μ (polar H) (a ∩ b) := by
   rw [probabilisticRelevant_polar_iff_weightOfEvidence_ne_zero hH (ha.inter hb) hcH hcH',
-    not_not, weightOfEvidence_eq_zero_iff hH, hind.measure_inter_eq_mul,
+    not_not, weightOfEvidence_eq_zero_iff, hind.measure_inter_eq_mul,
     hind'.measure_inter_eq_mul, h]
 
 end Cancellation

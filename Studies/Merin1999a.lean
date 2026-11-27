@@ -7,44 +7,23 @@ public import Linglib.Semantics.Focus.Particles
 /-!
 # Merin (1999): Information, Relevance, and Social Decisionmaking
 
-Merin measures the relevance of a proposition `E` to a proposition `H` at issue by the logarithm
-of the likelihood ratio, `log (μ[E | H] / μ[E | Hᶜ])`, the amount `E` adds to the logarithm of
-the odds of `H`. That is `ProbabilityTheory.weightOfEvidence μ H E`, and this file formalizes the
-paper's applications of it to *or*, *but*, *even* and *also*.
+The relevance of a proposition `E` to a proposition `H` at issue is the weight of evidence that
+`E` provides for `H`, `log (μ[E | H] / μ[E | Hᶜ])`. This file states the paper's conditions on
+*or*, *but*, *even* and *also* with it.
 
-*Scalar implicature.* The paper licenses *X if not indeed Y* in a context when `Y` is more
-relevant than `X`, and `X` positively so, to one side of the issue. When `A` and `B` are
-independent on each side of the issue and each has positive finite relevance, the conjunction is
-more relevant than either and than the disjunction, which is still positively relevant, so
-*A (or B), if not indeed A and B* is licensed. The exclusive disjunction can then be negatively
-relevant or irrelevant, and the disjunction can be as relevant as a disjunct, so that
-*A or B, if not indeed A* is not licensed; these are shown on small models with counting
-measures.
-
-*But and even.* *A but B* needs an issue to which `A` is positively relevant and `B` and `A ∧ B`
-negatively, and *A CONJ even(B)* one to which `A` is positively relevant and `B` more so; with one
-issue for both they clash on the sign of `B`. For `A` and `B` independent on each side of the
-issue, `B` is less probable given `A` than otherwise exactly when their relevance to the issue has
-opposite nonzero signs. With `Bᶜ` as the issue that independence holds of any `A` and `B`, and `B`
-is negatively relevant, infinitely relevant to the other side, unexpected given a positively
-relevant `A`, and additive with it. A prior on which no instance of a predicate lowers the
-probability of another then excludes *Qa but Qb*.
-
-*Also.* A proposition is presupposed when conditioning on it changes nothing, equivalently when
-it has probability one; it is then irrelevant to every open issue and its relevance adds to that of
-any other proposition. The antecedent of *also* must have been relevant before it was presupposed,
-so it cannot be the focus's own instance, cannot be properly accommodated, and is not a prima
-facie cause of its host.
+For `A` and `B` independent given `H` and given `Hᶜ`, each of positive finite relevance, the
+conjunction is more relevant than either and than the disjunction, so *A or B, if not indeed A
+and B* is licensed; *A or B, if not indeed A* need not be. For such `A` and `B`, `A` lowers the
+probability of `B` if and only if their relevance has opposite nonzero signs. No one issue makes
+a sentence felicitous both as *A but B* and as *A, even B*. A presupposed proposition has
+probability one and relevance zero, so the antecedent of *also* is not the focus's own instance.
 
 ## Implementation notes
 
-* Relevance is `ProbabilityTheory.weightOfEvidence`, an extended real that is `0` for a
-  proposition of probability zero, as the paper stipulates after Carnap. A context is a measure
-  and the proposition at issue, and that the issue is open is the pair of hypotheses `μ H ≠ 0`
-  and `μ Hᶜ ≠ 0` where a statement needs them; the paper's sign of relevance is `SignType.sign`.
-* Independence on each side of the issue is `IndepSet` at the measures conditioned on `H` and on
-  `Hᶜ`.
-* The earlier state of the definition of topic-anaphoric salience is a second measure with the
+* A context is a measure and the proposition at issue. That the issue is open is the pair of
+  hypotheses `μ H ≠ 0` and `μ Hᶜ ≠ 0`, stated where a result needs them.
+* A proposition of probability zero has relevance `0`, as the paper stipulates.
+* The earlier context in the definition of topic-anaphoric salience is a second measure with the
   same issue; that it is the last one before the antecedent became presupposed is not modelled.
 * The second clause of the prediction for *A (or B), if not indeed A and B* is formalized with
   the conjunction as `Y`.
@@ -223,16 +202,6 @@ private theorem cond_count_lt_iff {s' t' : Set V} :
 private theorem cond_count_ne_zero (h : (s ∩ t).Nonempty) : Measure.count[t | s] ≠ 0 :=
   (uniformOn_ne_zero_iff (toFinite s)).2 h
 
-private theorem likelihoodRatio_count_lt_iff (ht : (sᶜ ∩ t).Nonempty) (hu : (sᶜ ∩ u).Nonempty) :
-    Measure.count[t | s] / Measure.count[t | sᶜ] < Measure.count[u | s] / Measure.count[u | sᶜ] ↔
-      ((s ∩ t).ncard / s.ncard : ℝ) / ((sᶜ ∩ t).ncard / sᶜ.ncard) <
-        (s ∩ u).ncard / s.ncard / ((sᶜ ∩ u).ncard / sᶜ.ncard) := by
-  rw [← ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (measure_ne_top _ _) (cond_count_ne_zero ht))
-      (ENNReal.div_ne_top (measure_ne_top _ _) (cond_count_ne_zero hu)),
-    ENNReal.toReal_div, ENNReal.toReal_div, ← measureReal_def, ← measureReal_def,
-    ← measureReal_def, ← measureReal_def, cond_count_real, cond_count_real, cond_count_real,
-    cond_count_real]
-
 end Count
 
 /-! #### Theorem 6b -/
@@ -286,7 +255,7 @@ theorem exists_weightOfEvidence_symmDiff_neg :
     ∃ (μ : Measure World₁) (H a b : Set World₁),
       IndepConfirmers μ H a b ∧ weightOfEvidence μ H (a ∆ b) < 0 := by
   refine ⟨_, _, _, _, indepConfirmers₁,
-    (weightOfEvidence_neg_iff .of_discrete).2 (cond_count_lt_iff.2 ?_)⟩
+    weightOfEvidence_neg_iff.2 (cond_count_lt_iff.2 ?_)⟩
   obtain ⟨h1, h2, -, -, -, -, -, -, h9, h10⟩ := ncard₁
   rw [h1, h2, h9, h10]; norm_num
 
@@ -346,7 +315,7 @@ theorem exists_not_weightOfEvidence_symmDiff_neg :
       IndepConfirmers μ H a b ∧ ¬ weightOfEvidence μ H (a ∆ b) < 0 := by
   refine ⟨_, _, _, _, indepConfirmers₂, fun h ↦ ?_⟩
   obtain ⟨h1, h2, -, -, -, -, -, -, -, -, h11, h12⟩ := ncard₂
-  have := cond_count_lt_iff.1 ((weightOfEvidence_neg_iff .of_discrete).1 h)
+  have := cond_count_lt_iff.1 (weightOfEvidence_neg_iff.1 h)
   rw [h1, h2, h11, h12] at this
   norm_num at this
 
@@ -359,11 +328,11 @@ theorem exists_not_ifNotIndeed_union :
   obtain ⟨h1, h2, h3, h4, -, -, -, -, h9, h10, -⟩ := ncard₂
   have hu : (H₂ᶜ ∩ (A₂ ∪ B₂)).Nonempty := ⟨.off 0 false, by simp [World₂.h, World₂.a]⟩
   have ha : (H₂ᶜ ∩ A₂).Nonempty := ⟨.off 0 false, by simp [World₂.h, World₂.a]⟩
-  have hne {e : Set World₂} (he : (H₂ᶜ ∩ e).Nonempty) : Measure.count e ≠ 0 :=
-    (Measure.count_ne_zero_iff.2 (he.mono inter_subset_right))
+  have hne {e : Set World₂} (he : (H₂ᶜ ∩ e).Nonempty) : (Measure.count[|H₂ᶜ]).real e ≠ 0 :=
+    (ENNReal.toReal_pos (cond_count_ne_zero he) (measure_ne_top _ _)).ne'
   rintro (⟨-, h⟩ | ⟨h, -⟩)
-  · rw [weightOfEvidence_lt_weightOfEvidence_iff (hne hu) (hne ha),
-      likelihoodRatio_count_lt_iff hu ha, h1, h2, h3, h4, h9, h10] at h
+  · rw [weightOfEvidence_lt_weightOfEvidence_iff_real (hne hu) (hne ha)] at h
+    simp only [cond_count_real, h1, h2, h3, h4, h9, h10] at h
     norm_num at h
   · have := cond_count_lt_iff.1 (weightOfEvidence_pos_iff.1 h)
     rw [compl_compl, h1, h2, h9, h10] at this
@@ -414,7 +383,7 @@ theorem cond_lt_iff_sign_eq_neg [IsProbabilityMeasure μ] (hH : MeasurableSet H)
   have hp : 0 < μ.real H * μ.real Hᶜ :=
     mul_pos (ENNReal.toReal_pos hcH (measure_ne_top _ _))
       (ENNReal.toReal_pos hcH' (measure_ne_top _ _))
-  rw [sign_weightOfEvidence hH, sign_weightOfEvidence hH, ← mul_neg_iff_sign,
+  rw [sign_weightOfEvidence, sign_weightOfEvidence, ← mul_neg_iff_sign,
     ← ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
     ← measureReal_def, cond_real_apply μ ha b,
     div_lt_iff₀ (show 0 < μ.real a from ENNReal.toReal_pos ha₀ (measure_ne_top _ _)), ← sub_neg,
@@ -431,7 +400,7 @@ theorem indepSet_cond_compl_self [IsFiniteMeasure μ] (ha : MeasurableSet a)
 -- Theorem 10 (a)
 theorem weightOfEvidence_compl_self_neg [IsFiniteMeasure μ] (hb : MeasurableSet b)
     (hb₀ : μ b ≠ 0) : weightOfEvidence μ bᶜ b < 0 := by
-  rw [weightOfEvidence_neg_iff hb.compl, compl_compl, cond_apply_self hb₀ (measure_ne_top _ _),
+  rw [weightOfEvidence_neg_iff, compl_compl, cond_apply_self hb₀ (measure_ne_top _ _),
     cond_apply hb.compl, compl_inter_self, measure_empty, mul_zero]
   exact zero_lt_one
 
@@ -531,7 +500,7 @@ theorem IsPresupposed.cond_eq_one [IsProbabilityMeasure μ] {s : Set W} (h : IsP
 theorem IsPresupposed.weightOfEvidence_eq_zero [IsProbabilityMeasure μ] (h : IsPresupposed μ a)
     (ha : MeasurableSet a) (hH : MeasurableSet H) (hcH : μ H ≠ 0) (hcH' : μ Hᶜ ≠ 0) :
     weightOfEvidence μ H a = 0 := by
-  rw [weightOfEvidence_eq_zero_iff hH, h.cond_eq_one ha hH hcH, h.cond_eq_one ha hH.compl hcH']
+  rw [weightOfEvidence_eq_zero_iff, h.cond_eq_one ha hH hcH, h.cond_eq_one ha hH.compl hcH']
 
 -- Fact 17
 theorem IsPresupposed.weightOfEvidence_inter [IsProbabilityMeasure μ] (h : IsPresupposed μ a)

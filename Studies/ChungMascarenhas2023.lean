@@ -14,63 +14,36 @@ public import Studies.Lassiter2017
 /-!
 # Chung and Mascarenhas (2023): Modality, expected utility, and hypothesis testing
 
-Chung and Mascarenhas give necessity modals one semantics over a finite family `R` of relevant
-propositions, ideals on a deontic reading and pieces of evidence on an epistemic one. The measure
-function `μ_EVAL[R]` counts the members of `R` true at a world, and the expected value of a
-proposition `φ` under a prior `p` is the average `⨍ w in φ, μ_EVAL[R] w ∂p` of that count over
-`φ`: the expected utility of `φ` on the deontic reading, and on the epistemic reading the sum
-`∑ i, p[|φ].real (R i)` of the likelihoods of the evidence, its explanatory value. For a
-threshold `θ` and a set of alternatives, *must* holds of `φ` when the expected value of `φ`
-exceeds `θ` and that of no alternative does, *ought* when the expected value of `φ` exceeds `θ`
-and that of every alternative, and *might* is the dual of *must* with the polar alternative.
+Necessity modals are interpreted against a finite family `R` of relevant propositions, ideals on a
+deontic reading and pieces of evidence on an epistemic one. The value of a world is the number of
+members of `R` true at it, and the expected value of a proposition `φ` under a prior `p` is the
+average of that number over `φ`, which is `∑ i, p[|φ].real (R i)`. For a threshold `θ` and a set
+of alternatives, *must* holds of `φ` when the expected value of `φ` exceeds `θ` and that of no
+alternative does, *ought* when it exceeds `θ` and that of every alternative, and *might* is the
+dual of *must* with the negation of `φ` as alternative.
 
-*Must* entails *ought*, holds of at most one of a proposition and its alternatives, and is
-antitone in the alternatives; against one alternative `ψ` it holds for the thresholds from the
-expected value of `ψ` up to that of `φ`. It depends on the prior only through the prior
-conditioned on the prejacent and on each alternative, so reweighting the prior by a density
-constant on each of them changes nothing, which is how the paper reads the neglect of base rates.
-A proposition of positive probability that entails every member of `R` has the greatest expected
-value, so nothing is a *must* against such an alternative. With one piece of evidence and the
-negation of the prejacent as alternative, *must* holds at some threshold exactly when the
-evidence has positive weight for the prejacent, and the paper's alternative analysis thresholds
-that weight, the logarithm of the likelihood ratio.
+*Must* entails *ought*, and it depends on the prior only through the prior conditioned on the
+prejacent and on each alternative. With one piece of evidence and the negation of the prejacent
+as alternative, it holds at some threshold if and only if the evidence has positive weight for
+the prejacent.
 
-In the miners puzzle the ideals are that more than `k` of the ten miners are saved, and the
-measure function is the number saved. On a prior that makes the miners as likely to be in either
-shaft whatever is done, blocking neither shaft has expected utility 9 and blocking a shaft 5, and
-given the shaft the miners are in each action has the utility it has there. *We ought to block
-neither shaft* then holds for every threshold below 9 and *we must* for those from 5 up to 9, and
-*if the miners are in shaft s, we ought to block s* for every threshold below 10 and *we must*
-for those from 9 up to 10, the if-clause conditioning the prior. No threshold serves both *must*
-sentences. On Kratzer's account, with best worlds and the miners in one of the shafts, the three
-*ought* sentences are not all true.
-
-With the paper's likelihoods for the Linda scenario, *must* holds of *bank teller and feminist*
-and not of *bank teller* for every threshold from 0.5 up to 1.5, where Kratzer's necessity and a
-threshold on probability hold of every consequence of what they hold of. With its likelihoods
-for the lawyers and engineers scenario, *Jack must be an engineer* holds for the thresholds from
-0.63 up to 1.33. In the inheritance scenario *Kim must marry Pat* is true at some threshold
+In the miners puzzle each *ought* and *must* sentence holds on an interval of thresholds, and no
+threshold verifies both *we must block neither shaft* and *if the miners are in shaft s, we must
+block s*. With the paper's likelihoods for the Linda scenario, *must* holds of a conjunction and
+not of its conjunct. In the inheritance scenario *Kim must marry Pat* holds at some threshold
 against its negation and at none against the other people Kim might marry.
 
 ## Implementation notes
 
-* The expected value of a proposition is the one Lassiter's scale of goodness is built on, with
-  the count as value function. It is real-valued, and `0` for a proposition of probability zero.
-* The relevant propositions are an indexed family and not a set, as in the paper's sum over
-  `e₁, …, eₙ`: the ideals that more than zero, …, more than eight miners are saved hold at the
-  same worlds of the six-world model and count nine times.
-* The paper indexes the probability function by the world of evaluation. The operators here take
-  one measure, and a sentence with an if-clause is evaluated at the measure conditioned on the
-  antecedent with the alternatives unchanged, which intersects the prejacent and each alternative
-  with the antecedent as the paper prints it.
-* Alternative sets are arguments, the paper leaving their source to the question under
-  discussion; *might* takes the polar alternative.
-* *Must* is defined by the composition the paper gives the Korean conditional evaluative: the
-  threshold applied to the conditional *if `φ`, EVAL*, asserted of `φ` and negated of each
-  alternative.
-* The miners, Linda and inheritance models have uniform priors. The paper gives the miners'
-  locations probability 0.5 and no prior for the other two; printed likelihoods are hypotheses on
-  the conditioned measure.
+* The relevant propositions are an indexed family and not a set: the ideals that more than `k`
+  miners are saved coincide for several `k` on the six-world model, and each counts.
+* The operators take one measure. A sentence with an if-clause is evaluated at the measure
+  conditioned on the antecedent, with the alternatives unchanged.
+* Alternative sets are arguments.
+* *Must* is the threshold applied to the conditional evaluative, asserted of the prejacent and
+  negated of each alternative.
+* The models have uniform priors. The likelihoods the paper prints are hypotheses on the
+  conditioned measure.
 
 ## TODO
 
@@ -245,10 +218,11 @@ def mustLog (p : Measure W) (e : Set W) (θ : ℝ) : Set (Set W) :=
 def mightLog (p : Measure W) (e : Set W) (θ : ℝ) : Set (Set W) :=
   {φ | φᶜ ∉ mustLog p e θ}
 
+omit [DiscreteMeasurableSpace W] in
 -- (62)
-theorem mem_mightLog [IsFiniteMeasure p] :
+theorem mem_mightLog :
     φ ∈ mightLog p e θ ↔ ((-θ : ℝ) : EReal) ≤ weightOfEvidence p φ e := by
-  rw [mightLog, mem_ofPred_eq, mustLog, mem_ofPred_eq, not_lt, weightOfEvidence_compl .of_discrete,
+  rw [mightLog, mem_ofPred_eq, mustLog, mem_ofPred_eq, not_lt, weightOfEvidence_compl,
     EReal.neg_le, EReal.coe_neg]
 
 -- (14): where both likelihoods are positive the measure is the difference of their logarithms

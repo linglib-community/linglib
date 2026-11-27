@@ -12,40 +12,39 @@ public import Mathlib.Probability.Distributions.Bernoulli
 /-!
 # Cummins and Franke (2021): Rational Interpretation of Numerical Quantity in Argumentative Contexts
 
-Cummins and Franke measure the argumentative strength of a numerical utterance toward a
-speaker's goal, after Merin, as a log Bayes factor: once on the utterance's truth conditions
-and once on its felicitous assertability, which accounts for the implicatures a hearer may
-draw. In their conference example the goal is that more than 120 people attend, attendees are
-those who registered, registrations are uniform on [0, 200], and the speaker chooses between
-*more than 100* and *more than 110*. Semantically the stronger utterance is the stronger
-argument, but a hearer who reads *more than 110* as implicating *not more than 120* finds that
-reading incompatible with the goal, so pragmatically the utterance is only weak evidence and
-the order reverses.
+The argumentative strength of an utterance `E` toward a goal `H` is the weight of evidence that
+`E` provides for `H`, taken once on the truth conditions of `E` and once on its felicitous
+assertability. In the paper's example the goal is that more than 120 people attend, registrations
+are uniform on [0, 200], and the speaker chooses between *more than 100* and *more than 110*.
 
-We derive the semantic ordering from the general fact that shedding worlds where the goal
-fails only strengthens an argument. When an implicature holds wherever the goal fails, the
-pragmatic Bayes factor is the semantic one discounted by the enrichment rate times the
-probability, given success, that the implicature fails. The paper asks which stronger
-alternative *more than 100* negates. On its granularity account the hearer negates every
-numeral above it at least as round on the scale evoked, which leaves *not more than* the next
-point of that scale. The order then reverses at no rate on the scale of tens, above sixteen in
-seventeen on the scale of 25s, above eight in eleven for the illustration's 150, and above one
-in two on the scale of hundreds, the coarsest decimal scale through 100. Cummins's
-constraint-based account selects the same alternatives for both numerals. The paper's
-high-framing examples, its rules for a sceptical hearer and its corpus study are not
-formalized.
+On truth conditions *more than 110* is the stronger argument, as an utterance that drops worlds
+where the goal fails is stronger. On assertability a hearer enriches *more than n* with
+*not more than c* at rate `ρ`, and the likelihood ratio is the semantic one times `1 - ρ * q`,
+for `q` the probability given the goal that more than `c` attend. With *more than 110* enriched
+by *not more than 120* and *more than 100* by *not more than c*, *more than 100* is the stronger
+argument if and only if `80 < ρ * (c - 40)`: at no rate for `c = 110`, and above 16/17, 8/11 and
+1/2 for `c = 125`, `150` and `200`.
+
+On the granularity account the hearer negates every numeral above `n` at least as round on the
+scale evoked, which on the decimal scales gives `c = 120` and `c = 200`. Cummins's
+constraint-based account selects 200 for *more than 100* and, in a context with a granularity,
+120 for *more than 110*.
 
 ## Implementation notes
 
 * Registrations are uniform on the counts from 1 to 200, each count standing for the unit
-  interval below it, so at the example's whole-number thresholds every probability is the one
-  the paper computes on [0, 200]; *more than n* denotes `Set.Ioi n`.
-* For *more than 110* the paper prints log 11, the Bayes factor of *more than 100* toward the
-  goal *more than 110*. Its own pragmatic calculation gives *more than 110* probability 1/12
-  given failure, so toward the stated goal the factor is 12, which the rate-zero case
-  recovers. The ordering is unaffected.
+  interval below it, so at whole-number thresholds every probability is the one the paper
+  computes on [0, 200].
+* The strength of *more than 110* toward the goal is `log 12`, the value the assertability model
+  gives at rate zero; `log 11` is the strength of *more than 100* toward the goal *more than 110*.
 * Strengths are natural logarithms; the paper prints base-ten decimals, and a change of base
   preserves the sign, order and ratios of strengths.
+* The likelihood ratio is also stated as a real number, since the strength of *more than 110* is
+  `⊥` at rate one.
+
+## TODO
+
+* The paper's high-framing examples, its rules for a sceptical hearer and its corpus study.
 
 ## References
 
@@ -75,43 +74,20 @@ section Ratio
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {H E E' : Set Ω}
 
-/-- The likelihood ratio of a goal `H` on an utterance `E`. -/
-noncomputable abbrev likelihoodRatio (μ : Measure Ω) (H E : Set Ω) : ℝ≥0∞ :=
-  μ[E | H] / μ[E | Hᶜ]
+/-- The likelihood ratio of a goal `H` on an utterance `E`, as a real number. -/
+noncomputable abbrev likelihoodRatio (μ : Measure Ω) (H E : Set Ω) : ℝ :=
+  μ[|H].real E / μ[|Hᶜ].real E
 
-theorem toReal_likelihoodRatio (μ : Measure Ω) (H E : Set Ω) :
-    (likelihoodRatio μ H E).toReal = μ[|H].real E / μ[|Hᶜ].real E :=
-  ENNReal.toReal_div _ _
-
-theorem likelihoodRatio_ne_top (h : μ[E | Hᶜ] ≠ 0) : likelihoodRatio μ H E ≠ ⊤ :=
-  ENNReal.div_ne_top (measure_ne_top _ _) h
-
-theorem weightOfEvidence_eq_log {x : ℝ} (hx : 0 < x) (h : (likelihoodRatio μ H E).toReal = x) :
+theorem weightOfEvidence_eq_log {x : ℝ} (hx : 0 < x) (h : likelihoodRatio μ H E = x) :
     weightOfEvidence μ H E = Real.log x := by
-  have h₀ := ENNReal.toReal_pos_iff.1 (h ▸ hx)
-  have hH : μ[E | H] ≠ 0 := fun h' ↦ h₀.1.ne' (by simp [likelihoodRatio, h'])
-  have hH' : μ[E | Hᶜ] ≠ 0 := fun h' ↦ h₀.2.ne (by simp [likelihoodRatio, h', ENNReal.div_zero hH])
-  rw [weightOfEvidence_eq_coe_log hH hH', ← toReal_likelihoodRatio, h]
-
-theorem weightOfEvidence_pos_iff_one_lt_toReal (ht : likelihoodRatio μ H E ≠ ⊤) :
-    0 < weightOfEvidence μ H E ↔ 1 < (likelihoodRatio μ H E).toReal := by
-  unfold likelihoodRatio at ht ⊢
-  rw [weightOfEvidence_pos_iff, ← ENNReal.toReal_one,
-    ENNReal.toReal_lt_toReal ENNReal.one_ne_top ht,
-    ENNReal.lt_div_iff_mul_lt (.inr ENNReal.one_ne_top) (.inr one_ne_zero), one_mul]
-
-theorem weightOfEvidence_lt_of_likelihoodRatio_lt (h₁ : likelihoodRatio μ H E ≠ 0)
-    (h : likelihoodRatio μ H E < likelihoodRatio μ H E') :
-    weightOfEvidence μ H E < weightOfEvidence μ H E' := by
-  have ne {e : Set Ω} (he : likelihoodRatio μ H e ≠ 0) : μ e ≠ 0 := fun h₀ ↦
-    he (by simp [likelihoodRatio, (cond_absolutelyContinuous h₀ : μ[e | H] = 0)])
-  exact (weightOfEvidence_lt_weightOfEvidence_iff (ne h₁) (ne (ne_bot_of_gt h))).2 h
+  subst h
+  exact weightOfEvidence_eq_coe_log_of_pos hx
 
 /-- Shedding worlds where the goal fails strengthens an argument: an utterance that keeps the
-goal's worlds and drops some of positive probability has a larger likelihood ratio. -/
-theorem likelihoodRatio_lt_of_subset [IsFiniteMeasure μ] (hH : MeasurableSet H)
+goal's worlds and drops some of positive probability is the stronger one. -/
+theorem weightOfEvidence_lt_of_subset [IsFiniteMeasure μ] (hH : MeasurableSet H)
     (hE' : MeasurableSet E') (hsub : E' ⊆ E) (hent : H ∩ E ⊆ E') (hpos : μ (H ∩ E') ≠ 0)
-    (hgap : μ (E \ E') ≠ 0) : likelihoodRatio μ H E < likelihoodRatio μ H E' := by
+    (hgap : μ (E \ E') ≠ 0) : weightOfEvidence μ H E < weightOfEvidence μ H E' := by
   have h : H ∩ E = H ∩ E' := inter_congr_left (fun _ hw ↦ hsub hw.2) hent
   have hgap' : E \ E' ⊆ Hᶜ := fun w hw h ↦ hw.2 (hent ⟨h, hw.1⟩)
   have hd : μ[E' | Hᶜ] < μ[E | Hᶜ] := by
@@ -120,7 +96,9 @@ theorem likelihoodRatio_lt_of_subset [IsFiniteMeasure μ] (hH : MeasurableSet H)
     exact ENNReal.mul_lt_mul_right (ENNReal.inv_ne_zero.mpr (measure_ne_top μ _))
       (ENNReal.inv_ne_top.mpr fun h0 ↦ hgap (measure_mono_null hgap' h0))
       (ENNReal.lt_add_right (measure_ne_top μ _) hgap)
-  rw [likelihoodRatio, likelihoodRatio, cond_apply hH, cond_apply hH, h]
+  rw [weightOfEvidence_lt_weightOfEvidence_iff
+      (.inl (cond_pos_of_inter_ne_zero hH (h ▸ hpos)).ne')
+      (.inl (cond_pos_of_inter_ne_zero hH hpos).ne'), cond_apply hH, cond_apply hH, h]
   exact ENNReal.div_lt_div_left
     (mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top μ _)) hpos)
     (ENNReal.mul_ne_top (ENNReal.inv_ne_top.mpr fun h ↦ hpos
@@ -176,9 +154,9 @@ theorem cond_moreThan100_le_moreThan110 :
     cond_apply_of_subset .of_discrete (Ioi_subset_Ioi (by norm_num))]
   exact ENNReal.div_le_div_left (measure_mono (Ioi_subset_Ioi (by norm_num))) _
 
-theorem likelihoodRatio_moreThan100_lt_moreThan110 :
-    likelihoodRatio prior (Ioi 120) (Ioi 100) < likelihoodRatio prior (Ioi 120) (Ioi 110) :=
-  likelihoodRatio_lt_of_subset .of_discrete .of_discrete (Ioi_subset_Ioi (by norm_num))
+theorem weightOfEvidence_moreThan100_lt_moreThan110 :
+    weightOfEvidence prior (Ioi 120) (Ioi 100) < weightOfEvidence prior (Ioi 120) (Ioi 110) :=
+  weightOfEvidence_lt_of_subset .of_discrete .of_discrete (Ioi_subset_Ioi (by norm_num))
     (inter_subset_left.trans (Ioi_subset_Ioi (by norm_num)))
     ((measureReal_ne_zero_iff).mp (by
       rw [Ioi_inter_Ioi, max_eq_left (by norm_num), real_prior_Ioi (by norm_num)]
@@ -187,30 +165,28 @@ theorem likelihoodRatio_moreThan100_lt_moreThan110 :
       rw [Ioi_sdiff_Ioi, real_prior_Ioc (by norm_num) (by norm_num)]
       norm_num))
 
-theorem toReal_likelihoodRatio_moreThan100 :
-    (likelihoodRatio prior (Ioi 120) (Ioi 100)).toReal = 6 := by
-  rw [toReal_likelihoodRatio, real_cond_Ioi_of_le (by norm_num) (by norm_num), compl_Ioi,
+theorem likelihoodRatio_moreThan100 : likelihoodRatio prior (Ioi 120) (Ioi 100) = 6 := by
+  rw [likelihoodRatio, real_cond_Ioi_of_le (by norm_num) (by norm_num), compl_Ioi,
     real_cond_Iic (by norm_num) (by norm_num)]
   norm_num
 
-theorem toReal_likelihoodRatio_moreThan110 :
-    (likelihoodRatio prior (Ioi 120) (Ioi 110)).toReal = 12 := by
-  rw [toReal_likelihoodRatio, real_cond_Ioi_of_le (by norm_num) (by norm_num), compl_Ioi,
+theorem likelihoodRatio_moreThan110 : likelihoodRatio prior (Ioi 120) (Ioi 110) = 12 := by
+  rw [likelihoodRatio, real_cond_Ioi_of_le (by norm_num) (by norm_num), compl_Ioi,
     real_cond_Iic (by norm_num) (by norm_num)]
   norm_num
 
 theorem weightOfEvidence_moreThan100 :
     weightOfEvidence prior (Ioi 120) (Ioi 100) = Real.log 6 :=
-  weightOfEvidence_eq_log (by norm_num) toReal_likelihoodRatio_moreThan100
+  weightOfEvidence_eq_log (by norm_num) likelihoodRatio_moreThan100
 
 theorem weightOfEvidence_moreThan110 :
     weightOfEvidence prior (Ioi 120) (Ioi 110) = Real.log 12 :=
-  weightOfEvidence_eq_log (by norm_num) toReal_likelihoodRatio_moreThan110
+  weightOfEvidence_eq_log (by norm_num) likelihoodRatio_moreThan110
 
 theorem weightOfEvidence_moreThan100_toward110 :
     weightOfEvidence prior (Ioi 110) (Ioi 100) = Real.log 11 :=
   weightOfEvidence_eq_log (by norm_num) <| by
-    rw [toReal_likelihoodRatio, real_cond_Ioi_of_le (by norm_num) (by norm_num), compl_Ioi,
+    rw [likelihoodRatio, real_cond_Ioi_of_le (by norm_num) (by norm_num), compl_Ioi,
       real_cond_Iic (by norm_num) (by norm_num)]
     norm_num
 
@@ -276,114 +252,109 @@ theorem real_assertable_of_success (ρ : I) {n c : ℕ} (hn : n ≤ 120) (hnc : 
   rw [real_cond_assertable, real_cond_Ioi_of_le hn (by norm_num)] at *
   linear_combination (ρ : ℝ) * hdiff
 
-theorem toReal_likelihoodRatio_assertable (ρ : I) {n c : ℕ} (hn : n ≤ 120) (hc : 120 ≤ c) :
-    (likelihoodRatio (joint ρ) attended (assertable n c)).toReal =
-      (likelihoodRatio prior (Ioi 120) (Ioi n)).toReal *
-        (1 - ρ * (prior[|Ioi 120]).real (Ioi c)) := by
-  rw [toReal_likelihoodRatio, toReal_likelihoodRatio, real_assertable_of_success ρ hn (hn.trans hc),
-    real_assertable_of_failure ρ n hc, real_cond_Ioi_of_le hn (by norm_num),
-    compl_Ioi]
+theorem likelihoodRatio_assertable (ρ : I) {n c : ℕ} (hn : n ≤ 120) (hc : 120 ≤ c) :
+    likelihoodRatio (joint ρ) attended (assertable n c) =
+      likelihoodRatio prior (Ioi 120) (Ioi n) * (1 - ρ * (prior[|Ioi 120]).real (Ioi c)) := by
+  rw [likelihoodRatio, likelihoodRatio, real_assertable_of_success ρ hn (hn.trans hc),
+    real_assertable_of_failure ρ n hc, real_cond_Ioi_of_le hn (by norm_num), compl_Ioi]
   ring
 
 theorem likelihoodRatio_joint_zero (n c : ℕ) :
     likelihoodRatio (joint 0) attended (assertable n c) =
       likelihoodRatio prior (Ioi 120) (Ioi n) := by
-  have h (s : Set ℕ) : (prior.prod (hearer 0))[|Prod.fst ⁻¹' s] (assertable n c) =
-      prior[|s] (Ioi n) := by
-    rw [← measureReal_eq_measureReal_iff, real_cond_assertable]
-    simp
-  unfold likelihoodRatio
-  rw [← preimage_compl, h, h]
+  rw [likelihoodRatio, likelihoodRatio, ← preimage_compl, real_cond_assertable,
+    real_cond_assertable]
+  simp
 
-theorem toReal_likelihoodRatio_assertable_moreThan100 (ρ : I) {c : ℕ} (hc : 120 ≤ c)
-    (hc' : c ≤ 200) :
-    (likelihoodRatio (joint ρ) attended (assertable 100 c)).toReal =
+theorem likelihoodRatio_assertable_moreThan100 (ρ : I) {c : ℕ} (hc : 120 ≤ c) (hc' : c ≤ 200) :
+    likelihoodRatio (joint ρ) attended (assertable 100 c) =
       6 * (1 - ρ * ((200 - (c : ℝ)) / 80)) := by
-  rw [toReal_likelihoodRatio_assertable ρ (by norm_num) hc, toReal_likelihoodRatio_moreThan100,
+  rw [likelihoodRatio_assertable ρ (by norm_num) hc, likelihoodRatio_moreThan100,
     real_cond_Ioi hc hc']
   norm_num
 
-theorem toReal_likelihoodRatio_assertable_moreThan110 (ρ : I) :
-    (likelihoodRatio (joint ρ) attended (assertable 110 120)).toReal = 12 * (1 - ρ) := by
-  rw [toReal_likelihoodRatio_assertable ρ (by norm_num) le_rfl, toReal_likelihoodRatio_moreThan110,
+theorem likelihoodRatio_assertable_moreThan110 (ρ : I) :
+    likelihoodRatio (joint ρ) attended (assertable 110 120) = 12 * (1 - ρ) := by
+  rw [likelihoodRatio_assertable ρ (by norm_num) le_rfl, likelihoodRatio_moreThan110,
     real_cond_Ioi le_rfl (by norm_num)]
   norm_num
 
 theorem weightOfEvidence_assertable_moreThan100 (ρ : I) :
     weightOfEvidence (joint ρ) attended (assertable 100 150) = Real.log (6 * (1 - 5 / 8 * ρ)) :=
   weightOfEvidence_eq_log (by nlinarith [le_one ρ, nonneg ρ]) <| by
-    rw [toReal_likelihoodRatio_assertable_moreThan100 ρ (by norm_num) (by norm_num)]
+    rw [likelihoodRatio_assertable_moreThan100 ρ (by norm_num) (by norm_num)]
     push_cast
     ring
 
 theorem weightOfEvidence_assertable_moreThan110 (ρ : I) (hρ : (ρ : ℝ) < 1) :
     weightOfEvidence (joint ρ) attended (assertable 110 120) = Real.log (12 * (1 - ρ)) :=
-  weightOfEvidence_eq_log (by linarith) (toReal_likelihoodRatio_assertable_moreThan110 ρ)
+  weightOfEvidence_eq_log (by linarith) (likelihoodRatio_assertable_moreThan110 ρ)
 
-private theorem likelihoodRatio_assertable_ne_top (ρ : I) {n c : ℕ} (hn : n < 120) (hc : 120 ≤ c) :
-    likelihoodRatio (joint ρ) attended (assertable n c) ≠ ⊤ := by
-  refine likelihoodRatio_ne_top ((measureReal_ne_zero_iff).mp ?_)
+private theorem real_assertable_of_failure_ne_zero (ρ : I) {n c : ℕ} (hn : n < 120)
+    (hc : 120 ≤ c) : ((joint ρ)[|attendedᶜ]).real (assertable n c) ≠ 0 := by
   rw [real_assertable_of_failure ρ n hc, real_cond_Iic hn.le (by norm_num)]
   exact div_ne_zero (sub_pos.2 (by exact_mod_cast hn)).ne' (by norm_num)
 
 theorem weightOfEvidence_assertable_moreThan100_pos (ρ : I) :
     0 < weightOfEvidence (joint ρ) attended (assertable 100 150) := by
-  rw [weightOfEvidence_pos_iff_one_lt_toReal (likelihoodRatio_assertable_ne_top ρ (by norm_num)
-    (by norm_num)), toReal_likelihoodRatio_assertable_moreThan100 ρ (by norm_num) (by norm_num)]
-  linarith [le_one ρ]
+  rw [weightOfEvidence_assertable_moreThan100]
+  exact EReal.coe_pos.2 (Real.log_pos (by linarith [le_one ρ]))
 
 theorem weightOfEvidence_assertable_moreThan110_pos_iff (ρ : I) :
     0 < weightOfEvidence (joint ρ) attended (assertable 110 120) ↔ (ρ : ℝ) < 11 / 12 := by
-  rw [weightOfEvidence_pos_iff_one_lt_toReal (likelihoodRatio_assertable_ne_top ρ (by norm_num)
-    le_rfl), toReal_likelihoodRatio_assertable_moreThan110]
-  constructor <;> intro <;> linarith
+  rw [weightOfEvidence_pos_iff_real, real_assertable_of_success ρ (by norm_num) (by norm_num),
+    real_assertable_of_failure ρ 110 le_rfl, real_cond_Ioi le_rfl (by norm_num),
+    real_cond_Iic (by norm_num) (by norm_num)]
+  constructor <;> intro h <;> norm_num at h ⊢ <;> linarith
 
 /-! ### The reversal -/
 
-theorem likelihoodRatio_assertable_lt_iff_of_le (ρ : I) {c : ℕ} (hc : 120 ≤ c) (hc' : c ≤ 200) :
-    likelihoodRatio (joint ρ) attended (assertable 110 120) <
-        likelihoodRatio (joint ρ) attended (assertable 100 c) ↔ 80 < ρ * ((c : ℝ) - 40) := by
-  rw [← ENNReal.toReal_lt_toReal (likelihoodRatio_assertable_ne_top _ (by norm_num)
-    le_rfl) (likelihoodRatio_assertable_ne_top _ (by norm_num) hc),
-    toReal_likelihoodRatio_assertable_moreThan110,
-    toReal_likelihoodRatio_assertable_moreThan100 ρ hc hc']
+theorem weightOfEvidence_assertable_lt_iff_of_le (ρ : I) {c : ℕ} (hc : 120 ≤ c) (hc' : c ≤ 200) :
+    weightOfEvidence (joint ρ) attended (assertable 110 120) <
+        weightOfEvidence (joint ρ) attended (assertable 100 c) ↔ 80 < ρ * ((c : ℝ) - 40) := by
+  rw [weightOfEvidence_lt_weightOfEvidence_iff_real
+    (real_assertable_of_failure_ne_zero ρ (by norm_num) le_rfl)
+    (real_assertable_of_failure_ne_zero ρ (by norm_num) hc)]
+  change likelihoodRatio _ _ _ < likelihoodRatio _ _ _ ↔ _
+  rw [likelihoodRatio_assertable_moreThan110, likelihoodRatio_assertable_moreThan100 ρ hc hc']
   constructor <;> intro <;> linarith
 
-theorem likelihoodRatio_assertable_lt_iff (ρ : I) :
-    likelihoodRatio (joint ρ) attended (assertable 110 120) <
-        likelihoodRatio (joint ρ) attended (assertable 100 150) ↔ 8 / 11 < (ρ : ℝ) := by
-  rw [likelihoodRatio_assertable_lt_iff_of_le ρ (by norm_num) (by norm_num), Nat.cast_ofNat]
+theorem weightOfEvidence_assertable_lt_iff (ρ : I) :
+    weightOfEvidence (joint ρ) attended (assertable 110 120) <
+        weightOfEvidence (joint ρ) attended (assertable 100 150) ↔ 8 / 11 < (ρ : ℝ) := by
+  rw [weightOfEvidence_assertable_lt_iff_of_le ρ (by norm_num) (by norm_num), Nat.cast_ofNat]
   constructor <;> intro <;> linarith
 
-theorem likelihoodRatio_assertable_moreThan100_tens_le (ρ : I) :
-    likelihoodRatio (joint ρ) attended (assertable 100 110) ≤
-      likelihoodRatio (joint ρ) attended (assertable 110 120) := by
-  have hS : ((joint ρ)[|attended]).real (assertable 100 110) =
-      1 - ρ := by
+theorem not_weightOfEvidence_assertable_lt_tens (ρ : I) :
+    ¬ weightOfEvidence (joint ρ) attended (assertable 110 120) <
+        weightOfEvidence (joint ρ) attended (assertable 100 110) := by
+  have hS : ((joint ρ)[|attended]).real (assertable 100 110) = 1 - ρ := by
     rw [real_assertable_of_success ρ (by norm_num) (by norm_num),
       real_cond_Ioi_of_le (by norm_num) (by norm_num), mul_one]
-  have hF : ((joint ρ)[|attendedᶜ]).real (assertable 100 110) =
-      ρ / 12 + (1 - ρ) / 6 := by
+  have hF : ((joint ρ)[|attendedᶜ]).real (assertable 100 110) = ρ / 12 + (1 - ρ) / 6 := by
     rw [← preimage_compl, real_cond_assertable, compl_Ioi, cond_real_apply _ .of_discrete,
       inter_eq_right.mpr (Ioc_subset_Iic_self.trans (Iic_subset_Iic.2 (by norm_num))),
       real_prior_Ioc (by norm_num) (by norm_num),
       real_prior_Iic (by norm_num), real_cond_Iic (by norm_num) (by norm_num)]
     ring
   have hpos : 0 < (ρ : ℝ) / 12 + (1 - ρ) / 6 := by linarith [le_one ρ, nonneg ρ]
-  rw [← ENNReal.toReal_le_toReal (likelihoodRatio_ne_top ((measureReal_ne_zero_iff).mp
-    (hF ▸ hpos.ne'))) (likelihoodRatio_assertable_ne_top _ (by norm_num) le_rfl),
-    toReal_likelihoodRatio, hS, hF, toReal_likelihoodRatio_assertable_moreThan110, div_le_iff₀ hpos]
+  rw [weightOfEvidence_lt_weightOfEvidence_iff_real
+    (real_assertable_of_failure_ne_zero ρ (by norm_num) le_rfl) (by rw [hF]; exact hpos.ne'),
+    not_lt]
+  change likelihoodRatio _ _ _ ≤ likelihoodRatio _ _ _
+  rw [likelihoodRatio_assertable_moreThan110, likelihoodRatio, hS, hF, div_le_iff₀ hpos]
   nlinarith [le_one ρ, nonneg ρ]
 
 theorem reversal_on_scales (ρ : I) :
-    ¬ likelihoodRatio (joint ρ) attended (assertable 110 120) <
-        likelihoodRatio (joint ρ) attended (assertable 100 110) ∧
-      (likelihoodRatio (joint ρ) attended (assertable 110 120) <
-          likelihoodRatio (joint ρ) attended (assertable 100 125) ↔ 16 / 17 < (ρ : ℝ)) ∧
-      (likelihoodRatio (joint ρ) attended (assertable 110 120) <
-          likelihoodRatio (joint ρ) attended (assertable 100 200) ↔ 1 / 2 < (ρ : ℝ)) := by
-  refine ⟨not_lt.2 (likelihoodRatio_assertable_moreThan100_tens_le ρ), ?_, ?_⟩ <;>
-    rw [likelihoodRatio_assertable_lt_iff_of_le ρ (by norm_num) (by norm_num), Nat.cast_ofNat] <;>
+    ¬ weightOfEvidence (joint ρ) attended (assertable 110 120) <
+        weightOfEvidence (joint ρ) attended (assertable 100 110) ∧
+      (weightOfEvidence (joint ρ) attended (assertable 110 120) <
+          weightOfEvidence (joint ρ) attended (assertable 100 125) ↔ 16 / 17 < (ρ : ℝ)) ∧
+      (weightOfEvidence (joint ρ) attended (assertable 110 120) <
+          weightOfEvidence (joint ρ) attended (assertable 100 200) ↔ 1 / 2 < (ρ : ℝ)) := by
+  refine ⟨not_weightOfEvidence_assertable_lt_tens ρ, ?_, ?_⟩ <;>
+    rw [weightOfEvidence_assertable_lt_iff_of_le ρ (by norm_num) (by norm_num),
+      Nat.cast_ofNat] <;>
     constructor <;> intro <;> linarith
 
 /-! ### Granularity -/
@@ -460,13 +431,9 @@ noncomputable abbrev nineTenths : I := ⟨9 / 10, by norm_num, by norm_num⟩
 theorem weightOfEvidence_reversal :
     weightOfEvidence prior (Ioi 120) (Ioi 100) < weightOfEvidence prior (Ioi 120) (Ioi 110) ∧
       weightOfEvidence (joint nineTenths) attended (assertable 110 120) <
-        weightOfEvidence (joint nineTenths) attended (assertable 100 150) := by
-  refine ⟨?_, weightOfEvidence_lt_of_likelihoodRatio_lt ?_
-    ((likelihoodRatio_assertable_lt_iff _).mpr (by norm_num [nineTenths]))⟩
-  · rw [weightOfEvidence_moreThan100, weightOfEvidence_moreThan110]
-    exact EReal.coe_lt_coe_iff.2 (Real.log_lt_log (by norm_num) (by norm_num))
-  · exact (ENNReal.toReal_ne_zero.mp (by
-      rw [toReal_likelihoodRatio_assertable_moreThan110]; norm_num [nineTenths])).1
+        weightOfEvidence (joint nineTenths) attended (assertable 100 150) :=
+  ⟨weightOfEvidence_moreThan100_lt_moreThan110,
+    (weightOfEvidence_assertable_lt_iff _).2 (by norm_num [nineTenths])⟩
 
 theorem weightOfEvidence_assertable_moreThan100_nineTenths :
     weightOfEvidence (joint nineTenths) attended (assertable 100 150) = Real.log (21 / 8) := by

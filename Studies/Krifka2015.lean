@@ -546,7 +546,7 @@ theorem sign_weightOfEvidence_evidence (μ : MeasureTheory.Measure Weather)
   cases e
   · have := ProbabilityTheory.cond_isProbabilityMeasure h
     have := ProbabilityTheory.cond_isProbabilityMeasure h'
-    rw [(ProbabilityTheory.weightOfEvidence_eq_zero_iff .of_discrete).2 (by simp [evidence]),
+    rw [ProbabilityTheory.weightOfEvidence_eq_zero_iff.2 (by simp [evidence]),
       sign_zero]
     rfl
   · exact sign_neg (ProbabilityTheory.weightOfEvidence_neg_of_subset_compl .of_discrete
