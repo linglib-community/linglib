@@ -9,6 +9,7 @@ public import Mathlib.GroupTheory.GroupAction.DomAct.Basic
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.MeasureTheory.Group.Action
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
 # Measures invariant under permuting coordinates
@@ -25,6 +26,7 @@ measures then apply to it as they stand: `μ.map (· ∘ σ) = μ` is `MeasureTh
 * `MeasureTheory.smulInvariantMeasure_of_measure_singleton`: on a countable space with measurable
   singletons, a measure is invariant under a group action when moving a point never changes its
   mass.
+* `MeasureTheory.smulInvariantMeasure_bind`: a mixture of invariant measures is invariant.
 * `MeasureTheory.Measure.pi.smulInvariantMeasure_domMulAct`: a finite product of copies of one
   measure is invariant under a group acting on the indices, so under permuting the coordinates.
 
@@ -61,6 +63,16 @@ theorem smulInvariantMeasure_of_measure_singleton {G X : Type*} [Group G] [MulAc
   refine Measure.ext_of_singleton fun x ↦ ?_
   rw [Measure.map_apply (measurable_of_countable _) (measurableSet_singleton x),
     Set.preimage_smul, Set.smul_set_singleton, h]
+
+/-- A mixture of measures invariant under an action is invariant. -/
+@[to_additive /-- A mixture of measures invariant under an additive action is invariant. -/]
+theorem smulInvariantMeasure_bind {M α β : Type*} [SMul M α] [MeasurableSpace α]
+    [MeasurableConstSMul M α] [MeasurableSpace β] {m : Measure β} {κ : β → Measure α}
+    (hκ : AEMeasurable κ m) (h : ∀ᵐ b ∂m, SMulInvariantMeasure M α (κ b)) :
+    SMulInvariantMeasure M α (m.bind κ) := by
+  refine ⟨fun c s hs ↦ ?_⟩
+  rw [Measure.bind_apply (hs.preimage (measurable_const_smul c)) hκ, Measure.bind_apply hs hκ]
+  exact lintegral_congr_ae (h.mono fun b hb ↦ hb.measure_preimage_smul c hs)
 
 /-- Independent and identically distributed values are exchangeable: a finite product of copies
 of one measure is invariant under a group acting on the indices. -/
