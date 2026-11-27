@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Order.Basic
@@ -7,67 +12,58 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # The Agreement Hierarchy
 
-This file defines the four positions of Corbett's Agreement Hierarchy, the attributive
-modifier, the predicate, the relative pronoun and the personal pronoun, as a chain with the
-attributive on top; the availability of semantic agreement at a position; the hybrid nouns
-whose availability varies from position to position; and what it is for a map along a
-hierarchy to respect it.
-
-A target agrees syntactically when its form follows the feature value the controller is
-assigned, and semantically when it follows the controller's meaning. A hybrid noun, such as
-Russian *vrač* 'doctor' denoting a woman or British English *committee*, admits both at some
-positions, and the Agreement Hierarchy predicts that the likelihood of semantic agreement
-never decreases from the attributive towards the personal pronoun, so a map respects the
-hierarchy when it is antitone on the positions where it is recorded. A finite verb agrees at
-the predicate position; Comrie's Predicate Hierarchy, which grades the verb, participle,
-adjective and noun within the predicate, is `Corbett2000.PredicateTarget`.
-
-## Main definitions
-
-* `Agreement.Position`: the four positions, a chain from the personal pronoun up.
-* `Agreement.Kind`: syntactic or semantic agreement, the former below the latter.
-* `Agreement.Availability`: the five degrees of availability of semantic agreement, from
-  syntactic only to semantic only, linearly ordered.
-* `Agreement.RespectsHierarchy`: a map recorded at some positions of a hierarchy is
-  antitone where it is recorded.
-* `Agreement.Hybrid`: a hybrid noun, the availability of semantic agreement at the
-  positions of a hierarchy for which there are data.
+A controller such as Russian *vrač* 'doctor' denoting a woman, or British English *committee*,
+admits two agreements: syntactic agreement follows the feature value the controller is
+assigned, semantic agreement its meaning. [corbett-1979] ranges the targets of agreement in
+four positions, the attributive modifier, the predicate, the relative pronoun and the personal
+pronoun, and claims that the likelihood of semantic agreement never decreases from one to the
+next. A record of that likelihood maps each position to a value, or to `none` where it records
+nothing, and the claim is that it is monotone where it records a value: for a record `f` and any
+default `d`, `MonotoneOn (fun i ↦ (f i).getD d) {i | (f i).isSome}`. The likelihood is graded
+by `Availability`, along which admitting semantic agreement is monotone
+(`Availability.monotone_allows_semantic`) and admitting syntactic agreement antitone
+(`Availability.antitone_allows_syntactic`).
 
 ## Implementation notes
 
-`RespectsHierarchy` takes any preorder of positions and any preorder of values, so that it
-serves the Agreement Hierarchy on `Position`, the Predicate Hierarchy on the sub-positions of
-the predicate, and refinements of the attributive position alike, and corpus proportions of
-semantic agreement as well as availabilities. A position carrying no value is skipped: values
-are compared only across comparable positions that both carry one.
+* The attributive is the least position, the order in which [corbett-1991] prints the
+  hierarchy; [corbett-2006] prints the same ranking with `>`, for decreasing canonicity. With
+  the attributive least, the claim of the hierarchy is monotonicity.
+* A record keeps `none` at a position where agreement does not apply or there are no data, since
+  a value there would be a datum the source does not give. The hierarchy's claim reads the
+  record with a default on the positions it records, as mathlib reads `Polynomial.degree` with
+  `Polynomial.natDegree`; the default is never compared, and every result of mathlib's
+  `MonotoneOn` (composition along the positions, restriction to fewer of them) applies without
+  a predicate of the hierarchy's own. A record with a value everywhere is a total map, and its
+  claim is `Monotone`.
+* `Availability` has the five degrees that [corbett-1991]'s summary of the evidence shades.
 
 ## References
 
-* [corbett-1979] — the Agreement Hierarchy
-* [corbett-1983] — hierarchies, targets and controllers
-* [corbett-1991] — the hierarchy applied to gender, chapter 8
-* [corbett-2006] — the standard monograph on agreement
+* [corbett-1979]
+* [corbett-1983]
+* [corbett-1991]
+* [corbett-2006]
 -/
 
 @[expose] public section
 
 namespace Agreement
 
-/-- A position of the Agreement Hierarchy ([corbett-1979]), declared from the bottom of the
-hierarchy. -/
+/-- A position of the Agreement Hierarchy ([corbett-1979]). -/
 inductive Position where
-  /-- The personal pronoun (English *he ~ she ~ it*). -/
-  | personalPronoun
-  /-- The relative pronoun (German *der ~ die ~ das*). -/
-  | relativePronoun
-  /-- The predicate, a finite verb or a predicate adjective (Russian *kniga interesna*). -/
-  | predicate
   /-- The attributive modifier (French *un bon livre*). -/
   | attributive
+  /-- The predicate, a finite verb or a predicate adjective (Russian *kniga interesna*). -/
+  | predicate
+  /-- The relative pronoun (German *der ~ die ~ das*). -/
+  | relativePronoun
+  /-- The personal pronoun (English *he ~ she ~ it*). -/
+  | personalPronoun
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- The Agreement Hierarchy as a chain:
-`personalPronoun < relativePronoun < predicate < attributive`. -/
+`attributive < predicate < relativePronoun < personalPronoun`. -/
 instance : LinearOrder Position := LinearOrder.lift' Position.ctorIdx (by decide)
 
 /-- Whether an agreement form follows the feature value the controller is assigned or the
@@ -81,7 +77,7 @@ inductive Kind where
 monotone when it never trades semantic agreement for syntactic. -/
 instance : LinearOrder Kind := LinearOrder.lift' Kind.ctorIdx (by decide)
 
-/-- The availability of semantic agreement at a position of a hierarchy, the five categories
+/-- The availability of semantic agreement at a position of a hierarchy, in the five degrees
 of [corbett-1991]'s summary of hybrid nouns, ordered by the likelihood of semantic
 agreement. -/
 inductive Availability where
@@ -97,45 +93,21 @@ namespace Availability
 /-- Availabilities are ordered by the likelihood of semantic agreement. -/
 instance : LinearOrder Availability := LinearOrder.lift' Availability.ctorIdx (by decide)
 
-/-- Which agreement an availability admits. -/
-def Allows : Availability → Kind → Prop
-  | .syntacticOnly, k => k = .syntactic
-  | .semanticOnly, k => k = .semantic
-  | _, _ => True
+/-- Which agreement an availability admits: each, unless only the other is found. -/
+def Allows (a : Availability) : Kind → Prop
+  | .syntactic => a ≠ .semanticOnly
+  | .semantic => a ≠ .syntacticOnly
 
-instance (a : Availability) (k : Kind) : Decidable (a.Allows k) := by
-  cases a <;> simp only [Allows] <;> infer_instance
+instance (a : Availability) : DecidablePred a.Allows
+  | .syntactic => inferInstanceAs (Decidable (a ≠ .semanticOnly))
+  | .semantic => inferInstanceAs (Decidable (a ≠ .syntacticOnly))
+
+theorem monotone_allows_semantic : Monotone (Allows · .semantic) :=
+  (by decide : ∀ a b : Availability, a ≤ b → a.Allows .semantic → b.Allows .semantic)
+
+theorem antitone_allows_syntactic : Antitone (Allows · .syntactic) :=
+  (by decide : ∀ a b : Availability, a ≤ b → b.Allows .syntactic → a.Allows .syntactic)
 
 end Availability
-
-section Hierarchy
-
-variable {ι α : Type*} [Preorder ι] [Preorder α]
-
-/-- A map recording a value at some positions of a hierarchy respects it when the value
-never decreases down the hierarchy: of two comparable positions that both carry a value, the
-lower carries the larger. -/
-def RespectsHierarchy (f : ι → Option α) : Prop :=
-  ∀ ⦃i j⦄, i ≤ j → ∀ a ∈ f i, ∀ b ∈ f j, b ≤ a
-
-instance [Fintype ι] [DecidableLE ι] [DecidableLE α] (f : ι → Option α) :
-    Decidable (RespectsHierarchy f) := by
-  unfold RespectsHierarchy; infer_instance
-
-theorem respectsHierarchy_some_comp_iff_antitone {g : ι → α} :
-    RespectsHierarchy (some ∘ g) ↔ Antitone g := by
-  simp [RespectsHierarchy, Antitone]
-
-/-- A map respecting a hierarchy respects it along any monotone map into it. -/
-theorem RespectsHierarchy.comp_monotone {κ : Type*} [Preorder κ] {f : ι → Option α}
-    (hf : RespectsHierarchy f) {g : κ → ι} (hg : Monotone g) : RespectsHierarchy (f ∘ g) :=
-  fun _ _ h ↦ hf (hg h)
-
-end Hierarchy
-
-/-- A hybrid noun, as the availability of semantic agreement at each position of a hierarchy
-at which agreement in the feature applies and there are data; it respects the hierarchy when
-`RespectsHierarchy` holds of it. -/
-abbrev Hybrid (ι : Type*) := ι → Option Availability
 
 end Agreement

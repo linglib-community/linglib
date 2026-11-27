@@ -20,7 +20,7 @@ and under *must* keep [disjunctions competition cannot remove](##mem_strengthen_
 * A world of a collective or mixed nucleus is the extension of the predicate before closure under
   sum, `ElliottNicolaeSauerland2022.starred`, and a world of a distributive one the plurality it
   holds of.
-* Under *must* a world is replaced by its modal base. `Question.isExhaustivelyResolvable_box_iff`
+* Under *must* a world is replaced by its modal base. `Question.hasStrongestTrueAnswer_box_iff`
   gives the equivalence at one world, and `contentMust` compares forms over every set of
   pluralities, the empty one included; since (14) compares domains of worlds, this takes each base
   to be realized.
@@ -30,7 +30,7 @@ and under *must* keep [disjunctions competition cannot remove](##mem_strengthen_
 * `G+` (47) is a fragment of Elliott et al.'s range chosen for illustration, so the forms range over
   `upwardGQ`, and `hamblinPlus` is the printed fragment. The reasoning of the paper's §5.3 needs the
   former, where *quién(et)t* is
-  [vacuous under *must*](##ElliottNicolaeSauerland2022.isExhaustivelyResolvableOn_upwardGQ). On the
+  [vacuous under *must*](##ElliottNicolaeSauerland2022.hasStrongestAnswerOn_upwardGQ). On the
   fragment [no member is strongest on the modal base of (68b)](##notMem_contentMust_hamblinPlus),
   competition [does exclude (68a)](##notMem_strengthen_atoms), and EXHp [drops where the form is
   undefined](##avoidsIneffability_hamblinPlus), as the paper's fallback paragraph says.
@@ -65,6 +65,8 @@ and under *must* keep [disjunctions competition cannot remove](##mem_strengthen_
 
 namespace AlonsoOvalleRouillard2023
 
+open Examples (Phrase)
+
 open ElliottNicolaeSauerland2022 Question Set Presupposition Mereology
 
 variable {E W : Type*}
@@ -73,25 +75,11 @@ variable {E W : Type*}
 
 section Phrases
 
-/-- An interrogative phrase, by the paper's taxonomy of its rows. -/
-inductive Phrase
-  /-- A singular complex phrase, *which student*. -/
-  | sci
-  /-- A plural complex phrase, *which students*. -/
-  | pci
-  /-- An English bare phrase, *who*. -/
-  | bi
-  /-- A singular bare phrase, *quién*. -/
-  | sbi
-  /-- A plural bare phrase, *quiénes*. -/
-  | pbi
-  deriving DecidableEq
-
 variable [CompleteLattice E] [IsAtomistic E]
 
 /-- The worlds where a question is defined, as in Dayal for complex phrases and *who*, and over the
 weak singular (36a) and the strong plural (36b) for Spanish bare phrases. -/
-def Phrase.felicitous : Phrase → Set E
+def Examples.Phrase.felicitous : Phrase → Set E
   | .sci => whFelicitous (some .singular)
   | .pci => whFelicitous (some .plural)
   | .bi => whFelicitous none
@@ -100,18 +88,20 @@ def Phrase.felicitous : Phrase → Set E
 
 variable [Finite E] {a b : E}
 
-theorem Phrase.atom_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (p : Phrase) :
+theorem Examples.Phrase.atom_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
+    (p : Phrase) :
     a ∈ p.felicitous ↔ p ≠ .pci ∧ p ≠ .pbi := by
   cases p <;> simp [Phrase.felicitous, whFelicitous_singular, whFelicitous_plural ha hb hab,
     whFelicitous_none, presupposition_hamblin_whDomain,
     presupposition_hamblin_Ici (toFinite _) isUpperSet_whStrongPlural, mem_whStrongPlural, ha,
     ha.ne_bot]
 
-theorem Phrase.sup_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) (p : Phrase) :
+theorem Examples.Phrase.sup_mem_felicitous_iff (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b)
+    (p : Phrase) :
     a ⊔ b ∈ p.felicitous ↔ p ≠ .sci := by
   have hne : a ⊔ b ≠ ⊥ := fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1
-  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_atom_sup_of_ne (atom_iff_isAtom.2 ha)
-    (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)
+  have hna : ¬ IsAtom (a ⊔ b) := fun h ↦ not_isAtom_sup_of_ne (ha)
+    (hb) hab (h)
   cases p <;> simp [Phrase.felicitous, whFelicitous_singular, whFelicitous_plural ha hb hab,
     whFelicitous_none, presupposition_hamblin_whDomain,
     presupposition_hamblin_Ici (toFinite _) isUpperSet_whStrongPlural, mem_whStrongPlural, hne, hna]
@@ -126,14 +116,14 @@ variable [SemilatticeSup E] {g g₁ g₂ x : E}
 
 variable {D : Set E} {v : Set E}
 
--- (26b) is `isExhaustivelyResolvable_starred_image_iff`
+-- (26b) is `hasStrongestTrueAnswer_starred_image_iff`
 
 /-- Where two groups form committees, a phrase ranging over conjunctions and disjunctions has a
 strongest true answer, the conjunction of the two, (31). -/
 theorem isStrongestTrueAnswer_hamblin_starred (hg₁ : g₁ ∈ D) (hg₂ : g₂ ∈ D) :
     IsStrongestTrueAnswer (hamblin starred D) {g₁, g₂} (starred g₁ ∩ starred g₂) := by
   refine ⟨⟨.inl (inf_mem_infClosure (mem_image_of_mem _ hg₁) (mem_image_of_mem _ hg₂)),
-    .base (.inl rfl), .base (.inr rfl)⟩, ?_⟩
+    subset_supClosure (Set.mem_insert _ _), subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩, ?_⟩
   rintro q ⟨hq, hw⟩
   obtain ⟨X, -, -, rfl | rfl⟩ := mem_hamblin.1 hq
   · exact subset_iInter₂ fun x hx ↦ starred_subset_of_pair_mem (mem_iInter₂.1 hw x hx)
@@ -144,7 +134,8 @@ theorem isStrongestTrueAnswer_hamblin_starred (hg₁ : g₁ ∈ D) (hg₂ : g₂
 (70), the reading of (53b) that the weak singular allows and the strong singular does not. -/
 theorem isStrongestTrueAnswer_hamblin_starred_singleton (hg : g ∈ D) :
     IsStrongestTrueAnswer (hamblin starred D) {g} (starred g) := by
-  refine ⟨⟨.inl (subset_infClosure (mem_image_of_mem _ hg)), .base rfl⟩, ?_⟩
+  refine ⟨⟨.inl (subset_infClosure (mem_image_of_mem _ hg)),
+    singleton_mem_starred_iff.2 rfl⟩, ?_⟩
   rintro q ⟨hq, hw⟩
   obtain ⟨X, -, -, rfl | rfl⟩ := mem_hamblin.1 hq
   · exact subset_iInter₂ fun x hx ↦ singleton_mem_starred_iff.1 (mem_iInter₂.1 hw x hx) ▸ subset_rfl
@@ -195,7 +186,7 @@ variable [CompleteLattice E]
 /-- The presupposition of a form's question under *must*, (67), on the modal bases, over a range
 `G` for the higher-order forms. -/
 def contentMust (G : Set E → Set (Set E)) (f : Form) : Set (Set E) :=
-  {s | IsExhaustivelyResolvableOn (f.hamblinSet G) s}
+  {s | HasStrongestAnswerOn (f.hamblinSet G) s}
 
 /-- The competitors of *quiénes(et)t* that §5.3 considers. -/
 def rivals (_ : Form) : Set Form := {.quienE, .quienesE, .quienGQ}
@@ -205,8 +196,8 @@ section StrongSingular
 variable {g : E}
 
 -- (54): over individuals the strong singular is undefined at a collective lifting
-theorem not_isExhaustivelyResolvable_starred_atoms (hg : ¬ IsAtom g) :
-    ¬ IsExhaustivelyResolvable (starred '' whDomain (some Number.singular)) {g} := by
+theorem not_hasStrongestTrueAnswer_starred_atoms (hg : ¬ IsAtom g) :
+    ¬ HasStrongestTrueAnswer (starred '' whDomain (some Number.singular)) {g} := by
   rintro ⟨_, ⟨⟨z, hz, rfl⟩, hzw⟩, -⟩
   exact hg (singleton_mem_starred_iff.1 hzw ▸ mem_whDomain_singular.1 hz)
 
@@ -229,9 +220,9 @@ theorem mem_strengthen_disjunction [IsAtomistic E] [Finite E] (hu : u ≠ ⊥) (
       (fun a ha ↦ mem_whDomain_of_isAtom _ ha) hu hv
   refine ⟨hleast, mem_strengthen_iff.2 ⟨⟨_, hleast⟩, ?_⟩⟩
   rintro _ (rfl | rfl | rfl) hs hss
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .singular))
       (fun h ↦ h.2 rfl) hdis (Or.inl rfl) (Or.inr rfl) hs
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .plural))
       (fun h ↦ h.2 rfl) hdis (Or.inl rfl) (Or.inr rfl) hs
   · refine hss.ne ?_
     simp only [contentMust, Form.hamblinSet, upwardGQ_whDomain_singular]
@@ -316,9 +307,9 @@ theorem avoidsIneffability_hamblinPlus [Finite E] (ha : IsAtom a) (hb : IsAtom b
   have hab : Disjoint a b := hdis.mono_right le_sup_left
   refine .inr ⟨fun _ _ ↦ by rw [contentMust_hamblinPlus_quienesGQ]; trivial, ?_⟩
   rintro _ (rfl | rfl | rfl) - hs
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .singular))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .singular))
       (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
-  · exact not_isExhaustivelyResolvableOn_image_Ici (D := whDomain (E := E) (some .plural))
+  · exact not_hasStrongestAnswerOn_image_Ici (D := whDomain (E := E) (some .plural))
       (fun h ↦ h.2 rfl) hab (Or.inl rfl) (Or.inr rfl) (strengthen_subset _ _ _ (hs (.inl rfl)))
   · exact notMem_contentMust_hamblinPlus ha hb hc hbc hdis
       (strengthen_subset _ _ _ (hs (.inr rfl)))
@@ -329,13 +320,9 @@ end Forms
 
 /-! ### The paper's judgments -/
 
-/-- A row's interrogative phrase, by its type in the paper's taxonomy. -/
-def phrase? (e : Datum) : Option Phrase :=
-  e.parse? "type" [("SCI", .sci), ("PCI", .pci), ("BI", .bi), ("SBI", .sbi), ("PBI", .pbi)]
-
 /-- A row's phrase, where the paper judges its singular and plural answers. -/
 def answers? (e : Datum) : Option Phrase :=
-  (phrase? e).filter fun _ ↦ (e.readings.lookup "singular answer").isSome
+  (Examples.phrase e).filter fun _ ↦ (e.readings.lookup "singular answer").isSome
 
 /-- The complete disjunctive answers the paper judges under *must*. -/
 inductive Disjunction
@@ -375,7 +362,7 @@ theorem rows_agree [IsAtomistic E] [Finite E] (ha : IsAtom a) (hb : IsAtom b) (h
 private theorem sup_mem_whStrongPlural (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     a ⊔ b ∈ (whStrongPlural : Set E) :=
   mem_whStrongPlural.2 ⟨fun h ↦ ha.ne_bot (sup_eq_bot_iff.1 h).1, fun h ↦
-    not_atom_sup_of_ne (atom_iff_isAtom.2 ha) (atom_iff_isAtom.2 hb) hab (atom_iff_isAtom.2 h)⟩
+    not_isAtom_sup_of_ne (ha) (hb) hab (h)⟩
 
 -- (36a), (38b): the weak singular has every disjunction
 theorem Disjunction.answer_mem_hamblin_whDomain (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c)
@@ -406,9 +393,9 @@ theorem Disjunction.answer_mem_hamblin_whStrongPlural_iff (ha : IsAtom a) (hb : 
 theorem disjunction_rows_agree (ha : IsAtom a) (hb : IsAtom b) (hc : IsAtom c) (hd : IsAtom d)
     (hab : a ≠ b) (hcd : c ≠ d) :
     ∀ e ∈ Examples.all, ∀ r ∈ e.readings, ∀ k ∈ disjunction? r.1,
-      (phrase? e = some .sbi →
+      (Examples.phrase e = some .sbi →
         (k.answer a b c d ∈ hamblin Ici (whDomain none) ↔ r.2 = .acceptable)) ∧
-      (phrase? e = some .pbi →
+      (Examples.phrase e = some .pbi →
         (k.answer a b c d ∈ hamblin Ici whStrongPlural ↔ r.2 = .acceptable)) := by
   simp only [Disjunction.answer_mem_hamblin_whStrongPlural_iff ha hb hc hd hab hcd,
     iff_true_intro (Disjunction.answer_mem_hamblin_whDomain ha hb hc _), true_iff]
@@ -423,12 +410,13 @@ theorem not_subset_presupposition_weak_singular [Finite E] {c : Set E} (hbot : �
 -- (22a), (23): two groups have an answer over quantifiers and, (26), none over individuals
 theorem two_group_answer_iff {g₁ g₂ : E} (hg₁ : g₁ ∈ whStrongPlural) (hg₂ : g₂ ∈ whStrongPlural)
     (hne : g₁ ≠ g₂) :
-    (IsExhaustivelyResolvable (hamblin starred whStrongPlural) {g₁, g₂} ↔
+    (HasStrongestTrueAnswer (hamblin starred whStrongPlural) {g₁, g₂} ↔
         Examples.ex_22a.readings.lookup "two-group answer" = some .acceptable) ∧
-      ¬ IsExhaustivelyResolvable (starred '' whStrongPlural) {g₁, g₂} := by
+      ¬ HasStrongestTrueAnswer (starred '' whStrongPlural) {g₁, g₂} := by
   refine ⟨iff_of_true ⟨_, isStrongestTrueAnswer_hamblin_starred hg₁ hg₂⟩ (by decide), fun h ↦ ?_⟩
-  obtain ⟨z, -, huniq⟩ := isExhaustivelyResolvable_starred_image_iff.1 h
-  exact hne ((huniq g₁ ⟨hg₁, .base (.inl rfl)⟩).trans (huniq g₂ ⟨hg₂, .base (.inr rfl)⟩).symm)
+  obtain ⟨z, -, huniq⟩ := hasStrongestTrueAnswer_starred_image_iff.1 h
+  exact hne ((huniq g₁ ⟨hg₁, subset_supClosure (Set.mem_insert _ _)⟩).trans
+    (huniq g₂ ⟨hg₂, subset_supClosure (Set.mem_insert_of_mem _ rfl)⟩).symm)
 
 -- (53): one collective lifting is answered by naming the group on the weak singular, and on the
 -- strong singular, whose answer is the tautology, it is not

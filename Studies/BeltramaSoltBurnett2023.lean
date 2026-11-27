@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Basic.Sign
 public import Linglib.Data.Statistics.BeltramaSoltBurnett2023
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
-public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Data.Rat.Floor
@@ -86,7 +86,7 @@ theorem precise_mem_approximate (e : Experiment) {a : Approximator}
     (hne : m {(stimuli e .approximate).after} ≠ {(stimuli e .approximate).after}) :
     (stimuli e .precise).after ∈ m {(stimuli e .approximate).after} := by
   cases e <;> cases a <;> simp only [stimuli, reduceCtorEq, Option.some.injEq] at ha ⊢ <;>
-    obtain ⟨y, rfl⟩ := hr <;> simp only [SetRel.image_ofSuccessors_singleton, Set.mem_Icc] at hne ⊢ <;>
+    obtain ⟨y, rfl⟩ := hr <;> simp only [SetRel.image_cgraph_singleton, Set.mem_Icc] at hne ⊢ <;>
     refine ⟨?_, by omega⟩ <;>
     by_contra h <;> exact hne (by
       obtain rfl : y = 0 := by omega

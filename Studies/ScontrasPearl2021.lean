@@ -6,7 +6,7 @@ public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Pragmatics.Probabilistic.QUD
 public import Linglib.Pragmatics.Probabilistic.Uniform
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Core.Probability.Distributions.Binomial
 public import Linglib.Core.Probability.Kernel.Posterior
@@ -254,7 +254,7 @@ instance (i : Scope) : IsFiniteKernel (L0 D n i) :=
 theorem map_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
     (L0 D n i).map (project n q) u {project n q w}
       = uniformOn ↑(ext D n i u) (↑(cell n q w) : Set (World n)) := by
-  rw [Kernel.map_apply_singleton, L0, literalListener_uniformOn_apply]
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), L0, literalListener_uniformOn_apply]
   congr 1
   ext w'
   simp [cell]

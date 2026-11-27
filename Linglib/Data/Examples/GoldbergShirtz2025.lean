@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `GoldbergShirtz2025` — typed example data
@@ -285,5 +287,48 @@ def gs2025_18b : Datum :=
     paperFeatures := [("hostFrame", "preposition complement")] }
 
 def all : List Datum := [gs2025_1a, gs2025_1b, gs2025_1c, gs2025_t2_simple, gs2025_t2_old, gs2025_t2_mustsee, gs2025_t2_romney, gs2025_t2_honey, gs2025_t2_welcome, gs2025_t3_jespersen, gs2025_t3_diy, gs2025_t3_nyt, gs2025_8a, gs2025_15a, gs2025_15b, gs2025_15c, gs2025_16b, gs2025_17b, gs2025_18b]
+
+/-- The word-class slot a PAL fills. -/
+inductive PALPosition where
+  /-- prenominal modifier: prenominal modifier -/
+  | prenominalModifier
+  /-- head noun: head noun -/
+  | headNoun
+  /-- predicative adjective: predicative adjective -/
+  | predicativeAdjective
+  /-- verb: verb -/
+  | verb
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `position`. -/
+def position (e : Datum) : Option PALPosition :=
+  e.parse? "position" [("prenominal modifier", .prenominalModifier), ("head noun", .headNoun),
+    ("predicative adjective", .predicativeAdjective), ("verb", .verb)]
+
+/-- Word-level inflection attested on a PAL. -/
+inductive Inflection where
+  /-- plural: plural -/
+  | plural
+  /-- agentive -er + plural: agentive -er + plural -/
+  | agentivePlural
+  /-- gerund: gerund -/
+  | gerund
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `inflection`. -/
+def inflection (e : Datum) : Option Inflection :=
+  e.parse? "inflection" [("plural", .plural), ("agentive -er + plural", .agentivePlural), ("gerund", .gerund)]
+
+/-- A comparable construction is hosted by a compound(-like) frame in West Germanic and Turkish, where the compound marker sits on the head noun, or the complement of a preposition in Hebrew and Brazilian Portuguese. -/
+inductive PALHostFrame where
+  /-- compound: compound -/
+  | compound
+  /-- preposition complement: preposition complement -/
+  | prepositionComplement
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `hostFrame`. -/
+def hostFrame (e : Datum) : Option PALHostFrame :=
+  e.parse? "hostFrame" [("compound", .compound), ("preposition complement", .prepositionComplement)]
 
 end GoldbergShirtz2025.Examples

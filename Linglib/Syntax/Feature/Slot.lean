@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Order.Flat
@@ -6,37 +11,37 @@ public import Mathlib.Order.GaloisConnection.Basic
 /-!
 # Feature-checking slots
 
-This file defines the checking slot of one feature dimension on an item and its valuation. The
-slot is `absent` when the item lacks the dimension, `unvalued` when the item bears the dimension
-without a value, and `valued v` when it bears the value `v`. A probe bears an unvalued slot, and a
-nominal whose case has not been assigned bears an unvalued case slot.
+This file defines the checking slot of one feature dimension on an item. For a slot order `β`,
+the order of the information an item can hold in the dimension, the checking slot is
+`FeatureSlot β = WithBot β`: the new bottom element is the slot of an item that lacks the
+dimension, `absent`, and `↑x` is the slot of an item that bears the dimension and holds `x`,
+`unvalued` when `x = ⊥`. A probe bears an unvalued slot, and a nominal whose case has not been
+assigned bears an unvalued case slot.
 
-A checking slot is a flat slot (`Core/Order/Flat.lean`) with a new bottom element, so its type is
-`WithBot (Flat α)`. Its order is `absent < unvalued < valued v`, and distinct values are
-incomparable.
+Over a flat slot (`Core/Order/Flat.lean`), a slot is `absent`, `unvalued`, or `valued v`, with
+`absent < unvalued < valued v` and distinct values incomparable. Over an order with more
+structure, such as that of the person slot, a person with a clusivity, a slot that holds some
+information can come to hold more.
 
-The map `toFlat` forgets whether the dimension is borne: it sends `absent` and `unvalued` to `⊥`.
-It has a left adjoint `ofFlat`, which sends `⊥` to `absent`, and a right adjoint, the coercion,
-which sends `⊥` to `unvalued`. Both adjoints are sections of `toFlat`.
+Forgetting whether the dimension is borne is `WithBot.unbotD ⊥`, which sends the absent and the
+unvalued slot to `⊥`. Its left adjoint `FeatureSlot.ofSlot` sends `⊥` to the absent slot
+(`FeatureSlot.gc_ofSlot_unbotD`), and its right adjoint is the coercion (mathlib's
+`WithBot.giUnbotDBot`).
 
-Valuing a slot with `v` unifies it with `valued v`. An unvalued slot becomes `valued v`, a slot
-valued `v` is unchanged, and a slot valued `w ≠ v` fails, which is `⊤`. An absent slot is
-unchanged, since an item that lacks a dimension cannot be valued in it. On a borne slot,
-[valuation is flat unification](##FeatureSlot.map_toFlat_valueWith).
-
-## Main definitions
-
-* `FeatureSlot`: the checking slots with values in `α`.
-* `FeatureSlot.toFlat`: the value of a slot as a flat slot.
-* `FeatureSlot.ofFlat`: a flat slot as a checking slot.
-* `FeatureSlot.gciOfFlat`: `ofFlat` and `toFlat` form a Galois coinsertion.
-* `FeatureSlot.giToFlat`: `toFlat` and the coercion form a Galois insertion.
-* `FeatureSlot.valueWith`: a slot valued with `v`.
+Unifying a slot with `x` by a unification `u` of `β` is `FeatureSlot.unifyWith u x`. An absent
+slot is unchanged, since an item that lacks a dimension cannot be valued in it. Where `u`
+computes the joins of `β`, unifying a borne slot with `x` is their join
+(`FeatureSlot.unifyWith_eq_coe_iff`), and forgetting that the slot is borne gives the
+unification in `β` (`FeatureSlot.map_unbotD_unifyWith`).
 
 ## Implementation notes
 
-`FeatureSlot α` unfolds to `Option (Option α)`, so the literal `none` typechecks as a slot and
-denotes `absent`, not `unvalued`. Write the named slots.
+`FeatureSlot (Flat α)` unfolds to `Option (Option α)`, so the literal `none` typechecks as a slot
+and denotes `absent`, not `unvalued`. Write the named slots.
+
+The slot takes its order as the parameter, not a type of values, so that a dimension whose
+information is not flat has a checking slot of the same kind. A flat dimension is the case
+`β = Flat α`.
 
 ## References
 
@@ -45,33 +50,34 @@ denotes `absent`, not `unvalued`. Write the named slots.
 
 @[expose] public section
 
-/-- A checking slot with values in `α`: `absent`, `unvalued`, or `valued v`. -/
-abbrev FeatureSlot (α : Type*) := WithBot (Flat α)
+/-- A checking slot over the slot order `β`: absent, or borne with the information `x : β`,
+unvalued when `x = ⊥`. Over a flat slot it is `absent`, `unvalued`, or `valued v`. -/
+abbrev FeatureSlot (β : Type*) := WithBot β
 
 namespace FeatureSlot
 
-variable {α : Type*}
+variable {α β : Type*}
 
 /-- The slot of an item that lacks the dimension. -/
-@[match_pattern] abbrev absent : FeatureSlot α := none
+@[match_pattern] abbrev absent : FeatureSlot β := none
 
 /-- The slot of an item that bears the dimension without a value. -/
-@[match_pattern] abbrev unvalued : FeatureSlot α := WithBot.some ⊥
+@[match_pattern] abbrev unvalued [Bot β] : FeatureSlot β := WithBot.some ⊥
 
 /-- The slot of an item that bears the value `v`. -/
-@[match_pattern] abbrev valued (v : α) : FeatureSlot α := WithBot.some (Flat.some v)
+@[match_pattern] abbrev valued (v : α) : FeatureSlot (Flat α) := WithBot.some (Flat.some v)
 
 /-- Case analysis on a slot. -/
 @[elab_as_elim, cases_eliminator, induction_eliminator]
-def rec' {motive : FeatureSlot α → Sort*} (absent : motive .absent) (unvalued : motive .unvalued)
-    (valued : ∀ v, motive (.valued v)) : ∀ s, motive s
+def rec' {motive : FeatureSlot (Flat α) → Sort*} (absent : motive .absent)
+    (unvalued : motive .unvalued) (valued : ∀ v, motive (.valued v)) : ∀ s, motive s
   | .absent => absent
   | .unvalued => unvalued
   | .valued v => valued v
 
-@[simp] theorem bot_eq_absent : (⊥ : FeatureSlot α) = absent := rfl
+@[simp] theorem bot_eq_absent : (⊥ : FeatureSlot (Flat α)) = absent := rfl
 
-@[simp] theorem unvalued_ne_absent : (unvalued : FeatureSlot α) ≠ absent := nofun
+@[simp] theorem unvalued_ne_absent : (unvalued : FeatureSlot (Flat α)) ≠ absent := nofun
 
 @[simp] theorem valued_ne_absent (v : α) : valued v ≠ absent := nofun
 
@@ -79,19 +85,20 @@ def rec' {motive : FeatureSlot α → Sort*} (absent : motive .absent) (unvalued
 
 @[simp] theorem valued_ne_unvalued (v : α) : valued v ≠ unvalued := nofun
 
-@[simp] theorem absent_ne_unvalued : (absent : FeatureSlot α) ≠ unvalued := nofun
+@[simp] theorem absent_ne_unvalued : (absent : FeatureSlot (Flat α)) ≠ unvalued := nofun
 
 @[simp] theorem unvalued_ne_valued (v : α) : unvalued ≠ valued v := nofun
 
-instance [DecidableEq α] : DecidableEq (FeatureSlot α) :=
+instance [DecidableEq α] : DecidableEq (FeatureSlot (Flat α)) :=
   inferInstanceAs (DecidableEq (WithBot (Flat α)))
 
-instance (priority := 100) decidableEqAbsent : (s : FeatureSlot α) → Decidable (s = absent)
+instance (priority := 100) decidableEqAbsent : (s : FeatureSlot (Flat α)) → Decidable (s = absent)
   | .absent => isTrue rfl
   | .unvalued => isFalse unvalued_ne_absent
   | .valued v => isFalse (valued_ne_absent v)
 
-instance (priority := 100) decidableEqUnvalued : (s : FeatureSlot α) → Decidable (s = unvalued)
+instance (priority := 100) decidableEqUnvalued :
+    (s : FeatureSlot (Flat α)) → Decidable (s = unvalued)
   | .absent => isFalse absent_ne_unvalued
   | .unvalued => isTrue rfl
   | .valued v => isFalse (valued_ne_unvalued v)
@@ -99,25 +106,25 @@ instance (priority := 100) decidableEqUnvalued : (s : FeatureSlot α) → Decida
 @[simp] theorem valued_inj {v w : α} : valued v = valued w ↔ v = w :=
   ⟨fun h ↦ Flat.coe_injective (WithBot.coe_injective h), fun h ↦ h ▸ rfl⟩
 
-@[simp] theorem valued_le_iff {v : α} {s : FeatureSlot α} : valued v ≤ s ↔ s = valued v := by
+@[simp] theorem valued_le_iff {v : α} {s : FeatureSlot (Flat α)} : valued v ≤ s ↔ s = valued v := by
   cases s with
   | absent => exact iff_of_false (WithBot.not_coe_le_bot _) (absent_ne_valued v)
   | unvalued => exact iff_of_false (fun h ↦ Flat.not_coe_le_bot v (WithBot.coe_le_coe.1 h)) nofun
   | valued w => simp [eq_comm]
 
 /-- The value of a slot, if it is valued. -/
-def value? : FeatureSlot α → Option α
+def value? : FeatureSlot (Flat α) → Option α
   | .valued v => some v
   | _ => none
 
-@[simp] theorem value?_absent : (absent : FeatureSlot α).value? = none := rfl
+@[simp] theorem value?_absent : (absent : FeatureSlot (Flat α)).value? = none := rfl
 
-@[simp] theorem value?_unvalued : (unvalued : FeatureSlot α).value? = none := rfl
+@[simp] theorem value?_unvalued : (unvalued : FeatureSlot (Flat α)).value? = none := rfl
 
 @[simp] theorem value?_valued (v : α) : (valued v).value? = some v := rfl
 
 /-- The slot an unvalued item has once offered `o`: valued if `o` is a value, unvalued otherwise. -/
-def offer (o : Option α) : FeatureSlot α := o.elim .unvalued .valued
+def offer (o : Option α) : FeatureSlot (Flat α) := o.elim .unvalued .valued
 
 @[simp] theorem offer_none : offer (none : Option α) = .unvalued := rfl
 
@@ -132,159 +139,124 @@ def offer (o : Option α) : FeatureSlot α := o.elim .unvalued .valued
 @[simp] theorem value?_offer (o : Option α) : (offer o).value? = o := by
   cases o <;> rfl
 
-@[simp] theorem unvalued_le_valued (v : α) : (unvalued : FeatureSlot α) ≤ valued v :=
+@[simp] theorem unvalued_le_valued (v : α) : (unvalued : FeatureSlot (Flat α)) ≤ valued v :=
   WithBot.coe_le_coe.2 bot_le
 
-theorem unvalued_le_offer (o : Option α) : (unvalued : FeatureSlot α) ≤ offer o := by
+theorem unvalued_le_offer (o : Option α) : (unvalued : FeatureSlot (Flat α)) ≤ offer o := by
   cases o <;> simp
 
 /-- A slot with its value, if any, sent through `g`. -/
-def map {β : Type*} (g : α → β) : FeatureSlot α → FeatureSlot β
+def map (g : α → β) : FeatureSlot (Flat α) → FeatureSlot (Flat β)
   | .absent => .absent
   | .unvalued => .unvalued
   | .valued v => .valued (g v)
 
-@[simp] theorem map_absent {β : Type*} (g : α → β) : (absent : FeatureSlot α).map g = absent := rfl
+@[simp] theorem map_absent (g : α → β) : (absent : FeatureSlot (Flat α)).map g = absent := rfl
 
-@[simp] theorem map_unvalued {β : Type*} (g : α → β) :
-    (unvalued : FeatureSlot α).map g = unvalued := rfl
+@[simp] theorem map_unvalued (g : α → β) :
+    (unvalued : FeatureSlot (Flat α)).map g = unvalued := rfl
 
-@[simp] theorem map_valued {β : Type*} (g : α → β) (v : α) : (valued v).map g = valued (g v) :=
+@[simp] theorem map_valued (g : α → β) (v : α) : (valued v).map g = valued (g v) :=
   rfl
 
-@[simp] theorem map_eq_valued_iff {β : Type*} {g : α → β} {s : FeatureSlot α} {w : β} :
+@[simp] theorem map_eq_valued_iff {g : α → β} {s : FeatureSlot (Flat α)} {w : β} :
     s.map g = valued w ↔ ∃ v, s = valued v ∧ g v = w := by
   cases s <;> simp [map]
 
-@[simp] theorem map_eq_unvalued_iff {β : Type*} {g : α → β} {s : FeatureSlot α} :
+@[simp] theorem map_eq_unvalued_iff {g : α → β} {s : FeatureSlot (Flat α)} :
     s.map g = unvalued ↔ s = unvalued := by
   cases s <;> simp [map]
 
-@[simp] theorem value?_map {β : Type*} (g : α → β) (s : FeatureSlot α) :
+@[simp] theorem value?_map (g : α → β) (s : FeatureSlot (Flat α)) :
     (s.map g).value? = s.value?.map g := by
   cases s <;> rfl
 
-@[simp] theorem map_offer {β : Type*} (g : α → β) (o : Option α) :
+@[simp] theorem map_offer (g : α → β) (o : Option α) :
     (offer o).map g = offer (o.map g) := by
   cases o <;> rfl
 
-@[simp] theorem map_map {β γ : Type*} (g : α → β) (h : β → γ) (s : FeatureSlot α) :
+@[simp] theorem map_map {β γ : Type*} (g : α → β) (h : β → γ) (s : FeatureSlot (Flat α)) :
     (s.map g).map h = s.map (h ∘ g) := by
   cases s <;> rfl
 
-/-! ### The flat slot underneath -/
+/-! ### Slots over an arbitrary order -/
 
-/-- The value of a slot as a flat slot, `⊥` if the slot is absent or unvalued. -/
-def toFlat : FeatureSlot α → Flat α := WithBot.unbotD ⊥
+section Order
 
-/-- A flat slot as a checking slot, absent where the flat slot is `⊥`. -/
-def ofFlat : Flat α → FeatureSlot α := Flat.recBotCoe absent valued
+/-- The least checking slot holding `x`, absent where `x` is `⊥`. -/
+def ofSlot [Bot β] [DecidableEq β] (x : β) : FeatureSlot β := if x = ⊥ then ⊥ else ↑x
 
-@[simp] theorem ofFlat_bot : ofFlat (⊥ : Flat α) = absent := rfl
+@[simp] theorem ofSlot_bot [Bot β] [DecidableEq β] : ofSlot (⊥ : β) = ⊥ := by simp [ofSlot]
 
-@[simp] theorem ofFlat_coe (v : α) : ofFlat (v : Flat α) = valued v := rfl
+theorem ofSlot_of_ne_bot [Bot β] [DecidableEq β] {x : β} (h : x ≠ ⊥) : ofSlot x = ↑x := by
+  simp [ofSlot, h]
 
-@[simp] theorem toFlat_absent : toFlat (absent : FeatureSlot α) = ⊥ := rfl
+@[simp] theorem unbotD_ofSlot [Bot β] [DecidableEq β] (x : β) :
+    (ofSlot x).unbotD ⊥ = x := by
+  by_cases h : x = ⊥
+  · rw [h, ofSlot_bot, WithBot.unbotD_bot]
+  · rw [ofSlot_of_ne_bot h, WithBot.unbotD_coe]
 
-@[simp] theorem toFlat_unvalued : toFlat (unvalued : FeatureSlot α) = ⊥ := rfl
-
-@[simp] theorem toFlat_valued (v : α) : toFlat (valued v) = ↑v := rfl
-
-@[simp] theorem toFlat_coe (x : Flat α) : toFlat (x : FeatureSlot α) = x := rfl
-
-@[simp] theorem toFlat_ofFlat (x : Flat α) : toFlat (ofFlat x) = x := by
-  induction x using Flat.recBotCoe <;> rfl
-
-theorem gc_ofFlat_toFlat : GaloisConnection (ofFlat : Flat α → FeatureSlot α) toFlat := by
+theorem gc_ofSlot_unbotD [PartialOrder β] [OrderBot β] [DecidableEq β] :
+    GaloisConnection (ofSlot : β → FeatureSlot β) (WithBot.unbotD ⊥) := by
   intro x s
-  induction x using Flat.recBotCoe with
-  | bot => exact iff_of_true bot_le bot_le
-  | coe v =>
-    rcases eq_or_ne s ⊥ with rfl | hs
-    · exact iff_of_false (WithBot.not_coe_le_bot _) (Flat.not_coe_le_bot v)
-    · exact (WithBot.le_unbotD_iff hs).symm
+  by_cases h : x = ⊥
+  · rw [h, ofSlot_bot]
+    exact iff_of_true bot_le bot_le
+  · rw [ofSlot_of_ne_bot h]
+    induction s using WithBot.recBotCoe with
+    | bot => exact iff_of_false (WithBot.not_coe_le_bot _) fun h' ↦ h (le_bot_iff.1 h')
+    | coe y => exact WithBot.coe_le_coe
 
-/-- `ofFlat` and `toFlat` form a Galois coinsertion. -/
-def gciOfFlat : GaloisCoinsertion (ofFlat : Flat α → FeatureSlot α) toFlat :=
-  gc_ofFlat_toFlat.toGaloisCoinsertion fun x ↦ (toFlat_ofFlat x).le
+/-- `ofSlot` and `WithBot.unbotD ⊥` form a Galois coinsertion. -/
+def gciOfSlot [PartialOrder β] [OrderBot β] [DecidableEq β] :
+    GaloisCoinsertion (ofSlot : β → FeatureSlot β) (WithBot.unbotD ⊥) :=
+  gc_ofSlot_unbotD.toGaloisCoinsertion fun x ↦ (unbotD_ofSlot x).le
 
-/-- `toFlat` and the coercion form a Galois insertion. -/
-def giToFlat : GaloisInsertion (toFlat : FeatureSlot α → Flat α) (↑) :=
-  WithBot.giUnbotDBot
+/-- The slot `s` unified with `x` by the unification `u` of `β`, `⊤` where it fails. An absent
+slot is unchanged. -/
+def unifyWith (u : β → β → WithTop β) (x : β) : FeatureSlot β → WithTop (FeatureSlot β)
+  | ⊥ => ((⊥ : FeatureSlot β) : WithTop (FeatureSlot β))
+  | (y : β) => (u y x).map (↑)
 
-/-! ### Valuation -/
+variable {u : β → β → WithTop β} {x y : β} {s s' : FeatureSlot β}
 
-section Valuation
+@[simp] theorem unifyWith_bot : unifyWith u x ⊥ = ((⊥ : FeatureSlot β) : WithTop (FeatureSlot β)) :=
+  rfl
 
-variable [DecidableEq α] {v w : α} {s s' : FeatureSlot α}
+@[simp] theorem unifyWith_coe : unifyWith u x (y : FeatureSlot β) = (u y x).map (↑) := rfl
 
-/-- The slot `s` valued with `v`, or `⊤` if `s` is valued otherwise. An absent slot is
-unchanged. -/
-def valueWith (v : α) (s : FeatureSlot α) : WithTop (FeatureSlot α) :=
-  if s = absent then s else PartialUnify.unify s (valued v)
+theorem isLUB_pair_coe_iff [Preorder β] {z : β} :
+    IsLUB ({↑y, ↑x} : Set (FeatureSlot β)) (z : FeatureSlot β) ↔ IsLUB {y, x} z := by
+  simp only [isLUB_pair_iff_forall_le, WithBot.coe_le_coe]
+  refine and_congr_right fun _ ↦ and_congr_right fun _ ↦
+    ⟨fun h w hy hx ↦ WithBot.coe_le_coe.1 (h w (WithBot.coe_le_coe.2 hy) (WithBot.coe_le_coe.2 hx)),
+      fun h w hy hx ↦ ?_⟩
+  obtain ⟨w, rfl, -⟩ := WithBot.coe_le_iff.1 hy
+  exact WithBot.coe_le_coe.2 (h w (WithBot.coe_le_coe.1 hy) (WithBot.coe_le_coe.1 hx))
 
-theorem valueWith_of_ne_absent (hs : s ≠ absent) :
-    valueWith v s = PartialUnify.unify s (valued v) := by
-  simp [valueWith, hs]
+/-- Where `u` computes the joins of `β`, unifying a slot the item bears with `x` is their join. -/
+theorem unifyWith_eq_coe_iff [PartialOrder β]
+    (hu : ∀ a b, IsLUB ({↑a, ↑b} : Set (WithTop β)) (u a b)) (hs : s ≠ ⊥) :
+    unifyWith u x s = ↑s' ↔ IsLUB {s, (x : FeatureSlot β)} s' := by
+  induction s using WithBot.recBotCoe with
+  | bot => exact absurd rfl hs
+  | coe y =>
+    rw [unifyWith_coe, WithTop.map_eq_some_iff]
+    refine ⟨fun ⟨z, hz, hzs⟩ ↦
+      hzs ▸ isLUB_pair_coe_iff.2 ((WithTop.eq_coe_iff_of_isLUB (hu y x)).1 hz), fun h ↦ ?_⟩
+    obtain ⟨z, rfl, -⟩ := WithBot.coe_le_iff.1 (isLUB_pair_iff_forall_le.1 h).1
+    exact ⟨z, (WithTop.eq_coe_iff_of_isLUB (hu y x)).2 (isLUB_pair_coe_iff.1 h), rfl⟩
 
-@[simp] theorem valueWith_absent (v : α) :
-    valueWith v (absent : FeatureSlot α) = ↑(absent : FeatureSlot α) := by
-  simp [valueWith]
+/-- Unifying a slot the item bears, then forgetting that it is borne, is unifying in `β`. -/
+theorem map_unbotD_unifyWith [Bot β] (hs : s ≠ ⊥) :
+    (unifyWith u x s).map (WithBot.unbotD ⊥) = u (s.unbotD ⊥) x := by
+  induction s using WithBot.recBotCoe with
+  | bot => exact absurd rfl hs
+  | coe y =>
+    rw [unifyWith_coe, WithBot.unbotD_coe]
+    induction u y x using WithTop.recTopCoe <;> rfl
 
-@[simp] theorem valueWith_unvalued (v : α) :
-    valueWith v (unvalued : FeatureSlot α) = valued v := by
-  rw [valueWith_of_ne_absent unvalued_ne_absent]
-  exact PartialUnify.unify_eq_right.2 (WithBot.coe_le_coe.2 bot_le)
-
-@[simp] theorem valueWith_valued (v w : α) :
-    valueWith v (valued w) = if w = v then ↑(valued w : FeatureSlot α) else ⊤ := by
-  rw [valueWith_of_ne_absent (valued_ne_absent w)]
-  split_ifs with h
-  · exact h ▸ PartialUnify.unify_self _
-  · simp [PartialUnify.unify_coe_coe,
-      show PartialUnify.unify (w : Flat α) v = ⊤ from Flat.unify_eq_top_of_ne h]
-
-theorem valueWith_eq_top_iff : valueWith v s = ⊤ ↔ ∃ w, w ≠ v ∧ s = valued w := by
-  cases s with
-  | absent => simp
-  | unvalued => simp
-  | valued w => by_cases h : w = v <;> simp [h]
-
-theorem le_of_valueWith_eq_coe (h : valueWith v s = s') : s ≤ s' := by
-  rcases eq_or_ne s absent with rfl | hs
-  · exact bot_le
-  · rw [valueWith_of_ne_absent hs, PartialUnify.unify_eq_coe_iff_isLUB] at h
-    exact (mem_upperBounds_pair.1 h.1).1
-
-theorem valueWith_mono (v : α) :
-    Monotone (valueWith v : FeatureSlot α → WithTop (FeatureSlot α)) := by
-  intro s s' h
-  cases s with
-  | absent => exact valueWith_absent v ▸ WithTop.coe_bot (α := FeatureSlot α) ▸ bot_le
-  | unvalued =>
-    cases s' with
-    | absent => exact absurd h (WithBot.not_coe_le_bot _)
-    | unvalued => exact le_rfl
-    | valued w => by_cases hw : w = v <;> simp [hw]
-  | valued u =>
-    cases s' with
-    | absent => exact absurd h (WithBot.not_coe_le_bot _)
-    | unvalued => exact absurd (Flat.coe_le_iff.1 (WithBot.coe_le_coe.1 h)) (by simp)
-    | valued w => obtain rfl : u = w := Flat.coe_le_coe.1 (WithBot.coe_le_coe.1 h); exact le_rfl
-
-theorem map_toFlat_valueWith (hs : s ≠ absent) :
-    (valueWith v s).map toFlat = PartialUnify.unify s.toFlat (v : Flat α) := by
-  cases s with
-  | absent => exact absurd rfl hs
-  | unvalued =>
-    rw [valueWith_unvalued, WithTop.map_coe, toFlat_valued, toFlat_unvalued, eq_comm]
-    exact PartialUnify.unify_eq_right.2 bot_le
-  | valued w =>
-    rcases eq_or_ne w v with rfl | hwv
-    · simp
-    · rw [valueWith_eq_top_iff.2 ⟨w, hwv, rfl⟩, WithTop.map_top, toFlat_valued]
-      exact (Flat.unify_eq_top_of_ne hwv).symm
-
-end Valuation
+end Order
 
 end FeatureSlot

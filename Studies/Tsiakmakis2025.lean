@@ -2,8 +2,8 @@ module
 
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Fragments.Greek.StandardModern.Negation
-public import Linglib.Fragments.Greek.StandardModern.PolarityItems
+public import Linglib.Languages.Greek.StandardModern.Negation
+public import Linglib.Languages.Greek.StandardModern.PolarityItems
 public import Linglib.Data.Examples.Tsiakmakis2025
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -29,7 +29,8 @@ spells out the negator of its class](##Tsiakmakis2025.greek_negators).
   only that the relation be serial. The paper's best worlds, those verifying every premise of an
   ordering source, are [the worlds accessible under it as a
   background](##Tsiakmakis2025.Negator.expletive_neg2_accessible_iff), serial when the ordering
-  source is consistent; Kratzer's best worlds are the relation `Modality.bestAccessible`. The
+  source is consistent; Kratzer's best worlds are the relation
+  `Modality.Background.bestAccessible`. The
   flavour of the modality varies by host and language, epistemic for Greek *min* and deontic for
   French fear-predicate *ne*, and is not fixed.
 * The paper says that canonical negative markers license negative concord items and that
@@ -222,7 +223,8 @@ def predicted? (e : Datum) : Option (List Negator) :=
     some (h.negator :: c)
   else none
 
-/-- The negators among the words of a row's sentence, in order: the entries of the Greek fragment,
+/-- The negators among the words of a row's sentence, in order: the entries of the Greek language
+file,
 classed by the mood they negate. -/
 def negators (e : Datum) : List Negator :=
   (Datum.wordsOf e.primaryText).filterMap fun w ↦

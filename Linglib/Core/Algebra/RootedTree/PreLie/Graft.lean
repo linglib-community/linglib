@@ -5,203 +5,152 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Positions
 
 /-!
-# Simultaneous grafting on rose trees
+# Grafting forests onto the vertices of a rose tree
 
-This file defines `multiGraft T pairs`, which grafts several trees onto `T` at once. Each pair
-`(p, S)` names a vertex of `T` by its address `p` and a tree `S` to become a new child of that
-vertex; every address is read in the original `T`, as in Foissy's multiple grafting. Trees
-grafted at the same vertex are prepended in the order of the pair list, so `multiGraft` depends on
-that order, and `Insertion.lean` recovers independence of it once children are unordered.
+For a tree `T` and a family `g : List ℕ → List (RoseTree α)` of forests indexed by addresses, we
+define `graft T g`, the tree obtained from `T` by making the trees of `g p` new children of the
+vertex at address `p`, for every vertex of `T` at once:
+`graft (node a cs) g = node a (g [] ++ graftForest cs g)`, where `graftForest cs g` grafts onto
+the trees of the forest `cs`, the address `i :: q` naming the vertex at `q` in the `i`-th tree.
+Every address is read in `T`, not in a partly grafted tree, and the new children of a vertex come
+before its old ones.
 
-## Main definitions
+Grafting a single tree `S` at the vertex `p` is `graft T (Function.update (fun _ ↦ []) p [S])`,
+the summand of the grafting pre-Lie product of [foissy-2021]. Grafting several trees is that
+paper's summand of the Guin–Oudom extension, there an iterated single grafting at vertices of
+`T`.
 
-* `multiGraft`, `multiGraftChildren`: simultaneous grafting into a tree and into a forest.
-* `rootPrependFilter`, `headChildFilter`, `tailChildFilter`: the pairs aimed at the root, at the
-  first child, and at the later children, with the addresses shortened accordingly.
-
-## Main results
-
-* `filterMap_rootPrependFilter`, `filterMap_headChildFilter`, `filterMap_tailChildFilter`: each
-  filter is a `List.filter` on the address followed by a projection.
-* `multiGraft_nil`: grafting nothing leaves the tree unchanged.
+We show that `graft` reads `g` only at the vertices of `T` (`graft_congr`), that it commutes with
+relabelling (`map_graft`), and that it adds the vertices of the grafted trees
+(`numNodes_graft`).
 
 ## Implementation notes
 
-The three filters are top-level definitions rather than inline `match` expressions so that every
-caller elaborates the same matcher, which lets their `filterMap` equations rewrite across files.
+The trees to graft are a function of the address and not a list of pairs of an address and a
+tree. Descending into the `i`-th child is then composition with `(i :: ·)`, where a list of pairs
+has to be filtered by the first index of each address and have that index removed. A list of
+pairs is turned into a family by `fun p ↦ (pairs.filter (·.1 = p)).map Prod.snd`.
 
 ## References
 
 * [foissy-2021]
-* [foissy-introduction-hopf-algebras-trees]
 -/
 @[expose] public section
 
 namespace RoseTree
 
-variable {α : Type*}
-
-/-! ### Routing the pairs -/
-
-/-- A pair aimed at the root yields its tree. -/
-def rootPrependFilter (pair : List ℕ × RoseTree α) : Option (RoseTree α) :=
-  match pair.fst with
-  | []     => some pair.snd
-  | _ :: _ => none
-
-@[simp] theorem rootPrependFilter_of_nil (T : RoseTree α) :
-    rootPrependFilter ((([], T) : List ℕ × RoseTree α)) = some T := rfl
-
-@[simp] theorem rootPrependFilter_of_cons (i : ℕ) (rest : List ℕ) (T : RoseTree α) :
-    rootPrependFilter ((i :: rest, T) : List ℕ × RoseTree α) = none := rfl
-
-/-- A pair aimed inside the first child yields the pair with the leading index removed. -/
-def headChildFilter (pair : List ℕ × RoseTree α) : Option (List ℕ × RoseTree α) :=
-  match pair.fst with
-  | 0 :: rest => some (rest, pair.snd)
-  | _         => none
-
-@[simp] theorem headChildFilter_of_nil (T : RoseTree α) :
-    headChildFilter ((([], T) : List ℕ × RoseTree α)) = none := rfl
-
-@[simp] theorem headChildFilter_of_zero_cons (rest : List ℕ) (T : RoseTree α) :
-    headChildFilter ((0 :: rest, T) : List ℕ × RoseTree α) = some (rest, T) := rfl
-
-@[simp] theorem headChildFilter_of_succ_cons (k : ℕ) (rest : List ℕ) (T : RoseTree α) :
-    headChildFilter (((k + 1) :: rest, T) : List ℕ × RoseTree α) = none := rfl
-
-/-- A pair aimed inside a later child yields the pair with the leading index decremented. -/
-def tailChildFilter (pair : List ℕ × RoseTree α) : Option (List ℕ × RoseTree α) :=
-  match pair.fst with
-  | (k + 1) :: rest => some (k :: rest, pair.snd)
-  | _               => none
-
-@[simp] theorem tailChildFilter_of_nil (T : RoseTree α) :
-    tailChildFilter ((([], T) : List ℕ × RoseTree α)) = none := rfl
-
-@[simp] theorem tailChildFilter_of_zero_cons (rest : List ℕ) (T : RoseTree α) :
-    tailChildFilter ((0 :: rest, T) : List ℕ × RoseTree α) = none := rfl
-
-@[simp] theorem tailChildFilter_of_succ_cons (k : ℕ) (rest : List ℕ) (T : RoseTree α) :
-    tailChildFilter (((k + 1) :: rest, T) : List ℕ × RoseTree α) = some (k :: rest, T) := rfl
-
-/-! ### Simultaneous grafting -/
+variable {α β : Type*}
 
 mutual
-/-- `multiGraft T pairs` grafts the tree of each pair at the vertex its address names. The trees
-aimed at the root are prepended to its children in pair-list order; the other pairs descend into
-the child their first index names. -/
-def multiGraft : RoseTree α → List (List ℕ × RoseTree α) → RoseTree α
-  | .node a cs, pairs =>
-      RoseTree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs)
-/-- `multiGraftChildren cs pairs` grafts into the forest `cs`, where the first index of each
-address names a tree of `cs`. -/
-def multiGraftChildren :
-    List (RoseTree α) → List (List ℕ × RoseTree α) → List (RoseTree α)
-  | [],      _     => []
-  | c :: cs, pairs =>
-      multiGraft c (pairs.filterMap headChildFilter) ::
-        multiGraftChildren cs (pairs.filterMap tailChildFilter)
+/-- `graft T g` makes the trees of `g p` new first children of the vertex of `T` at address `p`,
+for every vertex of `T`. -/
+def graft : RoseTree α → (List ℕ → List (RoseTree α)) → RoseTree α
+  | node a cs, g => node a (g [] ++ graftForest cs g)
+/-- `graftForest cs g` grafts onto the trees of the forest `cs`, where the address `i :: q` names
+the vertex at `q` in the `i`-th tree. -/
+def graftForest : List (RoseTree α) → (List ℕ → List (RoseTree α)) → List (RoseTree α)
+  | [], _ => []
+  | c :: cs, g => graft c (fun q ↦ g (0 :: q)) :: graftForest cs fun p ↦ g (p.modifyHead (· + 1))
 end
 
-@[simp] theorem multiGraft_node (a : α) (cs : List (RoseTree α))
-    (pairs : List (List ℕ × RoseTree α)) :
-    multiGraft (RoseTree.node a cs) pairs =
-      RoseTree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs) := rfl
+@[simp] theorem graft_node (a : α) (cs : List (RoseTree α)) (g : List ℕ → List (RoseTree α)) :
+    graft (node a cs) g = node a (g [] ++ graftForest cs g) := rfl
 
-@[simp] theorem multiGraftChildren_nil_cs (pairs : List (List ℕ × RoseTree α)) :
-    multiGraftChildren ([] : List (RoseTree α)) pairs = [] := rfl
+@[simp] theorem graftForest_nil (g : List ℕ → List (RoseTree α)) : graftForest [] g = [] := rfl
 
-@[simp] theorem multiGraftChildren_cons_cs (c : RoseTree α) (cs : List (RoseTree α))
-    (pairs : List (List ℕ × RoseTree α)) :
-    multiGraftChildren (c :: cs) pairs =
-      multiGraft c (pairs.filterMap headChildFilter) ::
-        multiGraftChildren cs (pairs.filterMap tailChildFilter) := rfl
+@[simp] theorem graftForest_cons (c : RoseTree α) (cs : List (RoseTree α))
+    (g : List ℕ → List (RoseTree α)) :
+    graftForest (c :: cs) g =
+      graft c (fun q ↦ g (0 :: q)) :: graftForest cs fun p ↦ g (p.modifyHead (· + 1)) := rfl
 
-/-! ### Filter characterizations
-
-Each pair filter is a `List.filter` on the address followed by a projection, so `Insertion.lean`
-can split the pair lists by a predicate on addresses. -/
-
-theorem filterMap_rootPrependFilter (pairs : List (List ℕ × RoseTree α)) :
-    pairs.filterMap rootPrependFilter =
-      (pairs.filter fun p => decide (p.1 = [])).map Prod.snd := by
-  induction pairs with
+/-- Grafting onto a forest grafts onto each of its trees. -/
+theorem graftForest_eq_mapIdx (cs : List (RoseTree α)) (g : List ℕ → List (RoseTree α)) :
+    graftForest cs g = cs.mapIdx fun i c ↦ graft c fun q ↦ g (i :: q) := by
+  induction cs generalizing g with
   | nil => rfl
-  | cons p pairs ih =>
-    obtain ⟨q, T⟩ := p
-    cases q <;> simp [ih]
+  | cons c cs ih => rw [graftForest_cons, ih, List.mapIdx_cons]; rfl
 
-theorem filterMap_headChildFilter (pairs : List (List ℕ × RoseTree α)) :
-    pairs.filterMap headChildFilter =
-      (pairs.filter fun p => decide (p.1.head? = some 0)).map (Prod.map List.tail id) := by
-  induction pairs with
-  | nil => rfl
-  | cons p pairs ih =>
-    obtain ⟨q, T⟩ := p
-    rcases q with _ | ⟨_ | k, rest⟩ <;> simp [ih]
+@[simp] theorem length_graftForest (cs : List (RoseTree α)) (g : List ℕ → List (RoseTree α)) :
+    (graftForest cs g).length = cs.length := by
+  rw [graftForest_eq_mapIdx, List.length_mapIdx]
 
-theorem filterMap_tailChildFilter (pairs : List (List ℕ × RoseTree α))
-    (h : ∀ p ∈ pairs, p.1 ≠ []) :
-    pairs.filterMap tailChildFilter =
-      (pairs.filter fun p => decide (¬ p.1.head? = some 0)).map
-        (Prod.map (List.modifyHead (· - 1)) id) := by
-  induction pairs with
-  | nil => rfl
-  | cons p pairs ih =>
-    obtain ⟨q, T⟩ := p
-    have ih := ih fun p hp => h p (List.mem_cons_of_mem _ hp)
-    rcases q with _ | ⟨_ | k, rest⟩
-    · exact absurd rfl (h ([], T) List.mem_cons_self)
-    · simp [ih]
-    · simp [ih]
-
-@[simp] theorem value_multiGraft (T : RoseTree α) (pairs : List (List ℕ × RoseTree α)) :
-    (multiGraft T pairs).value = T.value := by
+@[simp] theorem value_graft (T : RoseTree α) (g : List ℕ → List (RoseTree α)) :
+    (graft T g).value = T.value := by
   cases T; rfl
-
-theorem multiGraftChildren_congr {cs : List (RoseTree α)}
-    {pairs₁ pairs₂ : List (List ℕ × RoseTree α)}
-    (h₁ : pairs₁.filterMap headChildFilter = pairs₂.filterMap headChildFilter)
-    (h₂ : pairs₁.filterMap tailChildFilter = pairs₂.filterMap tailChildFilter) :
-    multiGraftChildren cs pairs₁ = multiGraftChildren cs pairs₂ := by
-  cases cs with
-  | nil => rfl
-  | cons c cs => rw [multiGraftChildren_cons_cs, multiGraftChildren_cons_cs, h₁, h₂]
-
-theorem multiGraftChildren_filter_ne_nil (cs : List (RoseTree α))
-    (pairs : List (List ℕ × RoseTree α)) :
-    multiGraftChildren cs (pairs.filter fun p => decide (¬ p.1 = [])) =
-      multiGraftChildren cs pairs := by
-  refine multiGraftChildren_congr ?_ ?_ <;>
-  · rw [List.filterMap_filter]
-    refine List.filterMap_congr fun p _ => ?_
-    obtain ⟨q, T⟩ := p
-    cases q <;> simp
-
-theorem multiGraftChildren_length :
-    ∀ (cs : List (RoseTree α)) (pairs : List (List ℕ × RoseTree α)),
-    (multiGraftChildren cs pairs).length = cs.length
-  | [], _ => rfl
-  | c :: cs, pairs => by
-    rw [multiGraftChildren_cons_cs, List.length_cons, List.length_cons,
-      multiGraftChildren_length cs (pairs.filterMap tailChildFilter)]
 
 mutual
 /-- Grafting nothing leaves a tree unchanged. -/
-theorem multiGraft_nil : ∀ (T : RoseTree α), multiGraft T [] = T
-  | .node a cs => by
-    show RoseTree.node a ([] ++ multiGraftChildren cs []) = RoseTree.node a cs
-    rw [List.nil_append, multiGraftChildren_nil_pairs cs]
-theorem multiGraftChildren_nil_pairs : ∀ (cs : List (RoseTree α)),
-    multiGraftChildren cs [] = cs
+@[simp] theorem graft_nil : ∀ T : RoseTree α, graft T (fun _ ↦ []) = T
+  | node a cs => by rw [graft_node, List.nil_append, graftForest_nil_right cs]
+@[simp] theorem graftForest_nil_right : ∀ cs : List (RoseTree α),
+    graftForest cs (fun _ ↦ []) = cs
   | [] => rfl
-  | c :: cs => by
-    show multiGraft c [] :: multiGraftChildren cs [] = c :: cs
-    rw [multiGraft_nil c, multiGraftChildren_nil_pairs cs]
+  | c :: cs => by rw [graftForest_cons, graft_nil c, graftForest_nil_right cs]
 end
+
+mutual
+/-- `graft T g` depends only on the values of `g` at the vertices of `T`. -/
+theorem graft_congr : ∀ {T : RoseTree α} {g g' : List ℕ → List (RoseTree α)},
+    (∀ p ∈ vertices T, g p = g' p) → graft T g = graft T g'
+  | node a cs, g, g', h => by
+    rw [graft_node, graft_node, h [] List.mem_cons_self,
+      graftForest_congr fun p hp ↦ h p (List.mem_cons_of_mem _ hp)]
+theorem graftForest_congr : ∀ {cs : List (RoseTree α)} {g g' : List ℕ → List (RoseTree α)},
+    (∀ p ∈ verticesList cs, g p = g' p) → graftForest cs g = graftForest cs g'
+  | [], _, _, _ => rfl
+  | c :: cs, g, g', h => by
+    rw [graftForest_cons, graftForest_cons,
+      graft_congr fun q hq ↦ h (0 :: q) (List.mem_append_left _ (List.mem_map_of_mem hq)),
+      graftForest_congr fun p hp ↦ h _ (List.mem_append_right _ (List.mem_map_of_mem hp))]
+end
+
+mutual
+/-- Relabelling a grafted tree is grafting the relabelled trees onto the relabelled tree. -/
+theorem map_graft (f : α → β) : ∀ (T : RoseTree α) (g : List ℕ → List (RoseTree α)),
+    (graft T g).map f = graft (T.map f) fun p ↦ (g p).map (map f)
+  | node a cs, g => by
+    rw [graft_node, map_node, map_node, graft_node, List.map_append, map_graftForest f cs]
+theorem map_graftForest (f : α → β) : ∀ (cs : List (RoseTree α))
+    (g : List ℕ → List (RoseTree α)),
+    (graftForest cs g).map (map f) = graftForest (cs.map (map f)) fun p ↦ (g p).map (map f)
+  | [], _ => rfl
+  | c :: cs, g => by
+    rw [graftForest_cons, List.map_cons, List.map_cons, graftForest_cons, map_graft f c,
+      map_graftForest f cs]
+end
+
+mutual
+/-- A grafted tree has the vertices of the tree and those of the trees grafted at its vertices. -/
+theorem numNodes_graft : ∀ (T : RoseTree α) (g : List ℕ → List (RoseTree α)),
+    (graft T g).numNodes =
+      T.numNodes + ((vertices T).map fun p ↦ ((g p).map numNodes).sum).sum
+  | node a cs, g => by
+    rw [graft_node, numNodes_node, numNodes_node, List.map_append, List.sum_append,
+      sum_map_numNodes_graftForest cs, vertices_node, List.map_cons, List.sum_cons]
+    omega
+theorem sum_map_numNodes_graftForest : ∀ (cs : List (RoseTree α))
+    (g : List ℕ → List (RoseTree α)),
+    ((graftForest cs g).map numNodes).sum =
+      (cs.map numNodes).sum + ((verticesList cs).map fun p ↦ ((g p).map numNodes).sum).sum
+  | [], _ => rfl
+  | c :: cs, g => by
+    rw [graftForest_cons, List.map_cons, List.sum_cons, numNodes_graft c,
+      sum_map_numNodes_graftForest cs, verticesList_cons, List.map_append, List.sum_append,
+      List.map_map, List.map_map, List.map_cons, List.sum_cons]
+    simp only [Function.comp_def]
+    omega
+end
+
+/-- Grafting a leaf at the root and another at the first child. -/
+example : graft (node 0 [leaf 1]) (fun p ↦ if p = [] then [leaf 2] else if p = [0] then [leaf 3]
+    else []) = node 0 [leaf 2, node 1 [leaf 3]] := by
+  decide
+
+/-- An address outside the tree is ignored. -/
+example : graft (leaf 0) (Function.update (fun _ ↦ []) [0] [leaf 1]) = leaf 0 :=
+  (graft_congr fun p hp ↦ by simp_all).trans (graft_nil _)
 
 end RoseTree

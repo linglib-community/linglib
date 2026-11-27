@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Linglib.Phonology.Harmony.System
-public import Linglib.Fragments.Finnish.Phonology
-public import Linglib.Fragments.Turkish.Phonology
+public import Linglib.Languages.Finnish.Phonology
+public import Linglib.Languages.Turkish.Phonology
 public import Studies.Yang2016
 public import Linglib.Data.Examples.Belth2026
 public import Linglib.Morphology.Morph
@@ -27,9 +27,9 @@ iterations with the tiers Σ, [+cons] and [+sib], accuracies 1/8, 4/8 and 7/7, a
 `Toy.learn`). The rules D2L converges to on natural language data are run on the paper's
 examples: Latin liquid dissimilation (54) on (53), with the *lunaris* row it mispredicts
 (`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the
-search-and-copy reading of the fragment's `Finnish.palatalHarmony`, on (51)
-(`finnish_rows`); and Turkish vowel harmony (49a) on (46) and (47) through the fragment's
-two harmonies (`turkish_rows`).
+search-and-copy reading of the language file's `Finnish.palatalHarmony`, on (51)
+(`finnish_rows`); and Turkish vowel harmony (49a) on (46) and (47) through the language file's
+surface forms (`turkish_rows`).
 
 ## Implementation notes
 
@@ -41,7 +41,7 @@ alternating segments must stay on the tier ((19), step 8); on this reading of (2
 second iteration deletes exactly {n, k, g}. A trigger unspecified for the feature counts as
 an incorrect application, as the paper counts it. Ties in accuracy go to the left-context
 rule. Belth's Turkish rule (49a) transmits backness and rounding as one feature set; the
-fragment factors it into the two harmonies of Göksel and Kerslake, applied in turn. The
+language file factors it into the two harmonies of Göksel and Kerslake, applied in turn. The
 predictions of section 4 need Finley's and McMullin and Hansson's full stimulus lists, which
 the paper does not print, so the learned rules (40) and (44) are not run here.
 
@@ -452,7 +452,7 @@ namespace Finnish
 open _root_.Finnish Phonology
 
 /-- `ofChar c` is the segment that the letter `c` of the paper's IPA transcription writes, which
-is the Fragment's spelling but for the vowels `ɑ`, `æ` and `ø`. -/
+is the language file's spelling but for the vowels `ɑ`, `æ` and `ø`. -/
 def ofChar : Char → Option Segment
   | 'ɑ' => some a | 'æ' => some ä | 'ø' => some ö
   | c => _root_.Finnish.ofChar c
@@ -477,7 +477,7 @@ namespace Turkish
 open _root_.Turkish.Phonology Phonology
 
 /-- `ofChar c` is the segment that the letter `c` of the paper's IPA transcription writes, which
-is the Fragment's spelling but for the vowels `ɑ`, `ɯ`, `y` and `ø` and the glide `j`. -/
+is the language file's spelling but for the vowels `ɑ`, `ɯ`, `y` and `ø` and the glide `j`. -/
 def ofChar : Char → Option Segment
   | 'ɑ' => some a | 'ɯ' => some ı | 'y' => some ü | 'ø' => some ö | 'j' => some y
   | c => Turkish.Phonology.ofChar c

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.FixedPoints
-public import Linglib.Syntax.HPSG.Subinterpretation
+public import Linglib.Logic.RSRL.Subinterpretation
 public import Studies.SagWasowBender2003
 public import Linglib.Syntax.HPSG.Construction
 public import Studies.Sag2010
@@ -9,21 +9,22 @@ public import Studies.Sag2010
 /-!
 # Przepiórkowski (2021): Three improvements to the HPSG model theory
 
-This file formalizes the first two of the paper's three proposals. The first takes the models of
-a grammar to be rooted models of single utterances, whose quantifiers range over the whole
-universe. The second solves Höhle's Problem, the spurious ambiguity between look-alike objects
-that may or may not be token-identical, by a General Identity Principle from which a cycle exempts
-the referential indices.
+The paper proposes three changes to the model theory of HPSG. This file formalizes the first
+two.
+
+In RSRL every entity must satisfy the grammar, with quantifiers that range over its own
+components. The first proposal takes a model to be a *rooted* model of a single utterance, whose
+quantifiers range over the whole universe (`ModelsFO`). The second is about Höhle's Problem: two
+objects in a model may look exactly alike and yet be either one object or two. A General
+Identity Principle identifies look-alike objects, and a cycle exempts the referential indices.
 
 ## Implementation notes
 
-`copiesDef` states (13) for any signature. The illustration has a signature with the attribute
-`INT` of (14) and one without it, and `withCopies` adds a copy relation to an utterance. A root
-principle is evaluated at the root in place of the paper's term `r`, which agrees for formulas
-that mention `r` but not the colon. The values that (13) relates are first bound to variables,
-since RSRL applies relations to variables only. An index stands in for the paper's stranded
-`local` objects and has a gender and `INT` but no person or number. The third proposal, a
-second-order description language, is not formalized.
+`copiesDef` states the paper's copy relation for any signature. A root principle is evaluated at
+the root, where the paper uses a term `r`. The values that the copy relation relates are first
+bound to variables, since RSRL applies relations to variables only. An index stands in for the
+paper's stranded `local` objects. The third proposal, a second-order description language, is
+not formalized.
 
 ## References
 
@@ -81,23 +82,27 @@ end Quantification
 
 section Binding
 
-open HPSG.RSRL.Binding
+open HPSG.Binding
 open SagWasowBender2003 (clause)
 
 /-- At the subject of a clause some entity of the universe is a sign, but no component of the
 subject is. -/
-example : (clause .ana .iSubj .gFem .nSing).SatisfiesOn Set.univ (fun _ ↦ .subj) .subj
-      (.ex 0 (.sortAssign (.var 0) .sign)) ∧
-    ¬ (clause .ana .iSubj .gFem .nSing).Satisfies (fun _ ↦ .subj) .subj
-      (.ex 0 (.sortAssign (.var 0) .sign)) := by decide
+example : (clause .ana .susan .susan .susan).SatisfiesOn Set.univ (fun _ ↦ .syn .susan)
+      (.syn .susan) (.ex 0 (.sortAssign (.var 0) .sign)) ∧
+    ¬ (clause .ana .susan .susan .susan).Satisfies (fun _ ↦ .syn .susan) (.syn .susan)
+      (.ex 0 (.sortAssign (.var 0) .sign)) := by decide +kernel
 
 /-- The utterance *Susan likes herself* is a rooted model of the binding principles, and *Susan
-likes himself* is not. -/
-example : ModelsFO ((clause .ana .iSubj .gFem .nSing).generated .s) Binding.grammar ∧
-    ¬ ModelsFO ((clause .ana .iSubj .gMasc .nSing).generated .s) Binding.grammar := by
-  simp only [modelsFO_generated_iff_of_isColonFree _
-    (by simp only [Grammar.mem_ofList]; decide : ∀ d ∈ Binding.grammar, _), Grammar.mem_ofList]
-  decide
+likes himself* is not: the masculine reflexive has an index of its own, the gender being the
+index's. -/
+example : ModelsFO ((clause .ana .susan .susan .susan).generated .root) HPSG.Binding.grammar ∧
+    ¬ ModelsFO ((clause .ana .pron .susan ⟨.third, .sing, .masc⟩).generated .root)
+      HPSG.Binding.grammar := by
+  have hcf : ∀ d ∈ HPSG.Binding.grammar, d.toFormula.IsColonFree := by
+    simp only [Grammar.mem_ofList]; decide
+  rw [modelsFO_generated_iff_of_isColonFree _ hcf, modelsFO_generated_iff_of_isColonFree _ hcf]
+  exact ⟨(SagWasowBender2003.grammatical_clause_ana_iff (by simp) _ _).2 rfl,
+    fun h ↦ by simpa using (SagWasowBender2003.grammatical_clause_ana_iff (by simp) _ _).1 h⟩
 
 end Binding
 

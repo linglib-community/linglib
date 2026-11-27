@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Tense.Embedding
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Linglib.Data.Examples.Klecha2016
 public import Linglib.Data.Examples.Readers
 
@@ -40,9 +40,9 @@ orientation](##hope_readings), as [the corpus sentences show](##rows_readings).
 
 namespace Klecha2016
 
-open scoped Denotes
+open scoped Denotes SetRel
 
-open Tense HistoricalAlternatives English English.Verbs
+open Tense Temporal English English.Verbs
 
 variable {W T : Type*}
 
@@ -62,32 +62,28 @@ def orientations : Background → PointAlgebra
   | .dox => ⟦past⟧ ⊔ ⟦present⟧
   | .cir => ⟦future⟧
 
-/-- The situations a modal base makes accessible from `s`, (35), the alternatives at the times
-its orientations admit. -/
-def base [LT T] (m : Background) (history : HistoricalAlternatives W T) (s : Index W T) :
-    Set (Index W T) :=
-  orientedBase history s m.orientations
+/-- The accessibility relation of a modal base, (35): a step to a historical alternative and
+then to a time its orientations admit. -/
+def base [Preorder T] (m : Background) (F : TWFrame W T) : SetRel (Index W T) (Index W T) :=
+  F.orientedBase m.orientations
 
-theorem base_dox_cir [LT T] (history : HistoricalAlternatives W T) (s : Index W T) :
-    dox.base history s = actualHistoryBase history s ∧
-      cir.base history s = futureHistoryBase history s :=
-  ⟨by rw [base, orientations, actualHistoryBase]; rfl, rfl⟩
+theorem base_dox_cir [Preorder T] (F : TWFrame W T) :
+    dox.base F = F.actualHistoryBase ∧ cir.base F = F.futureHistoryBase :=
+  ⟨by rw [base, orientations, TWFrame.actualHistoryBase]; rfl, rfl⟩
 
 -- (53), (55)
-theorem compare_mem_orientations [LinearOrder T] (m : Background)
-    (history : HistoricalAlternatives W T) {s s' : Index W T} (h : s' ∈ m.base history s) :
-    compare s'.time s.time ∈ m.orientations :=
-  compare_mem_of_mem_orientedBase h
+theorem compare_mem_orientations [LinearOrder T] (m : Background) (F : TWFrame W T)
+    {s s' : Index W T} (h : s ~[m.base F] s') : compare s'.time s.time ∈ m.orientations :=
+  TWFrame.compare_mem_of_mem_orientedBase h
 
 -- §4.2 [abusch-1997]
 theorem orientations_dox : dox.orientations = nonfuture := by decide
 
 /-- The modal base `dox` carries the Upper Limit Constraint: its situations are never later than
 the evaluation time. -/
-theorem nonfuture_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
-    {s s' : Index W T} (h : s' ∈ dox.base history s) :
-    compare s'.time s.time ∈ nonfuture :=
-  orientations_dox ▸ compare_mem_orientations .dox history h
+theorem nonfuture_of_mem_dox [LinearOrder T] (F : TWFrame W T) {s s' : Index W T}
+    (h : s ~[dox.base F] s') : compare s'.time s.time ∈ nonfuture :=
+  orientations_dox ▸ compare_mem_orientations .dox F h
 
 -- (55), (53), §3.3, (43), (45a), §3.2
 theorem cells :
@@ -134,7 +130,7 @@ theorem hope_readings : ∀ a ∈ hope.attitude.toList,
 
 /-! ### The data, (1)–(3) -/
 
-/-- The attitude verb of a row, from the fragment. -/
+/-- The attitude verb of a row, from the language file. -/
 def verbOf : String → Option English.Verbs.Verb
   | "think" => some think
   | "hope" => some hope

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Aikhenvald2008` — typed example data
@@ -46,5 +47,22 @@ def ex18_53 : Datum :=
     paperFeatures := [] }
 
 def all : List Datum := [ex18_17, ex18_53]
+
+/-- The readings the grammar gives a completive medial clause. -/
+inductive Reading where
+  /-- after: the event of the medial clause is over before the next -/
+  | after
+  /-- because: the event of the medial clause is the reason for the next -/
+  | because
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .after => "after"
+  | .because => "because"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
 
 end Aikhenvald2008.Examples

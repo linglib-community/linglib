@@ -1,33 +1,32 @@
 module
 
-public import Mathlib.Order.PiLex
-public import Mathlib.Order.Cover
 public import Mathlib.Data.List.Lex
 public import Mathlib.Data.List.OfFn
-public import Mathlib.Data.Fin.Tuple.Basic
-public import Mathlib.Order.Fin.Basic
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Finset.Max
-public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Order.Fin.Tuple
 
 /-!
-# The lexicographic order on finite tuples
+# The lexicographic order on functions, by a decisive coordinate
 
-This file relates `Pi.Lex` on `Fin n → α` to the lexicographic order on lists and characterizes it
-by the first differing coordinate. The order on `Fin (n + 1)`-tuples compares heads and then tails
-(`Pi.toLex_lt_toLex_iff_succ`, `Pi.toLex_le_toLex_iff_succ`), so it is the order of the tuples'
-lists (`List.ofFn_lex_lt_iff`, `List.ofFn_le_ofFn_iff`); since the list order is decidable, so is
-the tuple order (`Pi.Lex.decidableLT`, `Pi.Lex.decidableLE`), where mathlib's `LinearOrder` on
-`Pi.Lex` carries only a classical instance. A tuple is lexicographically at most another when every coordinate where it
-exceeds the other is preceded by one where it falls short (`Pi.lex_le_iff_forall`), which is to say
-that it falls short at the first coordinate where they differ (`Pi.lex_le_iff_find`). Reindexing
-both tuples along an equivalence transports the index relation (`Pi.lex_comp_equiv`). Read along an
-enumeration `e` of the coordinates, one vector is below another iff some coordinate where it is
-below comes before every coordinate where it is above (`Pi.toLex_comp_lt_iff_exists`), and the
-product order is the intersection of these lexicographic orders over all enumerations
-(`Pi.forall_toLex_comp_lt_iff`). Two vectors ordered oppositely along enumerations that differ by
-transposing adjacent positions agree before those positions and are ordered oppositely at them
-(`Pi.eq_and_lt_and_gt_of_toLex_comp_swap`).
+In the lexicographic order `Pi.Lex r (· < ·)` on functions `x y : ∀ i, β i`, mathlib defines `x`
+to be below `y` when they agree at every index `r`-before some `i` with `x i < y i`. When `r` is a
+well-founded strict total order and each `β i` is linearly ordered, the agreement clause can be
+dropped: `x` is below `y` iff some index where `x` is smaller comes `r`-before every index where
+`x` is larger (`Pi.lex_iff_exists_forall`), and `y` is not below `x` iff every index where `x` is
+larger comes `r`-after one where it is smaller (`Pi.not_lex_iff_forall_exists`).
+
+For `e : κ ≃ ι`, a function `v : ι → β` read along `e` is `toLex (v ∘ e)`, and comparing two such
+is `Pi.Lex` for the order of positions `InvImage (· < ·) e.symm` on `ι`
+(`Pi.toLex_comp_lt_toLex_comp_iff`), so the statements above apply to it.
+
+On tuples `Fin n → α` the lexicographic order compares heads and then tails
+(`Pi.toLex_lt_toLex_iff_succ`), so it is the order of the lists `List.ofFn`
+(`List.ofFn_lex_lt_iff`, `List.ofFn_le_ofFn_iff`).
+
+## Implementation notes
+
+Mathlib's `LinearOrder (Lex (∀ i, β i))` decides `<` and `≤` classically, since the indices are
+only assumed well-founded. `Pi.Lex.decidableLT` and `Pi.Lex.decidableLE` decide them on
+`Lex (Fin n → α)` by comparing lists, in time linear in `n`.
 
 [UPSTREAM] candidates for `Mathlib/Order/PiLex.lean` and `Mathlib/Data/List/OfFn.lean`.
 -/
@@ -36,66 +35,76 @@ transposing adjacent positions agree before those positions and are ordered oppo
 
 namespace Pi
 
-theorem lex_comp_equiv {κ ι β : Type*} (e : κ ≃ ι) (r : κ → κ → Prop) (s : β → β → Prop)
-    (x y : ι → β) :
-    Pi.Lex r (fun {_} ↦ s) (x ∘ e) (y ∘ e) ↔
-      Pi.Lex (fun i j ↦ r (e.symm i) (e.symm j)) (fun {_} ↦ s) x y := by
+section Rel
+
+variable {ι : Type*} {β : ι → Type*} {r : ι → ι → Prop} [∀ i, LinearOrder (β i)]
+  {x y : ∀ i, β i}
+
+/-- For a well-founded trichotomous relation on the indices, `x` is lexicographically below `y`
+iff some index where `x` is smaller comes before every index where `x` is larger. -/
+theorem lex_iff_exists_forall [Std.Trichotomous r] [wf : WellFounded r] :
+    Pi.Lex r (· < ·) x y ↔ ∃ i, x i < y i ∧ ∀ j, y j < x j → r i j := by
+  refine ⟨fun ⟨i, hi, hlt⟩ ↦ ⟨i, hlt, fun j hj ↦ by_contra fun hij ↦ ?_⟩, fun ⟨i, hi, hd⟩ ↦ ?_⟩
+  · obtain rfl : i = j := Std.Trichotomous.trichotomous i j hij fun hji ↦ hj.ne' (hi j hji)
+    exact lt_asymm hlt hj
+  · have hne : {k | x k ≠ y k}.Nonempty := ⟨i, hi.ne⟩
+    refine ⟨wf.min _ hne, fun k hk ↦ not_not.1 fun h ↦ wf.not_lt_min _ h hk, ?_⟩
+    exact (wf.min_mem _ hne).lt_or_gt.resolve_right fun h ↦ wf.not_lt_min _ hi.ne (hd _ h)
+
+theorem not_lex_iff_forall_exists [IsStrictTotalOrder ι r] [wf : WellFounded r] :
+    ¬ Pi.Lex r (· < ·) y x ↔ ∀ j, y j < x j → ∃ i, x i < y i ∧ r i j := by
+  rw [lex_iff_exists_forall]
+  push Not
+  refine forall₂_congr fun j hj ↦ exists_congr fun i ↦ and_congr_right fun hi ↦
+    ⟨fun h ↦ by_contra fun h' ↦ ?_, fun h ↦ asymm h⟩
+  obtain rfl := Std.Trichotomous.trichotomous j i h h'
+  exact lt_asymm hi hj
+
+theorem toLex_le_toLex_iff_forall [LinearOrder ι] [WellFoundedLT ι] :
+    toLex x ≤ toLex y ↔ ∀ j, y j < x j → ∃ i < j, x i < y i :=
+  (not_lt.symm.trans not_lex_iff_forall_exists).trans <|
+    forall₂_congr fun _ _ ↦ exists_congr fun _ ↦ and_comm
+
+end Rel
+
+/-- Read along `e`, the lexicographic order compares positions: it is `Pi.Lex` for the order of
+the indices pulled back along `e.symm`. -/
+theorem toLex_comp_lt_toLex_comp_iff {ι κ β : Type*} [LT κ] [LT β] (e : κ ≃ ι) {v w : ι → β} :
+    toLex (v ∘ e) < toLex (w ∘ e) ↔ Pi.Lex (InvImage (· < ·) e.symm) (· < ·) v w := by
   constructor
   · rintro ⟨k, hk, hs⟩
-    exact ⟨e k, fun j hj ↦ by simpa using hk (e.symm j) (by simpa using hj), hs⟩
+    exact ⟨e k, fun j hj ↦ by simpa using hk (e.symm j) (by simpa [InvImage] using hj), hs⟩
   · rintro ⟨i, hi, hs⟩
-    exact ⟨e.symm i, fun k hk ↦ by simpa using hi (e k) (by simpa using hk), by simpa using hs⟩
+    exact ⟨e.symm i, fun k hk ↦ by simpa using hi (e k) (by simpa [InvImage] using hk),
+      by simpa using hs⟩
 
-end Pi
-
-namespace Pi
-
-variable {α : Type*} [LinearOrder α] {n : ℕ}
-
-theorem toLex_lt_toLex_iff_succ (f g : Fin (n + 1) → α) :
+theorem toLex_lt_toLex_iff_succ {α : Type*} [LT α] {n : ℕ} (f g : Fin (n + 1) → α) :
     toLex f < toLex g ↔ f 0 < g 0 ∨ f 0 = g 0 ∧ toLex (Fin.tail f) < toLex (Fin.tail g) := by
-  constructor
-  · rintro ⟨i, hb, hi⟩
-    rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨i', rfl⟩
-    · exact Or.inl hi
-    · exact Or.inr ⟨hb 0 (Fin.succ_pos i'),
-        ⟨i', fun j hj ↦ hb j.succ (Fin.succ_lt_succ_iff.mpr hj), hi⟩⟩
-  · rintro (hlt | ⟨h0, i', hb, hi⟩)
-    · exact ⟨0, fun j hj ↦ absurd hj (Fin.not_lt_zero j), hlt⟩
-    · refine ⟨i'.succ, fun j hj ↦ ?_, hi⟩
-      rcases Fin.eq_zero_or_eq_succ j with rfl | ⟨j', rfl⟩
-      · exact h0
-      · exact hb j' (Fin.succ_lt_succ_iff.mp hj)
-
-theorem toLex_le_toLex_iff_succ (f g : Fin (n + 1) → α) :
-    toLex f ≤ toLex g ↔ f 0 < g 0 ∨ f 0 = g 0 ∧ toLex (Fin.tail f) ≤ toLex (Fin.tail g) := by
-  have h : f = g ↔ f 0 = g 0 ∧ Fin.tail f = Fin.tail g :=
-    ⟨fun h ↦ h ▸ ⟨rfl, rfl⟩, fun ⟨h0, ht⟩ ↦ by
-      rw [← Fin.cons_self_tail f, ← Fin.cons_self_tail g, h0, ht]⟩
-  rw [le_iff_lt_or_eq, le_iff_lt_or_eq, toLex_lt_toLex_iff_succ, toLex_inj, toLex_inj, h]
-  tauto
+  have h := Fin.pi_lex_lt_cons_cons (x₀ := f 0) (y₀ := g 0) (x := Fin.tail f) (y := Fin.tail g)
+    (fun {_} ↦ (· < ·))
+  rwa [Fin.cons_self_tail, Fin.cons_self_tail] at h
 
 end Pi
 
 namespace List
 
-variable {α : Type*} [LinearOrder α]
+variable {α : Type*}
 
-theorem ofFn_lex_lt_iff : ∀ {n : ℕ} (f g : Fin n → α),
+theorem ofFn_lex_lt_iff [LT α] : ∀ {n : ℕ} (f g : Fin n → α),
     Lex (· < ·) (ofFn f) (ofFn g) ↔ toLex f < toLex g
   | 0, f, g => by
     rw [ofFn_zero, ofFn_zero]
-    exact ⟨nofun, fun h ↦ by obtain ⟨i, -⟩ := h; exact i.elim0⟩
+    exact ⟨nofun, fun ⟨i, _⟩ ↦ i.elim0⟩
   | n + 1, f, g => by
     rw [ofFn_succ, ofFn_succ, cons_lex_cons_iff, ofFn_lex_lt_iff, Pi.toLex_lt_toLex_iff_succ]
     rfl
 
-theorem ofFn_lt_ofFn_iff {n : ℕ} (f g : Fin n → α) : ofFn f < ofFn g ↔ toLex f < toLex g :=
-  ofFn_lex_lt_iff f g
+variable [LinearOrder α]
 
-theorem ofFn_le_ofFn_iff {n : ℕ} (f g : Fin n → α) : ofFn f ≤ ofFn g ↔ toLex f ≤ toLex g := by
-  rw [← not_lt, ← not_lt, ofFn_lt_ofFn_iff]
+theorem ofFn_le_ofFn_iff {n : ℕ} (f g : Fin n → α) : ofFn f ≤ ofFn g ↔ toLex f ≤ toLex g :=
+  not_lt.symm.trans <| (ofFn_lex_lt_iff g f).not.trans not_lt
 
+/-- The cons rule for mathlib's `≤` on lists, as `List.cons_le_cons_iff` is for core's. -/
 theorem cons_le_cons_iff' {a b : α} {l₁ l₂ : List α} :
     a :: l₁ ≤ b :: l₂ ↔ a < b ∨ a = b ∧ l₁ ≤ l₂ := by
   rw [← not_lt, ← not_lt (a := l₂) (b := l₁),
@@ -109,198 +118,13 @@ end List
 
 namespace Pi.Lex
 
-variable {α : Type*} [LinearOrder α] {n : ℕ}
+variable {α : Type*} {n : ℕ}
 
 /-- `<` on `Lex (Fin n → α)` is decided by comparing the tuples' lists. -/
-instance decidableLT : DecidableLT (Lex (Fin n → α)) := fun a b ↦
-  decidable_of_iff _ (List.ofFn_lex_lt_iff (ofLex a) (ofLex b))
+instance decidableLT [LT α] [DecidableEq α] [DecidableLT α] : DecidableLT (Lex (Fin n → α)) :=
+  fun a b ↦ decidable_of_iff _ (List.ofFn_lex_lt_iff (ofLex a) (ofLex b))
 
-instance decidableLE : DecidableLE (Lex (Fin n → α)) := fun a b ↦
+instance decidableLE [LinearOrder α] : DecidableLE (Lex (Fin n → α)) := fun a b ↦
   decidable_of_iff (¬ b < a) not_lt
 
 end Pi.Lex
-
-namespace Pi
-
-variable {α : Type*} [LinearOrder α] {m : ℕ}
-
-theorem lex_le_iff_forall (A B : Fin m → α) :
-    toLex A ≤ toLex B ↔ ∀ p, B p < A p → ∃ p' < p, A p' < B p' := by
-  rw [← not_lt]
-  constructor
-  · intro hnlt p hp
-    by_contra hcon
-    by_cases hS : (Finset.univ.filter (fun j : Fin m ↦ j < p ∧ B j ≠ A j)).Nonempty
-    · set q := (Finset.univ.filter (fun j : Fin m ↦ j < p ∧ B j ≠ A j)).min' hS with hq
-      have hmem := Finset.min'_mem _ hS
-      rw [← hq] at hmem
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem
-      obtain ⟨hqp, hne⟩ := hmem
-      have hbefore : ∀ j, j < q → B j = A j := by
-        intro j hj
-        by_contra hjne
-        have hjmem : j ∈ Finset.univ.filter (fun j : Fin m ↦ j < p ∧ B j ≠ A j) := by
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨lt_trans hj hqp, hjne⟩
-        have := Finset.min'_le _ _ hjmem
-        rw [← hq] at this
-        exact absurd hj (not_lt.mpr this)
-      rcases lt_or_ge (B q) (A q) with hlt | hge
-      · exact hnlt ⟨q, fun j hj ↦ hbefore j hj, hlt⟩
-      · exact hcon ⟨q, hqp, lt_of_le_of_ne hge (fun h ↦ hne h.symm)⟩
-    · rw [Finset.not_nonempty_iff_eq_empty] at hS
-      have hbefore : ∀ j, j < p → B j = A j := by
-        intro j hj
-        by_contra hjne
-        have hjmem : j ∈ Finset.univ.filter (fun j : Fin m ↦ j < p ∧ B j ≠ A j) := by
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact ⟨hj, hjne⟩
-        rw [hS] at hjmem; simp at hjmem
-      exact hnlt ⟨p, fun j hj ↦ hbefore j hj, hp⟩
-  · intro hY hlt
-    obtain ⟨i, hpre, hi⟩ := hlt
-    obtain ⟨p', hp'lt, hp'⟩ := hY i hi
-    exact absurd (hpre p' hp'lt).symm (ne_of_lt hp')
-
-theorem lex_le_iff_find (A B : Fin m → α) [DecidablePred fun i ↦ B i ≠ A i] :
-    toLex A ≤ toLex B ↔ ∀ he : ∃ i, B i ≠ A i, A (Fin.find _ he) < B (Fin.find _ he) := by
-  rw [lex_le_iff_forall]
-  constructor
-  · intro h he
-    by_contra hle
-    obtain ⟨p', hlt, hp'⟩ := h _ ((not_lt.mp hle).lt_of_ne (Fin.find_spec he))
-    exact Fin.find_min he hlt hp'.ne'
-  · intro hlead p hp
-    have he : ∃ i, B i ≠ A i := ⟨p, hp.ne⟩
-    refine ⟨Fin.find _ he, ?_, hlead he⟩
-    exact (Fin.find_le_of_pos he hp.ne).lt_of_ne fun h ↦
-      absurd (h ▸ hlead he) hp.asymm
-
-end Pi
-
-namespace Pi
-
-section Reindex
-
-variable {ι κ β : Type*} [LinearOrder κ] [LinearOrder β] (e : κ ≃ ι) {v w : ι → β}
-
-theorem toLex_comp_strictMono [WellFoundedLT κ] : StrictMono fun v : ι → β ↦ toLex (v ∘ e) :=
-  fun v w h ↦ Pi.toLex_strictMono <| by
-    obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 h
-    exact Pi.lt_def.2 ⟨fun k ↦ hle (e k), e.symm i, by simpa using hi⟩
-
-private theorem eq_and_eq_of_swap_lt_swap [DecidableEq κ] {a b x y : κ} (hab : a ⋖ b)
-    (hxy : x < y) (h : Equiv.swap a b y < Equiv.swap a b x) : x = a ∧ y = b := by
-  have hlt : ∀ z, z ≠ a → z < b → z < a := fun z hza hzb ↦ (hab.le_of_lt hzb).lt_of_ne hza
-  rcases eq_or_ne x a with rfl | hxa
-  · rcases eq_or_ne y b with rfl | hyb
-    · exact ⟨rfl, rfl⟩
-    · rw [Equiv.swap_apply_left, Equiv.swap_apply_of_ne_of_ne hxy.ne' hyb] at h
-      exact absurd (hlt y hxy.ne' h) hxy.not_gt
-  · rcases eq_or_ne x b with rfl | hxb
-    · rw [Equiv.swap_apply_right, Equiv.swap_apply_of_ne_of_ne (hab.lt.trans hxy).ne' hxy.ne'] at h
-      exact absurd (hab.lt.trans hxy) h.not_gt
-    · rw [Equiv.swap_apply_of_ne_of_ne hxa hxb] at h
-      rcases eq_or_ne y a with rfl | hya
-      · rw [Equiv.swap_apply_left] at h
-        exact absurd (hxy.trans hab.lt) h.not_gt
-      · rcases eq_or_ne y b with rfl | hyb
-        · rw [Equiv.swap_apply_right] at h
-          exact absurd (hlt x hxa hxy) h.not_gt
-        · rw [Equiv.swap_apply_of_ne_of_ne hya hyb] at h
-          exact absurd hxy h.not_gt
-
-variable [WellFoundedLT κ]
-
-theorem toLex_comp_lt_iff_exists :
-    toLex (v ∘ e) < toLex (w ∘ e) ↔ ∃ i, v i < w i ∧ ∀ j, w j < v j → e.symm i < e.symm j := by
-  refine ⟨fun hlt ↦ ?_, fun ⟨i, hi, hd⟩ ↦ ?_⟩
-  · obtain ⟨i, hi, hlt⟩ := (lex_comp_equiv e (· < ·) (· < ·) v w).1 hlt
-    refine ⟨i, hlt, fun j hj ↦ ?_⟩
-    rcases lt_trichotomy (e.symm i) (e.symm j) with h | h | h
-    · exact h
-    · exact absurd hj (e.symm.injective h ▸ hlt.asymm)
-    · exact absurd (hi j h) hj.ne'
-  · refine lt_of_le_of_ne (not_lt.1 fun hlt ↦ ?_) fun heq ↦ hi.ne ?_
-    · obtain ⟨j, hj, hlt⟩ := (lex_comp_equiv e (· < ·) (· < ·) w v).1 hlt
-      exact absurd (hj i (hd j hlt)) hi.ne'
-    · simpa using congrArg (· (e.symm i)) heq
-
-theorem toLex_comp_le_iff_forall_exists :
-    toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∀ j, w j < v j → ∃ i, v i < w i ∧ e.symm i < e.symm j := by
-  rw [← not_lt, toLex_comp_lt_iff_exists]
-  push Not
-  refine forall₂_congr fun j hj ↦ exists_congr fun i ↦ and_congr_right fun hi ↦
-    ⟨fun h ↦ h.lt_of_ne fun heq ↦ ?_, le_of_lt⟩
-  obtain rfl := e.symm.injective heq
-  exact lt_asymm hi hj
-
-theorem toLex_comp_le_iff_exists_forall [Nonempty κ] :
-    toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∃ i, ∀ j, w j < v j → v i < w i ∧ e.symm i < e.symm j := by
-  refine ⟨fun h ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
-  · rcases h.lt_or_eq with h | h
-    · obtain ⟨i, hi, hd⟩ := (toLex_comp_lt_iff_exists e).1 h
-      exact ⟨i, fun j hj ↦ ⟨hi, hd j hj⟩⟩
-    · refine ⟨e (Classical.arbitrary κ), fun j hj ↦ absurd hj (not_lt.2 (le_of_eq ?_))⟩
-      simpa using congrArg (· (e.symm j)) h
-  · by_cases hv : ∃ j, w j < v j
-    · obtain ⟨j, hj⟩ := hv
-      exact ((toLex_comp_lt_iff_exists e).2 ⟨i, (hi j hj).1, fun k hk ↦ (hi k hk).2⟩).le
-    · push Not at hv
-      exact Pi.toLex_monotone fun k ↦ hv (e k)
-
-theorem eq_and_lt_and_gt_of_toLex_comp_swap [DecidableEq κ] {a b : κ} (hab : a ⋖ b)
-    (h : toLex (v ∘ e) < toLex (w ∘ e))
-    (h' : toLex (w ∘ (Equiv.swap a b).trans e) < toLex (v ∘ (Equiv.swap a b).trans e)) :
-    (∀ c < a, v (e c) = w (e c)) ∧ v (e a) < w (e a) ∧ w (e b) < v (e b) := by
-  obtain ⟨i, hi, hd⟩ := (toLex_comp_lt_iff_exists e).1 h
-  obtain ⟨i', hi', hd'⟩ := (toLex_comp_lt_iff_exists ((Equiv.swap a b).trans e)).1 h'
-  simp only [Equiv.symm_trans_apply, Equiv.symm_swap] at hd'
-  obtain ⟨hia, hib⟩ := eq_and_eq_of_swap_lt_swap hab (hd i' hi') (hd' i hi)
-  rw [Equiv.symm_apply_eq] at hia hib
-  subst hia hib
-  refine ⟨fun c hc ↦ ?_, hi, hi'⟩
-  rcases lt_trichotomy (v (e c)) (w (e c)) with hvw | hvw | hvw
-  · have := hd' (e c) hvw
-    rw [Equiv.symm_apply_apply, Equiv.symm_apply_apply, Equiv.swap_apply_right,
-      Equiv.swap_apply_of_ne_of_ne hc.ne (hc.trans hab.lt).ne] at this
-    exact absurd hc this.not_gt
-  · exact hvw
-  · exact absurd hc (by simpa using (hd (e c) hvw).not_gt)
-
-end Reindex
-
-section Enumerations
-
-variable {ι β : Type*} [Fintype ι] [LinearOrder β] {n : ℕ} {v w : ι → β}
-
-private theorem exists_equiv_fin_symm_lt (i : ι) (hn : Fintype.card ι = n) :
-    ∃ e : Fin n ≃ ι, ∀ j, j ≠ i → e.symm i < e.symm j := by
-  classical
-  let e : Fin n ≃ ι := (Fintype.equivFinOfCardEq hn).symm
-  let r : Fin n ≃ ι := (Equiv.swap ⟨0, (e.symm i).pos⟩ (e.symm i)).trans e
-  have hi : r.symm i = ⟨0, (e.symm i).pos⟩ := by simp [r]
-  refine ⟨r, fun j hj ↦ ?_⟩
-  rw [hi, Fin.lt_def]
-  exact Nat.pos_of_ne_zero fun h0 ↦ hj <| r.symm.injective <|
-    Fin.ext (h0.trans (congrArg Fin.val hi).symm)
-
-theorem exists_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
-    (∃ e : Fin n ≃ ι, toLex (v ∘ e) < toLex (w ∘ e)) ↔ ∃ i, v i < w i := by
-  refine ⟨fun ⟨e, he⟩ ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
-  · obtain ⟨i, hi, -⟩ := (toLex_comp_lt_iff_exists e).1 he
-    exact ⟨i, hi⟩
-  · obtain ⟨e, he⟩ := exists_equiv_fin_symm_lt i hn
-    exact ⟨e, (toLex_comp_lt_iff_exists e).2
-      ⟨i, hi, fun j hj ↦ he j fun hji ↦ (hji ▸ hj).asymm hi⟩⟩
-
-theorem forall_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
-    (∀ e : Fin n ≃ ι, toLex (v ∘ e) < toLex (w ∘ e)) ↔ v < w := by
-  refine ⟨fun h ↦ Pi.lt_def.2 ⟨fun i ↦ not_lt.1 fun hi ↦ ?_, ?_⟩,
-    fun h e ↦ toLex_comp_strictMono e h⟩
-  · obtain ⟨e, he⟩ := (exists_toLex_comp_lt_iff hn).2 ⟨i, hi⟩
-    exact (h e).asymm he
-  · exact (exists_toLex_comp_lt_iff hn).1 ⟨_, h (Fintype.equivFinOfCardEq hn).symm⟩
-
-end Enumerations
-
-end Pi

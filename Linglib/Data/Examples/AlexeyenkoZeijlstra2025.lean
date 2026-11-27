@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AlexeyenkoZeijlstra2025` — typed example data
@@ -21,12 +23,14 @@ def az2025_1a : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "She is proud of her daughter."
-    glossedTokens := []
+    glossedTokens := [("She", ""), ("is", ""), ("proud", ""), ("of", ""), ("her", ""), ("daughter", "")]
+    glossedWords := [⟨['S', 'h', 'e'], [], [⟨['S', 'h', 'e'], [], none⟩]⟩, ⟨['i', 's'], [], [⟨['i', 's'], [], none⟩]⟩, ⟨['p', 'r', 'o', 'u', 'd'], [], [⟨['p', 'r', 'o', 'u', 'd'], [], none⟩]⟩, ⟨['o', 'f'], [], [⟨['o', 'f'], [], none⟩]⟩, ⟨['h', 'e', 'r'], [], [⟨['h', 'e', 'r'], [], none⟩]⟩, ⟨['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], [], [⟨['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], [], none⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "proud"), ("dependent", "of")] }
+    spans := [⟨2, 1, "head", none⟩, ⟨3, 3, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_1b : Datum :=
   { id := "az2025_1b"
@@ -34,12 +38,14 @@ def az2025_1b : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "a proud of her daughter mother"
-    glossedTokens := []
+    glossedTokens := [("a", ""), ("proud", ""), ("of", ""), ("her", ""), ("daughter", ""), ("mother", "")]
+    glossedWords := [⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['p', 'r', 'o', 'u', 'd'], [], [⟨['p', 'r', 'o', 'u', 'd'], [], none⟩]⟩, ⟨['o', 'f'], [], [⟨['o', 'f'], [], none⟩]⟩, ⟨['h', 'e', 'r'], [], [⟨['h', 'e', 'r'], [], none⟩]⟩, ⟨['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], [], [⟨['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], [], none⟩]⟩, ⟨['m', 'o', 't', 'h', 'e', 'r'], [], [⟨['m', 'o', 't', 'h', 'e', 'r'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "proud"), ("noun", "mother"), ("dependent", "of")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_2a : Datum :=
   { id := "az2025_2a"
@@ -54,7 +60,8 @@ def az2025_2a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "perifanos"), ("dependent", "ɣia")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 4, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_2b : Datum :=
   { id := "az2025_2b"
@@ -69,7 +76,8 @@ def az2025_2b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "perifanos"), ("noun", "pateras"), ("dependent", "ɣia")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 4, "dependent", none⟩, ⟨6, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_3a : Datum :=
   { id := "az2025_3a"
@@ -84,7 +92,8 @@ def az2025_3a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "harro-a"), ("dependent", "Bere")] }
+    spans := [⟨0, 2, "dependent", none⟩, ⟨2, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_3b : Datum :=
   { id := "az2025_3b"
@@ -99,7 +108,8 @@ def az2025_3b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "harro-a"), ("noun", "emakume"), ("dependent", "bere")] }
+    spans := [⟨0, 1, "noun", none⟩, ⟨1, 2, "dependent", none⟩, ⟨3, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_4a : Datum :=
   { id := "az2025_4a"
@@ -114,7 +124,8 @@ def az2025_4a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "moftaxar-∅-and"), ("dependent", "be")] }
+    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_4b : Datum :=
   { id := "az2025_4b"
@@ -129,7 +140,8 @@ def az2025_4b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "moftaxar"), ("attributivizer", "clitic"), ("noun", "madar-an=e"), ("dependent", "be")] }
+    spans := [⟨0, 1, "noun", none⟩, ⟨0, 1, "attributivizer", none⟩, ⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩]
+    paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_7a : Datum :=
   { id := "az2025_7a"
@@ -137,12 +149,14 @@ def az2025_7a : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "a smoothly running meeting"
-    glossedTokens := []
+    glossedTokens := [("a", ""), ("smoothly", ""), ("running", ""), ("meeting", "")]
+    glossedWords := [⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['s', 'm', 'o', 'o', 't', 'h', 'l', 'y'], [], [⟨['s', 'm', 'o', 'o', 't', 'h', 'l', 'y'], [], none⟩]⟩, ⟨['r', 'u', 'n', 'n', 'i', 'n', 'g'], [], [⟨['r', 'u', 'n', 'n', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['m', 'e', 'e', 't', 'i', 'n', 'g'], [], [⟨['m', 'e', 'e', 't', 'i', 'n', 'g'], [], none⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "running"), ("noun", "meeting"), ("dependent", "smoothly")] }
+    spans := [⟨1, 1, "dependent", none⟩, ⟨2, 1, "head", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_7b : Datum :=
   { id := "az2025_7b"
@@ -150,12 +164,14 @@ def az2025_7b : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "a running smoothly meeting"
-    glossedTokens := []
+    glossedTokens := [("a", ""), ("running", ""), ("smoothly", ""), ("meeting", "")]
+    glossedWords := [⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['r', 'u', 'n', 'n', 'i', 'n', 'g'], [], [⟨['r', 'u', 'n', 'n', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['s', 'm', 'o', 'o', 't', 'h', 'l', 'y'], [], [⟨['s', 'm', 'o', 'o', 't', 'h', 'l', 'y'], [], none⟩]⟩, ⟨['m', 'e', 'e', 't', 'i', 'n', 'g'], [], [⟨['m', 'e', 'e', 't', 'i', 'n', 'g'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "running"), ("noun", "meeting"), ("dependent", "smoothly")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "dependent", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_8 : Datum :=
   { id := "az2025_8"
@@ -163,12 +179,14 @@ def az2025_8 : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "the proud of his children man"
-    glossedTokens := []
+    glossedTokens := [("the", ""), ("proud", ""), ("of", ""), ("his", ""), ("children", ""), ("man", "")]
+    glossedWords := [⟨['t', 'h', 'e'], [], [⟨['t', 'h', 'e'], [], none⟩]⟩, ⟨['p', 'r', 'o', 'u', 'd'], [], [⟨['p', 'r', 'o', 'u', 'd'], [], none⟩]⟩, ⟨['o', 'f'], [], [⟨['o', 'f'], [], none⟩]⟩, ⟨['h', 'i', 's'], [], [⟨['h', 'i', 's'], [], none⟩]⟩, ⟨['c', 'h', 'i', 'l', 'd', 'r', 'e', 'n'], [], [⟨['c', 'h', 'i', 'l', 'd', 'r', 'e', 'n'], [], none⟩]⟩, ⟨['m', 'a', 'n'], [], [⟨['m', 'a', 'n'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "proud"), ("noun", "man"), ("dependent", "of")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_9a : Datum :=
   { id := "az2025_9a"
@@ -176,12 +194,14 @@ def az2025_9a : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "the proud that her daughter is a student woman"
-    glossedTokens := []
+    glossedTokens := [("the", ""), ("proud", ""), ("that", ""), ("her", ""), ("daughter", ""), ("is", ""), ("a", ""), ("student", ""), ("woman", "")]
+    glossedWords := [⟨['t', 'h', 'e'], [], [⟨['t', 'h', 'e'], [], none⟩]⟩, ⟨['p', 'r', 'o', 'u', 'd'], [], [⟨['p', 'r', 'o', 'u', 'd'], [], none⟩]⟩, ⟨['t', 'h', 'a', 't'], [], [⟨['t', 'h', 'a', 't'], [], none⟩]⟩, ⟨['h', 'e', 'r'], [], [⟨['h', 'e', 'r'], [], none⟩]⟩, ⟨['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], [], [⟨['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], [], none⟩]⟩, ⟨['i', 's'], [], [⟨['i', 's'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['s', 't', 'u', 'd', 'e', 'n', 't'], [], [⟨['s', 't', 'u', 'd', 'e', 'n', 't'], [], none⟩]⟩, ⟨['w', 'o', 'm', 'a', 'n'], [], [⟨['w', 'o', 'm', 'a', 'n'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "proud"), ("noun", "woman"), ("dependent", "that")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 6, "dependent", none⟩, ⟨8, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_9b : Datum :=
   { id := "az2025_9b"
@@ -189,12 +209,14 @@ def az2025_9b : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "the wearing a coat person"
-    glossedTokens := []
+    glossedTokens := [("the", ""), ("wearing", ""), ("a", ""), ("coat", ""), ("person", "")]
+    glossedWords := [⟨['t', 'h', 'e'], [], [⟨['t', 'h', 'e'], [], none⟩]⟩, ⟨['w', 'e', 'a', 'r', 'i', 'n', 'g'], [], [⟨['w', 'e', 'a', 'r', 'i', 'n', 'g'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['c', 'o', 'a', 't'], [], [⟨['c', 'o', 'a', 't'], [], none⟩]⟩, ⟨['p', 'e', 'r', 's', 'o', 'n'], [], [⟨['p', 'e', 'r', 's', 'o', 'n'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "wearing"), ("noun", "person"), ("dependent", "a")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩, ⟨4, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_10a : Datum :=
   { id := "az2025_10a"
@@ -202,12 +224,14 @@ def az2025_10a : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "the to Bill letter"
-    glossedTokens := []
+    glossedTokens := [("the", ""), ("to", ""), ("Bill", ""), ("letter", "")]
+    glossedWords := [⟨['t', 'h', 'e'], [], [⟨['t', 'h', 'e'], [], none⟩]⟩, ⟨['t', 'o'], [], [⟨['t', 'o'], [], none⟩]⟩, ⟨['B', 'i', 'l', 'l'], [], [⟨['B', 'i', 'l', 'l'], [], none⟩]⟩, ⟨['l', 'e', 't', 't', 'e', 'r'], [], [⟨['l', 'e', 't', 't', 'e', 'r'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "to"), ("noun", "letter"), ("dependent", "Bill")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "dependent", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_10b : Datum :=
   { id := "az2025_10b"
@@ -215,12 +239,14 @@ def az2025_10b : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "a which I published in 1991 book"
-    glossedTokens := []
+    glossedTokens := [("a", ""), ("which", ""), ("I", ""), ("published", ""), ("in", ""), ("1991", ""), ("book", "")]
+    glossedWords := [⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['w', 'h', 'i', 'c', 'h'], [], [⟨['w', 'h', 'i', 'c', 'h'], [], none⟩]⟩, ⟨['I'], [], [⟨['I'], [], none⟩]⟩, ⟨['p', 'u', 'b', 'l', 'i', 's', 'h', 'e', 'd'], [], [⟨['p', 'u', 'b', 'l', 'i', 's', 'h', 'e', 'd'], [], none⟩]⟩, ⟨['i', 'n'], [], [⟨['i', 'n'], [], none⟩]⟩, ⟨['1', '9', '9', '1'], [], [⟨['1', '9', '9', '1'], [], none⟩]⟩, ⟨['b', 'o', 'o', 'k'], [], [⟨['b', 'o', 'o', 'k'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "which"), ("noun", "book"), ("dependent", "I")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 4, "dependent", none⟩, ⟨6, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_15 : Datum :=
   { id := "az2025_15"
@@ -228,12 +254,14 @@ def az2025_15 : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John is a tall enough guy to play basketball."
-    glossedTokens := []
+    glossedTokens := [("John", ""), ("is", ""), ("a", ""), ("tall", ""), ("enough", ""), ("guy", ""), ("to", ""), ("play", ""), ("basketball", "")]
+    glossedWords := [⟨['J', 'o', 'h', 'n'], [], [⟨['J', 'o', 'h', 'n'], [], none⟩]⟩, ⟨['i', 's'], [], [⟨['i', 's'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['t', 'a', 'l', 'l'], [], [⟨['t', 'a', 'l', 'l'], [], none⟩]⟩, ⟨['e', 'n', 'o', 'u', 'g', 'h'], [], [⟨['e', 'n', 'o', 'u', 'g', 'h'], [], none⟩]⟩, ⟨['g', 'u', 'y'], [], [⟨['g', 'u', 'y'], [], none⟩]⟩, ⟨['t', 'o'], [], [⟨['t', 'o'], [], none⟩]⟩, ⟨['p', 'l', 'a', 'y'], [], [⟨['p', 'l', 'a', 'y'], [], none⟩]⟩, ⟨['b', 'a', 's', 'k', 'e', 't', 'b', 'a', 'l', 'l'], [], [⟨['b', 'a', 's', 'k', 'e', 't', 'b', 'a', 'l', 'l'], [], none⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "tall"), ("attributivizer", "null"), ("noun", "guy"), ("degree", "enough")] }
+    spans := [⟨3, 1, "head", none⟩, ⟨4, 1, "degree", none⟩, ⟨5, 0, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
 def az2025_16 : Datum :=
   { id := "az2025_16"
@@ -241,12 +269,14 @@ def az2025_16 : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John is a tall enough to play basketball guy."
-    glossedTokens := []
+    glossedTokens := [("John", ""), ("is", ""), ("a", ""), ("tall", ""), ("enough", ""), ("to", ""), ("play", ""), ("basketball", ""), ("guy", "")]
+    glossedWords := [⟨['J', 'o', 'h', 'n'], [], [⟨['J', 'o', 'h', 'n'], [], none⟩]⟩, ⟨['i', 's'], [], [⟨['i', 's'], [], none⟩]⟩, ⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['t', 'a', 'l', 'l'], [], [⟨['t', 'a', 'l', 'l'], [], none⟩]⟩, ⟨['e', 'n', 'o', 'u', 'g', 'h'], [], [⟨['e', 'n', 'o', 'u', 'g', 'h'], [], none⟩]⟩, ⟨['t', 'o'], [], [⟨['t', 'o'], [], none⟩]⟩, ⟨['p', 'l', 'a', 'y'], [], [⟨['p', 'l', 'a', 'y'], [], none⟩]⟩, ⟨['b', 'a', 's', 'k', 'e', 't', 'b', 'a', 'l', 'l'], [], [⟨['b', 'a', 's', 'k', 'e', 't', 'b', 'a', 'l', 'l'], [], none⟩]⟩, ⟨['g', 'u', 'y'], [], [⟨['g', 'u', 'y'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "tall"), ("noun", "guy"), ("dependent", "to"), ("degree", "enough")] }
+    spans := [⟨3, 1, "head", none⟩, ⟨4, 1, "degree", none⟩, ⟨5, 3, "dependent", none⟩, ⟨8, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_17a : Datum :=
   { id := "az2025_17a"
@@ -261,7 +291,8 @@ def az2025_17a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "damok'ideb-ul-i"), ("dependent", "tavis")] }
+    spans := [⟨3, 1, "head", none⟩, ⟨4, 2, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_17b : Datum :=
   { id := "az2025_17b"
@@ -276,7 +307,8 @@ def az2025_17b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "damok'ideb-ul-i"), ("noun", "bič'-i"), ("dependent", "tavis")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 2, "dependent", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_18a : Datum :=
   { id := "az2025_18a"
@@ -291,7 +323,8 @@ def az2025_18a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "független"), ("dependent", "a")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_18b : Datum :=
   { id := "az2025_18b"
@@ -306,7 +339,8 @@ def az2025_18b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "független"), ("noun", "fiú"), ("dependent", "a")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩, ⟨4, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_19a : Datum :=
   { id := "az2025_19a"
@@ -321,7 +355,8 @@ def az2025_19a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-ur"), ("dependent", "af")] }
+    spans := [⟨2, 1, "head", none⟩, ⟨3, 3, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_19b : Datum :=
   { id := "az2025_19b"
@@ -336,7 +371,8 @@ def az2025_19b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-ur"), ("noun", "faðir"), ("dependent", "af")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 3, "dependent", none⟩, ⟨4, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_20a : Datum :=
   { id := "az2025_20a"
@@ -351,7 +387,8 @@ def az2025_20a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "hpart"), ("dependent", "ir")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨3, 2, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_20b : Datum :=
   { id := "az2025_20b"
@@ -366,7 +403,8 @@ def az2025_20b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "hpart"), ("noun", "hayr"), ("dependent", "ir")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 2, "dependent", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_21a : Datum :=
   { id := "az2025_21a"
@@ -381,7 +419,8 @@ def az2025_21a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "ponosan"), ("dependent", "na")] }
+    spans := [⟨2, 1, "head", none⟩, ⟨3, 3, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_21b : Datum :=
   { id := "az2025_21b"
@@ -396,12 +435,14 @@ def az2025_21b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "ponosan"), ("noun", "otac"), ("dependent", "na")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 3, "dependent", none⟩, ⟨4, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_23b : Datum :=
   { id := "az2025_23b"
     source := ⟨"alexeyenko-zeijlstra-2025", "(23b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "mode1248"
     primaryText := "I filikes pros tin Turkia χores apariθmunte os eksis"
     glossedTokens := [("I", "the"), ("filikes", "friendly"), ("pros", "towards"), ("tin", "the"), ("Turkia", "Turkey"), ("χores", "countries"), ("apariθmunte", "are.listed"), ("os", "as"), ("eksis", "following")]
@@ -411,12 +452,14 @@ def az2025_23b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "filikes"), ("noun", "χores"), ("dependent", "pros")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_24c : Datum :=
   { id := "az2025_24c"
     source := ⟨"alexeyenko-zeijlstra-2025", "(24c)"⟩
     reportedIn := none
+    method := some .corpus
     language := "russ1263"
     primaryText := "Inogda on zažmurival ustavšyje ot plohogo osveščenija glaza"
     glossedTokens := [("Inogda", "sometimes"), ("on", "he"), ("zažmurival", "closed.tightly"), ("ustavšyje", "tired"), ("ot", "from"), ("plohogo", "bad"), ("osveščenija", "lighting"), ("glaza", "eyes")]
@@ -426,7 +469,8 @@ def az2025_24c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "ustavšyje"), ("noun", "glaza"), ("dependent", "ot")] }
+    spans := [⟨3, 1, "head", none⟩, ⟨4, 3, "dependent", none⟩, ⟨7, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_26 : Datum :=
   { id := "az2025_26"
@@ -441,7 +485,8 @@ def az2025_26 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "dúlì"), ("attributivizer", "clitic"), ("noun", "qīngshàonián"), ("dependent", "yú")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_27 : Datum :=
   { id := "az2025_27"
@@ -456,7 +501,8 @@ def az2025_27 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "bagay"), ("attributivizer", "clitic"), ("noun", "damit"), ("dependent", "(para)")] }
+    spans := [⟨3, 1, "head", none⟩, ⟨4, 3, "dependent", none⟩, ⟨6, 1, "attributivizer", none⟩, ⟨7, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_28b : Datum :=
   { id := "az2025_28b"
@@ -471,7 +517,8 @@ def az2025_28b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "harro-a"), ("noun", "emakume")] }
+    spans := [⟨0, 1, "noun", none⟩, ⟨1, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_28d : Datum :=
   { id := "az2025_28d"
@@ -486,7 +533,8 @@ def az2025_28d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "harro-a"), ("noun", "emakume-a"), ("dependent", "bere"), ("construction", "relative")] }
+    spans := [⟨0, 2, "dependent", none⟩, ⟨2, 1, "head", none⟩, ⟨4, 1, "noun", none⟩]
+    paperFeatures := [("construction", "relative")] }
 
 def az2025_29a : Datum :=
   { id := "az2025_29a"
@@ -499,9 +547,26 @@ def az2025_29a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("naa motó tsi ʂo karetera ka=tí yói.", .acceptable)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "yói"), ("dependent", "karetera")] }
+    spans := [⟨4, 1, "head", none⟩, ⟨5, 2, "dependent", none⟩]
+    paperFeatures := [] }
+
+def az2025_29a_xpA : Datum :=
+  { id := "az2025_29a_xpA"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(29a)"⟩
+    reportedIn := none
+    language := "chac1251"
+    primaryText := "naa motó tsi ʂo karetera ka=tí yói."
+    glossedTokens := [("naa", "DEM"), ("motó", "motorcycle"), ("tsi", "PTCL"), ("ʂo", "DECL"), ("karetera", "highway"), ("ka=tí", "go=NMLZ:PURP"), ("yói", "bad")]
+    glossedWords := [⟨['n', 'a', 'a'], ['D', 'E', 'M'], [⟨['n', 'a', 'a'], ['D', 'E', 'M'], none⟩]⟩, ⟨['m', 'o', 't', 'ó'], ['m', 'o', 't', 'o', 'r', 'c', 'y', 'c', 'l', 'e'], [⟨['m', 'o', 't', 'ó'], ['m', 'o', 't', 'o', 'r', 'c', 'y', 'c', 'l', 'e'], none⟩]⟩, ⟨['t', 's', 'i'], ['P', 'T', 'C', 'L'], [⟨['t', 's', 'i'], ['P', 'T', 'C', 'L'], none⟩]⟩, ⟨['ʂ', 'o'], ['D', 'E', 'C', 'L'], [⟨['ʂ', 'o'], ['D', 'E', 'C', 'L'], none⟩]⟩, ⟨['k', 'a', 'r', 'e', 't', 'e', 'r', 'a'], ['h', 'i', 'g', 'h', 'w', 'a', 'y'], [⟨['k', 'a', 'r', 'e', 't', 'e', 'r', 'a'], ['h', 'i', 'g', 'h', 'w', 'a', 'y'], none⟩]⟩, ⟨['k', 'a', '=', 't', 'í'], ['g', 'o', '=', 'N', 'M', 'L', 'Z', ':', 'P', 'U', 'R', 'P'], [⟨['k', 'a'], ['g', 'o'], none⟩, ⟨['t', 'í'], ['N', 'M', 'L', 'Z', ':', 'P', 'U', 'R', 'P'], some '='⟩]⟩, ⟨['y', 'ó', 'i'], ['b', 'a', 'd'], [⟨['y', 'ó', 'i'], ['b', 'a', 'd'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    spans := [⟨4, 2, "dependent", none⟩, ⟨6, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_29b : Datum :=
   { id := "az2025_29b"
@@ -514,9 +579,26 @@ def az2025_29b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("motó karetera ka=tí yói kopi=ki paɨ.", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "yói"), ("noun", "motó"), ("dependent", "karetera")] }
+    spans := [⟨0, 1, "noun", none⟩, ⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩]
+    paperFeatures := [] }
+
+def az2025_29b_xpA : Datum :=
+  { id := "az2025_29b_xpA"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(29b)"⟩
+    reportedIn := none
+    language := "chac1251"
+    primaryText := "motó karetera ka=tí yói kopi=ki paɨ."
+    glossedTokens := [("motó", "motorcycle"), ("karetera", "highway"), ("ka=tí", "go=NMLZ:PURP"), ("yói", "bad"), ("kopi=ki", "buy=DECL.NPST"), ("paɨ", "Paë")]
+    glossedWords := [⟨['m', 'o', 't', 'ó'], ['m', 'o', 't', 'o', 'r', 'c', 'y', 'c', 'l', 'e'], [⟨['m', 'o', 't', 'ó'], ['m', 'o', 't', 'o', 'r', 'c', 'y', 'c', 'l', 'e'], none⟩]⟩, ⟨['k', 'a', 'r', 'e', 't', 'e', 'r', 'a'], ['h', 'i', 'g', 'h', 'w', 'a', 'y'], [⟨['k', 'a', 'r', 'e', 't', 'e', 'r', 'a'], ['h', 'i', 'g', 'h', 'w', 'a', 'y'], none⟩]⟩, ⟨['k', 'a', '=', 't', 'í'], ['g', 'o', '=', 'N', 'M', 'L', 'Z', ':', 'P', 'U', 'R', 'P'], [⟨['k', 'a'], ['g', 'o'], none⟩, ⟨['t', 'í'], ['N', 'M', 'L', 'Z', ':', 'P', 'U', 'R', 'P'], some '='⟩]⟩, ⟨['y', 'ó', 'i'], ['b', 'a', 'd'], [⟨['y', 'ó', 'i'], ['b', 'a', 'd'], none⟩]⟩, ⟨['k', 'o', 'p', 'i', '=', 'k', 'i'], ['b', 'u', 'y', '=', 'D', 'E', 'C', 'L', '.', 'N', 'P', 'S', 'T'], [⟨['k', 'o', 'p', 'i'], ['b', 'u', 'y'], none⟩, ⟨['k', 'i'], ['D', 'E', 'C', 'L', '.', 'N', 'P', 'S', 'T'], some '='⟩]⟩, ⟨['p', 'a', 'ɨ'], ['P', 'a', 'ë'], [⟨['p', 'a', 'ɨ'], ['P', 'a', 'ë'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨0, 1, "noun", none⟩, ⟨1, 2, "dependent", none⟩, ⟨3, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_29c : Datum :=
   { id := "az2025_29c"
@@ -531,7 +613,8 @@ def az2025_29c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "yói=ka"), ("noun", "motó"), ("dependent", "karetera"), ("construction", "relative")] }
+    spans := [⟨0, 1, "noun", none⟩, ⟨1, 2, "dependent", none⟩, ⟨3, 1, "head", none⟩]
+    paperFeatures := [("construction", "relative")] }
 
 def az2025_30a : Datum :=
   { id := "az2025_30a"
@@ -546,7 +629,8 @@ def az2025_30a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "boon-aa-ɗa"), ("dependent", "dureys-umma=tti")] }
+    spans := [⟨2, 1, "dependent", none⟩, ⟨3, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_30b : Datum :=
   { id := "az2025_30b"
@@ -561,7 +645,8 @@ def az2025_30b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "boon-aa-ɗa"), ("noun", "nama")] }
+    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_30c : Datum :=
   { id := "az2025_30c"
@@ -576,7 +661,8 @@ def az2025_30c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "boon-aa-ɗa"), ("noun", "nama"), ("dependent", "dureys-umma=tti")] }
+    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "dependent", none⟩, ⟨3, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_30d : Datum :=
   { id := "az2025_30d"
@@ -591,7 +677,8 @@ def az2025_30d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "boon-∅-u"), ("noun", "nama"), ("dependent", "dureys-umma=tti"), ("construction", "relative")] }
+    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "dependent", none⟩, ⟨3, 1, "head", none⟩]
+    paperFeatures := [("construction", "relative")] }
 
 def az2025_31 : Datum :=
   { id := "az2025_31"
@@ -606,7 +693,8 @@ def az2025_31 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "kii-sit-tu-p"), ("noun", "nukappiaqqa-p"), ("dependent", "qimmi-mut")] }
+    spans := [⟨0, 1, "noun", none⟩, ⟨1, 1, "dependent", none⟩, ⟨2, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_32 : Datum :=
   { id := "az2025_32"
@@ -621,7 +709,8 @@ def az2025_32 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "rak-khal"), ("attributivizer", "clitic"), ("noun", "gore"), ("dependent", "jal=na")] }
+    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "dependent", none⟩, ⟨3, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩]
+    paperFeatures := [("attributivizer", "clitic")] }
 
 def az2025_35 : Datum :=
   { id := "az2025_35"
@@ -636,7 +725,8 @@ def az2025_35 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "praestantibus"), ("noun", "viris"), ("dependent", "re")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 4, "dependent", none⟩, ⟨6, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_36a : Datum :=
   { id := "az2025_36a"
@@ -651,7 +741,8 @@ def az2025_36a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "bravi"), ("noun", "studenti"), ("dependent", "in")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 2, "dependent", none⟩, ⟨4, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_36b : Datum :=
   { id := "az2025_36b"
@@ -666,7 +757,8 @@ def az2025_36b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "bravi"), ("noun", "studenti"), ("dependent", "in")] }
+    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "head", none⟩, ⟨3, 2, "dependent", none⟩]
+    paperFeatures := [] }
 
 def az2025_36c : Datum :=
   { id := "az2025_36c"
@@ -674,12 +766,14 @@ def az2025_36c : Datum :=
     reportedIn := none
     language := "ital1282"
     primaryText := "nei bravi studenti"
-    glossedTokens := []
+    glossedTokens := [("nei", ""), ("bravi", ""), ("studenti", "")]
+    glossedWords := [⟨['n', 'e', 'i'], [], [⟨['n', 'e', 'i'], [], none⟩]⟩, ⟨['b', 'r', 'a', 'v', 'i'], [], [⟨['b', 'r', 'a', 'v', 'i'], [], none⟩]⟩, ⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'i'], [], [⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'i'], [], none⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "bravi"), ("noun", "studenti")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_36d : Datum :=
   { id := "az2025_36d"
@@ -687,12 +781,14 @@ def az2025_36d : Datum :=
     reportedIn := none
     language := "ital1282"
     primaryText := "negli studenti bravi"
-    glossedTokens := []
+    glossedTokens := [("negli", ""), ("studenti", ""), ("bravi", "")]
+    glossedWords := [⟨['n', 'e', 'g', 'l', 'i'], [], [⟨['n', 'e', 'g', 'l', 'i'], [], none⟩]⟩, ⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'i'], [], [⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'i'], [], none⟩]⟩, ⟨['b', 'r', 'a', 'v', 'i'], [], [⟨['b', 'r', 'a', 'v', 'i'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "bravi"), ("noun", "studenti")] }
+    spans := [⟨1, 1, "noun", none⟩, ⟨2, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_37a : Datum :=
   { id := "az2025_37a"
@@ -705,9 +801,26 @@ def az2025_37a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("(Aftos) ine perifan.", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "perifan-os"), ("marker", "agreement")] }
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("marker", "agreement")] }
+
+def az2025_37a_bare : Datum :=
+  { id := "az2025_37a_bare"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(37a)"⟩
+    reportedIn := none
+    language := "mode1248"
+    primaryText := "(Aftos) ine perifan."
+    glossedTokens := [("(Aftos)", "he"), ("ine", "is"), ("perifan", "proud")]
+    glossedWords := [⟨['(', 'A', 'f', 't', 'o', 's', ')'], ['h', 'e'], [⟨['A', 'f', 't', 'o', 's'], ['h', 'e'], none⟩]⟩, ⟨['i', 'n', 'e'], ['i', 's'], [⟨['i', 'n', 'e'], ['i', 's'], none⟩]⟩, ⟨['p', 'e', 'r', 'i', 'f', 'a', 'n'], ['p', 'r', 'o', 'u', 'd'], [⟨['p', 'e', 'r', 'i', 'f', 'a', 'n'], ['p', 'r', 'o', 'u', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("marker", "bare")] }
 
 def az2025_37b : Datum :=
   { id := "az2025_37b"
@@ -720,9 +833,26 @@ def az2025_37b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("o perifan pateras", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "perifan-os"), ("marker", "agreement"), ("noun", "pateras")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "noun", none⟩]
+    paperFeatures := [("marker", "agreement")] }
+
+def az2025_37b_bare : Datum :=
+  { id := "az2025_37b_bare"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(37b)"⟩
+    reportedIn := none
+    language := "mode1248"
+    primaryText := "o perifan pateras"
+    glossedTokens := [("o", "the"), ("perifan", "proud"), ("pateras", "father")]
+    glossedWords := [⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['p', 'e', 'r', 'i', 'f', 'a', 'n'], ['p', 'r', 'o', 'u', 'd'], [⟨['p', 'e', 'r', 'i', 'f', 'a', 'n'], ['p', 'r', 'o', 'u', 'd'], none⟩]⟩, ⟨['p', 'a', 't', 'e', 'r', 'a', 's'], ['f', 'a', 't', 'h', 'e', 'r'], [⟨['p', 'a', 't', 'e', 'r', 'a', 's'], ['f', 'a', 't', 'h', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "noun", none⟩]
+    paperFeatures := [("marker", "bare")] }
 
 def az2025_38a : Datum :=
   { id := "az2025_38a"
@@ -735,9 +865,26 @@ def az2025_38a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Er ist stolz-er.", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "stolz"), ("marker", "bare")] }
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("marker", "bare")] }
+
+def az2025_38a_agreeing : Datum :=
+  { id := "az2025_38a_agreeing"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(38a)"⟩
+    reportedIn := none
+    language := "stan1295"
+    primaryText := "Er ist stolz-er."
+    glossedTokens := [("Er", "he"), ("ist", "is"), ("stolz-er", "proud-M.SG.NOM.STRONG")]
+    glossedWords := [⟨['E', 'r'], ['h', 'e'], [⟨['E', 'r'], ['h', 'e'], none⟩]⟩, ⟨['i', 's', 't'], ['i', 's'], [⟨['i', 's', 't'], ['i', 's'], none⟩]⟩, ⟨['s', 't', 'o', 'l', 'z', '-', 'e', 'r'], ['p', 'r', 'o', 'u', 'd', '-', 'M', '.', 'S', 'G', '.', 'N', 'O', 'M', '.', 'S', 'T', 'R', 'O', 'N', 'G'], [⟨['s', 't', 'o', 'l', 'z'], ['p', 'r', 'o', 'u', 'd'], none⟩, ⟨['e', 'r'], ['M', '.', 'S', 'G', '.', 'N', 'O', 'M', '.', 'S', 'T', 'R', 'O', 'N', 'G'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("marker", "agreement")] }
 
 def az2025_38b : Datum :=
   { id := "az2025_38b"
@@ -750,9 +897,26 @@ def az2025_38b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("stolz Vater", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "stolz-er"), ("marker", "agreement"), ("noun", "Vater")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("marker", "agreement")] }
+
+def az2025_38b_bare : Datum :=
+  { id := "az2025_38b_bare"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(38b)"⟩
+    reportedIn := none
+    language := "stan1295"
+    primaryText := "stolz Vater"
+    glossedTokens := [("stolz", "proud"), ("Vater", "father")]
+    glossedWords := [⟨['s', 't', 'o', 'l', 'z'], ['p', 'r', 'o', 'u', 'd'], [⟨['s', 't', 'o', 'l', 'z'], ['p', 'r', 'o', 'u', 'd'], none⟩]⟩, ⟨['V', 'a', 't', 'e', 'r'], ['f', 'a', 't', 'h', 'e', 'r'], [⟨['V', 'a', 't', 'e', 'r'], ['f', 'a', 't', 'h', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("marker", "bare")] }
 
 def az2025_39a : Datum :=
   { id := "az2025_39a"
@@ -765,9 +929,26 @@ def az2025_39a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Ona umn-a.", .acceptable)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "umn-aja"), ("form", "long")] }
+    spans := [⟨1, 1, "head", none⟩]
+    paperFeatures := [("form", "long")] }
+
+def az2025_39a_short : Datum :=
+  { id := "az2025_39a_short"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(39a)"⟩
+    reportedIn := none
+    language := "russ1263"
+    primaryText := "Ona umn-a."
+    glossedTokens := [("Ona", "she"), ("umn-a", "smart-SHORT.F.SG")]
+    glossedWords := [⟨['O', 'n', 'a'], ['s', 'h', 'e'], [⟨['O', 'n', 'a'], ['s', 'h', 'e'], none⟩]⟩, ⟨['u', 'm', 'n', '-', 'a'], ['s', 'm', 'a', 'r', 't', '-', 'S', 'H', 'O', 'R', 'T', '.', 'F', '.', 'S', 'G'], [⟨['u', 'm', 'n'], ['s', 'm', 'a', 'r', 't'], none⟩, ⟨['a'], ['S', 'H', 'O', 'R', 'T', '.', 'F', '.', 'S', 'G'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    spans := [⟨1, 1, "head", none⟩]
+    paperFeatures := [("form", "short")] }
 
 def az2025_39b : Datum :=
   { id := "az2025_39b"
@@ -780,9 +961,26 @@ def az2025_39b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("umn-a d'evočka", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "umn-aja"), ("form", "long"), ("noun", "d'evočka")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "long")] }
+
+def az2025_39b_short : Datum :=
+  { id := "az2025_39b_short"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(39b)"⟩
+    reportedIn := none
+    language := "russ1263"
+    primaryText := "umn-a d'evočka"
+    glossedTokens := [("umn-a", "smart-SHORT"), ("d'evočka", "girl")]
+    glossedWords := [⟨['u', 'm', 'n', '-', 'a'], ['s', 'm', 'a', 'r', 't', '-', 'S', 'H', 'O', 'R', 'T'], [⟨['u', 'm', 'n'], ['s', 'm', 'a', 'r', 't'], none⟩, ⟨['a'], ['S', 'H', 'O', 'R', 'T'], some '-'⟩]⟩, ⟨['d', '\'', 'e', 'v', 'o', 'č', 'k', 'a'], ['g', 'i', 'r', 'l'], [⟨['d', '\'', 'e', 'v', 'o', 'č', 'k', 'a'], ['g', 'i', 'r', 'l'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "short")] }
 
 def az2025_40b : Datum :=
   { id := "az2025_40b"
@@ -797,7 +995,8 @@ def az2025_40b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-ur"), ("dependent", "af")] }
+    spans := [⟨2, 3, "dependent", none⟩, ⟨5, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_41b : Datum :=
   { id := "az2025_41b"
@@ -812,7 +1011,8 @@ def az2025_41b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-ur"), ("noun", "faðir"), ("dependent", "af")] }
+    spans := [⟨0, 3, "dependent", none⟩, ⟨3, 1, "head", none⟩, ⟨4, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_42a : Datum :=
   { id := "az2025_42a"
@@ -825,9 +1025,26 @@ def az2025_42a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Jón er stolt-i.", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-ur"), ("form", "strong")] }
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("form", "strong")] }
+
+def az2025_42a_weak : Datum :=
+  { id := "az2025_42a_weak"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(42a)"⟩
+    reportedIn := none
+    language := "icel1247"
+    primaryText := "Jón er stolt-i."
+    glossedTokens := [("Jón", "Jón"), ("er", "is"), ("stolt-i", "proud-M.SG.NOM.WEAK")]
+    glossedWords := [⟨['J', 'ó', 'n'], ['J', 'ó', 'n'], [⟨['J', 'ó', 'n'], ['J', 'ó', 'n'], none⟩]⟩, ⟨['e', 'r'], ['i', 's'], [⟨['e', 'r'], ['i', 's'], none⟩]⟩, ⟨['s', 't', 'o', 'l', 't', '-', 'i'], ['p', 'r', 'o', 'u', 'd', '-', 'M', '.', 'S', 'G', '.', 'N', 'O', 'M', '.', 'W', 'E', 'A', 'K'], [⟨['s', 't', 'o', 'l', 't'], ['p', 'r', 'o', 'u', 'd'], none⟩, ⟨['i'], ['M', '.', 'S', 'G', '.', 'N', 'O', 'M', '.', 'W', 'E', 'A', 'K'], some '-'⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("form", "weak")] }
 
 def az2025_42b : Datum :=
   { id := "az2025_42b"
@@ -840,9 +1057,26 @@ def az2025_42b : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("stolt-i faðir", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-ur"), ("form", "strong"), ("definiteness", "indefinite"), ("noun", "faðir")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "strong"), ("definiteness", "indefinite")] }
+
+def az2025_42b_weak : Datum :=
+  { id := "az2025_42b_weak"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(42b)"⟩
+    reportedIn := none
+    language := "icel1247"
+    primaryText := "stolt-i faðir"
+    glossedTokens := [("stolt-i", "proud-M.SG.NOM.WEAK"), ("faðir", "father")]
+    glossedWords := [⟨['s', 't', 'o', 'l', 't', '-', 'i'], ['p', 'r', 'o', 'u', 'd', '-', 'M', '.', 'S', 'G', '.', 'N', 'O', 'M', '.', 'W', 'E', 'A', 'K'], [⟨['s', 't', 'o', 'l', 't'], ['p', 'r', 'o', 'u', 'd'], none⟩, ⟨['i'], ['M', '.', 'S', 'G', '.', 'N', 'O', 'M', '.', 'W', 'E', 'A', 'K'], some '-'⟩]⟩, ⟨['f', 'a', 'ð', 'i', 'r'], ['f', 'a', 't', 'h', 'e', 'r'], [⟨['f', 'a', 'ð', 'i', 'r'], ['f', 'a', 't', 'h', 'e', 'r'], none⟩]⟩]
+    lgrConformance := some .morphemeAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "weak"), ("definiteness", "indefinite")] }
 
 def az2025_42c : Datum :=
   { id := "az2025_42c"
@@ -857,7 +1091,8 @@ def az2025_42c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-i"), ("form", "weak"), ("definiteness", "definite"), ("noun", "faðir-inn")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "weak"), ("definiteness", "definite")] }
 
 def az2025_42d : Datum :=
   { id := "az2025_42d"
@@ -872,7 +1107,8 @@ def az2025_42d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolt-ur"), ("form", "strong"), ("definiteness", "definite"), ("reading", "nonrestrictive"), ("noun", "faðir-inn")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "strong"), ("definiteness", "definite")] }
 
 def az2025_43a : Datum :=
   { id := "az2025_43a"
@@ -885,9 +1121,26 @@ def az2025_43a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Goran je lijepi.", .ungrammatical)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "lijep"), ("form", "short")] }
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("form", "short")] }
+
+def az2025_43a_long : Datum :=
+  { id := "az2025_43a_long"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(43a)"⟩
+    reportedIn := none
+    language := "sout1528"
+    primaryText := "Goran je lijepi."
+    glossedTokens := [("Goran", "Goran"), ("je", "is"), ("lijepi", "nice.LONG")]
+    glossedWords := [⟨['G', 'o', 'r', 'a', 'n'], ['G', 'o', 'r', 'a', 'n'], [⟨['G', 'o', 'r', 'a', 'n'], ['G', 'o', 'r', 'a', 'n'], none⟩]⟩, ⟨['j', 'e'], ['i', 's'], [⟨['j', 'e'], ['i', 's'], none⟩]⟩, ⟨['l', 'i', 'j', 'e', 'p', 'i'], ['n', 'i', 'c', 'e', '.', 'L', 'O', 'N', 'G'], [⟨['l', 'i', 'j', 'e', 'p', 'i'], ['n', 'i', 'c', 'e', '.', 'L', 'O', 'N', 'G'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    spans := [⟨2, 1, "head", none⟩]
+    paperFeatures := [("form", "long")] }
 
 def az2025_43b : Datum :=
   { id := "az2025_43b"
@@ -902,7 +1155,8 @@ def az2025_43b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "lijep"), ("form", "short"), ("definiteness", "indefinite"), ("noun", "momak")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "short"), ("definiteness", "indefinite")] }
 
 def az2025_43c : Datum :=
   { id := "az2025_43c"
@@ -917,7 +1171,8 @@ def az2025_43c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "lijepi"), ("form", "long"), ("definiteness", "definite"), ("noun", "momak")] }
+    spans := [⟨0, 1, "head", none⟩, ⟨1, 1, "noun", none⟩]
+    paperFeatures := [("form", "long"), ("definiteness", "definite")] }
 
 def az2025_62 : Datum :=
   { id := "az2025_62"
@@ -930,9 +1185,26 @@ def az2025_62 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Maria ist auf ihre Tochter stolz.", .acceptable)]
+    contrasts := []
     readings := []
-    paperFeatures := [("head", "stolz"), ("dependent", "auf")] }
+    spans := [⟨2, 1, "head", none⟩, ⟨3, 3, "dependent", none⟩]
+    paperFeatures := [] }
+
+def az2025_62_xpA : Datum :=
+  { id := "az2025_62_xpA"
+    source := ⟨"alexeyenko-zeijlstra-2025", "(62)"⟩
+    reportedIn := none
+    language := "stan1295"
+    primaryText := "Maria ist auf ihre Tochter stolz."
+    glossedTokens := [("Maria", "Maria"), ("ist", "is"), ("auf", "on"), ("ihre", "her"), ("Tochter", "daughter"), ("stolz", "proud")]
+    glossedWords := [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a'], [⟨['M', 'a', 'r', 'i', 'a'], ['M', 'a', 'r', 'i', 'a'], none⟩]⟩, ⟨['i', 's', 't'], ['i', 's'], [⟨['i', 's', 't'], ['i', 's'], none⟩]⟩, ⟨['a', 'u', 'f'], ['o', 'n'], [⟨['a', 'u', 'f'], ['o', 'n'], none⟩]⟩, ⟨['i', 'h', 'r', 'e'], ['h', 'e', 'r'], [⟨['i', 'h', 'r', 'e'], ['h', 'e', 'r'], none⟩]⟩, ⟨['T', 'o', 'c', 'h', 't', 'e', 'r'], ['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], [⟨['T', 'o', 'c', 'h', 't', 'e', 'r'], ['d', 'a', 'u', 'g', 'h', 't', 'e', 'r'], none⟩]⟩, ⟨['s', 't', 'o', 'l', 'z'], ['p', 'r', 'o', 'u', 'd'], [⟨['s', 't', 'o', 'l', 'z'], ['p', 'r', 'o', 'u', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    spans := [⟨2, 3, "dependent", none⟩, ⟨5, 1, "head", none⟩]
+    paperFeatures := [] }
 
 def az2025_63a : Datum :=
   { id := "az2025_63a"
@@ -947,7 +1219,8 @@ def az2025_63a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolz"), ("attributivizer", "affix"), ("noun", "Mutter"), ("dependent", "auf")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_63b : Datum :=
   { id := "az2025_63b"
@@ -962,7 +1235,8 @@ def az2025_63b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "stolz-e"), ("attributivizer", "affix"), ("noun", "Mutter"), ("dependent", "auf")] }
+    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_66a : Datum :=
   { id := "az2025_66a"
@@ -977,7 +1251,8 @@ def az2025_66a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "trots-e"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")] }
+    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_66b : Datum :=
   { id := "az2025_66b"
@@ -992,7 +1267,8 @@ def az2025_66b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "trots"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_66c : Datum :=
   { id := "az2025_66c"
@@ -1007,7 +1283,8 @@ def az2025_66c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "trots-e"), ("attributivizer", "affix"), ("noun", "vrouw"), ("dependent", "op")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_67a : Datum :=
   { id := "az2025_67a"
@@ -1022,7 +1299,8 @@ def az2025_67a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "trots-∅"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")] }
+    spans := [⟨1, 3, "dependent", none⟩, ⟨4, 1, "head", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
 def az2025_67b : Datum :=
   { id := "az2025_67b"
@@ -1037,7 +1315,8 @@ def az2025_67b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "trots"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
 def az2025_67c : Datum :=
   { id := "az2025_67c"
@@ -1052,7 +1331,8 @@ def az2025_67c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "trots-∅"), ("attributivizer", "null"), ("noun", "kind"), ("dependent", "op")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 3, "dependent", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
 def az2025_68a : Datum :=
   { id := "az2025_68a"
@@ -1067,7 +1347,8 @@ def az2025_68a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "groot"), ("attributivizer", "null"), ("noun", "kind"), ("degree", "genoeg-∅")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨2, 1, "attributivizer", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
 def az2025_68b : Datum :=
   { id := "az2025_68b"
@@ -1082,7 +1363,8 @@ def az2025_68b : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "groot"), ("attributivizer", "affix"), ("noun", "vrouw"), ("degree", "genoeg-e")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨2, 1, "attributivizer", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_68c : Datum :=
   { id := "az2025_68c"
@@ -1097,7 +1379,8 @@ def az2025_68c : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "groot-e"), ("noun", "vrouw"), ("degree", "genoeg")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 1, "degree", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "affix")] }
 
 def az2025_68d : Datum :=
   { id := "az2025_68d"
@@ -1112,7 +1395,8 @@ def az2025_68d : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "groot"), ("noun", "vrouw"), ("degree", "genoeg")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [] }
 
 def az2025_71a : Datum :=
   { id := "az2025_71a"
@@ -1120,12 +1404,14 @@ def az2025_71a : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "a proud-∅ child"
-    glossedTokens := []
+    glossedTokens := [("a", ""), ("proud-∅", ""), ("child", "")]
+    glossedWords := [⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['p', 'r', 'o', 'u', 'd', '-', '∅'], [], [⟨['p', 'r', 'o', 'u', 'd'], [], none⟩, ⟨['∅'], [], some '-'⟩]⟩, ⟨['c', 'h', 'i', 'l', 'd'], [], [⟨['c', 'h', 'i', 'l', 'd'], [], none⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "proud-∅"), ("attributivizer", "null"), ("noun", "child")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨1, 1, "attributivizer", none⟩, ⟨2, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
 def az2025_71b : Datum :=
   { id := "az2025_71b"
@@ -1133,12 +1419,14 @@ def az2025_71b : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "a proud of his mother-∅ child"
-    glossedTokens := []
+    glossedTokens := [("a", ""), ("proud", ""), ("of", ""), ("his", ""), ("mother-∅", ""), ("child", "")]
+    glossedWords := [⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['p', 'r', 'o', 'u', 'd'], [], [⟨['p', 'r', 'o', 'u', 'd'], [], none⟩]⟩, ⟨['o', 'f'], [], [⟨['o', 'f'], [], none⟩]⟩, ⟨['h', 'i', 's'], [], [⟨['h', 'i', 's'], [], none⟩]⟩, ⟨['m', 'o', 't', 'h', 'e', 'r', '-', '∅'], [], [⟨['m', 'o', 't', 'h', 'e', 'r'], [], none⟩, ⟨['∅'], [], some '-'⟩]⟩, ⟨['c', 'h', 'i', 'l', 'd'], [], [⟨['c', 'h', 'i', 'l', 'd'], [], none⟩]⟩]
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("head", "proud"), ("attributivizer", "null"), ("noun", "child"), ("dependent", "of")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 3, "dependent", none⟩, ⟨4, 1, "attributivizer", none⟩, ⟨5, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
 def az2025_71c : Datum :=
   { id := "az2025_71c"
@@ -1146,13 +1434,789 @@ def az2025_71c : Datum :=
     reportedIn := none
     language := "stan1293"
     primaryText := "a proud enough-∅ child"
-    glossedTokens := []
+    glossedTokens := [("a", ""), ("proud", ""), ("enough-∅", ""), ("child", "")]
+    glossedWords := [⟨['a'], [], [⟨['a'], [], none⟩]⟩, ⟨['p', 'r', 'o', 'u', 'd'], [], [⟨['p', 'r', 'o', 'u', 'd'], [], none⟩]⟩, ⟨['e', 'n', 'o', 'u', 'g', 'h', '-', '∅'], [], [⟨['e', 'n', 'o', 'u', 'g', 'h'], [], none⟩, ⟨['∅'], [], some '-'⟩]⟩, ⟨['c', 'h', 'i', 'l', 'd'], [], [⟨['c', 'h', 'i', 'l', 'd'], [], none⟩]⟩]
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("head", "proud"), ("attributivizer", "null"), ("noun", "child"), ("degree", "enough-∅")] }
+    spans := [⟨1, 1, "head", none⟩, ⟨2, 1, "degree", none⟩, ⟨2, 1, "attributivizer", none⟩, ⟨3, 1, "noun", none⟩]
+    paperFeatures := [("attributivizer", "null")] }
 
-def all : List Datum := [az2025_1a, az2025_1b, az2025_2a, az2025_2b, az2025_3a, az2025_3b, az2025_4a, az2025_4b, az2025_7a, az2025_7b, az2025_8, az2025_9a, az2025_9b, az2025_10a, az2025_10b, az2025_15, az2025_16, az2025_17a, az2025_17b, az2025_18a, az2025_18b, az2025_19a, az2025_19b, az2025_20a, az2025_20b, az2025_21a, az2025_21b, az2025_23b, az2025_24c, az2025_26, az2025_27, az2025_28b, az2025_28d, az2025_29a, az2025_29b, az2025_29c, az2025_30a, az2025_30b, az2025_30c, az2025_30d, az2025_31, az2025_32, az2025_35, az2025_36a, az2025_36b, az2025_36c, az2025_36d, az2025_37a, az2025_37b, az2025_38a, az2025_38b, az2025_39a, az2025_39b, az2025_40b, az2025_41b, az2025_42a, az2025_42b, az2025_42c, az2025_42d, az2025_43a, az2025_43b, az2025_43c, az2025_62, az2025_63a, az2025_63b, az2025_66a, az2025_66b, az2025_66c, az2025_67a, az2025_67b, az2025_67c, az2025_68a, az2025_68b, az2025_68c, az2025_68d, az2025_71a, az2025_71b, az2025_71c]
+def all : List Datum := [az2025_1a, az2025_1b, az2025_2a, az2025_2b, az2025_3a, az2025_3b, az2025_4a, az2025_4b, az2025_7a, az2025_7b, az2025_8, az2025_9a, az2025_9b, az2025_10a, az2025_10b, az2025_15, az2025_16, az2025_17a, az2025_17b, az2025_18a, az2025_18b, az2025_19a, az2025_19b, az2025_20a, az2025_20b, az2025_21a, az2025_21b, az2025_23b, az2025_24c, az2025_26, az2025_27, az2025_28b, az2025_28d, az2025_29a, az2025_29a_xpA, az2025_29b, az2025_29b_xpA, az2025_29c, az2025_30a, az2025_30b, az2025_30c, az2025_30d, az2025_31, az2025_32, az2025_35, az2025_36a, az2025_36b, az2025_36c, az2025_36d, az2025_37a, az2025_37a_bare, az2025_37b, az2025_37b_bare, az2025_38a, az2025_38a_agreeing, az2025_38b, az2025_38b_bare, az2025_39a, az2025_39a_short, az2025_39b, az2025_39b_short, az2025_40b, az2025_41b, az2025_42a, az2025_42a_weak, az2025_42b, az2025_42b_weak, az2025_42c, az2025_42d, az2025_43a, az2025_43a_long, az2025_43b, az2025_43c, az2025_62, az2025_62_xpA, az2025_63a, az2025_63b, az2025_66a, az2025_66b, az2025_66c, az2025_67a, az2025_67b, az2025_67c, az2025_68a, az2025_68b, az2025_68c, az2025_68d, az2025_71a, az2025_71b, az2025_71c]
+
+/-- The attributivizer the row shows, as the paper segments or describes it. -/
+inductive Attributivizer where
+  /-- affix: an overt affix, glossed ATTR -/
+  | affix
+  /-- null: a null affix, written ∅ -/
+  | null
+  /-- clitic: a clitic linker -/
+  | clitic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `attributivizer`. -/
+def attributivizer (e : Datum) : Option Attributivizer :=
+  e.parse? "attributivizer" [("affix", .affix), ("null", .null), ("clitic", .clitic)]
+
+/-- The construction of the modifier, where it is not an attributive adjective phrase. -/
+inductive Construction where
+  /-- relative: a relative clause containing the adjective phrase -/
+  | relative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `construction`. -/
+def construction (e : Datum) : Option Construction :=
+  e.parse? "construction" [("relative", .relative)]
+
+/-- Whether the adjective of an agreement paradigm row carries its agreement marker. -/
+inductive Marker where
+  /-- agreement: the adjective carries an agreement marker -/
+  | agreement
+  /-- bare: the adjective is a bare stem -/
+  | bare
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `marker`. -/
+def marker (e : Datum) : Option Marker :=
+  e.parse? "marker" [("agreement", .agreement), ("bare", .bare)]
+
+/-- The form of the adjective, in a language whose adjectives have two. -/
+inductive AdjectiveForm where
+  /-- long: the long form of Russian and Serbo-Croatian -/
+  | long
+  /-- short: the short form of Russian and Serbo-Croatian -/
+  | short
+  /-- strong: the strong form of Icelandic -/
+  | strong
+  /-- weak: the weak form of Icelandic -/
+  | weak
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `form`. -/
+def adjectiveForm (e : Datum) : Option AdjectiveForm :=
+  e.parse? "form" [("long", .long), ("short", .short), ("strong", .strong), ("weak", .weak)]
+
+/-- The definiteness of the noun phrase the adjective modifies. -/
+inductive Definiteness where
+  /-- definite: a definite noun phrase -/
+  | definite
+  /-- indefinite: an indefinite noun phrase -/
+  | indefinite
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `definiteness`. -/
+def definiteness (e : Datum) : Option Definiteness :=
+  e.parse? "definiteness" [("definite", .definite), ("indefinite", .indefinite)]
+
+/-- The labels of the spans the rows mark. -/
+inductive SpanLabel where
+  /-- head: the head of the modifier or predicate, an adjective except in the rows of other prenominal modifiers -/
+  | head
+  /-- noun: the modified noun -/
+  | noun
+  /-- dependent: the dependent of the head, a complement or modifier -/
+  | dependent
+  /-- degree: a degree word following the adjective -/
+  | degree
+  /-- attributivizer: the word that carries the attributivizer as a suffix or enclitic, or is it; of length zero, a null attributivizer the analysis places before the word -/
+  | attributivizer
+  deriving DecidableEq, Repr, Fintype
+
+/-- The label of a span, where it is a declared one. -/
+def label? (p : Datum.Span) : Option SpanLabel :=
+  List.lookup p.label [("head", .head), ("noun", .noun), ("dependent", .dependent), ("degree", .degree), ("attributivizer", .attributivizer)]
+
+/-- The examples of the paper. -/
+inductive Example where
+  | az2025_1a
+  | az2025_1b
+  | az2025_2a
+  | az2025_2b
+  | az2025_3a
+  | az2025_3b
+  | az2025_4a
+  | az2025_4b
+  | az2025_7a
+  | az2025_7b
+  | az2025_8
+  | az2025_9a
+  | az2025_9b
+  | az2025_10a
+  | az2025_10b
+  | az2025_15
+  | az2025_16
+  | az2025_17a
+  | az2025_17b
+  | az2025_18a
+  | az2025_18b
+  | az2025_19a
+  | az2025_19b
+  | az2025_20a
+  | az2025_20b
+  | az2025_21a
+  | az2025_21b
+  | az2025_23b
+  | az2025_24c
+  | az2025_26
+  | az2025_27
+  | az2025_28b
+  | az2025_28d
+  | az2025_29a
+  | az2025_29a_xpA
+  | az2025_29b
+  | az2025_29b_xpA
+  | az2025_29c
+  | az2025_30a
+  | az2025_30b
+  | az2025_30c
+  | az2025_30d
+  | az2025_31
+  | az2025_32
+  | az2025_35
+  | az2025_36a
+  | az2025_36b
+  | az2025_36c
+  | az2025_36d
+  | az2025_37a
+  | az2025_37a_bare
+  | az2025_37b
+  | az2025_37b_bare
+  | az2025_38a
+  | az2025_38a_agreeing
+  | az2025_38b
+  | az2025_38b_bare
+  | az2025_39a
+  | az2025_39a_short
+  | az2025_39b
+  | az2025_39b_short
+  | az2025_40b
+  | az2025_41b
+  | az2025_42a
+  | az2025_42a_weak
+  | az2025_42b
+  | az2025_42b_weak
+  | az2025_42c
+  | az2025_42d
+  | az2025_43a
+  | az2025_43a_long
+  | az2025_43b
+  | az2025_43c
+  | az2025_62
+  | az2025_62_xpA
+  | az2025_63a
+  | az2025_63b
+  | az2025_66a
+  | az2025_66b
+  | az2025_66c
+  | az2025_67a
+  | az2025_67b
+  | az2025_67c
+  | az2025_68a
+  | az2025_68b
+  | az2025_68c
+  | az2025_68d
+  | az2025_71a
+  | az2025_71b
+  | az2025_71c
+  deriving DecidableEq, Repr, Fintype
+
+/-- Every example of the file, in its order. -/
+def Example.all : List Example :=
+  [.az2025_1a, .az2025_1b, .az2025_2a, .az2025_2b, .az2025_3a, .az2025_3b, .az2025_4a,
+    .az2025_4b, .az2025_7a, .az2025_7b, .az2025_8, .az2025_9a, .az2025_9b, .az2025_10a,
+    .az2025_10b, .az2025_15, .az2025_16, .az2025_17a, .az2025_17b, .az2025_18a, .az2025_18b,
+    .az2025_19a, .az2025_19b, .az2025_20a, .az2025_20b, .az2025_21a, .az2025_21b, .az2025_23b,
+    .az2025_24c, .az2025_26, .az2025_27, .az2025_28b, .az2025_28d, .az2025_29a, .az2025_29a_xpA,
+    .az2025_29b, .az2025_29b_xpA, .az2025_29c, .az2025_30a, .az2025_30b, .az2025_30c, .az2025_30d,
+    .az2025_31, .az2025_32, .az2025_35, .az2025_36a, .az2025_36b, .az2025_36c, .az2025_36d,
+    .az2025_37a, .az2025_37a_bare, .az2025_37b, .az2025_37b_bare, .az2025_38a,
+    .az2025_38a_agreeing, .az2025_38b, .az2025_38b_bare, .az2025_39a, .az2025_39a_short,
+    .az2025_39b, .az2025_39b_short, .az2025_40b, .az2025_41b, .az2025_42a, .az2025_42a_weak,
+    .az2025_42b, .az2025_42b_weak, .az2025_42c, .az2025_42d, .az2025_43a, .az2025_43a_long,
+    .az2025_43b, .az2025_43c, .az2025_62, .az2025_62_xpA, .az2025_63a, .az2025_63b, .az2025_66a,
+    .az2025_66b, .az2025_66c, .az2025_67a, .az2025_67b, .az2025_67c, .az2025_68a, .az2025_68b,
+    .az2025_68c, .az2025_68d, .az2025_71a, .az2025_71b, .az2025_71c]
+
+/-- The row of an example. -/
+def Example.datum : Example → Datum
+  | .az2025_1a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_1a
+  | .az2025_1b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_1b
+  | .az2025_2a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_2a
+  | .az2025_2b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_2b
+  | .az2025_3a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_3a
+  | .az2025_3b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_3b
+  | .az2025_4a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_4a
+  | .az2025_4b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_4b
+  | .az2025_7a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_7a
+  | .az2025_7b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_7b
+  | .az2025_8 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_8
+  | .az2025_9a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_9a
+  | .az2025_9b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_9b
+  | .az2025_10a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_10a
+  | .az2025_10b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_10b
+  | .az2025_15 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_15
+  | .az2025_16 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_16
+  | .az2025_17a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_17a
+  | .az2025_17b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_17b
+  | .az2025_18a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_18a
+  | .az2025_18b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_18b
+  | .az2025_19a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_19a
+  | .az2025_19b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_19b
+  | .az2025_20a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_20a
+  | .az2025_20b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_20b
+  | .az2025_21a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_21a
+  | .az2025_21b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_21b
+  | .az2025_23b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_23b
+  | .az2025_24c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_24c
+  | .az2025_26 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_26
+  | .az2025_27 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_27
+  | .az2025_28b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_28b
+  | .az2025_28d => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_28d
+  | .az2025_29a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_29a
+  | .az2025_29a_xpA => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_29a_xpA
+  | .az2025_29b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_29b
+  | .az2025_29b_xpA => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_29b_xpA
+  | .az2025_29c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_29c
+  | .az2025_30a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_30a
+  | .az2025_30b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_30b
+  | .az2025_30c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_30c
+  | .az2025_30d => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_30d
+  | .az2025_31 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_31
+  | .az2025_32 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_32
+  | .az2025_35 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_35
+  | .az2025_36a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_36a
+  | .az2025_36b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_36b
+  | .az2025_36c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_36c
+  | .az2025_36d => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_36d
+  | .az2025_37a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_37a
+  | .az2025_37a_bare => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_37a_bare
+  | .az2025_37b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_37b
+  | .az2025_37b_bare => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_37b_bare
+  | .az2025_38a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_38a
+  | .az2025_38a_agreeing => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_38a_agreeing
+  | .az2025_38b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_38b
+  | .az2025_38b_bare => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_38b_bare
+  | .az2025_39a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_39a
+  | .az2025_39a_short => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_39a_short
+  | .az2025_39b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_39b
+  | .az2025_39b_short => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_39b_short
+  | .az2025_40b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_40b
+  | .az2025_41b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_41b
+  | .az2025_42a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_42a
+  | .az2025_42a_weak => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_42a_weak
+  | .az2025_42b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_42b
+  | .az2025_42b_weak => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_42b_weak
+  | .az2025_42c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_42c
+  | .az2025_42d => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_42d
+  | .az2025_43a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_43a
+  | .az2025_43a_long => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_43a_long
+  | .az2025_43b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_43b
+  | .az2025_43c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_43c
+  | .az2025_62 => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_62
+  | .az2025_62_xpA => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_62_xpA
+  | .az2025_63a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_63a
+  | .az2025_63b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_63b
+  | .az2025_66a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_66a
+  | .az2025_66b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_66b
+  | .az2025_66c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_66c
+  | .az2025_67a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_67a
+  | .az2025_67b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_67b
+  | .az2025_67c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_67c
+  | .az2025_68a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_68a
+  | .az2025_68b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_68b
+  | .az2025_68c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_68c
+  | .az2025_68d => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_68d
+  | .az2025_71a => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_71a
+  | .az2025_71b => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_71b
+  | .az2025_71c => _root_.AlexeyenkoZeijlstra2025.Examples.az2025_71c
+
+theorem Example.map_datum_all :
+    Example.all.map Example.datum = _root_.AlexeyenkoZeijlstra2025.Examples.all := rfl
+
+/-- The value the example records under `attributivizer`. -/
+def Example.attributivizer : Example → Option Attributivizer
+  | .az2025_1a => none
+  | .az2025_1b => none
+  | .az2025_2a => none
+  | .az2025_2b => none
+  | .az2025_3a => none
+  | .az2025_3b => none
+  | .az2025_4a => none
+  | .az2025_4b => some .clitic
+  | .az2025_7a => none
+  | .az2025_7b => none
+  | .az2025_8 => none
+  | .az2025_9a => none
+  | .az2025_9b => none
+  | .az2025_10a => none
+  | .az2025_10b => none
+  | .az2025_15 => some .null
+  | .az2025_16 => none
+  | .az2025_17a => none
+  | .az2025_17b => none
+  | .az2025_18a => none
+  | .az2025_18b => none
+  | .az2025_19a => none
+  | .az2025_19b => none
+  | .az2025_20a => none
+  | .az2025_20b => none
+  | .az2025_21a => none
+  | .az2025_21b => none
+  | .az2025_23b => none
+  | .az2025_24c => none
+  | .az2025_26 => some .clitic
+  | .az2025_27 => some .clitic
+  | .az2025_28b => none
+  | .az2025_28d => none
+  | .az2025_29a => none
+  | .az2025_29a_xpA => none
+  | .az2025_29b => none
+  | .az2025_29b_xpA => none
+  | .az2025_29c => none
+  | .az2025_30a => none
+  | .az2025_30b => none
+  | .az2025_30c => none
+  | .az2025_30d => none
+  | .az2025_31 => none
+  | .az2025_32 => some .clitic
+  | .az2025_35 => none
+  | .az2025_36a => none
+  | .az2025_36b => none
+  | .az2025_36c => none
+  | .az2025_36d => none
+  | .az2025_37a => none
+  | .az2025_37a_bare => none
+  | .az2025_37b => none
+  | .az2025_37b_bare => none
+  | .az2025_38a => none
+  | .az2025_38a_agreeing => none
+  | .az2025_38b => none
+  | .az2025_38b_bare => none
+  | .az2025_39a => none
+  | .az2025_39a_short => none
+  | .az2025_39b => none
+  | .az2025_39b_short => none
+  | .az2025_40b => none
+  | .az2025_41b => none
+  | .az2025_42a => none
+  | .az2025_42a_weak => none
+  | .az2025_42b => none
+  | .az2025_42b_weak => none
+  | .az2025_42c => none
+  | .az2025_42d => none
+  | .az2025_43a => none
+  | .az2025_43a_long => none
+  | .az2025_43b => none
+  | .az2025_43c => none
+  | .az2025_62 => none
+  | .az2025_62_xpA => none
+  | .az2025_63a => some .affix
+  | .az2025_63b => some .affix
+  | .az2025_66a => some .affix
+  | .az2025_66b => some .affix
+  | .az2025_66c => some .affix
+  | .az2025_67a => some .null
+  | .az2025_67b => some .null
+  | .az2025_67c => some .null
+  | .az2025_68a => some .null
+  | .az2025_68b => some .affix
+  | .az2025_68c => some .affix
+  | .az2025_68d => none
+  | .az2025_71a => some .null
+  | .az2025_71b => some .null
+  | .az2025_71c => some .null
+
+theorem Example.attributivizer_datum :
+    ∀ x : Example, _root_.AlexeyenkoZeijlstra2025.Examples.attributivizer x.datum = x.attributivizer := by
+  decide +kernel
+
+/-- The value the example records under `construction`. -/
+def Example.construction : Example → Option Construction
+  | .az2025_1a => none
+  | .az2025_1b => none
+  | .az2025_2a => none
+  | .az2025_2b => none
+  | .az2025_3a => none
+  | .az2025_3b => none
+  | .az2025_4a => none
+  | .az2025_4b => none
+  | .az2025_7a => none
+  | .az2025_7b => none
+  | .az2025_8 => none
+  | .az2025_9a => none
+  | .az2025_9b => none
+  | .az2025_10a => none
+  | .az2025_10b => none
+  | .az2025_15 => none
+  | .az2025_16 => none
+  | .az2025_17a => none
+  | .az2025_17b => none
+  | .az2025_18a => none
+  | .az2025_18b => none
+  | .az2025_19a => none
+  | .az2025_19b => none
+  | .az2025_20a => none
+  | .az2025_20b => none
+  | .az2025_21a => none
+  | .az2025_21b => none
+  | .az2025_23b => none
+  | .az2025_24c => none
+  | .az2025_26 => none
+  | .az2025_27 => none
+  | .az2025_28b => none
+  | .az2025_28d => some .relative
+  | .az2025_29a => none
+  | .az2025_29a_xpA => none
+  | .az2025_29b => none
+  | .az2025_29b_xpA => none
+  | .az2025_29c => some .relative
+  | .az2025_30a => none
+  | .az2025_30b => none
+  | .az2025_30c => none
+  | .az2025_30d => some .relative
+  | .az2025_31 => none
+  | .az2025_32 => none
+  | .az2025_35 => none
+  | .az2025_36a => none
+  | .az2025_36b => none
+  | .az2025_36c => none
+  | .az2025_36d => none
+  | .az2025_37a => none
+  | .az2025_37a_bare => none
+  | .az2025_37b => none
+  | .az2025_37b_bare => none
+  | .az2025_38a => none
+  | .az2025_38a_agreeing => none
+  | .az2025_38b => none
+  | .az2025_38b_bare => none
+  | .az2025_39a => none
+  | .az2025_39a_short => none
+  | .az2025_39b => none
+  | .az2025_39b_short => none
+  | .az2025_40b => none
+  | .az2025_41b => none
+  | .az2025_42a => none
+  | .az2025_42a_weak => none
+  | .az2025_42b => none
+  | .az2025_42b_weak => none
+  | .az2025_42c => none
+  | .az2025_42d => none
+  | .az2025_43a => none
+  | .az2025_43a_long => none
+  | .az2025_43b => none
+  | .az2025_43c => none
+  | .az2025_62 => none
+  | .az2025_62_xpA => none
+  | .az2025_63a => none
+  | .az2025_63b => none
+  | .az2025_66a => none
+  | .az2025_66b => none
+  | .az2025_66c => none
+  | .az2025_67a => none
+  | .az2025_67b => none
+  | .az2025_67c => none
+  | .az2025_68a => none
+  | .az2025_68b => none
+  | .az2025_68c => none
+  | .az2025_68d => none
+  | .az2025_71a => none
+  | .az2025_71b => none
+  | .az2025_71c => none
+
+theorem Example.construction_datum :
+    ∀ x : Example, _root_.AlexeyenkoZeijlstra2025.Examples.construction x.datum = x.construction := by
+  decide +kernel
+
+/-- The value the example records under `marker`. -/
+def Example.marker : Example → Option Marker
+  | .az2025_1a => none
+  | .az2025_1b => none
+  | .az2025_2a => none
+  | .az2025_2b => none
+  | .az2025_3a => none
+  | .az2025_3b => none
+  | .az2025_4a => none
+  | .az2025_4b => none
+  | .az2025_7a => none
+  | .az2025_7b => none
+  | .az2025_8 => none
+  | .az2025_9a => none
+  | .az2025_9b => none
+  | .az2025_10a => none
+  | .az2025_10b => none
+  | .az2025_15 => none
+  | .az2025_16 => none
+  | .az2025_17a => none
+  | .az2025_17b => none
+  | .az2025_18a => none
+  | .az2025_18b => none
+  | .az2025_19a => none
+  | .az2025_19b => none
+  | .az2025_20a => none
+  | .az2025_20b => none
+  | .az2025_21a => none
+  | .az2025_21b => none
+  | .az2025_23b => none
+  | .az2025_24c => none
+  | .az2025_26 => none
+  | .az2025_27 => none
+  | .az2025_28b => none
+  | .az2025_28d => none
+  | .az2025_29a => none
+  | .az2025_29a_xpA => none
+  | .az2025_29b => none
+  | .az2025_29b_xpA => none
+  | .az2025_29c => none
+  | .az2025_30a => none
+  | .az2025_30b => none
+  | .az2025_30c => none
+  | .az2025_30d => none
+  | .az2025_31 => none
+  | .az2025_32 => none
+  | .az2025_35 => none
+  | .az2025_36a => none
+  | .az2025_36b => none
+  | .az2025_36c => none
+  | .az2025_36d => none
+  | .az2025_37a => some .agreement
+  | .az2025_37a_bare => some .bare
+  | .az2025_37b => some .agreement
+  | .az2025_37b_bare => some .bare
+  | .az2025_38a => some .bare
+  | .az2025_38a_agreeing => some .agreement
+  | .az2025_38b => some .agreement
+  | .az2025_38b_bare => some .bare
+  | .az2025_39a => none
+  | .az2025_39a_short => none
+  | .az2025_39b => none
+  | .az2025_39b_short => none
+  | .az2025_40b => none
+  | .az2025_41b => none
+  | .az2025_42a => none
+  | .az2025_42a_weak => none
+  | .az2025_42b => none
+  | .az2025_42b_weak => none
+  | .az2025_42c => none
+  | .az2025_42d => none
+  | .az2025_43a => none
+  | .az2025_43a_long => none
+  | .az2025_43b => none
+  | .az2025_43c => none
+  | .az2025_62 => none
+  | .az2025_62_xpA => none
+  | .az2025_63a => none
+  | .az2025_63b => none
+  | .az2025_66a => none
+  | .az2025_66b => none
+  | .az2025_66c => none
+  | .az2025_67a => none
+  | .az2025_67b => none
+  | .az2025_67c => none
+  | .az2025_68a => none
+  | .az2025_68b => none
+  | .az2025_68c => none
+  | .az2025_68d => none
+  | .az2025_71a => none
+  | .az2025_71b => none
+  | .az2025_71c => none
+
+theorem Example.marker_datum :
+    ∀ x : Example, _root_.AlexeyenkoZeijlstra2025.Examples.marker x.datum = x.marker := by
+  decide +kernel
+
+/-- The value the example records under `form`. -/
+def Example.adjectiveForm : Example → Option AdjectiveForm
+  | .az2025_1a => none
+  | .az2025_1b => none
+  | .az2025_2a => none
+  | .az2025_2b => none
+  | .az2025_3a => none
+  | .az2025_3b => none
+  | .az2025_4a => none
+  | .az2025_4b => none
+  | .az2025_7a => none
+  | .az2025_7b => none
+  | .az2025_8 => none
+  | .az2025_9a => none
+  | .az2025_9b => none
+  | .az2025_10a => none
+  | .az2025_10b => none
+  | .az2025_15 => none
+  | .az2025_16 => none
+  | .az2025_17a => none
+  | .az2025_17b => none
+  | .az2025_18a => none
+  | .az2025_18b => none
+  | .az2025_19a => none
+  | .az2025_19b => none
+  | .az2025_20a => none
+  | .az2025_20b => none
+  | .az2025_21a => none
+  | .az2025_21b => none
+  | .az2025_23b => none
+  | .az2025_24c => none
+  | .az2025_26 => none
+  | .az2025_27 => none
+  | .az2025_28b => none
+  | .az2025_28d => none
+  | .az2025_29a => none
+  | .az2025_29a_xpA => none
+  | .az2025_29b => none
+  | .az2025_29b_xpA => none
+  | .az2025_29c => none
+  | .az2025_30a => none
+  | .az2025_30b => none
+  | .az2025_30c => none
+  | .az2025_30d => none
+  | .az2025_31 => none
+  | .az2025_32 => none
+  | .az2025_35 => none
+  | .az2025_36a => none
+  | .az2025_36b => none
+  | .az2025_36c => none
+  | .az2025_36d => none
+  | .az2025_37a => none
+  | .az2025_37a_bare => none
+  | .az2025_37b => none
+  | .az2025_37b_bare => none
+  | .az2025_38a => none
+  | .az2025_38a_agreeing => none
+  | .az2025_38b => none
+  | .az2025_38b_bare => none
+  | .az2025_39a => some .long
+  | .az2025_39a_short => some .short
+  | .az2025_39b => some .long
+  | .az2025_39b_short => some .short
+  | .az2025_40b => none
+  | .az2025_41b => none
+  | .az2025_42a => some .strong
+  | .az2025_42a_weak => some .weak
+  | .az2025_42b => some .strong
+  | .az2025_42b_weak => some .weak
+  | .az2025_42c => some .weak
+  | .az2025_42d => some .strong
+  | .az2025_43a => some .short
+  | .az2025_43a_long => some .long
+  | .az2025_43b => some .short
+  | .az2025_43c => some .long
+  | .az2025_62 => none
+  | .az2025_62_xpA => none
+  | .az2025_63a => none
+  | .az2025_63b => none
+  | .az2025_66a => none
+  | .az2025_66b => none
+  | .az2025_66c => none
+  | .az2025_67a => none
+  | .az2025_67b => none
+  | .az2025_67c => none
+  | .az2025_68a => none
+  | .az2025_68b => none
+  | .az2025_68c => none
+  | .az2025_68d => none
+  | .az2025_71a => none
+  | .az2025_71b => none
+  | .az2025_71c => none
+
+theorem Example.adjectiveForm_datum :
+    ∀ x : Example, _root_.AlexeyenkoZeijlstra2025.Examples.adjectiveForm x.datum = x.adjectiveForm := by
+  decide +kernel
+
+/-- The value the example records under `definiteness`. -/
+def Example.definiteness : Example → Option Definiteness
+  | .az2025_1a => none
+  | .az2025_1b => none
+  | .az2025_2a => none
+  | .az2025_2b => none
+  | .az2025_3a => none
+  | .az2025_3b => none
+  | .az2025_4a => none
+  | .az2025_4b => none
+  | .az2025_7a => none
+  | .az2025_7b => none
+  | .az2025_8 => none
+  | .az2025_9a => none
+  | .az2025_9b => none
+  | .az2025_10a => none
+  | .az2025_10b => none
+  | .az2025_15 => none
+  | .az2025_16 => none
+  | .az2025_17a => none
+  | .az2025_17b => none
+  | .az2025_18a => none
+  | .az2025_18b => none
+  | .az2025_19a => none
+  | .az2025_19b => none
+  | .az2025_20a => none
+  | .az2025_20b => none
+  | .az2025_21a => none
+  | .az2025_21b => none
+  | .az2025_23b => none
+  | .az2025_24c => none
+  | .az2025_26 => none
+  | .az2025_27 => none
+  | .az2025_28b => none
+  | .az2025_28d => none
+  | .az2025_29a => none
+  | .az2025_29a_xpA => none
+  | .az2025_29b => none
+  | .az2025_29b_xpA => none
+  | .az2025_29c => none
+  | .az2025_30a => none
+  | .az2025_30b => none
+  | .az2025_30c => none
+  | .az2025_30d => none
+  | .az2025_31 => none
+  | .az2025_32 => none
+  | .az2025_35 => none
+  | .az2025_36a => none
+  | .az2025_36b => none
+  | .az2025_36c => none
+  | .az2025_36d => none
+  | .az2025_37a => none
+  | .az2025_37a_bare => none
+  | .az2025_37b => none
+  | .az2025_37b_bare => none
+  | .az2025_38a => none
+  | .az2025_38a_agreeing => none
+  | .az2025_38b => none
+  | .az2025_38b_bare => none
+  | .az2025_39a => none
+  | .az2025_39a_short => none
+  | .az2025_39b => none
+  | .az2025_39b_short => none
+  | .az2025_40b => none
+  | .az2025_41b => none
+  | .az2025_42a => none
+  | .az2025_42a_weak => none
+  | .az2025_42b => some .indefinite
+  | .az2025_42b_weak => some .indefinite
+  | .az2025_42c => some .definite
+  | .az2025_42d => some .definite
+  | .az2025_43a => none
+  | .az2025_43a_long => none
+  | .az2025_43b => some .indefinite
+  | .az2025_43c => some .definite
+  | .az2025_62 => none
+  | .az2025_62_xpA => none
+  | .az2025_63a => none
+  | .az2025_63b => none
+  | .az2025_66a => none
+  | .az2025_66b => none
+  | .az2025_66c => none
+  | .az2025_67a => none
+  | .az2025_67b => none
+  | .az2025_67c => none
+  | .az2025_68a => none
+  | .az2025_68b => none
+  | .az2025_68c => none
+  | .az2025_68d => none
+  | .az2025_71a => none
+  | .az2025_71b => none
+  | .az2025_71c => none
+
+theorem Example.definiteness_datum :
+    ∀ x : Example, _root_.AlexeyenkoZeijlstra2025.Examples.definiteness x.datum = x.definiteness := by
+  decide +kernel
 
 end AlexeyenkoZeijlstra2025.Examples

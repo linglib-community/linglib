@@ -12,6 +12,7 @@ public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Order.UpperLower.CompleteLattice
 public import Mathlib.Order.SupClosed
 public import Mathlib.Order.Interval.Set.OrdConnected
+public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Core.Order.DistribSemilattice
 
 /-!
@@ -25,6 +26,12 @@ transport both ways. In a complete lattice, the supremum of `s ⊻ t` is the joi
 two nonempty sets. Membership in `s ⊻ t` is decidable over a finite carrier. The indexed form of
 `s ⊻ t` is `Set.iSups s`, the set of suprema of choices of an element from each member of a
 family `s`. [UPSTREAM]
+
+Where only the pairs with an upper bound have a join, `Set.lubs s t` is the set of joins of the
+compatible pairs with one element from each set. It is `s ⊻ t` in a semilattice
+(`Set.lubs_eq_sups`), it is associative in a bounded-complete order, and its upper closure is the
+join of the upper closures (`Set.upperClosure_lubs`). This part is library substrate and not an
+upstream candidate.
 -/
 
 @[expose] public section
@@ -106,7 +113,7 @@ theorem Set.OrdConnected.sups [IsDistribSemilatticeSup α] (hs : s.OrdConnected)
 theorem isDistribSemilatticeSup_iff_isLowerSet_sups : IsDistribSemilatticeSup α ↔
     ∀ s t : Set α, IsLowerSet s → IsLowerSet t → IsLowerSet (s ⊻ t) := by
   refine ⟨fun _ _ _ hs ht ↦ hs.sups ht, fun h ↦ ⟨fun {a b c} hle ↦ ?_⟩⟩
-  exact Set.mem_sups.1 <| h _ _ (isLowerSet_Iic b) (isLowerSet_Iic c) hle
+  exact Set.mem_sups.1 <| h _ _ (IsLowerSet.Iic b) (IsLowerSet.Iic c) hle
     (Set.sup_mem_sups Set.self_mem_Iic Set.self_mem_Iic)
 
 end IsDistribSemilatticeSup
@@ -173,5 +180,55 @@ theorem upperClosure_iSups : upperClosure (iSups s) = ⨆ i, upperClosure (s i) 
     exact ⟨_, iSup_mem_iSups hf, iSup_le hfa⟩
 
 end iSups
+
+end Set
+
+/-! ### Joins of compatible pairs -/
+
+namespace Set
+
+section Preorder
+
+variable {α : Type*} [Preorder α] {s t : Set α} {c : α}
+
+/-- The joins of the compatible pairs with one element from each set. A pair with no least upper
+bound contributes nothing. -/
+def lubs (s t : Set α) : Set α := {c | ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c}
+
+theorem mem_lubs : c ∈ lubs s t ↔ ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c := Iff.rfl
+
+theorem lubs_comm (s t : Set α) : lubs s t = lubs t s :=
+  Set.ext fun _ ↦ ⟨fun ⟨a, ha, b, hb, h⟩ ↦ ⟨b, hb, a, ha, Set.pair_comm a b ▸ h⟩,
+    fun ⟨b, hb, a, ha, h⟩ ↦ ⟨a, ha, b, hb, Set.pair_comm b a ▸ h⟩⟩
+
+theorem lubs_assoc [IsBoundedComplete α] (s t u : Set α) :
+    lubs (lubs s t) u = lubs s (lubs t u) :=
+  Set.ext fun _ ↦
+    ⟨fun ⟨_, ⟨a, ha, b, hb, hv⟩, c, hc, hr⟩ ↦
+      let ⟨v', hv', hr'⟩ := hv.pair_assoc hr
+      ⟨a, ha, v', ⟨b, hb, c, hc, hv'⟩, hr'⟩,
+     fun ⟨a, ha, v, ⟨b, hb, c, hc, hv⟩, hr⟩ ↦
+      let ⟨v', hv', hr'⟩ := (Set.pair_comm b c ▸ hv).pair_assoc (Set.pair_comm a v ▸ hr)
+      ⟨v', ⟨a, ha, b, hb, Set.pair_comm b a ▸ hv'⟩, c, hc, Set.pair_comm c v' ▸ hr'⟩⟩
+
+/-- The upper closure of the joins of compatible pairs is the join of the upper closures. -/
+theorem upperClosure_lubs [IsBoundedComplete α] (s t : Set α) :
+    upperClosure (lubs s t) = upperClosure s ⊔ upperClosure t := by
+  refine SetLike.ext fun u ↦ ?_
+  simp only [UpperSet.mem_sup_iff, mem_upperClosure]
+  constructor
+  · rintro ⟨d, ⟨a, ha, b, hb, hd⟩, hdu⟩
+    obtain ⟨had, hbd⟩ := mem_upperBounds_pair.mp hd.1
+    exact ⟨⟨a, ha, had.trans hdu⟩, b, hb, hbd.trans hdu⟩
+  · rintro ⟨⟨a, ha, hau⟩, b, hb, hbu⟩
+    obtain ⟨d, hd⟩ := IsBoundedComplete.exists_isLUB_of_bddAbove a b (Compat.of_le hau hbu)
+    exact ⟨d, ⟨a, ha, b, hb, hd⟩, hd.2 (mem_upperBounds_pair.mpr ⟨hau, hbu⟩)⟩
+
+end Preorder
+
+/-- In a semilattice the joins of compatible pairs are the pointwise sups. -/
+theorem lubs_eq_sups {α : Type*} [SemilatticeSup α] (s t : Set α) : lubs s t = s ⊻ t :=
+  Set.ext fun _ ↦ ⟨fun ⟨a, ha, b, hb, h⟩ ↦ ⟨a, ha, b, hb, isLUB_pair.unique h⟩,
+    fun ⟨a, ha, b, hb, h⟩ ↦ ⟨a, ha, b, hb, h ▸ isLUB_pair⟩⟩
 
 end Set

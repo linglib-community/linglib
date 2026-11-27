@@ -1,0 +1,1222 @@
+{
+ "meta": {
+  "bibkey": "narrog-2009a",
+  "method": "corpus",
+  "description": "The scopal behavior of the modal markers of Modern Japanese against aspect, negation, tense, nominalization and illocutionary modulation, from a corpus study.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Marker",
+   "doc": "The modal markers of the study, in the order of the table that arranges them by scopal behavior, narrowest scope first.",
+   "levels": [
+    {
+     "name": "eru",
+     "label": "-Eru",
+     "doc": "a marker of dynamic modality"
+    },
+    {
+     "name": "rareru",
+     "label": "-(r)areru",
+     "doc": "a marker of dynamic modality"
+    },
+    {
+     "name": "kotoGaDekiru",
+     "label": "koto ga dekiru",
+     "doc": "a marker of dynamic modality"
+    },
+    {
+     "name": "soo1",
+     "label": "-soo(1)",
+     "doc": "a marker of evidentiality"
+    },
+    {
+     "name": "tai",
+     "label": "-tai",
+     "doc": "a marker of boulomaic modality"
+    },
+    {
+     "name": "teHosii",
+     "label": "-Te hosii",
+     "doc": "a marker of boulomaic modality"
+    },
+    {
+     "name": "nakerebaNaranai",
+     "label": "-(a)nakereba naranai",
+     "doc": "a marker of deontic modality"
+    },
+    {
+     "name": "rebaIi",
+     "label": "-(r)eba ii",
+     "doc": "a marker of deontic modality"
+    },
+    {
+     "name": "beki",
+     "label": "beki",
+     "doc": "a marker of deontic modality"
+    },
+    {
+     "name": "hazu",
+     "label": "hazu",
+     "doc": "a marker of epistemic modality"
+    },
+    {
+     "name": "yoo",
+     "label": "yoo",
+     "doc": "a marker of evidentiality"
+    },
+    {
+     "name": "rasii",
+     "label": "rasii",
+     "doc": "a marker of evidentiality"
+    },
+    {
+     "name": "kaMoSirenai",
+     "label": "ka mo sirenai",
+     "doc": "a marker of epistemic modality"
+    },
+    {
+     "name": "soo2",
+     "label": "-soo(2)",
+     "doc": "a marker of evidentiality"
+    },
+    {
+     "name": "daroo",
+     "label": "daroo",
+     "doc": "a marker of epistemic modality"
+    },
+    {
+     "name": "hortative",
+     "label": "Hortative -(y)oo",
+     "doc": "a marker of mood"
+    },
+    {
+     "name": "imperativeI",
+     "label": "Imperative I",
+     "doc": "a marker of mood"
+    },
+    {
+     "name": "imperativeII",
+     "label": "Imperative II",
+     "doc": "a marker of mood"
+    }
+   ]
+  },
+  {
+   "name": "ModalCategory",
+   "doc": "The modal categories of the markers.",
+   "levels": [
+    {
+     "name": "dynamic",
+     "label": "DYN",
+     "doc": "dynamic modality"
+    },
+    {
+     "name": "evidential",
+     "label": "EVI",
+     "doc": "evidentiality"
+    },
+    {
+     "name": "boulomaic",
+     "label": "BOU",
+     "doc": "boulomaic modality"
+    },
+    {
+     "name": "deontic",
+     "label": "DEO",
+     "doc": "deontic modality"
+    },
+    {
+     "name": "epistemic",
+     "label": "EPI",
+     "doc": "epistemic modality"
+    },
+    {
+     "name": "mood",
+     "label": "MOO",
+     "doc": "mood"
+    }
+   ]
+  },
+  {
+   "name": "Category",
+   "doc": "The categories the markers are tested against.",
+   "levels": [
+    {
+     "name": "stativeAspect",
+     "label": "stative aspect",
+     "doc": "stative aspect"
+    },
+    {
+     "name": "completiveAspect",
+     "label": "compl. aspect",
+     "doc": "completive aspect"
+    },
+    {
+     "name": "internalNegation",
+     "label": "internal neg",
+     "doc": "internal negation"
+    },
+    {
+     "name": "externalNegation",
+     "label": "external neg",
+     "doc": "external negation"
+    },
+    {
+     "name": "tense",
+     "label": "tense",
+     "doc": "past tense"
+    },
+    {
+     "name": "nominalization",
+     "label": "nominalization/complementation",
+     "doc": "nominalization and complementation"
+    },
+    {
+     "name": "illocutionaryModulation",
+     "label": "illocutionary modulation",
+     "doc": "illocutionary modulation"
+    }
+   ]
+  },
+  {
+   "name": "Scope",
+   "doc": "The scope relation of a marker to a category.",
+   "levels": [
+    {
+     "name": "embedded",
+     "label": "⊂",
+     "doc": "the marker can be embedded by the category and cannot embed it"
+    },
+    {
+     "name": "both",
+     "label": "⊂|⊃",
+     "doc": "the marker can embed the category and be embedded by it"
+    },
+    {
+     "name": "embeds",
+     "label": "⊃",
+     "doc": "the marker can embed the category and cannot be embedded by it"
+    },
+    {
+     "name": "none",
+     "label": "—",
+     "doc": "no interaction"
+    }
+   ]
+  },
+  {
+   "name": "Layer",
+   "doc": "The tentative layer of a marker from its interaction with other modal markers, the widest scope last.",
+   "levels": [
+    {
+     "name": "l4",
+     "label": "4",
+     "doc": "layer 4"
+    },
+    {
+     "name": "l3b",
+     "label": "3b",
+     "doc": "layer 3b"
+    },
+    {
+     "name": "l3a",
+     "label": "3a",
+     "doc": "layer 3a"
+    },
+    {
+     "name": "l2",
+     "label": "2",
+     "doc": "layer 2"
+    },
+    {
+     "name": "l1",
+     "label": "1",
+     "doc": "layer 1"
+    },
+    {
+     "name": "l0",
+     "label": "0",
+     "doc": "layer 0"
+    }
+   ]
+  },
+  {
+   "name": "ClauseLayer",
+   "doc": "The layer of a marker in non-matrix clauses in the Minami model, the lowest first.",
+   "levels": [
+    {
+     "name": "b",
+     "label": "B",
+     "doc": "layer B"
+    },
+    {
+     "name": "bc",
+     "label": "B~C",
+     "doc": "layer B~C"
+    },
+    {
+     "name": "c",
+     "label": "C",
+     "doc": "layer C"
+    },
+    {
+     "name": "cd",
+     "label": "C~D",
+     "doc": "layer C~D"
+    },
+    {
+     "name": "d",
+     "label": "D",
+     "doc": "layer D"
+    }
+   ]
+  }
+ ],
+ "constants": [],
+ "tables": [
+  {
+   "name": "markers",
+   "structure": "MarkerRow",
+   "doc": "a modal marker with its modal category and its layers.",
+   "locator": "Table 49, p. 227",
+   "verified": "page-image",
+   "key": [
+    "marker"
+   ],
+   "columns": [
+    {
+     "name": "marker",
+     "type": "Marker",
+     "doc": "The marker."
+    },
+    {
+     "name": "category",
+     "type": "ModalCategory",
+     "doc": "Its modal category."
+    },
+    {
+     "name": "layer",
+     "type": "Layer",
+     "doc": "Its layer among the modal markers."
+    },
+    {
+     "name": "clauseLayer",
+     "type": "ClauseLayer",
+     "doc": "Its layer in non-matrix clauses."
+    }
+   ],
+   "rows": [
+    {
+     "marker": "-Eru",
+     "category": "DYN",
+     "layer": "4",
+     "clauseLayer": "B"
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "DYN",
+     "layer": "4",
+     "clauseLayer": "B"
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "DYN",
+     "layer": "4",
+     "clauseLayer": "B"
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "EVI",
+     "layer": "3b",
+     "clauseLayer": "B"
+    },
+    {
+     "marker": "-tai",
+     "category": "BOU",
+     "layer": "3b",
+     "clauseLayer": "B"
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "BOU",
+     "layer": "3b",
+     "clauseLayer": "B"
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "DEO",
+     "layer": "3b",
+     "clauseLayer": "B"
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "DEO",
+     "layer": "3a",
+     "clauseLayer": "B~C"
+    },
+    {
+     "marker": "beki",
+     "category": "DEO",
+     "layer": "3a",
+     "clauseLayer": "B~C"
+    },
+    {
+     "marker": "hazu",
+     "category": "EPI",
+     "layer": "2",
+     "clauseLayer": "B~C"
+    },
+    {
+     "marker": "yoo",
+     "category": "EVI",
+     "layer": "2",
+     "clauseLayer": "B~C"
+    },
+    {
+     "marker": "rasii",
+     "category": "EVI",
+     "layer": "2",
+     "clauseLayer": "B~C"
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "EPI",
+     "layer": "2",
+     "clauseLayer": "B~C"
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "EVI",
+     "layer": "1",
+     "clauseLayer": "C"
+    },
+    {
+     "marker": "daroo",
+     "category": "EPI",
+     "layer": "1",
+     "clauseLayer": "B~C"
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "MOO",
+     "layer": "0",
+     "clauseLayer": "C~D"
+    },
+    {
+     "marker": "Imperative I",
+     "category": "MOO",
+     "layer": "0",
+     "clauseLayer": "D"
+    },
+    {
+     "marker": "Imperative II",
+     "category": "MOO",
+     "layer": "0",
+     "clauseLayer": "D"
+    }
+   ]
+  },
+  {
+   "name": "scopes",
+   "structure": "ScopeRow",
+   "doc": "the scope relation of a marker to a category.",
+   "locator": "Table 49, p. 227",
+   "verified": "page-image",
+   "key": [
+    "marker",
+    "category"
+   ],
+   "columns": [
+    {
+     "name": "marker",
+     "type": "Marker",
+     "doc": "The marker."
+    },
+    {
+     "name": "category",
+     "type": "Category",
+     "doc": "The category."
+    },
+    {
+     "name": "scope",
+     "type": "Scope",
+     "doc": "The relation."
+    },
+    {
+     "name": "qualified",
+     "type": "bool",
+     "doc": "Whether the table qualifies the relation with a mark."
+    }
+   ],
+   "rows": [
+    {
+     "marker": "-Eru",
+     "category": "stative aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-Eru",
+     "category": "compl. aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-Eru",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-Eru",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-Eru",
+     "category": "tense",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-Eru",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-Eru",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "stative aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "compl. aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "tense",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)areru",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "stative aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "compl. aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "tense",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "nominalization/complementation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "koto ga dekiru",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "stative aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "compl. aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "external neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "tense",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "nominalization/complementation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(1)",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-tai",
+     "category": "stative aspect",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding by the aspect only in a resultative reading."
+    },
+    {
+     "marker": "-tai",
+     "category": "compl. aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-tai",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-tai",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-tai",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding of tense only in the counterfactual past."
+    },
+    {
+     "marker": "-tai",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-tai",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "stative aspect",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding by the aspect only in a resultative reading."
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "compl. aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding of tense only in the counterfactual past."
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-Te hosii",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "stative aspect",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding by the aspect only in a resultative reading."
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "compl. aspect",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding of tense only in the counterfactual past."
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(a)nakereba naranai",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding of tense only in the counterfactual past."
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-(r)eba ii",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "beki",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "beki",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "beki",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "beki",
+     "category": "external neg",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "beki",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": true,
+     "note": "Embedding of tense only in the counterfactual past."
+    },
+    {
+     "marker": "beki",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "beki",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "hazu",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "hazu",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "hazu",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "hazu",
+     "category": "external neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "hazu",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "hazu",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "hazu",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "yoo",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "yoo",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "yoo",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "yoo",
+     "category": "external neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "yoo",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "yoo",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "yoo",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "rasii",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "rasii",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "rasii",
+     "category": "internal neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "rasii",
+     "category": "external neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "rasii",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "rasii",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "rasii",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "internal neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "external neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "ka mo sirenai",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "internal neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "external neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "tense",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "-soo(2)",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "daroo",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "daroo",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "daroo",
+     "category": "internal neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "daroo",
+     "category": "external neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "daroo",
+     "category": "tense",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "daroo",
+     "category": "nominalization/complementation",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "daroo",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "internal neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "external neg",
+     "scope": "⊂|⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "tense",
+     "scope": "—",
+     "qualified": false
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "nominalization/complementation",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Hortative -(y)oo",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative I",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative I",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative I",
+     "category": "internal neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative I",
+     "category": "external neg",
+     "scope": "—",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative I",
+     "category": "tense",
+     "scope": "—",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative I",
+     "category": "nominalization/complementation",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative I",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": true,
+     "note": "Printed in parentheses."
+    },
+    {
+     "marker": "Imperative II",
+     "category": "stative aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative II",
+     "category": "compl. aspect",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative II",
+     "category": "internal neg",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative II",
+     "category": "external neg",
+     "scope": "—",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative II",
+     "category": "tense",
+     "scope": "—",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative II",
+     "category": "nominalization/complementation",
+     "scope": "⊃",
+     "qualified": false
+    },
+    {
+     "marker": "Imperative II",
+     "category": "illocutionary modulation",
+     "scope": "⊂",
+     "qualified": true,
+     "note": "Printed in parentheses."
+    }
+   ]
+  }
+ ]
+}

@@ -6,8 +6,10 @@ public import Mathlib.Order.Hom.CompleteLattice
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Core.Order.StrictBounds
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Invariance
 public import Linglib.Core.Order.AntiAdditive
+public import Mathlib.Order.Completion
 
 /-!
 # Degree quantifiers
@@ -20,16 +22,20 @@ effect](##Quantifier.highScope_maxIn_iff_lowScope); under an antitone one [the d
 maximum](##Quantifier.not_isGreatest_scopeDegrees). The exact degree quantifier over `every` [names
 the infimum of the measures](##Quantifier.highScope_maxIn_singleton_every) and over `some` [their
 greatest](##Quantifier.highScope_maxIn_singleton_some). The max-quantified comparative
-`MaxComparative c` compares a matrix witness with the greatest measure by `c`, and [with unique
-witnesses it is direct measure comparison](##maxComparative_iff_of_unique).
+`MaxComparative c S T` relates the degrees `S` of a than-clause to the degrees `T` of a matrix
+clause: `S` has a greatest degree, and some degree of `T` stands in `c` to it. On a linear scale
+the strict comparative is `<` in the Dedekind–MacNeille completion of the scale, between the
+principal cut of the greatest degree of `S` and the cut that `T` generates,
+`maxComparative_gt_iff_principal_lt`, and every comparison of two degrees is the comparison of
+their principal cuts, `Comparison.rel_principal`.
 
 ## Implementation notes
 
 A measured degree property `Iic (μ x)` is a principal lower set and contains the bottom degree;
 the structural lemmas ask only that each degree property be a lower set. For a count, the
 cardinalities of the pluralities a numeral ranges over, `Iic` is pluralization with the empty sum
-(`Mereology.card_image_fullAlgClosure`); Link's pluralization, without it, gives `Icc 1 n`
-(`Mereology.card_image_algClosure`), and a collective predicate need give no lower set.
+(`Mereology.card_image_fullSupClosure`); Link's pluralization, without it, gives `Icc 1 n`
+(`Mereology.card_image_supClosure`), and a collective predicate need give no lower set.
 
 ## References
 
@@ -84,6 +90,50 @@ theorem scopeDegrees_no (R : Set α) (P : α → Set D) :
     scopeDegrees (no R) P = (scopeDegrees (Det.some R) P)ᶜ :=
   Set.ext fun _ ↦ no_iff_not_some
 
+theorem scopeDegrees_preimage {D' : Type*} (f : D' → D) (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q (fun x ↦ f ⁻¹' P x) = f ⁻¹' scopeDegrees Q P := rfl
+
+/-! In its quantifier, `scopeDegrees` is a preimage, so it commutes with the Boolean operations:
+outer negation complements the degrees, and inner negation complements each entity's degree
+property. -/
+
+theorem scopeDegrees_compl (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Qᶜ P = (scopeDegrees Q P)ᶜ := rfl
+
+theorem scopeDegrees_inf (Q Q' : Quantifier α) (P : α → Set D) :
+    scopeDegrees (Q ⊓ Q') P = scopeDegrees Q P ∩ scopeDegrees Q' P := rfl
+
+theorem scopeDegrees_sup (Q Q' : Quantifier α) (P : α → Set D) :
+    scopeDegrees (Q ⊔ Q') P = scopeDegrees Q P ∪ scopeDegrees Q' P := rfl
+
+/-- `scopeDegrees` in its quantifier, as a homomorphism of complete lattices. -/
+def scopeDegreesHom (P : α → Set D) : CompleteLatticeHom (Quantifier α) (Set D) where
+  toFun Q := scopeDegrees Q P
+  map_sInf' s := by
+    ext d
+    simp [mem_scopeDegrees, sInf_apply]
+  map_sSup' s := by
+    ext d
+    simp [mem_scopeDegrees, sSup_apply]
+
+@[simp] theorem scopeDegreesHom_apply (P : α → Set D) (Q : Quantifier α) :
+    scopeDegreesHom P Q = scopeDegrees Q P := rfl
+
+theorem scopeDegrees_mono (P : α → Set D) : Monotone (scopeDegrees · P) :=
+  OrderHomClass.mono (scopeDegreesHom P)
+
+theorem scopeDegrees_innerNeg (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q.innerNeg P = scopeDegrees Q fun x ↦ (P x)ᶜ := by
+  ext e
+  simp [mem_scopeDegrees, Set.compl_ofPred]
+
+/-- A degree negation below a quantifier is a degree negation above its dual: complementing each
+entity's degree property complements the degrees of the dual quantifier. -/
+theorem scopeDegrees_dual (Q : Quantifier α) (P : α → Set D) :
+    scopeDegrees Q.dual P = (scopeDegrees Q fun x ↦ (P x)ᶜ)ᶜ := by
+  rw [← scopeDegrees_innerNeg]
+  rfl
+
 end Scope
 
 section Preorder
@@ -95,6 +145,12 @@ variable [Preorder D] {Q : Quantifier α} {P : α → Set D} {μ : α → D} {d 
 def MaxIn (U X : Set D) : Prop := ∃ m ∈ U, IsGreatest X m
 
 theorem maxIn_singleton {X : Set D} {a : D} : MaxIn {a} X ↔ IsGreatest X a := exists_eq_left
+
+/-- At an upper set, the greatest degree of a set lies in it exactly when some degree of the set
+does: the positive form of a degree property at a standard. -/
+theorem maxIn_iff_inter_nonempty {U X : Set D} {m : D} (hU : IsUpperSet U) (h : IsGreatest X m) :
+    MaxIn U X ↔ (X ∩ U).Nonempty :=
+  ⟨fun ⟨n, hn, hg⟩ ↦ ⟨n, hg.1, hn⟩, fun ⟨_, hd, hdU⟩ ↦ ⟨m, hU (h.2 hd) hdU, h⟩⟩
 
 theorem scopeDegrees_some_Iic (R : Set α) (μ : α → D) :
     scopeDegrees (Det.some R) (Iic ∘ μ) = lowerClosure (μ '' R) := by
@@ -209,7 +265,7 @@ theorem highScope_maxIn_iff_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q
 theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (hne : (scopeDegrees Q (Iic ∘ μ)).Nonempty) {t : D} :
     HighScope (MaxIn (Iio t)) Q (Iic ∘ μ) ↔ ¬ Q {x | t ≤ μ x} := by
-  have h := highScope_maxIn_iff_lowScope (μ := μ) hQ hQ₀ (isUpperSet_Ici t)
+  have h := highScope_maxIn_iff_lowScope (μ := μ) hQ hQ₀ (IsUpperSet.Ici t)
   simp only [lowScope_maxIn, mem_Ici] at h
   rw [← compl_Ici, ← h]
   obtain ⟨x, hx⟩ := exists_isGreatest_scopeDegrees hQ hQ₀ hne
@@ -238,96 +294,161 @@ theorem isGLB_compl_scopeDegrees_iff [DenselyOrdered D] {P : α → Set D} (hQ :
 
 end LinearOrder
 
+section CompleteLinearOrder
+variable [CompleteLinearOrder D] {μ : α → D}
+
+/-- The supremum of the degrees every member of `R` reaches is the infimum of their measures. -/
+theorem sSup_scopeDegrees_every (R : Set α) (μ : α → D) :
+    sSup (scopeDegrees (every R) (Iic ∘ μ)) = sInf (μ '' R) := by
+  rw [scopeDegrees_every_Iic]
+  exact (isGLB_sInf _).isLUB.sSup_eq
+
+/-- The supremum of the degrees some member of `R` reaches is the supremum of their measures. -/
+theorem sSup_scopeDegrees_some (R : Set α) (μ : α → D) :
+    sSup (scopeDegrees (Det.some R) (Iic ∘ μ)) = sSup (μ '' R) := by
+  refine le_antisymm (sSup_le fun d ⟨x, hx, hd⟩ ↦ le_sSup_of_le ⟨x, hx, rfl⟩ hd)
+    (sSup_le_sSup ?_)
+  rintro _ ⟨x, hx, rfl⟩
+  exact ⟨x, hx, le_rfl⟩
+
+end CompleteLinearOrder
+
 end Quantifier
 
 /-! ### The max-quantified comparative
 
-The clausal comparative of von Stechow and Rullmann: some matrix witness stands in a comparison to
-the greatest measure of the than-clause witnesses, *more P than Q* at `.gt` and *as P as Q* at
-`.ge`. Matrix and than-clause restrictions are independent predicates over a witness sort, so
-heterogeneous comparatives are the general case. -/
+The clausal comparative of von Stechow and Rullmann relates the degrees `S` of the than-clause to
+the degrees `T` of the matrix clause: `S` has a greatest degree, and some degree of `T` stands in
+a comparison to it, *more* at `.gt` and *as* at `.ge`. At these it says that `S` has a greatest
+degree and that some degree of `T` bounds `S`, strictly or weakly. When `T` has a greatest degree
+it is `Quantifier.MaxIn` of the than-clause, and between lower sets it is inclusion. The matrix
+degree is existential, so at `.le` and `.lt` the relation does not compare greatest degrees; a
+downward comparison of a degree property is `Quantifier.MaxIn` at a lower interval. -/
 
 section MaxComparative
-variable [Preorder D] {c : Comparison} {P Q R : α → Prop} {μ : α → D}
+variable [Preorder D] {c c' : Comparison} {R S T : Set D} {a b : D}
 
-/-- The max-quantified comparative under the comparison `c` holds when the measures of the
-`Q`-witnesses have a greatest element `δ` and the measure of some `P`-witness stands in `c` to
-`δ`. -/
-def MaxComparative (c : Comparison) (P Q : α → Prop) (μ : α → D) : Prop :=
-  ∃ δ, IsGreatest (μ '' {x | Q x}) δ ∧ ∃ x, P x ∧ c.Rel (μ x) δ
+/-- The max-quantified comparative under the comparison `c` holds of the than-clause degrees `S`
+and the matrix degrees `T` when `S` has a greatest degree `δ` and some degree of `T` stands in
+`c` to `δ`. -/
+def MaxComparative (c : Comparison) (S T : Set D) : Prop :=
+  ∃ δ, IsGreatest S δ ∧ (T ∩ c.interval δ).Nonempty
 
 /-- A max-quantified comparative entails the comparatives with weaker comparisons, the equative
 from the strict comparative in particular. -/
-theorem MaxComparative.mono {c' : Comparison} (hc : ∀ a b : D, c.Rel a b → c'.Rel a b)
-    (h : MaxComparative c P Q μ) : MaxComparative c' P Q μ :=
-  let ⟨δ, hδ, x, hx, hr⟩ := h
-  ⟨δ, hδ, x, hx, hc _ _ hr⟩
+theorem MaxComparative.mono (hc : ∀ a b : D, c.Rel a b → c'.Rel a b)
+    (h : MaxComparative c S T) : MaxComparative c' S T :=
+  let ⟨δ, hδ, d, hd, hr⟩ := h
+  ⟨δ, hδ, d, hd, hc _ _ hr⟩
 
-theorem MaxComparative.exists_lt (h : MaxComparative .gt P Q μ) {x : α} (hx : Q x) :
-    ∃ y, P y ∧ μ x < μ y :=
-  let ⟨_, hδ, y, hy, hlt⟩ := h
-  ⟨y, hy, (hδ.2 ⟨x, hx, rfl⟩).trans_lt hlt⟩
+/-- The strict comparative holds when the than-clause has a greatest degree and some matrix
+degree lies strictly above every degree of the than-clause. -/
+theorem maxComparative_gt_iff :
+    MaxComparative .gt S T ↔ (∃ δ, IsGreatest S δ) ∧ (T ∩ strictUpperBounds S).Nonempty :=
+  ⟨fun ⟨δ, hδ, h⟩ ↦ ⟨⟨δ, hδ⟩, by rwa [hδ.strictUpperBounds_eq]⟩,
+    fun ⟨⟨δ, hδ⟩, h⟩ ↦ ⟨δ, hδ, by rwa [hδ.strictUpperBounds_eq] at h⟩⟩
+
+/-- The equative holds when the than-clause has a greatest degree and some matrix degree is an
+upper bound of the than-clause. -/
+theorem maxComparative_ge_iff :
+    MaxComparative .ge S T ↔ (∃ δ, IsGreatest S δ) ∧ (T ∩ upperBounds S).Nonempty :=
+  ⟨fun ⟨δ, hδ, h⟩ ↦ ⟨⟨δ, hδ⟩, by rwa [hδ.upperBounds_eq]⟩,
+    fun ⟨⟨δ, hδ⟩, h⟩ ↦ ⟨δ, hδ, by rwa [hδ.upperBounds_eq] at h⟩⟩
+
+theorem MaxComparative.exists_lt (h : MaxComparative .gt S T) (ha : a ∈ S) : ∃ d ∈ T, a < d :=
+  let ⟨_, hδ, d, hd, hlt⟩ := h
+  ⟨d, hd, (hδ.2 ha).trans_lt hlt⟩
 
 /-- The max-quantified comparative is transitive, so *more P than Q* and *more Q than R* give
 *more P than R* with no uniqueness assumption on any of the three sides. -/
-theorem MaxComparative.trans (h₁ : MaxComparative .gt P Q μ) (h₂ : MaxComparative .gt Q R μ) :
-    MaxComparative .gt P R μ :=
-  let ⟨_, hδ, _, hy, hlt⟩ := h₂
-  let ⟨z, hz, hlt'⟩ := h₁.exists_lt hy
-  ⟨_, hδ, z, hz, hlt.trans hlt'⟩
+theorem MaxComparative.trans (h₁ : MaxComparative .gt S T) (h₂ : MaxComparative .gt R S) :
+    MaxComparative .gt R T :=
+  let ⟨δ, hδ, _, hd, hlt⟩ := h₂
+  let ⟨e, he, hlt'⟩ := h₁.exists_lt hd
+  ⟨δ, hδ, e, he, hlt.trans hlt'⟩
+
+@[simp]
+theorem maxComparative_singleton : MaxComparative c {b} {a} ↔ c.Rel a b :=
+  ⟨fun ⟨_, hδ, _, hd, hr⟩ ↦ mem_singleton_iff.1 hδ.1 ▸ mem_singleton_iff.1 hd ▸ hr,
+    fun h ↦ ⟨b, isGreatest_singleton, a, rfl, h⟩⟩
 
 /-- Under unique matrix and than-clause witnesses, the max-quantified comparative compares their
 measures directly. -/
-theorem maxComparative_iff_of_unique {xa xb : α} (ha : P xa) (ha_unique : ∀ x, P x → x = xa)
-    (hb : Q xb) (hb_unique : ∀ x, Q x → x = xb) :
-    MaxComparative c P Q μ ↔ c.Rel (μ xa) (μ xb) := by
-  have hQ : {x | Q x} = {xb} := Set.ext fun x ↦ ⟨hb_unique x, fun h ↦ h ▸ hb⟩
-  refine ⟨fun ⟨δ, hδ, x, hx, hr⟩ ↦ ?_, fun hr ↦ ⟨_, hQ ▸ image_singleton ▸ isGreatest_singleton,
-    xa, ha, hr⟩⟩
-  rw [hQ, image_singleton] at hδ
-  exact hδ.1 ▸ ha_unique x hx ▸ hr
+theorem maxComparative_image_iff_of_unique {μ : α → D} {P Q : Set α} {xa xb : α} (ha : xa ∈ P)
+    (ha' : ∀ x ∈ P, x = xa) (hb : xb ∈ Q) (hb' : ∀ x ∈ Q, x = xb) :
+    MaxComparative c (μ '' Q) (μ '' P) ↔ c.Rel (μ xa) (μ xb) := by
+  rw [eq_singleton_iff_unique_mem.2 ⟨ha, ha'⟩, eq_singleton_iff_unique_mem.2 ⟨hb, hb'⟩,
+    image_singleton, image_singleton, maxComparative_singleton]
 
-theorem maxComparative_eq_iff (μ : α → D) (xa xb : α) :
-    MaxComparative c (· = xa) (· = xb) μ ↔ c.Rel (μ xa) (μ xb) :=
-  maxComparative_iff_of_unique rfl (fun _ h ↦ h) rfl (fun _ h ↦ h)
+/-- When the matrix degrees have a greatest degree `a`, the equative says that the greatest
+than-clause degree is at most `a`. -/
+theorem maxComparative_ge_iff_maxIn (hT : IsGreatest T a) :
+    MaxComparative .ge S T ↔ Quantifier.MaxIn (Iic a) S :=
+  ⟨fun ⟨δ, hδ, _, hd, hle⟩ ↦ ⟨δ, hle.trans (hT.2 hd), hδ⟩,
+    fun ⟨δ, hle, hδ⟩ ↦ ⟨δ, hδ, a, hT.1, hle⟩⟩
 
-theorem maxComparative_gt_iff_of_isGreatest [Preorder α] {xa xb : α}
-    (ha : IsGreatest {x | P x} xa) (hμa : MonotoneOn μ {x | P x})
-    (hb : IsGreatest {x | Q x} xb) (hμb : MonotoneOn μ {x | Q x}) :
-    MaxComparative .gt P Q μ ↔ μ xb < μ xa :=
-  ⟨fun ⟨_, hδ, _, hx, hlt⟩ ↦
-      (hδ.2 ⟨xb, hb.1, rfl⟩).trans_lt (hlt.trans_le (hμa hx ha.1 (ha.2 hx))),
-    fun hlt ↦ ⟨_, hμb.map_isGreatest hb, xa, ha.1, hlt⟩⟩
+/-- When the matrix degrees have a greatest degree `a`, the strict comparative says that the
+greatest than-clause degree is below `a`. -/
+theorem maxComparative_gt_iff_maxIn (hT : IsGreatest T a) :
+    MaxComparative .gt S T ↔ Quantifier.MaxIn (Iio a) S :=
+  ⟨fun ⟨δ, hδ, _, hd, hlt⟩ ↦ ⟨δ, lt_of_lt_of_le hlt (hT.2 hd), hδ⟩,
+    fun ⟨δ, hlt, hδ⟩ ↦ ⟨δ, hδ, a, hT.1, hlt⟩⟩
+
+/-- Into a lower set of matrix degrees, the equative is inclusion of a than-clause that has a
+greatest degree. -/
+theorem maxComparative_ge_iff_subset (hT : IsLowerSet T) :
+    MaxComparative .ge S T ↔ (∃ δ, IsGreatest S δ) ∧ S ⊆ T :=
+  ⟨fun ⟨δ, hδ, _, hd, hle⟩ ↦ ⟨⟨δ, hδ⟩, fun _ hs ↦ hT ((hδ.2 hs).trans hle) hd⟩,
+    fun ⟨⟨δ, hδ⟩, h⟩ ↦ ⟨δ, hδ, δ, h hδ.1, le_rfl⟩⟩
+
+theorem maxComparative_gt_image_iff_of_isGreatest [Preorder α] {μ : α → D} {P Q : Set α}
+    {xa xb : α} (ha : IsGreatest P xa) (hμa : MonotoneOn μ P) (hb : IsGreatest Q xb)
+    (hμb : MonotoneOn μ Q) : MaxComparative .gt (μ '' Q) (μ '' P) ↔ μ xb < μ xa :=
+  (maxComparative_gt_iff_maxIn (hμa.map_isGreatest ha)).trans
+    ⟨fun ⟨_, hm, hg⟩ ↦ (hg.2 ⟨xb, hb.1, rfl⟩).trans_lt hm,
+      fun h ↦ ⟨_, h, hμb.map_isGreatest hb⟩⟩
 
 end MaxComparative
 
+section MaxComparativePartialOrder
+variable [PartialOrder D] {S T : Set D} {a b : D}
+
+@[simp]
+theorem maxComparative_ge_Iic_Iic : MaxComparative .ge (Iic b) (Iic a) ↔ b ≤ a := by
+  rw [maxComparative_ge_iff_maxIn isGreatest_Iic, Quantifier.maxIn_Iic, mem_Iic]
+
+@[simp]
+theorem maxComparative_gt_Iic_Iic : MaxComparative .gt (Iic b) (Iic a) ↔ b < a := by
+  rw [maxComparative_gt_iff_maxIn isGreatest_Iic, Quantifier.maxIn_Iic, mem_Iio]
+
+theorem MaxComparative.antisymm (ha : IsGreatest S a) (hb : IsGreatest T b)
+    (h₁ : MaxComparative .ge S T) (h₂ : MaxComparative .ge T S) : a = b :=
+  let ⟨_, hle, hm⟩ := (maxComparative_ge_iff_maxIn hb).1 h₁
+  let ⟨_, hle', hm'⟩ := (maxComparative_ge_iff_maxIn ha).1 h₂
+  (hm.unique ha ▸ hle : a ≤ b).antisymm (hm'.unique hb ▸ hle')
+
+end MaxComparativePartialOrder
+
 section MaxComparativeLinearOrder
-variable [LinearOrder D] {P Q : α → Prop} {μ : α → D} {a b : D}
+variable [LinearOrder D] {S T : Set D} {a b : D}
 
-theorem MaxComparative.antisymm (ha : IsGreatest (μ '' {x | P x}) a)
-    (hb : IsGreatest (μ '' {x | Q x}) b) (h₁ : MaxComparative .ge P Q μ)
-    (h₂ : MaxComparative .ge Q P μ) : a = b := by
-  obtain ⟨b', hb', y, hy, hby⟩ := h₁
-  obtain ⟨a', ha', x, hx, hax⟩ := h₂
-  rw [ha.unique ha', hb.unique hb']
-  exact (hax.trans (hb'.2 ⟨x, hx, rfl⟩)).antisymm (hby.trans (ha'.2 ⟨y, hy, rfl⟩))
+theorem maxComparative_ge_total (ha : IsGreatest S a) (hb : IsGreatest T b) :
+    MaxComparative .ge S T ∨ MaxComparative .ge T S :=
+  (le_total a b).imp (fun h ↦ ⟨a, ha, b, hb.1, h⟩) fun h ↦ ⟨b, hb, a, ha.1, h⟩
 
-theorem maxComparative_ge_total (ha : IsGreatest (μ '' {x | P x}) a)
-    (hb : IsGreatest (μ '' {x | Q x}) b) :
-    MaxComparative .ge P Q μ ∨ MaxComparative .ge Q P μ := by
-  obtain ⟨x, hx, rfl⟩ := ha.1
-  obtain ⟨y, hy, rfl⟩ := hb.1
-  exact (le_total (μ y) (μ x)).imp (fun h ↦ ⟨_, hb, x, hx, h⟩) fun h ↦ ⟨_, ha, y, hy, h⟩
+theorem maxComparative_gt_trichotomy (ha : IsGreatest S a) (hb : IsGreatest T b) :
+    MaxComparative .gt S T ∨ a = b ∨ MaxComparative .gt T S :=
+  (lt_trichotomy a b).imp (fun h ↦ ⟨a, ha, b, hb.1, h⟩) <|
+    Or.imp_right fun h ↦ ⟨b, hb, a, ha.1, h⟩
 
-theorem maxComparative_gt_trichotomy (ha : IsGreatest (μ '' {x | P x}) a)
-    (hb : IsGreatest (μ '' {x | Q x}) b) :
-    MaxComparative .gt P Q μ ∨ a = b ∨ MaxComparative .gt Q P μ := by
-  obtain ⟨x, hx, rfl⟩ := ha.1
-  obtain ⟨y, hy, rfl⟩ := hb.1
-  rcases lt_trichotomy (μ y) (μ x) with h | h | h
-  · exact .inl ⟨_, hb, x, hx, h⟩
-  · exact .inr (.inl h.symm)
-  · exact .inr (.inr ⟨_, ha, y, hy, h⟩)
+/-- Between lower sets, the strict comparative is strict inclusion of a than-clause that has a
+greatest degree. -/
+theorem maxComparative_gt_iff_ssubset (hS : IsLowerSet S) (hT : IsLowerSet T) :
+    MaxComparative .gt S T ↔ (∃ δ, IsGreatest S δ) ∧ S ⊂ T := by
+  refine ⟨fun ⟨δ, hδ, d, hd, hlt⟩ ↦ ⟨⟨δ, hδ⟩, fun _ hs ↦ hT ((hδ.2 hs).trans hlt.le) hd,
+    fun h ↦ (hδ.2 (h hd)).not_gt hlt⟩, fun ⟨⟨δ, hδ⟩, h⟩ ↦ ?_⟩
+  obtain ⟨d, hd, hdS⟩ := not_subset.1 h.2
+  exact ⟨δ, hδ, d, hd, lt_of_not_ge fun hle ↦ hdS (hS hle hδ.1)⟩
 
 end MaxComparativeLinearOrder
 
@@ -336,7 +457,8 @@ end MaxComparativeLinearOrder
 The S-comparative of [hoeksema-1983] generalizes the point-standard comparative from a single
 standard to a degree-set standard. Its extension is `μ ⁻¹' strictUpperBounds Δ`, the entities
 measuring above every standard degree, and the binary comparator is its singleton case
-(`strictUpperBounds_singleton`). -/
+(`strictUpperBounds_singleton`). It is the strict max-quantified comparative without the
+requirement that the standard have a greatest degree (`maxComparative_gt_iff`). -/
 
 section SetOfDegrees
 variable [Preorder D] (μ : α → D) {Δ : Set D}
@@ -353,29 +475,53 @@ theorem gtOverSet_eq_singleton_of_isGreatest {m : D} (hm : IsGreatest Δ m) :
   simp only [mem_gtOverSet_iff_subset_Iio, singleton_subset_iff, mem_Iio]
   exact ⟨(· hm.1), fun h _ hd ↦ (hm.2 hd).trans_lt h⟩
 
-theorem maxComparative_gt_iff_gtOverSet (P Q : α → Prop) :
-    MaxComparative .gt P Q μ ↔
-      (∃ δ, IsGreatest (μ '' {x | Q x}) δ) ∧
-        ∃ x, P x ∧ x ∈ μ ⁻¹' strictUpperBounds (μ '' {x | Q x}) :=
-  ⟨fun ⟨δ, hδ, x, hx, hlt⟩ ↦ ⟨⟨δ, hδ⟩, x, hx, fun _ hd ↦ (hδ.2 hd).trans_lt hlt⟩,
-    fun ⟨⟨δ, hδ⟩, x, hx, hclear⟩ ↦ ⟨δ, hδ, x, hx, hclear hδ.1⟩⟩
-
 end SetOfDegrees
 
-/-! ### Change of scale -/
+/-! ### Comparison in the completion
 
-section ChangeOfScale
+A set of degrees generates a cut of the scale, `Concept.ofObjects (· ≤ ·) S`, its least upper
+bound in the Dedekind–MacNeille completion, and a set with a greatest degree generates the
+principal cut of that degree. Comparing two degrees is comparing their principal cuts, along
+`DedekindCut.principalEmbedding`, and the strict comparative compares the greatest than-clause
+degree with the cut of the matrix degrees. -/
 
-variable {D' : Type*} [LinearOrder D] [LinearOrder D'] {μ : α → D}
+section Cut
+open DedekindCut
 
-theorem maxComparative_comp (f : D ↪o D') (c : Comparison) (P Q : α → Prop) :
-    MaxComparative c P Q (f ∘ μ) ↔ MaxComparative c P Q μ := by
-  rw [MaxComparative, MaxComparative, Set.image_comp]
-  constructor
-  · rintro ⟨_, hδ, x, hx, hr⟩
-    obtain ⟨δ, -, rfl⟩ := hδ.1
-    exact ⟨δ, f.strictMono.map_isGreatest.1 hδ, x, hx, (Comparison.rel_map_iff f c).1 hr⟩
-  · rintro ⟨δ, hδ, x, hx, hr⟩
-    exact ⟨f δ, f.strictMono.map_isGreatest.2 hδ, x, hx, (Comparison.rel_map_iff f c).2 hr⟩
+theorem DedekindCut.ofObjects_eq_principal [PartialOrder D] {S : Set D} {δ : D}
+    (h : IsGreatest S δ) : Concept.ofObjects (· ≤ ·) S = principal δ :=
+  DedekindCut.ext' <| Set.ext fun _ ↦ ⟨fun hx ↦ hx h.1, fun hx _ hs ↦ (h.2 hs).trans hx⟩
 
-end ChangeOfScale
+theorem Comparison.rel_principal [PartialOrder D] (c : Comparison) {a b : D} :
+    c.Rel (principal a) (principal b) ↔ c.Rel a b :=
+  Comparison.rel_map_iff principalEmbedding c
+
+variable [LinearOrder D] {S T : Set D} {a b : D}
+
+/-- On a linear scale the strict comparative holds when the principal cut of the greatest
+than-clause degree lies strictly below the cut the matrix degrees generate. -/
+theorem maxComparative_gt_iff_principal_lt :
+    MaxComparative .gt S T ↔
+      ∃ δ, IsGreatest S δ ∧ principal δ < Concept.ofObjects (· ≤ ·) T := by
+  refine exists_congr fun δ ↦ and_congr_right fun _ ↦ Iff.trans ?_ principal_lt_iff.symm
+  exact ⟨fun ⟨t, ht, hlt⟩ ↦ ⟨t, fun _ hu ↦ hu ht, hlt⟩, fun ⟨_, hb, hlt⟩ ↦ by_contra fun hn ↦
+    (hb (b := δ) fun t ht ↦ le_of_not_gt fun h ↦ hn ⟨t, ht, h⟩).not_gt hlt⟩
+
+/-- When both sets have a greatest degree, the equative is `≤` of the cuts they generate. -/
+theorem maxComparative_ge_iff_ofObjects_le (hS : IsGreatest S b) (hT : IsGreatest T a) :
+    MaxComparative .ge S T ↔
+      Concept.ofObjects (· ≤ ·) S ≤ Concept.ofObjects (· ≤ ·) T := by
+  rw [ofObjects_eq_principal hS, ofObjects_eq_principal hT, principal_le_principal,
+    maxComparative_ge_iff_maxIn hT]
+  exact ⟨fun ⟨_, hm, h⟩ ↦ h.unique hS ▸ hm, fun h ↦ ⟨b, h, hS⟩⟩
+
+/-- When both sets have a greatest degree, the strict comparative is `<` of the cuts they
+generate. -/
+theorem maxComparative_gt_iff_ofObjects_lt (hS : IsGreatest S b) (hT : IsGreatest T a) :
+    MaxComparative .gt S T ↔
+      Concept.ofObjects (· ≤ ·) S < Concept.ofObjects (· ≤ ·) T := by
+  rw [ofObjects_eq_principal hS, ofObjects_eq_principal hT, principal_lt_principal,
+    maxComparative_gt_iff_maxIn hT]
+  exact ⟨fun ⟨_, hm, h⟩ ↦ h.unique hS ▸ hm, fun h ↦ ⟨b, h, hS⟩⟩
+
+end Cut

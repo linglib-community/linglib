@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.SupersetRule
-public import Linglib.Fragments.Slavic.Czech.Nouns
+public import Linglib.Morphology.Exponence.SupersetRule
+public import Linglib.Languages.Slavic.Czech.Nouns
 public import Studies.Blake1994
 public import Linglib.Data.Wordlist.Caha2009
 public import Linglib.Morphology.Word.UD
@@ -27,7 +27,7 @@ open, and a Slovene paradigm he passes over.
   `Data/Wordlist/Caha2009`
 * `accounts`, `analyses`: Caha's treatment of the paradigms with an offending syncretism
 * `czechCase`, `Declines`: the Czech case at each place of the sequence, and a noun of the Czech
-  fragment declining a paradigm of the tables at a place
+  language file declining a paradigm of the tables at a place
 
 ## Implementation notes
 
@@ -170,26 +170,28 @@ theorem isNone_iff_adjacent : ∀ r ∈ table67, r.2.2 = none ↔ Adjacent r.1 r
 
 /-! ### Caha's Czech nouns and Short's declensions
 
-Caha's Czech noun paradigms are those of the fragment's declension classes, the classes of
+Caha's Czech noun paradigms are those of the language file's declension classes, the classes of
 [short-1993-czech]'s tables with the stem conditions of [komarek-etal-1986]: each form of the
-literary paradigms is one of the forms the fragment gives the noun. The plural of *kluk* 'boy'
+literary paradigms is one of the forms the language file gives the noun. The plural of *kluk* 'boy'
 depends on the stem conditions, since the tables alone would give *kluki* and *klukech* where Caha
 has *kluci* and *klucích*. Caha's *hradu* and *městu* are the locative singular in *-u* that Short
 describes beside the tables' *-ě* for the hard inanimates (p. 466) and the neuters (p. 467), and
 his colloquial paradigms depart from the literary declension in the locative and the
 instrumental. -/
 
-/-- A noun of the fragment declines a paradigm of the tables at a place of the sequence when the
-paradigm's form there is one of the noun's forms in that case and the paradigm's number. -/
+/-- A noun of the language file declines a paradigm of the tables at a place of the sequence when
+the paradigm's form there is one of the forms by which the Czech declension realizes the noun in
+that case and the paradigm's number. -/
 def Declines (n : _root_.Czech.Noun) (p : Paradigm Wordlist.Cell) (i : Fin 6) : Prop :=
   ∃ m ∈ number p, ∃ h : m ∈ _root_.Czech.Declension.numbers,
-    _root_.Czech.Declension.segments (form p i) ∈ n.forms (czechCase i, ⟨_, h⟩)
+    _root_.Czech.Declension.segments (form p i) ∈
+      _root_.Czech.declension.realize n (czechCase i, ⟨_, h⟩)
 
 instance (n : _root_.Czech.Noun) (p : Paradigm Wordlist.Cell) (i : Fin 6) :
     Decidable (Declines n p i) :=
   inferInstanceAs (Decidable (∃ m ∈ number p, _))
 
-/-- The literary paradigms of the tables that decline nouns of the fragment, with the nouns. -/
+/-- The literary paradigms of the tables that decline nouns of the language file, with the nouns. -/
 def czechNouns : List (Paradigm Wordlist.Cell × _root_.Czech.Noun) :=
   [(ces_muz_sg.paradigm, _root_.Czech.muz), (ces_muz_pl.paradigm, _root_.Czech.muz),
     (ces_stroj_sg.paradigm, _root_.Czech.stroj), (ces_stroj_pl.paradigm, _root_.Czech.stroj),
@@ -197,7 +199,7 @@ def czechNouns : List (Paradigm Wordlist.Cell × _root_.Czech.Noun) :=
     (ces_zena_sg.paradigm, _root_.Czech.zena), (ces_zena_pl.paradigm, _root_.Czech.zena),
     (ces_kluk_pl.paradigm, _root_.Czech.kluk)]
 
-/-- The fragment declines each literary paradigm of the tables at every place. -/
+/-- The language file declines each literary paradigm of the tables at every place. -/
 theorem declines_czechNouns : ∀ x ∈ czechNouns, ∀ i, Declines x.2 x.1 i := by
   decide +kernel
 
@@ -210,8 +212,8 @@ theorem kluk_pl_not_mem_table :
           (_root_.Czech.kluk.stem ++ ·) := by
   decide +kernel
 
-/-- The fragment declines Caha's *hrad* and *město* at every place but the locative, where Caha
-has *hradu* and *městu* and the fragment the tables' *hradě* and *městě*. -/
+/-- The language file declines Caha's *hrad* and *město* at every place but the locative, where Caha
+has *hradu* and *městu* and the language file the tables' *hradě* and *městě*. -/
 theorem declines_hrad_mesto_iff (i : Fin 6) :
     (Declines _root_.Czech.hrad ces_hrad_sg.paradigm i ↔ czechCase i ≠ .loc) ∧
       (Declines _root_.Czech.mesto ces_mesto_sg.paradigm i ↔ czechCase i ≠ .loc) := by

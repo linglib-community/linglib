@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Semantics.Modality.ComparativeLikelihood
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.Completeness
 public import Linglib.Logic.ComparativeProbability.Defs
@@ -135,7 +135,7 @@ local notation "uniform3" => uniformOn (Set.univ : Set (Fin 3))
 private theorem uniform3_not_I1 : ¬RightUnion (inducedGe (uniform3)) := fun h ↦ by
   have := h {0} {1} {2} (by simp [inducedGe, uniformOn_univ_le_iff])
     (by simp [inducedGe, uniformOn_univ_le_iff])
-  simp only [inducedGe, uniformOn_univ_le_iff, Set.sup_eq_union, Set.singleton_union]
+  simp only [inducedGe, uniformOn_univ_le_iff, Set.singleton_union]
     at this
   rw [Set.ncard_pair (by decide), Set.ncard_singleton] at this
   omega

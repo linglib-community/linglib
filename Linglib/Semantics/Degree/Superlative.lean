@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Presupposition.Strawson
 
 /-!
@@ -42,12 +42,14 @@ variable {α D W : Type*}
 semantic reflex of [bobaljik-2012]'s containment `[[[ADJ] CMPR] SPRL]`. -/
 
 section Absolute
-variable [LinearOrder D] {μ : α → D} {C : Set α} {x y : α}
+variable {μ : α → D} {C : Set α} {x y : α}
 
 /-- The absolute superlative holds of `x` when `x` is in the comparison class `C` and beats every
 other member on the comparative. -/
-def AbsoluteSuperlative (μ : α → D) (C : Set α) (x : α) : Prop :=
+def AbsoluteSuperlative [LT D] (μ : α → D) (C : Set α) (x : α) : Prop :=
   x ∈ C ∧ ∀ y ∈ C, y ≠ x → μ y < μ x
+
+variable [Preorder D]
 
 theorem absoluteSuperlative_unique (hx : AbsoluteSuperlative μ C x)
     (hy : AbsoluteSuperlative μ C y) : x = y :=
@@ -95,7 +97,6 @@ theorem isAntiAdditive_trivalentSuperlative_assertion (μ : α → D) (x : α) :
     IsAntiAdditive fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x :=
   fun C C' ↦ funext fun w ↦ propext <| by
     simp only [Pi.inf_apply, inf_Prop_eq, trivalentSuperlative_assertion_iff, Pi.sup_apply,
-      sup_eq_union,
       union_sdiff_distrib, image_union]
     have h := gtOverSet_isAntiAdditive μ (μ '' (C w \ {x})) (μ '' (C' w \ {x}))
     beta_reduce at h
@@ -115,10 +116,11 @@ open Presupposition Trivalent
 
 variable [Preorder D] (μ : α → D) (x : α)
 
+open Classical in
 /-- The superlative is Strawson anti-additive in its comparison class. -/
 theorem isStrawsonAntiAdditive_trivalentSuperlative :
     IsStrawsonAntiAdditive (trivalentSuperlative (W := W) μ · x) :=
-  .of_isAntiAdditive (isAntiAdditive_trivalentSuperlative_assertion μ x) fun _ _ h ↦ by simp_all
+  .of_isAntiAdditive (isAntiAdditive_trivalentSuperlative_assertion μ x) fun _ _ ↦ condEvent_kLE
 
 theorem isStrawsonDE_trivalentSuperlative : IsStrawsonDE (trivalentSuperlative (W := W) μ · x) :=
   (isStrawsonAntiAdditive_trivalentSuperlative μ x).isStrawsonDE

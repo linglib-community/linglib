@@ -1,11 +1,16 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Data.Finset.Image
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Discourse.SpeechAct.Role
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Morphology.Word.Basic
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Global
 
 /-!
 # Determiners
@@ -24,7 +29,7 @@ with its own account of when a presupposition is marked.
 
 ## Main declarations
 
-* `Determiner` is the base record, and `Determiner.toWord` realizes it as a word.
+* `Determiner` is the base record.
 * `Article` records the degrees of definiteness it can mark, the exponent, the definite uses it
   obligatorily expones and the number it selects; `DemonstrativeDeterminer`,
   `QuantificationalDeterminer` and `PossessiveDeterminer` are the other specializations.
@@ -43,7 +48,7 @@ with its own account of when a presupposition is marked.
 This file is the Frame-free lexical layer. The denotations of articles, demonstratives and
 possessives are in `Semantics/Reference/Determiner.lean`. A `QuantificationalDeterminer` records
 its readings as determiner symbols (`Quantifier.Det.Symbol`), whose generalized-quantifier
-denotations are in `Semantics/Quantification/Determiner.lean`. `Inventory` is a `def`
+denotations are in `Semantics/Quantifier/Determiner.lean`. `Inventory` is a `def`
 rather than an `abbrev` so that its operations resolve by dot notation; its membership is the
 list's, and facts about one-entry inventories go through `Inventory.marks_singleton`.
 `Realizes` is
@@ -70,9 +75,6 @@ structure Determiner where
   deriving DecidableEq, Repr
 
 namespace Determiner
-
-/-- A determiner is realized as a bare word of category `DET`. -/
-def toWord (d : Determiner) : Morphology.Word := { form := d.form, cat := .DET }
 
 /-- An article is exponed by a dedicated morpheme, a classifier construction, a demonstrative
 form or a bare noun. Whether the form marks definiteness is a matter of the uses it expones,

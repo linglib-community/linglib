@@ -1,1988 +1,1481 @@
-[
-  {
-    "id": "qingetal2025_en_13a",
-    "source": {"bibkey": "white-2021", "paperLabel": "(22)"},
-    "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(13a)"},
-    "language": "stan1293",
-    "primaryText": "This Trump/Carson boom really has people like Bush, Walker, Rubio, and others wondering and hoping whether history will repeat itself and whether Republicans will return back to focusing on the establishment choices but it's all about outsider candidates right now.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "hope"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested; marginal or variable acceptability across speakers, (58a)",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_13b",
-    "source": {"bibkey": "white-2021", "paperLabel": "(23a)"},
-    "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(13b)"},
-    "language": "stan1293",
-    "primaryText": "I was hoping whether you are able to guide me [...]",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [
-      {"name": "hope that p", "judgment": "acceptable"},
-      {"name": "hope that not p", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["predicate", "hope"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested; the paraphrases are (59)",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_13c",
-    "source": {"bibkey": "white-2021", "paperLabel": "(23b)"},
-    "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(13c)"},
-    "language": "stan1293",
-    "primaryText": "I have done a quite a bit of research on using a Limited Co but was hoping whether someone with more experience could confirm my understanding of a few points [...]",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "hope"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_14a",
-    "source": {"bibkey": "white-2021", "paperLabel": "(25a)"},
-    "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14a)"},
-    "language": "stan1293",
-    "primaryText": "Interstellar space is so vast that there is no need to fear whether stars in the Andromeda galaxy will accidentally slam into the Sun.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "fear"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_14b",
-    "source": {"bibkey": "white-2021", "paperLabel": "(25b)"},
-    "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14b)"},
-    "language": "stan1293",
-    "primaryText": "I fear whether this test would run safely on the oxygen sensor as it has a lot of drawback when compared with the others.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "fear"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_14c",
-    "source": {"bibkey": "white-2021", "paperLabel": "(25c)"},
-    "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14c)"},
-    "language": "stan1293",
-    "primaryText": "[...] I fear whether I'll have use of my arms/hands by age 55 or 60.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "fear"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_14d",
-    "source": {"bibkey": "white-2021", "paperLabel": "(25d)"},
-    "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(14d)"},
-    "language": "stan1293",
-    "primaryText": "I know parents who seriously fear whether their children will ever hold a meaningful job.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "fear"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_22",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(22)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Mary worries that John didn't go to school yesterday.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_24",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(24)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Al's father worries where he can dock his boat.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_25",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(25)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Al's father worries that he can dock his boat at Y.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "false for every choice of Y",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_26a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(26a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Mr. Nelson denies he is “a real collector – the kind of person who buys first and then worries where he can find room for his purchases.”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_26b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(26b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "As Ashley hands his church keys back he worries where he can spend the night.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_26c",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(26c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I have a sister in California that worries where she can live because she is white and her kids are mixed race.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_26d",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(26d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Lucas tells Sami that he loves her and Sami tells him that she loves him too. Sami worries what she can do since she loves them both.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_32a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(32a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Sam worries what they should wear.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_32b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(32b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Sam worries that they should wear casual/business casual/formal.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "worry"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_38a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(38a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John doesn't like which student will sing.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "like"],
-      ["valence", "positive"],
-      ["polarity", "negated"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_38b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(38b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John isn't happy about which student will sing.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "happy"],
-      ["valence", "positive"],
-      ["polarity", "negated"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_40a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(40a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John doesn't hate which student will sing.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "hate"],
-      ["valence", "negative"],
-      ["polarity", "negated"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_40b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(40b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John isn't upset about which student will sing.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "upset"],
-      ["valence", "negative"],
-      ["polarity", "negated"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_43a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(43a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Both women initially worried about taking the bus, fearing who else might be riding the bus. Both have been pleasantly surprised. Express bus seats recline, and have individual reading lights and air-conditioning vents.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "fear"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_43b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(43b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "But if my party doesn't enter this city, I fear who else will.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "fear"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "Martha Wells, The Edge of Worlds",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_44",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(44)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The women do not fear who else might be riding the bus.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "No one in particular is such that the women fear that they might be riding the bus.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "fear"],
-      ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["polarity", "negated"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_62a_goodfriend",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(62a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John is hoping whether his neighbor will be home this weekend.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "marginal",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "hope"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "radical"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_62a_noisehater",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(62a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John is hoping whether his neighbor will be home this weekend.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "marginal",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "hope"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "negation"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_63a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(63a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I'm feeling tired. I was hoping whether we could leave.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Alex and Sam are at a party together. Alex says to Sam.",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "hope"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "radical"]
-    ],
-    "comment": "unmarked in the paper; recorded as marginal by (58a)",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_63b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(63b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "I'm feeling tired. I was hoping whether we have to stay.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Alex and Sam are at a party together. Alex says to Sam.",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "hope"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "negation"]
-    ],
-    "comment": "intended: I was hoping that we didn't have to stay",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_78a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(78a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Des wonders hopefully: “Is John alive?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "unacceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "hopefully"],
-      ["valence", "positive"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "negation"]
-    ],
-    "comment": "implies that Des hopes that John is alive",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_78b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(78b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Des wonders hopefully: “Is John dead?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "hopefully"],
-      ["valence", "positive"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "radical"]
-    ],
-    "comment": "implies that Des hopes that John is dead",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_78c",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(78c)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ali wonders hopefully: “Is John alive?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "hopefully"],
-      ["valence", "positive"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "radical"]
-    ],
-    "comment": "implies that Ali hopes that John is alive",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_78d",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(78d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ali wonders hopefully: “Is John dead?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "unacceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "hopefully"],
-      ["valence", "positive"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "negation"]
-    ],
-    "comment": "implies that Ali hopes that John is dead",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_79a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(79a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Des wonders fearfully: “Is John alive?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "fearfully"],
-      ["valence", "negative"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "radical"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_79b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(79b)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "stan1293",
-    "primaryText": "Des wonders fearfully: “Is John dead?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "marginal",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "fearfully"],
-      ["valence", "negative"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "negation"]
-    ],
-    "comment": "(?) for some consultants, ultimately judged true and felicitous",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_79c",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(79c)"},
-    "reportedIn": null,
-    "method": "elicitation",
-    "language": "stan1293",
-    "primaryText": "Ali wonders fearfully: “Is John alive?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "marginal",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "fearfully"],
-      ["valence", "negative"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "negation"]
-    ],
-    "comment": "(?) for some consultants, ultimately judged true and felicitous",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_en_79d",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(79d)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Ali wonders fearfully: “Is John dead?”",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Des, an assassin, sabotages the brakes of the vehicle transporting John, the star witness in a criminal case, and watches it careen off a cliff. Shortly after, Ali, the prosecutor in the case, arrives with a rescue team. Des hadn't expected Ali to arrive so quickly. While it's clear that John is seriously injured, Des isn't sure whether he's dead. If John survives and is saved by the rescue team, Des knows he will face severe consequences for failing the assassination attempt.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "wonder"],
-      ["adverb", "fearfully"],
-      ["valence", "negative"],
-      ["clause", "polar"],
-      ["embedding", "quotation"],
-      ["target", "radical"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_18",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(18)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Hen qidai ta hui zenyang quanshi zhege xinde juese.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Hen", "very"], ["qidai", "qidai"], ["ta", "he"], ["hui", "will"], ["zenyang", "how"],
-      ["quanshi", "interpret"], ["zhege", "this"], ["xinde", "new"], ["juese", "character"]
-    ],
-    "translation": "I (very much) look forward to (seeing) how he will interpret this new character.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "qidai"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_19",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(19)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Ye qidai ta neng tongguo zhege zuopin rang gengduode ren shuzhi ta.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Ye", "also"], ["qidai", "qidai"], ["ta", "he"], ["neng", "can"], ["tongguo", "through"],
-      ["zhege", "this.CLF"], ["zuopin", "work.of.art"], ["rang", "let"], ["gengduode", "more"],
-      ["ren", "people"], ["shuzhi", "know.well"], ["ta", "him"]
-    ],
-    "translation": "I also look forward to him being able to let more people know him well through this piece of work.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "qidai"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested; non-veridical: does not entail that the actor will",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_27a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(27a)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Wode baba hen danxin ta neng zai nali ting tade chuan.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Wode", "my"], ["baba", "father"], ["hen", "very"], ["danxin", "worry"], ["ta", "he"],
-      ["neng", "can"], ["zai", "at"], ["nali", "where"], ["ting", "dock"], ["tade", "his"],
-      ["chuan", "boat"]
-    ],
-    "translation": "My father worries (very much) about where he can dock his boat.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "danxin"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_27b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(27b)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Wode baba hen danxin ta neng zai Y (nali) ting tade chuan.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Wode", "my"], ["baba", "father"], ["hen", "very"], ["danxin", "worry"], ["ta", "he"],
-      ["neng", "can"], ["zai", "at"], ["Y", "Y"], ["(nali)", "there"], ["ting", "dock"],
-      ["tade", "his"], ["chuan", "boat"]
-    ],
-    "translation": "My father worries (very much) that he can dock his boat at Y.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "danxin"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_33",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(33)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Yuehan hen danxin ta yao chuan shenme.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yuehan", "John"], ["hen", "very"], ["danxin", "worry"], ["ta", "he"], ["yao", "should"],
-      ["chuan", "wear"], ["shenme", "what"]
-    ],
-    "translation": "John worries (very much) what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "danxin"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_55",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(55)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Yuehan (hen) haipa tade linju huibuhui zaijia.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yuehan", "John"], ["(hen)", "very"], ["haipa", "fears"], ["tade", "his"],
-      ["linju", "neighbor"], ["huibuhui", "will.not.will"], ["zaijia", "at.home"]
-    ],
-    "translation": "John fears (very much) whether his neighbor will be at home.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "haipa"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_56",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(56)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Yuehan (hen) haipa naming xuanshou hui yingde bisai.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yuehan", "John"], ["(hen)", "very"], ["haipa", "fears"], ["naming", "which.CLF"],
-      ["xuanshou", "player"], ["hui", "will"], ["yingde", "win"], ["bisai", "match"]
-    ],
-    "translation": "Intended: John fears which player will win the match.",
-    "context": "",
-    "judgment": "unacceptable",
-    "contrasts": [],
-    "readings": [
-      {"name": "constituent question", "judgment": "unacceptable"},
-      {"name": "wh-indefinite: John fears that some player will win the match", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["predicate", "haipa"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_fn8",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "fn. 8 (i)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Yuehan haipa tamen tigong na xie yinliao.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yuehan", "John"], ["haipa", "fears"], ["tamen", "they"], ["tigong", "serve"],
-      ["na", "which"], ["xie", "CL.PL"], ["yinliao", "beverage"]
-    ],
-    "translation": "Intended: John fears which kinds of beverage they serve.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "haipa"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "no wh-indefinite reading either",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_64a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(64a)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Yuehan xiwang (daoshihou) tade linju huibuhui zai jia.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yuehan", "John"], ["xiwang", "hope"], ["(daoshihou)", "then"], ["tade", "his"],
-      ["linju", "neighbor"], ["huibuhui", "will.not.will"], ["zai", "at"], ["jia", "home"]
-    ],
-    "translation": "Intended: John hopes whether his neighbor will be at home then.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "xiwang"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_zh_64b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(64b)"},
-    "reportedIn": null,
-    "language": "mand1415",
-    "primaryText": "Yuehan xiwang (daoshihou) tade linju nengbuneng bangbang ta.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Yuehan", "John"], ["xiwang", "hope"], ["(daoshihou)", "then"], ["tade", "his"],
-      ["linju", "neighbor"], ["nengbuneng", "can.not.can"], ["bangbang", "help"], ["ta", "him"]
-    ],
-    "translation": "Intended: John hopes whether his neighbor can help him.",
-    "context": "",
-    "judgment": "marginal",
-    "contrasts": [],
-    "readings": [
-      {"name": "hope that p", "judgment": "acceptable"},
-      {"name": "hope that not p", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["predicate", "xiwang"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "% across speakers, fn. 14",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_20a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(20a)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "Kotosi-wa dare-ga MVP-o toru-no-ka tanosimi-desu-wa.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Kotosi-wa", "this.year-TOP"], ["dare-ga", "who-NOM"], ["MVP-o", "MVP-ACC"],
-      ["toru-no-ka", "win-NMZ-Q"], ["tanosimi-desu-wa", "fun-COP.POL-PARTICLE"]
-    ],
-    "translation": "I look forward to who will win the MVP this year.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "tanosimi"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested; does not entail (20b) for any winner X",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_21a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(21a)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "Watasi-wa Pattinson-ga Batman-de nani-o suru-no-ka tanosimi-desu.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Watasi-wa", "I-TOP"], ["Pattinson-ga", "Pattinson-NOM"], ["Batman-de", "Batman-LOC"],
-      ["nani-o", "what-ACC"], ["suru-no-ka", "do-NMZ-Q"], ["tanosimi-desu", "fun-COP.POL"]
-    ],
-    "translation": "I look forward to what Pattinson will do in The Batman.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "tanosimi"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_28a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(28a)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "Kare-wa doko-ni hune-o tome-rareru-ka-o sinpai-siteiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Kare-wa", "he-TOP"], ["doko-ni", "where-LOC"], ["hune-o", "boat-ACC"],
-      ["tome-rareru-ka-o", "park-can-Q-ACC"], ["sinpai-siteiru", "worry-do.ASP"]
-    ],
-    "translation": "He worries where he can dock his boat.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "sinpai"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_28b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(28b)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "Kare-wa Y-ni hune-o tome-rareru-no-o sinpai-siteiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Kare-wa", "he-TOP"], ["Y-ni", "Y-LOC"], ["hune-o", "boat-ACC"],
-      ["tome-rareru-no-o", "park-can-NMZ-ACC"], ["sinpai-siteiru", "worry-do.ASP"]
-    ],
-    "translation": "He worries that he can dock his boat at Y.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "sinpai"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_34",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(34)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "John-wa nani-o kiru-beki-ka-o sinpai-siteiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-wa", "John-TOP"], ["nani-o", "what-ACC"], ["kiru-beki-ka-o", "wear-should-Q-ACC"],
-      ["sinpai-siteiru", "worry-ASP"]
-    ],
-    "translation": "John worries what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "sinpai"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_50_goodfriend",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(50)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "John-wa rinzin-ga konsyuumatu ie-ni iru ka-o osore-teiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-wa", "John-TOP"], ["rinzin-ga", "neighbor-NOM"], ["konsyuumatu", "this.weekend"],
-      ["ie-ni", "home-LOC"], ["iru", "be"], ["ka-o", "Q-ACC"], ["osore-teiru", "fear-ASP"]
-    ],
-    "translation": "John fears whether his neighbor will be home.",
-    "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "osore"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "negation"]
-    ],
-    "comment": "The paper's gloss prints neightbor-NOM.",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_50_noisehater",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(50)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "John-wa rinzin-ga konsyuumatu ie-ni iru ka-o osore-teiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-wa", "John-TOP"], ["rinzin-ga", "neighbor-NOM"], ["konsyuumatu", "this.weekend"],
-      ["ie-ni", "home-LOC"], ["iru", "be"], ["ka-o", "Q-ACC"], ["osore-teiru", "fear-ASP"]
-    ],
-    "translation": "John fears whether his neighbor will be home.",
-    "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "osore"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "radical"]
-    ],
-    "comment": "The paper's gloss prints neightbor-NOM.",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_51",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(51)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "John-wa dono sensyu-ga sono siai-de katu-ka osore-teiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-wa", "John-TOP"], ["dono", "which"], ["sensyu-ga", "player-NOM"], ["sono", "the"],
-      ["siai-de", "match-LOC"], ["katu-ka", "win-Q"], ["osore-teiru", "fear-ASP"]
-    ],
-    "translation": "John fears which player will win the match.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "osore"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_52",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(52)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "John-wa dono sensyu-ga sono siai-de katu-ka osore-teinai.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John-wa", "John-TOP"], ["dono", "which"], ["sensyu-ga", "player-NOM"], ["sono", "the"],
-      ["siai-de", "match-LOC"], ["katu-ka", "win-Q"], ["osore-teinai", "fear-ASP.NEG"]
-    ],
-    "translation": "John does not fear which player will win the match.",
-    "context": "No player in particular is such that John fears that they will win the match.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "osore"],
-      ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["polarity", "negated"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_67a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(67a)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "Taro-wa tomodati-ga sonotoki ie-ni iru-ka-o nozon-deiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Taro-wa", "Taro-TOP"], ["tomodati-ga", "friend-NOM"], ["sonotoki", "then"],
-      ["ie-ni", "home-LOC"], ["iru-ka-o", "be-Q-ACC"], ["nozon-deiru", "hope-ASP"]
-    ],
-    "translation": "Intended: Taro hopes whether his friend will be at home then.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "nozomu"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_ja_67b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(67b)"},
-    "reportedIn": null,
-    "language": "nucl1643",
-    "primaryText": "Taro-wa tomodati-ga mondai-o tokeru-ka-o nozon-deiru.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Taro-wa", "Taro-TOP"], ["tomodati-ga", "friend-NOM"], ["mondai-o", "problem-ACC"],
-      ["tokeru-ka-o", "solve.can-Q-ACC"], ["nozon-deiru", "hope-ASP"]
-    ],
-    "translation": "Intended: Taro hopes whether his friend can solve the problem.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "nozomu"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_es_29a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(29a)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "A mi padre le preocupa dónde puede atracar Antonio el barco.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["A", "to"], ["mi", "my"], ["padre", "father"], ["le", "CL"], ["preocupa", "worries"],
-      ["dónde", "where"], ["puede", "could.IND"], ["atracar", "dock"], ["Antonio", "Antonio"],
-      ["el", "the"], ["barco", "boat"]
-    ],
-    "translation": "My father worries about where Antonio can dock his boat.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "preocupar"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_es_29b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(29b)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "A mi padre le preocupa que Antonio pueda atracar el barco en Y.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["A", "to"], ["mi", "my"], ["padre", "father"], ["le", "CL"], ["preocupa", "worries"],
-      ["que", "that"], ["Antonio", "Antonio"], ["pueda", "can.SUBJ"], ["atracar", "dock"],
-      ["el", "the"], ["barco", "boat"], ["en", "at"], ["Y", "Y"]
-    ],
-    "translation": "My father worries that Antonio can dock the boat at Y.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "preocupar"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "the subjunctive clause allows a non-veridical interpretation, fn. 6",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_es_35",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(35)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "A Juan le preocupa qué debería ponerse.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["A", "to"], ["Juan", "Juan"], ["le", "CL"], ["preocupa", "worries"], ["qué", "what"],
-      ["debería", "should.3SG"], ["ponerse", "wear"]
-    ],
-    "translation": "It worries John what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "preocupar"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_es_53",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(53)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "Juan teme qué puede pasar si su vecino está en casa.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Juan", "Juan"], ["teme", "fears"], ["qué", "what"], ["puede", "can.IND"],
-      ["pasar", "happen"], ["si", "if"], ["su", "his"], ["vecino", "neighbor"], ["está", "is"],
-      ["en", "at"], ["casa", "home"]
-    ],
-    "translation": "Juan fears what can happen if his neighbor is at home.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "temer"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_es_54",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(54)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "Juan teme si su vecino estará en casa.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Juan", "Juan"], ["teme", "fears"], ["si", "whether"], ["su", "his"],
-      ["vecino", "neighbor"], ["estará", "will.be"], ["en", "at"], ["casa", "home"]
-    ],
-    "translation": "Juan fears whether his neighbor will be at home.",
-    "context": "",
-    "judgment": "questionable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "temer"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "??? in the paper; set aside as beyond the analysis",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_es_66a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(66a)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "Espero si el vecino me puede ayudar.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Espero", "hope-1SG"], ["si", "whether"], ["el", "the"], ["vecino", "neighbor"],
-      ["me", "me-ACC"], ["puede", "can.IND"], ["ayudar", "help"]
-    ],
-    "translation": "Intended: I hope / was hoping whether the neighbor can help me.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "esperar"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_es_66b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(66b)"},
-    "reportedIn": null,
-    "language": "stan1288",
-    "primaryText": "Espero que si el vecino me puede ayudar.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Espero", "hope-1SG"], ["que", "que"], ["si", "whether"], ["el", "the"],
-      ["vecino", "neighbor"], ["me", "me-ACC"], ["puede", "can.IND"], ["ayudar", "help"]
-    ],
-    "translation": "Intended: I hope / was hoping whether the neighbor can help me.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "esperar"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_30a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30a)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Babam gemisini nereye park ed-eceğ-in-den endişeleniyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Babam", "my.dad"], ["gemisini", "his.boat"], ["nereye", "where"], ["park", "park"],
-      ["ed-eceğ-in-den", "do-NMZ.FUT-3S.POSS-ABL"], ["endişeleniyor", "worry"]
-    ],
-    "translation": "My dad is worried where he'll park his boat.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "endiselen"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "future in place of the possibility modal, fn. 7",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_30b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30b)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Babam gemisini Y-ye park ed-eceğ-in-den endişeleniyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Babam", "my.dad"], ["gemisini", "his.boat"], ["Y-ye", "Y-LOC"], ["park", "park"],
-      ["ed-eceğ-in-den", "do-NMZ.FUT-3S.POSS-ABL"], ["endişeleniyor", "worry"]
-    ],
-    "translation": "My dad is worried that he'll park his boat in Y.",
-    "context": "Al's father recently bought a new boat and is planning to visit Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "endiselen"],
-      ["clause", "declarative"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_36",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(36)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John ne giy-me-si gerek-tiğ-in-den endişeleniyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["ne", "what"], ["giy-me-si", "wear-NMZ-3S.POSS"],
-      ["gerek-tiğ-in-den", "MOD-COP.NMZ-3S.POSS-ABL"], ["endişeleniyor", "worries"]
-    ],
-    "translation": "John is worried what he should wear.",
-    "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "endiselen"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_45_goodfriend",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(45)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John komşusunun haftasonu evde ol-up ol-ma-yacağ-ın-dan korkuyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["komşusunun", "his.neighbor"], ["haftasonu", "weekend"],
-      ["evde", "at.home"], ["ol-up", "be-CONJ"],
-      ["ol-ma-yacağ-ın-dan", "be-NEG-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
-    ],
-    "translation": "John fears whether his neighbor will be home over the weekend.",
-    "context": "GoodFriend: John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "kork"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "negation"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_45_noisehater",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(45)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John komşusunun haftasonu evde ol-up ol-ma-yacağ-ın-dan korkuyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["komşusunun", "his.neighbor"], ["haftasonu", "weekend"],
-      ["evde", "at.home"], ["ol-up", "be-CONJ"],
-      ["ol-ma-yacağ-ın-dan", "be-NEG-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
-    ],
-    "translation": "John fears whether his neighbor will be home over the weekend.",
-    "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "kork"],
-      ["clause", "polar"],
-      ["embedding", "argument"],
-      ["target", "radical"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_48",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(48)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John maçı hangi oyuncunun kazan-acağ-ın-dan korkuyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["maçı", "match"], ["hangi", "which"], ["oyuncunun", "player"],
-      ["kazan-acağ-ın-dan", "win-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
-    ],
-    "translation": "John fears which player will win the match.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "kork"],
-      ["clause", "constituent"],
-      ["embedding", "argument"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_49",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(49)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John maçı hangi oyuncunun kazan-acağ-ın-dan korkmuyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["maçı", "match"], ["hangi", "which"], ["oyuncunun", "player"],
-      ["kazan-acağ-ın-dan", "win-NMZ.FUT-3S.POSS-ABL"], ["korkmuyor", "fear.NEG"]
-    ],
-    "translation": "John does not fear which player will win the match.",
-    "context": "No player in particular is such that John fears that they will win the match.",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "kork"],
-      ["clause", "constituent"],
-      ["embedding", "argument"],
-      ["polarity", "negated"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_68a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(68a)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Bana yardımcı ol-up ol-ama-yacağ-ınız-ı um-uyor-du-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Bana", "1S.DAT"], ["yardımcı", "helper"], ["ol-up", "be-COORD"],
-      ["ol-ama-yacağ-ınız-ı", "be-NEG.ABIL-FUT-2P-ACC"], ["um-uyor-du-m", "hope-IPFV-PST-1S"]
-    ],
-    "translation": "Intended: I was hoping whether you could help me.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "nominalized interrogative",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_68b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(68b)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Birisi-nin yazdıklarımı teyit ed-ip et-me-yeceğ-in-i um-uyor-du-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Birisi-nin", "someone-GEN"], ["yazdıklarımı", "what.I.wrote"], ["teyit", "confirmation"],
-      ["ed-ip", "do-COORD"], ["et-me-yeceğ-in-i", "do-NEG-FUT-3S-ACC"],
-      ["um-uyor-du-m", "hope-IPFV-PST-1S"]
-    ],
-    "translation": "Intended: I was hoping whether someone could confirm what I wrote.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "nominalized interrogative",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_71a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(71a)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John komşu-su ev-de ol-acak mı diye um-uyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["komşu-su", "neighbor-3S.POSS"], ["ev-de", "house-LOC"],
-      ["ol-acak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["um-uyor", "hope-IPFV.PRES.3S"]
-    ],
-    "translation": "John hopes whether his neighbor will be home.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "diye"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_71b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(71b)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Bana birileri yardımcı ol-abil-ir mi diye um-uyor-du-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Bana", "1S.DAT"], ["birileri", "someone"], ["yardımcı", "helpful"],
-      ["ol-abil-ir", "be-MOD-AOR.3S"], ["mi", "POLQ"], ["diye", "diye"],
-      ["um-uyor-du-m", "hope-IPFV-PST-1S"]
-    ],
-    "translation": "I was hoping whether someone could help me.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "diye"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_71c",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(71c)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "O sebeple Hitman'de de ol-ur mu diye um-du-m ama hayal kırıklığı yaşa-dı-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["O sebeple", "that's.why"], ["Hitman'de", "Hitman.LOC"], ["de", "too"], ["ol-ur", "be-AOR"],
-      ["mu", "POLQ"], ["diye", "diye"], ["um-du-m", "hope-PFV.PST-1S"], ["ama", "but"],
-      ["hayal kırıklığı", "disappointment"], ["yaşa-dı-m", "live-PFV.PST-1S"]
-    ],
-    "translation": "That's why I hoped whether it [=a Turkish translation] would be available in Hitman too, but I was disappointed.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "diye"]
-    ],
-    "comment": "attested",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_72a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(72a)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Bana birileri-nin yardımcı ol-up ol-ama-yacağ-ın-ı um-uyor-du-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Bana", "1S.DAT"], ["birileri-nin", "someone-GEN"], ["yardımcı", "helpful"],
-      ["ol-up", "be-COORD"], ["ol-ama-yacağ-ın-ı", "be-NEG.MOD-NMZ.FUT-3S-ACC"],
-      ["um-uyor-du-m", "hope-IPFV-PST-1S"]
-    ],
-    "translation": "Intended: I was hoping whether someone could help me.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "nominalized interrogative",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_72b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(72b)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "O sebeple Hitman'de de ol-up ol-ma-yacağ-ın-ı um-du-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["O sebeple", "that's.why"], ["Hitman'de", "Hitman.LOC"], ["de", "too"],
-      ["ol-up", "be-COORD"], ["ol-ma-yacağ-ın-ı", "be-NEG-NMZ.FUT-3S-ACC"],
-      ["um-du-m", "hope-PFV.PST-1S"]
-    ],
-    "translation": "Intended: That's why I hoped whether it would be available in Hitman too.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "nominalized interrogative",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_73a",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(73a)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Bana birileri yardımcı ol-abil-ir mi diye dolan-dı-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Bana", "1S.DAT"], ["birileri", "someone"], ["yardımcı", "helpful"],
-      ["ol-abil-ir", "be-MOD-AOR.3S"], ["mi", "POLQ"], ["diye", "diye"],
-      ["dolan-dı-m", "walk.around-PFV.PST-1S"]
-    ],
-    "translation": "I walked around wondering whether someone could help me.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "dolan"],
-      ["clause", "polar"],
-      ["embedding", "diye"]
-    ],
-    "comment": "the wondering is contributed by diye, not by a lexical predicate",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_73b",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(73b)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "Bana birileri-nin yardımcı ol-up ol-ama-yacağ-ın-ı dolan-dı-m.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Bana", "1S.DAT"], ["birileri-nin", "someone-GEN"], ["yardımcı", "helpful"],
-      ["ol-up", "be-COORD"], ["ol-ama-yacağ-ın-ı", "be-NEG.MOD-NMZ.FUT-3S-ACC"],
-      ["dolan-dı-m", "walk.around-IPFV-PST-1S"]
-    ],
-    "translation": "Intended: I walked around wondering whether someone could help me.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "dolan"],
-      ["clause", "polar"],
-      ["embedding", "argument"]
-    ],
-    "comment": "a nominalized clause is an argument, and walk around takes none",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_75_goodfriend",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(75)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John komşusu ev-de ol-acak mı diye um-uyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["komşusu", "his.neighbor"], ["ev-de", "house-LOC"],
-      ["ol-acak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["um-uyor", "hope-IPFV.PRES.3S"]
-    ],
-    "translation": "John hopes whether his neighbor will be home.",
-    "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "diye"],
-      ["target", "radical"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_75_noisehater",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(75)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John komşusu ev-de ol-acak mı diye um-uyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["komşusu", "his.neighbor"], ["ev-de", "house-LOC"],
-      ["ol-acak", "be-FUT.3S"], ["mı", "Q"], ["diye", "diye"], ["um-uyor", "hope-IPFV.PRES.3S"]
-    ],
-    "translation": "John hopes whether his neighbor will be home.",
-    "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": false,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "um"],
-      ["clause", "polar"],
-      ["embedding", "diye"],
-      ["target", "negation"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_76_goodfriend",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(76)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John komşusu evde olacak mı diye korkuyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["komşusu", "his.neighbor"], ["evde", "at.home"], ["olacak", "be-FUT"],
-      ["mı", "Q"], ["diye", "diye"], ["korkuyor", "fears"]
-    ],
-    "translation": "John fears whether his neighbor will be home.",
-    "context": "GoodFriend: John likes to invite his friends over to party. He and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "kork"],
-      ["clause", "polar"],
-      ["embedding", "diye"],
-      ["target", "negation"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "qingetal2025_tr_76_noisehater",
-    "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(76)"},
-    "reportedIn": null,
-    "language": "nucl1301",
-    "primaryText": "John komşusu evde olacak mı diye korkuyor.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["John", "John"], ["komşusu", "his.neighbor"], ["evde", "at.home"], ["olacak", "be-FUT"],
-      ["mı", "Q"], ["diye", "diye"], ["korkuyor", "fears"]
-    ],
-    "translation": "John fears whether his neighbor will be home.",
-    "context": "NoiseHater: John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
-    "judgment": "acceptable",
-    "verdict": true,
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      ["predicate", "kork"],
-      ["clause", "polar"],
-      ["embedding", "diye"],
-      ["target", "radical"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "Clause",
+      "doc": "The type of the complement clause.",
+      "levels": [
+        {
+          "name": "declarative",
+          "label": "declarative",
+          "doc": "a declarative clause"
+        },
+        {
+          "name": "polar",
+          "label": "polar",
+          "doc": "a polar interrogative"
+        },
+        {
+          "name": "constituent",
+          "label": "constituent",
+          "doc": "a constituent interrogative"
+        }
+      ]
+    },
+    {
+      "key": "polarity",
+      "lean": "polarity",
+      "type": "MatrixPolarity",
+      "doc": "The polarity of the matrix clause, where it is negated.",
+      "levels": [
+        {
+          "name": "negated",
+          "label": "negated",
+          "doc": "the matrix predicate is negated"
+        }
+      ]
+    },
+    {
+      "key": "valence",
+      "lean": "valence",
+      "type": "Valence",
+      "doc": "The valence the paper gives the veridical preferential under test.",
+      "levels": [
+        {
+          "name": "positive",
+          "label": "positive",
+          "doc": "evaluatively positive, as *like* and *be happy*"
+        },
+        {
+          "name": "negative",
+          "label": "negative",
+          "doc": "evaluatively negative, as *hate* and *be upset*"
+        }
+      ]
+    },
+    {
+      "key": "answer",
+      "lean": "answer",
+      "type": "Answer",
+      "doc": "The answer to the embedded polar question that the holder fears.",
+      "levels": [
+        {
+          "name": "radical",
+          "label": "radical",
+          "doc": "the holder fears that the radical of the question holds"
+        },
+        {
+          "name": "negation",
+          "label": "negation",
+          "doc": "the holder fears that the radical does not hold"
+        }
+      ]
+    }
+  ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The parses of a clause with a wh-phrase.",
+    "levels": [
+      {
+        "name": "question",
+        "label": "question",
+        "doc": "the clause is a constituent question"
+      },
+      {
+        "name": "indefinite",
+        "label": "indefinite",
+        "doc": "the wh-phrase is an indefinite and the clause a declarative"
+      }
+    ]
+  },
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "predicate",
+          "label": "predicate",
+          "doc": "the preferential predicate under test"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The nonveridical preferential predicates under test.",
+      "levels": [
+        {
+          "name": "hope",
+          "label": "hope",
+          "doc": "English *hope*"
+        },
+        {
+          "name": "fear",
+          "label": "fear",
+          "doc": "English *fear*"
+        },
+        {
+          "name": "worry",
+          "label": "worry",
+          "doc": "English *worry*, with an experiencer subject"
+        },
+        {
+          "name": "qidai",
+          "label": "qidai",
+          "doc": "Mandarin *qidai* 'look forward to'"
+        },
+        {
+          "name": "danxin",
+          "label": "danxin",
+          "doc": "Mandarin *danxin* 'worry'"
+        },
+        {
+          "name": "haipa",
+          "label": "haipa",
+          "doc": "Mandarin *haipa* 'fear'"
+        },
+        {
+          "name": "tanosimi",
+          "label": "tanosimi",
+          "doc": "Japanese *tanosimi* 'look forward to'"
+        },
+        {
+          "name": "sinpai",
+          "label": "sinpai",
+          "doc": "Japanese *sinpai-suru* 'worry'"
+        },
+        {
+          "name": "osore",
+          "label": "osore",
+          "doc": "Japanese *osore(ru)* 'fear'"
+        },
+        {
+          "name": "preocupar",
+          "label": "preocupar",
+          "doc": "Spanish *preocupar* 'worry'"
+        },
+        {
+          "name": "temer",
+          "label": "temer",
+          "doc": "Spanish *temer* 'fear'"
+        },
+        {
+          "name": "endiselen",
+          "label": "endiselen",
+          "doc": "Turkish *endişelen-* 'worry'"
+        },
+        {
+          "name": "kork",
+          "label": "kork",
+          "doc": "Turkish *kork-* 'fear'"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the article with a preferential predicate under test."
+  },
+  "examples": [
+    {
+      "id": "qingetal2025_en_6",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(6)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "John hopes which student will sing.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["hopes", ""], ["which", ""], ["student", ""], ["will", ""], ["sing", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "hope"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_26",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(26)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Mary worries that John didn't go to school yesterday.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Mary", ""], ["worries", ""], ["that", ""], ["John", ""], ["didn't", ""], ["go", ""],
+        ["to", ""], ["school", ""], ["yesterday", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_28",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(28)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Al's father worries where he can dock his boat.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Al's", ""], ["father", ""], ["worries", ""], ["where", ""], ["he", ""], ["can", ""],
+        ["dock", ""], ["his", ""], ["boat", ""]
+      ],
+      "translation": "",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_29",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(29)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Al's father worries that he can dock his boat at Y.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Al's", ""], ["father", ""], ["worries", ""], ["that", ""], ["he", ""], ["can", ""],
+        ["dock", ""], ["his", ""], ["boat", ""], ["at", ""], ["Y", ""]
+      ],
+      "translation": "",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "false for every choice of Y",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_30a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30a)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Mr. Nelson denies he is “a real collector – the kind of person who buys first and then worries where he can find room for his purchases.”",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Mr", ""], ["Nelson", ""], ["denies", ""], ["he", ""], ["is", ""], ["a", ""], ["real", ""],
+        ["collector", ""], ["the", ""], ["kind", ""], ["of", ""], ["person", ""], ["who", ""],
+        ["buys", ""], ["first", ""], ["and", ""], ["then", ""], ["worries", ""], ["where", ""],
+        ["he", ""], ["can", ""], ["find", ""], ["room", ""], ["for", ""], ["his", ""],
+        ["purchases", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 17, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_30b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30b)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "As Ashley hands his church keys back he worries where he can spend the night.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["As", ""], ["Ashley", ""], ["hands", ""], ["his", ""], ["church", ""], ["keys", ""],
+        ["back", ""], ["he", ""], ["worries", ""], ["where", ""], ["he", ""], ["can", ""],
+        ["spend", ""], ["the", ""], ["night", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_30c",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30c)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "I have a sister in California that worries where she can live because she is white and her kids are mixed race.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I", ""], ["have", ""], ["a", ""], ["sister", ""], ["in", ""], ["California", ""],
+        ["that", ""], ["worries", ""], ["where", ""], ["she", ""], ["can", ""], ["live", ""],
+        ["because", ""], ["she", ""], ["is", ""], ["white", ""], ["and", ""], ["her", ""],
+        ["kids", ""], ["are", ""], ["mixed", ""], ["race", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 7, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_30d",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(30d)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Lucas tells Sami that he loves her and Sami tells him that she loves him too. Sami worries what she can do since she loves them both.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lucas", ""], ["tells", ""], ["Sami", ""], ["that", ""], ["he", ""], ["loves", ""],
+        ["her", ""], ["and", ""], ["Sami", ""], ["tells", ""], ["him", ""], ["that", ""],
+        ["she", ""], ["loves", ""], ["him", ""], ["too", ""], ["Sami", ""], ["worries", ""],
+        ["what", ""], ["she", ""], ["can", ""], ["do", ""], ["since", ""], ["she", ""],
+        ["loves", ""], ["them", ""], ["both", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 17, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_36a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(36a)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Sam worries what they should wear.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Sam", ""], ["worries", ""], ["what", ""], ["they", ""], ["should", ""], ["wear", ""]
+      ],
+      "translation": "",
+      "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_36b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(36b)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "Sam worries that they should wear casual/business casual/formal.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Sam", ""], ["worries", ""], ["that", ""], ["they", ""], ["should", ""], ["wear", ""],
+        ["casual/business", ""], ["casual/formal", ""]
+      ],
+      "translation": "",
+      "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "worry"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_42a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(42a)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "John doesn't like which student will sing.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["doesn't", ""], ["like", ""], ["which", ""], ["student", ""], ["will", ""],
+        ["sing", ""]
+      ],
+      "translation": "",
+      "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"],
+        ["polarity", "negated"],
+        ["valence", "positive"]
+      ],
+      "comment": "adapted from Uegaki and Sudo 2019, (41)",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_42b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(42b)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "John isn't happy about which student will sing.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["isn't", ""], ["happy", ""], ["about", ""], ["which", ""], ["student", ""],
+        ["will", ""], ["sing", ""]
+      ],
+      "translation": "",
+      "context": "It is common knowledge that John knows which student will sing. Al knows that there is no particular student John wants to sing (i.e., John is indifferent about which student will sing). Bo asks Al: “How does John feel about which student will sing?”",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"],
+        ["polarity", "negated"],
+        ["valence", "positive"]
+      ],
+      "comment": "adapted from Uegaki and Sudo 2019, (41)",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_44a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(44a)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "John doesn't hate which student will sing.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["doesn't", ""], ["hate", ""], ["which", ""], ["student", ""], ["will", ""],
+        ["sing", ""]
+      ],
+      "translation": "",
+      "context": "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"],
+        ["polarity", "negated"],
+        ["valence", "negative"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_44b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(44b)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "John isn't upset about which student will sing.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", ""], ["isn't", ""], ["upset", ""], ["about", ""], ["which", ""], ["student", ""],
+        ["will", ""], ["sing", ""]
+      ],
+      "translation": "",
+      "context": "It is common knowledge that John knows which student will sing. Al knows that there is no student such that John will hate it or be upset if they will sing. Bo asks Al: “How does John feel about which student will sing?”",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"],
+        ["polarity", "negated"],
+        ["valence", "negative"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_46a",
+      "source": {"bibkey": "white-2021", "paperLabel": "(25a)"},
+      "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(46a)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Interstellar space is so vast that there is no need to fear whether stars in the Andromeda galaxy will accidentally slam into the Sun.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Interstellar", ""], ["space", ""], ["is", ""], ["so", ""], ["vast", ""], ["that", ""],
+        ["there", ""], ["is", ""], ["no", ""], ["need", ""], ["to", ""], ["fear", ""],
+        ["whether", ""], ["stars", ""], ["in", ""], ["the", ""], ["Andromeda", ""], ["galaxy", ""],
+        ["will", ""], ["accidentally", ""], ["slam", ""], ["into", ""], ["the", ""], ["Sun", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 11, "label": "predicate", "lexeme": "fear"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "radical"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_46b",
+      "source": {"bibkey": "white-2021", "paperLabel": "(25b)"},
+      "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(46b)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "I fear whether this test would run safely on the oxygen sensor as it has a lot of drawback when compared with the others.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I", ""], ["fear", ""], ["whether", ""], ["this", ""], ["test", ""], ["would", ""],
+        ["run", ""], ["safely", ""], ["on", ""], ["the", ""], ["oxygen", ""], ["sensor", ""],
+        ["as", ""], ["it", ""], ["has", ""], ["a", ""], ["lot", ""], ["of", ""], ["drawback", ""],
+        ["when", ""], ["compared", ""], ["with", ""], ["the", ""], ["others", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "fear"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "negation"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_46c",
+      "source": {"bibkey": "white-2021", "paperLabel": "(25c)"},
+      "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(46c)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "[...] I fear whether I'll have use of my arms/hands by age 55 or 60.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I", ""], ["fear", ""], ["whether", ""], ["I'll", ""], ["have", ""], ["use", ""],
+        ["of", ""], ["my", ""], ["arms/hands", ""], ["by", ""], ["age", ""], ["55", ""], ["or", ""],
+        ["60", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "fear"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "negation"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_46d",
+      "source": {"bibkey": "white-2021", "paperLabel": "(25d)"},
+      "reportedIn": {"bibkey": "qing-uegaki-2025", "paperLabel": "(46d)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "I know parents who seriously fear whether their children will ever hold a meaningful job.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I", ""], ["know", ""], ["parents", ""], ["who", ""], ["seriously", ""], ["fear", ""],
+        ["whether", ""], ["their", ""], ["children", ""], ["will", ""], ["ever", ""], ["hold", ""],
+        ["a", ""], ["meaningful", ""], ["job", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "predicate", "lexeme": "fear"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "negation"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_47a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(47a)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "Both women initially worried about taking the bus, fearing who else might be riding the bus. Both have been pleasantly surprised. Express bus seats recline, and have individual reading lights and air-conditioning vents.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Both", ""], ["women", ""], ["initially", ""], ["worried", ""], ["about", ""],
+        ["taking", ""], ["the", ""], ["bus", ""], ["fearing", ""], ["who", ""], ["else", ""],
+        ["might", ""], ["be", ""], ["riding", ""], ["the", ""], ["bus", ""], ["Both", ""],
+        ["have", ""], ["been", ""], ["pleasantly", ""], ["surprised", ""], ["Express", ""],
+        ["bus", ""], ["seats", ""], ["recline", ""], ["and", ""], ["have", ""], ["individual", ""],
+        ["reading", ""], ["lights", ""], ["and", ""], ["air-conditioning", ""], ["vents", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 8, "label": "predicate", "lexeme": "fear"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_47b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(47b)"},
+      "method": "corpus",
+      "language": "stan1293",
+      "primaryText": "But if my party doesn't enter this city, I fear who else will.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["But", ""], ["if", ""], ["my", ""], ["party", ""], ["doesn't", ""], ["enter", ""],
+        ["this", ""], ["city", ""], ["I", ""], ["fear", ""], ["who", ""], ["else", ""], ["will", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 9, "label": "predicate", "lexeme": "fear"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "Martha Wells, The Edge of Worlds",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_en_48",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(48)"},
+      "method": "unclassified",
+      "language": "stan1293",
+      "primaryText": "The women do not fear who else might be riding the bus.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["The", ""], ["women", ""], ["do", ""], ["not", ""], ["fear", ""], ["who", ""], ["else", ""],
+        ["might", ""], ["be", ""], ["riding", ""], ["the", ""], ["bus", ""]
+      ],
+      "translation": "",
+      "context": "There exists no person x such that the women fear that x might be riding the bus.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "fear"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"],
+        ["polarity", "negated"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "qingetal2025_zh_22",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(22)"},
+      "method": "corpus",
+      "language": "mand1415",
+      "primaryText": "Hen qidai ta hui zenyang quanshi zhege xinde juese.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hen", "very"], ["qidai", "qidai"], ["ta", "he"], ["hui", "will"], ["zenyang", "how"],
+        ["quanshi", "interpret"], ["zhege", "this"], ["xinde", "new"], ["juese", "character"]
+      ],
+      "translation": "I (very much) look forward to (seeing) how he will interpret this new character.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "qidai"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_zh_23",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(23)"},
+      "method": "corpus",
+      "language": "mand1415",
+      "primaryText": "Ye qidai ta neng tongguo zhege zuopin rang gengduode ren shuzhi ta.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ye", "also"], ["qidai", "qidai"], ["ta", "he"], ["neng", "can"], ["tongguo", "through"],
+        ["zhege", "this.CLF"], ["zuopin", "work.of.art"], ["rang", "let"], ["gengduode", "more"],
+        ["ren", "people"], ["shuzhi", "know.well"], ["ta", "him"]
+      ],
+      "translation": "I also look forward to him being able to let more people know him well through this piece of work.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "qidai"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "does not entail that the actor will",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_zh_31a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(31a)"},
+      "language": "mand1415",
+      "primaryText": "Wode baba hen danxin ta neng zai nali ting tade chuan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Wode", "my"], ["baba", "father"], ["hen", "very"], ["danxin", "worry"], ["ta", "he"],
+        ["neng", "can"], ["zai", "at"], ["nali", "where"], ["ting", "dock"], ["tade", "his"],
+        ["chuan", "boat"]
+      ],
+      "translation": "My father worries (very much) about where he can dock his boat.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "predicate", "lexeme": "danxin"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_zh_31b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(31b)"},
+      "language": "mand1415",
+      "primaryText": "Wode baba hen danxin ta neng zai Y (nali) ting tade chuan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Wode", "my"], ["baba", "father"], ["hen", "very"], ["danxin", "worry"], ["ta", "he"],
+        ["neng", "can"], ["zai", "at"], ["Y", "Y"], ["(nali)", "there"], ["ting", "dock"],
+        ["tade", "his"], ["chuan", "boat"]
+      ],
+      "translation": "My father worries (very much) that he can dock his boat at Y.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "predicate", "lexeme": "danxin"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_zh_37",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(37)"},
+      "language": "mand1415",
+      "primaryText": "Yuehan hen danxin ta yao chuan shenme.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yuehan", "John"], ["hen", "very"], ["danxin", "worry"], ["ta", "he"], ["yao", "should"],
+        ["chuan", "wear"], ["shenme", "what"]
+      ],
+      "translation": "John worries (very much) what he should wear.",
+      "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate", "lexeme": "danxin"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_zh_59",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(59)"},
+      "language": "mand1415",
+      "primaryText": "Yuehan (hen) haipa tade linju huibuhui zaijia.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yuehan", "John"], ["(hen)", "very"], ["haipa", "fears"], ["tade", "his"],
+        ["linju", "neighbor"], ["huibuhui", "will.not.will"], ["zaijia", "at.home"]
+      ],
+      "translation": "John fears (very much) whether his neighbor will be at home.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "predicate", "lexeme": "haipa"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_zh_60",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(60)"},
+      "language": "mand1415",
+      "primaryText": "Yuehan (hen) haipa naming xuanshou hui yingde bisai.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yuehan", "John"], ["(hen)", "very"], ["haipa", "fears"], ["naming", "which.CLF"],
+        ["xuanshou", "player"], ["hui", "will"], ["yingde", "win"], ["bisai", "match"]
+      ],
+      "translation": "John fears that some player will win the match.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "question", "judgment": "unacceptable"},
+        {"name": "indefinite", "judgment": "acceptable"}
+      ],
+      "spans": [
+        {"start": 2, "label": "predicate", "lexeme": "haipa"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "the wh-phrase is read as an indefinite and the clause as a declarative",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_zh_fn10_i",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "fn. 10 (i)"},
+      "language": "mand1415",
+      "primaryText": "Yuehan haipa tamen tigong na xie yinliao.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Yuehan", "John"], ["haipa", "fears"], ["tamen", "they"], ["tigong", "serve"],
+        ["na", "which"], ["xie", "CL.PL"], ["yinliao", "beverage"]
+      ],
+      "translation": "Intended: John fears which kinds of beverage they serve.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "haipa"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "no wh-indefinite reading either",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_24a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(24a)"},
+      "method": "corpus",
+      "language": "nucl1643",
+      "primaryText": "Kotosi-wa dare-ga MVP-o toru-no-ka tanosimi-desu-wa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kotosi-wa", "this.year-TOP"], ["dare-ga", "who-NOM"], ["MVP-o", "MVP-ACC"],
+        ["toru-no-ka", "win-NMZ-Q"], ["tanosimi-desu-wa", "fun-COP.POL-PARTICLE"]
+      ],
+      "translation": "I look forward to who will win the MVP this year.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "tanosimi"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "does not entail (24b) for any winner X",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_25a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(25a)"},
+      "method": "corpus",
+      "language": "nucl1643",
+      "primaryText": "Watasi-wa Pattinson-ga Batman-de nani-o suru-no-ka tanosimi-desu.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Watasi-wa", "I-TOP"], ["Pattinson-ga", "Pattinson-NOM"], ["Batman-de", "Batman-LOC"],
+        ["nani-o", "what-ACC"], ["suru-no-ka", "do-NMZ-Q"], ["tanosimi-desu", "fun-COP.POL"]
+      ],
+      "translation": "I look forward to what Pattinson will do in The Batman.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "predicate", "lexeme": "tanosimi"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_32a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(32a)"},
+      "language": "nucl1643",
+      "primaryText": "Kare-wa doko-ni hune-o tome-rareru-ka-o sinpai-siteiru.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kare-wa", "he-TOP"], ["doko-ni", "where-LOC"], ["hune-o", "boat-ACC"],
+        ["tome-rareru-ka-o", "park-can-Q-ACC"], ["sinpai-siteiru", "worry-do.ASP"]
+      ],
+      "translation": "He worries where he can dock his boat.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "sinpai"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_32b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(32b)"},
+      "language": "nucl1643",
+      "primaryText": "Kare-wa Y-ni hune-o tome-rareru-no-o sinpai-siteiru.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kare-wa", "he-TOP"], ["Y-ni", "Y-LOC"], ["hune-o", "boat-ACC"],
+        ["tome-rareru-no-o", "park-can-NMZ-ACC"], ["sinpai-siteiru", "worry-do.ASP"]
+      ],
+      "translation": "He worries that he can dock his boat at Y.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "sinpai"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_38",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(38)"},
+      "language": "nucl1643",
+      "primaryText": "John-wa nani-o kiru-beki-ka-o sinpai-siteiru.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-wa", "John-TOP"], ["nani-o", "what-ACC"], ["kiru-beki-ka-o", "wear-should-Q-ACC"],
+        ["sinpai-siteiru", "worry-ASP"]
+      ],
+      "translation": "John worries what he should wear.",
+      "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "predicate", "lexeme": "sinpai"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_54_goodfriend",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(54)"},
+      "language": "nucl1643",
+      "primaryText": "John-wa rinzin-ga konsyuumatu ie-ni iru ka-o osore-teiru.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-wa", "John-TOP"], ["rinzin-ga", "neighbor-NOM"], ["konsyuumatu", "this.weekend"],
+        ["ie-ni", "home-LOC"], ["iru", "be"], ["ka-o", "Q-ACC"], ["osore-teiru", "fear-ASP"]
+      ],
+      "translation": "John fears whether his neighbor will be home.",
+      "context": "John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "predicate", "lexeme": "osore"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "negation"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_54_noisehater",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(54)"},
+      "language": "nucl1643",
+      "primaryText": "John-wa rinzin-ga konsyuumatu ie-ni iru ka-o osore-teiru.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-wa", "John-TOP"], ["rinzin-ga", "neighbor-NOM"], ["konsyuumatu", "this.weekend"],
+        ["ie-ni", "home-LOC"], ["iru", "be"], ["ka-o", "Q-ACC"], ["osore-teiru", "fear-ASP"]
+      ],
+      "translation": "John fears whether his neighbor will be home.",
+      "context": "John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "predicate", "lexeme": "osore"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "radical"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_55",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(55)"},
+      "language": "nucl1643",
+      "primaryText": "John-wa dono sensyu-ga sono siai-de katu-ka osore-teiru.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-wa", "John-TOP"], ["dono", "which"], ["sensyu-ga", "player-NOM"], ["sono", "the"],
+        ["siai-de", "match-LOC"], ["katu-ka", "win-Q"], ["osore-teiru", "fear-ASP"]
+      ],
+      "translation": "John fears which player will win the match.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "predicate", "lexeme": "osore"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_ja_56",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(56)"},
+      "language": "nucl1643",
+      "primaryText": "John-wa dono sensyu-ga sono siai-de katu-ka osore-teinai.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-wa", "John-TOP"], ["dono", "which"], ["sensyu-ga", "player-NOM"], ["sono", "the"],
+        ["siai-de", "match-LOC"], ["katu-ka", "win-Q"], ["osore-teinai", "fear-ASP.NEG"]
+      ],
+      "translation": "John does not fear which player will win the match.",
+      "context": "There exists no player x such that John fears that x will win the match.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "predicate", "lexeme": "osore"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"],
+        ["polarity", "negated"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_es_33a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(33a)"},
+      "language": "stan1288",
+      "primaryText": "A mi padre le preocupa dónde puede atracar Antonio el barco.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", "to"], ["mi", "my"], ["padre", "father"], ["le", "CL"], ["preocupa", "worries"],
+        ["dónde", "where"], ["puede", "could.IND"], ["atracar", "dock"], ["Antonio", "Antonio"],
+        ["el", "the"], ["barco", "boat"]
+      ],
+      "translation": "My father worries about where Antonio can dock his boat.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "preocupar"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "the article also prints the variant with va a",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_es_33b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(33b)"},
+      "language": "stan1288",
+      "primaryText": "A mi padre le preocupa que Antonio pueda atracar el barco en Y.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", "to"], ["mi", "my"], ["padre", "father"], ["le", "CL"], ["preocupa", "worries"],
+        ["que", "that"], ["Antonio", "Antonio"], ["pueda", "can.SUBJ"], ["atracar", "dock"],
+        ["el", "the"], ["barco", "boat"], ["en", "at"], ["Y", "Y"]
+      ],
+      "translation": "My father worries that Antonio can dock the boat at Y.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "preocupar"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "the subjunctive clause allows a nonveridical interpretation, fn. 8; the article also prints the variant with vaya a",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_es_39",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(39)"},
+      "language": "stan1288",
+      "primaryText": "A Juan le preocupa qué debería ponerse.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["A", "to"], ["Juan", "Juan"], ["le", "CL"], ["preocupa", "worries"], ["qué", "what"],
+        ["debería", "should.3SG"], ["ponerse", "wear"]
+      ],
+      "translation": "It worries John what he should wear.",
+      "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "predicate", "lexeme": "preocupar"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_es_57",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(57)"},
+      "language": "stan1288",
+      "primaryText": "Juan teme qué puede pasar si su vecino está en casa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juan", "Juan"], ["teme", "fears"], ["qué", "what"], ["puede", "can.IND"],
+        ["pasar", "happen"], ["si", "if"], ["su", "his"], ["vecino", "neighbor"], ["está", "is"],
+        ["en", "at"], ["casa", "home"]
+      ],
+      "translation": "Juan fears what can happen if his neighbor is at home.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "temer"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_es_58",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(58)"},
+      "language": "stan1288",
+      "primaryText": "Juan teme si su vecino estará en casa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Juan", "Juan"], ["teme", "fears"], ["si", "whether"], ["su", "his"],
+        ["vecino", "neighbor"], ["estará", "will.be"], ["en", "at"], ["casa", "home"]
+      ],
+      "translation": "Juan fears whether his neighbor will be at home.",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "predicate", "lexeme": "temer"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"]
+      ],
+      "comment": "the article prints ???",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_tr_34a",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(34a)"},
+      "language": "nucl1301",
+      "primaryText": "Baba-m gemi-sin-i nereye demirle-yeceğ-in-den endişelen-iyor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Baba-m", "dad-my"], ["gemi-sin-i", "boat-his-ACC"], ["nereye", "where"],
+        ["demirle-yeceğ-in-den", "anchor.V-NMZ.FUT-3S.POSS-ABL"],
+        ["endişelen-iyor", "worry-IPFV.PRES"]
+      ],
+      "translation": "My dad is worrying where he'll dock his boat.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "endiselen"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "future in place of the possibility modal, fn. 9",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_tr_34b",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(34b)"},
+      "language": "nucl1301",
+      "primaryText": "Baba-m gemi-sin-i Y-ye demirle-yeceğ-in-den endişelen-iyor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Baba-m", "dad-my"], ["gemi-sin-i", "boat-his-ACC"], ["Y-ye", "Y-LOC"],
+        ["demirle-yeceğ-in-den", "anchor.V-NMZ.FUT-3S.POSS-ABL"],
+        ["endişelen-iyor", "worry-IPFV.PRES"]
+      ],
+      "translation": "My dad is worrying that he'll dock his boat in Y.",
+      "context": "Al's father recently bought a new boat and is visiting Amsterdam with it. He is sure that there must be a place in Amsterdam where he can dock his boat, and he would be happy to dock his boat anywhere. However, for any specific place, he does not know whether it still has spots available, and he is anxiously trying to find out where exactly he can dock his boat.",
+      "judgment": "acceptable",
+      "verdict": false,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "endiselen"}
+      ],
+      "paperFeatures": [
+        ["clause", "declarative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_tr_40",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(40)"},
+      "language": "nucl1301",
+      "primaryText": "John ne giy-me-si gerek-tiğ-in-den endişelen-iyor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", "John"], ["ne", "what"], ["giy-me-si", "wear-NMZ-3S.POSS"],
+        ["gerek-tiğ-in-den", "MOD-NMZ-3S.POSS-ABL"], ["endişelen-iyor", "worry-IPFV.PRES"]
+      ],
+      "translation": "John is worried what he should wear.",
+      "context": "Sam is invited to an event. Not knowing much about it, they do not know what type of clothes would be appropriate: Casual, business casual, formal? They possess all relevant types of clothes and are happy to wear anything as long as it is appropriate for the occasion.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 4, "label": "predicate", "lexeme": "endiselen"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_tr_49_goodfriend",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(49)"},
+      "language": "nucl1301",
+      "primaryText": "John komşu-sun-un haftasonu ev-de ol-up ol-ma-yacağ-ın-dan korkuyor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", "John"], ["komşu-sun-un", "neighbor-his-GEN"], ["haftasonu", "weekend"],
+        ["ev-de", "home-LOC"], ["ol-up", "be-CONJ"],
+        ["ol-ma-yacağ-ın-dan", "be-NEG-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
+      ],
+      "translation": "John fears whether his neighbor will be home over the weekend.",
+      "context": "John and his neighbor are good friends. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "predicate", "lexeme": "kork"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "negation"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_tr_49_noisehater",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(49)"},
+      "language": "nucl1301",
+      "primaryText": "John komşu-sun-un haftasonu ev-de ol-up ol-ma-yacağ-ın-dan korkuyor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", "John"], ["komşu-sun-un", "neighbor-his-GEN"], ["haftasonu", "weekend"],
+        ["ev-de", "home-LOC"], ["ol-up", "be-CONJ"],
+        ["ol-ma-yacağ-ın-dan", "be-NEG-NMZ.FUT-3S.POSS-ABL"], ["korkuyor", "fear"]
+      ],
+      "translation": "John fears whether his neighbor will be home over the weekend.",
+      "context": "John likes to invite his friends over to party, but his neighbor hates noise and they have had several heated quarrels. His neighbor is away on a business trip, which may be long or short. John wants to throw a party this weekend.",
+      "judgment": "acceptable",
+      "verdict": true,
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 6, "label": "predicate", "lexeme": "kork"}
+      ],
+      "paperFeatures": [
+        ["clause", "polar"],
+        ["answer", "radical"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_tr_52",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(52)"},
+      "language": "nucl1301",
+      "primaryText": "John maç-ı hangi oyuncu-nun kazan-acağ-ın-dan kork-uyor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", "John"], ["maç-ı", "match-ACC"], ["hangi", "which"], ["oyuncu-nun", "player-GEN"],
+        ["kazan-acağ-ın-dan", "win-NMZ.FUT-3S.POSS-ABL"], ["kork-uyor", "fear-IPFV.PRES"]
+      ],
+      "translation": "John fears which player will win the match.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "predicate", "lexeme": "kork"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "qingetal2025_tr_53",
+      "source": {"bibkey": "qing-uegaki-2025", "paperLabel": "(53)"},
+      "language": "nucl1301",
+      "primaryText": "John maç-ı hangi oyuncu-nun kazan-acağ-ın-dan kork-m-uyor.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John", "John"], ["maç-ı", "match-ACC"], ["hangi", "which"], ["oyuncu-nun", "player-GEN"],
+        ["kazan-acağ-ın-dan", "win-NMZ.FUT-3S.POSS-ABL"], ["kork-m-uyor", "fear-NEG-IPFV.PRES"]
+      ],
+      "translation": "John does not fear which player will win the match.",
+      "context": "There exists no player x such that John fears that x will win the match.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 5, "label": "predicate", "lexeme": "kork"}
+      ],
+      "paperFeatures": [
+        ["clause", "constituent"],
+        ["polarity", "negated"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

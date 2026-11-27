@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Mwaghavul.Basic
+public import Linglib.Languages.Mwaghavul.Basic
 public import Linglib.Phonology.Autosegmental.Candidate
 public import Linglib.Phonology.OCP
 public import Linglib.Core.Data.List.Forall2

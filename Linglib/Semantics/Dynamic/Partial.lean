@@ -23,11 +23,11 @@ connectives are Peters'.
 ## Main definitions
 
 * `PartialUpdate.seq`: sequencing, the composition of partial functions.
-* `PartialUpdate.IsEliminative`: Heim's Principle (A), that an update never adds information.
+* `PartialUpdate.IsEliminative`: an update never adds information.
 * `PartialUpdate.supports`: a state supports an update of which it is a fixed point.
 * `PartialUpdate.Presupposes`: every state admitting the first update supports the second.
 * `CCP.Partial.ofTrivalent`: the update of a trivalent proposition.
-* `CCP.Partial.neg`, `CCP.Partial.cond`, `CCP.Partial.disj`: Heim's negation and conditional,
+* `PartialUpdate.neg`, `PartialUpdate.cond`, `CCP.Partial.disj`: Heim's negation and conditional,
   and the disjunction that updates its second disjunct with the negation of the first.
 * `CCP.Partial.diff`, `CCP.Partial.union`, `CCP.Partial.inter`: the difference, union and
   intersection of updates, defined where both updates are.
@@ -55,11 +55,10 @@ connectives are Peters'.
 
 The partiality is of the update and not of the points. The partial assignments of
 `Dynamic/State.lean` encode referential growth rather than presupposition, the sense of partial
-dynamic semantics in Haug's work, and the two kinds compose in `Dynamic/FileChange.lean`. Heim
-gives context change potentials for negation, conjunction and the conditional only, and the
-disjunction follows Beaver. [george-2014]'s error context `#` is the undefinedness of a `Part`, so
-every update sends `#` to `#`; updates that recover from `#`, such as his (6a), are not
-representable, but every trivalentisable update is of this kind.
+dynamic semantics in Haug's work. Heim gives context change potentials for negation, conjunction
+and the conditional only, and the disjunction follows Beaver. [george-2014]'s error context `#`
+is the undefinedness of a `Part`, so every update sends `#` to `#`; updates that recover from
+`#`, such as his (6a), are not representable, but every trivalentisable update is of this kind.
 
 ## References
 
@@ -96,12 +95,6 @@ variable {α : Type*} {φ ψ χ : PartialUpdate α} {s : α}
     [karttunen-1974-presupposition]'s satisfaction). This is `Part.Dom`. -/
 def Admits (u : PartialUpdate α) (s : α) : Prop := (u s).Dom
 
-/-- Total updates are partial updates with trivial presupposition. -/
-def ofTotal (φ : α → α) : PartialUpdate α := fun s ↦ Part.some (φ s)
-
-@[simp] theorem admits_ofTotal (φ : α → α) (s : α) :
-    (ofTotal φ).Admits s := trivial
-
 /-- Sequencing, dynamic conjunction, is `s[φ ∧ ψ] = s[φ][ψ]`. This is
     `PFun.comp`; the projection behavior of conjunction is the
     composition law of partial functions. -/
@@ -117,7 +110,8 @@ theorem seq_eq_kleisliComp (φ ψ : α → Part α) :
 /-! ### Eliminativity -/
 
 /-- A partial update is *eliminative* if its defined outputs are at least as informative as the
-input ([heim-1982]'s Principle (A); [groenendijk-stokhof-1990]'s `↓`-direction). -/
+input, as [heim-1982]'s principle (A) requires of a satisfaction set
+([groenendijk-stokhof-1990]'s `↓`-direction). -/
 def IsEliminative [LE α] (φ : PartialUpdate α) : Prop := ∀ s, ∀ s' ∈ φ s, s' ≤ s
 
 theorem isEliminative_id [Preorder α] : IsEliminative (PFun.id α) :=
@@ -213,6 +207,40 @@ theorem image_seq (φ ψ : PartialUpdate α) (s : Set α) :
     (seq φ ψ).image s = ψ.image (φ.image s) :=
   PFun.image_comp φ ψ s
 
+/-! ### Negation and the conditional -/
+
+section SDiff
+
+variable [SDiff α]
+
+/-- Negation is `s[¬φ] = s \ s[φ]`, defined iff `s[φ]` is ([heim-1983]). -/
+def neg (φ : PartialUpdate α) : PartialUpdate α := fun s ↦ (φ s).map (s \ ·)
+
+/-- The conditional is `s[if φ, ψ] = s \ (s[φ] \ s[φ][ψ])`, defined iff `s[φ]` and `s[φ][ψ]`
+are ([heim-1983]). -/
+def cond (φ ψ : PartialUpdate α) : PartialUpdate α :=
+  fun s ↦ (φ s).bind fun sφ ↦ (ψ sφ).map fun sφψ ↦ s \ (sφ \ sφψ)
+
+@[simp] theorem admits_neg (φ : PartialUpdate α) (s : α) : (neg φ).Admits s ↔ φ.Admits s :=
+  Iff.rfl
+
+theorem admits_cond (φ ψ : PartialUpdate α) (s : α) :
+    (cond φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
+  Iff.rfl
+
+theorem mem_neg {s t : α} : t ∈ neg φ s ↔ ∃ u ∈ φ s, s \ u = t := Part.mem_map_iff _
+
+theorem mem_cond {s t : α} : t ∈ cond φ ψ s ↔ ∃ u ∈ φ s, ∃ v ∈ ψ u, s \ (u \ v) = t := by
+  simp only [cond, Part.mem_bind_iff, Part.mem_map_iff]
+
+/-- The conditional is the negation of the antecedent followed by the negated consequent. -/
+theorem cond_eq_neg_seq_neg (φ ψ : PartialUpdate α) : cond φ ψ = neg (seq φ (neg ψ)) := by
+  funext s
+  simp only [cond, neg, seq, PFun.comp_apply, Part.map_bind, Part.map_map]
+  rfl
+
+end SDiff
+
 end PartialUpdate
 
 /-! ### Heim's partial context change potentials -/
@@ -266,14 +294,6 @@ theorem ofTrivalent_congr {p q : W → Trivalent} {s : Set W} (h : ∀ w ∈ s, 
 
 /-! ### Connectives -/
 
-/-- Heim negation is `s[¬φ] = s \ s[φ]`, defined iff `s[φ]` is. -/
-def neg (φ : CCP.Partial P) : CCP.Partial P := fun s ↦ (φ s).map (s \ ·)
-
-/-- The Heim conditional is `s[if φ, ψ] = s \ (s[φ] \ s[φ][ψ])`, defined iff
-    `s[φ]` and `s[φ][ψ]` are. -/
-def cond (φ ψ : CCP.Partial P) : CCP.Partial P :=
-  fun s ↦ (φ s).bind fun sφ ↦ (ψ sφ).map fun sφψ ↦ s \ (sφ \ sφψ)
-
 /-- Disjunction, after [beaver-2001], is `s[φ ∨ ψ] = s[φ] ∪ (s \ s[φ])[ψ]`, evaluating its
 second disjunct in the ¬φ local context. -/
 def disj (φ ψ : CCP.Partial P) : CCP.Partial P :=
@@ -285,11 +305,13 @@ def diff (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s \ ψ s
 
 /-- The union of updates is `s[φ ∪ ψ] = s[φ] ∪ s[ψ]`, defined iff both updates are
 ([george-2014], Definition 7). -/
-def union (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s ∪ ψ s
+def union (φ ψ : CCP.Partial P) : CCP.Partial P :=
+  fun s ↦ (φ s).bind fun sφ ↦ (ψ s).map fun sψ ↦ sφ ∪ sψ
 
 /-- The intersection of updates is `s[φ ∩ ψ] = s[φ] ∩ s[ψ]`, defined iff both updates are
 ([george-2014], Definition 7). -/
-def inter (φ ψ : CCP.Partial P) : CCP.Partial P := fun s ↦ φ s ∩ ψ s
+def inter (φ ψ : CCP.Partial P) : CCP.Partial P :=
+  fun s ↦ (φ s).bind fun sφ ↦ (ψ s).map fun sψ ↦ sφ ∩ sψ
 
 theorem admits_diff (φ ψ : CCP.Partial P) (s : Set P) :
     (diff φ ψ).Admits s ↔ φ.Admits s ∧ ψ.Admits s := exists_prop
@@ -301,43 +323,29 @@ theorem admits_inter (φ ψ : CCP.Partial P) (s : Set P) :
     (inter φ ψ).Admits s ↔ φ.Admits s ∧ ψ.Admits s := exists_prop
 
 /-- Heim negation is the difference from the null update ([george-2014], Definition 8). -/
-theorem neg_eq_diff (φ : CCP.Partial P) : neg φ = diff (PFun.id _) φ :=
+theorem neg_eq_diff (φ : CCP.Partial P) : φ.neg = diff (PFun.id _) φ :=
   funext fun s ↦ (Part.bind_some s _).symm
 
 /-- The Heim conditional is `ε \ (φ \ (φ; ψ))` ([george-2014], Definition 8). -/
 theorem cond_eq_diff (φ ψ : CCP.Partial P) :
-    cond φ ψ = diff (PFun.id _) (diff φ (PartialUpdate.seq φ ψ)) := by
+    φ.cond ψ = diff (PFun.id _) (diff φ (PartialUpdate.seq φ ψ)) := by
   funext s
   refine Part.ext' ?_ fun _ _ ↦ rfl
   exact ⟨fun ⟨h, h'⟩ ↦ ⟨trivial, h, h, h'⟩, fun ⟨_, h, _, h'⟩ ↦ ⟨h, h'⟩⟩
-
-theorem cond_eq_neg_seq_neg (φ ψ : CCP.Partial P) :
-    cond φ ψ = neg (PartialUpdate.seq φ (neg ψ)) := by
-  funext s
-  simp only [cond, neg, PartialUpdate.seq, PFun.comp_apply, Part.map_bind, Part.map_map]
-  rfl
 
 /-! ### Eliminativity -/
 
 theorem isEliminative_ofTrivalent (p : W → Trivalent) :
     (ofTrivalent p).IsEliminative := fun _ _ h ↦ (Part.mem_mk_iff.mp h).2 ▸ Set.sep_subset _ _
 
-theorem isEliminative_neg (φ : CCP.Partial P) : (neg φ).IsEliminative := fun _ _ h ↦ by
+theorem isEliminative_neg (φ : CCP.Partial P) : φ.neg.IsEliminative := fun _ _ h ↦ by
   obtain ⟨t, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact Set.sdiff_subset
 
-theorem isEliminative_cond (φ ψ : CCP.Partial P) : (cond φ ψ).IsEliminative := fun _ _ h ↦ by
+theorem isEliminative_cond (φ ψ : CCP.Partial P) : (φ.cond ψ).IsEliminative := fun _ _ h ↦ by
   obtain ⟨_, -, h⟩ := Part.mem_bind_iff.mp h
   obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact Set.sdiff_subset
-
-@[simp] theorem admits_neg (φ : CCP.Partial P) (s : Set P) :
-    (neg φ).Admits s ↔ φ.Admits s :=
-  Iff.rfl
-
-theorem admits_cond (φ ψ : CCP.Partial P) (s : Set P) :
-    (cond φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
-  Iff.rfl
 
 theorem admits_disj (φ ψ : CCP.Partial P) (s : Set P) :
     (disj φ ψ).Admits s ↔
@@ -358,7 +366,7 @@ theorem admits_seq_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s
   ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
 
 theorem admits_cond_ofTrivalent_iff (p : W → Trivalent) (ψ : CCP.Partial W) (s : Set W) :
-    (cond (ofTrivalent p) ψ).Admits s ↔
+    ((ofTrivalent p).cond ψ).Admits s ↔
       s ⊆ (Trivalent.gapExt p)ᶜ ∧ ψ.Admits (Connective.cond.localContext s (Trivalent.posExt p)) :=
   admits_seq_ofTrivalent_iff p ψ s
 
@@ -389,7 +397,7 @@ theorem admits_seq_ofTrivalent (p q : W → Trivalent) (s : Set W) :
 /-- The dynamic conditional admits `s` iff the Middle Kleene conditional is defined throughout
 it. -/
 theorem admits_cond_ofTrivalent (p q : W → Trivalent) (s : Set W) :
-    (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
+    ((ofTrivalent p).cond (ofTrivalent q)).Admits s ↔
       s ⊆ (Trivalent.gapExt fun w ↦ (p w)ᶜ.joinMiddle (q w))ᶜ :=
   (admits_cond_ofTrivalent_iff p _ s).trans
     Presupposition.subset_compl_gapExt_compl_joinMiddle_iff.symm
@@ -479,7 +487,7 @@ theorem ofTrivalent_joinWeak (p q : W → Trivalent) :
   funext s
   refine Part.ext' ((admits_ofTrivalent_weak (f := Trivalent.joinWeak) (by decide) p q s).trans
     (admits_union _ _ s).symm) fun h _ ↦ ?_
-  simp only [union, Part.union_get_eq, ofTrivalent_get]
+  change {w ∈ s | _ = Trivalent.true} = {w ∈ s | p w = .true} ∪ {w ∈ s | q w = .true}
   ext w
   by_cases hw : w ∈ s
   · have hd : Trivalent.joinWeak (p w) (q w) ≠ .undefined := h hw
@@ -495,7 +503,7 @@ theorem ofTrivalent_meetWeak (p q : W → Trivalent) :
   funext s
   refine Part.ext' ((admits_ofTrivalent_weak (f := Trivalent.meetWeak) (by decide) p q s).trans
     (admits_inter _ _ s).symm) fun _ _ ↦ ?_
-  simp only [inter, Part.inter_get_eq, ofTrivalent_get]
+  change {w ∈ s | _ = Trivalent.true} = {w ∈ s | p w = .true} ∩ {w ∈ s | q w = .true}
   ext w
   simp only [Set.mem_inter_iff, Set.mem_sep_iff, Trivalent.meetWeak_eq_true_iff]
   tauto
@@ -503,14 +511,14 @@ theorem ofTrivalent_meetWeak (p q : W → Trivalent) :
 /-- Heim negation is Kleene negation, read off the isomorphic images of `ε \ φ`
 ([george-2014], footnote 15). -/
 theorem ofTrivalent_neg (p : W → Trivalent) :
-    ofTrivalent (fun w ↦ (p w)ᶜ) = neg (ofTrivalent p) := by
+    ofTrivalent (fun w ↦ (p w)ᶜ) = (ofTrivalent p).neg := by
   rw [neg_eq_diff, ← ofTrivalent_true, ← ofTrivalent_diff]
   simp only [Trivalent.meetWeak_true_left]
 
 /-- The Heim conditional is Peters' conditional, read off the isomorphic images of
 `ε \ (φ \ (φ; ψ))` ([george-2014], footnote 15). -/
 theorem ofTrivalent_cond (p q : W → Trivalent) :
-    ofTrivalent (fun w ↦ ((p w)ᶜ).joinMiddle (q w)) = cond (ofTrivalent p) (ofTrivalent q) := by
+    ofTrivalent (fun w ↦ ((p w)ᶜ).joinMiddle (q w)) = (ofTrivalent p).cond (ofTrivalent q) := by
   rw [cond_eq_diff, ← ofTrivalent_meetMiddle, ← ofTrivalent_diff, ← ofTrivalent_true,
     ← ofTrivalent_diff]
   congr 1; funext w
@@ -536,7 +544,7 @@ theorem ofTrivalent_joinMiddle (p q : W → Trivalent) :
 isomorphic images (footnote 15). -/
 theorem ofTrivalent_joinMiddle_eq_neg_seq_neg (p q : W → Trivalent) :
     ofTrivalent (fun w ↦ (p w).joinMiddle (q w)) =
-      neg (PartialUpdate.seq (neg (ofTrivalent p)) (neg (ofTrivalent q))) := by
+      ((ofTrivalent p).neg.seq (ofTrivalent q).neg).neg := by
   rw [← ofTrivalent_neg, ← ofTrivalent_neg, ← ofTrivalent_meetMiddle, ← ofTrivalent_neg]
   congr 1; funext w
   generalize p w = a; generalize q w = b
@@ -546,7 +554,7 @@ theorem ofTrivalent_joinMiddle_eq_neg_seq_neg (p q : W → Trivalent) :
 [george-2014]'s Definition 9; on arbitrary updates the two differ. -/
 theorem disj_ofTrivalent (p q : W → Trivalent) :
     disj (ofTrivalent p) (ofTrivalent q) =
-      neg (PartialUpdate.seq (neg (ofTrivalent p)) (neg (ofTrivalent q))) := by
+      ((ofTrivalent p).neg.seq (ofTrivalent q).neg).neg := by
   rw [← ofTrivalent_joinMiddle, ofTrivalent_joinMiddle_eq_neg_seq_neg]
 
 /-- Trivalent propositions are the trivalentisable updates. -/
@@ -583,12 +591,12 @@ theorem IsTrivalentisable.inter (hφ : IsTrivalentisable φ) (hψ : IsTrivalenti
   obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
   exact ⟨_, ofTrivalent_meetWeak p q⟩
 
-theorem IsTrivalentisable.neg (hφ : IsTrivalentisable φ) : IsTrivalentisable (neg φ) := by
+theorem IsTrivalentisable.neg (hφ : IsTrivalentisable φ) : IsTrivalentisable φ.neg := by
   obtain ⟨p, rfl⟩ := hφ
   exact ⟨_, ofTrivalent_neg p⟩
 
 theorem IsTrivalentisable.cond (hφ : IsTrivalentisable φ) (hψ : IsTrivalentisable ψ) :
-    IsTrivalentisable (cond φ ψ) := by
+    IsTrivalentisable (φ.cond ψ) := by
   obtain ⟨p, rfl⟩ := hφ; obtain ⟨q, rfl⟩ := hψ
   exact ⟨_, ofTrivalent_cond p q⟩
 
@@ -623,18 +631,18 @@ namespace PartialUpdate.Presupposes
 
 variable {P : Type*} {φ ψ χ : CCP.Partial P}
 
-theorem neg (h : Presupposes φ ψ) : Presupposes (CCP.Partial.neg φ) ψ := h
+theorem neg (h : Presupposes φ ψ) : Presupposes φ.neg ψ := h
 
-theorem cond_left (h : Presupposes φ ψ) : Presupposes (CCP.Partial.cond φ χ) ψ :=
+theorem cond_left (h : Presupposes φ ψ) : Presupposes (φ.cond χ) ψ :=
   fun s ⟨hs, _⟩ ↦ h s hs
 
 /-- A presupposition of the second conjunct projects conditionalised on the first. -/
-theorem seq_right (h : Presupposes φ ψ) : Presupposes (seq χ φ) (CCP.Partial.cond χ ψ) := by
+theorem seq_right (h : Presupposes φ ψ) : Presupposes (seq χ φ) (χ.cond ψ) := by
   rintro s ⟨hχ, hφ⟩
   exact Part.mem_bind_iff.2 ⟨_, Part.get_mem hχ, (Part.mem_map_iff _).2 ⟨_, h _ hφ, by simp⟩⟩
 
 theorem cond_right (h : Presupposes φ ψ) :
-    Presupposes (CCP.Partial.cond χ φ) (CCP.Partial.cond χ ψ) :=
+    Presupposes (χ.cond φ) (χ.cond ψ) :=
   fun s hs ↦ h.seq_right s hs
 
 end PartialUpdate.Presupposes

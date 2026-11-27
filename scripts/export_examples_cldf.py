@@ -16,7 +16,8 @@ specification 1.3):
   `WORD_ALIGNED` for a glossed example, `MORPHEME_ALIGNED` when every word and its gloss also
   have the same number of `-` and of `=` boundaries (Leipzig Glossing Rules, Rules 2 and 2A) and
   at least one word is segmented. `Grammaticality_Judgement` is the mark the paper prints
-  (empty, `?`, `??`, `#`, `*`). `Source` is `bibkey[locator]` for `source` and `reportedIn`.
+  (empty, `?`, `??`, `#`, `?*`, `*`, `%`), a split mark as its marks joined by `/` with `√` for the
+  unmarked one. `Source` is `bibkey[locator]` for `source` and `reportedIn`.
   The linglib-specific fields are custom columns: `Context`, and JSON-valued
   `Discourse_Segments`, `Contrasts`, `Readings`, `Paper_Features`.
 - `languages.csv` (LanguageTable): the rows of `Linglib/Data/Examples/languages.csv`, plus one
@@ -62,7 +63,8 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lgr import lgr_conformance  # noqa: E402
+from judgments import MARK  # noqa: E402
+from lgr import leipzig_pairs, lgr_conformance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 JSON_DIR = ROOT / "Linglib" / "Data" / "Examples"
@@ -77,15 +79,6 @@ LANGUAGE_COLUMNS = ["ID", "Name", "Glottocode", "ISO639P3code", "Level", "Macroa
 NO_LANGUAGE = {"ID": "no-language", "Name": "No language (a constructed string)"}
 TERMS = "http://cldf.clld.org/v1.0/terms.rdf#"
 
-MARK = {
-    "acceptable": "",
-    "marginal": "?",
-    "questionable": "??",
-    "unacceptable": "#",
-    "ungrammatical": "*",
-    "variable": "%",
-}
-
 CUSTOM_COLUMNS = [
     {"name": "Context", "dc:description": "The scenario the paper gives for the judgment."},
     {"name": "Verdict", "datatype": "boolean",
@@ -97,6 +90,9 @@ CUSTOM_COLUMNS = [
      "dc:description": "Other forms the paper judges in the same frame, with their marks."},
     {"name": "Readings", "datatype": "json",
      "dc:description": "The readings the paper distinguishes, with their marks."},
+    {"name": "Spans", "datatype": "json",
+     "dc:description": "Spans of the analyzed words, each with the position of its first word, its "
+                       "length, its label and the lexeme it is a form of."},
     {"name": "Paper_Features", "datatype": "json",
      "dc:description": "The paper's own classifications of the example, as key-value pairs."},
     {"name": "Verified",
@@ -119,12 +115,18 @@ def contribution_methods():
 CONTRIBUTION_METHODS = contribution_methods()
 
 
+# The boundary symbols a data file declares for its source's notation, by paper.
+BOUNDARIES = {}
+
+
 def load():
     papers = {}
     for path in sorted(JSON_DIR.glob("*.json")):
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
             papers[path.stem] = data["examples"] if isinstance(data, dict) else data
+            if isinstance(data, dict) and data.get("boundaries"):
+                BOUNDARIES[path.stem] = data["boundaries"]
     return papers
 
 
@@ -141,13 +143,22 @@ def source_ref(ref):
     return f"{ref['bibkey']}[{label}]" if label else ref["bibkey"]
 
 
+def mark(row):
+    """The mark of a row, a split mark as its marks joined by `/`."""
+    also = row.get("alsoJudged", [])
+    if not also:
+        return MARK[row["judgment"]]
+    return "/".join(MARK[j] or "√" for j in [row["judgment"], *also])
+
+
 def judged_id(code):
     """The LanguageTable item, with no Glottocode, that the judged examples of `code` link to."""
     return f"{code}-judged"
 
 
 def example_row(paper, row):
-    pairs = row.get("glossedTokens") or []
+    # The words in the notation of the Leipzig rules, where the file declares its source's own.
+    pairs = leipzig_pairs(row.get("glossedTokens") or [], BOUNDARIES.get(paper))
     refs = [source_ref(row["source"])]
     if row.get("reportedIn"):
         refs.append(source_ref(row["reportedIn"]))
@@ -155,16 +166,16 @@ def example_row(paper, row):
     return {
         "ID": row["id"],
         "Language_ID": (NO_LANGUAGE["ID"] if not code
-                        else judged_id(code) if MARK[row["judgment"]] else code),
+                        else judged_id(code) if mark(row) else code),
         "Primary_Text": row.get("primaryText", ""),
         "Analyzed_Word": [w for w, _ in pairs],
-        "Gloss": [g for _, g in pairs],
+        "Gloss": [g for _, g in pairs] if any(g for _, g in pairs) else [],
         "Translated_Text": row.get("translation") or None,
         "Meta_Language_ID": META_LANGUAGE,
         "LGR_Conformance": lgr_conformance(pairs),
         "Comment": row.get("comment") or None,
         "Source": refs,
-        "Grammaticality_Judgement": MARK[row["judgment"]] or None,
+        "Grammaticality_Judgement": mark(row) or None,
         "Contribution_ID": paper,
         "Context": row.get("context") or None,
         "Verdict": row.get("verdict"),
@@ -173,6 +184,7 @@ def example_row(paper, row):
                          for a in row.get("contrasts", [])] or None,
         "Readings": [{"name": r["name"], "mark": MARK[r["judgment"]]}
                      for r in row.get("readings", [])] or None,
+        "Spans": row.get("spans") or None,
         "Paper_Features": features(row) or None,
         "Verified": row.get("verified"),
         "Method": (None if row.get("method") == "unclassified"

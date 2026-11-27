@@ -9,7 +9,7 @@ public import Studies.CarianiSantorio2018
 public import Studies.Condoravdi2002
 public import Linglib.Semantics.Modality.BranchingTime
 public import Linglib.Semantics.Tense.Quantificational
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Systems
 
 /-!
 # Cariani (2021): *The Modal Future*
@@ -361,7 +361,7 @@ is designed to avoid (p. 128). -/
 section Condoravdi
 
 open Aspect
-open Condoravdi2002 (PRES WOLL frame)
+open Condoravdi2002 (PRES WOLL frame SortedProperty At at_pure_stative_iff at_pure_eventive_iff)
 open Event (τ)
 
 variable {W E T : Type*} [LinearOrder T] [TemporalTrace E T] (s : SelectionFunction W)
@@ -426,9 +426,7 @@ theorem pres_woll_frame_stative_iff {P : W → E → Prop} :
   rw [pres_woll_iff]
   change At (Interval.Ici (↑now : WithTop T) ⊓ Interval.pure ↑now) _ (.stative P) ↔ _
   rw [inf_eq_right.2 (Interval.pure_le_Ici.2 le_rfl)]
-  simp only [At, Interval.not_disjoint_iff, Interval.mem_pure]
-  refine exists_congr fun e ↦ and_congr_right fun _ ↦ ?_
-  simp [NonemptyInterval.mem_def]
+  exact at_pure_stative_iff
 
 /-- With an eventive prejacent (11), present-directed *will* requires an instantaneous event at the
 present, as in (12) (p. 129). -/
@@ -438,9 +436,7 @@ theorem pres_woll_frame_eventive_iff {P : W → E → Prop} :
   rw [pres_woll_iff]
   change At (Interval.Ici (↑now : WithTop T) ⊓ Interval.pure ↑now) _ (.eventive P) ↔ _
   rw [inf_eq_right.2 (Interval.pure_le_Ici.2 le_rfl)]
-  simp only [At, Interval.coe_le_iff, Interval.mem_pure]
-  refine exists_congr fun e ↦ and_congr_right fun _ ↦ ?_
-  simp [NonemptyInterval.ext_iff, Prod.ext_iff, NonemptyInterval.withTop]
+  exact at_pure_eventive_iff
 
 end Condoravdi
 

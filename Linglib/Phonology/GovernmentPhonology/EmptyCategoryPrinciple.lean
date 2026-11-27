@@ -12,24 +12,25 @@ public import Mathlib.Data.Finset.Basic
 /-!
 # The Empty Category Principle
 
-A nucleus may stay unexpressed when it is governed, when it is enclosed in a domain of
-infrasegmental government, or when it is final in a language whose final nuclei may be empty.
-Since a governed nucleus governs nothing, of two successive unexpressed nuclei
-[one is enclosed](##GovernmentPhonology.EmptyCategoryPrinciple.enclosed_or_enclosed).
-Where alternation with zero is obligatory, the realization of a domain is fixed from the right,
-each nucleus unexpressed exactly when the principle lets it be, and the principle
-[holds of it](##GovernmentPhonology.emptyCategoryPrinciple_obligatory). In a word of
-alternating vowels the outcome depends on whether such a vowel, once expressed, is strong
-enough to govern another: where it is,
-[every other one](##GovernmentPhonology.expressed_obligatory_iff_even) is expressed, counting
-from the end, and where it is not,
-[all but the last](##GovernmentPhonology.expressed_obligatory_iff_succ_lt) are.
+The Empty Category Principle says when a nucleus may stay unexpressed: when it is governed, when
+it is enclosed in a domain of infrasegmental government, or when it is final in a language whose
+final nuclei may be empty.
+
+A realization of a domain chooses which of its nuclei are expressed. We define two. The
+obligatory realization `obligatory` decides from right to left and leaves a nucleus unexpressed
+whenever the principle allows it. The left-to-right realization `leftToRight` leaves a nucleus
+unexpressed when the next nucleus can govern it, and then expresses the next nucleus. Both
+satisfy the principle.
+
+In a word of alternating vowels, the obligatory realization depends on whether an expressed
+alternating vowel is strong enough to govern another. If it is, the vowels at an even distance
+from the end are expressed. If it is not, all vowels but the last are expressed.
 
 ## Implementation notes
 
-The realization takes the set of nuclei that are required to be expressed on grounds the
-lateral relations do not give. Alternation is optional in some languages, and the realization
-here is the obligatory one.
+Both realizations take a set `R` of nuclei that must be expressed for reasons other than the
+lateral relations. Alternation is optional in some languages; `obligatory` is the realization in
+which every nucleus that may be unexpressed is unexpressed.
 
 ## References
 
@@ -208,6 +209,99 @@ theorem obligatory_eq_self_iff : obligatory A R l = l ↔
         Enclosed A (l.set i { x with expressed := false }) i ∨
         i + 1 = l.length ∧ A.finalEmpty = true)) :=
   obligatoryFrom_eq_self_iff
+
+/-! ### The left-to-right realization -/
+
+variable (A) in
+/-- The left-to-right realization of a list of nuclei whose first nucleus is nucleus `i` of its
+domain. A nucleus with no associated melody that is not in `R` is left unexpressed if the next
+nucleus, once expressed, is strong enough to govern it, and the next nucleus is then expressed.
+A last nucleus with no associated melody that is not in `R` is left unexpressed if final nuclei
+may be empty. Every other nucleus is expressed. -/
+def leftToRightFrom (R : Finset ℕ) : ℕ → List Nucleus → List Nucleus
+  | _, [] => []
+  | i, [x] =>
+    if x.melody ≠ .associated ∧ i ∉ R ∧ A.finalEmpty = true then [{ x with expressed := false }]
+    else [{ x with expressed := true }]
+  | i, x :: y :: r =>
+    if x.melody ≠ .associated ∧ i ∉ R ∧
+        (x.melody : WithBot Melody) ≤ A.strength { y with expressed := true } (decide (r = [])) then
+      { x with expressed := false } :: { y with expressed := true } :: leftToRightFrom R (i + 2) r
+    else { x with expressed := true } :: leftToRightFrom R (i + 1) (y :: r)
+
+variable (A) in
+/-- The left-to-right realization of a domain: a nucleus that the next nucleus can govern is left
+unexpressed, unless it is in `R`. -/
+def leftToRight (R : Finset ℕ) (l : List Nucleus) : List Nucleus := leftToRightFrom A R 0 l
+
+@[simp] theorem length_leftToRightFrom : (leftToRightFrom A R i l).length = l.length := by
+  fun_induction leftToRightFrom A R i l <;> simp_all
+
+@[simp] theorem length_leftToRight : (leftToRight A R l).length = l.length := length_leftToRightFrom
+
+/-- The left-to-right realization changes only which nuclei are expressed. -/
+theorem map_leftToRightFrom : (leftToRightFrom A R i l).map ({ · with expressed := false }) =
+    l.map ({ · with expressed := false }) := by
+  fun_induction leftToRightFrom A R i l <;> simp_all
+
+theorem map_leftToRight : (leftToRight A R l).map ({ · with expressed := false }) =
+    l.map ({ · with expressed := false }) :=
+  map_leftToRightFrom
+
+theorem emptyCategoryPrinciple_leftToRightFrom :
+    EmptyCategoryPrinciple A (leftToRightFrom A R i l) := by
+  fun_induction leftToRightFrom A R i l with
+  | case1 => exact emptyCategoryPrinciple_nil
+  | case2 i x h =>
+    exact emptyCategoryPrinciple_cons.2
+      ⟨fun hx ↦ absurd hx h.1, fun _ ↦ .inr (.inr ⟨rfl, h.2.2⟩), emptyCategoryPrinciple_nil⟩
+  | case3 i x h =>
+    exact emptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h,
+      emptyCategoryPrinciple_nil⟩
+  | case4 i x y r h ih =>
+    have hy : EmptyCategoryPrinciple A
+        ({ y with expressed := true } :: leftToRightFrom A R (i + 2) r) :=
+      emptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
+    refine emptyCategoryPrinciple_cons.2 ⟨fun hx ↦ absurd hx h.1, fun _ ↦ ?_, hy⟩
+    by_cases he : EnclosedHead A
+        ({ x with expressed := false } :: { y with expressed := true } ::
+          leftToRightFrom A R (i + 2) r)
+    · exact .inr (.inl he)
+    · refine .inl ⟨rfl, he, fun hg ↦ by simpa using hg.1, _, rfl, ?_⟩
+      have hr : leftToRightFrom A R (i + 2) r = [] ↔ r = [] := by
+        rw [← List.length_eq_zero_iff, length_leftToRightFrom, List.length_eq_zero_iff]
+      simpa [hr] using h.2.2
+  | case5 i x y r h ih =>
+    exact emptyCategoryPrinciple_cons.2 ⟨fun _ ↦ rfl, fun h ↦ by simp at h, ih⟩
+
+/-- The left-to-right realization of a domain satisfies the Empty Category Principle. -/
+theorem emptyCategoryPrinciple_leftToRight : EmptyCategoryPrinciple A (leftToRight A R l) :=
+  emptyCategoryPrinciple_leftToRightFrom
+
+theorem expressed_of_mem_leftToRightFrom {y : Nucleus} (hy : y ∈ leftToRightFrom A R i l)
+    (hm : y.melody = .associated) : y.expressed = true := by
+  fun_induction leftToRightFrom A R i l <;> simp_all <;> grind
+
+/-- The left-to-right realization expresses every nucleus with an associated melody. -/
+theorem expressed_of_mem_leftToRight {y : Nucleus} (hy : y ∈ leftToRight A R l)
+    (hm : y.melody = .associated) : y.expressed = true :=
+  expressed_of_mem_leftToRightFrom hy hm
+
+/-- Nucleus `k` of the left-to-right realization of a domain is nucleus `k` of the domain,
+expressed or not. -/
+theorem getElem?_leftToRight (k : ℕ) : (leftToRight A R l)[k]? = l[k]?.map fun x ↦
+    { x with expressed := decide (∃ y ∈ (leftToRight A R l)[k]?, y.expressed = true) } := by
+  have h := congrArg (·[k]?) (map_leftToRight (A := A) (R := R) (l := l))
+  simp only [List.getElem?_map] at h
+  cases hy : (leftToRight A R l)[k]? with
+  | none => simpa [hy] using h
+  | some y =>
+    cases hx : l[k]? with
+    | none => simp [hy, hx] at h
+    | some x =>
+      obtain ⟨m, e, c⟩ := y
+      obtain ⟨m', e', c'⟩ := x
+      simp_all
 
 /-! ### Words of alternating vowels -/
 

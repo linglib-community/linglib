@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Cover
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.BoundedComplete
 
 /-!
 # The flat order
@@ -14,19 +14,20 @@ pattern-matching. Partial assignments and situations are mathlib's `Part`-valued
 (`Linglib/Logic/Assignment.lean`); `Flat` is for slots that are matched on and decided.
 
 The flat order is bounded-complete but not a lattice: meets are total (`SemilatticeInf`), joins
-partial (`PartialUnify`). Linguistically it is one atomic feature slot, ordered by [shieber-1986]'s
+partial (`Flat.unify`). Linguistically it is one atomic feature slot, ordered by [shieber-1986]'s
 and [carpenter-1992]'s subsumption; `Flat Bool` is the knowledge order of Kleene three-valued logic.
-Feature bundles arise via the `Pi` `PartialUnify` instance, with `Compat` as consistency.
+Feature bundles are functions into slots, with `Compat` as consistency.
 
 The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
 `Mathlib/Order/WithBot.lean`) and is an `[UPSTREAM]` candidate for
 `Mathlib/Order/Flat.lean`, coexisting with the namespaced `Module.Flat` and
-`ConvexCone.Flat`. The `PartialUnify` instance and `compat_iff` stay here.
+`ConvexCone.Flat`. Unification and `compat_iff` stay here.
 
 ## Main declarations
 
 * `Flat` — the order-carrying alias, with coercion `↑ : α → Flat α`, and
-  `PartialOrder`, `OrderBot`, `SemilatticeInf` and `PartialUnify` instances
+  `PartialOrder`, `OrderBot` and `SemilatticeInf` instances, and the flat lattice
+  `SemilatticeSup (WithTop (Flat α))`
 * `Flat.coe_le_coe`, `Flat.not_coe_le_bot` — the order, characterized
 * `Flat.covBy_iff` — the covers, from `⊥` to a committed value: the order has height one
 * `Flat.coe_inf_coe`, `Flat.disjoint_coe_coe`, `Flat.compat_coe_coe` — the meet,
@@ -227,7 +228,7 @@ theorem or_le (hx : x ≤ z) (hy : y ≤ z) : x.or y ≤ z := by
 /-! ### Meets -/
 
 /-- The meet of two slots is their agreement, or `⊥` — the *generalization*
-(anti-unification) of the two, order-dual to the partial join `PartialUnify`. -/
+(anti-unification) of the two, order-dual to the partial join `Flat.unify`. -/
 protected def inf [DecidableEq α] (x y : Flat α) : Flat α :=
   if x = y then x else ⊥
 
@@ -279,40 +280,78 @@ private theorem unify_coe_coe [DecidableEq α] (a b : α) :
     Flat.unify (↑a : Flat α) ↑b = if a = b then ((a : Flat α) : WithTop (Flat α)) else ⊤ :=
   rfl
 
-instance [DecidableEq α] : PartialUnify (Flat α) where
-  unify := Flat.unify
-  isLUB_of_unify_eq_coe := by
-    intro x y z h
-    match x, y with
-    | ⊥, y =>
-      obtain rfl : y = z := WithTop.coe_inj.mp h
-      exact ⟨mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
-        fun u hu ↦ (mem_upperBounds_pair.mp hu).2⟩
-    | (a : α), ⊥ =>
+private theorem isLUB_of_unify_eq_coe [DecidableEq α] :
+    ∀ {x y z : Flat α}, Flat.unify x y = ↑z → IsLUB {x, y} z := by
+  intro x y z h
+  match x, y with
+  | ⊥, y =>
+    obtain rfl : y = z := WithTop.coe_inj.mp h
+    exact ⟨mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
+      fun u hu ↦ (mem_upperBounds_pair.mp hu).2⟩
+  | (a : α), ⊥ =>
+    obtain rfl : (↑a : Flat α) = z := WithTop.coe_inj.mp h
+    exact ⟨mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
+      fun u hu ↦ (mem_upperBounds_pair.mp hu).1⟩
+  | (a : α), (b : α) =>
+    rw [unify_coe_coe] at h
+    split at h
+    · next hab =>
+      subst hab
       obtain rfl : (↑a : Flat α) = z := WithTop.coe_inj.mp h
-      exact ⟨mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
-        fun u hu ↦ (mem_upperBounds_pair.mp hu).1⟩
-    | (a : α), (b : α) =>
-      rw [unify_coe_coe] at h
-      split at h
-      · next hab =>
-        subst hab
-        obtain rfl : (↑a : Flat α) = z := WithTop.coe_inj.mp h
-        rw [Set.pair_eq_singleton]
-        exact isLUB_singleton
-      · exact absurd h WithTop.top_ne_coe
-  unify_ne_top_of_bddAbove := by
-    intro x y ⟨u, hu⟩
-    obtain ⟨hxu, hyu⟩ := mem_upperBounds_pair.mp hu
-    match x, y with
-    | ⊥, y => exact WithTop.coe_ne_top
-    | (a : α), ⊥ => exact WithTop.coe_ne_top
-    | (a : α), (b : α) =>
-      obtain rfl : u = ↑a := coe_le_iff.mp hxu
-      obtain rfl : a = b := coe_inj.mp (coe_le_iff.mp hyu)
-      show Flat.unify (↑a : Flat α) ↑a ≠ ⊤
-      rw [unify_coe_coe, ite_eq_left rfl]
-      exact WithTop.coe_ne_top
+      rw [Set.pair_eq_singleton]
+      exact isLUB_singleton
+    · exact absurd h WithTop.top_ne_coe
+
+private theorem unify_ne_top_of_bddAbove [DecidableEq α] :
+    ∀ {x y : Flat α}, BddAbove ({x, y} : Set (Flat α)) → Flat.unify x y ≠ ⊤ := by
+  intro x y ⟨u, hu⟩
+  obtain ⟨hxu, hyu⟩ := mem_upperBounds_pair.mp hu
+  match x, y with
+  | ⊥, y => exact WithTop.coe_ne_top
+  | (a : α), ⊥ => exact WithTop.coe_ne_top
+  | (a : α), (b : α) =>
+    obtain rfl : u = ↑a := coe_le_iff.mp hxu
+    obtain rfl : a = b := coe_inj.mp (coe_le_iff.mp hyu)
+    show Flat.unify (↑a : Flat α) ↑a ≠ ⊤
+    rw [unify_coe_coe, ite_eq_left rfl]
+    exact WithTop.coe_ne_top
+
+/-- `Flat.unify x y` is the join of `x` and `y` in `WithTop (Flat α)`. -/
+theorem isLUB_unify [DecidableEq α] (x y : Flat α) :
+    IsLUB ({↑x, ↑y} : Set (WithTop (Flat α))) (Flat.unify x y) := by
+  generalize h : Flat.unify x y = u
+  induction u using WithTop.recTopCoe with
+  | top => exact WithTop.isLUB_pair_coe_top_iff.2 fun hb ↦ unify_ne_top_of_bddAbove hb h
+  | coe c => exact WithTop.isLUB_pair_coe_iff.2 (isLUB_of_unify_eq_coe h)
+
+/-- The flat lattice: with the failure of unification adjoined as `⊤`, slots form a
+join-semilattice whose join is unification. -/
+instance [DecidableEq α] : SemilatticeSup (WithTop (Flat α)) :=
+  WithTop.semilatticeSupOfIsLUB Flat.unify isLUB_unify
+
+theorem coe_sup_coe [DecidableEq α] (x y : Flat α) :
+    (x : WithTop (Flat α)) ⊔ y = Flat.unify x y := rfl
+
+/-- Two slots unify to a slot exactly when it is their join. -/
+theorem unify_eq_coe_iff [DecidableEq α] : Flat.unify x y = ↑z ↔ IsLUB {x, y} z :=
+  WithTop.eq_coe_iff_of_isLUB (isLUB_unify x y)
+
+/-- Two slots fail to unify exactly when they are incompatible. -/
+theorem unify_eq_top_iff [DecidableEq α] : Flat.unify x y = ⊤ ↔ ¬ Compat x y :=
+  WithTop.eq_top_iff_of_isLUB (isLUB_unify x y)
+
+@[simp] theorem unify_self [DecidableEq α] (x : Flat α) : Flat.unify x x = x :=
+  sup_idem (x : WithTop (Flat α))
+
+@[simp] theorem bot_unify [DecidableEq α] (x : Flat α) : Flat.unify ⊥ x = x := rfl
+
+@[simp] theorem unify_bot [DecidableEq α] (x : Flat α) : Flat.unify x ⊥ = x := by
+  cases x <;> rfl
+
+instance [DecidableEq α] : Decidable (Compat x y) :=
+  decidable_of_iff (¬ Flat.unify x y = ⊤) unify_eq_top_iff.not_left
+
+instance [DecidableEq α] : Decidable (IsLUB {x, y} z) := decidable_of_iff _ unify_eq_coe_iff
 
 /-- Two slots are compatible exactly when their committed values coincide;
 an uncommitted slot is a wildcard. -/
@@ -345,12 +384,16 @@ theorem le_or_right (h : Compat x y) : y ≤ x.or y := by
     obtain rfl := compat_iff.1 h a rfl b rfl
     exact le_rfl
 
+/-- Compatible slots have a join, the merge. -/
+theorem _root_.Compat.isLUB_or (h : Compat x y) : IsLUB {x, y} (x.or y) :=
+  isLUB_pair_iff_forall_le.2 ⟨le_or_left x y, le_or_right h, fun _ ↦ or_le⟩
+
 /-! ### Non-distributivity
 
 The flat order is not distributive: three distinct atoms (with a top
 adjoined) form the diamond M₃ — [carpenter-1992] takes subsumption orders
 to be neither distributive nor modular in general. `Flat` carries only the
-partial join (`PartialUnify`), so the distributive law cannot even be
+partial join (`Flat.unify`), so the distributive law cannot even be
 *stated* on it directly; `unify_eq_top_of_ne` is the witness — distinct
 atoms have no upper bound, so the join the law would require is undefined. -/
 

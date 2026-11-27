@@ -4,6 +4,7 @@ public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Tactic.IntervalCases
 public import Linglib.Semantics.Plurality.NumberFeatures
+public import Linglib.Syntax.Feature.Number.System
 public import Linglib.Core.Order.Concept
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Studies.Corbett2000
@@ -18,8 +19,8 @@ numbers. Each feature acts on a lattice of atoms and their sums, and the same tw
 govern all three: whether a feature is active on Number⁰ (22) and whether its two values may
 cooccur (23). A sociosemantic convention fixes the height of the cut `[±additive]` induces (14).
 A parameter setting generates a number system, the feature bundles with nonempty denotation, and
-the typology of Table 3 and the implications of Table 1 are claims about these systems. Without
-`[±additive]`, a setting with `[±atomic]` gives a referent of `k` individuals [the value
+the typology of Table 3 and the implications `Number.universals` are claims about these systems.
+Without `[±additive]`, a setting with `[±atomic]` gives a referent of `k` individuals [the value
 `Number.ofCard` gives](##Harbour2014.Setting.number_eq_ofCard), so conjoined noun phrases
 resolve to the value of the sum of their cardinalities; [an approximative value rules such
 resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
@@ -31,7 +32,6 @@ resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
 * `Setting.cell`: the region of a person lattice a bundle denotes in a setting.
 * `Setting.system`: the number system a setting generates.
 * `PlusAdditive`: the `[+additive]` elements of a region cut horizontally.
-* `table1`, `SatisfiesTable1`: the implicational universals of Table 1.
 * `Generates`, `Requires`: the legitimate settings as a formal context, and the order of its
   attribute concepts that (34) reads off them, one number requiring another.
 
@@ -63,7 +63,7 @@ resolution out](##Harbour2014.Setting.factorsThrough_number_iff).
 namespace Harbour2014
 
 open Mereology
-open Number (Bundle Feature additiveIn atomsOf nonAtomsOf nonMinimalOf)
+open Number (Bundle Feature additiveIn SatisfiesUniversals)
 
 /-! ### Person lattices and their strata (§2, (12)) -/
 
@@ -71,22 +71,15 @@ section Region
 
 variable {α : Type*}
 
-theorem atom_iff_eq_one {k : ℕ} : Atom k ↔ k = 1 := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · have h0 : k ≠ 0 := fun h0 ↦ h.1 (h0 ▸ isBot_bot)
-    have := h.2 (y := 1) (by simp [isBot_iff_eq_bot]) (by omega)
-    omega
-  · rintro rfl
-    exact ⟨by simp [isBot_iff_eq_bot], fun y hy _ ↦ by
-      have : y ≠ 0 := fun h0 ↦ hy (h0 ▸ isBot_bot); omega⟩
+/-- A region of the person lattice over `B` consists of the sums containing `B` whose number of
+atoms lies in `S`, a union of strata (12). -/
+def region (B : Finset α) (S : Set ℕ) : Set (Finset α) := {s | B ⊆ s ∧ s.card ∈ S}
 
-/-- A region of the person lattice over `B` holds of the sums containing `B` whose number of
-atoms satisfies `S`, a union of strata (12). -/
-def region (B : Finset α) (S : ℕ → Prop) (s : Finset α) : Prop := B ⊆ s ∧ S s.card
+variable {B : Finset α} {S : Set ℕ}
 
-variable {B : Finset α} {S : ℕ → Prop}
+@[simp] theorem mem_region {s : Finset α} : s ∈ region B S ↔ B ⊆ s ∧ s.card ∈ S := Iff.rfl
 
-theorem atomize_region (hS : ∀ k, S k → B.card ≤ k) :
+theorem atomize_region (hS : ∀ k ∈ S, B.card ≤ k) :
     atomize (region B S) = region B (atomize S) := by
   ext s
   refine ⟨fun h ↦ ⟨h.1.1, h.1.2, fun j hj hle ↦ ?_⟩, fun h ↦ ⟨⟨h.1, h.2.1⟩, fun t ht hts ↦ ?_⟩⟩
@@ -94,23 +87,25 @@ theorem atomize_region (hS : ∀ k, S k → B.card ≤ k) :
     exact Finset.card_le_card (h.2 ⟨hBt, hj⟩ hts)
   · exact (Finset.eq_of_subset_of_card_le hts (h.2.2 ht.2 (Finset.card_le_card hts))).ge
 
-theorem atom_iff_card {s : Finset α} : Atom s ↔ Atom s.card := by
-  rw [atom_finset_iff_card_eq_one, atom_iff_eq_one]
+theorem atom_iff_card {s : Finset α} : IsAtom s ↔ IsAtom s.card := by
+  rw [isAtom_finset_iff_card_eq_one, Nat.isAtom_iff_eq_one]
 
 variable [DecidableEq α]
 
 omit [DecidableEq α] in
-theorem atomsOf_region : atomsOf (region B S) = region B (atomsOf S) := by
-  ext s; simp only [atomsOf, region, atom_iff_card, and_assoc]
-
-omit [DecidableEq α] in
-theorem nonAtomsOf_region : nonAtomsOf (region B S) = region B (nonAtomsOf S) := by
-  ext s; simp only [nonAtomsOf, region, atom_iff_card, and_assoc]
-
-omit [DecidableEq α] in
-theorem nonMinimalOf_region (hS : ∀ k, S k → B.card ≤ k) :
-    nonMinimalOf (region B S) = region B (nonMinimalOf S) := by
-  ext s; simp only [nonMinimalOf, atomize_region hS, region]; tauto
+theorem restrict_region (f : Feature) (v : Bool) (hS : ∀ k ∈ S, B.card ≤ k) :
+    f.restrict v (region B S) = region B (f.restrict v S) := by
+  match f, v with
+  | .atomic, true | .atomic, false =>
+    ext s
+    simp only [Feature.mem_restrict_atomic_true, Feature.mem_restrict_atomic_false, mem_region,
+      atom_iff_card, and_assoc]
+  | .minimal, true => exact atomize_region hS
+  | .minimal, false =>
+    ext s
+    simp only [Feature.mem_restrict_minimal_false, atomize_region hS, mem_region]
+    tauto
+  | .additive, _ => rfl
 
 end Region
 
@@ -120,49 +115,56 @@ section Successor
 
 variable {α : Type*} [DecidableEq α]
 
-private theorem atomize_le (k : ℕ) : atomize (k ≤ ·) = (· = k) := by
-  ext j
-  exact ⟨fun h ↦ le_antisymm (h.2 le_rfl h.1) h.1, by rintro rfl; exact ⟨le_rfl, fun _ h _ ↦ h⟩⟩
-
-private theorem nonMinimalOf_iterate (n : ℕ) : nonMinimalOf^[n] (2 ≤ ·) = (n + 2 ≤ ·) := by
+private theorem restrict_minimal_false_iterate (n : ℕ) :
+    (Feature.restrict .minimal false)^[n] (Set.Ici 2) = Set.Ici (n + 2) := by
   induction n with
-  | zero => rfl
+  | zero => simp
   | succ n ih =>
     rw [Function.iterate_succ_apply', ih]
-    ext j; simp only [nonMinimalOf, atomize_le]; omega
+    ext j
+    simp only [Feature.mem_restrict_minimal_false, atomize_Ici, Set.mem_Ici,
+      Set.mem_singleton_iff]
+    omega
 
 omit [DecidableEq α] in
-private theorem nonMinimalOf_iterate_region (n : ℕ) (S : ℕ → Prop) :
-    nonMinimalOf^[n] (region (∅ : Finset α) S) = region ∅ (nonMinimalOf^[n] S) := by
+private theorem restrict_minimal_false_iterate_region (n : ℕ) (S : Set ℕ) :
+    (Feature.restrict .minimal false)^[n] (region (∅ : Finset α) S) =
+      region ∅ ((Feature.restrict .minimal false)^[n] S) := by
   induction n with
   | zero => rfl
   | succ n ih => rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih,
-      nonMinimalOf_region fun _ _ ↦ Nat.zero_le _]
+      restrict_region _ _ fun _ _ ↦ Nat.zero_le _]
 
 omit [DecidableEq α] in
-private theorem nonempty_eq_region : (Finset.Nonempty : Finset α → Prop) = region ∅ (1 ≤ ·) := by
-  ext t; simp [region, Finset.one_le_card]
+private theorem nonempty_eq_region : {t : Finset α | t.Nonempty} = region ∅ (Set.Ici 1) := by
+  ext t; simp [Finset.one_le_card]
 
 omit [DecidableEq α] in
 /-- `(+minimal(−minimalⁿ(−atomic(P))))` holds of exactly the sums of `n + 2` atoms (31), the dual of
 (30) at `n = 0` and the trial at `n = 1`. -/
-theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
-    atomize (nonMinimalOf^[n] (nonAtomsOf Finset.Nonempty)) s ↔ s.card = n + 2 := by
-  have hna : nonAtomsOf (1 ≤ ·) = (2 ≤ ·) := by
-    ext j; simp only [nonAtomsOf, atom_iff_eq_one]; omega
-  rw [nonempty_eq_region, nonAtomsOf_region, hna, nonMinimalOf_iterate_region,
-    nonMinimalOf_iterate, atomize_region fun _ _ ↦ Nat.zero_le _, atomize_le]
-  simp [region]
+theorem atomize_restrict_iterate (n : ℕ) (s : Finset α) :
+    s ∈ atomize ((Feature.restrict .minimal false)^[n]
+      (Feature.restrict .atomic false {t | t.Nonempty})) ↔ s.card = n + 2 := by
+  have hna : Feature.restrict .atomic false (Set.Ici 1) = Set.Ici 2 := by
+    ext j; simp only [Feature.mem_restrict_atomic_false, Nat.isAtom_iff_eq_one, Set.mem_Ici]; omega
+  rw [nonempty_eq_region, restrict_region _ _ fun _ _ ↦ Nat.zero_le _, hna,
+    restrict_minimal_false_iterate_region, restrict_minimal_false_iterate,
+    atomize_region fun _ _ ↦ Nat.zero_le _, atomize_Ici]
+  simp
 
 -- (30)
 omit [DecidableEq α] in
-theorem atomize_atomsOf (s : Finset α) :
-    atomize (atomsOf Finset.Nonempty) s ↔ s.card = 1 := by
-  have ha : atomsOf (1 ≤ ·) = ((· = 1) : ℕ → Prop) := by
-    ext j; simp only [atomsOf, atom_iff_eq_one]; omega
-  rw [nonempty_eq_region, atomsOf_region, ha, atomize_region fun _ _ ↦ Nat.zero_le _]
-  simp only [region, Finset.empty_subset, true_and]
-  exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ hj _ ↦ hj ▸ h.le⟩⟩
+theorem atomize_restrict_atomic_true (s : Finset α) :
+    s ∈ atomize (Feature.restrict .atomic true {t | t.Nonempty}) ↔ s.card = 1 := by
+  have ha : Feature.restrict .atomic true (Set.Ici 1) = ({1} : Set ℕ) := by
+    ext j
+    simp only [Feature.mem_restrict_atomic_true, Nat.isAtom_iff_eq_one, Set.mem_Ici,
+      Set.mem_singleton_iff]
+    omega
+  rw [nonempty_eq_region, restrict_region _ _ fun _ _ ↦ Nat.zero_le _, ha,
+    atomize_region fun _ _ ↦ Nat.zero_le _]
+  simp only [mem_region, Finset.empty_subset, true_and]
+  exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ hj _ ↦ Set.mem_singleton_iff.1 hj ▸ h.le⟩⟩
 
 end Successor
 
@@ -170,15 +172,17 @@ end Successor
 
 section Orders
 
-variable {D : Type*} [SemilatticeSup D]
+variable {D : Type*} [SemilatticeSup D] [OrderBot D]
 
 -- §4.1, n. 15
-theorem not_atomsOf_nonAtomsOf (P : D → Prop) (x : D) : ¬ atomsOf (nonAtomsOf P) x :=
+theorem not_restrict_atomic_true_restrict_atomic_false (P : Set D) (x : D) :
+    x ∉ Feature.restrict .atomic true (Feature.restrict .atomic false P) :=
   fun h ↦ h.1.2 h.2
 
 -- §4.3
-theorem not_atomsOf_nonMinimalOf {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) (x : D) :
-    ¬ atomsOf (nonMinimalOf P) x :=
+theorem not_restrict_atomic_true_restrict_minimal_false {P : Set D}
+    (hP : ∀ y ∈ P, y ≠ ⊥) (x : D) :
+    x ∉ Feature.restrict .atomic true (Feature.restrict .minimal false P) :=
   fun h ↦ h.1.2 (Number.singular_subset_minimal hP ⟨h.1.1, h.2⟩)
 
 end Orders
@@ -189,49 +193,49 @@ section Additive
 
 variable {α : Type*} [DecidableEq α]
 
-/-- A band holds of the sums of at least `lo` and fewer than `hi` atoms. -/
-def Band (lo hi : ℕ) (s : Finset α) : Prop := lo ≤ s.card ∧ s.card < hi
+/-- A band consists of the sums of at least `lo` and fewer than `hi` atoms. -/
+def Band (lo hi : ℕ) : Set (Finset α) := {s | lo ≤ s.card ∧ s.card < hi}
 
 /-- Given infinitely many atoms, no element of a band above the null individual is additive in it
 (10), so `(+additive(−additive(P)))` is unsatisfiable (§3.3). -/
 theorem not_additiveIn_band [Infinite α] {lo hi : ℕ} (hlo : 1 ≤ lo) (s : Finset α) :
-    ¬ additiveIn (Band lo hi) s := by
+    s ∉ additiveIn (Band lo hi) := by
   rintro ⟨⟨hl, hh⟩, h⟩
   obtain ⟨u, hsu, hu⟩ :=
     Infinite.exists_superset_card_eq s (s.card + max lo (hi - s.card)) (by omega)
   have hcard : (u \ s).card = max lo (hi - s.card) := by
     rw [Finset.card_sdiff_of_subset hsu, hu]; omega
   have := (h (u \ s) ⟨by omega, by omega⟩).2
-  rw [Finset.sup_eq_union, Finset.union_sdiff_of_subset hsu, hu] at this
+  rw [Finset.union_sdiff_of_subset hsu, hu] at this
   omega
 
 -- (10), (11)
 theorem additiveIn_le_card {c : ℕ} {s : Finset α} (hs : c ≤ s.card) :
-    additiveIn (c ≤ ·.card) s :=
+    s ∈ additiveIn {t | c ≤ t.card} :=
   ⟨hs, fun _ _ ↦ hs.trans (Finset.card_le_card Finset.subset_union_left)⟩
 
 theorem additiveIn_le_card' {i : α} {c : ℕ} {s : Finset α} (hi : i ∈ s) (hs : c ≤ s.card) :
-    additiveIn (fun t ↦ i ∈ t ∧ c ≤ t.card) s :=
+    s ∈ additiveIn {t | i ∈ t ∧ c ≤ t.card} :=
   ⟨⟨hi, hs⟩, fun _ _ ↦ ⟨Finset.mem_union_left _ hi,
     hs.trans (Finset.card_le_card Finset.subset_union_left)⟩⟩
 
 -- n. 23
-theorem additiveIn_atomize_superset (B : Finset α) : additiveIn (atomize (B ⊆ ·)) B := by
-  have hB : atomize (B ⊆ ·) B := ⟨subset_rfl, fun _ hy _ ↦ hy⟩
+theorem additiveIn_atomize_superset (B : Finset α) : B ∈ additiveIn (atomize {t | B ⊆ t}) := by
+  have hB : B ∈ atomize {t | B ⊆ t} := ⟨Finset.Subset.refl B, fun _ hy _ ↦ hy⟩
   refine ⟨hB, fun y hy ↦ ?_⟩
-  rw [le_antisymm (hy.2 subset_rfl hy.1) hy.1, sup_idem]
+  rw [le_antisymm (hy.2 (Finset.Subset.refl B) hy.1) hy.1, sup_idem]
   exact hB
 
 -- n. 23
 theorem not_additiveIn_atomize_nonempty [Nontrivial α] (s : Finset α) :
-    ¬ additiveIn (atomize Finset.Nonempty) s := by
-  have key : ∀ t : Finset α, atomize Finset.Nonempty t ↔ t.card = 1 := fun t ↦ by
-    rw [nonempty_eq_region, atomize_region fun _ _ ↦ Nat.zero_le _, atomize_le]; simp [region]
+    s ∉ additiveIn (atomize {t | t.Nonempty}) := by
+  have key : ∀ t : Finset α, t ∈ atomize {t | t.Nonempty} ↔ t.card = 1 := fun t ↦ by
+    rw [nonempty_eq_region, atomize_region fun _ _ ↦ Nat.zero_le _, atomize_Ici]; simp
   rintro ⟨hs, h⟩
   obtain ⟨a, rfl⟩ := Finset.card_eq_one.mp ((key s).mp hs)
   obtain ⟨b, hb⟩ := exists_ne a
   have := (key _).mp (h {b} ((key _).mpr (Finset.card_singleton b)))
-  rw [Finset.sup_eq_union, Finset.singleton_union, Finset.card_pair hb.symm] at this
+  rw [Finset.singleton_union, Finset.card_pair hb.symm] at this
   omega
 
 end Additive
@@ -244,29 +248,31 @@ variable {α : Type*} [DecidableEq α]
 
 /-- An element of a region `P` cut at `c` is `[+additive]` (10) when it is additive in the bounded
 region below the cut or in the unbounded region above it. -/
-def PlusAdditive (c : ℕ) (P : Finset α → Prop) (s : Finset α) : Prop :=
-  additiveIn (fun t ↦ P t ∧ t.card < c) s ∨ additiveIn (fun t ↦ P t ∧ c ≤ t.card) s
+def PlusAdditive (c : ℕ) (P : Set (Finset α)) : Set (Finset α) :=
+  additiveIn {t | t ∈ P ∧ t.card < c} ∪ additiveIn {t | t ∈ P ∧ c ≤ t.card}
 
 theorem plusAdditive_nonempty_iff [Infinite α] {c : ℕ} (hc : 1 ≤ c) (s : Finset α) :
-    PlusAdditive c Finset.Nonempty s ↔ c ≤ s.card := by
-  have hb : (fun t : Finset α ↦ t.Nonempty ∧ t.card < c) = Band 1 c := by
+    s ∈ PlusAdditive c {t | t.Nonempty} ↔ c ≤ s.card := by
+  have hb : {t : Finset α | t ∈ {t : Finset α | t.Nonempty} ∧ t.card < c} = Band 1 c := by
     ext t; simp [Band, Finset.one_le_card]
-  have ha : (fun t : Finset α ↦ t.Nonempty ∧ c ≤ t.card) = (c ≤ ·.card) := by
-    ext t; exact ⟨fun h ↦ h.2, fun h ↦ ⟨Finset.card_pos.mp (by omega), h⟩⟩
+  have ha : {t : Finset α | t ∈ {t : Finset α | t.Nonempty} ∧ c ≤ t.card} = {t | c ≤ t.card} := by
+    ext t
+    exact ⟨fun h ↦ h.2, fun (h : c ≤ t.card) ↦ ⟨Finset.card_pos.mp (by omega), h⟩⟩
   rw [PlusAdditive, hb, ha]
-  exact ⟨fun h ↦ h.elim (fun h ↦ (not_additiveIn_band le_rfl s h).elim) (·.1),
-    fun h ↦ .inr (additiveIn_le_card h)⟩
+  exact ⟨fun h ↦ Or.elim h (fun h ↦ (not_additiveIn_band le_rfl s h).elim) (·.1),
+    fun h ↦ Or.inr (additiveIn_le_card h)⟩
 
 -- (33)
 theorem ordConnected_plusAdditive_nonempty [Infinite α] {c : ℕ} (hc : 1 ≤ c) :
-    {s : Finset α | PlusAdditive c Finset.Nonempty s}.OrdConnected := by
-  simp only [plusAdditive_nonempty_iff hc]
+    (PlusAdditive c {t : Finset α | t.Nonempty}).OrdConnected := by
+  rw [show PlusAdditive c {t : Finset α | t.Nonempty} = {s | c ≤ s.card} from
+    Set.ext (plusAdditive_nonempty_iff hc)]
   exact IsUpperSet.ordConnected fun _ _ hst h ↦ h.trans (Finset.card_le_card hst)
 
 /-- On the first-person exclusive lattice, only the speaker atom is additive below a cut (Figure 8).
 -/
 theorem additiveIn_firstPerson_iff [Infinite α] {i : α} {c : ℕ} (hc : 2 ≤ c) (s : Finset α) :
-    additiveIn (fun t ↦ i ∈ t ∧ t.card < c) s ↔ s = {i} := by
+    s ∈ additiveIn {t | i ∈ t ∧ t.card < c} ↔ s = {i} := by
   refine ⟨fun ⟨⟨hi, hlt⟩, h⟩ ↦ ?_, ?_⟩
   · by_contra hne
     have h2 : 2 ≤ s.card := by
@@ -277,24 +283,24 @@ theorem additiveIn_firstPerson_iff [Infinite α] {i : α} {c : ℕ} (hc : 2 ≤ 
     have hiu : i ∉ u \ s := fun h ↦ (Finset.mem_sdiff.mp h).2 hi
     have := (h (insert i (u \ s)) ⟨Finset.mem_insert_self i _, by
       rw [Finset.card_insert_of_notMem hiu, Finset.card_sdiff_of_subset hsu]; omega⟩).2
-    rw [Finset.sup_eq_union, Finset.union_insert, Finset.union_sdiff_of_subset hsu,
+    rw [Finset.union_insert, Finset.union_sdiff_of_subset hsu,
       Finset.insert_eq_of_mem (hsu hi), hu] at this
     omega
   · rintro rfl
     refine ⟨⟨Finset.mem_singleton_self i, by simp; omega⟩, fun t ht ↦ ?_⟩
-    rwa [Finset.sup_eq_union, Finset.singleton_union, Finset.insert_eq_of_mem ht.1]
+    rwa [Finset.singleton_union, Finset.insert_eq_of_mem ht.1]
 
 /-- `{±additive}` cuts the first-person lattice nonconvexly (p. 212), so by (32), after
 [gardenfors-2004], `[±additive]` is never a language's sole number feature. -/
 theorem not_ordConnected_plusAdditive_firstPerson [Infinite α] (i : α) {c : ℕ} (hc : 3 ≤ c) :
-    ¬ {s | PlusAdditive c (i ∈ ·) s}.OrdConnected := by
+    ¬ (PlusAdditive c {t | i ∈ t}).OrdConnected := by
   intro h
   obtain ⟨o, ho⟩ := exists_ne i
   obtain ⟨u, hu, huc⟩ := Infinite.exists_superset_card_eq {i, o} c
     (by rw [Finset.card_pair ho.symm]; omega)
   have hmid := h.out (x := {i}) (y := u)
-    (.inl ((additiveIn_firstPerson_iff (by omega) _).mpr rfl))
-    (.inr (additiveIn_le_card' (hu (by simp)) huc.ge))
+    (Or.inl ((additiveIn_firstPerson_iff (by omega) _).mpr rfl))
+    (Or.inr (additiveIn_le_card' (hu (by simp)) huc.ge))
     ⟨Finset.singleton_subset_iff.mpr (by simp), hu⟩
   rcases hmid with hl | hr
   · have := congrArg Finset.card ((additiveIn_firstPerson_iff (by omega) _).mp hl)
@@ -396,7 +402,8 @@ theorem Bundle.label_eq_singular_iff {c : Convention} {b : Bundle} :
 
 /-- Only `[+atomic]` restricts and only the singular carries it, so in every system a bundle is
 defined where its label is. -/
-theorem Bundle.dom_eq_dom_label {E : Type*} [PartialOrder E] (c : Convention) (b : Bundle) :
+theorem Bundle.dom_eq_dom_label {E : Type*} [PartialOrder E] [OrderBot E] (c : Convention)
+    (b : Bundle) :
     Bundle.dom (E := E) b = Number.dom (some (Bundle.label c b)) := by
   rw [Bundle.dom_eq]
   split_ifs with h
@@ -415,38 +422,32 @@ inductive Strata where
 
 namespace Strata
 
-/-- `s.Mem k` holds when `k` is a stratum of `s`. -/
-def Mem : Strata → ℕ → Prop
-  | empty, _ => False
-  | point n, k => k = n
-  | ray n, k => max n 1 ≤ k
+/-- `s.toSet` is the set of the strata of `s`. -/
+def toSet : Strata → Set ℕ
+  | empty => ∅
+  | point n => {n}
+  | ray n => Set.Ici (max n 1)
 
-instance : ∀ s : Strata, DecidablePred s.Mem
-  | empty => fun _ ↦ instDecidableFalse
-  | point n => fun k ↦ inferInstanceAs (Decidable (k = n))
-  | ray n => fun k ↦ inferInstanceAs (Decidable (max n 1 ≤ k))
+instance : ∀ (s : Strata) (k : ℕ), Decidable (k ∈ s.toSet)
+  | empty, _ => inferInstanceAs (Decidable False)
+  | point n, k => inferInstanceAs (Decidable (k = n))
+  | ray n, k => inferInstanceAs (Decidable (max n 1 ≤ k))
 
-/-- `[+atomic]` keeps the stratum one. -/
-def atomic : Strata → Strata
-  | point n => if n = 1 then point 1 else empty
-  | ray n => if n ≤ 1 then point 1 else empty
-  | empty => empty
-
-/-- `[−atomic]` drops the stratum one. -/
-def nonAtomic : Strata → Strata
-  | point n => if n = 1 then empty else point n
-  | ray n => ray (max n 2)
-  | empty => empty
-
-/-- `[+minimal]` keeps the least stratum. -/
-def minimal : Strata → Strata
-  | ray n => point (max n 1)
-  | s => s
-
-/-- `[−minimal]` drops the least stratum. -/
-def nonMinimal : Strata → Strata
-  | ray n => ray (max n 1 + 1)
-  | _ => empty
+/-- The strata a valued feature selects: `[+atomic]` keeps the stratum one and `[−atomic]` drops
+it, `[+minimal]` keeps the least stratum and `[−minimal]` drops it. -/
+def restrict : Feature → Bool → Strata → Strata
+  | .atomic, _, empty => empty
+  | .atomic, true, point n => if n = 1 then point 1 else empty
+  | .atomic, true, ray n => if n ≤ 1 then point 1 else empty
+  | .atomic, false, point n => if n = 1 then empty else point n
+  | .atomic, false, ray n => ray (max n 2)
+  | .minimal, true, empty => empty
+  | .minimal, true, point n => point n
+  | .minimal, true, ray n => point (max n 1)
+  | .minimal, false, empty => empty
+  | .minimal, false, point _ => empty
+  | .minimal, false, ray n => ray (max n 1 + 1)
+  | .additive, _, s => s
 
 /-- Membership in a region of strata is constant from its bound on. -/
 def bound : Strata → ℕ
@@ -454,61 +455,72 @@ def bound : Strata → ℕ
   | point n => n + 1
   | ray n => max n 1
 
-theorem atomsOf_mem (s : Strata) : atomsOf s.Mem = s.atomic.Mem := by
-  ext k
+theorem atomize_toSet (s : Strata) : atomize s.toSet = (s.restrict .minimal true).toSet := by
   cases s with
-  | empty => simp [atomsOf, Mem, atomic]
-  | point n =>
-    by_cases h : n = 1 <;> simp [atomsOf, Mem, atomic, atom_iff_eq_one, h]
-    all_goals omega
-  | ray n =>
-    by_cases h : n ≤ 1 <;> simp [atomsOf, Mem, atomic, atom_iff_eq_one, h]
-    all_goals omega
+  | empty => exact (atomize_subset _).antisymm (Set.empty_subset _)
+  | point n => exact Set.ext fun _ ↦ (Set.subsingleton_singleton.isAntichain _).minimal_mem_iff
+  | ray n => exact atomize_Ici _
 
-theorem nonAtomsOf_mem (s : Strata) : nonAtomsOf s.Mem = s.nonAtomic.Mem := by
-  ext k
-  cases s with
-  | empty => simp [nonAtomsOf, Mem, nonAtomic]
-  | point n =>
-    by_cases h : n = 1 <;> simp [nonAtomsOf, Mem, nonAtomic, atom_iff_eq_one, h]
-    all_goals omega
-  | ray n => simp [nonAtomsOf, Mem, nonAtomic, atom_iff_eq_one]; omega
+theorem restrict_toSet (f : Feature) (v : Bool) (s : Strata) :
+    f.restrict v s.toSet = (s.restrict f v).toSet := by
+  match f, v with
+  | .atomic, true =>
+    ext k
+    cases s with
+    | empty => simp [toSet, restrict]
+    | point n =>
+      by_cases h : n = 1 <;> simp [toSet, restrict, Nat.isAtom_iff_eq_one, h]
+      omega
+    | ray n =>
+      by_cases h : n ≤ 1 <;> simp [toSet, restrict, Nat.isAtom_iff_eq_one, h]
+      all_goals omega
+  | .atomic, false =>
+    ext k
+    cases s with
+    | empty => simp [toSet, restrict]
+    | point n =>
+      by_cases h : n = 1 <;> simp [toSet, restrict, Nat.isAtom_iff_eq_one, h]
+      omega
+    | ray n => simp [toSet, restrict, Nat.isAtom_iff_eq_one]; omega
+  | .minimal, true => exact atomize_toSet s
+  | .minimal, false =>
+    ext k
+    rw [Feature.mem_restrict_minimal_false, atomize_toSet]
+    cases s <;> simp [toSet, restrict]
+    omega
+  | .additive, _ => cases s <;> rfl
 
-theorem atomize_mem (s : Strata) : atomize s.Mem = s.minimal.Mem := by
-  ext k
-  cases s with
-  | empty => exact ⟨fun h ↦ h.1, fun h ↦ h.elim⟩
-  | point n => exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ hj _ ↦ (h.trans hj.symm).le⟩⟩
-  | ray n =>
-    simp only [minimal, Mem]
-    exact ⟨fun h ↦ le_antisymm (h.2 le_rfl h.1) h.1, fun h ↦ ⟨h.ge, fun _ hj _ ↦ h ▸ hj⟩⟩
-
-theorem nonMinimalOf_mem (s : Strata) : nonMinimalOf s.Mem = s.nonMinimal.Mem := by
-  ext k; rw [nonMinimalOf, atomize_mem]; cases s <;> simp [Mem, minimal, nonMinimal]; omega
+theorem mem_of_restrict {f : Feature} {v : Bool} {s : Strata} {k : ℕ}
+    (h : k ∈ (s.restrict f v).toSet) : k ∈ s.toSet :=
+  Feature.restrict_le f v s.toSet (s.restrict_toSet f v ▸ h)
 
 theorem mem_iff_of_bound_le {s : Strata} (hs : s.bound ≤ 4) {k : ℕ} (hk : 4 ≤ k) :
-    s.Mem k ↔ s.Mem 4 := by
-  cases s <;> simp only [bound] at hs <;> simp only [Mem] <;> omega
+    k ∈ s.toSet ↔ 4 ∈ s.toSet := by
+  cases s <;> simp only [bound] at hs <;>
+    simp only [toSet, Set.mem_empty_iff_false, Set.mem_singleton_iff, Set.mem_Ici] <;> omega
 
 end Strata
 
 /-- The strata a bundle's `[±atomic]` and `[±minimal]` values select from `s`, in the order
 (28). -/
 def Bundle.strata (b : Bundle) (s : Strata) : Strata :=
-  b.step (.minimal, true) Strata.minimal <| b.step (.minimal, false) Strata.nonMinimal <|
-    b.step (.atomic, true) Strata.atomic <| b.step (.atomic, false) Strata.nonAtomic s
+  b.step (.minimal, true) (Strata.restrict .minimal true) <|
+    b.step (.minimal, false) (Strata.restrict .minimal false) <|
+    b.step (.atomic, true) (Strata.restrict .atomic true) <|
+    b.step (.atomic, false) (Strata.restrict .atomic false) s
 
 private theorem Bundle.step_map {X Y : Type*} (b : Bundle) (v : Feature × Bool) {f : X → X}
     {g : Y → Y} {φ : X → Y} (h : ∀ x, φ (f x) = g (φ x)) (x : X) :
     φ (b.step v f x) = b.step v g (φ x) := by
   unfold Bundle.step; split_ifs <;> simp [h]
 
-theorem Bundle.exact_mem (b : Bundle) (s : Strata) : b.exact s.Mem = (Bundle.strata b s).Mem := by
+theorem Bundle.exact_toSet (b : Bundle) (s : Strata) :
+    b.exact s.toSet = (Bundle.strata b s).toSet := by
   simp only [Bundle.exact, Bundle.strata]
-  rw [Bundle.step_map b _ fun s ↦ (Strata.atomize_mem s).symm,
-    Bundle.step_map b _ fun s ↦ (Strata.nonMinimalOf_mem s).symm,
-    Bundle.step_map b _ fun s ↦ (Strata.atomsOf_mem s).symm,
-    Bundle.step_map b _ fun s ↦ (Strata.nonAtomsOf_mem s).symm]
+  rw [Bundle.step_map b _ fun s ↦ (Strata.atomize_toSet s).symm,
+    Bundle.step_map b _ fun s ↦ (Strata.restrict_toSet .minimal false s).symm,
+    Bundle.step_map b _ fun s ↦ (Strata.restrict_toSet .atomic true s).symm,
+    Bundle.step_map b _ fun s ↦ (Strata.restrict_toSet .atomic false s).symm]
 
 theorem bound_strata_le : ∀ b : Bundle, ∀ p ≤ 2, (Bundle.strata b (.ray p)).bound ≤ 4 := by decide
 
@@ -525,32 +537,35 @@ variable {α : Type*} [DecidableEq α] {B : Finset α}
 
 omit [DecidableEq α] in
 private theorem step_region (b : Bundle) (v : Feature × Bool)
-    {f : (Finset α → Prop) → Finset α → Prop} {g : Strata → Strata} {s : Strata}
-    (h : f (region B s.Mem) = region B (g s).Mem) :
-    b.step v f (region B s.Mem) = region B (b.step v g s).Mem := by
+    {f : Set (Finset α) → Set (Finset α)} {g : Strata → Strata} {s : Strata}
+    (h : f (region B s.toSet) = region B (g s).toSet) :
+    b.step v f (region B s.toSet) = region B (b.step v g s).toSet := by
   unfold Bundle.step; split_ifs <;> simp [h]
 
 private theorem step_mem (b : Bundle) (v : Feature × Bool) {g : Strata → Strata}
-    (hg : ∀ {t : Strata} {k : ℕ}, (g t).Mem k → t.Mem k) {s : Strata} {k : ℕ}
-    (h : (b.step v g s).Mem k) : s.Mem k := by
+    (hg : ∀ {t : Strata} {k : ℕ}, k ∈ (g t).toSet → k ∈ t.toSet) {s : Strata} {k : ℕ}
+    (h : k ∈ (b.step v g s).toSet) : k ∈ s.toSet := by
   unfold Bundle.step at h; split_ifs at h; exacts [hg h, h]
 
 omit [DecidableEq α] in
-theorem Bundle.exact_region (b : Bundle) {s : Strata} (hs : ∀ k, s.Mem k → B.card ≤ k) :
-    b.exact (region B s.Mem) = region B (Bundle.strata b s).Mem := by
-  have h₁ : ∀ {k}, (b.step (.atomic, false) Strata.nonAtomic s).Mem k → s.Mem k :=
-    step_mem b _ fun {t k} h ↦ (t.nonAtomsOf_mem ▸ h : nonAtomsOf t.Mem k).1
-  have h₂ : ∀ {t k}, (b.step (.atomic, true) Strata.atomic t).Mem k → t.Mem k :=
-    step_mem b _ fun {t k} h ↦ (t.atomsOf_mem ▸ h : atomsOf t.Mem k).1
-  have h₃ : ∀ {t k}, (b.step (.minimal, false) Strata.nonMinimal t).Mem k → t.Mem k :=
-    step_mem b _ fun {t k} h ↦ (t.nonMinimalOf_mem ▸ h : nonMinimalOf t.Mem k).1
+theorem Bundle.exact_region (b : Bundle) {s : Strata} (hs : ∀ k ∈ s.toSet, B.card ≤ k) :
+    b.exact (region B s.toSet) = region B (Bundle.strata b s).toSet := by
+  have h₁ : ∀ {k}, k ∈ (b.step (.atomic, false) (Strata.restrict .atomic false) s).toSet →
+      k ∈ s.toSet :=
+    step_mem b _ Strata.mem_of_restrict
+  have h₂ : ∀ {t k}, k ∈ (b.step (.atomic, true) (Strata.restrict .atomic true) t).toSet →
+      k ∈ t.toSet :=
+    step_mem b _ Strata.mem_of_restrict
+  have h₃ : ∀ {t k},
+      k ∈ (b.step (.minimal, false) (Strata.restrict .minimal false) t).toSet → k ∈ t.toSet :=
+    step_mem b _ Strata.mem_of_restrict
   simp only [Bundle.exact, Bundle.strata]
-  rw [step_region b _ (by rw [nonAtomsOf_region, Strata.nonAtomsOf_mem]),
-    step_region b _ (by rw [atomsOf_region, Strata.atomsOf_mem]),
-    step_region b _ (by rw [nonMinimalOf_region fun k hk ↦ hs k (h₁ (h₂ hk)),
-      Strata.nonMinimalOf_mem]),
+  rw [step_region b _ (by rw [restrict_region _ _ hs, Strata.restrict_toSet]),
+    step_region b _ (by rw [restrict_region _ _ fun k hk ↦ hs k (h₁ hk), Strata.restrict_toSet]),
+    step_region b _ (by rw [restrict_region _ _ fun k hk ↦ hs k (h₁ (h₂ hk)),
+      Strata.restrict_toSet]),
     step_region b _ (by rw [atomize_region fun k hk ↦ hs k (h₁ (h₂ (h₃ hk))),
-      Strata.atomize_mem])]
+      Strata.atomize_toSet])]
 
 end Region
 
@@ -567,23 +582,23 @@ instance (lo hi : ℕ) (b : Bundle) : DecidablePred (Bundle.Cut lo hi b) := fun 
   unfold Bundle.Cut; infer_instance
 
 /-- A bundle denotes the elements of its exact region that survive its cuts, graded by `g`. -/
-def Bundle.denote {D : Type*} [SemilatticeSup D] (g : D → ℕ) (lo hi : ℕ) (b : Bundle)
-    (P : D → Prop) (x : D) : Prop :=
-  b.exact P x ∧ Bundle.Cut lo hi b (g x)
+def Bundle.denote {D : Type*} [SemilatticeSup D] [OrderBot D] (g : D → ℕ) (lo hi : ℕ) (b : Bundle)
+    (P : Set D) (x : D) : Prop :=
+  x ∈ b.exact P ∧ Bundle.Cut lo hi b (g x)
 
 /-- The cell of a bundle in a setting is its denotation less those of the more specific bundles,
 as the plural of Figure 7 is `Q+ \ Q′`. -/
-def Setting.cell {D : Type*} [SemilatticeSup D] (σ : Setting) (g : D → ℕ) (lo hi : ℕ)
-    (P : D → Prop) (b : Bundle) (x : D) : Prop :=
+def Setting.cell {D : Type*} [SemilatticeSup D] [OrderBot D] (σ : Setting) (g : D → ℕ) (lo hi : ℕ)
+    (P : Set D) (b : Bundle) (x : D) : Prop :=
   Bundle.denote g lo hi b P x ∧ ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ Bundle.denote g lo hi b' P x
 
 theorem Setting.cell_strata_iff (σ : Setting) (lo hi : ℕ) (s : Strata) (b : Bundle) (k : ℕ) :
-    σ.cell id lo hi s.Mem b k ↔ ((Bundle.strata b s).Mem k ∧ Bundle.Cut lo hi b k) ∧
-      ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ ((Bundle.strata b' s).Mem k ∧ Bundle.Cut lo hi b' k) := by
-  simp only [Setting.cell, Bundle.denote, Bundle.exact_mem, id]
+    σ.cell id lo hi s.toSet b k ↔ (k ∈ (Bundle.strata b s).toSet ∧ Bundle.Cut lo hi b k) ∧
+      ∀ b' ∈ σ.bundles, b ⊂ b' → ¬ (k ∈ (Bundle.strata b' s).toSet ∧ Bundle.Cut lo hi b' k) := by
+  simp only [Setting.cell, Bundle.denote, Bundle.exact_toSet, id]
 
 instance (σ : Setting) (lo hi : ℕ) (s : Strata) (b : Bundle) :
-    DecidablePred (σ.cell id lo hi s.Mem b) := fun k ↦
+    DecidablePred (σ.cell id lo hi s.toSet b) := fun k ↦
   decidable_of_iff _ (σ.cell_strata_iff lo hi s b k).symm
 
 /-- `collapse lo hi` keeps the strata up to four and sends those below `lo`, those from `lo` below
@@ -599,7 +614,7 @@ theorem cut_collapse {lo hi : ℕ} (h : 4 < lo) (b : Bundle) (k : ℕ) :
     split_ifs <;> omega
 
 theorem mem_strata_collapse {lo hi p : ℕ} (hp : p ≤ 2) (b : Bundle) (k : ℕ) :
-    (Bundle.strata b (.ray p)).Mem k ↔ (Bundle.strata b (.ray p)).Mem (collapse lo hi k) := by
+    k ∈ (Bundle.strata b (.ray p)).toSet ↔ collapse lo hi k ∈ (Bundle.strata b (.ray p)).toSet := by
   have h4 := fun j (hj : 4 ≤ j) ↦ Strata.mem_iff_of_bound_le (bound_strata_le b p hp) hj
   unfold collapse
   split_ifs
@@ -610,15 +625,15 @@ theorem mem_strata_collapse {lo hi p : ℕ} (hp : p ≤ 2) (b : Bundle) (k : ℕ
 
 theorem cell_collapse {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Setting) (b : Bundle)
     (k : ℕ) :
-    σ.cell id lo hi (Strata.ray p).Mem b k ↔
-      σ.cell id 5 6 (Strata.ray p).Mem b (collapse lo hi k) := by
+    σ.cell id lo hi (Strata.ray p).toSet b k ↔
+      σ.cell id 5 6 (Strata.ray p).toSet b (collapse lo hi k) := by
   simp only [Setting.cell_strata_iff, mem_strata_collapse hp (lo := lo) (hi := hi) _ k,
     cut_collapse h _ k]
 
 theorem exists_cell_iff {lo hi p : ℕ} (h₁ : 4 < lo) (h₂ : lo < hi) (hp : p ≤ 2) (σ : Setting)
     (b : Bundle) :
-    (∃ k, σ.cell id lo hi (Strata.ray p).Mem b k) ↔
-      ∃ k, k ≤ 6 ∧ σ.cell id 5 6 (Strata.ray p).Mem b k := by
+    (∃ k, σ.cell id lo hi (Strata.ray p).toSet b k) ↔
+      ∃ k, k ≤ 6 ∧ σ.cell id 5 6 (Strata.ray p).toSet b k := by
   refine ⟨fun ⟨k, hk⟩ ↦ ⟨collapse lo hi k, by unfold collapse; split_ifs <;> omega,
     (cell_collapse h₁ hp σ b k).mp hk⟩, fun ⟨j, hj, hc⟩ ↦ ?_⟩
   obtain ⟨k, rfl⟩ : ∃ k, collapse lo hi k = j := by
@@ -635,10 +650,10 @@ namespace Setting
 bundles with nonempty cells, computed with the cuts at five and six (`filter_cell_eq_system`). -/
 def system (σ : Setting) (p : ℕ) : List Bundle :=
   σ.bundles.filter fun b ↦
-    decide (∃ k : ℕ, k ≤ 6 ∧ σ.cell (D := ℕ) id 5 6 (Strata.ray p).Mem b k)
+    decide (∃ k : ℕ, k ≤ 6 ∧ σ.cell (D := ℕ) id 5 6 (Strata.ray p).toSet b k)
 
 theorem mem_system {σ : Setting} {p : ℕ} {b : Bundle} :
-    b ∈ σ.system p ↔ b ∈ σ.bundles ∧ ∃ k, k ≤ 6 ∧ σ.cell id 5 6 (Strata.ray p).Mem b k := by
+    b ∈ σ.system p ↔ b ∈ σ.bundles ∧ ∃ k, k ≤ 6 ∧ σ.cell id 5 6 (Strata.ray p).toSet b k := by
   simp [system]
 
 /-- The values of a setting's system are its bundles' labels. -/
@@ -656,10 +671,10 @@ section Lattice
 variable {α : Type*} [DecidableEq α]
 
 theorem cell_region {B : Finset α} {lo hi : ℕ} (σ : Setting) (b : Bundle) (x : Finset α) :
-    σ.cell Finset.card lo hi (region B (Strata.ray B.card).Mem) b x ↔
-      B ⊆ x ∧ σ.cell id lo hi (Strata.ray B.card).Mem b x.card := by
-  have hs : ∀ k, (Strata.ray B.card).Mem k → B.card ≤ k := fun k hk ↦ le_of_max_le_left hk
-  simp only [Setting.cell, Bundle.denote, Bundle.exact_region _ hs, Bundle.exact_mem, region,
+    σ.cell Finset.card lo hi (region B (Strata.ray B.card).toSet) b x ↔
+      B ⊆ x ∧ σ.cell id lo hi (Strata.ray B.card).toSet b x.card := by
+  have hs : ∀ k ∈ (Strata.ray B.card).toSet, B.card ≤ k := fun k hk ↦ le_of_max_le_left hk
+  simp only [Setting.cell, Bundle.denote, Bundle.exact_region _ hs, Bundle.exact_toSet, mem_region,
     id]
   constructor
   · rintro ⟨⟨⟨hB, hE⟩, hb⟩, h⟩
@@ -674,7 +689,7 @@ form its system. -/
 theorem filter_cell_eq_system [Infinite α] {B : Finset α} (hB : B.card ≤ 2) {lo hi : ℕ}
     (h₁ : 4 < lo) (h₂ : lo < hi) (σ : Setting) :
     σ.bundles.filter (fun b ↦ ∃ x, σ.cell Finset.card lo hi
-      (region B (Strata.ray B.card).Mem) b x) = σ.system B.card := by
+      (region B (Strata.ray B.card).toSet) b x) = σ.system B.card := by
   refine List.filter_congr fun b _ ↦ decide_eq_decide.mpr ?_
   rw [← exists_cell_iff h₁ h₂ hB]
   refine ⟨fun ⟨x, hx⟩ ↦ ⟨x.card, ((cell_region σ b x).mp hx).2⟩, fun ⟨k, hk⟩ ↦ ?_⟩
@@ -690,9 +705,9 @@ By `filter_cell_eq_system`, the following hold of every person lattice and every
 the cuts above four atoms. -/
 
 theorem exists_mem_cell {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Setting) {k : ℕ}
-    (hk : max p 1 ≤ k) : ∃ b ∈ σ.bundles, σ.cell id lo hi (Strata.ray p).Mem b k := by
+    (hk : max p 1 ≤ k) : ∃ b ∈ σ.bundles, σ.cell id lo hi (Strata.ray p).toSet b k := by
   have ref : ∀ σ : Setting, ∀ p ≤ 2, ∀ j ≤ 6, max p 1 ≤ j →
-      ∃ b ∈ σ.bundles, σ.cell (D := ℕ) id 5 6 (Strata.ray p).Mem b j := by
+      ∃ b ∈ σ.bundles, σ.cell (D := ℕ) id 5 6 (Strata.ray p).toSet b j := by
     decide +kernel
   obtain ⟨b, hb, hc⟩ := ref σ p hp (collapse lo hi k) (by unfold collapse; split_ifs <;> omega)
     (by unfold collapse; split_ifs <;> omega)
@@ -700,13 +715,14 @@ theorem exists_mem_cell {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Settin
 
 theorem disjoint_cell {lo hi p : ℕ} (h : 4 < lo) (hp : p ≤ 2) (σ : Setting) {b b' : Bundle}
     (hb : b ∈ σ.bundles) (hb' : b' ∈ σ.bundles) (hne : b ≠ b') :
-    Disjoint (σ.cell id lo hi (Strata.ray p).Mem b) (σ.cell id lo hi (Strata.ray p).Mem b') := by
+    Disjoint (σ.cell id lo hi (Strata.ray p).toSet b)
+      (σ.cell id lo hi (Strata.ray p).toSet b') := by
   rw [Pi.disjoint_iff]
   intro k
   rw [Prop.disjoint_iff]
   have ref : ∀ σ : Setting, ∀ p ∈ [0, 1, 2], ∀ b ∈ σ.system p, ∀ b' ∈ σ.system p, b ≠ b' →
-      ∀ j ≤ 6, σ.cell (D := ℕ) id 5 6 (Strata.ray p).Mem b j →
-        ¬ σ.cell (D := ℕ) id 5 6 (Strata.ray p).Mem b' j := by
+      ∀ j ≤ 6, σ.cell (D := ℕ) id 5 6 (Strata.ray p).toSet b j →
+        ¬ σ.cell (D := ℕ) id 5 6 (Strata.ray p).toSet b' j := by
     decide +kernel
   rw [cell_collapse h hp, cell_collapse h hp]
   have hj : collapse lo hi k ≤ 6 := by unfold collapse; split_ifs <;> omega
@@ -747,49 +763,17 @@ theorem length_values_le_six : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.a
     (σ.values c 0).length ≤ 6 := by
   decide +kernel
 
-/-- An implication of Table 1 says that a system with its antecedent has one of its
-consequents. -/
-structure Implication where
-  /-- The number that requires another. -/
-  antecedent : Number
-  /-- The numbers one of which it requires. -/
-  consequents : Finset Number
-  deriving DecidableEq
-
-/-- A system satisfies an implication when, with its antecedent, it has one of its
-consequents. -/
-def Implication.Holds (u : Implication) (s : Finset Number) : Prop :=
-  u.antecedent ∈ s → ∃ v ∈ u.consequents, v ∈ s
-
-instance (u : Implication) (s : Finset Number) : Decidable (u.Holds s) := by
-  unfold Implication.Holds; infer_instance
-
-/-- Table 1, the implications the features are to derive, in the printed order; its last row,
-for the greater and the global plural alike, is two implications. -/
-def table1 : List Implication :=
-  [⟨.trial, {.dual}⟩, ⟨.dual, {.singular}⟩, ⟨.singular, {.plural}⟩,
-    ⟨.plural, {.singular, .minimal}⟩, ⟨.unitAugmented, {.augmented}⟩,
-    ⟨.minimal, {.augmented, .plural}⟩, ⟨.augmented, {.minimal}⟩, ⟨.greaterPaucal, {.paucal}⟩,
-    ⟨.paucal, {.plural}⟩, ⟨.greaterPlural, {.plural, .augmented}⟩,
-    ⟨.globalPlural, {.plural, .augmented}⟩]
-
-/-- A system satisfies Table 1 when it satisfies each of its implications. -/
-def SatisfiesTable1 (s : Finset Number) : Prop := ∀ u ∈ table1, u.Holds s
-
-instance (s : Finset Number) : Decidable (SatisfiesTable1 s) := by
-  unfold SatisfiesTable1; infer_instance
-
 /-- Every legitimate setting satisfies Table 1 except `{±additive(*), ±minimal*}`, two lacunae of
 Table 3 whose unit augmented has no augmented. -/
-theorem satisfiesTable1_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
-    σ.Legitimate → (SatisfiesTable1 (σ.toSystem c) ↔
+theorem satisfiesUniversals_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
+    σ.Legitimate → (SatisfiesUniversals (σ.toSystem c) ↔
       ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
   decide +kernel
 
 -- Table 1 [corbett-2000]
-theorem satisfiesTable1_corbett (c : Corbett2000.Choices) : SatisfiesTable1 c.toSystem := by
+theorem satisfiesUniversals_corbett (c : Corbett2000.Choices) : SatisfiesUniversals c.toSystem := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
-  change SatisfiesTable1 (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem
+  change SatisfiesUniversals (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem
   fin_cases d <;> fin_cases p <;> cases gp <;> decide
 
 
@@ -930,15 +914,14 @@ theorem meleFila_system :
 upper, `[+additive]` relative to the one and `[−additive]` relative to the other. -/
 theorem meleFila_cell_plural {α : Type*} [DecidableEq α] {lo hi : ℕ} (h₁ : 4 < lo)
     (x : Finset α) :
-    meleFila.cell Finset.card lo hi Finset.Nonempty
+    meleFila.cell Finset.card lo hi {t | t.Nonempty}
       {(.atomic, false), (.minimal, false), (.additive, false), (.additive, true)} x ↔
         lo ≤ x.card ∧ x.card < hi := by
-  have ref : ∀ j ≤ 6, meleFila.cell (D := ℕ) id 5 6 (Strata.ray 0).Mem
+  have ref : ∀ j ≤ 6, meleFila.cell (D := ℕ) id 5 6 (Strata.ray 0).toSet
       {(.atomic, false), (.minimal, false), (.additive, false), (.additive, true)} j ↔ j = 5 := by
     decide +kernel
-  have hP : (Finset.Nonempty : Finset α → Prop) =
-      region ∅ (Strata.ray (∅ : Finset α).card).Mem := by
-    ext t; simp [region, Strata.Mem, Finset.one_le_card]
+  have hP : {t : Finset α | t.Nonempty} = region ∅ (Strata.ray (∅ : Finset α).card).toSet := by
+    ext t; simp [Strata.toSet, Finset.one_le_card]
   rw [hP, cell_region]
   simp only [Finset.empty_subset, true_and, Finset.card_empty]
   rw [cell_collapse h₁ (Nat.zero_le 2), ref _ (by unfold collapse; split_ifs <;> omega)]
@@ -964,13 +947,13 @@ namespace Setting
 /-- The value a setting gives a third-person referent of `k` individuals, the label of the bundle
 whose cell holds `k`; the cells are disjoint (`disjoint_cell`). -/
 def number (σ : Setting) (c : Convention) (lo hi : ℕ) (k : ℕ+) : Number :=
-  ((σ.bundles.find? fun b ↦ decide (σ.cell id lo hi (Strata.ray 0).Mem b k)).map
+  ((σ.bundles.find? fun b ↦ decide (σ.cell id lo hi (Strata.ray 0).toSet b k)).map
     (Bundle.label c)).getD .general
 
 theorem number_eq_of_collapse {lo hi : ℕ} (h : 4 < lo) (σ : Setting) (c : Convention)
     {k j : ℕ+} (hj : (j : ℕ) = collapse lo hi k) : σ.number c lo hi k = σ.number c 5 6 j := by
-  have e : (fun b ↦ decide (σ.cell id lo hi (Strata.ray 0).Mem b k)) =
-      fun b ↦ decide (σ.cell id 5 6 (Strata.ray 0).Mem b j) :=
+  have e : (fun b ↦ decide (σ.cell id lo hi (Strata.ray 0).toSet b k)) =
+      fun b ↦ decide (σ.cell id 5 6 (Strata.ray 0).toSet b j) :=
     funext fun b ↦ decide_eq_decide.2 ((cell_collapse h (Nat.zero_le 2) σ b k).trans (by rw [hj]))
   simp only [number, e]
 

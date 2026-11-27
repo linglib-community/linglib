@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Questions.Hamblin.Closure
+public import Linglib.Semantics.Questions.Hamblin.Modal
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Data.Examples.Xiang2022
 
@@ -65,11 +66,11 @@ def trueShort (P : α → Set W) (w : W) : Set α := {a | w ∈ P a}
 
 /-- Dayal's exhaustivity presupposition for a topical property: its answer space has a
 strongest true member. -/
-def DEP (P : α → Set W) (w : W) : Prop := IsExhaustivelyResolvable (range P) w
+def DEP (P : α → Set W) (w : W) : Prop := HasStrongestTrueAnswer (range P) w
 
 theorem dep_iff (P : α → Set W) (w : W) :
     DEP P w ↔ ∃ a, w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b :=
-  isExhaustivelyResolvable_range_iff P w
+  hasStrongestTrueAnswer_range_iff P w
 
 /-- A max-informative true short answer: true, and minimal under entailment among the true
 short answers. -/
@@ -86,7 +87,7 @@ def ansS (P : α → Set W) (w : W) : Set α := {a | MaxI P w a}
 def ansP (P : α → Set W) (w : W) : Set (Set W) := P '' ansS P w
 
 theorem mem_ansP_iff {P : α → Set W} {w : W} {p : Set W} :
-    p ∈ ansP P w ↔ Minimal (· ∈ trueAnswers (range P) w) p := by
+    p ∈ ansP P w ↔ Minimal (· ∈ karttunen (range P) w) p := by
   constructor
   · rintro ⟨a, ⟨ha, hmin⟩, rfl⟩
     refine ⟨⟨⟨a, rfl⟩, ha⟩, ?_⟩

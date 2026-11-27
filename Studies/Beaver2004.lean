@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Discourse.Centering.Transition
+public import Linglib.Discourse.Centering.Discourse
+public import Linglib.Discourse.Centering.Pronominalization
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Data.Examples.Beaver2004
 public import Linglib.Data.UD.Features
-import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.Set.Finite.Basic
 
@@ -36,12 +36,12 @@ FAM-DEF > COHERE > ALIGN. Between two fully anaphoric interpretations that pass 
 * The interpretations of a sentence give its indefinites new referents (fn. 20), and the
   discourse includes the previous sentence (`prev ∈ ctx`), so that no indefinite realizes an
   entity of it. BFP's prediction is the fully anaphoric interpretation surviving the filters
-  (`Filtered`) with the highest transition (`bfpTransition`), an interpretation without a topic
+  (`Filtered`) with the highest transition (`extendedTransition`), an interpretation without a topic
   having none.
 * COHERE is satisfied only when the topic is defined and unchanged (p. 17), so with no prior
   topic every candidate violates it (`cohere_none`), while the first transition test of
   [walker-iida-cote-1994] passes when there is no prior center
-  (`bfpTransition_none_eq_ofTests`). Both treat the candidates of a sentence alike, and the
+  (`extendedTransition_none_eq_ofTests`). Both treat the candidates of a sentence alike, and the
   comparison of (19) holds either way (`cot_lt_iff_bfp_lt_of_tied`).
 * Both readings of (12c) violate FAM-DEF (`d12_famDef`), *Mary* being new, so (12) lies outside
   `Filtered` and Proposition (20); (1) instantiates them.
@@ -61,7 +61,7 @@ FAM-DEF > COHERE > ALIGN. Between two fully anaphoric interpretations that pass 
 
 namespace Beaver2004
 
-open Discourse.Centering OptimalityTheory
+open Centering OptimalityTheory
 
 /-! ### Interpretations -/
 
@@ -198,70 +198,54 @@ variable [LinearOrder R] {prev c : Utterance E R (Form Φ N)} {x : E}
 /-- PRO-TOP: the topic is pronominalized. A candidate with no topic violates it (p. 16), as does
 one with no pronoun, so it needs none of Rule 1's if-clause. -/
 def proTop (prev : Utterance E R (Form Φ N)) : Constraint (Utterance E R (Form Φ N)) :=
-  Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c, c.Pronominalizes pronouns t
+  Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c.cf, t ∈ c.pronominalized pronouns
 
 /-- COHERE: the topic of the current sentence is the topic of the previous one, so that a
 candidate with no topic violates it, as does every candidate when there is no prior topic
 (p. 17). -/
 def cohere (prev : Utterance E R (Form Φ N)) (priorTopic : Option E) :
     Constraint (Utterance E R (Form Φ N)) :=
-  Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c, priorTopic = some t
+  Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c.cf, priorTopic = some t
 
 /-- ALIGN: the topic is in subject position, for canonical sentences the preferred center
 (p. 18); a candidate with no topic violates it. -/
 def align (prev : Utterance E R (Form Φ N)) : Constraint (Utterance E R (Form Φ N)) :=
-  Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c, c.cp = some t
+  Constraint.binary fun c ↦ ¬ ∃ t ∈ cb prev c.cf, c.cp = some t
 
 theorem cohere_none (prev c : Utterance E R (Form Φ N)) : cohere prev none c = 1 := by
   simp [cohere]
 
-theorem cohere_of_cb_eq_none (priorTopic : Option E) (h : cb prev c = none) :
+theorem cohere_of_cb_eq_none (priorTopic : Option E) (h : cb prev c.cf = none) :
     cohere prev priorTopic c = 1 := by
   simp [cohere, h]
 
-theorem align_of_cb_eq_none (h : cb prev c = none) : align prev c = 1 := by
+theorem align_of_cb_eq_none (h : cb prev c.cf = none) : align prev c = 1 := by
   simp [align, h]
 
 -- [strube-1998]
-theorem align_eq_zero_iff : align prev c = 0 ↔ ∃ t ∈ cb prev c, c.cp = some t := by
+theorem align_eq_zero_iff : align prev c = 0 ↔ ∃ t ∈ cb prev c.cf, c.cp = some t := by
   simp [align]
 
 private theorem proTop_eq_one (h : ¬ ∃ x ∈ sentence c, x.2 ∈ pronouns) : proTop prev c = 1 := by
-  have hn : ¬ ∃ t ∈ cb prev c, c.Pronominalizes pronouns t :=
-    fun ⟨_, _, r, hr, _, hrp⟩ ↦ h ⟨_, List.mem_map_of_mem hr, hrp⟩
+  have hn : ¬ ∃ t ∈ cb prev c.cf, t ∈ c.pronominalized pronouns :=
+    fun ⟨_, _, hp⟩ ↦
+      let ⟨_, hr, _, hrp⟩ := Utterance.mem_pronominalized.1 hp
+      h ⟨_, List.mem_map_of_mem hr, hrp⟩
   rw [proTop, Constraint.binary_apply, ite_eq_left hn]
 
 /-! ### BFP's transitions and table (19) -/
 
-/-- BFP's transition into a candidate, from the prior topic, its backward-looking center and its
-preferred center; `⊥` when it has no backward-looking center, which the transitions do not
-classify. -/
-def bfpTransition (prev : Utterance E R (Form Φ N)) (priorTopic : Option E)
-    (c : Utterance E R (Form Φ N)) :
-    WithBot ExtendedTransition :=
-  match cb prev c with
-  | some x => ExtendedTransition.ofCenters priorTopic x c.cp
-  | none => ⊥
-
-theorem bfpTransition_of_cb_eq_none (priorTopic : Option E) (h : cb prev c = none) :
-    bfpTransition prev priorTopic c = ⊥ := by
-  simp [bfpTransition, h]
-
-theorem bfpTransition_of_cb_eq_some (priorTopic : Option E) (h : cb prev c = some x) :
-    bfpTransition prev priorTopic c = ExtendedTransition.ofCenters priorTopic x c.cp := by
-  simp [bfpTransition, h]
-
 -- (19): with a prior topic, the transition is read off the COHERE and ALIGN verdicts
-theorem bfpTransition_eq_ofTests {p : E} (h : cb prev c = some x) :
-    bfpTransition prev (some p) c =
+theorem extendedTransition_eq_ofTests {p : E} (h : cb prev c.cf = some x) :
+    extendedTransition (some p) prev c =
       ExtendedTransition.ofTests (cohere prev (some p) c = 0) (align prev c = 0) := by
-  rw [bfpTransition_of_cb_eq_some _ h, WithBot.coe_inj]
+  rw [extendedTransition_of_cb_eq_some _ h, WithBot.coe_inj]
   ext <;> simp [ExtendedTransition.ofCenters, cohere, align, h, eq_comm]
 
 -- [walker-iida-cote-1994]: the first test passes when there is no prior center
-theorem bfpTransition_none_eq_ofTests (h : cb prev c = some x) :
-    bfpTransition prev none c = ExtendedTransition.ofTests True (align prev c = 0) := by
-  rw [bfpTransition_of_cb_eq_some _ h, WithBot.coe_inj]
+theorem extendedTransition_none_eq_ofTests (h : cb prev c.cf = some x) :
+    extendedTransition none prev c = ExtendedTransition.ofTests True (align prev c = 0) := by
+  rw [extendedTransition_of_cb_eq_some _ h, WithBot.coe_inj]
   ext <;> simp [ExtendedTransition.ofCenters, align, h]
 
 end Order
@@ -377,10 +361,12 @@ private theorem proTop_eq (hf : famDef ctx prev c = 0)
       · exact absurd hxp (by simp [pronouns])
       · exact absurd hxp (by simp [pronouns])
     have hcf : r.entity ∈ prev.cf := prev.mem_cf.2 he
-    obtain ⟨t, ht⟩ : ∃ t, cb prev c = some t :=
-      Option.ne_none_iff_exists'.1 fun h ↦ cb_eq_none_iff.1 h _ hcf ⟨r, hr, rfl⟩
-    have htop : ∃ t ∈ cb prev c, c.Pronominalizes pronouns t :=
-      ⟨t, ht, h1 ⟨_, hcf, r, hr, rfl, hxp⟩ t ht⟩
+    obtain ⟨t, ht⟩ : ∃ t, cb prev c.cf = some t :=
+      Option.ne_none_iff_exists'.1 fun h ↦
+        Finset.disjoint_left.1 (cb_eq_none_iff.1 h) hcf (c.mem_cf.2 ⟨r, hr, rfl⟩)
+    have htop : ∃ t ∈ cb prev c.cf, t ∈ c.pronominalized pronouns :=
+      ⟨t, ht, h1 ⟨_, Finset.mem_inter.2
+        ⟨hcf, Utterance.mem_pronominalized.2 ⟨r, hr, rfl, hxp⟩⟩⟩ t ht⟩
     have hp : ∃ x ∈ sentence c, x.2 ∈ pronouns := ⟨_, hx, hxp⟩
     rw [ite_eq_right (not_not.2 htop), ite_eq_left hp]
   · rw [ite_eq_right hp]
@@ -389,17 +375,18 @@ private theorem proTop_eq (hf : famDef ctx prev c = 0)
 -- in a discourse that includes the previous sentence, a fully anaphoric interpretation has no
 -- topic exactly when its sentence has no definite
 theorem cb_eq_none_iff_of_famDef (hprev : prev ∈ ctx) (hc : c ∈ interpretations ctx s)
-    (hf : famDef ctx prev c = 0) : cb prev c = none ↔ ∀ x ∈ s, x.2 = .indefinite := by
-  rw [cb_eq_none_iff, ← hc.1]
+    (hf : famDef ctx prev c = 0) : cb prev c.cf = none ↔ ∀ x ∈ s, x.2 = .indefinite := by
+  rw [cb_eq_none_iff, ← hc.1, Finset.disjoint_left]
   constructor
   · rintro h _ hx
     obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hx
     have hfam := famDef_eq_zero_iff.1 hf r hr
     rcases r with ⟨e, ρ, φ | n | _⟩
-    · exact (h e (prev.mem_cf.2 hfam) ⟨_, hr, rfl⟩).elim
-    · exact (h e (prev.mem_cf.2 hfam.1) ⟨_, hr, rfl⟩).elim
+    · exact (h (prev.mem_cf.2 hfam) (c.mem_cf.2 ⟨_, hr, rfl⟩)).elim
+    · exact (h (prev.mem_cf.2 hfam.1) (c.mem_cf.2 ⟨_, hr, rfl⟩)).elim
     · rfl
-  · rintro h e he ⟨r, hr, rfl⟩
+  · rintro h e he hec
+    obtain ⟨r, hr, rfl⟩ := c.mem_cf.1 hec
     exact hc.2 r hr (h _ (List.mem_map_of_mem hr)) prev hprev (prev.mem_cf.1 he)
 
 /-! ### From BFP to COT -/
@@ -408,31 +395,33 @@ theorem cb_eq_none_iff_of_famDef (hprev : prev ∈ ctx) (hc : c ∈ interpretati
 theorem cot_lt_iff_bfp_lt_of_tied (h0 : agree feat prev c₁ = agree feat prev c₂)
     (h1 : disjoint c₁ = disjoint c₂) (h2 : proTop prev c₁ = proTop prev c₂)
     (h3 : famDef ctx prev c₁ = famDef ctx prev c₂)
-    (hcb : cb prev c₁ = none ↔ cb prev c₂ = none) :
+    (hcb : cb prev c₁.cf = none ↔ cb prev c₂.cf = none) :
     cotProfile feat ctx prev priorTopic c₁ < cotProfile feat ctx prev priorTopic c₂ ↔
-      bfpTransition prev priorTopic c₂ < bfpTransition prev priorTopic c₁ := by
+      extendedTransition priorTopic prev c₂ < extendedTransition priorTopic prev c₁ := by
   simp only [cotProfile_lt_iff, h0, h1, h2, h3, lt_self_iff_false, false_or, true_and]
   have b1 : cohere prev priorTopic c₁ ≤ 1 := Constraint.binary_le_one _ _
   have b2 : cohere prev priorTopic c₂ ≤ 1 := Constraint.binary_le_one _ _
   have b3 : align prev c₁ ≤ 1 := Constraint.binary_le_one _ _
   have b4 : align prev c₂ ≤ 1 := Constraint.binary_le_one _ _
-  rcases hx₁ : cb prev c₁ with _ | x₁ <;> rcases hx₂ : cb prev c₂ with _ | x₂
-  · rw [bfpTransition_of_cb_eq_none _ hx₁, bfpTransition_of_cb_eq_none _ hx₂,
+  rcases hx₁ : cb prev c₁.cf with _ | x₁ <;> rcases hx₂ : cb prev c₂.cf with _ | x₂
+  · rw [extendedTransition_of_cb_eq_none _ hx₁, extendedTransition_of_cb_eq_none _ hx₂,
       cohere_of_cb_eq_none _ hx₁, cohere_of_cb_eq_none _ hx₂, align_of_cb_eq_none hx₁,
       align_of_cb_eq_none hx₂]
     simp
   · simp [hx₁, hx₂] at hcb
   · simp [hx₁, hx₂] at hcb
   rcases priorTopic with _ | p
-  · rw [bfpTransition_none_eq_ofTests hx₁, bfpTransition_none_eq_ofTests hx₂, cohere_none,
+  · rw [extendedTransition_none_eq_ofTests hx₁, extendedTransition_none_eq_ofTests hx₂, cohere_none,
       cohere_none, WithBot.coe_lt_coe]
-    simp only [ExtendedTransition.lt_iff_toLex_lt, Prod.Lex.toLex_lt_toLex,
+    rw [← ExtendedTransition.toLexIso.lt_iff_lt]
+    simp only [ExtendedTransition.toLexIso_apply, Prod.Lex.toLex_lt_toLex,
       ExtendedTransition.cohesion_ofTests, ExtendedTransition.salience_ofTests, Bool.lt_iff,
       decide_true, decide_eq_true_eq, decide_eq_false_iff_not, false_or, lt_self_iff_false,
       true_and]
     omega
-  · rw [bfpTransition_eq_ofTests hx₁, bfpTransition_eq_ofTests hx₂, WithBot.coe_lt_coe]
-    simp only [ExtendedTransition.lt_iff_toLex_lt, Prod.Lex.toLex_lt_toLex,
+  · rw [extendedTransition_eq_ofTests hx₁, extendedTransition_eq_ofTests hx₂, WithBot.coe_lt_coe]
+    rw [← ExtendedTransition.toLexIso.lt_iff_lt]
+    simp only [ExtendedTransition.toLexIso_apply, Prod.Lex.toLex_lt_toLex,
       ExtendedTransition.cohesion_ofTests, ExtendedTransition.salience_ofTests, Bool.lt_iff,
       decide_eq_true_eq, decide_eq_false_iff_not, decide_eq_decide]
     omega
@@ -444,7 +433,7 @@ theorem cot_lt_iff_bfp_lt (hprev : prev ∈ ctx) (hc₁ : c₁ ∈ interpretatio
     (hc₂ : c₂ ∈ interpretations ctx s) (h₁ : Filtered feat ctx prev c₁)
     (h₂ : Filtered feat ctx prev c₂) :
     cotProfile feat ctx prev priorTopic c₁ < cotProfile feat ctx prev priorTopic c₂ ↔
-      bfpTransition prev priorTopic c₂ < bfpTransition prev priorTopic c₁ :=
+      extendedTransition priorTopic prev c₂ < extendedTransition priorTopic prev c₁ :=
   cot_lt_iff_bfp_lt_of_tied (h₁.agree_eq.trans h₂.agree_eq.symm)
     (h₁.disjoint_eq.trans h₂.disjoint_eq.symm)
     (by rw [proTop_eq h₁.famDef_eq h₁.rule1, proTop_eq h₂.famDef_eq h₂.rule1, hc₁.1, hc₂.1])
@@ -456,7 +445,7 @@ theorem cot_lt_iff_bfp_lt (hprev : prev ∈ ctx) (hc₁ : c₁ ∈ interpretatio
 theorem cot_optimal_of_bfp (hprev : prev ∈ ctx) (hc : c ∈ interpretations ctx s)
     (hf : Filtered feat ctx prev c)
     (hb : ∀ d' ∈ interpretations ctx s, Filtered feat ctx prev d' → d' ≠ c →
-      bfpTransition prev priorTopic d' < bfpTransition prev priorTopic c)
+      extendedTransition priorTopic prev d' < extendedTransition priorTopic prev c)
     (hd : d ∈ interpretations ctx s) (hdc : d ≠ c) :
     cotProfile feat ctx prev priorTopic c < cotProfile feat ctx prev priorTopic d := by
   have hs : sentence c = sentence d := hc.1.trans hd.1.symm
@@ -467,15 +456,16 @@ theorem cot_optimal_of_bfp (hprev : prev ∈ ctx) (hc : c ∈ interpretations ct
     · rw [ite_eq_left hp]
       refine ⟨Nat.zero_le _, fun h0 ↦ ?_⟩
       rw [proTop, Constraint.binary_apply] at h0
-      have htop : ∃ t ∈ cb prev d, d.Pronominalizes pronouns t := by
+      have htop : ∃ t ∈ cb prev d.cf, t ∈ d.pronominalized pronouns := by
         by_contra hn
         rw [ite_eq_left hn] at h0
         exact one_ne_zero h0
       obtain ⟨t, ht, htp⟩ := htop
       exact CbPronominalized.constraint fun t' ht' ↦ Option.mem_unique ht ht' ▸ htp
     · rw [ite_eq_right hp, proTop_eq_one (prev := prev) (c := d) (hs ▸ hp)]
-      refine ⟨le_rfl, fun _ ↦ pronominalizationConstraint_of_forall_not ?_⟩
-      rintro e ⟨r, hr, -, hrp⟩
+      refine ⟨le_rfl, fun _ ↦
+        pronominalizationConstraint_of_disjoint (Finset.disjoint_right.2 fun e he _ ↦ ?_)⟩
+      obtain ⟨r, hr, -, hrp⟩ := Utterance.mem_pronominalized.1 he
       exact hp (hs ▸ ⟨_, List.mem_map_of_mem hr, hrp⟩)
   by_cases htied : agree feat prev d = 0 ∧ disjoint d = 0 ∧ proTop prev d = proTop prev c ∧
       famDef ctx prev d = 0
@@ -520,26 +510,30 @@ theorem agree_disjoint_rule1_of_cot_optimal [Infinite E] (hc : c ∈ interpretat
     refine ho _ (hmem c.realizations.length) ?_
     rw [cotProfile_lt_iff]
     omega
-  refine ⟨ha, hj, fun ⟨e, he, r₀, hr₀, hre, hrp⟩ ↦ ?_⟩
+  refine ⟨ha, hj, fun ⟨e, hne⟩ ↦ ?_⟩
+  obtain ⟨he, hpe⟩ := Finset.mem_inter.1 hne
+  obtain ⟨r₀, hr₀, hre, hrp⟩ := Utterance.mem_pronominalized.1 hpe
   by_contra hnB
   obtain ⟨k, hk, rfl⟩ := List.mem_iff_getElem.1 hr₀
   have hed : e ∈ reassign c (keepOne c g k) :=
     ⟨_, mem_reassign.2 ⟨⟨k, hk⟩, rfl⟩, by simp [keepOne, hre]⟩
-  obtain ⟨t, ht⟩ : ∃ t, cb prev (reassign c (keepOne c g k)) = some t :=
-    Option.ne_none_iff_exists'.1 fun h ↦ cb_eq_none_iff.1 h e he hed
+  obtain ⟨t, ht⟩ : ∃ t, cb prev (reassign c (keepOne c g k)).cf = some t :=
+    Option.ne_none_iff_exists'.1 fun h ↦
+      Finset.disjoint_left.1 (cb_eq_none_iff.1 h) he ((Utterance.mem_cf _).2 hed)
   have hpd : proTop prev (reassign c (keepOne c g k)) = 0 := by
-    obtain ⟨r, hr, hrt⟩ := mem_of_cb ht
+    obtain ⟨r, hr, hrt⟩ := (Utterance.mem_cf _).1 (cb_mem_right ht)
     obtain ⟨i, rfl⟩ := mem_reassign.1 hr
     have hi : i.val = k := by
       by_contra hi
       have hrt' : g i = t := by simpa [keepOne, hi] using hrt
-      exact hgp i (hrt' ▸ prev.mem_cf.1 (cb_mem_cf ht))
-    have hpron : (reassign c (keepOne c g k)).Pronominalizes pronouns t := ⟨_, hr, hrt, by
+      exact hgp i (hrt' ▸ cb_mem_left ht)
+    have hpron : t ∈ (reassign c (keepOne c g k)).pronominalized pronouns :=
+      Utterance.mem_pronominalized.2 ⟨_, hr, hrt, by
       obtain rfl : i = ⟨k, hk⟩ := Fin.ext hi
       exact hrp⟩
     rw [proTop, Constraint.binary_apply, ite_eq_right (not_not.2 ⟨t, ht, hpron⟩)]
   have hpc : proTop prev c = 1 := by
-    have hn : ¬ ∃ t ∈ cb prev c, c.Pronominalizes pronouns t :=
+    have hn : ¬ ∃ t ∈ cb prev c.cf, t ∈ c.pronominalized pronouns :=
       fun ⟨t, ht, hp⟩ ↦ hnB fun t' ht' ↦ Option.mem_unique ht ht' ▸ hp
     rw [proTop, Constraint.binary_apply, ite_eq_left hn]
   have hda : agree feat prev (reassign c (keepOne c g k)) = 0 := agree_reassign hgp
@@ -565,7 +559,7 @@ theorem cot_iff_bfp [Infinite E] (hprev : prev ∈ ctx) (hc : c ∈ interpretati
     (famDef ctx prev c = 0 ∧ ∀ d ∈ interpretations ctx s, d ≠ c →
         cotProfile feat ctx prev priorTopic c < cotProfile feat ctx prev priorTopic d) ↔
       Filtered feat ctx prev c ∧ ∀ d ∈ interpretations ctx s, Filtered feat ctx prev d → d ≠ c →
-        bfpTransition prev priorTopic d < bfpTransition prev priorTopic c := by
+        extendedTransition priorTopic prev d < extendedTransition priorTopic prev c := by
   refine ⟨fun ⟨hf, ho⟩ ↦ ?_, fun ⟨hfc, hb⟩ ↦
     ⟨hfc.famDef_eq, fun _ hd hdc ↦ cot_optimal_of_bfp hprev hc hfc hb hd hdc⟩⟩
   have hfc : Filtered feat ctx prev c := Filtered.of_cot_optimal (priorTopic := priorTopic) hc hf
@@ -623,7 +617,7 @@ def c_retain : Interpretation :=
   ⟨[⟨.mary, .subject, .pronoun .Fem⟩, ⟨.jane, .other, .pronoun .Fem⟩]⟩
 
 /-- The prior topic, from (1a) to (1b): Jane. -/
-def priorTopic : Option Entity := cb a b
+def priorTopic : Option Entity := cb a b.cf
 
 end D1
 
@@ -634,8 +628,8 @@ theorem d1_filtered : Filtered Entity.gender [D1.a, D1.b] D1.b D1.c_continue ∧
 
 -- (1c), Table I
 theorem d1_transitions :
-    bfpTransition D1.b D1.priorTopic D1.c_continue = ExtendedTransition.continue ∧
-      bfpTransition D1.b D1.priorTopic D1.c_retain = ExtendedTransition.retain := by
+    extendedTransition D1.priorTopic D1.b D1.c_continue = ExtendedTransition.continue ∧
+      extendedTransition D1.priorTopic D1.b D1.c_retain = ExtendedTransition.retain := by
   decide
 
 theorem d1_lex_picks_continue :
@@ -699,7 +693,7 @@ def c_l_eq_j : Interpretation :=
     ⟨.present, .other, .indefinite⟩]⟩
 
 /-- The prior topic, from (12a) to (12b): Jane. -/
-def priorTopic : Option Entity := cb a b
+def priorTopic : Option Entity := cb a b.cf
 
 end D12
 
@@ -711,7 +705,7 @@ theorem d12_lex_picks_l_eq_i :
 
 -- (12c)
 theorem d12_transition_retain :
-    bfpTransition D12.b D12.priorTopic D12.c_l_eq_i = ExtendedTransition.retain := by decide
+    extendedTransition D12.priorTopic D12.b D12.c_l_eq_i = ExtendedTransition.retain := by decide
 
 -- (13)
 theorem d12_famDef : famDef [D12.a, D12.b] D12.b D12.c_l_eq_i = 1 ∧
@@ -734,7 +728,7 @@ def c_two_marys : Interpretation :=
   ⟨[⟨.jim, .subject, .pronoun .Masc⟩, ⟨.mary₂, .other, .name .mary⟩]⟩
 
 /-- The prior topic, from (2a) to (2b): Mary. -/
-def priorTopic : Option Entity := cb a b
+def priorTopic : Option Entity := cb a b.cf
 
 end D2
 

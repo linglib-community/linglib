@@ -1,13 +1,14 @@
 module
 
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Semantics.Reference.Pronoun
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Büring (2012): Pronouns
 
 This file formalizes the semantics of definite pronouns in Büring's handbook survey, as theorems
-about the project's pronoun denotation applied to the English Fragment's entries. A pronoun is
+about the project's pronoun denotation applied to the English language file's entries. A pronoun is
 indexed and denotes the value its index has under the assignment; bound, anaphoric and deictic uses
 share that one denotation, so a binder is an external operator manipulating the assignment rather
 than a second lexical entry. The φ-features are presuppositions on the resolved referent: *she*
@@ -51,8 +52,8 @@ theorem she_not_dom_of_masculine (h : g n ∈ Gendered.masculine) :
 
 /-- A first-person pronoun denotes nothing at a referent that does not include the agent. -/
 theorem not_dom_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ c.agent ≤ g n) :
-    ¬ (e.denote n c g ⟨⟩).Dom := by
-  simp [hp, h]
+    ¬ (e.denote n c g ⟨⟩).Dom := fun hd ↦
+  h ((Person.mem_dom_first c _).1 (Person.dom_subset_dom c _ _ (hp ▸ hd.1.1)))
 
 theorem i_not_dom_of_not_agent (h : ¬ c.agent ≤ g n) : ¬ (i.denote n c g ⟨⟩).Dom :=
   not_dom_of_not_agent i g n c (by decide) h
@@ -64,7 +65,9 @@ avoid a gender specification. -/
 theorem mem_of_unmarked_features (hp : e.referentialPerson = some .third)
     (hn : e.referentialNumber = some .plural) (hg : e.gender = none) :
     g n ∈ e.denote n c g ⟨⟩ := by
-  simp [hp, hn, hg]
+  have hc : e.referentialClusivity = none :=
+    Person.Category.sharedClusivity_eq_none_of_sharedPerson_eq_third hp
+  simp [hp, hc, hn, hg]
 
 theorem they_mem_regardless_of_gender : g n ∈ they.denote n c g ⟨⟩ :=
   mem_of_unmarked_features they g n c (by decide) (by decide) rfl

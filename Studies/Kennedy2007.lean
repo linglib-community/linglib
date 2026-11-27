@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Adjective.Basic
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 
 /-!
 # Kennedy (2007): Vagueness and Grammar

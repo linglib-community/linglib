@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Herce2023
-public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
 

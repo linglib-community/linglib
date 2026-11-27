@@ -1,7 +1,10 @@
 module
 
 public import Linglib.Discourse.QUD.Basic
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.GarassinoJacob2018
 public import Linglib.Data.Examples.Readers
@@ -42,7 +45,7 @@ responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 * The chapter endorses [matic-nikolaeva-2018]'s view that dislocation is no structural means of
   polarity focus but makes the reading available in context.
 * An utterance with a preceding turn, a statement or a polar question, is a
-  `Discourse.Response` to it (`Antecedent.response`), positive since it affirms; an inferred
+  `Response` to it (`Examples.Antecedent.response`), positive since it affirms; an inferred
   negation, an open question, a modal statement or no antecedent is no such turn.
 * The discourse trees are stated for finitely many worlds, which is what the substrate's strategy
   completeness needs to pass from lattice entailment to alternative entailment.
@@ -63,7 +66,9 @@ responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 
 namespace GarassinoJacob2018
 
-open Question Discourse
+open Examples (Means Antecedent Dislocated Relation)
+
+open Question Inquisitive Inquisitive.Proposition
 
 variable {W F : Type*}
 
@@ -78,18 +83,18 @@ theorem orbit_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
 /-- The tree of the sitting-back passage pursues a *wh*-question over candidates through the
 polar question for each candidate. -/
 def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
-  .node (fromSetoid (partition (Set.range P))) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
+  .node (fromSetoid (Setoid.ofProps (Set.range P))) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
 
 theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
     (P : F → Set W) : (agentStrategy agents P).IsComplete := by
   refine .node (fun _ ↦ ?_) (fun c hc ↦ ?_)
   · have hmem : ∀ q, q ∈ ((agents.map fun f ↦ RoseTree.leaf (ofSet (P f)).query).map
-        RoseTree.value : Multiset (Question W)) ↔ ∃ f, (ofSet (P f)).query = q := by
+        RoseTree.value : Multiset (Proposition (Set W))) ↔ ∃ f, (ofSet (P f)).query = q := by
       intro q
       simp only [Multiset.mem_coe, List.mem_map, List.map_map, Function.comp_def, RoseTree.leaf,
         RoseTree.value_node]
       exact ⟨fun ⟨f, _, h⟩ ↦ ⟨f, h⟩, fun ⟨f, h⟩ ↦ ⟨f, hcov f, h⟩⟩
-    rw [fromSetoid_partition, iInf_range]
+    rw [fromSetoid_ofProps, iInf_range]
     simp_rw [← query_ofSet]
     refine (le_antisymm ?_ ?_).le
     · exact le_iInf fun f ↦ Multiset.inf_le ((hmem _).mpr ⟨f, rfl⟩)
@@ -109,31 +114,9 @@ theorem scalarStrategy_isComplete (p q : Set W) : (scalarStrategy p q).IsComplet
 
 /-! ### The chapter's examples -/
 
-/-- The lexical and syntactic means of polarity focus the chapter surveys. -/
-inductive Means
-  | emphaticDo | verumAccent | embedding | juxtaposed | ellipticEmbedding | fronting | faireCleft
-  | leftDislocation | rightDislocation | siChe | siQue | siOnly | siParticle
-  deriving DecidableEq, Repr
-
-/-- What the polarity-focus utterance reacts to. -/
-inductive Antecedent
-  | explicitNegation | explicitQuestion | inferredNegation | openQuestion | modal | positive
-  | absent
-  deriving DecidableEq, Repr
-
-/-- The dislocated constituent, if any. -/
-inductive Dislocated
-  | absent | subject | object | adverbial | both
-  deriving DecidableEq, Repr
-
-/-- Whether the utterance's situation is the antecedent's or an analogous one. -/
-inductive Relation
-  | identity | analogy | unstated
-  deriving DecidableEq, Repr
-
 /-- When the antecedent is a preceding turn, a polarity-focus utterance responds to it with an
 affirmation, after a negative statement, a positive statement or a polar question. -/
-def Antecedent.response : Antecedent → Option Discourse.Response
+def Examples.Antecedent.response : Antecedent → Option Response
   | .explicitNegation => some ⟨.assertion, .negative, .positive⟩
   | .positive => some ⟨.assertion, .positive, .positive⟩
   | .explicitQuestion => some ⟨.polarQuestion, .positive, .positive⟩
@@ -141,7 +124,7 @@ def Antecedent.response : Antecedent → Option Discourse.Response
 
 /-- The antecedent is a previous denial of the proposition, explicit or inferable: polarity focus
 after it presupposes the negation rather than an open question or a given affirmation. -/
-def Antecedent.Denies : Antecedent → Prop
+def Examples.Antecedent.Denies : Antecedent → Prop
   | .explicitNegation | .inferredNegation => True
   | _ => False
 
@@ -157,18 +140,10 @@ structure Row where
   deriving DecidableEq, Repr
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let means ← ex.parse? "strategy" [("emphaticDo", Means.emphaticDo),
-    ("verumAccent", .verumAccent), ("embedding", .embedding), ("juxtaposed", .juxtaposed),
-    ("ellipticEmbedding", .ellipticEmbedding), ("fronting", .fronting), ("faireCleft", .faireCleft),
-    ("leftDislocation", .leftDislocation), ("rightDislocation", .rightDislocation),
-    ("siChe", .siChe), ("siQue", .siQue), ("siOnly", .siOnly), ("siParticle", .siParticle)]
-  let antecedent ← ex.parse? "antecedent" [("explicitNegation", Antecedent.explicitNegation),
-    ("explicitQuestion", .explicitQuestion), ("inferredNegation", .inferredNegation),
-    ("openQuestion", .openQuestion), ("modal", .modal), ("positive", .positive), ("none", .absent)]
-  let dislocated ← ex.parse? "dislocated" [("none", Dislocated.absent), ("subject", .subject),
-    ("object", .object), ("adverbial", .adverbial), ("both", .both)]
-  let relation ← ex.parse? "relation" [("identity", Relation.identity), ("analogy", .analogy),
-    ("unstated", .unstated)]
+  let means ← (Examples.strategy ex)
+  let antecedent ← (Examples.antecedent ex)
+  let dislocated ← (Examples.dislocated ex)
+  let relation ← (Examples.relation ex)
   let subquestion ← ex.parse? "subquestion" [("yes", true), ("no", false)]
   pure ⟨means, antecedent, dislocated, relation, subquestion⟩
 

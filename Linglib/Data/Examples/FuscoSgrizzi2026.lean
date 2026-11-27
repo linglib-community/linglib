@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `FuscoSgrizzi2026` — typed example data
@@ -196,5 +198,34 @@ def ex18 : Datum :=
     paperFeatures := [("size", "vP"), ("diagnostic", "independentTime"), ("grammatical", "no")] }
 
 def all : List Datum := [ex4a, ex4b, ex4a_control, ex11a, ex11b, ex12, ex13, ex14, ex15, ex16, ex17, ex18]
+
+/-- A property of an infinitival complement the paper tests. -/
+inductive Diagnostic where
+  /-- belief: belief -/
+  | belief
+  /-- intention: intention -/
+  | intention
+  /-- truthAssessable: truthAssessable -/
+  | truthAssessable
+  /-- subjectControl: subjectControl -/
+  | subjectControl
+  /-- passive: passive -/
+  | passive
+  /-- aspectual: aspectual -/
+  | aspectual
+  /-- negation: negation -/
+  | negation
+  /-- independentTime: independentTime -/
+  | independentTime
+  /-- cliticClimbing: cliticClimbing -/
+  | cliticClimbing
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("belief", .belief), ("intention", .intention), ("truthAssessable", .truthAssessable),
+    ("subjectControl", .subjectControl), ("passive", .passive), ("aspectual", .aspectual),
+    ("negation", .negation), ("independentTime", .independentTime),
+    ("cliticClimbing", .cliticClimbing)]
 
 end FuscoSgrizzi2026.Examples

@@ -45,7 +45,7 @@ def RoleList.args (r : RoleList) : List EntailmentProfile :=
 
 /-! ### Named templates
 
-The consensus profiles of verb classes, which studies and fragments reference. -/
+The consensus profiles of verb classes, which studies and language files reference. -/
 
 /-- The activity template's subject, with volition, sentience, movement and independent existence.
 Transitive activities like *hit* add causation at the class level via root-contributed objects. -/

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.Commitment.Proposition
 public import Linglib.Discourse.Commitment.Sincerity
 

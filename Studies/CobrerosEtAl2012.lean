@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Logic.Modal.Basic
-public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Logic.Modal.Systems
+public import Linglib.Logic.Propositional.Trivalent
 
 /-!
 # Cobreros, Égré, Ripley and van Rooij 2012: Tolerant, classical, strict
@@ -54,9 +54,12 @@ universe u
 namespace CobrerosEtAl2012
 
 open ModalLogic Consequence
-open scoped SetRel Trivalent.Formula
+open scoped SetRel Propositional.Formula
 
 /-! ### T-models -/
+
+/-- `R` is a *KTB frame* when it is reflexive and symmetric, as an indifference relation is. -/
+class IsKTBFrame {D : Type*} (R : SetRel D D) : Prop extends R.IsRefl, R.IsSymm
 
 /-- A T-model (Definition 4) is a classical model of the constants `C` and predicates `Pred` over
 the domain `D`, with for each predicate a reflexive and symmetric, possibly non-transitive,
@@ -117,11 +120,11 @@ inductive Atom (Pred C : Type*)
   | sim : Pred → C → C → Atom Pred C
 
 /-- The propositional fragment of the language (Definition 2). -/
-abbrev Formula (Pred C : Type*) := Trivalent.Formula (Atom Pred C)
+abbrev Formula (Pred C : Type*) := Propositional.Formula (Atom Pred C)
 
 /-- The instance `Pa ∧ a I_P b → Pb` of the tolerance principle (1). -/
 def tolerance (P : Pred) (a b : C) : Formula Pred C :=
-  Trivalent.Formula.cond (.conj (.atom (.pred P a)) (.atom (.sim P a b))) (.atom (.pred P b))
+  Propositional.Formula.cond (.conj (.atom (.pred P a)) (.atom (.sim P a b))) (.atom (.pred P b))
 
 namespace TModel
 
@@ -264,7 +267,7 @@ theorem borderline_iff_not_realize_strict (P : Pred) (a : C) :
 
 -- §2.4
 theorem Borderline.not_realize_strict_disj {P : Pred} {a : C} (h : M.Borderline P (M.const a)) :
-    ¬ M.Realize .strict ((Trivalent.Formula.atom (.pred P a)).disj (.neg (.atom (.pred P a)))) := by
+    ¬ M.Realize .strict ((Propositional.Formula.atom (.pred P a)).disj (.neg (.atom (.pred P a)))) := by
   rw [realize_disj, realize_neg]
   exact fun hd ↦ hd.elim h.2 (fun hn ↦ hn h.1)
 
@@ -379,7 +382,7 @@ theorem tolerance_valid (P : Pred) (a b : C) : Valid .tolerant (tolerance P a b)
 
 -- Fact 3
 theorem tolerance_two_step_valid (P : Pred) (a b c : C) :
-    Valid .tolerant (Trivalent.Formula.cond
+    Valid .tolerant (Propositional.Formula.cond
       (.conj (.conj (.atom (.pred P a)) (.atom (.sim P a b))) (.atom (.sim P b c)))
       (.atom (.pred P c)) : Formula Pred C) := by
   rintro ⟨D, M⟩
@@ -530,7 +533,7 @@ theorem not_consequence_tolerant_strict (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
 open Classical in
 /-- In the MV-model of Lemma 4, a predication is true when strictly true, false when not
 tolerantly true and undefined when borderline, and similarity statements are two-valued. -/
-noncomputable def toMV (M : TModel Pred C D) : Trivalent.Model (Atom Pred C)
+noncomputable def toMV (M : TModel Pred C D) : Propositional.Model (Atom Pred C)
   | .pred P a =>
     if □[M.sim P] (M.interp P) (M.const a) then .true
     else if ◇[M.sim P] (M.interp P) (M.const a) then .undefined else .false
@@ -545,7 +548,7 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
     cases α with
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
-        Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
+        Propositional.Formula.realize_atom, Trivalent.Designation.threshold_lp,
         Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false,
         Trivalent.true_le_iff,
         toMV]
@@ -554,29 +557,29 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
       · exact ⟨iff_of_true ht (by decide), iff_of_false hs (by decide)⟩
       · exact ⟨iff_of_false ht (fun h ↦ h rfl), iff_of_false hs (by decide)⟩
     | sim P a b =>
-      simp only [TModel.realize_sim, Trivalent.Formula.realize_atom,
+      simp only [TModel.realize_sim, Propositional.Formula.realize_atom,
         Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
         Trivalent.undefined_le_iff_ne_false, Trivalent.true_le_iff, toMV]
       split_ifs with h <;> simp [h]
   | neg ψ ih =>
-    simp only [TModel.realize_neg, Trivalent.Formula.realize_neg, Mode.dual_tolerant,
+    simp only [TModel.realize_neg, Propositional.Formula.realize_neg, Mode.dual_tolerant,
       Mode.dual_strict, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
     exact ⟨not_congr ih.2, not_congr ih.1⟩
   | conj ψ χ ihψ ihχ =>
-    simp only [TModel.realize_conj, Trivalent.Formula.realize_conj]
+    simp only [TModel.realize_conj, Propositional.Formula.realize_conj]
     exact ⟨and_congr ihψ.1 ihχ.1, and_congr ihψ.2 ihχ.2⟩
   | disj ψ χ ihψ ihχ =>
-    simp only [TModel.realize_disj, Trivalent.Formula.realize_disj]
+    simp only [TModel.realize_disj, Propositional.Formula.realize_disj]
     exact ⟨or_congr ihψ.1 ihχ.1, or_congr ihψ.2 ihχ.2⟩
   | cond ψ χ ihψ ihχ =>
-    simp only [TModel.realize_cond, Trivalent.Formula.realize_cond, Mode.dual_tolerant,
+    simp only [TModel.realize_cond, Propositional.Formula.realize_cond, Mode.dual_tolerant,
       Mode.dual_strict, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
     exact ⟨imp_congr ihψ.2 ihχ.1, imp_congr ihψ.1 ihχ.2⟩
 
 /-- The T-model of Lemma 5 lives on the doubled domain, where `(a, false)` is `a` and
 `(a, true)` its double `a'`, indifferent from each other and from nothing else; `a` is `P` when
 `v` makes `Pa` true and `a'` when `v` makes it non-false. -/
-def ofMV (v : Trivalent.Model (Atom Pred C)) : TModel Pred C (C × Bool) where
+def ofMV (v : Propositional.Model (Atom Pred C)) : TModel Pred C (C × Bool) where
   const a := (a, false)
   interp P
     | (a, false) => v (.pred P a) = .true
@@ -585,7 +588,7 @@ def ofMV (v : Trivalent.Model (Atom Pred C)) : TModel Pred C (C × Bool) where
   sim_ktb _ := { refl := fun _ ↦ rfl, symm := fun _ _ ↦ Eq.symm }
 
 -- Lemma 5
-theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ) :
+theorem ofMV_realize (v : Propositional.Model (Atom Pred C)) (hφ : IsRestricted φ) :
     ((ofMV v).Realize .tolerant φ ↔ v ⊨[.strongKleene, .lp] φ) ∧
       ((ofMV v).Realize .strict φ ↔ v ⊨[.strongKleene, .k3] φ) := by
   induction φ with
@@ -593,7 +596,7 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
     cases α with
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
-        Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
+        Propositional.Formula.realize_atom, Trivalent.Designation.threshold_lp,
         Trivalent.Designation.threshold_k3, Trivalent.undefined_le_iff_ne_false,
         Trivalent.true_le_iff,
         ofMV, Box, Diamond]
@@ -606,17 +609,17 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
         cases i <;> simp [h]
     | sim P a b => exact hφ.elim
   | neg ψ ih =>
-    simp only [TModel.realize_neg, Trivalent.Formula.realize_neg, Mode.dual_tolerant,
+    simp only [TModel.realize_neg, Propositional.Formula.realize_neg, Mode.dual_tolerant,
       Mode.dual_strict, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
     exact ⟨not_congr (ih hφ).2, not_congr (ih hφ).1⟩
   | conj ψ χ ihψ ihχ =>
-    simp only [TModel.realize_conj, Trivalent.Formula.realize_conj]
+    simp only [TModel.realize_conj, Propositional.Formula.realize_conj]
     exact ⟨and_congr (ihψ hφ.1).1 (ihχ hφ.2).1, and_congr (ihψ hφ.1).2 (ihχ hφ.2).2⟩
   | disj ψ χ ihψ ihχ =>
-    simp only [TModel.realize_disj, Trivalent.Formula.realize_disj]
+    simp only [TModel.realize_disj, Propositional.Formula.realize_disj]
     exact ⟨or_congr (ihψ hφ.1).1 (ihχ hφ.2).1, or_congr (ihψ hφ.1).2 (ihχ hφ.2).2⟩
   | cond ψ χ ihψ ihχ =>
-    simp only [TModel.realize_cond, Trivalent.Formula.realize_cond, Mode.dual_tolerant,
+    simp only [TModel.realize_cond, Propositional.Formula.realize_cond, Mode.dual_tolerant,
       Mode.dual_strict, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
     exact ⟨imp_congr (ihψ hφ.1).2 (ihχ hφ.2).1, imp_congr (ihψ hφ.1).1 (ihχ hφ.2).2⟩
 
@@ -624,7 +627,7 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
 correspondences of Lemmas 4 and 5 (Theorem 3). -/
 theorem consequence_tolerant_iff_lp (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
     (hΔ : ∀ δ ∈ Δ, IsRestricted δ) :
-    Consequence .tolerant .tolerant Γ Δ ↔ Trivalent.Consequence .strongKleene .lp .lp Γ Δ :=
+    Consequence .tolerant .tolerant Γ Δ ↔ Propositional.Consequence .strongKleene .lp .lp Γ Δ :=
   ⟨fun h ↦ h.comap (fun v ↦ ⟨_, ofMV v⟩) (fun v γ hγ ↦ (ofMV_realize v (hΓ γ hγ)).1.2)
       fun v δ hδ ↦ (ofMV_realize v (hΔ δ hδ)).1.1,
     fun h ↦ h.comap (fun M ↦ toMV M.2) (fun M γ _ ↦ (M.2.realize_toMV γ).1.1)
@@ -633,7 +636,7 @@ theorem consequence_tolerant_iff_lp (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
 -- Theorem 3
 theorem consequence_strict_iff_k3 (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
     (hΔ : ∀ δ ∈ Δ, IsRestricted δ) :
-    Consequence .strict .strict Γ Δ ↔ Trivalent.Consequence .strongKleene .k3 .k3 Γ Δ :=
+    Consequence .strict .strict Γ Δ ↔ Propositional.Consequence .strongKleene .k3 .k3 Γ Δ :=
   ⟨fun h ↦ h.comap (fun v ↦ ⟨_, ofMV v⟩) (fun v γ hγ ↦ (ofMV_realize v (hΓ γ hγ)).2.2)
       fun v δ hδ ↦ (ofMV_realize v (hΔ δ hδ)).2.1,
     fun h ↦ h.comap (fun M ↦ toMV M.2) (fun M γ _ ↦ (M.2.realize_toMV γ).2.1)

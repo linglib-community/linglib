@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `AlonsoOvalleRouillard2023` — typed example data
@@ -205,5 +207,23 @@ def ex_78 : Datum :=
     paperFeatures := [("type", "PBI")] }
 
 def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_22a, ex_27a, ex_28a, ex_53a, ex_58a, ex_59a, ex_66a, ex_78]
+
+/-- An interrogative phrase, by the paper's taxonomy of its rows. -/
+inductive Phrase where
+  /-- SCI: A singular complex phrase, *which student* -/
+  | sci
+  /-- PCI: A plural complex phrase, *which students* -/
+  | pci
+  /-- BI: an English bare phrase, *who* -/
+  | bi
+  /-- SBI: A singular bare phrase, *quién* -/
+  | sbi
+  /-- PBI: A plural bare phrase, *quiénes* -/
+  | pbi
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `type`. -/
+def phrase (e : Datum) : Option Phrase :=
+  e.parse? "type" [("SCI", .sci), ("PCI", .pci), ("BI", .bi), ("SBI", .sbi), ("PBI", .pbi)]
 
 end AlonsoOvalleRouillard2023.Examples

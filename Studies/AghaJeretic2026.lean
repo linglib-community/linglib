@@ -62,7 +62,11 @@ negation and the determiner–modal generalization for infinitival relatives
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace AghaJeretic2026
+
+open Examples (Environment)
 
 open Modality Modality.Directive Exhaustification
 open Ferreira2023 (Conjunct Pattern)
@@ -120,10 +124,10 @@ theorem crosslinguistic_tests :
 domain has at most one world ([horn-2001], §2.5). -/
 theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
     (∀ p : Set W, p ∉ weakNecessity f g g' w → pᶜ ∈ weakNecessity f g g' w) ↔
-      ((premisePreorder (g' w)).minimals (bestWorlds f g w)).Subsingleton := by
+      ((≤[g' w]).minimals (f.bestWorlds g w)).Subsingleton := by
   simp only [mem_weakNecessity]
   have key := ModalLogic.box_not_of_not_box_at_iff
-    (R := .ofSuccessors fun _ ↦ (premisePreorder (g' w)).minimals (bestWorlds f g w)) (w := w)
+    (R := .cgraph fun _ ↦ (≤[g' w]).minimals (f.bestWorlds g w)) (w := w)
   exact ⟨fun h ↦ key.1 fun q ↦ h {v | q v}, fun h r ↦ key.2 h (· ∈ r)⟩
 
 /-! ### Scope under negation ((18)–(20)) -/
@@ -149,16 +153,6 @@ theorem haveTo_always_narrow :
   decide
 
 /-! ### Polarity-sensitive variable force (§3) -/
-
-/-- The environments the typology distinguishes. -/
-inductive Environment
-  /-- An unembedded clause. -/
-  | unembedded
-  /-- Under a clausemate negation. -/
-  | clausemateNegation
-  /-- Another downward-entailing context. -/
-  | otherDE
-  deriving DecidableEq, Repr
 
 /-- What a possibility modal projects ([jeretic-2021a], [jeretic-2021b], [newkirk-2022a]). -/
 structure Projection where
@@ -215,11 +209,6 @@ def anga : Projection := ⟨true, true, false, true⟩
 def projection? (e : Datum) : Option Projection :=
   e.parse? "modal" [("o'qa", oqa), ("ba'iji", baiji), ("får", får), ("anga", anga)]
 
-/-- The environment a row concerns. -/
-def environment? (e : Datum) : Option Environment :=
-  e.parse? "environment" [("unembedded", Environment.unembedded),
-    ("clausemate negation", .clausemateNegation), ("other DE", .otherDE)]
-
 /-- The reading of a row that a force is. -/
 def forceReading : ModalForce → Examples.Reading
   | .possibility => .possibility
@@ -229,14 +218,14 @@ def forceReading : ModalForce → Examples.Reading
 /-- The projections license exactly the readings the chapter's table records. -/
 theorem projection_matches_table :
     ∀ e ∈ Examples.all, e.feature? "table" = some "true" →
-      ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
+      ∀ π ∈ projection? e, ∀ env ∈ Examples.environment e, ∀ r,
         (Examples.reading e (forceReading r) = some .acceptable ↔ Available π env r) := by
   decide
 
 /-- Every reading the chapter's examples record is licensed, and every reading they exclude is
 not. -/
 theorem readings_licensed :
-    ∀ e ∈ Examples.all, ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
+    ∀ e ∈ Examples.all, ∀ π ∈ projection? e, ∀ env ∈ Examples.environment e, ∀ r,
       (Examples.reading e (forceReading r) = some .acceptable → Available π env r) ∧
         (Examples.reading e (forceReading r) = some .unacceptable → ¬ Available π env r) := by
   decide

@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `NapoliNespor1976` — typed example data
@@ -102,9 +104,10 @@ def ex9a : Datum :=
     glossedTokens := []
     context := "Dario: Non ho capito per niente quest'ultima lezione, comunque non credo che valga la pena di chiedere aiuto a Maria. 'I didn't understand this last lesson at all, but I don't believe it's worth the trouble to ask M for help.'"
     judgment := .acceptable
+    alsoJudged := [.marginal]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "inferred"), ("alsoJudged", "marginal")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "indicative"), ("complementizer", "quanto"), ("evidence", "inferred")] }
 
 def ex9b : Datum :=
   { id := "napolinespor1976_ex9b"
@@ -816,7 +819,7 @@ def ex60b : Datum :=
     primaryText := "Maria è più intelligente di quanto tu non credi."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
@@ -843,9 +846,10 @@ def ex60d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    alsoJudged := [.marginal]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("alsoJudged", "marginal")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
 def ex61a : Datum :=
   { id := "napolinespor1976_ex61a"
@@ -868,7 +872,7 @@ def ex61b : Datum :=
     primaryText := "Maria è più intelligente di quanto non è Carlo."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
@@ -895,9 +899,10 @@ def ex61d : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    alsoJudged := [.marginal]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("alsoJudged", "marginal")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto")] }
 
 def ex62 : Datum :=
   { id := "napolinespor1976_ex62"
@@ -921,9 +926,10 @@ def ex63 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
+    alsoJudged := [.questionable]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "pur"), ("alsoJudged", "questionable")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "thirdParty"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "pur")] }
 
 def ex64 : Datum :=
   { id := "napolinespor1976_ex64"
@@ -934,9 +940,10 @@ def ex64 : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
+    alsoJudged := [.questionable]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "neanche"), ("alsoJudged", "questionable")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "neanche")] }
 
 def ex65a : Datum :=
   { id := "napolinespor1976_ex65a"
@@ -947,9 +954,10 @@ def ex65a : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    alsoJudged := [.marginal]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "che"), ("alsoJudged", "marginal")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "che")] }
 
 def ex65b : Datum :=
   { id := "napolinespor1976_ex65b"
@@ -960,9 +968,10 @@ def ex65b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
+    alsoJudged := [.marginal]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "che"), ("alsoJudged", "marginal")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "none"), ("mood", "subjunctive"), ("complementizer", "che")] }
 
 def ex66a : Datum :=
   { id := "napolinespor1976_ex66a"
@@ -972,7 +981,7 @@ def ex66a : Datum :=
     primaryText := "Maria è più intelligente che non è Carlo."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "che")] }
@@ -985,7 +994,7 @@ def ex66b : Datum :=
     primaryText := "Maria è più intelligente che tu non credi."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "che")] }
@@ -1050,7 +1059,7 @@ def ex68a : Datum :=
     primaryText := "Maria è più intelligente di quanto non è suo fratello."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
@@ -1064,9 +1073,10 @@ def ex68b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
+    alsoJudged := [.questionable]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto"), ("alsoJudged", "questionable")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "clausal"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
 def ex69a : Datum :=
   { id := "napolinespor1976_ex69a"
@@ -1076,7 +1086,7 @@ def ex69a : Datum :=
     primaryText := "Maria è più intelligente di quanto tu non credi."
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
@@ -1090,9 +1100,10 @@ def ex69b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .marginal
+    alsoJudged := [.questionable]
     contrasts := []
     readings := []
-    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "formerAddressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto"), ("alsoJudged", "questionable")] }
+    paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "formerAddressee"), ("negation", "non2"), ("mood", "indicative"), ("complementizer", "quanto")] }
 
 def ex72a : Datum :=
   { id := "napolinespor1976_ex72a"
@@ -1342,5 +1353,58 @@ def exfn13i : Datum :=
     paperFeatures := [("force", "declarative"), ("matrix", "positive"), ("construction", "piu"), ("standard", "belief"), ("holder", "addressee"), ("negation", "non2"), ("mood", "subjunctive"), ("complementizer", "quanto"), ("element", "affatto")] }
 
 def all : List Datum := [ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex10a, ex10b, ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex15c, ex16, ex17, ex18a, ex18b, ex18c, ex19, ex20, ex21a, ex21b, ex21c, ex22a, ex22b, ex23a, ex23b, ex24, ex25, ex26a, ex26b, ex27a, ex27b, ex28a, ex28b, ex30, ex31, ex32a, ex32b, ex33a, ex33b, ex34, ex38a, ex38b, ex39a, ex39b, ex45a, ex45b, ex48a, ex48b, ex52a, ex52b, ex60a, ex60b, ex60c, ex60d, ex61a, ex61b, ex61c, ex61d, ex62, ex63, ex64, ex65a, ex65b, ex66a, ex66b, ex67a_non, ex67a, ex67b_non, ex67b, ex68a, ex68b, ex69a, ex69b, ex72a, ex72b, ex73a, ex73b, ex75a, ex75b, ex79a, ex79b, ex80b, ex81, ex82a, ex82b, ex82c, ex89a, ex89b, ex91a, ex91b, ex92, exfn13i]
+
+/-- Whose belief the comparison bears on. -/
+inductive Holder where
+  /-- addressee: the listener, now -/
+  | addressee
+  /-- formerAddressee: the listener at an earlier time, *di quanto tu credevi* (13) -/
+  | formerAddressee
+  /-- thirdParty: someone else, *di quanto lui crede* (14) -/
+  | thirdParty
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `holder`. -/
+def holder (e : Datum) : Option Holder :=
+  e.parse? "holder" [("addressee", .addressee), ("formerAddressee", .formerAddressee),
+    ("thirdParty", .thirdParty)]
+
+/-- The complementizer of the embedded clause. -/
+inductive Complementizer where
+  /-- quanto: *(di) quanto*, the comparative quantifier in complementizer position -/
+  | quanto
+  /-- che: che -/
+  | che
+  /-- se: *se* 'if', of an indirect question -/
+  | se
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `complementizer`. -/
+def complementizer (e : Datum) : Option Complementizer :=
+  e.parse? "complementizer" [("quanto", .quanto), ("che", .che), ("se", .se)]
+
+/-- The standard of a comparison is a clause, *di quanto è Carlo* (4), or a belief, *di quanto tu credi* (5). -/
+inductive Standard where
+  /-- clausal: clausal -/
+  | clausal
+  /-- belief: belief -/
+  | belief
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `standard`. -/
+def standard (e : Datum) : Option Standard :=
+  e.parse? "standard" [("clausal", .clausal), ("belief", .belief)]
+
+/-- The predicate of a comparative clause, when it is not deleted. -/
+inductive Predicate where
+  /-- adjective: A predicate adjective, repeated (75) or another one (82) -/
+  | adjective
+  /-- lo: the clitic *lo* for the predicate adjective (79) -/
+  | lo
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `predicate`. -/
+def predicate (e : Datum) : Option Predicate :=
+  e.parse? "predicate" [("adjective", .adjective), ("lo", .lo)]
 
 end NapoliNespor1976.Examples

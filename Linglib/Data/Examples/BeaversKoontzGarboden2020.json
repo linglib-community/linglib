@@ -1,237 +1,343 @@
-[
-  {
-    "id": "bkg2020_25a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25a)"},
-    "language": "stan1293",
-    "primaryText": "Mary flattened the rug again, and it had been flat before.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {"name": "restitutive: again scopes over the root state", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["diagnostic", "sublexical again"],
-      ["attachment", "root"]
-    ],
-    "comment": "Lowest of the three attachment sites in (27).",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_25b",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25b)"},
-    "language": "stan1293",
-    "primaryText": "Mary flattened the rug again, and it had flattened before.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {"name": "repetitive over the change: again scopes over v_become", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["diagnostic", "sublexical again"],
-      ["attachment", "v_become"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_25c",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25c)"},
-    "language": "stan1293",
-    "primaryText": "Mary flattened the rug again, and Mary had flattened it before.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {"name": "repetitive over the causation: again scopes over v_cause", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["diagnostic", "sublexical again"],
-      ["attachment", "v_cause"]
-    ],
-    "comment": "(25c) entails (25b) entails (25a) — the reading hierarchy.",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch2_46a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (46a)"},
-    "language": "stan1293",
-    "primaryText": "John sharpened the knife again.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "John buys a knife forged already sharp, uses it until it becomes blunt, and sharpens it with a whetting stone.",
-    "judgment": "acceptable",
-    "readings": [
-      {"name": "restitutive: could be just one sharpening", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["root class", "property concept"],
-      ["diagnostic", "restitutive again"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch2_47a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (47a)"},
-    "language": "stan1293",
-    "primaryText": "Sandy returned the shirt again.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "A boutique store makes their shirts in the back. Sandy buys one, decides she does not want it, and exchanges it.",
-    "judgment": "unacceptable",
-    "readings": [
-      {"name": "repetitive: necessarily two returnings", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["root class", "result"],
-      ["diagnostic", "restitutive again"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch2_47b",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (47b)"},
-    "language": "stan1293",
-    "primaryText": "Leah thawed the meat again.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Leah kills a rabbit, butchers it, freezes the fresh meat for three days, then puts it out to thaw.",
-    "judgment": "unacceptable",
-    "readings": [
-      {"name": "repetitive: necessarily two defrostings", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["root class", "result"],
-      ["diagnostic", "restitutive again"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch2_48",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (48)"},
-    "language": "stan1293",
-    "primaryText": "John fried the fruit again.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "John finds a fruit that naturally has brown, fatty edges, trims off the edges, refrigerates it, and later fries it.",
-    "judgment": "unacceptable",
-    "readings": [
-      {"name": "repetitive: necessarily two fryings", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["root class", "result"],
-      ["diagnostic", "restitutive again"]
-    ],
-    "comment": "Even granting a prototypical fried state, no restitutive reading.",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch3_10a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 3 (10a)"},
-    "language": "stan1293",
-    "primaryText": "Mary gave John a ring, but he never got it.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["root class", "true possession"],
-      ["diagnostic", "result denial"]
-    ],
-    "comment": "Possession is non-cancelable with giving verbs (give, hand, pass).",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch3_11a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 3 (11a)"},
-    "language": "stan1293",
-    "primaryText": "Mary sent John a letter, but it got lost in the mail and he never got it.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["root class", "release"],
-      ["diagnostic", "result denial"]
-    ],
-    "comment": "Sending verbs cancel the possession inference: prospective rather than actual having.",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch3_48a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 3 (48a)"},
-    "language": "stan1293",
-    "primaryText": "Mary handed John the book, but it never came to be on his person.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["root class", "transfer of possession by motion"],
-      ["diagnostic", "result denial"]
-    ],
-    "comment": "The hand root entails change along a possession-by-motion scale in both templates.",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch4_25a",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 4 (25a)"},
-    "language": "stan1293",
-    "primaryText": "Jane just drowned Joe, but nothing is different about him.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["verb class", "manner of killing"],
-      ["diagnostic", "result denial"]
-    ],
-    "comment": "Manner-of-killing verbs pattern with result verbs: the result is entailed.",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch4_26c",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 4 (26c)"},
-    "language": "stan1293",
-    "primaryText": "All last night, Shane drowned.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "readings": [],
-    "paperFeatures": [
-      ["verb class", "manner of killing"],
-      ["diagnostic", "object deletion"]
-    ],
-    "comment": "On the transitive-killing reading: result verbs disallow object deletion.",
-    "verified": "page-image"
-  },
-  {
-    "id": "bkg2020_ch4_32b",
-    "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 4 (32b)"},
-    "language": "stan1293",
-    "primaryText": "The governor drowned the prisoner, but didn't move a muscle — rather, during the execution she just sat there, tacitly refusing to order a halt!",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "readings": [],
-    "paperFeatures": [
-      ["verb class", "manner of killing"],
-      ["diagnostic", "action denial"]
-    ],
-    "comment": "Actor-oriented manner is entailed alongside the result: manner+result in one root.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "root class",
+      "lean": "rootClass",
+      "type": "RootClass",
+      "doc": "The classes of root the book distinguishes.",
+      "levels": [
+        {
+          "name": "propertyConcept",
+          "label": "property concept",
+          "doc": "a root that describes a state and entails no change"
+        },
+        {
+          "name": "result",
+          "label": "result",
+          "doc": "a root whose state arises from a change"
+        },
+        {
+          "name": "truePossession",
+          "label": "true possession",
+          "doc": "a ditransitive root that entails caused possession, as of *give*"
+        },
+        {
+          "name": "transferByMotion",
+          "label": "transfer of possession by motion",
+          "doc": "a ditransitive root that entails caused possession reached by motion, as of *hand*"
+        },
+        {
+          "name": "release",
+          "label": "release",
+          "doc": "a ditransitive root that entails that the theme leaves the causer, as of *send*"
+        }
+      ]
+    },
+    {
+      "key": "verb class",
+      "lean": "verbClass",
+      "type": "VerbClass",
+      "doc": "The verb classes of chapter 4.",
+      "levels": [
+        {
+          "name": "mannerOfKilling",
+          "label": "manner of killing",
+          "doc": "a verb of killing that names the manner, as *drown*"
+        }
+      ]
+    },
+    {
+      "key": "diagnostic",
+      "lean": "diagnostic",
+      "type": "Diagnostic",
+      "doc": "The diagnostics the examples apply.",
+      "levels": [
+        {
+          "name": "sublexicalAgain",
+          "label": "sublexical again",
+          "doc": "*again* attached within the causative structure"
+        },
+        {
+          "name": "restitutiveAgain",
+          "label": "restitutive again",
+          "doc": "*again* with a reading on which only the state held before"
+        },
+        {
+          "name": "resultDenial",
+          "label": "result denial",
+          "doc": "a continuation that denies the result"
+        },
+        {
+          "name": "objectDeletion",
+          "label": "object deletion",
+          "doc": "the verb without its object"
+        },
+        {
+          "name": "actionDenial",
+          "label": "action denial",
+          "doc": "a continuation that denies that the causer acted"
+        }
+      ]
+    },
+    {
+      "key": "attachment",
+      "lean": "attachment",
+      "type": "Attachment",
+      "doc": "The attachment sites of *again* (27).",
+      "levels": [
+        {
+          "name": "root",
+          "label": "root",
+          "doc": "the root, for the restitutive reading"
+        },
+        {
+          "name": "vBecome",
+          "label": "v_become",
+          "doc": "`vbecome`, for the repetitive reading over the change"
+        },
+        {
+          "name": "vCause",
+          "label": "v_cause",
+          "doc": "`vcause`, for the repetitive reading over the causation"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "bkg2020_25a",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25a)"},
+      "language": "stan1293",
+      "primaryText": "Mary flattened the rug again, and it had been flat before.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [
+        {"name": "restitutive: again scopes over the root state", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "sublexical again"],
+        ["attachment", "root"]
+      ],
+      "comment": "Lowest of the three attachment sites in (27).",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_25b",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25b)"},
+      "language": "stan1293",
+      "primaryText": "Mary flattened the rug again, and it had flattened before.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [
+        {"name": "repetitive over the change: again scopes over v_become", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "sublexical again"],
+        ["attachment", "v_become"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_25c",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 1 (25c)"},
+      "language": "stan1293",
+      "primaryText": "Mary flattened the rug again, and Mary had flattened it before.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [
+        {"name": "repetitive over the causation: again scopes over v_cause", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["diagnostic", "sublexical again"],
+        ["attachment", "v_cause"]
+      ],
+      "comment": "(25c) entails (25b) entails (25a) — the reading hierarchy.",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch2_46a",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (46a)"},
+      "language": "stan1293",
+      "primaryText": "John sharpened the knife again.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "John buys a knife forged already sharp, uses it until it becomes blunt, and sharpens it with a whetting stone.",
+      "judgment": "acceptable",
+      "readings": [
+        {"name": "restitutive: could be just one sharpening", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["root class", "property concept"],
+        ["diagnostic", "restitutive again"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch2_47a",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (47a)"},
+      "language": "stan1293",
+      "primaryText": "Sandy returned the shirt again.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "A boutique store makes their shirts in the back. Sandy buys one, decides she does not want it, and exchanges it.",
+      "judgment": "unacceptable",
+      "readings": [
+        {"name": "repetitive: necessarily two returnings", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["root class", "result"],
+        ["diagnostic", "restitutive again"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch2_47b",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (47b)"},
+      "language": "stan1293",
+      "primaryText": "Leah thawed the meat again.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Leah kills a rabbit, butchers it, freezes the fresh meat for three days, then puts it out to thaw.",
+      "judgment": "unacceptable",
+      "readings": [
+        {"name": "repetitive: necessarily two defrostings", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["root class", "result"],
+        ["diagnostic", "restitutive again"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch2_48",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 2 (48)"},
+      "language": "stan1293",
+      "primaryText": "John fried the fruit again.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "John finds a fruit that naturally has brown, fatty edges, trims off the edges, refrigerates it, and later fries it.",
+      "judgment": "unacceptable",
+      "readings": [
+        {"name": "repetitive: necessarily two fryings", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["root class", "result"],
+        ["diagnostic", "restitutive again"]
+      ],
+      "comment": "Even granting a prototypical fried state, no restitutive reading.",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch3_10a",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 3 (10a)"},
+      "language": "stan1293",
+      "primaryText": "Mary gave John a ring, but he never got it.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["root class", "true possession"],
+        ["diagnostic", "result denial"]
+      ],
+      "comment": "Possession is non-cancelable with giving verbs (give, hand, pass).",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch3_11a",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 3 (11a)"},
+      "language": "stan1293",
+      "primaryText": "Mary sent John a letter, but it got lost in the mail and he never got it.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["root class", "release"],
+        ["diagnostic", "result denial"]
+      ],
+      "comment": "Sending verbs cancel the possession inference: prospective rather than actual having.",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch3_48a",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 3 (48a)"},
+      "language": "stan1293",
+      "primaryText": "Mary handed John the book, but it never came to be on his person.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["root class", "transfer of possession by motion"],
+        ["diagnostic", "result denial"]
+      ],
+      "comment": "The hand root entails change along a possession-by-motion scale in both templates.",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch4_25a",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 4 (25a)"},
+      "language": "stan1293",
+      "primaryText": "Jane just drowned Joe, but nothing is different about him.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["verb class", "manner of killing"],
+        ["diagnostic", "result denial"]
+      ],
+      "comment": "Manner-of-killing verbs pattern with result verbs: the result is entailed.",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch4_26c",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 4 (26c)"},
+      "language": "stan1293",
+      "primaryText": "All last night, Shane drowned.",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "readings": [],
+      "paperFeatures": [
+        ["verb class", "manner of killing"],
+        ["diagnostic", "object deletion"]
+      ],
+      "comment": "On the transitive-killing reading: result verbs disallow object deletion.",
+      "verified": "page-image"
+    },
+    {
+      "id": "bkg2020_ch4_32b",
+      "source": {"bibkey": "beavers-koontz-garboden-2020", "paperLabel": "ch. 4 (32b)"},
+      "language": "stan1293",
+      "primaryText": "The governor drowned the prisoner, but didn't move a muscle — rather, during the execution she just sat there, tacitly refusing to order a halt!",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "readings": [],
+      "paperFeatures": [
+        ["verb class", "manner of killing"],
+        ["diagnostic", "action denial"]
+      ],
+      "comment": "Actor-oriented manner is entailed alongside the result: manner+result in one root.",
+      "verified": "page-image"
+    }
+  ]
+}

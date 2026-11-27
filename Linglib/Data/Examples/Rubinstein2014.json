@@ -1,4 +1,30 @@
-[
+{
+  "features": [
+    {
+      "key": "strategy",
+      "lean": "strategy",
+      "type": "Strategy",
+      "doc": "The routes to weak necessity are a dedicated item, a strong modal with weakening morphology, and evaluative comparative language.",
+      "levels": [
+        {
+          "name": "lexical",
+          "label": "lexical",
+          "doc": "A dedicated weak necessity modal, English *ought*"
+        },
+        {
+          "name": "compositional",
+          "label": "compositional",
+          "doc": "A strong necessity modal with counterfactual morphology, Spanish *debería*"
+        },
+        {
+          "name": "evaluativeComparative",
+          "label": "evaluativeComparative",
+          "doc": "an evaluative comparative, Hebrew *yoter tov*"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "rubinstein2014_nr_should",
     "source": {"bibkey": "horn-1978", "paperLabel": "p. 198"},
@@ -388,3 +414,4 @@
     "verified": "page-image"
   }
 ]
+}

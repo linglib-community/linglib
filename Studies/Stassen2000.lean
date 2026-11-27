@@ -1,20 +1,20 @@
 module
 
 public import Linglib.Data.Examples.Stassen2000
-public import Linglib.Fragments.English.Adpositions
-public import Linglib.Fragments.English.Coordination
-public import Linglib.Fragments.Farsi.Adpositions
-public import Linglib.Fragments.Farsi.Coordination
-public import Linglib.Fragments.Finnish.Coordination
-public import Linglib.Fragments.Hausa.Adpositions
-public import Linglib.Fragments.Hausa.Coordination
-public import Linglib.Fragments.Japanese.Adpositions
-public import Linglib.Fragments.Japanese.Coordination
-public import Linglib.Fragments.Korean.Coordination
-public import Linglib.Fragments.Latin.Coordination
-public import Linglib.Fragments.Turkish.Coordination
-public import Linglib.Fragments.Yakut.Case
-public import Linglib.Fragments.Yakut.Coordination
+public import Linglib.Languages.English.Adpositions
+public import Linglib.Languages.English.Coordination
+public import Linglib.Languages.Farsi.Adpositions
+public import Linglib.Languages.Farsi.Coordination
+public import Linglib.Languages.Finnish.Coordination
+public import Linglib.Languages.Hausa.Adpositions
+public import Linglib.Languages.Hausa.Coordination
+public import Linglib.Languages.Japanese.Adpositions
+public import Linglib.Languages.Japanese.Coordination
+public import Linglib.Languages.Korean.Coordination
+public import Linglib.Languages.Latin.Coordination
+public import Linglib.Languages.Turkish.Coordination
+public import Linglib.Languages.Yakut.Case
+public import Linglib.Languages.Yakut.Coordination
 public import Linglib.Syntax.WordOrder
 public import Mathlib.Data.Finset.Grade
 public import Linglib.Data.Examples.Readers
@@ -66,12 +66,12 @@ open Coordinator (Pattern)
 /-- A medial connective, a single linking morpheme between the two noun phrases, is in
 construction with the second, A co-B, or with the first, A-co B, as each language decides
 (p. 10). -/
-def medial : Finset Pattern := {(none, some .before), (some .after, none)}
+def medial : Finset Pattern := {![∅, {.before}], ![{.after}, ∅]}
 
 /-- The patterns the examples' labels admit, A-co B written `a'co_b` as Haspelmath writes it. -/
 def patternLabels : List (String × Finset Pattern) :=
-  [("asyndetic", {(none, none)}), ("medial", medial), ("a'co_b'co", {(some .after, some .after)}),
-    ("a'co_b", {(some .after, none)}), ("a_b'co", {(none, some .after)})]
+  [("asyndetic", {![∅, ∅]}), ("medial", medial), ("a'co_b'co", {![{.after}, {.after}]}),
+    ("a'co_b", {![{.after}, ∅]}), ("a_b'co", {![∅, {.after}]})]
 
 /-- The patterns an example admits. -/
 def patterns (d : Datum) : Finset Pattern := (d.parse? "pattern" patternLabels).getD ∅
@@ -80,21 +80,21 @@ theorem patterns_nonempty : ∀ d ∈ Examples.all, (patterns d).Nonempty := by 
 
 /-- Monosyndetic preposing on the first noun phrase, the scheme AND-NP NP, is attested in no
 example, as in none of the sample (p. 15). -/
-theorem coAB_not_mem_patterns : ∀ d ∈ Examples.all, (some .before, none) ∉ patterns d := by
+theorem coAB_not_mem_patterns : ∀ d ∈ Examples.all, ![{.before}, ∅] ∉ patterns d := by
   decide
 
 /-- In an example without a medial connective, no coordinator precedes its noun phrase (p. 12). -/
 theorem postpositive_of_not_medial : ∀ d ∈ Examples.all, patterns d ≠ medial →
-    ∀ p ∈ patterns d, p.1 ≠ some .before ∧ p.2 ≠ some .before := by
+    ∀ p ∈ patterns d, .before ∉ p 0 ∧ .before ∉ p 1 := by
   decide
 
-/-- An example whose coordinator has a Fragment entry. -/
+/-- An example whose coordinator has a language file entry. -/
 structure Attestation where
   datum : Datum
   coordinator : Coordinator
 
 open Examples in
-/-- The examples whose coordinators have Fragment entries: Persian *va*, Mahootian's *væ*, and
+/-- The examples whose coordinators have language file entries: Persian *va*, Mahootian's *væ*, and
 *-o*, Finnish *ja*, Turkish *ve*, Korean *-hago* and Latin *-que*. -/
 def attestations : List Attestation :=
   [⟨ex20b, Farsi.Coordination.va⟩, ⟨ex22, Finnish.Coordination.ja⟩,
@@ -105,10 +105,10 @@ theorem attestations_conjunctive :
     ∀ a ∈ attestations, a.coordinator.role = .conjunctive := by
   decide
 
-/-- A Fragment coordinator bound on a side of its host stands on that side of every noun phrase
+/-- A language file coordinator bound on a side of its host stands on that side of every noun phrase
 the example marks: the enclitics *-hago*, *-o* and *-que* follow theirs. -/
 theorem attestations_side : ∀ a ∈ attestations, ∀ p ∈ patterns a.datum,
-    ∀ s ∈ a.coordinator.morph.kind.side?, ∀ t ∈ [p.1, p.2], t ≠ none → t = some s := by
+    ∀ s ∈ a.coordinator.morph.kind.side?, ∀ t ∈ [p 0, p 1], t ≠ ∅ → t = {s} := by
   decide
 
 /-! ### Encodings -/
@@ -187,7 +187,7 @@ example : ({ Agrees := False, encodings := {⊥, {.pluralAgreement}ᶜ} } : Lang
 
 end Language
 
-/-! ### The linker in the Fragments -/
+/-! ### The linker in the language files -/
 
 /-- English, the paper's example of an AND-language, links its coordinate strategy by *and*,
 distinct from its comitative *with*. -/

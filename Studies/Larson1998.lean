@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Larson1998
 public import Linglib.Data.Examples.Readers
 public import Linglib.Semantics.ArgumentStructure.EventIdentification
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Basic.Rel
 
 /-!

@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Category.Classifier.Basic
@@ -13,7 +18,7 @@ interrogative in a question, and a particle that is also a coordinator of the la
 Japanese *dare-ka* 'someone' and *dare-mo* 'everyone' combine *dare* 'who' with *ka* 'or' and
 *mo* 'and', and Latin *quisque* 'each' combines *quis* 'who' with the enclitic *-que* 'and'. A coordinator has a quantifier use when an
 indeterminate quantifier of its language has it as its particle. What the quantifier denotes is
-`IndeterminateQuantifier.reading`, in `Semantics/Quantification/IndeterminateQuantifier.lean`.
+`IndeterminateQuantifier.reading`, in `Semantics/Quantifier/IndeterminateQuantifier.lean`.
 
 ## Main definitions
 

@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Tense.Embedding
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Data.Examples.Ogihara1996
-public import Linglib.Fragments.Japanese.Tense
+public import Linglib.Languages.Japanese.Tense
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 

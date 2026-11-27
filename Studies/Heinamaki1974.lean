@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Fragments.English.TemporalConnectives
+public import Linglib.Semantics.Aspect.AspectualClass
+public import Linglib.Languages.English.TemporalConnectives
 public import Linglib.Data.Examples.Heinamaki1974
 public import Linglib.Data.Examples.Readers
 
@@ -24,8 +24,8 @@ the main clause begins. The formulas [fit the paper's judgments of *while*, *as 
 ## Implementation notes
 
 * A clause carries the intervals it specifies, its `Clause.intervals`, "and no shorter or longer
-  stretch of time", so these are the maximal intervals and not the run times of
-  `Semantics/Tense/RunTimes.lean`, which a state closes under subintervals.
+  stretch of time", so these are the maximal intervals and not an interval property closed under
+  subintervals, as the run times of a state are (`Logic/Temporal/IntervalProperty.lean`).
 * The thesis's "non-durative" (p. 25) is the achievement, with the "fast accomplishment" counted
   among achievements here. Its "durative" is `Durative`, a state or an activity, narrower than
   `AspectualClass.duration`, which an accomplishment shares.
@@ -440,7 +440,7 @@ instance : ∀ r a b, Decidable (Admitted r a b)
   | .before, _, _ | .after, _, _ | .asSoonAs, _, _ | .when_, _, _ | .whenever, _, _
   | .since, _, _ => isTrue trivial
 
-/-- The fragment's entries for the connectives of the rows. -/
+/-- The language file's entries for the connectives of the rows. -/
 def connectives : List (String × Connective) :=
   [ (English.TemporalConnectives.while_.form, English.TemporalConnectives.while_),
     (English.TemporalConnectives.asLongAs.form, English.TemporalConnectives.asLongAs),

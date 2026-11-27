@@ -1,0 +1,188 @@
+{
+ "meta": {
+  "bibkey": "stankova-simik-2025",
+  "method": "experiment",
+  "description": "Naturalness ratings of Czech negative polar questions on a seven-point scale from 75 native speakers: a main experiment crossing verb position, indefinite and context, and subexperiments on the particles *náhodou* and *copak*. The paper reports the fixed effects of cumulative link mixed models with random intercepts for items and participants.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Model",
+   "doc": "The fitted models, one for each verb position of the main experiment and one for each particle.",
+   "levels": [
+    {
+     "name": "v1",
+     "label": "V1",
+     "doc": "the interrogative questions of the main experiment"
+    },
+    {
+     "name": "nonV1",
+     "label": "nonV1",
+     "doc": "the declarative questions of the main experiment"
+    },
+    {
+     "name": "nahodou",
+     "label": "náhodou",
+     "doc": "the interrogative questions with *náhodou*"
+    },
+    {
+     "name": "copak",
+     "label": "copak",
+     "doc": "the questions with *copak*"
+    }
+   ]
+  },
+  {
+   "name": "Effect",
+   "doc": "The effects the paper reports a test for.",
+   "levels": [
+    {
+     "name": "indefinite",
+     "label": "indefinite",
+     "doc": "the main effect of the indefinite, concord item or polarity item"
+    },
+    {
+     "name": "context",
+     "label": "context",
+     "doc": "the main effect of the context"
+    },
+    {
+     "name": "interaction",
+     "label": "context × indefinite",
+     "doc": "the interaction of context and indefinite"
+    },
+    {
+     "name": "contextWithinPPI",
+     "label": "context within PPI",
+     "doc": "the simple effect of context at the polarity item, from a post-hoc model"
+    },
+    {
+     "name": "contextWithinNCI",
+     "label": "context within NCI",
+     "doc": "the simple effect of context at the concord item, from a post-hoc model"
+    }
+   ]
+  }
+ ],
+ "constants": [
+  {
+   "name": "participants",
+   "type": "nat",
+   "value": 75,
+   "doc": "The native speakers of Czech who filled in the questionnaire.",
+   "locator": "§5, p. 5",
+   "verified": "text-layer"
+  },
+  {
+   "name": "scaleMax",
+   "type": "nat",
+   "value": 7,
+   "doc": "The top of the Likert scale, completely natural.",
+   "locator": "§5, p. 6",
+   "verified": "text-layer"
+  },
+  {
+   "name": "medianPositive",
+   "type": "nat",
+   "value": 6,
+   "doc": "The median rating of an interrogative negative question with a polarity item after positive evidence, as in (14).",
+   "locator": "§5.3, p. 8",
+   "verified": "text-layer"
+  },
+  {
+   "name": "medianNeutral",
+   "type": "nat",
+   "value": 5,
+   "doc": "The median rating of the same condition after a neutral context.",
+   "locator": "§5.3, p. 8",
+   "verified": "text-layer"
+  }
+ ],
+ "tables": [
+  {
+   "name": "tests",
+   "structure": "Test",
+   "doc": "The Wald tests of the fixed effects that the paper reports.",
+   "locator": "§5.2, p. 7; §6.1, p. 10; §6.2, p. 12",
+   "verified": "page-image",
+   "columns": [
+    {
+     "name": "model",
+     "type": "Model",
+     "doc": "The model."
+    },
+    {
+     "name": "effect",
+     "type": "Effect",
+     "doc": "The effect tested."
+    },
+    {
+     "name": "z",
+     "type": "decimal",
+     "doc": "The z statistic."
+    },
+    {
+     "name": "p",
+     "type": "pvalue",
+     "doc": "The p-value as printed."
+    }
+   ],
+   "rows": [
+    {
+     "model": "V1",
+     "effect": "indefinite",
+     "z": "-15.674",
+     "p": "< 0.001"
+    },
+    {
+     "model": "V1",
+     "effect": "context",
+     "z": "-1.374",
+     "p": "0.169"
+    },
+    {
+     "model": "V1",
+     "effect": "context × indefinite",
+     "z": "2.933",
+     "p": "< 0.01"
+    },
+    {
+     "model": "V1",
+     "effect": "context within PPI",
+     "z": "-3.522",
+     "p": "< 0.001"
+    },
+    {
+     "model": "V1",
+     "effect": "context within NCI",
+     "z": "1.104",
+     "p": "0.27"
+    },
+    {
+     "model": "nonV1",
+     "effect": "context",
+     "z": "8.674",
+     "p": "< 0.01"
+    },
+    {
+     "model": "nonV1",
+     "effect": "indefinite",
+     "z": "6.208",
+     "p": "< 0.01"
+    },
+    {
+     "model": "náhodou",
+     "effect": "indefinite",
+     "z": "-12.845",
+     "p": "< 0.001"
+    },
+    {
+     "model": "copak",
+     "effect": "context",
+     "z": "9.372",
+     "p": "< 0.001"
+    }
+   ]
+  }
+ ]
+}

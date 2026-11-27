@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Syntax.Gender.Assignment
+public import Linglib.Syntax.Feature.Gender.Assignment
 public import Linglib.Semantics.Reference.Gender
-public import Linglib.Morphology.Word.Basic
 public import Mathlib.Data.Finset.Option
 
 /-!
@@ -15,7 +19,7 @@ proper name projects as a third-person `PROPN` token; it is its own type rather 
 the noun, since a name has no countability or plural and the syntax projects it as a different
 head. A language with gender extends the entry with the controller gender in its own carrier,
 the gender the language's assignment rules give the noun; the facets particular rules read
-besides, animacy, rationality, declension class or accent, are the fields of the fragments'
+besides, animacy, rationality, declension class or accent, are the fields of the language files'
 further extensions. Whether a noun's gender is natural is a question about its language's
 semantic rules (`GenderedNoun.IsNatural`). A classified noun records the ways a numeral counts it:
 without a classifier, as in *three cups*, or with one, as in Mandarin *sān běn shū* 'three CL
@@ -37,7 +41,7 @@ measure word, as in *three cups of milk*, and a count noun is one some numeral c
 ## Implementation notes
 
 The general concept takes the plain name and the specializations extend it, as in mathlib. A
-fragment's extension is its own `Noun`, in its namespace; a file that opens that namespace
+language file's extension is its own `Noun`, in its namespace; a file that opens that namespace
 qualifies the name, the root `Noun` being in scope too. A noun that is count in one use and
 mass in another, *many seeds* and *much seed*, has an entry for each class.
 
@@ -71,13 +75,6 @@ structure Noun where
 /-- A proper name is a noun that names its referent. -/
 structure ProperName extends Noun
   deriving DecidableEq, Repr
-
-/-- The word token of a name is a third-person `PROPN`, masculine or feminine by the gender it
-restricts its referent to. -/
-def ProperName.toWord (n : ProperName) : Morphology.Word :=
-  { form := n.form, cat := .PROPN
-    features := Morphology.Features.of (person := some .third)
-      (gender := n.referentGender.map ReferentGender.toUD) }
 
 /-- A noun with its controller gender over the carrier `G`. -/
 structure GenderedNoun (G : Type*) extends Noun where

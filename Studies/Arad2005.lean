@@ -1,10 +1,10 @@
 module
 
 public import Studies.McCarthy1981
-public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Realization.Map
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.Hebrew.ConsonantalRoots
+public import Linglib.Languages.Hebrew.ConsonantalRoots
 public import Linglib.Data.Wordlist.Arad2005
 public import Mathlib.Data.List.Destutter
 public import Mathlib.Data.Sym.Sym2
@@ -32,7 +32,7 @@ single out the natural pairs.
   the vowels are Voice's (Bat El's melodic overwriting, p. 47). A `+` in the base marks the
   suffixes (32) prints as outside the stem.
 * The derivations run over the book's transcription, and a relabeling lifts them to the
-  fragment's segments. There the alternating stops are archisegments that spirantization
+  language file's segments. There the alternating stops are archisegments that spirantization
   realizes by continuancy, as the one stop or fricative of the inventory that refines them.
 * The data's patterns 1–7 are the numbers of (3). Ch. 7 prints CaCaC, hiCCiC, CiCCeC and
   hitCaCCeC, which p. 43 equates with them.
@@ -708,7 +708,7 @@ theorem conjugations_natural :
     ∀ x ∈ conjugations, ¬(x.2.1.Intransitive ↔ x.2.2.Intransitive) → ¬x.2.1.Intransitive := by
   decide +kernel
 
-/-! ### Over the fragment's segments -/
+/-! ### Over the language file's segments -/
 
 /-- `uncovered` lists the root-derived verbs the derivation leaves out, for guttural lowering in
 *hexšiv* and *heʔedim*, t–sibilant metathesis in *histager*, and the biliteral allomorphy of √mss.
@@ -735,7 +735,8 @@ theorem naturalClass_fillContinuant (post : Bool) :
   · exact ⟨hb, hk, hp⟩
   · exact ⟨hv, hx, hf⟩
 
-/-- `segment x` reads a letter of the book's transcription as a segment of the fragment, *b*, *k*,
+/-- `segment x` reads a letter of the book's transcription as a segment of the language file, *b*,
+*k*,
 *p* as the archisegments of the alternating stops, *q* as the /k/ of ק, *r* as /ʁ/, *c* as /ts/ and
 *e* as /ɛ/. -/
 def segment : String → Phonology.Segment
@@ -794,7 +795,8 @@ theorem fillContinuant_segment (post : Bool) (x : String) :
   have h := not_alternating_segment x hp hb hk
   rw [surfaceSegment, hx, fillContinuant_eq_self h, fillContinuant_eq_self h]
 
-/-- The roots of the data in the fragment, by label; Arad's √qlt is the fragment's √klt. -/
+/-- The roots of the data in the language file, by label; Arad's √qlt is the language
+file's √klt. -/
 def fragmentRoots : List (String × ConsonantalRoot Phonology.Segment) :=
   [("lmd", Hebrew.lmd), ("spr", Hebrew.spr), ("qlt", Hebrew.klt), ("pll", Hebrew.pll),
     ("npc", Hebrew.npc), ("xlq", Hebrew.xlq), ("str", Hebrew.str), ("pqd", Hebrew.pqd),
@@ -825,7 +827,7 @@ private theorem verb_eq_of_not_mem_uncovered {a : Wordlist.Analysis} (hf : a ∈
       exact List.mem_map_of_mem (List.mem_filter.2 ⟨hf, decide_eq_true ⟨hc, x, hx, hne⟩⟩)
     exact hu ((by decide : ∀ y ∈ _, y ∈ uncovered) _ h)
 
-/-- Over the fragment's roots and segments, the derivation produces every root-derived word of
+/-- Over the language file's roots and segments, the derivation produces every root-derived word of
 the data read as segments, the alternating stops realized by continuancy, except the verbs it
 leaves out. -/
 theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ a ∈ Wordlist.analyses, a.root = some p.1 →
@@ -859,6 +861,24 @@ theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ a ∈ Wordlist.analyses
 
 /-! ### Multiple Contextualized Meaning (Ch. 3, Ch. 7) -/
 
+/-- An interpreted realization pairs the realization of indices by forms with a realization of the
+same indices, in the same contexts, by readings: the separation of the Vocabulary from the
+Encyclopedia in [marantz-1997]. -/
+structure Interpreted (R Ctx F M : Type*) extends Realization R Ctx F where
+  /-- `interp.realize r c` is the set of readings of `r` in `c`. -/
+  interp : Realization R Ctx M
+
+/-- `r` is allosemous when it has two distinct readings, the counterpart in meaning of
+suppletion. -/
+abbrev Interpreted.IsAllosemous {R Ctx F M : Type*} (S : Interpreted R Ctx F M) (r : R) : Prop :=
+  S.interp.IsSuppletive r
+
+/-- `r` is cross-categorial when it is licensed in two contexts whose categories `k` differ, as a
+category-free root is. -/
+def Interpreted.IsCrossCategorial {R Ctx F M K : Type*} (S : Interpreted R Ctx F M) (k : Ctx → K)
+    (r : R) : Prop :=
+  ∃ c c', k c ≠ k c' ∧ S.IsLicensed r c ∧ S.IsLicensed r c'
+
 /-- `pattern? a` is the pattern of a word, its binyan number or its mišqal. -/
 def pattern? (a : Wordlist.Analysis) : Option String := a.binyan.orElse fun _ ↦ a.pattern
 
@@ -873,7 +893,7 @@ def rootMeanings (root pattern : String) : Finset String :=
     (·.form.parameterId)).toFinset
 
 /-- `roots` is the interpreted realization system of roots over the patterns. -/
-def roots : Realization.Interpreted String String String String where
+def roots : Interpreted String String String String where
   realize := rootForms
   interp := ⟨rootMeanings⟩
 
@@ -904,7 +924,7 @@ theorem crossCategorial_iff :
   have key (r : String) : roots.IsCrossCategorial patternHead r ↔
       ∃ a ∈ Wordlist.analyses, ∃ b ∈ Wordlist.analyses, a.root = some r ∧ b.root = some r ∧
         ∃ p ∈ pattern? a, ∃ q ∈ pattern? b, patternHead p ≠ patternHead q := by
-    simp only [Realization.IsCrossCategorial, isLicensed_roots_iff]
+    simp only [Interpreted.IsCrossCategorial, isLicensed_roots_iff]
     constructor
     · rintro ⟨p, q, hk, ⟨a, ha, har, hp⟩, b, hb, hbr, hq⟩
       exact ⟨a, ha, b, hb, har, hbr, p, hp, q, hq, hk⟩

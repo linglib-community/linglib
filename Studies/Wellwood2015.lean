@@ -47,7 +47,7 @@ The obligatory *much* of *very* with nouns and verbs is Bresnan's Much Deletion.
   here, measures the coffee its determiner chooses.
 
 The paper's
-non-trivially structured domains are the predicates that are not quantized, `¬ QUA P`. An
+non-trivially structured domains are the predicates that are not quantized, `¬ QUA {x | P x}`. An
 admissible measure is `StrictMono` on the type of what is measured, the ordered domain of (26), or
 `StrictMonoOn` the satisfiers of a predicate. The bare-adjective, measure-phrase and scalar-change
 discussions of the paper's objections section are not formalized.
@@ -75,12 +75,14 @@ open ArgumentStructure (ThematicFrame)
 `P` and measures strictly above the maximal than-clause degree of `b`. -/
 def comparativeTruth {Ent α Measured D : Type*} [Preorder D] (role : Ent → α → Prop)
     (P : α → Prop) (extract : α → Measured) (μ : Measured → D) (a b : Ent) : Prop :=
-  MaxComparative .gt (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
+  MaxComparative .gt ((fun e ↦ μ (extract e)) '' {e | role b e ∧ P e})
+    ((fun e ↦ μ (extract e)) '' {e | role a e ∧ P e})
 
 /-- The equative, (27ii), is the comparative with a weak comparison. -/
 def equativeTruth {Ent α Measured D : Type*} [Preorder D] (role : Ent → α → Prop)
     (P : α → Prop) (extract : α → Measured) (μ : Measured → D) (a b : Ent) : Prop :=
-  MaxComparative .ge (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
+  MaxComparative .ge ((fun e ↦ μ (extract e)) '' {e | role b e ∧ P e})
+    ((fun e ↦ μ (extract e)) '' {e | role a e ∧ P e})
 
 theorem comparativeTruth_entails_equativeTruth {Ent α Measured D : Type*} [Preorder D]
     (role : Ent → α → Prop) (P : α → Prop) (extract : α → Measured)
@@ -124,7 +126,11 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} [PartialOrder D] (role
       and_assoc]
   rw [this, Quantifier.scopeDegrees_some_Iic]
   simp only [comparativeTruth, MaxComparative, isGreatest_lowerClosure_iff, matrixClause,
-    matrixDegP, Comparison.Rel, and_assoc]
+    matrixDegP, Set.Nonempty, Set.mem_inter_iff, Set.mem_image, Set.mem_ofPred_eq,
+    Comparison.interval_gt, Set.mem_Ioi, and_assoc]
+  exact exists_congr fun δ ↦ and_congr_right fun _ ↦
+    ⟨fun ⟨e, h₁, h₂, h₃⟩ ↦ ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩,
+      fun ⟨_, ⟨e, h₁, h₂, rfl⟩, h₃⟩ ↦ ⟨e, h₁, h₂, h₃⟩⟩
 
 end Derivation
 
@@ -383,18 +389,18 @@ open Mereology
 
 variable {α D : Type*} [Preorder D]
 
-theorem not_qua_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM P) {x y : α} (hx : P x)
-    (hy : P y) (hne : x ≠ y) : ¬ QUA P := fun hQ ↦
+theorem not_qua_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM {x | P x}) {x y : α} (hx : P x)
+    (hy : P y) (hne : x ≠ y) : ¬ QUA {x | P x} := fun hQ ↦
   hne <| (hQ.eq hx (hC hx hy) le_sup_left).trans (hQ.eq hy (hC hx hy) le_sup_right).symm
 
-theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) (μ : α → D) :
+theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA {x | P x}) (μ : α → D) :
     StrictMonoOn μ {x | P x} :=
   fun _ hx _ hy hlt ↦ absurd hlt (hQ.not_lt hx hy)
 
 /-- Monotonicity (15) must preserve the strict part-whole order: a measure on which every part
 agrees with its whole, as temperature on a portion of coffee, preserves the weak order and is still
 not monotonic on a domain that is not quantized. -/
-theorem monotoneOn_and_not_strictMonoOn [PartialOrder α] {P : α → Prop} (hP : ¬ QUA P)
+theorem monotoneOn_and_not_strictMonoOn [PartialOrder α] {P : α → Prop} (hP : ¬ QUA {x | P x})
     {μ : α → D} (hμ : ∀ x y, P x → P y → x ≤ y → μ x = μ y) :
     MonotoneOn μ {x | P x} ∧ ¬ StrictMonoOn μ {x | P x} :=
   ⟨fun x hx y hy hxy ↦ (hμ x y hx hy hxy).le, fun h ↦
@@ -414,7 +420,7 @@ theorem comparativeTruth_iff_of_isGreatest [Preorder D] {μ : Measured → D}
     (ha : IsGreatest {e | role a e ∧ P e} xa) (hb : IsGreatest {e | role b e ∧ P e} xb)
     (hμ : Monotone (μ ∘ extract)) :
     comparativeTruth role P extract μ a b ↔ μ (extract xb) < μ (extract xa) :=
-  maxComparative_gt_iff_of_isGreatest ha (hμ.monotoneOn _) hb (hμ.monotoneOn _)
+  maxComparative_gt_image_iff_of_isGreatest ha (hμ.monotoneOn _) hb (hμ.monotoneOn _)
 
 /-- On the truth conditions (42), (48) and (65), *a ran more than b* is true under one admissible
 measure and *b ran more than a* under another, as with the duration and distance of (5b), exactly

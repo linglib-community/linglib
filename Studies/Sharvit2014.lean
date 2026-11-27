@@ -5,7 +5,7 @@ public import Linglib.Logic.Assignment
 public import Linglib.Logic.Temporal.IntervalAlgebra
 public import Linglib.Semantics.Tense.Perspective
 public import Linglib.Semantics.Tense.Quantificational
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Semantics.Tense.Before
 public import Studies.Sharvit2003
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Field.Rat
@@ -78,7 +78,7 @@ variable {M : Type*} [LinearOrder M] {C SP t d : NonemptyInterval M}
 /-- `IsEarliest C P m` says that `m` is the leftmost moment of the intervals of `P` within `C`, the
 EARLIEST of (23). -/
 def IsEarliest (C : NonemptyInterval M) (P : Set (NonemptyInterval M)) (m : M) : Prop :=
-  IsLeast (timeTrace (P ∩ Set.Iic C)) m
+  IsLeast (Temporal.timeTrace (· ∈ P ∩ Set.Iic C)) m
 
 theorem IsEarliest.fst_le (h : IsEarliest C P m) : C.fst ≤ m :=
   let ⟨_, ⟨_, ht⟩, hm⟩ := h.1

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Japanese.Prosody
+public import Linglib.Languages.Japanese.Prosody
 public import Linglib.Phonology.Prosody.Grid
 public import Linglib.Phonology.Tone.Basic
 public import Mathlib.Data.Finset.Card
@@ -22,7 +22,7 @@ restricted tone rather than stress accent (`kinga_not_stressAccent`).
 The four combinations of the two criteria are all attested among restricted-H systems, Table
 II: Kinga's antepenultimate-mora H is obligatory and culminative, Creek's tonal accent
 obligatory but not culminative, Tokyo Japanese's accent culminative but not obligatory,
-read off the accent lexicon of the Japanese fragment (`tokyo_not_obligatory`), and Seneca's
+read off the accent lexicon of the Japanese language file (`tokyo_not_obligatory`), and Seneca's
 trochaic H neither, derived from the analysis of (21) (`seneca_not_obligatory`). So neither
 criterion implies the other, no hierarchical typology can cut first by one and then by the
 other, and the cut by OBLHEAD and the reviewer's cut by culminativity of Section 7 classify
@@ -113,7 +113,7 @@ theorem not_stressAccent_of_no_units {m : Marking Word U} {w : Word} (h : m.unit
 
 open Japanese.Prosody in
 /-- The accent of Tokyo Japanese as a marking of moras: the accented mora of each lexical
-entry of the fragment, or none. -/
+entry of the language file, or none. -/
 def tokyo : Marking ProsodicEntry ℕ where
   units e := Finset.range e.nMorae
   marked e := (Finset.range e.nMorae).filter (e.accentMora = some ·)

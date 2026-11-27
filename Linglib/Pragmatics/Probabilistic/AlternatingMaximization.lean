@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Core.InformationTheory.ChannelCapacity
+public import Linglib.Core.InformationTheory.Entropy.Tilted
 public import Linglib.Core.InformationTheory.InformationLoss
 public import Linglib.Pragmatics.Probabilistic.Recursion
 
@@ -30,6 +32,11 @@ belief [only by being her](##RSA.freeEnergy_eq_freeEnergy_speaker_iff) at every 
 made; when that speaker is the zero measure at such an observation, no utterance being open to
 her there, every speaker's free energy is `⊥` and the comparison is empty.
 
+For a speaker who knows the state, the free energy against her Bayesian listener is
+$(\alpha - 1) I(W; U) + H(U) - \alpha H(W)$ less $\alpha$ times the expected cost
+(`RSA.freeEnergy_id_listener`), so mutual information lowers it below $\alpha = 1$ and raises it
+above.
+
 ## Implementation notes
 
 * The free energy is the functional the source calls the RSA tradeoff. At each observation it is
@@ -57,29 +64,6 @@ open MeasureTheory ProbabilityTheory InformationTheory Real Filter Topology
 open scoped ENNReal
 
 namespace RSA
-
-/-- Gibbs' variational identity for normalized weights. The divergence from the normalized weights
-and the entropy add up to the log of the total weight less the expected log-weight, so normalizing
-gives the distribution with the greatest entropy plus expected log-weight. -/
-private theorem toReal_klDiv_ofWeights_add_measureEntropy {S ι : Type*} [MeasurableSpace S]
-    [MeasurableSingletonClass S] {μ : Measure S} [MeasurableSpace ι] [Countable ι]
-    [MeasurableSingletonClass ι] [Fintype S] [IsProbabilityMeasure μ] {w : ι → S → ℝ≥0∞} {i : ι}
-    (hw : ∀ s, w i s ≠ ∞) (hμ : μ ≪ Kernel.ofWeights w i) :
-    (klDiv μ (Kernel.ofWeights w i)).toReal + Hm[μ] =
-      log (∑ s, (w i s).toReal) - ∑ s, μ.real {s} * log (w i s).toReal := by
-  have := Kernel.isProbabilityMeasure_ofWeights_of_absolutelyContinuous hw hμ
-  have hterm (s : S) : μ.real {s} * log ((Kernel.ofWeights w i).real {s}) =
-      μ.real {s} * log (w i s).toReal - μ.real {s} * log (∑ s, (w i s).toReal) := by
-    rcases eq_or_ne (μ.real {s}) 0 with h | h
-    · simp [h]
-    · have hp : (Kernel.ofWeights w i).real {s} ≠ 0 := fun h0 ↦
-        h ((measureReal_eq_zero_iff (measure_ne_top _ _)).2
-          (hμ ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h0)))
-      rw [Kernel.ofWeights_real_singleton w i hw] at hp ⊢
-      rw [log_div (fun h0 ↦ hp (by rw [h0, zero_div])) fun h0 ↦ hp (by rw [h0, div_zero]), mul_sub]
-  rw [toReal_klDiv_add_measureEntropy hμ, Finset.sum_congr rfl fun s _ ↦ hterm s,
-    Finset.sum_sub_distrib, ← Finset.sum_mul, sum_measureReal_singleton, Finset.coe_univ,
-    probReal_univ, one_mul, neg_sub]
 
 variable {W O U : Type*} [MeasurableSpace W] [MeasurableSpace O] [MeasurableSpace U]
 
@@ -124,7 +108,7 @@ theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ spe
       ← exp_add, ENNReal.toReal_ofReal (exp_pos _).le, log_exp, integral_fintype .of_finite]
     simp only [smul_eq_mul, measureReal_def]
     ring
-  have key := toReal_klDiv_ofWeights_add_measureEntropy (μ := q) (i := o)
+  have key := toReal_klDiv_ofWeights_add_measureEntropy (q := q) (i := o)
     (w := fun o u ↦ (b o).geomMean (fun w ↦ L u {w}) ^ α * ENNReal.ofReal (exp (-(α * C u))))
     (fun u ↦ ENNReal.mul_ne_top (hw u) ENNReal.ofReal_ne_top)
     (by rwa [speaker_eq_ofWeights] at hq)
@@ -610,5 +594,53 @@ theorem tendsto_sum_klDiv_speaker_iterate_recurse :
     (tsum_sum_klDiv_speaker_iterate_recurse_ne_top hb hα hκ L)
 
 end Recursion
+
+/-! ### The speaker who knows the state, against her Bayesian listener -/
+
+section BayesianListener
+
+variable [Fintype W] [Fintype U] [MeasurableSingletonClass W] [MeasurableSingletonClass U]
+  [Nonempty W] [IsProbabilityMeasure μ]
+
+/-- Against her Bayesian listener, the free energy of a speaker who knows the state is the entropy
+of her utterance, plus `α - 1` times the mutual information of state and utterance, less `α` times
+the entropy of the state and the expected cost. -/
+theorem freeEnergy_id_listener (S : Kernel W U) [IsMarkovKernel S] :
+    freeEnergy μ Kernel.id C α S (listener μ S) =
+      (((α - 1) * Im[μ ⊗ₘ S] + Hm[S ∘ₘ μ] - α * Hm[μ] - α * ∫ u, C u ∂(S ∘ₘ μ) : ℝ) : EReal) := by
+  have h0 : 0 ≤ Hm[μ] - Im[μ ⊗ₘ S] := by
+    rw [← sum_mul_measureEntropy_posterior]
+    exact Finset.sum_nonneg fun u _ ↦ mul_nonneg measureReal_nonneg (measureEntropy_nonneg _)
+  have hL : informationLoss μ S (listener μ S) = ENNReal.ofReal (Hm[μ] - Im[μ ⊗ₘ S]) := by
+    rw [informationLoss_congr (listener_ae_eq_posterior μ S), informationLoss_posterior,
+      ← sum_mul_measureEntropy_posterior, ENNReal.ofReal_sum_of_nonneg fun u _ ↦
+        mul_nonneg measureReal_nonneg (measureEntropy_nonneg _)]
+    exact Finset.sum_congr rfl fun u _ ↦ by
+      rw [ENNReal.ofReal_mul measureReal_nonneg, ofReal_measureReal]
+  rw [freeEnergy_id, expectedUtility, hL, sum_mul_measureEntropy, EReal.coe_ennreal_ofReal,
+    max_eq_left h0, ← EReal.coe_neg, ← EReal.coe_sub, ← EReal.coe_mul, ← EReal.coe_add]
+  congr 1
+  ring
+
+/-- A speaker whose utterance does not depend on the state has free energy the entropy of her
+utterance, less `α` times the entropy of the state and the expected cost. -/
+theorem freeEnergy_id_listener_const (ν : Measure U) [IsProbabilityMeasure ν] :
+    freeEnergy μ Kernel.id C α (Kernel.const W ν) (listener μ (Kernel.const W ν)) =
+      ((Hm[ν] - α * Hm[μ] - α * ∫ u, C u ∂ν : ℝ) : EReal) := by
+  rw [freeEnergy_id_listener, Measure.compProd_const, measureMutualInfo_prod, Measure.const_comp,
+    measure_univ, one_smul, mul_zero, zero_add]
+
+/-- A speaker who names each state by an utterance of its own has free energy minus `α` times the
+expected cost. -/
+theorem freeEnergy_id_listener_deterministic {f : W → U} (hf : f.Injective) :
+    freeEnergy μ Kernel.id C α (Kernel.deterministic f .of_discrete)
+        (listener μ (Kernel.deterministic f .of_discrete)) =
+      ((-(α * ∫ u, C u ∂μ.map f) : ℝ) : EReal) := by
+  rw [freeEnergy_id_listener, measureMutualInfo_compProd_deterministic,
+    Measure.deterministic_comp_eq_map, measureEntropy_map_of_injective .of_discrete hf]
+  congr 1
+  ring
+
+end BayesianListener
 
 end RSA

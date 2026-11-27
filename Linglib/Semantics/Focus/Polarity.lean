@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Focus.Marking
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 
 /-!
 # Polarity focus
@@ -28,6 +28,8 @@ negation](##Focus.polarityFocus_alternatives), which
 -/
 
 @[expose] public section
+
+open Inquisitive
 
 namespace Focus
 
@@ -95,7 +97,7 @@ theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed :=
 
 /-- Polarity focus evokes the polar question the sentence answers. -/
 theorem generate_polarityFocus (p : Set W) :
-    Question.generate (polarityFocus p).alternatives = Question.polar p := by
-  rw [polarityFocus_alternatives_eq_orbit, Question.polar_eq_generate_orbit]
+    Proposition.generate (polarityFocus p).alternatives = Proposition.polar p := by
+  rw [polarityFocus_alternatives_eq_orbit, Inquisitive.Proposition.polar_eq_generate_orbit]
 
 end Focus

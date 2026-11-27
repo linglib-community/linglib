@@ -1,7 +1,7 @@
 module
 
 public import Studies.Krifka2007b
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.AlexandropoulouGotzner2024a
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Statistics.AlexandropoulouGotzner2024a
@@ -24,7 +24,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 ## Implementation notes
 
 * The paper's positive and negative adjectives are the evaluatively positive and negative ones.
-  On the four pairs used here they are the Fragment's positive and negative poles, which
+  On the four pairs used here they are the language file's positive and negative poles, which
   `row_factors` checks on the stimuli. The paper itself orients the absolute scale by dirtiness,
   with *dirty* the dimensionally positive pole; either orientation gives the same complementary
   standards.

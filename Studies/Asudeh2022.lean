@@ -6,7 +6,7 @@ public import Mathlib.Algebra.BigOperators.Group.Multiset.Defs
 public import Mathlib.Tactic.Ring
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Data.Examples.Asudeh2022
-public import Linglib.Semantics.Quantification.Polyadic
+public import Linglib.Semantics.Quantifier.Polyadic
 public import Studies.HeimKratzer1998
 public import Linglib.Semantics.Composition.Sorts
 public import Studies.BresnanEtAl1982
@@ -42,8 +42,11 @@ and Zaenen bear out.
 
 ## TODO
 
-* Prove `derivable_iff_exists_correct`, by desequentialization and sequentialization, and
-  define the net of a linear term, so that `card_correct_loves` counts proofs up to βη.
+* A sequent is derivable exactly when it has a correct proof net. Desequentialization goes by
+  induction on a linear term: a variable links its formula to itself, an application joins two
+  nets through a tensor, and an abstraction adds a par. Sequentialization splits a correct net at
+  a splitting tensor or a terminal par. With the net of a linear term defined, the correct
+  linkings of *Everybody loves somebody* would count its proofs up to βη.
 * Planarity of linkings characterizes the Lambek calculus, but stating it needs directional
   types, which Glue's `⊸` lacks.
 
@@ -643,14 +646,6 @@ instance (L : S.Linking) (σ : S.Switching) : Decidable (L.graph σ).IsTree :=
 instance (L : S.Linking) : Decidable L.Correct := inferInstanceAs (Decidable (∀ _, _))
 
 end Sequent
-
-/-- A sequent is derivable exactly when it has a correct proof net. -/
-theorem derivable_iff_exists_correct [DecidableEq α] (Γ : List (GlueTy α)) (C : GlueTy α) :
-    Derivable (Γ : Multiset (GlueTy α)) C ↔ ∃ L : (Sequent.of Γ C).Linking, L.Correct := by
-  -- TODO: Desequentialization: by induction on a linear term, with a variable linking its
-  -- formula to itself, an application joining two nets through a tensor and an abstraction
-  -- adding a par. Sequentialization: split a correct net at a splitting tensor or a terminal par.
-  sorry
 
 namespace GlueTy
 

@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Fragments.HindiUrdu.Particles
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
+public import Linglib.Languages.HindiUrdu.Particles
 
 /-!
 # Bhatt and Dayal 2020: the polar question particle kya:
@@ -52,7 +53,7 @@ the theorems about it assume.
 
 namespace BhattDayal2020
 
-open Question HindiUrdu.Particles Clause
+open Inquisitive Inquisitive.Proposition HindiUrdu.Particles Clause
 
 variable {W : Type*}
 
@@ -61,9 +62,9 @@ variable {W : Type*}
 /-- *kya:* is defined (23) when its sister has a single alternative, the paper's
 `∃p ∈ Q[∀q[q ∈ Q → q = p]]` read on the sister's alternatives. On that domain *kya:* is the
 identity. -/
-def KyaDefined (Q : Question W) : Prop := ∃ p, alt Q = {p}
+def KyaDefined (Q : Proposition (Set W)) : Prop := ∃ p, alt Q = {p}
 
-theorem not_kyaDefined_of_mem_alt {Q : Question W} {p₁ p₂ : Set W} (h₁ : p₁ ∈ alt Q)
+theorem not_kyaDefined_of_mem_alt {Q : Proposition (Set W)} {p₁ p₂ : Set W} (h₁ : p₁ ∈ alt Q)
     (h₂ : p₂ ∈ alt Q) (hne : p₁ ≠ p₂) : ¬KyaDefined Q := fun ⟨_, hp⟩ ↦
   (Set.nontrivial_of_mem_mem_ne h₁ h₂ hne).ne_singleton hp
 
@@ -88,7 +89,7 @@ theorem kya_not_two_cell {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
 
 /-- The presupposition picks out exactly the non-inquisitive contents among the normal ones.
 The declarative *p* meets it as well as the polar question, since both are `ofSet p`. -/
-theorem kyaDefined_iff_not_isInquisitive {Q : Question W} (hQ : Q.IsNormal) :
+theorem kyaDefined_iff_not_isInquisitive {Q : Proposition (Set W)} (hQ : Q.IsNormal) :
     KyaDefined Q ↔ ¬Q.IsInquisitive :=
   hQ.exists_alt_eq_singleton_iff.trans (info_mem_iff_not_isInquisitive Q)
 
@@ -96,7 +97,7 @@ theorem kyaDefined_iff_not_isInquisitive {Q : Question W} (hQ : Q.IsNormal) :
 
 /-- The alternative question *p or q* is the disjunction of the two polar questions, (44) and
 (52). -/
-def altQ (p q : Set W) : Question W := ofSet p ⊔ ofSet q
+def altQ (p q : Set W) : Proposition (Set W) := ofSet p ⊔ ofSet q
 
 theorem mem_alt_altQ_left {p q : Set W} (h : ¬ p ⊆ q) : p ∈ alt (altQ p q) :=
   mem_alt_sup_of_alt_left (by simp) fun _ hr hpr => absurd (hpr.trans hr) h
@@ -128,13 +129,19 @@ instance (e : EmbeddingContext) : Decidable (selectsForceP e) :=
 ((8), (9), (21)). -/
 theorem kya_licensed_iff_selectsForceP :
     ∀ e, e ≠ EmbeddingContext.quotation →
-      (e ∈ kya.distribution.possible.cod ↔ selectsForceP e) := by
+      (e ∈ kya.distribution.contexts ↔ selectsForceP e) := by
   decide
 
 /-- *kya:* is licensed in polar and alternative questions and not in constituent questions,
 (4) and (5). -/
 theorem kya_clause_types :
-    ∀ c, c ∈ kya.distribution.possible.dom ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
+    ∀ c, c ∈ kya.distribution.types ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
   decide
+
+/-- The language file gives *kya:* every position in its clause, where the atlas codes the Hindi
+question particle as initial. -/
+theorem kya_placements :
+    kya.placements = Finset.univ ∧ Data.WALS.F92A.allData.lookup "hin" = some .initial := by
+  decide +kernel
 
 end BhattDayal2020

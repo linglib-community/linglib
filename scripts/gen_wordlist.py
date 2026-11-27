@@ -38,7 +38,8 @@ Paralex's lexemes and cells and four linglib extensions:
 A cell's `Features` are Universal Dependencies features in the CoNLL-U syntax, checked against
 `Linglib/Data/UD/Features.lean`, and features named by a key of `Types`; a dataset with the latter
 gets a `Cell` structure extending `UD.MorphFeatures`. A form without `Cell` has the empty cell. A
-form's `Judgment` is one of the names `Judgment.ofName?` reads, `acceptable` when absent; the
+form's `Judgment` is the name of a mark of `Judgment` other than `variable`, `acceptable` when
+absent; the
 accepted forms are emitted in `all`, the others in `marked`. An analysis column's `Type` is
 `String`, `List String` or a key of `Types`; its field is an `Option` unless every form's analysis
 gives it. Every form has an analysis, empty where the source gives none. `Source` entries use the
@@ -57,6 +58,7 @@ import textwrap
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_module_frontier import as_module_if_possible  # noqa: E402
+from judgments import MARK  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 JSON_DIR = ROOT / "Linglib" / "Data" / "Wordlist"
@@ -92,8 +94,8 @@ FEATURES = {"PronType": ("pronType", "PronType"), "NumType": ("numType", "NumTyp
 # UD features whose one value is `Yes` -> their `Bool` field of `UD.MorphFeatures`
 FLAGS = {"Poss": "poss", "Reflex": "reflex", "Foreign": "foreign", "Abbr": "abbr", "Typo": "typo"}
 PERSON = {"0": "zero", "1": "first", "2": "second", "3": "third", "4": "fourth"}
-# the names `Judgment.ofName?` reads, `Linglib/Data/Examples/Judgment.lean`
-JUDGMENTS = {"acceptable", "marginal", "questionable", "unacceptable", "ungrammatical"}
+# the marks of `Judgment` a form bears
+JUDGMENTS = set(MARK) - {"variable"}
 
 TABLES = {
     "CellTable": ["ID", "Name", "Features", "Comment"],

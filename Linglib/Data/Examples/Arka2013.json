@@ -334,11 +334,11 @@
     "context": "",
     "judgment": "acceptable",
     "contrasts": [
-      {"form": "Dia datang [(sambil) sedang menangis].", "judgment": "ungrammatical"}
+      {"form": "Dia datang [(sambil) sedang menangis].", "judgment": "nearlyUngrammatical"}
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "(14b) is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "comment": "(14b) is marked ?*.",
     "verified": "page-image"
   },
   {
@@ -354,11 +354,11 @@
     "context": "",
     "judgment": "acceptable",
     "contrasts": [
-      {"form": "Saya belajar bisa [menembak].", "judgment": "ungrammatical"}
+      {"form": "Saya belajar bisa [menembak].", "judgment": "nearlyUngrammatical"}
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "(15b) is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "comment": "(15b) is marked ?*.",
     "verified": "page-image"
   },
   {
@@ -981,11 +981,11 @@
     "context": "",
     "judgment": "acceptable",
     "contrasts": [
-      {"form": "[Kamu pembohong] adalah katanya.", "judgment": "ungrammatical"}
+      {"form": "[Kamu pembohong] adalah katanya.", "judgment": "nearlyUngrammatical"}
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "(52e), with adalah, is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "comment": "(52e), with adalah, is marked ?*.",
     "verified": "page-image"
   },
   {
@@ -999,11 +999,11 @@
     "context": "",
     "judgment": "acceptable",
     "contrasts": [
-      {"form": "katanya adalah [kamu pembohong].", "judgment": "ungrammatical"}
+      {"form": "katanya adalah [kamu pembohong].", "judgment": "nearlyUngrammatical"}
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "(52d), with adalah, is marked ?*; recorded as ungrammatical, the severe part of the mark.",
+    "comment": "(52d), with adalah, is marked ?*.",
     "verified": "page-image"
   },
   {

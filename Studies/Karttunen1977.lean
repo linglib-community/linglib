@@ -1,17 +1,19 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Semantics.Questions.HamblinSet
-
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 /-!
 # Karttunen (1977): Syntax and Semantics of Questions
 
 This file formalizes the semantics of [karttunen-1977]: an indirect question denotes the set
 of its true answers, the propositions among its alternatives that hold at the world of
-evaluation, which is `Question.trueAnswers` of the question's Hamblin set. The yes/no rule
+evaluation, which is `Question.karttunen` of the question's Hamblin set. The yes/no rule
 (26) gives *whether p* the alternatives `p` and its negation, so that at each world the
-question denotes the singleton of the true one (`trueAnswers_pair`); the WH-quantification
+question denotes the singleton of the true one (`karttunen_pair`); the WH-quantification
 rule (33) gives *which girl sleeps* one alternative per girl, the common noun read at the world
 of evaluation, so that the question denotes there the propositions that a sleeping girl sleeps,
 (34) (`wh`), and the empty set when no girl sleeps (`wh_eq_empty_iff`), the existential
@@ -32,13 +34,14 @@ Knowing *whether p* is knowing `p` where it holds and its negation elsewhere
 
 ## Implementation notes
 
-The substrate's `Question` is a downward-closed set of propositions whose alternatives
-`Question.alt` are its maximal members, so `Question.polar` and `Question.which` reproduce
-the paper's alternative sets only up to maximality: the polar identification holds for a
-non-trivial proposition (`trueAnswers_alt_polar`) and the wh one when the domain is fixed
-across worlds and the answers form an antichain (`trueAnswers_alt_which`). The paper's syntax,
-the proto-questions and the rules building questions from them, is not represented, nor are the
-multiple-wh and scope ambiguities of its later sections.
+The substrate's `Inquisitive.Proposition` is a downward-closed set of propositions whose
+alternatives `Inquisitive.Proposition.alt` are its maximal members, so
+`Inquisitive.Proposition.polar` and `Inquisitive.Proposition.which` reproduce the paper's
+alternative sets only up to maximality: the polar identification holds for a non-trivial proposition
+(`karttunen_alt_polar`) and the wh one when the domain is fixed across worlds and the answers form
+an antichain (`karttunen_alt_which`). The paper's syntax, the proto-questions and the rules
+building questions from them, is not represented, nor are the multiple-wh and scope ambiguities of
+its later sections.
 
 ## References
 
@@ -48,7 +51,7 @@ multiple-wh and scope ambiguities of its later sections.
 
 @[expose] public section
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 open scoped SetRel
 
 namespace Karttunen1977
@@ -58,9 +61,9 @@ variable {W : Type*} (w : W)
 /-! ### The denotation -/
 
 -- (26)
-theorem trueAnswers_pair_of_mem {p : Set W} (h : w ∈ p) : trueAnswers {p, pᶜ} w = {p} := by
+theorem karttunen_pair_of_mem {p : Set W} (h : w ∈ p) : karttunen {p, pᶜ} w = {p} := by
   ext q
-  simp only [mem_trueAnswers, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [mem_karttunen, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨rfl | rfl, hq⟩
     · rfl
@@ -68,10 +71,10 @@ theorem trueAnswers_pair_of_mem {p : Set W} (h : w ∈ p) : trueAnswers {p, pᶜ
   · rintro rfl
     exact ⟨Or.inl rfl, h⟩
 
-theorem trueAnswers_pair_of_notMem {p : Set W} (h : w ∉ p) :
-    trueAnswers {p, pᶜ} w = {pᶜ} := by
+theorem karttunen_pair_of_notMem {p : Set W} (h : w ∉ p) :
+    karttunen {p, pᶜ} w = {pᶜ} := by
   ext q
-  simp only [mem_trueAnswers, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [mem_karttunen, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨rfl | rfl, hq⟩
     · exact absurd hq h
@@ -79,8 +82,8 @@ theorem trueAnswers_pair_of_notMem {p : Set W} (h : w ∉ p) :
   · rintro rfl
     exact ⟨Or.inr rfl, h⟩
 
-theorem trueAnswers_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    trueAnswers (alt (polar p)) w = trueAnswers {p, pᶜ} w := by
+theorem karttunen_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    karttunen (alt (polar p)) w = karttunen {p, pᶜ} w := by
   rw [alt_polar_of_nontrivial hne hnu]
 
 variable {E : Type*} (S P : E → Set W)
@@ -88,11 +91,11 @@ variable {E : Type*} (S P : E → Set W)
 /-- The WH-quantification rule (33) makes *which S P* denote at `w` the true ones among the
 propositions that `x` is `P`, for each `x` that is `S` at `w`, (34b): the common noun is
 extensional, read at the world of evaluation. -/
-def wh (w : W) : Set (Set W) := trueAnswers (P '' {x | w ∈ S x}) w
+def wh (w : W) : Set (Set W) := karttunen (P '' {x | w ∈ S x}) w
 
 -- (34)
 theorem mem_wh_iff {q : Set W} : q ∈ wh S P w ↔ ∃ x, w ∈ S x ∧ w ∈ P x ∧ q = P x := by
-  simp only [wh, mem_trueAnswers, Set.mem_image, Set.mem_ofPred_eq]
+  simp only [wh, mem_karttunen, Set.mem_image, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨x, hx, rfl⟩, hw⟩
     exact ⟨x, hx, hw, rfl⟩
@@ -100,10 +103,10 @@ theorem mem_wh_iff {q : Set W} : q ∈ wh S P w ↔ ∃ x, w ∈ S x ∧ w ∈ P
     exact ⟨⟨x, hx, rfl⟩, hw⟩
 
 theorem wh_eq_image : wh S P w = P '' {x | w ∈ S x ∧ w ∈ P x} := by
-  rw [wh, trueAnswers_image]
+  rw [wh, karttunen_image]
   rfl
 
-theorem isVeridical_wh : IsVeridical (wh S P) := fun w ↦ isVeridical_trueAnswers _ w
+theorem isVeridical_wh : IsVeridical (wh S P) := fun w ↦ isVeridical_karttunen _ w
 
 /-- When no girl sleeps, the question denotes the empty set: the existential implicature of
 footnote 13 is not part of the denotation. -/
@@ -113,13 +116,13 @@ theorem wh_eq_empty_iff : wh S P w = ∅ ↔ ∀ x, w ∈ S x → w ∉ P x := b
 
 variable (D : Set E)
 
-theorem trueAnswers_alt_which (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D)) :
-    trueAnswers (alt (which D P)) w = trueAnswers (P '' D) w := by
+theorem karttunen_alt_which (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D)) :
+    karttunen (alt (which D P)) w = karttunen (P '' D) w := by
   rw [alt_which_of_antichain hD hA]
 
 /-- (19): what is told with an indirect question is true, as what is told with a
 *that*-clause need not be. -/
-theorem told_true {H : Set (Set W)} {p : Set W} (hp : p ∈ trueAnswers H w) : w ∈ p := hp.2
+theorem told_true {H : Set (Set W)} {p : Set W} (hp : p ∈ karttunen H w) : w ∈ p := hp.2
 
 /-! ### Knowing a question (footnote 11) -/
 
@@ -133,10 +136,10 @@ def Knows (q : W → Set (Set W)) (w : W) (Dox : SetRel W W) : Prop :=
 
 /-- Knowing *whether p* is knowing `p` at a `p`-world and its negation at another, (31). -/
 theorem knows_pair_iff (p : Set W) :
-    Knows (trueAnswers {p, pᶜ}) w Dox ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
+    Knows (karttunen {p, pᶜ}) w Dox ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
   by_cases h : w ∈ p
-  · simp [Knows, trueAnswers_pair_of_mem w h, h]
-  · simp [Knows, trueAnswers_pair_of_notMem w h, h]
+  · simp [Knows, karttunen_pair_of_mem w h, h]
+  · simp [Knows, karttunen_pair_of_notMem w h, h]
 
 /-- When no girl sleeps, knowing which girl sleeps is believing that no girl sleeps, where the
 girls are those of each belief world. -/

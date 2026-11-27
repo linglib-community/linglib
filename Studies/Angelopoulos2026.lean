@@ -2,10 +2,9 @@ module
 
 public import Studies.Bondarenko2022
 public import Studies.Roussou2010
-public import Linglib.Fragments.Greek.StandardModern.Complementizers
-public import Linglib.Fragments.Greek.StandardModern.Verbs
-public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
-public import Linglib.Semantics.Attitudes.Anchor
+public import Linglib.Languages.Greek.StandardModern.Complementizers
+public import Linglib.Languages.Greek.StandardModern.Verbs
+public import Linglib.Syntax.Category.Verb.Takes
 public import Linglib.Data.Examples.Angelopoulos2026
 public import Linglib.Data.Examples.Readers
 
@@ -48,9 +47,8 @@ against the transparent syntax–semantics mapping.
 namespace Angelopoulos2026
 
 open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs
-open Bondarenko2022 (NominalSort CompositionPath)
+open Bondarenko2022 (NominalSort)
 open Aspect
-open Anchor (existsClosure)
 
 /-! ### Sorts and aspectual selection -/
 
@@ -92,9 +90,9 @@ instance (s : NominalSort) (h : AspectualHead) (c : Complementizer) :
 /-- The sample verbs with the sort of noun each verbalizes (§3.2, where saying, belief, and
 knowledge verbs are content-denoting like *rumor*, emotive factives situation-denoting like
 *sadness*) and the aspectual head of the reading the rows use, stative or eventive by the
-manner-adverb test of §2.3, as the example rows name them; *thimame* splits into its attitude and perception
-senses (fn. 16), *simveni* 'happen' is a situation verb (fn. 14), and *δjafono* 'disagree', which
-the rows use only for the ban on prepositions (31), is not among them. -/
+manner-adverb test of §2.3, as the example rows name them; *thimame* splits into its attitude and
+perception senses (fn. 16), *simveni* 'happen' is a situation verb (fn. 14), and *δjafono*
+'disagree', which the rows use only for the ban on prepositions (31), is not among them. -/
 def verbEntry : Examples.Verb → Option (NominalSort × AspectualHead)
   | .leo => some (.content, .vEvent)
   | .pistevo => some (.content, .vState)
@@ -191,11 +189,15 @@ def Examples.NounSort.toNominalSort : Examples.NounSort → NominalSort
 
 -- (33), (34), (36), (37)
 theorem rows_sort_diagnostics :
-    ∀ r ∈ Examples.all, ∀ s ∈ Examples.nounSort r,
+    ∀ r ∈ Examples.all, ∀ n ∈ Examples.nounSort r,
       (Examples.diagnostic r = some .truthPredicates →
-        (r.judgment = .acceptable ↔ s.toNominalSort.truthEvaluable)) ∧
+        (r.judgment = .acceptable ↔ ∀ (E W : Type) (S : Set E) (cont : E →. Set W),
+          n.toNominalSort.extension S cont ⊆ cont.Dom)) ∧
       (Examples.diagnostic r = some .occurrencePredicates →
-        (r.judgment = .acceptable ↔ s.toNominalSort.occurrenceCompatible)) := by
+        (r.judgment = .acceptable ↔ ∀ (E W : Type) (S : Set E) (cont : E →. Set W),
+          n.toNominalSort.extension S cont ⊆ S)) := by
+  simp only [NominalSort.forall_extension_subset_dom_iff,
+    NominalSort.forall_extension_subset_iff]
   decide +kernel
 
 theorem situation_clause_factive :
@@ -209,31 +211,28 @@ theorem oti_pu_lexically_distinct :
 
 /-! ### Factivity from situation semantics (§3.2) -/
 
-/-- A situation verb is anchored when it relates agents only to situations realized at the
-evaluation situation. -/
-def Anchored {S X : Type*} (verb : X → SituationIndividual S → S → Prop) : Prop :=
-  ∀ a xs s, verb a xs s → xs.sit s
-
--- (38b)
-theorem pu_report_factive {S X : Type*} {verb : X → SituationIndividual S → S → Prop}
-    (h : Anchored verb) (a : X) (q : S → Prop) (s : S) : existsClosure verb a q s → q s := by
-  rintro ⟨xs, hv, hq⟩
-  rw [← show xs.sit = q from hq]
-  exact h a xs s hv
+/-- A report with a situation clause entails its complement, whatever the verb, where the
+complement is persistent, a closed set of the topology of parts: the clause holds of a part of
+the evaluation situation that exemplifies the complement. -/
+theorem pu_report_factive {S X : Type*} [TopologicalSpace S] [PartialOrder S]
+    [Topology.IsLowerSet S] (verb : X → S → S → Prop) (a : X) {q : Set S} (hq : IsClosed q) (s : S)
+    (h : ∃ x, verb a x s ∧ x ≤ s ∧ Mereology.Exemplifies q x) : s ∈ q :=
+  let ⟨_, _, hxs, hx⟩ := h; Bondarenko2022.mem_of_exemplifies_of_le hq hx hxs
 
 -- (38a)
-theorem content_report_not_factive :
-    ¬ ∀ (verb : Unit → ContentIndividual Bool → Bool → Prop) (a : Unit) (p : Bool → Prop)
-        (w : Bool), existsClosure verb a p w → p w :=
-  fun h ↦ h (fun _ _ _ ↦ True) () (fun _ ↦ False) true ⟨⟨fun _ ↦ False⟩, trivial, rfl⟩
+theorem oti_report_not_factive :
+    ¬ ∀ (cont : Unit →. Set Bool) (verb : Unit → Unit → Bool → Prop) (p : Set Bool)
+        (w : Bool), (∃ x, verb () x w ∧ p ∈ cont x) → w ∈ p :=
+  fun h ↦ h (fun _ ↦ Part.some ∅) (fun _ _ _ ↦ True) ∅ true ⟨(), trivial, Part.mem_some _⟩
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
 theorem transparency_conflates_axes :
-    ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
+    (Bondarenko2022.bareArgument .theme Bondarenko2022.contCP).derive Bondarenko2022.grammar
+        (fun _ ↦ .e) (W := Bondarenko2022.Item) (fun w ↦ [w]) = [] ∧
       ∃ r ∈ Examples.all, Examples.position r = some .internalArgument ∧
         Examples.diagnostic r = some .cliticDoubling ∧
         r.feature? "composition" = some "predicate_modification" :=
-  ⟨Bondarenko2022.not_transparentSSMapping_bareArgument, by decide +kernel⟩
+  ⟨(Bondarenko2022.derive_bareArgument .theme).1, by decide +kernel⟩
 
 end Angelopoulos2026

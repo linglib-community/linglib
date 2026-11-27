@@ -39,7 +39,7 @@ the focus alone](##DistributedMorphology.Spellout.pf_rewriteBefore_eq_pf_rewrite
 ## TODO
 
 * The operations before Linearization as maps of the hierarchical object, composed before the
-  handover of `LateInsertion.lean`.
+  pronounced terminals are handed over.
 * The place of Linearization: [arregi-nevins-2012] linearize before the linear operations, which
   precede insertion, and [embick-noyer-2001] linearize at insertion, with Lowering before it and
   Local Dislocation after.
@@ -151,6 +151,18 @@ theorem apply_sublist (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundl
 theorem length_apply_le (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) :
     (rule.apply d).length ≤ d.length :=
   (rule.apply_sublist d).length_le
+
+/-- The rule fires on a domain when one of the domain's neighborhoods satisfies its condition. -/
+protected def Fires (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) : Prop :=
+  ∃ n ∈ along d, rule.condition n
+
+instance (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) : Decidable (rule.Fires d) :=
+  inferInstanceAs (Decidable (∃ n ∈ along d, rule.condition n))
+
+/-- A rule that does not fire leaves the domain as it is. -/
+theorem apply_of_not_fires {rule : ObliterationRule Bundle} {d : SpelloutDomain Bundle}
+    (h : ¬ rule.Fires d) : rule.apply d = d :=
+  rewriteFirst_of_not_fires fun ⟨n, hn, hs⟩ ↦ h ⟨n, hn, by by_contra hc; simp [hc] at hs⟩
 
 end ObliterationRule
 

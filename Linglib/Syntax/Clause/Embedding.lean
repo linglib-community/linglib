@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Logic.Natural.ImplicationSignature
@@ -46,8 +51,8 @@ namespace Clause.Embedding
 *thimame*) overrides the lexeme-level attitude, factivity and opacity for its frame (`none`
 inherits the lexeme's) and records the sort of the frame's complement. -/
 structure Reading where
-  /-- The reading applies to every frame of the predicate refining this one, in the refinement
-  order on `ArgumentFrame`. -/
+  /-- The reading applies to every frame of the predicate at most this one, in the order on
+  `ArgumentFrame`. -/
   frame : ArgumentFrame
   /-- Frame-conditioned attitude override. -/
   attitude : Option Attitude := none
@@ -65,7 +70,8 @@ namespace Clause
 
 /-- What a predicate does with a clausal complement. -/
 structure Embedding where
-  /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a non-factive. -/
+  /-- The [karttunen-1971b] factivity class a source gives a factive predicate. `none` records no
+  class: an entry that says nothing is not thereby non-factive. -/
   factivity : Option Presupposition.Factivity := none
   /-- The [nairn-condoravdi-karttunen-2006] implication signature of the predicate, the polarity
   of the complement it implies in a positive and in a negative context; `⊥` for a predicate that
@@ -85,11 +91,12 @@ structure Embedding where
   classification is textbook consensus (believe, think, know); preferential attitudes (want, hope)
   are contested ([heim-1992]) and stay `none`. -/
   complementSig : Option ProjectivitySignature := none
-  deriving Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace Embedding
 
-/-- The predicate is factive when it carries a [karttunen-1971b] factivity class. -/
+/-- The predicate is recorded as factive: it carries a [karttunen-1971b] factivity class. Its
+negation says only that no class is recorded. -/
 def IsFactive (e : Embedding) : Prop := e.factivity ≠ none
 
 instance : DecidablePred IsFactive := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
@@ -100,9 +107,9 @@ def IsTrigger (e : Embedding) : Prop := e.IsFactive ∨ e.implicative ≠ ⊥
 
 instance : DecidablePred IsTrigger := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The reading keyed to frame `fr` is the first whose frame `fr` refines. -/
+/-- The reading keyed to frame `fr` is the first whose frame `fr` is at most. -/
 def reading? (e : Embedding) (fr : ArgumentFrame) : Option Reading :=
-  e.readings.find? fun r ↦ decide (r.frame ≤ fr)
+  e.readings.find? fun r ↦ decide (fr ≤ r.frame)
 
 /-- The effective attitude on frame `fr` is the reading's override, else the lexeme's default. -/
 def attitudeOn (e : Embedding) (fr : ArgumentFrame) : Option Attitude :=

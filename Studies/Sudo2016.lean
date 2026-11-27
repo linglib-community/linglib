@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Reference.Rigidity
-public import Linglib.Fragments.Japanese.Nouns
+public import Linglib.Languages.Japanese.Nouns
 public import Studies.Chierchia1998
 public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Finset.Card
@@ -25,7 +25,7 @@ the property of having that many atomic parts (`up`); by the Blocking Principle 
 unavailable in a language whose lexicon has overt items with the same function, the
 classifiers. The ways a numeral becomes a predicate are therefore the ∪-operator where no
 classifier blocks it and an overt classifier otherwise (`PredicateOf`): with classifiers in
-the lexicon, as the Japanese fragment has (`japanese_has_classifiers`), every predicate use
+the lexicon, as the Japanese language file has (`japanese_has_classifiers`), every predicate use
 of a numeral goes through a classifier and carries its sortal presupposition
 (`predicateOf_iff_of_hasClassifiers`), the paper's contrast between the ungrammatical bare
 predicative numeral of (15) and its classifier-suffixed counterpart (16). The inverse
@@ -84,22 +84,22 @@ open Classical in
 trivalent property presupposing the plural closure of the sortal and asserting that the
 argument has the numeral's number of sortal atoms. -/
 noncomputable def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : E → Trivalent :=
-  Trivalent.condEvent (AlgClosure (c w)) (fun x ↦ count {y | c w y} x = n w)
+  Trivalent.condEvent (· ∈ supClosure {y | c w y}) (fun x ↦ count {y | c w y} x = n w)
 
 /-- The ∪-operator of the paper's (10) maps a numeral to its property correlate, having that
 many atomic parts. -/
 def up (atomic : Sortal W E) (n : W → ℕ) : W → E → Prop := fun w x ↦ count {y | atomic w y} x = n w
 
 @[simp] theorem Sortal.apply_eq_undefined_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
-    c.apply n w x = .undefined ↔ ¬ AlgClosure (c w) x := by
+    c.apply n w x = .undefined ↔ x ∉ supClosure {y | c w y} := by
   simp [Sortal.apply]
 
 @[simp] theorem Sortal.apply_eq_true_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
-    c.apply n w x = .true ↔ AlgClosure (c w) x ∧ up c n w x := by
+    c.apply n w x = .true ↔ x ∈ supClosure {y | c w y} ∧ up c n w x := by
   simp [Sortal.apply, up]
 
 @[simp] theorem Sortal.apply_eq_false_iff {c : Sortal W E} {n : W → ℕ} {w : W} {x : E} :
-    c.apply n w x = .false ↔ AlgClosure (c w) x ∧ ¬ up c n w x := by
+    c.apply n w x = .false ↔ x ∈ supClosure {y | c w y} ∧ ¬ up c n w x := by
   simp [Sortal.apply, up]
 
 open Classical in
@@ -110,7 +110,8 @@ noncomputable def modify (P : E → Trivalent) (N : E → Prop) : E → Trivalen
 
 -- (7c)
 theorem modify_sortal_ne_undefined (c : Sortal W E) (n : W → ℕ) (w : W) {x : E}
-    (h : AlgClosure (c w) x) : modify (c.apply n w) (AlgClosure (c w)) x ≠ .undefined := by
+    (h : x ∈ supClosure {y | c w y}) :
+    modify (c.apply n w) (· ∈ supClosure {y | c w y}) x ≠ .undefined := by
   simp [modify, h]
 
 /-! ### The ∩-operator -/
@@ -133,7 +134,7 @@ theorem IsDown.unique {atomic : Sortal W E} {P : W → E → Prop} {n m : W → 
 /-- On the plural closure of its sortal, a numeral-classifier phrase holds of exactly the sums with
 the numeral's number of atoms (25). -/
 theorem isDown_sortal (c : Sortal W E) (n : W → ℕ) :
-    ∀ w x, AlgClosure (c w) x → (c.apply n w x = .true ↔ count {y | c w y} x = n w) :=
+    ∀ w x, x ∈ supClosure {y | c w y} → (c.apply n w x = .true ↔ count {y | c w y} x = n w) :=
   fun _ _ hx ↦ by simp [hx, up]
 
 /-! ### Blocking -/
@@ -206,7 +207,7 @@ theorem count_singletonSortal (P : α → Prop) [DecidablePred P] (x : Finset α
 theorem singletonSortal_apply_ne_undefined_iff (P : α → Prop) (n : Unit → ℕ) (x : Finset α) :
     (singletonSortal P).apply n () x ≠ .undefined ↔ x.Nonempty ∧ ∀ a ∈ x, P a := by
   rw [Ne, Sortal.apply_eq_undefined_iff, not_not,
-    algClosure_iff_of_subset_range_singleton fun y hy ↦ by
+    mem_supClosure_iff_of_subset_range_singleton fun y hy ↦ by
     obtain ⟨a, hy, _⟩ := hy; exact ⟨a, hy.symm⟩]
   simp [singletonSortal]
 

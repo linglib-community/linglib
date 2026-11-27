@@ -1,4 +1,66 @@
-[
+{
+  "features": [
+    {
+      "key": "alternant",
+      "lean": "alternant",
+      "type": "Alternant",
+      "doc": "The two alternants.",
+      "levels": [
+        {
+          "name": "base",
+          "label": "base",
+          "doc": "base"
+        },
+        {
+          "name": "nonBase",
+          "label": "nonBase",
+          "doc": "nonBase"
+        }
+      ]
+    },
+    {
+      "key": "content",
+      "lean": "content",
+      "type": "Content",
+      "doc": "The contents of the non-base alternant that the diagnostics target.",
+      "levels": [
+        {
+          "name": "abundance",
+          "label": "abundance",
+          "doc": "abundance"
+        },
+        {
+          "name": "scalarity",
+          "label": "scalarity",
+          "doc": "scalarity"
+        },
+        {
+          "name": "mirativity",
+          "label": "mirativity",
+          "doc": "mirativity"
+        }
+      ]
+    },
+    {
+      "key": "response",
+      "lean": "response",
+      "type": "Response",
+      "doc": "A reply to the alternant, a plain denial or *Hey, wait a minute*.",
+      "levels": [
+        {
+          "name": "denial",
+          "label": "denial",
+          "doc": "denial"
+        },
+        {
+          "name": "waitAMinute",
+          "label": "wait a minute",
+          "doc": "wait a minute"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "holefraser2026_17",
     "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(17)"},
@@ -1038,3 +1100,4 @@
     "verified": "page-image"
   }
 ]
+}

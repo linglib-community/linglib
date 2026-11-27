@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Morphology.Morph
@@ -29,7 +34,7 @@ Romero and Han draw.
 * A typology of markers or of negative constructions is one author's classification and lives in
   that author's study, such as Miestamo's symmetry in `Studies/Miestamo2005.lean`, whose
   affirmative–negative pairs are its example rows. An inflecting negative verb is cited by its
-  stem, and its endings form an `Agreement.Paradigm` in the language's fragment.
+  stem, and its endings form an `Agreement.Paradigm` in the language's language file.
 * The form of a polar interrogative is an `Option Negation.Position`, `none` for a positive
   question, which gives Romero's PosQ, LoNQ and HiNQ. Forms and readings are related, not
   identified: the preposed *-n't* of *Isn't this the road to Lund?* has both readings for some

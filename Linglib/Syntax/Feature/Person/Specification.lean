@@ -1,0 +1,215 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+module
+
+public import Linglib.Core.Order.BoundedComplete
+public import Linglib.Core.Order.Flat
+public import Linglib.Syntax.Feature.Person.Participants
+public import Mathlib.Data.Fintype.Powerset
+
+/-!
+# Person specifications
+
+A referent has one participant set, but a form may be used for several: English *we* covers the
+speaker alone and the speaker with the addressee, while an inclusive pronoun covers only the
+second. A *person specification* is the set of participant sets a form can be used for. A
+specification that covers fewer participant sets is more specific, so the first person is less
+specific than the inclusive. Two specifications are compatible when some participant set is
+covered by both, as the first and the second person are not.
+
+The person and the clusivity a form bears are labels, and this file reads a pair of them as a
+specification: the participant sets of the person that satisfy the clusivity. The reading is
+monotone where some participant set satisfies both, and a pair that none satisfies, as the
+second person with the exclusive, is read as unspecified.
+
+## Main definitions
+
+* `Specification`: a nonempty set of participant sets, more specific when smaller.
+* `Specification.ofPerson p`: the participant sets the person `p` covers.
+* `Specification.ofPersonClusivity p c`: the participant sets of `p` that satisfy `c`.
+
+## Main results
+
+* `Specification.ofPerson_first_le_inclusive`: the first person is less specific than the
+  inclusive.
+* `Specification.not_compat_first_second`: the first and the second person are incompatible.
+
+## Implementation notes
+
+The order is that of `{s : Finset α // s.Nonempty}ᵒᵈ` in `Core/Order/BoundedComplete.lean`, the
+smaller family the larger element. The empty family is not a specification, so that
+incompatible specifications have no common extension.
+
+## References
+
+* [harbour-2016]
+* [cysouw-2003]
+-/
+
+@[expose] public section
+
+open SpeechAct
+
+namespace Person
+
+/-- A person specification: the nonempty family of participant sets a form covers, a more
+specific specification covering fewer. -/
+abbrev Specification := {S : Finset (Finset Role) // S.Nonempty}ᵒᵈ
+
+namespace Specification
+
+/-- The participant sets a specification covers. -/
+def sets (x : Specification) : Finset (Finset Role) := (OrderDual.ofDual x).1
+
+theorem le_iff {x y : Specification} : x ≤ y ↔ y.sets ⊆ x.sets := Iff.rfl
+
+instance : DecidableLE Specification := fun x y ↦ inferInstanceAs (Decidable (y.sets ⊆ x.sets))
+
+/-- The unspecified form covers every participant set. -/
+instance : OrderBot Specification where
+  bot := OrderDual.toDual ⟨Finset.univ, Finset.univ_nonempty⟩
+  bot_le x := Finset.subset_univ x.sets
+
+@[simp] theorem sets_bot : (⊥ : Specification).sets = Finset.univ := rfl
+
+/-- The specification of a person value: the participant sets it covers. -/
+def ofPerson (p : Person) : Specification :=
+  OrderDual.toDual ⟨p.participantSets, p.participantSets_nonempty⟩
+
+@[simp] theorem sets_ofPerson (p : Person) : (ofPerson p).sets = p.participantSets := rfl
+
+/-- A person value is read as the specification of what it covers. -/
+instance : Coe Person Specification := ⟨ofPerson⟩
+
+theorem ofPerson_injective : Function.Injective ofPerson := fun _ _ h ↦
+  participantSets_injective (congrArg sets h)
+
+/-- The specification of a referent with the participants `s`. -/
+def ofParticipants (s : Finset Role) : Specification :=
+  OrderDual.toDual ⟨{s}, Finset.singleton_nonempty s⟩
+
+@[simp] theorem sets_ofParticipants (s : Finset Role) : (ofParticipants s).sets = {s} := rfl
+
+/-- The specification of the general first person. -/
+abbrev first : Specification := ofPerson .first
+
+/-- The specification of the inclusive first person: the speaker with the addressee. -/
+abbrev firstInclusive : Specification := ofParticipants {.speaker, .addressee}
+
+/-- The specification of the exclusive first person: the speaker without the addressee. -/
+abbrev firstExclusive : Specification := ofParticipants {.speaker}
+
+/-- The specification of the second person. -/
+abbrev second : Specification := ofPerson .second
+
+/-- The specification of the third person. -/
+abbrev third : Specification := ofPerson .third
+
+/-- A specification covers a referent exactly when it covers the referent's participants. -/
+theorem le_ofParticipants_iff {x : Specification} {s : Finset Role} :
+    x ≤ ofParticipants s ↔ s ∈ x.sets :=
+  Finset.singleton_subset_iff
+
+/-- The specification of an optional person narrowed by an optional clusivity: the participant
+sets of the person, all of them where there is none, that satisfy the clusivity. It is
+unspecified where no participant set does, as for the second person with the exclusive. -/
+def ofPersonClusivity (p : Option Person) (c : Option Clusivity) : Specification :=
+  if h : (Clusivity.restrict c (p.elim Finset.univ participantSets)).Nonempty then
+    OrderDual.toDual ⟨_, h⟩
+  else ⊥
+
+/-- A person and a clusivity are coherent when some participant set satisfies both, as the
+second person and the exclusive are not. -/
+def Coherent (p : Option Person) (c : Option Clusivity) : Prop :=
+  (Clusivity.restrict c (p.elim Finset.univ participantSets)).Nonempty
+
+instance (p : Option Person) (c : Option Clusivity) : Decidable (Coherent p c) :=
+  inferInstanceAs (Decidable (Finset.Nonempty _))
+
+theorem sets_ofPersonClusivity {p : Option Person} {c : Option Clusivity} (h : Coherent p c) :
+    (ofPersonClusivity p c).sets = Clusivity.restrict c (p.elim Finset.univ participantSets) := by
+  simp only [ofPersonClusivity, dif_pos (show (Clusivity.restrict c _).Nonempty from h)]
+  rfl
+
+/-- The specification of a person and a clusivity is monotone where the more specific pair is
+coherent: specifying a person or a clusivity narrows what the form covers. -/
+theorem ofPersonClusivity_le_ofPersonClusivity {p p' : Flat Person} {c c' : Flat Clusivity}
+    (hp : p ≤ p') (hc : c ≤ c') (h : Coherent p' c') :
+    ofPersonClusivity p c ≤ ofPersonClusivity p' c' := by
+  have key : Clusivity.restrict c' (Option.elim p' Finset.univ participantSets) ⊆
+      Clusivity.restrict c (Option.elim p Finset.univ participantSets) := by
+    intro s hs
+    rw [Clusivity.mem_restrict] at hs ⊢
+    refine ⟨?_, fun k hk ↦ hs.2 k ?_⟩
+    · rcases Flat.le_def.1 hp with rfl | ⟨a, rfl, rfl⟩
+      exacts [Finset.mem_univ s, hs.1]
+    · rcases Flat.le_def.1 hc with rfl | ⟨a, rfl, rfl⟩
+      · cases hk
+      · exact hk
+  rw [le_iff, sets_ofPersonClusivity h, sets_ofPersonClusivity (h.mono key)]
+  exact key
+
+@[simp] theorem ofPersonClusivity_none_none : ofPersonClusivity none none = ⊥ := by decide
+
+@[simp] theorem ofPersonClusivity_some_none (p : Person) :
+    ofPersonClusivity (some p) none = ofPerson p := by
+  revert p; decide
+
+theorem ofPersonClusivity_first_inclusive :
+    ofPersonClusivity (some .first) (some .inclusive) = firstInclusive := by
+  decide
+
+theorem ofPersonClusivity_first_exclusive :
+    ofPersonClusivity (some .first) (some .exclusive) = firstExclusive := by
+  decide
+
+/-- A specification is printed as the participant sets it covers. -/
+instance : Repr Specification where
+  reprPrec x _ :=
+    repr <| [((∅ : Finset Role), "other"), ({.speaker}, "speaker"), ({.addressee}, "addressee"),
+      ({.speaker, .addressee}, "speaker+addressee")].filterMap fun p ↦
+        if p.1 ∈ x.sets then some p.2 else none
+
+/-- A specification is a speech-act participant's when every participant set it covers is
+nonempty. -/
+def IsSAP (x : Specification) : Prop := ∀ s ∈ x.sets, s.Nonempty
+
+instance : DecidablePred IsSAP := fun x ↦ inferInstanceAs (Decidable (∀ s ∈ x.sets, s.Nonempty))
+
+theorem isSAP_ofPerson {p : Person} : IsSAP (ofPerson p) ↔ p ≠ .third :=
+  ne_third_iff_forall_nonempty.symm
+
+theorem not_isSAP_bot : ¬ IsSAP ⊥ := by decide
+
+/-- A first person form with no clusivity covers an inclusive referent. -/
+theorem ofPerson_first_le_inclusive : first ≤ firstInclusive := by decide
+
+theorem ofPerson_first_le_exclusive : first ≤ firstExclusive := by decide
+
+theorem not_exclusive_le_inclusive : ¬ firstExclusive ≤ firstInclusive := by decide
+
+/-- The first person with no clusivity and the inclusive unify to the inclusive. -/
+theorem isLUB_first_inclusive : IsLUB {first, firstInclusive} firstInclusive := by
+  decide
+
+/-- The first and the second person have no common extension. -/
+theorem not_compat_first_second : ¬ Compat first second := by
+  decide
+
+end Specification
+
+end Person
+
+namespace Clusivity
+
+/-- With no person specified, the inclusive participant sets are those of the second person and
+of the inclusive first person. -/
+theorem restrict_inclusive_univ :
+    restrict (some inclusive) Finset.univ =
+      Person.second.participantSets ∪ {{.speaker, .addressee}} := by
+  decide
+
+end Clusivity

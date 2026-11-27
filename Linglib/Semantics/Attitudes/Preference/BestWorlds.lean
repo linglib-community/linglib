@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 public import Linglib.Semantics.Presupposition.Strawson
 
@@ -9,12 +9,13 @@ public import Linglib.Semantics.Presupposition.Strawson
 # Best-worlds desire semantics
 
 On the best-worlds semantics, *a wants p* when the best worlds of a domain, ranked by the
-subject's preferences as a Kratzer ordering source, are `p`-worlds (`Want`). Von Fintel takes the
-domain to be the worlds compatible with what the subject believes whatever she chooses to do,
-and gives *want*, *glad* and *sorry* one family of entries: *want* presupposes that its domain
-contains both `p`-worlds and non-`p`-worlds, *glad* adds that the subject believes `p` and that
-the domain contains her belief worlds, and *sorry* has the presupposition of *glad* and the
-assertion of wanting `p` false.
+subject's preferences as a Kratzer ordering source, are `p`-worlds. Over the accessible worlds of
+a modal base these are Kratzer's best worlds, so the wanted propositions are those true throughout
+them. Von Fintel takes the domain to be the worlds compatible with what the subject believes
+whatever she chooses to do, and gives *want*, *glad* and *sorry* one family of entries: *want*
+presupposes that its domain contains both `p`-worlds and non-`p`-worlds, *glad* adds that the
+subject believes `p` and that the domain contains her belief worlds, and *sorry* has the
+presupposition of *glad* and the assertion of wanting `p` false.
 
 ## Main definitions
 
@@ -24,7 +25,10 @@ assertion of wanting `p` false.
 
 ## Main results
 
-* `Desire.BestWorlds.Want.not_compl`: on a finite frame `p` and `¬p` are not both wanted.
+* `Desire.BestWorlds.want_and_want_compl_iff`: `p` and `¬p` are both wanted exactly when the
+  domain has no best worlds, which a nonempty domain of a finite frame has.
+* `Desire.BestWorlds.want_accessibleWorlds_iff`: wanting over the accessible worlds of a modal
+  base is truth at Kratzer's best worlds.
 * `Desire.BestWorlds.Want.mono`: the semantics is upward monotone in `p`, the doxastic-closure
   problem Villalta raises.
 * `Desire.BestWorlds.want_inter_iff`: wanting a conjunction is wanting each conjunct, which makes
@@ -55,6 +59,8 @@ Civic case; the replacement is `VonFintel1999.gladBetter`.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Desire.BestWorlds
 
 open Modality
@@ -67,14 +73,14 @@ section Want
 
 /-- `Want A dom p` holds when every best world of `dom` under the ordering source `A` is a
 `p`-world. -/
-def Want (A : Set (Set W)) (dom p : Set W) : Prop := (premisePreorder A).minimals dom ⊆ p
+def Want (A : Set (Set W)) (dom p : Set W) : Prop := (≤[A]).minimals dom ⊆ p
 
 variable {A : Set (Set W)} {dom p q : Set W}
 
 theorem want_iff : Want A dom p ↔ ∀ w ∈ dom, (∀ z ∈ dom, (z ≤[A] w) → (w ≤[A] z)) → w ∈ p :=
   ⟨fun h _ hw hb ↦ h ⟨hw, hb⟩, fun h w hw ↦ h w hw.1 hw.2⟩
 
-instance [Fintype W] [DecidableRel (premisePreorder A).le] [DecidablePred (· ∈ dom)]
+instance [Fintype W] [DecidableRel (≤[A]).le] [DecidablePred (· ∈ dom)]
     [DecidablePred (· ∈ p)] : Decidable (Want A dom p) :=
   decidable_of_iff _ want_iff.symm
 
@@ -87,10 +93,19 @@ theorem Want.mono_on (hpq : ∀ w ∈ dom, w ∈ p → w ∈ q) (h : Want A dom 
 
 theorem Want.mono (hpq : p ⊆ q) (h : Want A dom p) : Want A dom q := h.trans hpq
 
+/-- A proposition and its negation are both wanted exactly when the domain has no best worlds. -/
+theorem want_and_want_compl_iff :
+    Want A dom p ∧ Want A dom pᶜ ↔ (≤[A]).minimals dom = ∅ := by
+  rw [← want_inter_iff, Set.inter_compl_self, Want, Set.subset_empty_iff]
+
 theorem Want.not_compl [Finite W] (h : dom.Nonempty) (hp : Want A dom p) : ¬ Want A dom pᶜ :=
-  fun hnp ↦
-    let ⟨_, hw⟩ := Preorder.minimals_nonempty (premisePreorder A) h
-    hnp hw (hp hw)
+  fun hnp ↦ (Preorder.minimals_nonempty (≤[A]) h).ne_empty
+    (want_and_want_compl_iff.1 ⟨hp, hnp⟩)
+
+/-- Wanting over the accessible worlds of a modal base is truth at Kratzer's best worlds. -/
+theorem want_accessibleWorlds_iff {f g : Background W} {w : W} :
+    Want (g w) (f.accessibleWorlds w) p ↔ f.bestWorlds g w ⊆ p :=
+  Iff.rfl
 
 end Want
 
@@ -166,20 +181,22 @@ open Modality Presupposition Trivalent
 
 variable {W : Type*} (dox base : W → Set W) (g : W → Set (Set W))
 
+open Classical in
 /-- *Want* is Strawson upward entailing in its complement ([von-fintel-1999], §3.2). -/
 theorem isStrawsonUE_want : IsStrawsonUE (want base g) :=
   .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
-    fun _ _ h ↦ by simp_all
+    fun _ _ ↦ condEvent_kLE
 
+open Classical in
 theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
   .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
-    fun _ _ h ↦ by simp_all [glad]
+    fun _ _ ↦ Bilattice.kLE_trans (transplication_kLE _ _) condEvent_kLE
 
 /-- *Glad* is not Strawson downward entailing ([von-fintel-1999], §3.3). -/
 theorem not_isStrawsonDE_glad :
     ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {{1}})) := by
-  have hb : (premisePreorder {{(1 : Fin 3)}}).minimals (Set.univ : Set (Fin 3)) = {1} := by
-    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
+  have hb : (≤[{{(1 : Fin 3)}}]).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    rw [Preorder.minimals_ofLowerSets_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
   intro h
@@ -187,6 +204,7 @@ theorem not_isStrawsonDE_glad :
   simp [glad, Want, IsContingent, hb] at this
   exact this ⟨2, by simp⟩ ⟨1, by simp⟩
 
+open Classical in
 /-- *Sorry* is Strawson anti-additive in its complement, since wanting a disjunction false is
 wanting each disjunct false. -/
 theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base g) :=
@@ -195,7 +213,7 @@ theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base 
       show Want (g w) (base w) (p ∪ q)ᶜ ↔ Want (g w) (base w) pᶜ ∧ Want (g w) (base w) qᶜ
       rw [Set.compl_union]
       exact want_inter_iff)
-    fun _ _ h ↦ by simp_all [regret]
+    fun _ _ ↦ Bilattice.kLE_trans (transplication_kLE _ _) condEvent_kLE
 
 theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
   (isStrawsonAntiAdditive_regret dox base g).isStrawsonDE
@@ -206,9 +224,9 @@ theorem not_antitone_posExt_regret :
     ¬ Antitone fun p : Set Bool ↦
       Trivalent.posExt
         (regret (fun _ ↦ {Bool.true}) (fun _ ↦ .univ) (fun _ ↦ {{Bool.false}}) p) := by
-  have hb : (premisePreorder {{Bool.false}}).minimals ({Bool.false, Bool.true} : Set Bool) =
+  have hb : (≤[{{Bool.false}}]).minimals ({Bool.false, Bool.true} : Set Bool) =
       {Bool.false} := by
-    rw [Preorder.minimals_ofCriteria_eq ⟨Bool.false, by simp, by simp⟩]
+    rw [Preorder.minimals_ofLowerSets_eq ⟨Bool.false, by simp, by simp⟩]
     ext
     simp
   exact not_antitone_posExt (p := ∅) (q := {Bool.true}) (w := Bool.true) (Set.empty_subset _)
@@ -219,8 +237,8 @@ a Golf*, defined and false when the subject prefers the Golf. The subject believ
 prefers world `1`. -/
 theorem not_isStrawsonUE_regret :
     ¬ IsStrawsonUE (regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {{1}})) := by
-  have hb : (premisePreorder {{(1 : Fin 3)}}).minimals (Set.univ : Set (Fin 3)) = {1} := by
-    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
+  have hb : (≤[{{(1 : Fin 3)}}]).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    rw [Preorder.minimals_ofLowerSets_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
   exact not_isStrawsonUE (p := {0}) (q := {0, 1}) (w := 0) (by simp)

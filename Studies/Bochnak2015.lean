@@ -28,9 +28,9 @@ margin of error](##marginOrder_of_conjoinedComparison), van Rooij's semi-order.
   conjoined comparison (27), the Consistency Constraint (28b) (`Delineation.IsSoundFor`) and the
   Similarity Constraint (20), which bars judging *x is G* true and *y is G* false, are stated with
   it.
-* An absolute-standard predicate has one extension in every comparison class. The extensions of
-  *bent* and *straight* are stated with Kennedy's minimum and maximum standards on a scale of
-  bend, which describe the model and not the entries, as the paper's degree-free relative/absolute
+* An absolute-standard predicate has one standard in every comparison class. *Bent* and
+  *straight* are the delineations of a scale of bend at Kennedy's minimum and maximum standards,
+  which describe the model and not the entries, as the paper's degree-free relative/absolute
   distinction requires.
 * The Similarity Constraint is a condition on a delineation for a relation of similarity, imposed
   in every comparison class containing the similar pair; so imposed it is a tolerance condition,
@@ -129,24 +129,20 @@ section AbsoluteStandard
 
 variable [LinearOrder D] [OrderBot D] (μ : E → D) {C : Set E} {x y : E}
 
-/-- An absolute-standard predicate has the same extension `S` in every comparison class. -/
-def absolute (S : Set E) : Delineation E :=
-  ofExtension fun _ ↦ S
-
-/-- *Bent*, whose extension is the minimum standard on a scale of bend `μ`. -/
+/-- *Bent* takes the minimum standard on a scale of bend `μ` in every comparison class. -/
 abbrev bent : Delineation E :=
-  absolute (μ ⁻¹' Set.Ioi ⊥)
+  ofStandard μ fun _ ↦ .Ioi ⊥
 
-/-- *Straight*, whose extension is the maximum standard on the reversed scale. -/
+/-- *Straight* takes the maximum standard on the reversed scale in every comparison class. -/
 abbrev straight : Delineation E :=
-  absolute ((OrderDual.toDual ∘ μ) ⁻¹' Set.Ici ⊤)
+  ofStandard (OrderDual.toDual ∘ μ) fun _ ↦ .Ici ⊤
 
 theorem mem_straight_iff : x ∈ straight μ C ↔ x ∉ bent μ C := by
   change x ∈ (OrderDual.toDual ∘ μ) ⁻¹' Set.Ici ⊤ ↔ x ∈ (μ ⁻¹' Set.Ioi ⊥)ᶜ
   rw [(Kennedy2007.antonyms_isCompl μ).compl_eq]
 
 theorem conjoinedComparison_bent_iff : ConjoinedComparison (bent μ) C x y ↔ ⊥ < μ x ∧ μ y = ⊥ := by
-  simp [ConjoinedComparison, absolute]
+  simp [ConjoinedComparison, ofStandard]
 
 theorem conjoinedComparison_straight_iff :
     ConjoinedComparison (straight μ) C x y ↔ μ x = ⊥ ∧ ⊥ < μ y := by
@@ -154,7 +150,7 @@ theorem conjoinedComparison_straight_iff :
     change y ∉ straight μ C ↔ _
     rw [mem_straight_iff, not_not]
   rw [ConjoinedComparison, mem_straight_iff, hneg]
-  simp [absolute]
+  simp [ofStandard]
 
 /-- In the context of (23), with both rods bent and `x` more bent than `y`, the explicit
 comparative (23a) holds, while each conjoined attempt (24a–c) needs one rod to be straight or not

@@ -2,58 +2,65 @@ module
 
 public import Linglib.Logic.Aristotelian.Triangle
 public import Linglib.Pragmatics.Probabilistic.Decision
+public import Linglib.Pragmatics.SignalingGame.Basic
+public import Linglib.Pragmatics.SignalingGame.Dynamics.Replicator
 public import Studies.KirbyDowmanGriffiths2007
 
 /-!
 # Brochhagen, Franke and van Rooij (2018): Coevolution of Lexical Meaning and Pragmatic Use
 
-A population of language users, each pairing a lexicon with a level of pragmatic reasoning,
-evolves by the replicator mutator dynamic: types reproduce in proportion to their expected
-communicative success and pass to the next generation by iterated Bayesian learning. The speakers
-[send false messages](##speaker_eq_zero_and_agents_fst_ne_zero), so any type can be mistaken for
-any other. Over the two states of *some*, a lexicon with the upper bound of *some*
-[communicates better](##selfSuccess_lt) than one without, and the claim that every other type
-beats literal use of the unbounded lexicon [fails at low rationality](##selfSuccess_Llack_zero_lt).
-Learners who sample from the posterior [keep the prior](##invariant_biasedPrior); learners who
-adopt the likeliest type
-[favour the type others are mistaken for](##invariant_mapLearner_comp_lh_iff).
+A type of language user pairs a lexicon, which sends each message to the set of states it is true
+at, with a level of pragmatic reasoning. The literal hearer conditions the state prior on the truth
+of a message, and the literal speaker is the softmax, at rationality `λ`, of its truth. The hearer
+of level `n + 1` inverts the speaker of level `n` by Bayes' rule, and the speaker of level `n + 1`
+is the softmax of the chance that the hearer of level `n` guesses the state. Two users communicate
+by playing a signaling game, whose payoff is the `SignalingGame.success` of a speaker with a
+hearer, the probability that the hearer's guess is the state.
+
+Every speaker sends every message with positive probability, false ones included, unlike the
+speaker whose utility is the logarithm of the literal hearer's credence
+(`rsaSpeaker_eq_zero_and_speaker_ne_zero`). Relabelling the states by a permutation that preserves
+the prior, and the messages by any permutation, relabels every speaker and hearer alike, so it
+leaves expected success unchanged (`success_image`). Over the two states of *some*, the lexicon
+that bounds *some* above communicates better with its own kind than the lexicon that does not, at
+each level of reasoning (`selfSuccess_lt`). Pragmatic use of the bounded lexicon outdoes literal use
+of the unbounded one exactly above the rationality $\log(5/3)$, while at rationalities up to
+$2\log(5/2)$ literal use of the unbounded lexicon outdoes pragmatic use of it
+(`selfSuccess_Llack_zero_lt`).
+
+A population of types evolves by the replicator–mutator step, which reweights it by fitness and
+passes the result through the kernel that sends a teacher's type to the type its learner acquires.
+Learners who sample from the posterior keep the prior (`invariant_biasedPrior`), while learners who
+adopt the likeliest type favour the type that the others are mistaken for
+(`invariant_mapLearner_comp_lh_iff`).
 
 ## Implementation notes
 
-* The pragmatic speakers of eq. (6) maximize the chance that the hearer guesses the state, so they
-  are `RSA.actionSpeaker` at the utility of a correct guess, not `RSA.speaker`, whose logarithmic
-  utility [frank-goodman-2012] never sends a false message (note 2).
-* A type's data (`produce`) draw each state from the state prior, so they have total mass one; the
-  posterior over types is the same as under the printed likelihood.
-* The factor `1.05` of Fig. 2 is the prior's parameter, from the caption. `invariant_biasedPrior`
-  shows for every factor that the stationary ratio of `L_lack` to `L_bound` users is the factor,
-  which is the "exactly 1.05" of p. 2770.
-* Appendix B's learners at `l = 10` are replaced by learners who adopt the likeliest type, the
-  limit `l → ∞` and [griffiths-kalish-2007]'s `mapLearner`; the printed `Q` at `l = 10` is `LH`
-  to the printed precision.
-* The complexities of Table 2 are taken as printed; the lexicon prior is left unnormalized.
-* Swapping *none* and *all* reverses the scale and preserves the flat prior, so the model is
-  symmetric under it ([success_image](##success_image)). It takes the lexicon {*none*, *some*,
-  *all*} to {*all*, *not all*, *none*}, which therefore communicates exactly as well with every
-  type; only the prior separates them, by `7 : 6`, since *not all* costs one unit more than
-  *some* ([success_lexMirror](##success_lexMirror)). The paper does not state this. Its six lexica
-  "of the third kind" (p. 2770) are the permutations of the first; the permutations of the second
-  leave the lower bound of *not all* to pragmatics instead.
-* [brochhagen-franke-van-rooij-2016] is the precursor, over two states and two messages, with a
-  speaker that weighs the literal hearer by an exponent and a prior that penalizes upper-bounded
-  messages; it is not formalized separately. Its update (p. 2083) weights the mutation into type
-  `i` by the share of `i` in the previous generation, which loses mass: with no mutation, equal
-  fitness and the uniform population over its twelve types in both generations, the next
-  population has total mass `1/12`. Its prose (p. 2082) says that `L_a` gives `m₁` an upper
-  bound, but by its matrix the bounded message, true only at the first state, is `m₂`.
+* The pragmatic speaker maximizes the chance that the hearer guesses the state, so it is
+  `RSA.actionSpeaker` at the reward of a correct guess, not `RSA.speaker`.
+* A type's datum draws the state from the state prior and the message from the type's speaker, so
+  a type's data have total mass one. The state prior does not depend on the type, so it does not
+  change the learner's posterior.
+* The prior favouring the unbounded lexicon takes its factor as a parameter, `1.05` in the paper.
+* Learners who raise the posterior to a large power are replaced by learners who adopt the
+  likeliest type, the limit of large powers and `GriffithsKalish2007.mapLearner`. In the
+  three-type example the paper's mutation matrix at power `10` is, to the printed precision, the
+  production likelihood itself.
+* The complexities of the six lexical representations are taken as printed, and the prior of a
+  lexicon is left unnormalized.
+* The composite step of the coordination game is formalized from its replicator and mutation
+  steps, as $x \mapsto (1.1x^2 - 0.4x + 0.2)/(3x^2 - 4x + 2)$, whose rest points are the roots of
+  $30x^3 - 51x^2 + 24x - 2$.
+* Swapping *none* and *all* preserves the flat prior over three states and takes the lexicon
+  {*none*, *some*, *all*} to {*all*, *not all*, *none*}, which therefore communicates as well with
+  every type; only the simplicity prior separates the two, by `7 : 6` (`success_lexMirror`).
 
 ## TODO
 
-* The simulations of §3.3 are not formalized.
-* That the costs of Table 2 are the least derivation costs in the grammar of Table 1.
-* Convergence, not just invariance, of the chains of Fig. 2(b) and Appendix B.
-* The type-level fitness of §2.4.2, the mean of a type's success as speaker and as hearer, over
-  the 432 types of §3.2.
+* The simulations over the 432 types are not formalized.
+* Convergence, not just invariance, of the iterated-learning chains over four and three types.
+* The fitness of a type in a mixed population, the mean of its success as speaker and as hearer
+  against each type, and the replicator steps it drives on the four types of the restricted space.
 
 ## References
 
@@ -62,13 +69,14 @@ adopt the likeliest type
 * [griffiths-kalish-2007]
 * [kirby-dowman-griffiths-2007]
 * [frank-goodman-2012]
+* [lewis-1969]
 -/
 
 @[expose] public section
 
 namespace BrochhagenFrankeVanRooij2018
 
-open MeasureTheory ProbabilityTheory Finset RSA
+open MeasureTheory ProbabilityTheory Finset RSA SignalingGame
 open Aristotelian (Triangle)
 open KirbyDowmanGriffiths2007 (exponentiatedPosterior invariant_exponentiatedPosterior_one)
 open GriffithsKalish2007 (mapLearner mapLearner_apply)
@@ -81,122 +89,144 @@ section Agents
 variable {S M : Type*} [Fintype S] [MeasurableSpace S] [DiscreteMeasurableSpace S] [DecidableEq S]
   [Fintype M] [MeasurableSpace M] [DiscreteMeasurableSpace M]
 
-/-- Eqs. (3)–(6): the speaker and the hearer of reasoning level `n` with lexicon `L` at state
-prior `pr` and rationality `lam`. The literal speaker is the softmax of the truth of a message,
-the literal hearer conditions the prior on its truth, a pragmatic speaker is the softmax of the
-chance that the hearer of the level below guesses the state, and a pragmatic hearer inverts the
-speaker of the level below by Bayes' rule. -/
-noncomputable def agents (pr : Measure S) (lam : ℝ) (L : M → Set S) : ℕ → Kernel S M × Kernel M S
-  | 0 => (Kernel.softmax fun s m ↦ ((lam * (L m).indicator 1 s : ℝ) : EReal),
-      literalListener pr L)
-  | n + 1 => (actionSpeaker lam 0 (agents pr lam L n).2 fun a ↦ Pi.single a 1,
-      listener pr fun s ↦ (agents pr lam L n).1 s)
+mutual
 
-/-- §2.4.2: the expected success of a speaker addressing a hearer, the chance that the hearer
-guesses the speaker's state. -/
-noncomputable def success (pr : Measure S) (σ : Kernel S M) (η : Kernel M S) : ℝ :=
-  ∑ s, pr.real {s} * ∑ m, (σ s).real {m} * (η m).real {s}
+/-- Eqs. (4) and (6): the speaker of reasoning level `n` with lexicon `L` at state prior `pr` and
+rationality `lam`. The literal speaker is the softmax of the truth of a message, and a pragmatic
+speaker the softmax of the chance that the hearer of the level below guesses the state. -/
+noncomputable def speaker (pr : Measure S) (lam : ℝ) (L : M → Set S) : ℕ → Kernel S M
+  | 0 => Kernel.softmax fun s m ↦ ((lam * (L m).indicator 1 s : ℝ) : EReal)
+  | n + 1 => actionSpeaker lam 0 (hearer pr lam L n) fun a ↦ Pi.single a 1
+
+/-- Eqs. (3) and (5): the hearer of reasoning level `n`. The literal hearer conditions the prior
+on the truth of the message, and a pragmatic hearer inverts the speaker of the level below by
+Bayes' rule. -/
+noncomputable def hearer (pr : Measure S) (lam : ℝ) (L : M → Set S) : ℕ → Kernel M S
+  | 0 => literalListener pr L
+  | n + 1 => listener pr fun s ↦ speaker pr lam L n s
+
+end
 
 variable (pr : Measure S) (lam : ℝ) (L : M → Set S)
 
-theorem agents_zero_fst :
-    (agents pr lam L 0).1 = Kernel.softmax fun s m ↦ ((lam * (L m).indicator 1 s : ℝ) : EReal) :=
+theorem speaker_zero :
+    speaker pr lam L 0 = Kernel.softmax fun s m ↦ ((lam * (L m).indicator 1 s : ℝ) : EReal) :=
   rfl
 
-theorem agents_zero_snd : (agents pr lam L 0).2 = literalListener pr L := rfl
-
-theorem agents_succ_fst (n : ℕ) :
-    (agents pr lam L (n + 1)).1 = actionSpeaker lam 0 (agents pr lam L n).2 fun a ↦ Pi.single a 1 :=
+theorem speaker_succ (n : ℕ) :
+    speaker pr lam L (n + 1) = actionSpeaker lam 0 (hearer pr lam L n) fun a ↦ Pi.single a 1 :=
   rfl
 
-theorem agents_succ_snd (n : ℕ) :
-    (agents pr lam L (n + 1)).2 = listener pr fun s ↦ (agents pr lam L n).1 s := rfl
+theorem hearer_zero : hearer pr lam L 0 = literalListener pr L := rfl
 
-instance [Nonempty M] (n : ℕ) : IsMarkovKernel (agents pr lam L n).1 := by
+theorem hearer_succ (n : ℕ) : hearer pr lam L (n + 1) = listener pr fun s ↦ speaker pr lam L n s :=
+  rfl
+
+instance (n : ℕ) : IsFiniteKernel (speaker pr lam L n) := by
+  cases n <;> exact inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
+
+instance [Nonempty M] (n : ℕ) : IsMarkovKernel (speaker pr lam L n) := by
   cases n
   · exact Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary M, EReal.coe_ne_bot _⟩)
       fun _ _ ↦ EReal.coe_ne_top _
   · exact inferInstanceAs (IsMarkovKernel (actionSpeaker _ _ _ _))
 
-instance (n : ℕ) : IsFiniteKernel (agents pr lam L n).2 := by
+instance (n : ℕ) : IsFiniteKernel (hearer pr lam L n) := by
   cases n <;> exact inferInstanceAs (IsFiniteKernel (listener _ _))
 
 -- Note 2: every speaker sends every message, false ones included, with positive probability.
-theorem agents_fst_apply_ne_zero (n : ℕ) (s : S) (m : M) : (agents pr lam L n).1 s {m} ≠ 0 := by
+theorem speaker_apply_singleton_ne_zero (n : ℕ) (s : S) (m : M) : speaker pr lam L n s {m} ≠ 0 := by
   cases n
   · exact Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
   · exact actionSpeaker_apply_singleton_ne_zero _ _ _
 
--- With two messages, a pragmatic speaker's share of one is the logistic function of the scaled
--- difference in the chance that the hearer below guesses the state after each.
-theorem agents_succ_fst_real_of_pair (n : ℕ) (s : S) {m m' : M} (hmm' : m ≠ m')
-    (hall : ∀ c, c = m ∨ c = m') :
-    ((agents pr lam L (n + 1)).1 s).real {m} = Real.sigmoid (lam *
-      (((agents pr lam L n).2 m).real {s} - ((agents pr lam L n).2 m').real {s})) := by
-  rw [agents_succ_fst, actionSpeaker_real_of_pair (fun a ↦ Pi.single a 1) 0 _ hmm' hall]
-  simp only [integral_pi_single]
-  simp
-
 -- With two messages, the literal speaker's share of one is the logistic function of the scaled
 -- difference in their truth.
-theorem agents_zero_fst_real_of_pair (s : S) {m m' : M} (hmm' : m ≠ m')
-    (hall : ∀ c, c = m ∨ c = m') :
-    ((agents pr lam L 0).1 s).real {m} =
+theorem speaker_zero_real_of_pair (s : S) {m m' : M} (hmm' : m ≠ m') (hall : ∀ c, c = m ∨ c = m') :
+    (speaker pr lam L 0 s).real {m} =
       Real.sigmoid (lam * (L m).indicator 1 s - lam * (L m').indicator 1 s) := by
-  rw [agents_zero_fst, Kernel.softmax_real_singleton_of_pair hmm' (EReal.coe_ne_bot _)
+  rw [speaker_zero, Kernel.softmax_real_singleton_of_pair hmm' (EReal.coe_ne_bot _)
     (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _) (fun c _ ↦ hall c), EReal.toReal_coe,
     EReal.toReal_coe]
 
+-- With two messages, a pragmatic speaker's share of one is the logistic function of the scaled
+-- difference in the chance that the hearer below guesses the state after each.
+theorem speaker_succ_real_of_pair (n : ℕ) (s : S) {m m' : M} (hmm' : m ≠ m')
+    (hall : ∀ c, c = m ∨ c = m') :
+    (speaker pr lam L (n + 1) s).real {m} =
+      Real.sigmoid (lam * ((hearer pr lam L n m).real {s} - (hearer pr lam L n m').real {s})) := by
+  rw [speaker_succ, actionSpeaker_real_of_pair (fun a ↦ Pi.single a 1) 0 _ hmm' hall]
+  simp [integral_pi_single]
+
 -- The literal hearer conditions the prior on the truth of the message.
-theorem agents_zero_snd_real (m : M) (s : S) [Decidable (s ∈ L m)] :
-    ((agents pr lam L 0).2 m).real {s} = if s ∈ L m then pr.real {s} / pr.real (L m) else 0 := by
-  rw [agents_zero_snd]
-  split_ifs with h
-  · exact literalListener_real_singleton pr L h
-  · rw [measureReal_def, literalListener_apply_singleton_of_notMem pr L h, ENNReal.toReal_zero]
+theorem hearer_zero_real (m : M) (s : S) :
+    (hearer pr lam L 0 m).real {s} = (L m).indicator (fun s ↦ pr.real {s} / pr.real (L m)) s := by
+  by_cases h : s ∈ L m
+  · rw [Set.indicator_of_mem h, hearer_zero, literalListener_real_singleton pr L h]
+  · rw [Set.indicator_of_notMem h, measureReal_def, hearer_zero,
+      literalListener_apply_singleton_of_notMem pr L h, ENNReal.toReal_zero]
 
-private theorem softmax_apply_eq {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] [Countable α]
-    [MeasurableSingletonClass α] [Fintype β] {score score' : α → β → EReal} {a a' : α}
-    (h : ∀ b, score' a' b = score a b) : Kernel.softmax score' a' = Kernel.softmax score a := by
-  simp only [Kernel.softmax, Kernel.ofWeights, Kernel.ofFunOfCountable_apply, h]
+/-- Note 2: a speaker who maximizes the logarithm of the literal hearer's credence in the state
+never sends a false message, whereas every speaker of the paper does with positive probability. -/
+theorem rsaSpeaker_eq_zero_and_speaker_ne_zero {α : ℝ} (hα : 0 < α) {s : S} {m : M}
+    (h : s ∉ L m) :
+    RSA.speaker α 0 (literalListener pr L) Measure.dirac s {m} = 0 ∧
+      ∀ n, speaker pr lam L n s {m} ≠ 0 :=
+  ⟨speaker_dirac_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem pr L h),
+    fun n ↦ speaker_apply_singleton_ne_zero pr lam L n s m⟩
 
--- The agents of a lexicon moved by a permutation of the states that preserves the prior are the
--- agents of the original lexicon, moved by that permutation.
-theorem agents_image (e : S ≃ S) (he : ∀ s, pr {e s} = pr {s}) (n : ℕ) :
-    (∀ s, (agents pr lam (fun m ↦ e '' L m) n).1 (e s) = (agents pr lam L n).1 s) ∧
-      ∀ m s, (agents pr lam (fun m ↦ e '' L m) n).2 m {e s} = (agents pr lam L n).2 m {s} := by
+/-! #### Relabelling states and messages -/
+
+private theorem speaker_image_and_hearer_image {e : S ≃ S} (he : MeasurePreserving e pr pr)
+    (π : M ≃ M) (n : ℕ) :
+    speaker pr lam (fun m ↦ e '' L (π.symm m)) n =
+        ((speaker pr lam L n).comap e.symm .of_discrete).map π ∧
+      hearer pr lam (fun m ↦ e '' L (π.symm m)) n =
+        ((hearer pr lam L n).comap π.symm .of_discrete).map e := by
   induction n with
   | zero =>
-    refine ⟨fun s ↦ softmax_apply_eq fun m ↦ ?_, fun m s ↦ ?_⟩
-    · rw [Set.indicator_image e.injective]
-      rfl
-    · refine listener_apply_singleton_of_equiv pr _ e he (fun t ↦ ?_) s
-      rw [truthful_apply_singleton, truthful_apply_singleton, Set.indicator_image e.injective]
-      rfl
+    refine ⟨?_, by rw [hearer_zero, hearer_zero, literalListener_relabel, he.map_eq]⟩
+    rw [speaker_zero, speaker_zero, Kernel.softmax_comap, Kernel.softmax_map_equiv]
+    congr 1
+    funext s m
+    rw [e.image_eq_preimage_symm]
+    rfl
   | succ n ih =>
-    refine ⟨fun s ↦ softmax_apply_eq fun m ↦ ?_, fun m s ↦ ?_⟩
-    · simp only [integral_pi_single, measureReal_def, ih.2]
-    · exact listener_apply_singleton_of_equiv pr _ e he (fun t ↦ by rw [ih.1]) s
+    refine ⟨?_, ?_⟩
+    · rw [speaker_succ, speaker_succ, actionSpeaker, actionSpeaker, Kernel.softmax_comap,
+        Kernel.softmax_map_equiv, ih.2]
+      congr 1
+      funext s m
+      simp only [integral_pi_single, measureReal_def, Pi.zero_apply,
+        Kernel.map_apply' _ .of_discrete _ (.singleton s), Kernel.comap_apply,
+        ← Equiv.image_symm_eq_preimage, Set.image_singleton]
+    · rw [hearer_succ, hearer_succ, listener_relabel, he.map_eq, ih.1]
+      congr 1
+      funext s
+      rw [Kernel.map_apply _ .of_discrete, Kernel.comap_apply]
 
--- §2.4.2: so the expected success of any speaker of the moved lexicon with any hearer of a moved
--- lexicon is that of the original pair.
-theorem success_image (L' : M → Set S) (e : S ≃ S) (he : ∀ s, pr {e s} = pr {s}) (n n' : ℕ) :
-    success pr (agents pr lam (fun m ↦ e '' L m) n).1 (agents pr lam (fun m ↦ e '' L' m) n').2 =
-      success pr (agents pr lam L n).1 (agents pr lam L' n').2 := by
-  rw [success, ← e.sum_comp]
-  refine sum_congr rfl fun s _ ↦ ?_
-  simp only [measureReal_def, he, (agents_image pr lam L e he n).1,
-    (agents_image pr lam L' e he n').2]
+variable {pr} {e : S ≃ S}
 
-/-- Note 2: a speaker who maximizes the log of the literal hearer's credence in the state, as in
-[frank-goodman-2012], never sends a false message, whereas every speaker of the paper, maximizing
-the hearer's chance of guessing the state, sends every message with positive probability. -/
-theorem speaker_eq_zero_and_agents_fst_ne_zero {α : ℝ} (hα : 0 < α) {s : S} {m : M}
-    (h : s ∉ L m) :
-    speaker α 0 (literalListener pr L) Measure.dirac s {m} = 0 ∧
-      ∀ n, (agents pr lam L n).1 s {m} ≠ 0 :=
-  ⟨speaker_dirac_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem pr L h),
-    fun n ↦ agents_fst_apply_ne_zero pr lam L n s m⟩
+-- Relabelling the states of a lexicon by a permutation that preserves the prior, and its messages
+-- by any permutation, relabels its speakers' states and messages alike.
+theorem speaker_image (he : MeasurePreserving e pr pr) (π : M ≃ M) (n : ℕ) :
+    speaker pr lam (fun m ↦ e '' L (π.symm m)) n =
+      ((speaker pr lam L n).comap e.symm .of_discrete).map π :=
+  (speaker_image_and_hearer_image pr lam L he π n).1
+
+theorem hearer_image (he : MeasurePreserving e pr pr) (π : M ≃ M) (n : ℕ) :
+    hearer pr lam (fun m ↦ e '' L (π.symm m)) n =
+      ((hearer pr lam L n).comap π.symm .of_discrete).map e :=
+  (speaker_image_and_hearer_image pr lam L he π n).2
+
+-- So the expected success of any speaker with any hearer is unchanged when both lexica are
+-- relabelled alike.
+theorem success_image (L' : M → Set S) (he : MeasurePreserving e pr pr) (π : M ≃ M) (n n' : ℕ) :
+    success pr (speaker pr lam (fun m ↦ e '' L (π.symm m)) n)
+        (hearer pr lam (fun m ↦ e '' L' (π.symm m)) n') =
+      success pr (speaker pr lam L n) (hearer pr lam L' n') := by
+  rw [speaker_image lam L he π n, hearer_image lam L' he π n']
+  exact success_relabel he π _ _
 
 end Agents
 
@@ -236,9 +266,9 @@ def Llack : Msg → Set Triangle
   | .some => ↑Triangle.corners.I
   | .all => {.all}
 
-/-- The success of a type communicating with itself, its fitness in a population of its own kind. -/
+/-- The success of a type with its own kind, its fitness in a population of that type. -/
 noncomputable def selfSuccess (lam : ℝ) (L : Msg → Set Triangle) (n : ℕ) : ℝ :=
-  success pr (agents pr lam L n).1 (agents pr lam L n).2
+  success pr (speaker pr lam L n) (hearer pr lam L n)
 
 instance : IsProbabilityMeasure pr :=
   isProbabilityMeasure_uniformOn (finite_toSet _) ⟨.someNotAll, by decide⟩
@@ -250,22 +280,23 @@ private theorem pr_real (t : Triangle) :
   rw [pr, uniformOn_finset_real_singleton]
   cases t <;> simp [Triangle.corners]
 
-private theorem success_eq {σ : Kernel Triangle Msg} {η : Kernel Msg Triangle} :
+private theorem success_eq {σ : Kernel Triangle Msg} [IsFiniteKernel σ] {η : Kernel Msg Triangle}
+    [IsFiniteKernel η] :
     success pr σ η = ((σ .someNotAll).real {.some} * (η .some).real {.someNotAll} +
       (σ .someNotAll).real {.all} * (η .all).real {.someNotAll} +
       (σ .all).real {.some} * (η .some).real {.all} +
       (σ .all).real {.all} * (η .all).real {.all}) / 2 := by
-  simp only [success, Triangle.univ_eq, msg_univ, sum_insert, mem_insert, mem_singleton,
+  simp only [success_eq_sum, Triangle.univ_eq, msg_univ, sum_insert, mem_insert, mem_singleton,
     reduceCtorEq, or_self, not_false_eq_true, sum_singleton, pr_real, ↓reduceIte]
   ring
 
 variable {lam : ℝ}
 
 private theorem pragmatic_hearer_real (L : Msg → Set Triangle) (m : Msg) (s : Triangle) :
-    ((agents pr lam L 1).2 m).real {s} = pr.real {s} * ((agents pr lam L 0).1 s).real {m} /
-      (((agents pr lam L 0).1 .someNotAll).real {m} / 2 +
-        ((agents pr lam L 0).1 .all).real {m} / 2) := by
-  rw [agents_succ_snd, listener_real_singleton]
+    (hearer pr lam L 1 m).real {s} = pr.real {s} * (speaker pr lam L 0 s).real {m} /
+      ((speaker pr lam L 0 .someNotAll).real {m} / 2 +
+        (speaker pr lam L 0 .all).real {m} / 2) := by
+  rw [hearer_succ, listener_real_singleton]
   congr 1
   simp only [Triangle.univ_eq, sum_insert, mem_insert, mem_singleton, reduceCtorEq, or_self,
     not_false_eq_true, sum_singleton, pr_real, ↓reduceIte]
@@ -281,50 +312,44 @@ private theorem pr_real_someNotAll : pr.real {.someNotAll} = 1 / 2 := by rw [pr_
 private theorem pr_real_all : pr.real {.all} = 1 / 2 := by rw [pr_real]; rfl
 
 private theorem S0_some (L : Msg → Set Triangle) (s : Triangle) :
-    ((agents pr lam L 0).1 s).real {.some} =
+    (speaker pr lam L 0 s).real {.some} =
       Real.sigmoid (lam * (L .some).indicator 1 s - lam * (L .all).indicator 1 s) :=
-  agents_zero_fst_real_of_pair pr lam L s (by decide) fun c ↦ by cases c <;> simp
+  speaker_zero_real_of_pair pr lam L s (by decide) fun c ↦ by cases c <;> simp
 
 private theorem S0_all (L : Msg → Set Triangle) (s : Triangle) :
-    ((agents pr lam L 0).1 s).real {.all} =
+    (speaker pr lam L 0 s).real {.all} =
       Real.sigmoid (lam * (L .all).indicator 1 s - lam * (L .some).indicator 1 s) :=
-  agents_zero_fst_real_of_pair pr lam L s (by decide) fun c ↦ by cases c <;> simp
+  speaker_zero_real_of_pair pr lam L s (by decide) fun c ↦ by cases c <;> simp
 
 private theorem S1_some (L : Msg → Set Triangle) (s : Triangle) :
-    ((agents pr lam L 1).1 s).real {.some} = Real.sigmoid (lam *
-      (((agents pr lam L 0).2 .some).real {s} - ((agents pr lam L 0).2 .all).real {s})) :=
-  agents_succ_fst_real_of_pair pr lam L 0 s (by decide) fun c ↦ by cases c <;> simp
+    (speaker pr lam L 1 s).real {.some} = Real.sigmoid (lam *
+      ((hearer pr lam L 0 .some).real {s} - (hearer pr lam L 0 .all).real {s})) :=
+  speaker_succ_real_of_pair pr lam L 0 s (by decide) fun c ↦ by cases c <;> simp
 
 private theorem S1_all (L : Msg → Set Triangle) (s : Triangle) :
-    ((agents pr lam L 1).1 s).real {.all} = Real.sigmoid (lam *
-      (((agents pr lam L 0).2 .all).real {s} - ((agents pr lam L 0).2 .some).real {s})) :=
-  agents_succ_fst_real_of_pair pr lam L 0 s (by decide) fun c ↦ by cases c <;> simp
-
-open Classical in
-private theorem H0_real (L : Msg → Set Triangle) (m : Msg) (s : Triangle) :
-    ((agents pr lam L 0).2 m).real {s} = if s ∈ L m then pr.real {s} / pr.real (L m) else 0 :=
-  agents_zero_snd_real pr lam L m s
+    (speaker pr lam L 1 s).real {.all} = Real.sigmoid (lam *
+      ((hearer pr lam L 0 .all).real {s} - (hearer pr lam L 0 .some).real {s})) :=
+  speaker_succ_real_of_pair pr lam L 0 s (by decide) fun c ↦ by cases c <;> simp
 
 -- §2.4.1: the literal user of `L_bound` sends the true message with chance `σ(λ)`.
 theorem selfSuccess_Lbound_zero : selfSuccess lam Lbound 0 = Real.sigmoid lam := by
-  rw [selfSuccess, success_eq, S0_some, S0_all, S0_some, S0_all, H0_real, H0_real, H0_real,
-    H0_real]
-  simp [Lbound, pr_real_someNotAll, pr_real_all, Real.sigmoid_neg]
+  rw [selfSuccess, success_eq, S0_some, S0_all, S0_some, S0_all]
+  simp [hearer_zero_real, Lbound, pr_real_someNotAll, pr_real_all, Real.sigmoid_neg]
 
 -- §2.4.1: the pragmatic user of `L_bound` reasons over the literal one's noise.
 theorem selfSuccess_Lbound_one :
     selfSuccess lam Lbound 1 = Real.sigmoid lam ^ 2 + (1 - Real.sigmoid lam) ^ 2 := by
   rw [selfSuccess, success_eq, S1_some, S1_all, S1_some, S1_all, pragmatic_hearer_real,
     pragmatic_hearer_real, pragmatic_hearer_real, pragmatic_hearer_real]
-  simp only [S0_some, S0_all, H0_real]
+  simp only [S0_some, S0_all, hearer_zero_real]
   simp [Lbound, pr_real_someNotAll, pr_real_all, Real.sigmoid_neg]
   ring
 
 -- §2.4.1: the literal user of `L_lack` cannot tell the states apart after *some*.
 theorem selfSuccess_Llack_zero : selfSuccess lam Llack 0 = Real.sigmoid lam / 4 + 3 / 8 := by
-  rw [selfSuccess, success_eq, S0_some, S0_all, S0_some, S0_all, H0_real, H0_real, H0_real,
-    H0_real]
-  simp [Llack, pr_real_someNotAll, pr_real_all, pr_real_I, Real.sigmoid_neg, Triangle.corners]
+  rw [selfSuccess, success_eq, S0_some, S0_all, S0_some, S0_all]
+  simp [hearer_zero_real, Llack, pr_real_someNotAll, pr_real_all, pr_real_I, Real.sigmoid_neg,
+    Triangle.corners]
   ring
 
 -- §2.4.1: the pragmatic user of `L_lack`, with `σ(λ)` and `σ(λ/2)`.
@@ -334,16 +359,16 @@ theorem selfSuccess_Llack_one :
         (1 - Real.sigmoid (lam / 2)) * (1 - Real.sigmoid lam) / (3 / 2 - Real.sigmoid lam) +
         (1 - Real.sigmoid (lam / 2)) * (1 / 2) / (Real.sigmoid lam + 1 / 2) +
         Real.sigmoid (lam / 2) * (1 / 2) / (3 / 2 - Real.sigmoid lam)) / 2 := by
-  have hH0 (m : Msg) (t : Triangle) : ((agents pr lam Llack 0).2 m).real {t} =
+  have hH0 (m : Msg) (t : Triangle) : (hearer pr lam Llack 0 m).real {t} =
       if t = .none then 0 else if m = .some then 1 / 2 else if t = .all then 1 else 0 := by
-    rw [H0_real]
+    rw [hearer_zero_real]
     cases m <;> cases t <;>
       simp [Llack, Triangle.corners, pr_real_someNotAll, pr_real_all, pr_real_I]
-  have hS0 (m : Msg) (t : Triangle) (ht : t ≠ .none) : ((agents pr lam Llack 0).1 t).real {m} =
+  have hS0 (m : Msg) (t : Triangle) (ht : t ≠ .none) : (speaker pr lam Llack 0 t).real {m} =
       if t = .all then 1 / 2 else if m = .some then Real.sigmoid lam else 1 - Real.sigmoid lam := by
     cases m <;> cases t <;>
       simp_all [S0_some, S0_all, Llack, Triangle.corners, Real.sigmoid_neg, Real.sigmoid_zero]
-  have hS1 (m : Msg) (t : Triangle) (ht : t ≠ .none) : ((agents pr lam Llack 1).1 t).real {m} =
+  have hS1 (m : Msg) (t : Triangle) (ht : t ≠ .none) : (speaker pr lam Llack 1 t).real {m} =
       if (m = .some) = (t = .someNotAll) then Real.sigmoid (lam / 2)
       else 1 - Real.sigmoid (lam / 2) := by
     rw [← Real.sigmoid_neg]
@@ -390,9 +415,6 @@ private theorem one_sub_div_self {u : ℝ} (h : u + 1 ≠ 0) : 1 - u / (u + 1) =
   field_simp
   ring
 
-private theorem half_lt_sigmoid {lam : ℝ} (h : 0 < lam) : 1 / 2 < Real.sigmoid lam := by
-  simpa [Real.sigmoid_zero] using Real.sigmoid_lt h
-
 private theorem sigmoid_log_five_thirds : Real.sigmoid (Real.log (5 / 3)) = 5 / 8 := by
   rw [Real.sigmoid_def, Real.exp_neg, Real.exp_log (by norm_num)]
   norm_num
@@ -435,15 +457,14 @@ private theorem selfSuccess_Llack_zero_sub_Llack_one (lam : ℝ) :
   field_simp
   ring
 
-/-- §3.1 (p. 2768): literal `L_bound` communicates better with its own kind than pragmatic
-`L_bound` does, which gains nothing from reasoning over a lexicon with an upper bound, and better
-than literal `L_lack`, whose *some* is ambiguous; and pragmatic `L_bound` communicates better than
-pragmatic `L_lack`. These hold at every rationality. -/
+/-- §3.1: at every positive rationality, literal `L_bound` communicates better with its own kind
+than pragmatic `L_bound` and than literal `L_lack`, and pragmatic `L_bound` better than pragmatic
+`L_lack`. -/
 theorem selfSuccess_lt (hlam : 0 < lam) :
     selfSuccess lam Lbound 1 < selfSuccess lam Lbound 0 ∧
       selfSuccess lam Llack 0 < selfSuccess lam Lbound 0 ∧
       selfSuccess lam Llack 1 < selfSuccess lam Lbound 1 := by
-  have h₁ := half_lt_sigmoid hlam
+  have h₁ : 1 / 2 < Real.sigmoid lam := by simpa using Real.sigmoid_lt hlam
   have h₂ := Real.sigmoid_lt_one lam
   refine ⟨?_, ?_, ?_⟩
   · rw [selfSuccess_Lbound_one, selfSuccess_Lbound_zero]
@@ -455,9 +476,9 @@ theorem selfSuccess_lt (hlam : 0 < lam) :
     have hu' := hu.trans' one_pos
     refine div_pos (mul_pos (pow_pos (sub_pos.2 hu) 2) (by positivity)) (by positivity)
 
-/-- §3.1 (p. 2768) claims that every other type communicates better than literal `L_lack`. With
-pragmatic `L_bound` this holds exactly when `λ > log(5/3)`, and pragmatic `L_lack` does worse than
-literal `L_lack` whenever `λ ≤ 2 log(5/2)`, as at the paper's `λ = 1`. -/
+/-- §3.1: pragmatic `L_bound` communicates better with its own kind than literal `L_lack` exactly
+when `λ > log (5/3)`, and pragmatic `L_lack` worse than literal `L_lack` whenever
+`λ ≤ 2 log (5/2)`. -/
 theorem selfSuccess_Llack_zero_lt (hlam : 0 < lam) :
     (selfSuccess lam Llack 0 < selfSuccess lam Lbound 1 ↔ Real.log (5 / 3) < lam) ∧
       (lam ≤ 2 * Real.log (5 / 2) → selfSuccess lam Llack 1 < selfSuccess lam Llack 0) := by
@@ -465,7 +486,7 @@ theorem selfSuccess_Llack_zero_lt (hlam : 0 < lam) :
   · have key : Real.log (5 / 3) < lam ↔ 5 / 8 < Real.sigmoid lam := by
       rw [← sigmoid_log_five_thirds, Real.sigmoid_lt_iff]
     rw [selfSuccess_Llack_zero, selfSuccess_Lbound_one, key]
-    have h₁ := half_lt_sigmoid hlam
+    have h₁ : 1 / 2 < Real.sigmoid lam := by simpa using Real.sigmoid_lt hlam
     constructor <;> intro h <;> nlinarith
   · rw [← sub_pos, selfSuccess_Llack_zero_sub_Llack_one]
     have hu := Real.one_lt_exp_iff.2 (half_pos hlam)
@@ -481,7 +502,7 @@ theorem selfSuccess_Llack_zero_lt (hlam : 0 < lam) :
     nlinarith [sub_pos.2 hu]
 
 -- At high rationality the order reverses: at the `λ = 20` of §2.4.1, pragmatic `L_lack`
--- communicates better than literal `L_lack`.
+-- communicates better with its own kind than literal `L_lack`.
 example : selfSuccess 20 Llack 0 < selfSuccess 20 Llack 1 := by
   rw [← sub_neg, selfSuccess_Llack_zero_sub_Llack_one]
   have hu : (3 : ℝ) ≤ Real.exp (20 / 2) := by
@@ -521,10 +542,10 @@ end Lex
 
 /-- §2.4.3: the chance that a type produces a sequence of `k` state-message pairs. -/
 noncomputable def produce (lam : ℝ) (k : ℕ) : Kernel (Lex × Fin 2) (Fin k → Triangle × Msg) :=
-  Kernel.ofFunOfCountable fun t ↦ Measure.pi fun _ ↦ pr ⊗ₘ (agents pr lam t.1.denote t.2).1
+  Kernel.ofFunOfCountable fun t ↦ Measure.pi fun _ ↦ pr ⊗ₘ speaker pr lam t.1.denote t.2
 
 instance (k : ℕ) : IsMarkovKernel (produce lam k) :=
-  ⟨fun t ↦ by rw [produce, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 /-- Fig. 2: the prior over types favouring those with `L_lack` by a factor `c`. -/
 noncomputable def biasedPrior (c : ℝ≥0) : Measure (Lex × Fin 2) :=
@@ -545,28 +566,30 @@ instance (c : ℝ≥0) : IsProbabilityMeasure (biasedPrior c) := by
   ring
 
 private theorem biasedPrior_real_lex (c : ℝ≥0) (x : Lex) :
-    (biasedPrior c).real {t | t.1 = x} = (if x = .lack then (c : ℝ) else 1) / (c + 1) := by
-  have : {t : Lex × Fin 2 | t.1 = x} = ↑({(x, 0), (x, 1)} : Finset (Lex × Fin 2)) := by
-    ext t; obtain ⟨y, i⟩ := t; fin_cases i <;> simp [eq_comm]
+    (biasedPrior c).real (Prod.fst ⁻¹' {x}) = (if x = .lack then (c : ℝ) else 1) / (c + 1) := by
+  have : (Prod.fst ⁻¹' {x} : Set (Lex × Fin 2)) = ↑({(x, 0), (x, 1)} : Finset (Lex × Fin 2)) := by
+    ext t; obtain ⟨y, i⟩ := t; fin_cases i <;> simp
   rw [this, ← sum_measureReal_singleton, sum_pair (by simp), biasedPrior_real_singleton,
     biasedPrior_real_singleton]
   field_simp
   ring
 
-/-- §3.1 (p. 2770), Fig. 2(b): learners who sample from the posterior (`l = 1`) keep the prior
-[griffiths-kalish-2007], so a population under mutation alone settles where users of `L_lack`
-outnumber users of `L_bound` by the factor by which the prior favours them, `1.05` in Fig. 2. -/
+/-- §3.1, Fig. 2(b): learners who sample from the posterior keep the prior, so a population under
+mutation alone settles where users of `L_lack` outnumber users of `L_bound` by the factor by which
+the prior favours them. -/
 theorem invariant_biasedPrior (k : ℕ) (c : ℝ≥0) :
     (exponentiatedPosterior (produce lam k) (biasedPrior c) 1 ∘ₖ produce lam k).Invariant
       (biasedPrior c) ∧
-      (biasedPrior c).real {t | t.1 = .lack} / (biasedPrior c).real {t | t.1 = .bound} = c := by
+      (biasedPrior c).real (Prod.fst ⁻¹' {.lack}) /
+        (biasedPrior c).real (Prod.fst ⁻¹' {.bound}) = c := by
   refine ⟨invariant_exponentiatedPosterior_one _ _, ?_⟩
   rw [biasedPrior_real_lex, biasedPrior_real_lex]
   simp only [↓reduceIte, reduceCtorEq]
   field_simp
 
-example : (biasedPrior 1.05).real {t | t.1 = .lack} / (biasedPrior 1.05).real {t | t.1 = .bound} =
-    1.05 := by
+example :
+    (biasedPrior 1.05).real (Prod.fst ⁻¹' {.lack}) /
+      (biasedPrior 1.05).real (Prod.fst ⁻¹' {.bound}) = 1.05 := by
   rw [(invariant_biasedPrior (lam := 0) 0 1.05).2]
   norm_num
 
@@ -591,8 +614,7 @@ theorem card_types : Fintype.card Representation = 6 ∧ Fintype.card (Fin 3 →
   have h : Fintype.card Representation = 6 := by decide
   simp [Fintype.card_prod, h]
 
-/-- Table 2: the least cost of a formula of the grammar of Table 1 that expresses each
-representation, as printed. -/
+/-- Table 2: the complexity assigned to each representation. -/
 def complexity (r : Finset Triangle) : ℕ :=
   if r = corners.A then 3 else if r = corners.I ⊓ corners.O then 8 else if r = corners.I then 4
   else if r = corners.E then 4 else if r = corners.E ⊔ corners.A then 10
@@ -647,7 +669,7 @@ def lexAll : Fin 3 → Representation := fun _ ↦ all
 /-- The mirror image of `lexLack`, which leaves the lower bound of *not all* to pragmatics. -/
 def lexMirror : Fin 3 → Representation := ![all, notAll, none]
 
--- §3.2.2 (p. 2773): the prior favours `lexAll` over `lexLack` over `lexBound`.
+-- §3.2.2: the prior favours `lexAll` over `lexLack` over `lexBound`.
 theorem lexiconWeight_lt : lexiconWeight lexBound < lexiconWeight lexLack ∧
     lexiconWeight lexLack < lexiconWeight lexAll := by
   have hB : univ.image lexBound = {none, someNotAll, all} := by decide
@@ -662,7 +684,7 @@ theorem lexiconWeight_lt : lexiconWeight lexBound < lexiconWeight lexLack ∧
   rw [h₁, h₂, h₃, h₅]
   norm_num
 
--- §3.2.2 (p. 2773): no lexicon is likelier a priori than `lexAll`.
+-- §3.2.2: no lexicon is likelier a priori than `lexAll`.
 theorem lexiconWeight_le_lexAll (L : Fin 3 → Representation) :
     lexiconWeight L ≤ lexiconWeight lexAll := by
   have hA : lexiconWeight lexAll = 1 / 4 := by
@@ -683,29 +705,31 @@ theorem lexiconWeight_le_lexAll (L : Fin 3 → Representation) :
           (prod_le_one₀ (fun r' _ ↦ h₀ r') fun r' _ ↦ (h₄ r').trans (by norm_num)) (h₀ r)
     _ ≤ 1 / 4 := by linarith [h₄ r]
 
--- Table 2 (p. 2773): `A ∩ B ≠ ∅ ∧ A ≠ ∅` is equivalent to `A ∩ B ≠ ∅`.
-example {α : Type*} (A B : Set α) : (A ∩ B).Nonempty ∧ A.Nonempty ↔ (A ∩ B).Nonempty :=
-  ⟨And.left, fun h ↦ ⟨h, h.mono Set.inter_subset_left⟩⟩
-
 /-- The flat prior over the three states. -/
 noncomputable def flat : Measure Triangle := uniformOn Set.univ
 
 /-- A lexicon's denotations. -/
 def denote (L : Fin 3 → Representation) (m : Fin 3) : Set Triangle := ↑(L m).1
 
+private theorem measurePreserving_swap_flat :
+    MeasurePreserving (Equiv.swap Triangle.none .all) flat flat := by
+  refine ⟨.of_discrete, Measure.ext_of_singleton fun s ↦ ?_⟩
+  rw [Measure.map_apply .of_discrete (.singleton s), ← Equiv.image_symm_eq_preimage,
+    Set.image_singleton, flat, uniformOn_univ_singleton_eq]
+
 -- The order-reversing permutation of the states, which swaps *none* and *all*, takes `lexLack`
 -- to `lexMirror`. The flat prior is symmetric under it, so `lexMirror` communicates with every
 -- type as `lexLack` does at every level and rationality; only the prior separates them, 7 : 6.
 theorem success_lexMirror (lam : ℝ) (L : Fin 3 → Set Triangle) (n n' : ℕ) :
-    success flat (agents flat lam (denote lexMirror) n).1
-        (agents flat lam (fun m ↦ Equiv.swap .none .all '' L m) n').2 =
-      success flat (agents flat lam (denote lexLack) n).1 (agents flat lam L n').2 ∧
+    success flat (speaker flat lam (denote lexMirror) n)
+        (hearer flat lam (fun m ↦ Equiv.swap .none .all '' L m) n') =
+      success flat (speaker flat lam (denote lexLack) n) (hearer flat lam L n') ∧
       lexiconWeight lexLack = 7 / 6 * lexiconWeight lexMirror := by
   have he : denote lexMirror = fun m ↦ Equiv.swap .none .all '' denote lexLack m := by
     funext m
     rw [denote, denote, ← Equiv.coe_toEmbedding, ← Finset.coe_map, Finset.coe_inj]
     fin_cases m <;> decide
-  refine ⟨he ▸ success_image flat lam _ L _ (fun s ↦ uniformOn_univ_singleton_eq _ _) n n', ?_⟩
+  refine ⟨he ▸ success_image lam _ L measurePreserving_swap_flat (Equiv.refl _) n n', ?_⟩
   have hM : univ.image lexMirror = {all, notAll, none} := by decide
   have hL : univ.image lexLack = {none, some, all} := by decide
   simp only [lexiconWeight, hM, hL, prod_insert (by decide : none ∉ ({some, all} : Finset _)),
@@ -718,61 +742,7 @@ theorem success_lexMirror (lam : ℝ) (L : Fin 3 → Set Triangle) (n n' : ℕ) 
 
 end ThreeStates
 
-/-! ### The replicator mutator dynamic
-
-A population is a probability measure over types. The replicator step reweights each type by its
-fitness, and the mutator step passes the result through the kernel `Q` that sends a teacher's type
-to the type its learners acquire. -/
-
-section Replicator
-
-variable {T : Type*} [Fintype T] [MeasurableSpace T] [MeasurableSingletonClass T]
-
-/-- §2.4.2: the fitness of a type, its expected payoff `U` against a member of the population. -/
-noncomputable def fitness (U : T → T → ℝ) (x : Measure T) (i : T) : ℝ≥0∞ :=
-  ENNReal.ofReal (∑ j, x.real {j} * U i j)
-
-/-- Eq. (2): the replicator step, which reweights each type by its fitness. -/
-noncomputable def replicator (f : T → ℝ≥0∞) (x : Measure T) : Measure T :=
-  (x.withDensity f)[|Set.univ]
-
-/-- Eqs. (1)–(2): the replicator mutator step. -/
-noncomputable def rmd (Q : Kernel T T) (f : T → ℝ≥0∞) (x : Measure T) : Measure T :=
-  Q ∘ₘ replicator f x
-
-instance (f : T → ℝ≥0∞) (x : Measure T) : IsFiniteMeasure (replicator f x) :=
-  inferInstanceAs (IsFiniteMeasure ((x.withDensity f)[|Set.univ]))
-
-theorem replicator_apply_singleton (f : T → ℝ≥0∞) (x : Measure T) (i : T) :
-    replicator f x {i} = (∑ k, f k * x {k})⁻¹ * (f i * x {i}) := by
-  rw [replicator, cond_apply .univ, Set.univ_inter, withDensity_apply _ .univ,
-    withDensity_apply _ (measurableSet_singleton i), Measure.restrict_univ, lintegral_fintype,
-    lintegral_singleton]
-
-theorem replicator_real_singleton (f : T → ℝ≥0∞) (hf : ∀ i, f i ≠ ⊤) (x : Measure T)
-    [IsFiniteMeasure x] (i : T) :
-    (replicator f x).real {i} = (f i).toReal * x.real {i} / ∑ k, (f k).toReal * x.real {k} := by
-  rw [measureReal_def, replicator_apply_singleton, ENNReal.toReal_mul, ENNReal.toReal_inv,
-    ENNReal.toReal_sum fun k _ ↦ ENNReal.mul_ne_top (hf k) (measure_ne_top _ _),
-    ENNReal.toReal_mul, inv_mul_eq_div]
-  simp only [ENNReal.toReal_mul, measureReal_def]
-
-omit [Fintype T] [MeasurableSingletonClass T] in
--- p. 2761: without mutation the dynamic is the replicator dynamic.
-theorem rmd_id (f : T → ℝ≥0∞) (x : Measure T) : rmd Kernel.id f x = replicator f x :=
-  Measure.id_comp
-
--- p. 2761: under equal fitness the dynamic is iterated mutation.
-theorem rmd_const (Q : Kernel T T) {c : ℝ≥0∞} (hc : c ≠ 0) (hc' : c ≠ ⊤) (x : Measure T)
-    [IsProbabilityMeasure x] : rmd Q (fun _ ↦ c) x = Q ∘ₘ x := by
-  have : replicator (fun _ ↦ c) x = x := Measure.ext_of_singleton fun i ↦ by
-    rw [replicator_apply_singleton, ← mul_sum, sum_measure_singleton, coe_univ, measure_univ,
-      mul_one, ← mul_assoc, ENNReal.inv_mul_cancel hc hc', one_mul]
-  rw [rmd, this]
-
-end Replicator
-
-/-! #### Appendix A: a coordination game
+/-! ### Appendix A: a coordination game
 
 Two types of agent, negative and positive, earn `1` when two negatives meet, `2` when two
 positives meet, and `0` otherwise. A tenth of the learners of each type acquire the other. -/
@@ -808,8 +778,11 @@ end Sign
 
 open Sign
 
-private theorem mutation_real_negative (j : Sign) :
-    (mutation j).real {negative} = if negative = j then 0.9 else 0.1 := by
+private theorem eq_negative_or_eq_positive (i : Sign) : i = negative ∨ i = positive := by
+  cases i <;> simp
+
+private theorem mutation_real_singleton (i j : Sign) :
+    (mutation j).real {i} = if i = j then 0.9 else 0.1 := by
   rw [mutation, Kernel.ofFunOfCountable_apply,
     Measure.finsetSum_ofReal_smul_dirac_real_singleton (fun i ↦ by split_ifs <;> norm_num)]
 
@@ -822,9 +795,24 @@ instance : IsMarkovKernel mutation :=
 
 private theorem real_positive (x : Measure Sign) [IsProbabilityMeasure x] :
     x.real {positive} = 1 - x.real {negative} := by
-  have : x.real {negative} + x.real {positive} = 1 :=
-    measureReal_singleton_add_singleton_of_pair x (by decide) fun i _ ↦ by cases i <;> simp
-  linarith
+  linarith [measureReal_singleton_add_singleton_of_pair x (by decide : negative ≠ positive)
+    fun i _ ↦ eq_negative_or_eq_positive i]
+
+-- App. A: mutation alone has one rest point, the even population, and every population converges
+-- to it.
+theorem invariant_mutation_iff_and_tendsto (x : Measure Sign) [IsProbabilityMeasure x] :
+    (mutation.Invariant x ↔ x.real {negative} = 1 / 2) ∧
+      Filter.Tendsto (fun n : ℕ ↦ ((mutation ^ n) ∘ₘ x).real {negative}) Filter.atTop
+        (nhds (1 / 2)) := by
+  have hab : negative ≠ positive := by decide
+  refine ⟨?_, ?_⟩
+  · rw [Kernel.invariant_iff_of_pair hab eq_negative_or_eq_positive, mutation_real_singleton,
+      mutation_real_singleton, real_positive]
+    simp only [reduceCtorEq, ↓reduceIte]
+    constructor <;> intro h <;> linarith
+  · convert Kernel.tendsto_pow_comp_real_singleton_of_pair hab eq_negative_or_eq_positive
+      (κ := mutation) (μ := x) ?_ ?_ using 2 <;>
+      simp only [mutation_real_singleton, reduceCtorEq, ↓reduceIte] <;> norm_num
 
 private theorem replicator_real (x : Measure Sign) [IsProbabilityMeasure x] (i : Sign) :
     (replicator (fitness payoff x) x).real {i} =
@@ -833,16 +821,18 @@ private theorem replicator_real (x : Measure Sign) [IsProbabilityMeasure x] (i :
   have h₀ := measureReal_nonneg (μ := x) (s := {negative})
   have h₁ : x.real {negative} ≤ 1 := measureReal_le_one
   have hp := real_positive x
+  have hf (j : Sign) : fitness payoff x j = ENNReal.ofReal
+      (x.real {negative} * payoff j negative + (1 - x.real {negative}) * payoff j positive) := by
+    rw [fitness, integral_fintype .of_finite, univ_eq, sum_pair (by decide), smul_eq_mul,
+      smul_eq_mul, hp]
   rw [replicator_real_singleton (fitness payoff x) (fun _ ↦ ENNReal.ofReal_ne_top), univ_eq,
     sum_pair (by decide)]
   cases i <;>
-    simp only [fitness, univ_eq, sum_pair (by decide : negative ≠ positive), payoff, hp,
-      ↓reduceIte, reduceCtorEq] <;>
+    simp only [hf, payoff, hp, ↓reduceIte, reduceCtorEq] <;>
     rw [ENNReal.toReal_ofReal (by nlinarith), ENNReal.toReal_ofReal (by nlinarith)] <;>
     congr 1 <;> ring
 
--- App. A (p. 2788): the replicator step alone rests at the shares `0`, `2/3` and `1` of
--- negatives.
+-- App. A: the replicator step alone rests at the shares `0`, `2/3` and `1` of negatives.
 theorem replicator_real_negative_eq_iff (x : Measure Sign) [IsProbabilityMeasure x] :
     (replicator (fitness payoff x) x).real {negative} = x.real {negative} ↔
       x.real {negative} = 0 ∨ x.real {negative} = 2 / 3 ∨ x.real {negative} = 1 := by
@@ -861,20 +851,32 @@ theorem replicator_real_negative_eq_iff (x : Measure Sign) [IsProbabilityMeasure
     · exact .inr (.inl (by linarith))
   · rintro (h | h | h) <;> rw [h] <;> ring
 
--- App. A (p. 2788): the replicator mutator step sends the share `x` of negatives to
+-- App. A: the replicator mutator step sends the share `x` of negatives to
 -- `(1.1x² - 0.4x + 0.2) / (3x² - 4x + 2)`.
-theorem rmd_real_negative (x : Measure Sign) [IsProbabilityMeasure x] :
-    (rmd mutation (fitness payoff x) x).real {negative} =
+theorem replicatorMutator_real_negative (x : Measure Sign) [IsProbabilityMeasure x] :
+    (replicatorMutator mutation (fitness payoff x) x).real {negative} =
       (1.1 * x.real {negative} ^ 2 - 0.4 * x.real {negative} + 0.2) /
         (3 * x.real {negative} ^ 2 - 4 * x.real {negative} + 2) := by
-  rw [rmd, Measure.comp_real_singleton, univ_eq, sum_pair (by decide), mutation_real_negative,
-    mutation_real_negative, replicator_real, replicator_real]
+  rw [replicatorMutator, Measure.comp_real_singleton, univ_eq, sum_pair (by decide),
+    mutation_real_singleton, mutation_real_singleton, replicator_real, replicator_real]
   set a := x.real {negative}
   have hΦ : 3 * a ^ 2 - 4 * a + 2 ≠ 0 := by nlinarith [sq_nonneg (a - 2 / 3)]
   simp only [↓reduceIte, reduceCtorEq]
   rw [div_mul_eq_mul_div, div_mul_eq_mul_div, ← add_div]
   congr 1
   ring
+
+-- App. A: so the replicator mutator step rests where the share of negatives is a root of
+-- `30x³ - 51x² + 24x - 2`.
+theorem replicatorMutator_real_negative_eq_iff (x : Measure Sign) [IsProbabilityMeasure x] :
+    (replicatorMutator mutation (fitness payoff x) x).real {negative} = x.real {negative} ↔
+      30 * x.real {negative} ^ 3 - 51 * x.real {negative} ^ 2 + 24 * x.real {negative} - 2 = 0 := by
+  rw [replicatorMutator_real_negative]
+  set a := x.real {negative}
+  have hΦ : 3 * a ^ 2 - 4 * a + 2 ≠ 0 := by nlinarith [sq_nonneg (a - 2 / 3)]
+  rw [div_eq_iff hΦ]
+  exact ⟨fun h ↦ by linear_combination (-10 : ℝ) * h,
+    fun h ↦ by linear_combination (-1 / 10 : ℝ) * h⟩
 
 end AppendixA
 
@@ -951,11 +953,6 @@ private theorem real_add_three (ν : Measure (Fin 3)) [IsProbabilityMeasure ν] 
   have := sum_measureReal_singleton (μ := ν) (univ : Finset (Fin 3))
   rwa [Fin.sum_univ_three, coe_univ, probReal_univ] at this
 
-private theorem ext_of_real {μ ν : Measure (Fin 3)} [IsFiniteMeasure μ] [IsFiniteMeasure ν]
-    (h : ∀ i, μ.real {i} = ν.real {i}) : μ = ν :=
-  Measure.ext_of_singleton fun i ↦
-    (measureReal_eq_measureReal_iff (measure_ne_top _ _) (measure_ne_top _ _)).1 (h i)
-
 -- App. B: the chain `LH` keeps exactly the population `(δ, ε, ε) / (δ + 2ε)`.
 theorem invariant_lh_iff (hε : 0 < ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1) (ν : Measure (Fin 3))
     [IsProbabilityMeasure ν] : (lh ε δ).Invariant ν ↔ ν = lhStationary ε δ := by
@@ -967,7 +964,7 @@ theorem invariant_lh_iff (hε : 0 < ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1) (
     rw [Measure.comp_real_singleton, Fin.sum_univ_three, lh_real_singleton hε.le hδ h,
       lh_real_singleton hε.le hδ h, lh_real_singleton hε.le hδ h]
   have hpos : δ + 2 * ε ≠ 0 := by linarith
-  refine ⟨fun hν ↦ ext_of_real fun i ↦ ?_, ?_⟩
+  refine ⟨fun hν ↦ Measure.ext_of_measureReal_singleton fun i ↦ ?_, ?_⟩
   · have hsum := real_add_three ν
     have h₀ := hcomp ν 0
     have h₁ := hcomp ν 1
@@ -983,14 +980,14 @@ theorem invariant_lh_iff (hε : 0 < ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1) (
     · simp only [Fin.reduceFinMk, Fin.isValue, Fin.reduceEq, ↓reduceIte]
       linear_combination ε * hsum + h₂
   · rintro rfl
-    refine ext_of_real fun j ↦ ?_
+    refine Measure.ext_of_measureReal_singleton fun j ↦ ?_
     rw [hcomp, lhStationary_real_singleton hε hδ, lhStationary_real_singleton hε hδ,
       lhStationary_real_singleton hε hδ, lhStationary_real_singleton hε hδ]
     fin_cases j <;> simp [lhWeight] <;> field_simp <;> ring
 
-/-- App. B (p. 2789): learners who sample from the posterior (`l = 1`) keep the flat prior, while
-learners who adopt the likeliest type learn `LH` itself, whose only stationary population is
-`(δ, ε, ε) / (δ + 2ε)`. This population favours `t₁` exactly when `δ > ε`. -/
+/-- App. B: learners who sample from the posterior keep the flat prior, while learners who adopt the
+likeliest type learn `LH` itself, whose only stationary population is `(δ, ε, ε) / (δ + 2ε)`, which
+favours `t₁` exactly when `δ > ε`. -/
 theorem invariant_mapLearner_comp_lh_iff (hε : 0 < ε) (hδ : 0 ≤ δ) (h : δ + 2 * ε < 1)
     (ν : Measure (Fin 3)) [IsProbabilityMeasure ν] :
     letI := isMarkovKernel_lh hε.le hδ h

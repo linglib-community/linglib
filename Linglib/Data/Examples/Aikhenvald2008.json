@@ -1,4 +1,9 @@
-[
+{
+"readings": {"lean": "reading", "type": "Reading",
+             "doc": "The readings the grammar gives a completive medial clause.",
+             "levels": [{"name": "after", "label": "after", "doc": "the event of the medial clause is over before the next"},
+                        {"name": "because", "label": "because", "doc": "the event of the medial clause is the reason for the next"}]},
+"examples": [
   {
     "id": "aikhenvald2008_ex18_17",
     "source": {"bibkey": "aikhenvald-2008", "paperLabel": "18.17"},
@@ -49,3 +54,4 @@
     "verified": "page-image"
   }
 ]
+}

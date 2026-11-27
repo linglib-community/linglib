@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Fragments.Swahili.Relativization
+public import Linglib.Languages.Swahili.Relativization
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Scott2021
 
@@ -14,7 +14,7 @@ monosyllabic prepositions require (§3.3): bound pronouns, the only option insid
 ((35)–(37)), never carry person. Both follow from the Vocabulary of (28) (`resumptiveVocab`) and the
 copy theory of movement. A pronoun is a `PhraseStructure.Tree` over D, Num, the animate n and, for
 local persons only, a Person projection ((40)–(44), `pronoun`), and the Vocabulary spells out the
-Fragment's paradigm of Table 2 (`table2`). A movement copy in a position with a phonological
+language file's paradigm of Table 2 (`table2`). A movement copy in a position with a phonological
 requirement is reduced rather than deleted, following Landau: MaxElide removes the largest
 constituent whose residue can still be spelled out (`Deletable`, `maxElideTarget`), which is PersP,
 since *-ye* spells out `[sg + n_anim]` while nothing spells out Num alone ((46)–(48),
@@ -110,7 +110,7 @@ def spellout (t : Tree DPCat String) : Option String :=
 /-- The person of a cell as the structures' person, third person being the absence of
 PersP. -/
 def cellPerson (c : Agreement.Bundle) : Option Person :=
-  if c.IsSAP then some c.person else none
+  if c.person ≠ ↑Person.third then c.person else none
 
 /-- The number of a cell. -/
 def cellNumber (c : Agreement.Bundle) : Number := if c.IsPlural then .plural else .singular

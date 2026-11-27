@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
@@ -39,7 +44,7 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
   Baker's reflexive-reciprocal formation; an implied participant occupies an implicit position
   of the frame, and one understood as the subject itself or its members is cumulated with it.
 * Participants are numbered, and a diathesis is entered as the participants of its slots in slot
-  order, the external argument first: `ofSlots .np [0, 1]` puts participant 0 in subject
+  order, the subject first: `ofSlots .np [0, 1]` puts participant 0 in subject
   position and participant 1 in object position.
 * A diathesis may leave out a participant another diathesis of the verb expresses, as the
   intransitive of *break* leaves out the breaker, so a causative or anticausative pair is two

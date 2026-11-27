@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Directive
-public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Data.Examples.Rubinstein2014
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Data.Examples.Readers
@@ -16,7 +16,7 @@ Sloman (1970), the priorities of Kratzer's ordering source are split by negotiab
 with the circumstances, delimit the favored worlds through Frank's compatibility-restricted
 union ((39)–(40)), while the negotiable priorities an opinionated assessor promotes remain an
 ordering source. Strong necessity is simple necessity over the favored worlds (41), weak
-necessity is human necessity over them under the negotiable ordering (42), and the ordering
+necessity is necessity over them under the negotiable ordering (42), and the ordering
 source of a weak necessity presupposes negotiability (50). The tax-report dialogue is the shift
 from *should* to *have to* as an ideal stops being negotiable ((46), (51)), and neg-raising
 follows from the choice between a negotiable ideal and its negation (§3.4.2). Weak necessity
@@ -53,7 +53,11 @@ Hebrew reaches weak necessity through the comparatives alone.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Rubinstein2014
+
+open Examples (Strategy)
 
 open Modality
 
@@ -87,16 +91,16 @@ def favoredWorlds (b : Backgrounds W) (w : W) : Set W :=
 
 /-- The promoted priorities a world verifies. -/
 def verified (b : Backgrounds W) (w u : W) : Set (Set W) :=
-  Preorder.satisfied (· ∈ ·) {q | q ∈ b.nonNegotiable w} u
+  {q ∈ {q | q ∈ b.nonNegotiable w} | u ∈ q}
 
 variable {b : Backgrounds W} {p : Set W} {w : W}
 
 theorem atLeastAsGoodAs_iff_verified_subset {u v : W} :
     (v ≤[b.nonNegotiable w] u) ↔ verified b w u ⊆ verified b w v :=
-  (Preorder.satisfied_subset_iff _ _ u v).symm
+  Preorder.ofLowerSets_le_iff_subset _ v u
 
 /-- The priorities a best world verifies form a maximal consistent extension. -/
-theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b.nonNegotiable w) :
+theorem verified_mem_extensions {u : W} (hu : u ∈ b.circumstances.bestWorlds b.nonNegotiable w) :
     verified b w u ∈ extensions b w :=
   ⟨⟨fun _ hq ↦ hq.1, u, hu.1, fun _ hq ↦ hq.2⟩, fun _ ⟨hYh, _, hv, hvY⟩ hXY q hq ↦
     atLeastAsGoodAs_iff_verified_subset.1 (hu.2 hv (atLeastAsGoodAs_iff_verified_subset.2
@@ -105,7 +109,7 @@ theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b
 /-- A world verifying a maximal consistent extension is best. -/
 theorem mem_bestWorlds_of_extension {X : Set (Set W)} {u : W} (hX : X ∈ extensions b w)
     (hu : u ∈ b.circumstances.accessibleWorlds w) (huX : ∀ q ∈ X, u ∈ q) :
-    u ∈ bestWorlds b.circumstances b.nonNegotiable w := by
+    u ∈ b.circumstances.bestWorlds b.nonNegotiable w := by
   have hX' : Maximal (fun Y ↦ Y ⊆ {q | q ∈ b.nonNegotiable w} ∧ ConsistentWith b w Y) X := hX
   refine ⟨hu, fun v hv hvu ↦ atLeastAsGoodAs_iff_verified_subset.2 fun q hq ↦ ⟨hq.1, huX q ?_⟩⟩
   exact hX'.le_of_ge (y := verified b w v) ⟨fun _ hq' ↦ hq'.1, v, hv, fun _ hq' ↦ hq'.2⟩
@@ -113,7 +117,7 @@ theorem mem_bestWorlds_of_extension {X : Set (Set W)} {u : W} (hX : X ∈ extens
 
 /-- Frank's union is Kratzer's best worlds under the promoted priorities. -/
 theorem favoredWorlds_eq_bestWorlds (b : Backgrounds W) (w : W) :
-    favoredWorlds b w = bestWorlds b.circumstances b.nonNegotiable w := by
+    favoredWorlds b w = b.circumstances.bestWorlds b.nonNegotiable w := by
   ext u
   simp only [favoredWorlds, Set.mem_iUnion, Set.mem_sep_iff, exists_prop]
   exact ⟨fun ⟨X, hX, hu, huX⟩ ↦ mem_bestWorlds_of_extension hX hu huX,
@@ -125,16 +129,16 @@ theorem favoredWorlds_eq_bestWorlds (b : Backgrounds W) (w : W) :
 def strongNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
   favoredWorlds b w ⊆ p
 
-/-- Weak necessity (42) is human necessity over the favored worlds under the negotiable
+/-- Weak necessity (42) is necessity over the favored worlds under the negotiable
 ordering source. -/
 def weakNecessity (b : Backgrounds W) (p : Set W) (w : W) : Prop :=
-  (premisePreorder (b.negotiable w)).minimals (favoredWorlds b w) ⊆ p
+  (≤[b.negotiable w]).minimals (favoredWorlds b w) ⊆ p
 
 /-- Strong necessity is [von-fintel-iatridou-2008]'s, with the promoted priorities as the
 ordering source. -/
 theorem strongNecessity_iff :
     strongNecessity b p w ↔
-      bestWorlds b.circumstances b.nonNegotiable w ⊆ p := by
+      b.circumstances.bestWorlds b.nonNegotiable w ⊆ p := by
   rw [strongNecessity, favoredWorlds_eq_bestWorlds]
 
 /-- Weak necessity is [von-fintel-iatridou-2008]'s with promoted priorities as primary and
@@ -177,7 +181,7 @@ theorem weakNecessity_ideal {γ : Set W} (hγ : b.negotiable w = {γ})
     (hlive : ∃ v ∈ favoredWorlds b w, v ∈ γ) :
     weakNecessity b γ w ∧ ¬ weakNecessity b γᶜ w := by
   obtain ⟨v, hv, hγv⟩ := hlive
-  rw [weakNecessity, weakNecessity, hγ, Preorder.minimals_ofCriteria_eq ⟨v, hv, by simpa⟩]
+  rw [weakNecessity, weakNecessity, hγ, Preorder.minimals_ofLowerSets_eq ⟨v, hv, by simpa⟩]
   exact ⟨fun _ h ↦ h.2 γ (Set.mem_singleton _), fun h ↦ h ⟨hv, by simpa⟩ hγv⟩
 
 /-- The neg-raising inference for the ideal: when the negotiable ideal is `γ` or its negation and
@@ -239,7 +243,7 @@ private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     show (true, true) ∈ Background.accessibleWorlds ⊥ w
     rw [Background.accessibleWorlds_bot]; exact Set.mem_univ _
   rw [favoredWorlds_eq_bestWorlds,
-    bestWorlds, Preorder.minimals_ofCriteria_eq ⟨(true, true), hall, ?_⟩]
+    Background.bestWorlds, Preorder.minimals_ofLowerSets_eq ⟨(true, true), hall, ?_⟩]
   · ext v
     simp only [ofIdeals, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
       Set.forall_mem_image, Set.mem_ofPred_eq]
@@ -255,7 +259,7 @@ theorem tax_shift (w : Revenue) :
       (¬ Negotiable commitmentAfter [Ideal.international] ∧
         strongNecessity (ofIdeals [.domestic, .international] []) reportAll w) := by
   refine ⟨⟨by decide, ?_, fun h ↦ ?_⟩, by decide, fun v hv ↦ ?_⟩
-  · rw [weakNecessity, favoredWorlds_ofIdeals, Preorder.minimals_ofCriteria_eq ⟨(true, true),
+  · rw [weakNecessity, favoredWorlds_ofIdeals, Preorder.minimals_ofLowerSets_eq ⟨(true, true),
       by simp [Ideal.holds], by simp [ofIdeals, Ideal.holds]⟩]
     rintro v ⟨hd, hi⟩
     exact ⟨hd .domestic (by simp), hi _ ⟨.international, by simp, rfl⟩⟩
@@ -299,33 +303,17 @@ theorem carix_negRaises :
       e.readings.lookup "lowerNeg" = some .acceptable ∧ ¬ InComparativeClass e := by
   decide
 
-/-- The routes to weak necessity are a dedicated item, a strong modal with weakening morphology,
-and evaluative comparative language. -/
-inductive Strategy
-  /-- A dedicated weak necessity modal, English *ought*. -/
-  | lexical
-  /-- A strong necessity modal with counterfactual morphology, Spanish *debería*. -/
-  | compositional
-  /-- An evaluative comparative, Hebrew *yoter tov*. -/
-  | evaluativeComparative
-  deriving DecidableEq, Repr
-
-/-- The strategy a row exemplifies. -/
-def strategy? (e : Datum) : Option Strategy :=
-  e.parse? "strategy" [("lexical", Strategy.lexical), ("compositional", .compositional),
-    ("evaluativeComparative", .evaluativeComparative)]
-
 /-- The strength tests of (8), (16), (19) and (21) are felicitous exactly for the items reaching
 weak necessity by some strategy. -/
 theorem strength_tests :
     ∀ e ∈ Examples.all, e.feature? "diagnostic" ∈ [some "test1", some "test2"] →
-      (e.judgment = .acceptable ↔ (strategy? e).isSome) := by
+      (e.judgment = .acceptable ↔ (Examples.strategy e).isSome) := by
   decide
 
 -- §2.1
 theorem hebrew_comparative_only :
     ∀ e ∈ Examples.all, e.language = .modernHebrew →
-      ∀ s ∈ strategy? e, s = .evaluativeComparative := by
+      ∀ s ∈ Examples.strategy e, s = .evaluativeComparative := by
   decide
 
 end Rubinstein2014

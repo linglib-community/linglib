@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Logic.Trivalent.Quantifier
+public import Linglib.Logic.Propositional.Trivalent
 public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Fintype.Pi
 
@@ -28,7 +28,7 @@ undefined.
 
 ## Main definitions
 
-* `Trivalent.Formula.bivalentVariants`: the formulas over atoms paired with standards that read
+* `Propositional.Formula.bivalentVariants`: the formulas over atoms paired with standards that read
   each occurrence of an atom at a standard.
 * `Trivalent.supervaluationOn`: the supervaluation of a predicate over a set.
 
@@ -36,7 +36,7 @@ undefined.
 
 * `Trivalent.supervaluation_product_and`, `Trivalent.supervaluation_product_or`: over a product of
   families, supervaluation takes independent conjunctions and disjunctions to `⊓` and `⊔`.
-* `Trivalent.Formula.eval_strongKleene_eq_supervaluation`: the Strong Kleene value of a formula
+* `Propositional.Formula.eval_strongKleene_eq_supervaluation`: the Strong Kleene value of a formula
   is the supervaluation of its bivalent variants.
 * `Trivalent.forallStrong_eq_supervaluation`, `Trivalent.existsStrong_eq_supervaluation`: the
   Strong Kleene quantifiers are supervaluations over the readings of their instances.
@@ -165,7 +165,7 @@ theorem supervaluationOn_singleton (a : α) [Decidable (P a)] :
 
 theorem nontrivial_of_supervaluationOn_eq_undefined (h : supervaluationOn s P = .undefined) :
     s.Nontrivial :=
-  let ⟨⟨a, ha, hPa⟩, b, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h
+  let ⟨⟨_, ha, hPa⟩, _, hb, hPb⟩ := supervaluationOn_eq_undefined_iff.1 h
   Set.nontrivial_of_mem_mem_ne ha hb fun e ↦ hPb (e ▸ hPa)
 
 theorem supervaluationOn_congr (h : ∀ a ∈ s, P a ↔ Q a) :
@@ -211,13 +211,29 @@ theorem supervaluation_eq_of_between [DecidablePred P] [DecidableEq α] {s : Fin
     Finset.coe_singleton]
   exact supervaluationOn_eq_of_between hlo hhi hs
 
+/-- Supervaluation commutes with negation over a nonempty set. -/
+theorem supervaluationOn_not (hs : s.Nonempty) :
+    supervaluationOn s (¬ P ·) = (supervaluationOn s P)ᶜ := by
+  refine eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
+  · simp [supervaluationOn_eq_true_iff, supervaluationOn_eq_false_iff, hs]
+  · simp [supervaluationOn_eq_true_iff, supervaluationOn_eq_false_iff, hs]
+
+/-- Supervaluation is monotone in the predicate. -/
+theorem supervaluationOn_mono (h : ∀ a ∈ s, P a → Q a) :
+    supervaluationOn s P ≤ supervaluationOn s Q := by
+  rcases trichotomy (supervaluationOn s P) with hP | hP | hP
+  · rw [hP]
+    exact bot_le
+  · rcases trichotomy (supervaluationOn s Q) with hQ | hQ | hQ
+    · obtain ⟨⟨a, ha, hPa⟩, -⟩ := supervaluationOn_eq_undefined_iff.1 hP
+      exact absurd (h a ha hPa) ((supervaluationOn_eq_false_iff.1 hQ).2 a ha)
+    · rw [hP, hQ]
+    · rw [hQ]
+      exact le_top
+  · rw [supervaluationOn_eq_true_iff.2 fun a ha ↦ h a ha (supervaluationOn_eq_true_iff.1 hP a ha)]
+    exact le_top
+
 end SupervaluationOn
-
-end Trivalent
-
-namespace Trivalent
-
-open Trivalent
 
 section Standards
 
@@ -276,7 +292,11 @@ theorem existsStrong_eq_supervaluation (p : ι → Trivalent) :
   simpa using (supervaluation_piFinset_exists (S := fun _ ↦ Finset.univ)
     (fun i (d : Designation) ↦ d.threshold ≤ p i) fun _ ↦ Finset.univ_nonempty).symm
 
-namespace Formula
+end Trivalent
+
+namespace Propositional.Formula
+
+open Trivalent
 
 variable {Atom : Type*} [DecidableEq Atom]
 
@@ -325,6 +345,4 @@ theorem eval_strongKleene_eq_supervaluation (M : Model Atom) (φ : Formula Atom)
     simp only [bivalentVariants, ← Finset.image_uncurry_product, supervaluation_image]
     exact supervaluation_congr fun _ _ ↦ by simp [Function.uncurry_def]
 
-end Formula
-
-end Trivalent
+end Propositional.Formula

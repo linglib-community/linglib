@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OCP
+public import Linglib.Phonology.Autosegmental.Map
 public import Linglib.Phonology.Autosegmental.TwoTier
 
 /-!
@@ -106,6 +107,8 @@ variable {ι : Type*} {τ : ι → Type*} (X : AR τ) (m : ι)
 def IsCleanAt : Prop := IsClean (X.word m)
 
 variable [DecidableEq ι] [DecidableEq (τ m)]
+
+instance : Decidable (X.IsCleanAt m) := inferInstanceAs (Decidable (IsClean (X.word m)))
 
 variable {X m} in
 theorem IsCleanAt.repointIdx_runIdx (h : X.IsCleanAt m) {i : ι} {p : ℕ}

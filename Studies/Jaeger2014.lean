@@ -13,6 +13,8 @@ public import Mathlib.Tactic.Positivity
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Decision.Admissible
 public import Linglib.Data.Examples.Jaeger2014
+public import Linglib.Pragmatics.Agent.BestResponse
+public import Linglib.Pragmatics.SignalingGame.Pure
 public import Studies.Franke2011
 public import Linglib.Data.Examples.Readers
 
@@ -35,6 +37,13 @@ response.
 * Beliefs are points of mathlib's `Convexity.StdSimplex`; the paper's distributions over a set
   `P` of strategies, all of them or only those positive on all of `P`, are the beliefs whose
   support is contained in, respectively equal to, `P`.
+* The receiver's contexts take a semantic game beyond a signaling game, whose receiver has no
+  private information. With the sender and the receiver each in a context it is a
+  `SignalingGame` from worlds through signals to actions (`SemanticGame.toSignalingGame`), in
+  which the receiver's utility does not depend on the signal; the sender's ex-ante payoff is its
+  value of a pure profile, and the receiver's optimal actions are the best responses of an
+  `Agent` (`SemanticGame.coe_optimalActions_prior`). Best responses to a belief about the other
+  player's strategy and context are stated on the study's own definitions.
 * The iterated cautious response sequence is an iterate of `receiverStep` and the pragmatically
   rationalizable strategies are its limit superior; `mem_prsR_iff` is the paper's definition,
   which prints `s` for `r` in its receiver half.
@@ -672,6 +681,66 @@ theorem optimalActions_eq_of_extension_eq_singleton {f : F} {w : W} (hf : g.exte
   simp only [optimalActions, hf, Finset.sum_singleton]
   exact Finset.argmax_comp_strictMono (s := Finset.univ) (f := g.uR c w)
     (strictMono_mul_left_of_pos hw)
+
+/-! ### The signaling game of a context -/
+
+section SignalingGame
+
+open MeasureTheory
+
+variable [MeasurableSpace W] [MeasurableSingletonClass W]
+
+/-- The prior over worlds as a measure. -/
+noncomputable def priorMeasure : Measure W :=
+  ∑ w, ENNReal.ofReal (g.prior.weights w) • Measure.dirac w
+
+omit [Fintype C] [Fintype F] [Fintype A] [DecidableEq C] [DecidableEq W] [DecidableEq F] in
+theorem priorMeasure_real_singleton (w : W) : g.priorMeasure.real {w} = g.prior.weights w := by
+  rw [priorMeasure, measureReal_def, Measure.finsetSum_smul_dirac_singleton,
+    ENNReal.toReal_ofReal (g.prior.nonneg w)]
+
+instance : IsFiniteMeasure g.priorMeasure :=
+  ⟨by
+    rw [priorMeasure, Measure.finsetSum_smul_dirac_apply]
+    exact ENNReal.sum_lt_top.2 fun w _ ↦ by
+      rw [Set.indicator_of_mem (Set.mem_univ w)]
+      exact ENNReal.ofReal_lt_top⟩
+
+/-- With the sender in the context `cS` and the receiver in the context `cR`, a semantic game is a
+signaling game from worlds through signals to actions, in which the receiver's utility does not
+depend on the signal. -/
+noncomputable def toSignalingGame (cS cR : C) : SignalingGame W F A :=
+  ⟨g.priorMeasure, g.uS cS, fun w _ ↦ g.uR cR w⟩
+
+instance (cS cR : C) : IsFiniteMeasure (g.toSignalingGame cS cR).prior :=
+  inferInstanceAs (IsFiniteMeasure g.priorMeasure)
+
+omit [Fintype C] [Fintype F] [Fintype A] [DecidableEq C] [DecidableEq W] [DecidableEq F] in
+-- The ex-ante payoff is the sender's value of the pure profile, both players in the context.
+theorem senderPayoff_eq_pureSenderValue (c : C) (s : C → W → F) (r : C → F → A) :
+    g.senderPayoff c s r = (g.toSignalingGame c c).pureSenderValue (s c) (r c) := by
+  rw [senderPayoff, SignalingGame.pureSenderValue, integral_fintype .of_finite]
+  exact Finset.sum_congr rfl fun w _ ↦ by
+    rw [toSignalingGame, priorMeasure_real_singleton, smul_eq_mul]
+
+/-- The receiver in the context `c` who has updated the prior with the proposition `φ`, as an
+agent. -/
+noncomputable def receiverAt (c : C) (φ : Finset W) : Agent Unit W A :=
+  ⟨ProbabilityTheory.Kernel.const Unit (g.priorMeasure.restrict ↑φ),
+    fun w a ↦ (g.uR c w a : EReal)⟩
+
+omit [Fintype C] [Fintype F] [DecidableEq C] [DecidableEq W] [DecidableEq F] in
+-- Definition 1: the receiver's optimal actions are his best responses as an agent.
+theorem coe_optimalActions_prior (c : C) (φ : Finset W) :
+    (g.optimalActions c φ g.prior : Set A) = (g.receiverAt c φ).bestResponses () := by
+  rw [← Agent.coe_argmax_value, optimalActions]
+  congr 2
+  funext a
+  rw [receiverAt, Agent.value_coe, ProbabilityTheory.Kernel.const_apply,
+    setIntegral_finset _ Integrable.of_finite.integrableOn]
+  exact Finset.sum_congr rfl fun w _ ↦ by rw [priorMeasure_real_singleton, smul_eq_mul]
+
+end SignalingGame
 
 end SemanticGame
 

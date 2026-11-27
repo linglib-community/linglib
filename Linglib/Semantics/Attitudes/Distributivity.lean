@@ -48,9 +48,9 @@ def IsPToQEntailing (𝒬 : Set (Set (Set W))) (V : E → Set (Set W) → W → 
   ∀ Q ∈ 𝒬, ∀ x w, ∀ p ∈ Q, V x {p} w → V x Q w
 
 /-- `V` is clausally distributive on `𝒬` when it relates an entity to a question of `𝒬` exactly when
-it relates it to some answer, [belnap-1982]'s distributivity principle. [qing-uegaki-2025]'s (15)
-takes `𝒬` to be any embedded question and [theiler-etal-2018]'s Definition 8 those without
-overlapping answers. -/
+it relates it to some answer, [belnap-1982]'s distributivity principle. [qing-uegaki-2025]'s (8)
+takes `𝒬` to be the exhaustivity-neutral questions, polar and singular *which* questions among
+them, and [theiler-etal-2018]'s Definition 8 those without overlapping answers. -/
 def IsClausallyDistributive (𝒬 : Set (Set (Set W))) (V : E → Set (Set W) → W → Prop) : Prop :=
   ∀ Q ∈ 𝒬, ∀ x w, V x Q w ↔ ∃ p ∈ Q, V x {p} w
 

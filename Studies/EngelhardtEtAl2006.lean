@@ -3,10 +3,10 @@ module
 public import Linglib.Data.Examples.EngelhardtEtAl2006
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Statistics.EngelhardtEtAl2006
-public import Linglib.Fragments.English.Adpositions
+public import Linglib.Languages.English.Adpositions
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Reference.ReferentialSupport
-public import Linglib.Syntax.Case.Spatial
+public import Linglib.Syntax.Feature.Case.Spatial
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -54,7 +54,7 @@ structure Object where
   /-- The category label of the object. -/
   kind : Kind
   /-- The object it is located on or in, if any, with the part of it the object is localized in. -/
-  ground : Option (Spatial.Localization × Fin 5)
+  ground : Option (Locative.Configuration × Fin 5)
 
 /-- A display of five objects, the target first. -/
 abbrev Display := Fin 5 → Object

@@ -1,169 +1,230 @@
 module
 
-public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Integral.Average
 public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Semantics.MeasurementTheory.Intermediate
 
 /-!
-# Expected-value desire semantics
+# Expected value of a proposition
 
-On Lassiter's scalar semantics *want* is a gradable predicate: *a wants p* holds when the expected
-value of `p` given `a`'s beliefs lies above a contextual threshold, the positive form on the
-expected-value scale. The expected value is the expectation of a value function under the prior
-conditioned on the worlds of `p` compatible with the beliefs. It is an interval scale and lies
-between the values of disjoint propositions, from which the threshold reading derives Weakening
-and, when *want* is exclusive on the complement, the Smith Principle. The bare threshold admits
-wanting `p` and wanting `¬p` at once.
+We define the expected value of a proposition `φ : Set W`, for a prior `μ : Measure W` and a value
+function `V : W → ℝ` on worlds, as the average of `V` over `φ`:
+`expectedValue μ V φ = ⨍ w in φ, V w ∂μ`. It is the integral of `V` against the prior conditioned
+on `φ`, `∫ w, V w ∂μ[|φ]`, and on a finite set of worlds it is the weighted sum
+`(∑ w ∈ φ, μ {w} * V w) / ∑ w ∈ φ, μ {w}`. This is the measure of the goodness of a proposition
+in [lassiter-2017], which takes it from [jeffrey-1965]. Relative to a domain `D` of worlds the
+expected value of `φ` is that of `D ∩ φ`, which is the expected value of `φ` under the prior
+conditioned on `D`.
+
+For disjoint `φ` and `ψ` the expected value of `φ ∪ ψ` is the average of the expected values of
+`φ` and `ψ` weighted by their probabilities. It therefore lies between them, and strictly between
+them when they differ and both propositions have positive probability, so expected value is an
+intermediate measure of propositions. A positive affine change of the value function changes every
+expected value by the same map, so comparisons of expected value are invariant under such changes.
+
+[jeffrey-1965] changes the prior and the value function together. For reals `a`, `b`, `c`, `d`
+with `c * V + d` positive, the prior with density `c * V + d` and the value function
+`(a * V + b) / (c * V + d)` give every proposition of positive probability the expected value
+`(a * x + b) / (c * x + d)`, where `x` is its expected value under the original pair, and multiply
+its probability by `c * x + d`. With `c = 0` and `d = 1` the prior is unchanged and the value
+function is `a * V + b`.
 
 ## Main definitions
 
-* `Desire.ExpectedValue.expectedValue`: the expected value of a proposition given a belief state.
-* `Desire.ExpectedValue.Want`: the positive form of *want* on the expected-value scale.
+* `Desire.expectedValue`: the average of a value function over a proposition.
 
-## Main statements
+## Main results
 
-* `Desire.ExpectedValue.expectedValue_affine`: the expected value is an interval scale.
-* `Desire.ExpectedValue.expectedValue_intermediate`: the expected value of a disjoint union lies
-  between those of its parts.
-* `Desire.ExpectedValue.Want.union`, `Desire.ExpectedValue.Want.inter_of_union_eq_univ`: Weakening
-  and the Smith Principle.
-* `Desire.ExpectedValue.exists_want_and_want_compl`: a proposition and its negation can both be
-  wanted.
+* `Desire.expectedValue_eq_integral_cond`: expected value as an integral against the conditioned
+  prior.
+* `Desire.expectedValue_cond`: conditioning the prior on a domain restricts the proposition to it.
+* `Desire.expectedValue_union`: the expected value of a disjoint union is a weighted average.
+* `Desire.isIntermediate_expectedValue`: expected value is an intermediate measure.
+* `Desire.expectedValue_union_mem_Ioo`: the expected value of a disjoint union of propositions of
+  positive probability lies strictly between unequal expected values.
+* `Desire.invariant_positiveAffine_expectedValue_le`: comparisons of expected value are invariant
+  under positive affine changes of the value function.
+* `Desire.expectedValue_withDensity_fractionalLinear`: reweighting the prior by `c * V + d` and
+  dividing the value function by it changes expected values by a fractional linear map.
+* `Desire.withDensity_real_apply_eq_mul_expectedValue`: the reweighted probability of a
+  proposition.
+
+## Implementation notes
+
+The definition is mathlib's `MeasureTheory.average` of a restricted measure, so the expected value
+of a proposition of probability zero is `0`, where [lassiter-2017] leaves it undefined. With that
+value `isIntermediate_expectedValue` needs no hypothesis that the propositions have positive
+probability: when one of two disjoint propositions is null, their union has the expected value of
+the other.
 
 ## References
 
-* [lassiter-2011]
 * [lassiter-2017]
+* [jeffrey-1965]
 -/
 
 @[expose] public section
 
-namespace Desire.ExpectedValue
+namespace Desire
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory MeasurementTheory Set
 
-variable {W : Type*} [MeasurableSpace W] (μ : Measure W) (V : W → ℝ) (θ : ℝ) (bel p q : Set W)
+variable {W : Type*} [MeasurableSpace W] (μ : Measure W) (V : W → ℝ) (φ : Set W)
 
-/-- The expected value `E_V(p)` of `p` given the belief state is the expectation of the value
-function under the prior conditioned on the worlds of `p` compatible with the beliefs. -/
-noncomputable def expectedValue : ℝ := ∫ w, V w ∂μ[|bel ∩ p]
+/-- The expected value of the proposition `φ` is the average over `φ` of the value function `V`
+with respect to the prior `μ`. -/
+-- [lassiter-2017] (7.22)
+noncomputable def expectedValue : ℝ := ⨍ w in φ, V w ∂μ
 
-/-- `p` has positive prior mass inside the belief state when its compatible worlds do. -/
-def HasPositiveBeliefMass : Prop := μ (bel ∩ p) ≠ 0
+variable {μ V φ} {ψ D : Set W}
 
-/-- `a wants p` when `p` lies above the threshold on the expected-value scale, the positive form of
-a gradable predicate. -/
-def Want : Prop := p ∈ (expectedValue μ V bel) ⁻¹' Set.Ioi θ
+/-- The expected value of `φ` is the expectation of the value function under the prior conditioned
+on `φ`. -/
+theorem expectedValue_eq_integral_cond : expectedValue μ V φ = ∫ w, V w ∂μ[|φ] :=
+  setAverage_eq' μ V φ
 
-variable {μ V θ bel p} in
-theorem want_iff : Want μ V θ bel p ↔ θ < expectedValue μ V bel p := Iff.rfl
+variable [IsFiniteMeasure μ]
 
-variable {μ V θ bel p q} [IsFiniteMeasure μ]
-
-theorem measureReal_mul_expectedValue :
-    μ.real (bel ∩ p) * expectedValue μ V bel p = ∫ w in bel ∩ p, V w ∂μ := by
-  rw [expectedValue, ProbabilityTheory.cond, integral_smul_measure, smul_eq_mul, ← mul_assoc]
-  rcases eq_or_ne (μ (bel ∩ p)) 0 with h | h
-  · simp [measureReal_def, h, Measure.restrict_eq_zero.2 h]
-  · rw [measureReal_def, ENNReal.toReal_inv, mul_inv_cancel₀
-      (ENNReal.toReal_ne_zero.2 ⟨h, measure_ne_top _ _⟩), one_mul]
-
-private theorem measureReal_pos (h : HasPositiveBeliefMass μ bel p) : 0 < μ.real (bel ∩ p) :=
-  ENNReal.toReal_pos h (measure_ne_top _ _)
-
-variable [Finite W] [MeasurableSingletonClass W]
-
-theorem expectedValue_eq_sum [Fintype W] [DecidablePred (· ∈ bel ∩ p)] :
-    expectedValue μ V bel p =
-      (∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} * V w) /
-        ∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} := by
-  have hden : ∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} = μ.real (bel ∩ p) := by
+/-- On finitely many worlds the expected value of `φ` is the sum of the values of its worlds
+weighted by their conditional probabilities given `φ`. -/
+-- [lassiter-2017] (7.22)
+theorem expectedValue_eq_sum [Fintype W] [MeasurableSingletonClass W] [DecidablePred (· ∈ φ)] :
+    expectedValue μ V φ = (∑ w with w ∈ φ, μ.real {w} * V w) / ∑ w with w ∈ φ, μ.real {w} := by
+  have hden : ∑ w with w ∈ φ, μ.real {w} = μ.real φ := by
     rw [sum_measureReal_singleton]
     congr 1
     ext w
     simp
-  have hnum : ∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} * V w =
-      ∫ w in bel ∩ p, V w ∂μ := by
+  have hnum : ∑ w with w ∈ φ, μ.real {w} * V w = ∫ w in φ, V w ∂μ := by
     rw [integral_fintype .of_finite, Finset.sum_filter]
     refine Finset.sum_congr rfl fun w _ ↦ ?_
     rw [smul_eq_mul, measureReal_restrict_apply (measurableSet_singleton w)]
-    by_cases hw : w ∈ bel ∩ p <;> simp [hw]
-  rw [hden, hnum, ← measureReal_mul_expectedValue]
-  rcases eq_or_ne (μ (bel ∩ p)) 0 with h | h
-  · simp [expectedValue, cond_eq_zero_of_meas_eq_zero h]
-  · rw [mul_div_cancel_left₀ _ (measureReal_pos h).ne']
+    by_cases hw : w ∈ φ <;> simp [hw]
+  rw [hden, hnum, expectedValue, setAverage_eq, smul_eq_mul, inv_mul_eq_div]
 
-/-- Expected value is an interval scale, commuting with affine transformations of the value
+/-- The expected value of `φ` under the prior conditioned on a domain `D` is the expected value of
+`D ∩ φ`. -/
+theorem expectedValue_cond (hD : MeasurableSet D) (hφ : MeasurableSet φ) :
+    expectedValue μ[|D] V φ = expectedValue μ V (D ∩ φ) := by
+  rw [expectedValue_eq_integral_cond, expectedValue_eq_integral_cond,
+    cond_cond_eq_cond_inter hD hφ]
+
+/-! ### Disjoint unions -/
+
+section Union
+
+variable (hd : Disjoint φ ψ) (hψ : MeasurableSet ψ) (hV : Integrable V μ)
+include hd hψ hV
+
+/-- The expected value of a disjoint union is the average of the expected values of its parts
+weighted by their probabilities. -/
+-- [lassiter-2017] p. 188
+theorem expectedValue_union :
+    expectedValue μ V (φ ∪ ψ) =
+      μ.real φ / (μ.real φ + μ.real ψ) * expectedValue μ V φ +
+        μ.real ψ / (μ.real φ + μ.real ψ) * expectedValue μ V ψ :=
+  average_union hd.aedisjoint hψ.nullMeasurableSet (measure_ne_top _ _) (measure_ne_top _ _)
+    hV.integrableOn hV.integrableOn
+
+theorem expectedValue_union_mem_uIcc :
+    expectedValue μ V (φ ∪ ψ) ∈ uIcc (expectedValue μ V φ) (expectedValue μ V ψ) :=
+  (segment_eq_uIcc _ _).subset <| average_union_mem_segment hd.aedisjoint hψ.nullMeasurableSet
+    (measure_ne_top _ _) (measure_ne_top _ _) hV.integrableOn hV.integrableOn
+
+/-- The expected value of a disjoint union of propositions of positive probability lies strictly
+between their expected values when these differ. -/
+-- [lassiter-2017] (7.18)
+theorem expectedValue_union_mem_Ioo (hφ₀ : μ φ ≠ 0) (hψ₀ : μ ψ ≠ 0)
+    (h : expectedValue μ V ψ < expectedValue μ V φ) :
+    expectedValue μ V (φ ∪ ψ) ∈ Ioo (expectedValue μ V ψ) (expectedValue μ V φ) := by
+  rw [← openSegment_eq_Ioo h, openSegment_symm]
+  exact average_union_mem_openSegment hd.aedisjoint hψ.nullMeasurableSet hφ₀ hψ₀
+    (measure_ne_top _ _) (measure_ne_top _ _) hV.integrableOn hV.integrableOn
+
+end Union
+
+/-- Expected value is an intermediate measure of propositions. -/
+-- [lassiter-2017] (7.18), p. 188
+theorem isIntermediate_expectedValue [DiscreteMeasurableSpace W] (hV : Integrable V μ) :
+    IsIntermediate (expectedValue μ V) :=
+  fun _ _ hd ↦ expectedValue_union_mem_uIcc hd .of_discrete hV
+
+/-! ### Changes of the value function -/
+
+-- [lassiter-2017] pp. 187–188
+theorem expectedValue_const_mul_add_const (hφ : μ φ ≠ 0) (hV : Integrable V μ) (a b : ℝ) :
+    expectedValue μ (fun w ↦ a * V w + b) φ = a * expectedValue μ V φ + b := by
+  have := cond_isProbabilityMeasure hφ
+  have hV' : Integrable V μ[|φ] := hV.restrict.smul_measure (by simp [hφ])
+  simp only [expectedValue_eq_integral_cond]
+  rw [integral_add (hV'.const_mul a) (integrable_const b), integral_const_mul, integral_const,
+    probReal_univ, one_smul]
+
+/-- A positive affine change of the value function changes the expected value of a proposition of
+positive probability by the same map. -/
+theorem expectedValue_smul (hφ : μ φ ≠ 0) (hV : Integrable V μ) {g : ℝ ↪o ℝ}
+    (hg : g ∈ positiveAffine) : expectedValue μ (g • V) φ = g (expectedValue μ V φ) := by
+  obtain ⟨a, -, b, hg⟩ := hg
+  rw [show g • V = fun w ↦ a * V w + b from funext fun w ↦ hg (V w),
+    expectedValue_const_mul_add_const hφ hV, hg]
+
+/-- Comparisons of expected value are invariant under positive affine changes of the value
 function. -/
-theorem expectedValue_affine (h : HasPositiveBeliefMass μ bel p) (a b : ℝ) :
-    expectedValue μ (fun w ↦ a * V w + b) bel p = a * expectedValue μ V bel p + b := by
-  have := cond_isProbabilityMeasure (μ := μ) h
-  simp only [expectedValue]
-  rw [integral_add .of_finite .of_finite, integral_const_mul, integral_const, probReal_univ,
-    one_smul]
+theorem invariant_positiveAffine_expectedValue_le [Finite W] [MeasurableSingletonClass W]
+    (hφ : μ φ ≠ 0) (hψ : μ ψ ≠ 0) :
+    Invariant (positiveAffine : Set (ℝ ↪o ℝ)) fun V : W → ℝ ↦
+      expectedValue μ V ψ ≤ expectedValue μ V φ :=
+  fun g hg V ↦ by
+    beta_reduce
+    rw [expectedValue_smul hψ .of_finite hg, expectedValue_smul hφ .of_finite hg, g.le_iff_le]
 
-/-- The expected value of a disjoint union lies between the expected values of the
-parts. -/
-theorem expectedValue_intermediate (hp : HasPositiveBeliefMass μ bel p)
-    (hq : HasPositiveBeliefMass μ bel q) (hd : Disjoint p q) :
-    min (expectedValue μ V bel p) (expectedValue μ V bel q) ≤ expectedValue μ V bel (p ∪ q) ∧
-      expectedValue μ V bel (p ∪ q) ≤ max (expectedValue μ V bel p) (expectedValue μ V bel q) := by
-  have hd' : Disjoint (bel ∩ p) (bel ∩ q) := hd.mono Set.inter_subset_right Set.inter_subset_right
-  have hmp := measureReal_pos hp
-  have hmq := measureReal_pos hq
-  have hmass : μ.real (bel ∩ (p ∪ q)) = μ.real (bel ∩ p) + μ.real (bel ∩ q) := by
-    rw [Set.inter_union_distrib_left, measureReal_union hd' (Set.toFinite _).measurableSet]
-  have hsum : μ.real (bel ∩ (p ∪ q)) * expectedValue μ V bel (p ∪ q) =
-      μ.real (bel ∩ p) * expectedValue μ V bel p + μ.real (bel ∩ q) * expectedValue μ V bel q := by
-    rw [measureReal_mul_expectedValue, measureReal_mul_expectedValue, measureReal_mul_expectedValue,
-      Set.inter_union_distrib_left,
-      setIntegral_union hd' (Set.toFinite _).measurableSet Integrable.of_finite.integrableOn
-        Integrable.of_finite.integrableOn]
-  rw [hmass] at hsum
-  constructor
-  · by_contra hlt
-    push Not at hlt
-    nlinarith [min_le_left (expectedValue μ V bel p) (expectedValue μ V bel q),
-      min_le_right (expectedValue μ V bel p) (expectedValue μ V bel q)]
-  · by_contra hlt
-    push Not at hlt
-    nlinarith [le_max_left (expectedValue μ V bel p) (expectedValue μ V bel q),
-      le_max_right (expectedValue μ V bel p) (expectedValue μ V bel q)]
+/-! ### Fractional linear changes -/
 
-/-- Weakening holds, since disjoint `p` and `q` both above threshold put their union above it. -/
-theorem Want.union (hp' : HasPositiveBeliefMass μ bel p) (hq' : HasPositiveBeliefMass μ bel q)
-    (hd : Disjoint p q) (hp : Want μ V θ bel p) (hq : Want μ V θ bel q) :
-    Want μ V θ bel (p ∪ q) :=
-  lt_of_lt_of_le (lt_min hp hq) (expectedValue_intermediate hp' hq' hd).1
+section FractionalLinear
 
-theorem Want.resolve_left (hp' : HasPositiveBeliefMass μ bel p)
-    (hq' : HasPositiveBeliefMass μ bel q) (hd : Disjoint p q) (h : Want μ V θ bel (p ∪ q))
-    (hp : ¬ Want μ V θ bel p) : Want μ V θ bel q :=
-  (lt_max_iff.1 (lt_of_lt_of_le h (expectedValue_intermediate hp' hq' hd).2)).resolve_left hp
+variable {c d : ℝ}
 
-/-- By the Smith Principle, when `p` and `q` exhaust the worlds, wanting `p` without wanting `¬q`
-is wanting `p ∩ q`. -/
-theorem Want.inter_of_union_eq_univ (hpq : HasPositiveBeliefMass μ bel (p ∩ q))
-    (hq' : HasPositiveBeliefMass μ bel qᶜ) (huniv : p ∪ q = Set.univ) (hp : Want μ V θ bel p)
-    (hex : ¬ Want μ V θ bel qᶜ) : Want μ V θ bel (p ∩ q) := by
-  have hsub : qᶜ ⊆ p := Set.compl_subset_iff_union.2 (Set.union_comm _ _ ▸ huniv)
-  have heq : qᶜ ∪ p ∩ q = p := by
-    rw [← Set.inter_eq_right.2 hsub, Set.union_comm, Set.inter_union_compl]
-  exact Want.resolve_left hq' hpq (disjoint_compl_left.mono_right Set.inter_subset_right)
-    (by rw [heq]; exact hp) hex
+/-- Reweighting the prior by `c * V + d` multiplies the probability of a proposition by the value
+of `c * x + d` at its expected value. -/
+-- [jeffrey-1965] (6-1)
+theorem withDensity_real_apply_eq_mul_expectedValue (hV : Integrable V μ)
+    (hnn : 0 ≤ᵐ[μ] fun w ↦ c * V w + d) :
+    (μ.withDensity fun w ↦ ENNReal.ofReal (c * V w + d)).real φ =
+      μ.real φ * (c * expectedValue μ V φ + d) := by
+  have hint : IntegrableOn (fun w ↦ c * V w + d) φ μ :=
+    ((hV.const_mul c).add (integrable_const d)).integrableOn
+  rw [measureReal_def, withDensity_apply' _ φ,
+    ← ofReal_integral_eq_lintegral_ofReal hint (ae_restrict_of_ae hnn),
+    ENNReal.toReal_ofReal (integral_nonneg_of_ae (ae_restrict_of_ae hnn)),
+    integral_add (hV.const_mul c).integrableOn (integrable_const d).integrableOn,
+    integral_const_mul, integral_const, ← measure_smul_setAverage V (measure_ne_top μ φ),
+    measureReal_restrict_apply_univ, expectedValue]
+  simp only [smul_eq_mul]
+  ring
 
-omit [Finite W] [MeasurableSingletonClass W] [IsFiniteMeasure μ] in
-/-- The bare threshold admits simultaneous `want p` and `want ¬p`. -/
-theorem exists_want_and_want_compl :
-    ∃ (W : Type) (_ : MeasurableSpace W) (μ : Measure W) (V : W → ℝ) (θ : ℝ) (bel p : Set W),
-      Want μ V θ bel p ∧ Want μ V θ bel pᶜ := by
-  refine ⟨Bool, inferInstance, Measure.count, fun b ↦ if b then 2 else 1, 0, Set.univ, {true}, ?_⟩
-  have hpos (s : Set Bool) (hs : Measure.count (Set.univ ∩ s) ≠ 0) :
-      0 < expectedValue Measure.count (fun b ↦ if b then (2 : ℝ) else 1) Set.univ s := by
-    have := cond_isProbabilityMeasure (μ := Measure.count) hs
-    refine lt_of_lt_of_le zero_lt_one ?_
-    calc (1 : ℝ) = ∫ _, (1 : ℝ) ∂Measure.count[|Set.univ ∩ s] := by
-          rw [integral_const, probReal_univ, smul_eq_mul, mul_one]
-      _ ≤ _ := integral_mono (integrable_const 1) .of_finite fun b ↦ by cases b <;> norm_num
-  exact ⟨hpos _ (by simp), hpos _ (by simp [Set.compl_def])⟩
+/-- Reweighting the prior by `c * V + d` and dividing the value function `a * V + b` by the same
+weight sends the expected value of every proposition of positive probability through the
+fractional linear map `x ↦ (a * x + b) / (c * x + d)`. -/
+-- [jeffrey-1965] (6-2)
+theorem expectedValue_withDensity_fractionalLinear (hφ : μ φ ≠ 0) (hV : Integrable V μ)
+    (hpos : ∀ᵐ w ∂μ, 0 < c * V w + d) (a b : ℝ) :
+    expectedValue (μ.withDensity fun w ↦ ENNReal.ofReal (c * V w + d))
+        (fun w ↦ (a * V w + b) / (c * V w + d)) φ =
+      (a * expectedValue μ V φ + b) / (c * expectedValue μ V φ + d) := by
+  have hw : (fun w ↦ (ENNReal.ofReal (c * V w + d)).toReal • ((a * V w + b) / (c * V w + d)))
+      =ᵐ[μ.restrict φ] fun w ↦ a * V w + b := (ae_restrict_of_ae hpos).mono fun w hw ↦ by
+    simp only [ENNReal.toReal_ofReal hw.le, smul_eq_mul, mul_div_cancel₀ _ hw.ne']
+  rw [expectedValue, setAverage_eq,
+    withDensity_real_apply_eq_mul_expectedValue hV (hpos.mono fun _ h ↦ h.le),
+    setIntegral_withDensity_eq_setIntegral_toReal_smul₀' φ
+      ((hV.aemeasurable.const_mul c).add_const d).ennreal_ofReal.restrict
+      (.of_forall fun _ ↦ ENNReal.ofReal_lt_top), integral_congr_ae hw,
+    integral_add (hV.const_mul a).integrableOn (integrable_const b).integrableOn,
+    integral_const_mul, integral_const, ← measure_smul_setAverage V (measure_ne_top μ φ),
+    measureReal_restrict_apply_univ, ← expectedValue, smul_eq_mul, smul_eq_mul, smul_eq_mul,
+    mul_left_comm, ← mul_add, inv_mul_eq_div,
+    mul_div_mul_left _ _ ((measureReal_ne_zero_iff (measure_ne_top μ φ)).2 hφ)]
 
-end Desire.ExpectedValue
+end FractionalLinear
+
+end Desire

@@ -127,9 +127,10 @@ instance : DecidablePred Admissible := fun _ ↦ by unfold Admissible; infer_ins
 def hierarchies : List (List Feature) :=
   [Feature.author, .participant, .participantStar].sublists.flatMap List.permutations'
 
-/-- The graph of a partition given by its cells, as a finset of pairs of participant sets. -/
-def cellGraph (cells : List (Finset (Finset Role))) : Finset (Finset Role × Finset Role) :=
-  univ.filter fun p ↦ ∃ c ∈ cells, p.1 ∈ c ∧ p.2 ∈ c
+/-- The person partition given by a list of cells: two participant sets share a part when they
+lie in the same cells. -/
+def cellPartition (cells : List (Finset (Finset Role))) : Person.Partition :=
+  .ofFun fun P ↦ cells.filter (P ∈ ·)
 
 /-! ### The derived partitions -/
 
@@ -156,9 +157,9 @@ theorem not_admissible_participantStar : ¬ Admissible [.participantStar] := by 
 
 /-- The admissible hierarchies derive exactly the partitions of Harbour's bivalent geometry (9) (p.
 55; [harbour-2016] p. 193; Figure 4). -/
-theorem image_graph_sda_eq_geometry :
-    ((hierarchies.filter Admissible).map (cellGraph ∘ sda)).toFinset =
-      (univ.filter Harbour2016.Admissible).image Harbour2016.graph := by
+theorem image_partition_sda_eq_geometry :
+    ((hierarchies.filter Admissible).map (cellPartition ∘ sda)).toFinset =
+      (univ.filter Harbour2016.Admissible).image Person.Partition.ofFeatures := by
   decide
 
 end Hammerly2023

@@ -4,7 +4,7 @@ public import Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Bruening2025
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Linglib.Data.Statistics.Bruening2025
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Projection.Tree
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -195,7 +195,7 @@ features being on top of the coordinator's stack, and every positive feature on 
 satisfied by `h` ((100)–(104)). -/
 def MergesWith (ms : List Modifier) (h : Site) : Prop :=
   ms.IsChain (fun x y ↦ x.feature.ChecksNext y.cat) ∧
-    (∀ x ∈ HeadDirection.headFinal.nearest ms, x.feature.ChecksSite h) ∧
+    (∀ x ∈ ms.getLast?, x.feature.ChecksSite h) ∧
       ∀ x ∈ ms, x.feature.ChecksHost h
 
 instance (ms : List Modifier) (h : Site) : Decidable (MergesWith ms h) := by
@@ -349,7 +349,7 @@ theorem exp1b_predictions : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
 /-- For the speakers whose S-features persist (p. 457), the coordinations of Experiment 1b are out
 (§5.9). -/
 theorem exp1b_persisting : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
-    ¬ Admits (Satisfies (ConjunctAgreement.all.conjuncts .headInitial) {N}) ps := by
+    ¬ Admits (Satisfies ConjunctAgreement.all.conjuncts {N}) ps := by
   decide
 
 end Bruening2025

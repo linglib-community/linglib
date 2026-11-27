@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Word.Tree
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Skeleton
 public import Mathlib.Data.Fintype.EquivFin
@@ -13,9 +13,9 @@ public import Mathlib.Data.Finset.Basic
 Distributed Morphology builds words in the syntax and supplies their forms late. The syntax
 combines abstract morphemes: roots, which have no category, and functional morphemes, bundles of
 features, which bear the categories of the syntax, among them the categorizers *n*, *v* and *a*
-with one of which every root combines. Head movement and the operations after syntax gather a root and the heads above it into a complex
-head, and Vocabulary Insertion realizes its terminals, choosing among Vocabulary Items by the
-Subset Principle.
+with one of which every root combines. Head movement and the operations after syntax gather a root
+and the heads above it into a complex head, and Vocabulary Insertion realizes its terminals,
+choosing among Vocabulary Items by the Subset Principle.
 
 This file defines those objects. A complex head `ComplexHead R H` is a root of type `R` with the
 heads of type `H` adjoined above it, innermost first. Taking `R` to be `Root`, an index with no
@@ -31,21 +31,17 @@ into the syntax.
   Insertion substitutes for its variable Q.
 * `DistributedMorphology.ComplexHead`: a root with the heads adjoined above it.
 * `DistributedMorphology.ComplexHead.word`: the complex head after some steps of Merger.
-* `DistributedMorphology.ComplexHead.surface`: the linear order of a complex head.
-
-## Main statements
-
-* `DistributedMorphology.ComplexHead.surface_eq`: the Mirror Principle.
 
 ## Implementation notes
 
-The operations on complex heads are in their own files: Vocabulary Items and the Subset Principle in
-`VocabularyInsertion/Basic.lean`, insertion from the inside out in
-`VocabularyInsertion/InsideOut.lean`, the contexts rules read in `Neighborhood.lean`, the locality
-of allomorphy and allosemy within words in `Locality.lean` and across phrases in
-`PhrasalLocality.lean`, the configurations in which a Root is categorized and the diagnostics
-that can tell them apart in `RootCategorization.lean`, the rules that change terminals before
-insertion in `Impoverishment.lean`, `Fission.lean`, `Fusion.lean` and `Spellout.lean`, gender on
+The operations on complex heads are in their own files: the word tree of a complex head and its
+surface order in `WordTree.lean`, Vocabulary Items and the Subset Principle in
+`VocabularyInsertion/Basic.lean`, Vocabulary Insertion as a realization in `Realization.lean`,
+insertion from the inside out in `VocabularyInsertion/InsideOut.lean`, the contexts rules read in
+`Neighborhood.lean`, the locality of allomorphy and allosemy within words in `Locality.lean` and
+across phrases in `PhrasalLocality.lean`, the configurations in which a Root is categorized and
+the diagnostics that can tell them apart in `RootCategorization.lean`, the rules that change
+terminals before insertion in `Impoverishment.lean`, `Fusion.lean` and `Spellout.lean`, gender on
 *n* in `Gender.lean`, and contextual meaning in `Allosemy.lean`.
 
 ## References
@@ -67,7 +63,7 @@ open Morphology (Morph)
 
 /-- A root is individuated by an arbitrary index alone, with deliberately no form or meaning, and
 receives its form at Vocabulary Insertion. A different object from the comparative-concept root
-`Morphology.Comparative.Inventory.IsRoot`, which is a contentful morph. -/
+`Morphology.Distributional.IsRoot`, which is a contentful morph. -/
 @[ext]
 structure Root where
   /-- The individuating index. -/
@@ -174,23 +170,6 @@ def adjoinedSkeleton (k : ℕ) (p : P) : Option (Interpreter.Skeleton Unit (P �
           (fun t h ↦ .binary () t (.leaf (.inr (.inr h)))) (.leaf (.inr (.inl s.root)))))
 
 end Skeleton
-
-/-- The word tree, each head attached on the side its exponent takes, innermost first. -/
-def toTree (side : H → Morph.Side) : Morphology.Word.Tree (R ⊕ H) :=
-  Morphology.Word.Tree.attachAll (.inl s.root) (s.heads.map fun h => (side h, .inr h))
-
-/-- The surface order of root and heads. -/
-def surface (side : H → Morph.Side) : List (R ⊕ H) := (s.toTree side).toList
-
-/-- **The Mirror Principle.** The surface is the prefixal heads outermost first, the root, and the
-suffixal heads innermost first, so on each side the surface order outward from the root is the
-order of merger. -/
-theorem surface_eq (side : H → Morph.Side) :
-    s.surface side =
-      ((s.heads.filter fun h => side h = .before).map Sum.inr).reverse ++
-        Sum.inl s.root :: (s.heads.filter fun h => side h = .after).map Sum.inr := by
-  simp [surface, toTree, Morphology.Word.Tree.toList_attachAll, List.filter_map, List.map_map,
-    Function.comp_def]
 
 end ComplexHead
 

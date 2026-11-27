@@ -53,7 +53,7 @@ sharing a string. -/
 def word : Fin 3 → List Phone := ![[.t, .a, .i, .m], [.l, .a, .i, .m], [.t, .a, .i, .m]]
 
 /-- The six triphones of (2) are listed in the paper's column order `#ta taɪ aɪm ɪm# #la laɪ`. -/
-def triphone : Fin 6 → Augmented Phone :=
+def triphone : Fin 6 → Subregular.Augmented Phone :=
   ![[none, some .t, some .a], [some .t, some .a, some .i], [some .a, some .i, some .m],
     [some .i, some .m, none], [none, some .l, some .a], [some .l, some .a, some .i]]
 
@@ -201,7 +201,7 @@ def supportMatrix : Matrix (Fin m) (Fin m) ℝ := S * G * Cᵀ
 
 theorem supportMatrix_apply (i k : Fin m) :
     supportMatrix G S C i k = (S i ᵥ* G) ⬝ᵥ C k := by
-  rw [supportMatrix, mul_apply]
+  rw [supportMatrix, Matrix.mul_apply]
   rfl
 
 /-- *Semantic support for form* is the diagonal of `T`, the support a word's form receives from

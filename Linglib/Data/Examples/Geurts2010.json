@@ -1,4 +1,45 @@
-[
+{
+  "features": [
+    {
+      "key": "item",
+      "lean": "item",
+      "type": "Item",
+      "doc": "The three contrasts on which Gricean reasoning derives one inference and not its neighbour.",
+      "levels": [
+        {
+          "name": "sameLength",
+          "label": "sameLength",
+          "doc": "sameLength"
+        },
+        {
+          "name": "longer",
+          "label": "longer",
+          "doc": "longer"
+        },
+        {
+          "name": "figs",
+          "label": "figs",
+          "doc": "figs"
+        },
+        {
+          "name": "mango",
+          "label": "mango",
+          "doc": "mango"
+        },
+        {
+          "name": "referent",
+          "label": "referent",
+          "doc": "referent"
+        },
+        {
+          "name": "everySailor",
+          "label": "everySailor",
+          "doc": "everySailor"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "geurts2010_table2_i",
     "source": {"bibkey": "geurts-2010", "paperLabel": "Table 2 i, p. 58"},
@@ -525,3 +566,4 @@
     "verified": "page-image"
   }
 ]
+}

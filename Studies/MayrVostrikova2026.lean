@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Semantics.Quantification.Exceptive
+public import Linglib.Semantics.Quantifier.Exceptive
 public import Linglib.Data.Examples.MayrVostrikova2026
 
 /-!

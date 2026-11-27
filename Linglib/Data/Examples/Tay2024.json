@@ -1,4 +1,35 @@
-[
+{
+  "features": [
+    {
+      "key": "externalArgument",
+      "lean": "externalArgument",
+      "type": "ExternalArgument",
+      "doc": "The paper's reading of the external argument of a transitive compound relative to V1.",
+      "levels": [
+        {
+          "name": "agent",
+          "label": "agent",
+          "doc": "agent"
+        },
+        {
+          "name": "theme",
+          "label": "theme",
+          "doc": "theme"
+        },
+        {
+          "name": "subjectMatter",
+          "label": "subjectMatter",
+          "doc": "subjectMatter"
+        },
+        {
+          "name": "pureCauser",
+          "label": "pureCauser",
+          "doc": "pureCauser"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "tay2024_41",
     "source": {"bibkey": "tay-2024", "paperLabel": "(41), (43)"},
@@ -434,3 +465,4 @@
     "verified": "page-image"
   }
 ]
+}

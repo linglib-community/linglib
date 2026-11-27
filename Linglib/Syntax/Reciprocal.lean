@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.WALS.Features.F106A
 public import Linglib.Syntax.Voice.Basic
 
 /-!
@@ -30,6 +31,10 @@ language's inventory is built.
   `Construction.Mixed` is [evans-et-al-2007]'s mixed transitivity effect.
 * `Formation` — lexical vs syntactic formation of reciprocal verbs.
 * `Marker` — a reciprocal exponent with its strategy.
+* `Marker.IsIconic`, `type` — the value of an inventory of markers on the map of
+  [maslova-nedjalkov-2013], by whether the language has a reflexive reciprocal construction
+  (`ReciprocalType.HasReflexive`) and whether it has a non-reflexive one
+  (`ReciprocalType.HasNonReflexive`).
 
 ## Implementation notes
 
@@ -50,6 +55,13 @@ an argument strategy. The clitic of a syntactically formed reciprocal verb (Fren
 object ([siloni-2012]) and marks the predicate, as do German clitic *sich*, the only *sich* with a
 reciprocal reading ([gast-haas-2008]), and Wambaya *-ngg-*, which sits in the object position of
 the auxiliary but reduces valency ([evans-et-al-2007]).
+
+A reciprocal construction of [maslova-nedjalkov-2013] is iconic when it repeats the verb, once
+for each of the simple situations that make up the reciprocal one, and the map counts only the
+others, a reciprocal marker in a single clause. Such a construction is reflexive when it can also
+express the reflexive meaning, which `type` reads as identity of the marker's form with one of the
+language's reflexive exponents. Identity of form does not tell polysemy from accidental homophony,
+and the map's criterion is the same formal one.
 
 ## TODO
 
@@ -73,6 +85,7 @@ adverb shows no link to the predicate and does not distribute like an argument, 
 * [evans-et-al-2007]
 * [maslova-2008]
 * [hurst-2012]
+* [maslova-nedjalkov-2013]
 -/
 
 @[expose] public section
@@ -193,6 +206,80 @@ structure Marker where
   /-- Morphosyntactic strategy of the exponent. -/
   strategy : Strategy
   deriving DecidableEq
+
+/-! ### Reflexive and non-reflexive reciprocals -/
+
+section Polysemy
+
+open Data.WALS.F106A
+
+/-- The value is one of a language with a reflexive reciprocal construction. -/
+def _root_.Data.WALS.F106A.ReciprocalType.HasReflexive (v : ReciprocalType) : Prop :=
+  v = .mixed ∨ v = .identicalToReflexive
+
+/-- The value is one of a language with a non-reflexive reciprocal construction. -/
+def _root_.Data.WALS.F106A.ReciprocalType.HasNonReflexive (v : ReciprocalType) : Prop :=
+  v = .distinctFromReflexive ∨ v = .mixed
+
+instance : DecidablePred ReciprocalType.HasReflexive :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+instance : DecidablePred ReciprocalType.HasNonReflexive :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The value of a language that has a reflexive reciprocal construction if `r` and a
+non-reflexive one if `n`. -/
+def _root_.Data.WALS.F106A.ReciprocalType.ofProps (r n : Prop) [Decidable r] [Decidable n] :
+    ReciprocalType :=
+  if r then if n then .mixed else .identicalToReflexive
+  else if n then .distinctFromReflexive else .noReciprocalConstruction
+
+/-- A value of the map is determined by whether the language has a reflexive reciprocal
+construction and whether it has a non-reflexive one. -/
+theorem _root_.Data.WALS.F106A.ReciprocalType.ofProps_eq_iff {r n : Prop} [Decidable r]
+    [Decidable n] {v : ReciprocalType} :
+    .ofProps r n = v ↔ (v.HasReflexive ↔ r) ∧ (v.HasNonReflexive ↔ n) := by
+  unfold ReciprocalType.ofProps ReciprocalType.HasReflexive ReciprocalType.HasNonReflexive
+  cases v <;> split_ifs <;> simp_all
+
+/-- A marker is iconic when its exponent repeats the verb, as a compound of two copies does. -/
+def Marker.IsIconic (m : Marker) : Prop := m.strategy = .compoundVerb
+
+instance : DecidablePred Marker.IsIconic := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+/-- The value on the map of [maslova-nedjalkov-2013] of an inventory of reciprocal markers in a
+language whose reflexive exponents have the forms `F`: the language has a reflexive reciprocal
+construction when the form of some marker that is not iconic is among them, and a non-reflexive
+one when the form of some such marker is not. -/
+def type (markers : Finset Marker) (F : Finset (List Morphology.Morph)) : ReciprocalType :=
+  .ofProps (∃ m ∈ markers, ¬ m.IsIconic ∧ m.morphs ∈ F)
+    (∃ m ∈ markers, ¬ m.IsIconic ∧ m.morphs ∉ F)
+
+variable {markers : Finset Marker} {F : Finset (List Morphology.Morph)}
+
+@[simp]
+theorem hasReflexive_type :
+    (type markers F).HasReflexive ↔ ∃ m ∈ markers, ¬ m.IsIconic ∧ m.morphs ∈ F :=
+  (ReciprocalType.ofProps_eq_iff.1 rfl).1
+
+@[simp]
+theorem hasNonReflexive_type :
+    (type markers F).HasNonReflexive ↔ ∃ m ∈ markers, ¬ m.IsIconic ∧ m.morphs ∉ F :=
+  (ReciprocalType.ofProps_eq_iff.1 rfl).2
+
+/-- An inventory has no non-iconic reciprocal construction exactly when its markers are all
+iconic. -/
+theorem type_eq_noReciprocalConstruction_iff :
+    type markers F = .noReciprocalConstruction ↔ ∀ m ∈ markers, m.IsIconic := by
+  rw [type, ReciprocalType.ofProps_eq_iff]
+  simp only [ReciprocalType.HasReflexive, ReciprocalType.HasNonReflexive, reduceCtorEq, or_self,
+    false_iff, not_exists, not_and]
+  refine ⟨fun ⟨hr, hn⟩ m hm ↦ ?_, fun h ↦ ⟨fun m hm hi ↦ (hi (h m hm)).elim,
+    fun m hm hi ↦ (hi (h m hm)).elim⟩⟩
+  by_contra hi
+  exact hn m hm hi (hr m hm hi)
+
+end Polysemy
 
 /-! ### Constructions -/
 

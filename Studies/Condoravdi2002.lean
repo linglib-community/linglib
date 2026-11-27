@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Condoravdi2002
-public import Linglib.Semantics.Aspect.Instantiation
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
+public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Data.Examples.Readers
@@ -21,6 +22,13 @@ stated over closed intervals of times that may run to the end of time.
 
 ## Implementation notes
 
+* A property is of events, of states, or of times, `SortedProperty`, and `At` instantiates it at
+  a reference interval. Reference intervals are `Interval (WithTop T)`, so that an interval may
+  run to the end of time, as `Interval.Ici ↑t` does, and the intersection of two intervals may be
+  the null interval `⊥`. On a bounded interval, instantiation of a property of events is
+  `Aspect.perfective` and of a property of states `Temporal.inclusive` of `Aspect.unbounded`.
+* The run time of an eventuality is `Event.τ e`, the same in every world; the paper's temporal
+  trace takes the world as a second argument.
 * The paper's *now* is an interval, albeit a short one, taken here as a point, and a modal base
   is indexed by the start of the reference interval; the paper's `MB(w, t)` takes an interval
   and its `w ≃_t w'` a point.
@@ -40,6 +48,9 @@ stated over closed intervals of times that may run to the end of time.
 ## References
 
 * [C. Condoravdi, *Temporal Interpretation of Modals* (2002)][condoravdi-2002]
+* [H. Kamp and C. Rohrer, *Tense in Texts* (1983)][kamp-rohrer-1983]
+* [B. Partee, *Nominal and Temporal Anaphora* (1984)][partee-1984]
+* [H. Kamp and U. Reyle, *From Discourse to Logic* (1993)][kamp-reyle-1993]
 * [F. Mondadori, *Remarks on Tense and Mood: The Perfect Future* (1978)][mondadori-1978]
 * [D. Abusch, *Sequence of Tense and Temporal De Re* (1997)][abusch-1997]
 * [D. Abusch, *Generalizing Tense Semantics for Future Contexts* (1998)][abusch-1998]
@@ -58,8 +69,84 @@ namespace Condoravdi2002
 
 open Event (τ)
 
-open Aspect HistoricalAlternatives
+open Aspect Temporal
 open Modality (TemporalPerspective TemporalOrientation)
+
+/-! ### Instantiation -/
+
+section Instantiation
+
+variable {W E T : Type*} [LinearOrder T]
+
+/-- A sorted property is a property of events, of states, or of times. -/
+inductive SortedProperty (W E T : Type*) [LinearOrder T]
+  | eventive (P : W → E → Prop)
+  | stative (P : W → E → Prop)
+  | temporal (P : W → Interval (WithTop T) → Prop)
+
+/-- A sorted property is a property of eventualities when it is not a property of times. -/
+def SortedProperty.IsEventuality : SortedProperty W E T → Prop
+  | .temporal _ => False
+  | _ => True
+
+variable [TemporalTrace E T]
+
+/-- (19): `At t w Q` says that the property `Q` is instantiated in `w` at the interval `t`, by
+inclusion of the run time for events, overlap for states, and application for properties of
+times. -/
+def At (t : Interval (WithTop T)) (w : W) : SortedProperty W E T → Prop
+  | .eventive P => ∃ e, P w e ∧ ↑(τ e).withTop ≤ t
+  | .stative P => ∃ e, P w e ∧ ¬ Disjoint (↑(τ e).withTop) t
+  | .temporal P => P w t
+
+variable {P : W → E → Prop} {Q : SortedProperty W E T} {r r' : Interval (WithTop T)} {w : W}
+
+theorem exists_mem_of_at (hQ : Q.IsEventuality) (h : At r w Q) : ∃ x, x ∈ r := by
+  cases Q with
+  | eventive R => obtain ⟨e, -, hle⟩ := h; exact ⟨_, (Interval.coe_le_iff.1 hle).1⟩
+  | stative R =>
+    obtain ⟨e, -, hd⟩ := h
+    obtain ⟨x, -, hx⟩ := Interval.not_disjoint_iff.1 hd
+    exact ⟨x, hx⟩
+  | temporal R => exact hQ.elim
+
+theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w Q := by
+  cases Q with
+  | eventive R => obtain ⟨e, he, hle⟩ := hr; exact ⟨e, he, le_trans hle h⟩
+  | stative R =>
+    obtain ⟨e, he, hd⟩ := hr
+    exact ⟨e, he, fun hd' ↦ hd (hd'.mono_right h)⟩
+  | temporal R => exact hQ.elim
+
+@[simp] theorem at_Ici_eventive_iff {t : T} :
+    At (Interval.Ici ↑t) w (.eventive P) ↔ ∃ e, P w e ∧ t ≤ (τ e).fst := by
+  simp [At, Interval.withTop_le_Ici]
+
+@[simp] theorem at_Ici_stative_iff {t : T} :
+    At (Interval.Ici ↑t) w (.stative P) ↔ ∃ e, P w e ∧ t ≤ (τ e).snd := by
+  simp [At, Interval.not_disjoint_withTop_Ici]
+
+theorem at_eventive_withTop_iff_perfective {i : NonemptyInterval T} :
+    At ↑i.withTop w (.eventive P) ↔ perfective (P w) i := by
+  simp [At, perfective_iff, and_comm]
+
+theorem at_stative_withTop_iff_inclusive_unbounded {i : NonemptyInterval T} :
+    At ↑i.withTop w (.stative P) ↔ inclusive (unbounded (P w)) i := by
+  rw [inclusive_unbounded_iff]
+  simp [At, Interval.not_disjoint_coe_coe, NonemptyInterval.Overlaps, and_comm]
+
+@[simp] theorem at_pure_eventive_iff {t : T} :
+    At (Interval.pure ↑t) w (.eventive P) ↔ ∃ e, P w e ∧ τ e = .pure t :=
+  (at_eventive_withTop_iff_perfective (i := .pure t)).trans <|
+    perfective_pure_iff.trans <| exists_congr fun _ ↦ and_comm
+
+@[simp] theorem at_pure_stative_iff {t : T} :
+    At (Interval.pure ↑t) w (.stative P) ↔ ∃ e, P w e ∧ t ∈ τ e :=
+  (at_stative_withTop_iff_inclusive_unbounded (i := .pure t)).trans <|
+    inclusive_unbounded_iff.trans <| by
+      simp [NonemptyInterval.Overlaps, NonemptyInterval.mem_def, and_comm]
+
+end Instantiation
 
 variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P : W → E → Prop}
   {Q Q' : SortedProperty W E T}
@@ -184,12 +271,19 @@ theorem frame_modalPerf_nonpast (hQ : Q.IsEventuality) {period : Interval (WithT
 
 /-! ### Live options shrink -/
 
-theorem may_antitone {history : HistoricalAlternatives W T}
-    (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality) :
-    Antitone fun t : T ↦ PRES t (MAY (metaphysicalBase history) Q) w := by
+/-- The metaphysical modal base `MB(w, t) = {w' | w ≃ₜ w'}` of a frame (p. 82). -/
+abbrev metaphysicalBase (F : TWFrame W T) : W → T → Set W := fun w t ↦ F.alternatives ⟨w, t⟩
+
+variable {F : TWFrame W T}
+
+/-- Metaphysical possibilities decrease over time: historical equivalence gets finer as time
+advances, so what may yet be instantiated at a time might be at every earlier time. -/
+theorem may_antitone (hQ : Q.IsEventuality) :
+    Antitone fun t : T ↦ PRES t (MAY (metaphysicalBase F) Q) w := by
   simp only [pres_may_iff]
   rintro t' t h ⟨w', hw', hat⟩
-  exact ⟨w', hBC w h hw', hat.mono hQ (Interval.antitone_Ici (WithTop.coe_le_coe.2 h))⟩
+  exact ⟨w', TWFrame.alternatives_anti h hw',
+    hat.mono hQ (Interval.antitone_Ici (WithTop.coe_le_coe.2 h))⟩
 
 /-- The prior-phase half of Löbner's presupposition of *already* requires a prior negative phase. -/
 def AlreadyPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' < now, ¬ PRES t' Q w
@@ -197,29 +291,24 @@ def AlreadyPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' 
 /-- The prior-phase half of Löbner's presupposition of *still* requires a prior positive phase. -/
 def StillPresup (Q : SortedProperty W E T) (w : W) (now : T) : Prop := ∃ t' < now, PRES t' Q w
 
-theorem not_already_may {history : HistoricalAlternatives W T}
-    (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality)
-    (h : PRES now (MAY (metaphysicalBase history) Q) w) :
-    ¬ AlreadyPresup (MAY (metaphysicalBase history) Q) w now :=
-  fun ⟨_, ht', hn⟩ ↦ hn (may_antitone hBC hQ ht'.le h)
+theorem not_already_may (hQ : Q.IsEventuality) (h : PRES now (MAY (metaphysicalBase F) Q) w) :
+    ¬ AlreadyPresup (MAY (metaphysicalBase F) Q) w now :=
+  fun ⟨_, ht', hn⟩ ↦ hn (may_antitone hQ ht'.le h)
 
-theorem still_may {history : HistoricalAlternatives W T}
-    (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality)
-    (h : PRES now (MAY (metaphysicalBase history) Q) w) (ht' : t' < now) :
-    StillPresup (MAY (metaphysicalBase history) Q) w now :=
-  ⟨t', ht', may_antitone hBC hQ ht'.le h⟩
+theorem still_may (hQ : Q.IsEventuality) (h : PRES now (MAY (metaphysicalBase F) Q) w)
+    (ht' : t' < now) : StillPresup (MAY (metaphysicalBase F) Q) w now :=
+  ⟨t', ht', may_antitone hQ ht'.le h⟩
 
 /-! ### Settledness and the diversity condition -/
 
-/-- The history relation fixes the instantiation of `Q` at every interval up to its time, so that
-worlds identical up to `t` agree on `Q` there. -/
-def FixesPast (history : HistoricalAlternatives W T) (Q : SortedProperty W E T) : Prop :=
-  ∀ t w w', w' ∈ history ⟨w, t⟩ →
+/-- The frame fixes the instantiation of `Q` at every interval up to its time, so that worlds
+identical up to `t` agree on `Q` there. -/
+def FixesPast (F : TWFrame W T) (Q : SortedProperty W E T) : Prop :=
+  ∀ t w w', w' ∈ F.alternatives ⟨w, t⟩ →
     ∀ r : Interval (WithTop T), (∀ x ∈ r, x ≤ ↑t) → (At r w Q ↔ At r w' Q)
 
 theorem fixesPast_eventive :
-    FixesPast (Temporal.TWFrame.ofDatedFacts (fun e : E ↦ (τ e).fst) P).alternatives
-      (.eventive P) := by
+    FixesPast (TWFrame.ofDatedFacts (fun e : E ↦ (τ e).fst) P) (.eventive P) := by
   intro t w w' h r hr
   have key : ∀ e : E, ↑(τ e).withTop ≤ r → (τ e).fst ≤ t := fun e he ↦
     WithTop.coe_le_coe.1 (hr _ (Interval.coe_le_iff.1 he).1)
@@ -227,8 +316,7 @@ theorem fixesPast_eventive :
     fun ⟨e, he, hle⟩ ↦ ⟨e, (h e (key e hle)).2 he, hle⟩⟩
 
 theorem fixesPast_stative :
-    FixesPast (Temporal.TWFrame.ofDatedFacts (fun e : E ↦ (τ e).fst) P).alternatives
-      (.stative P) := by
+    FixesPast (TWFrame.ofDatedFacts (fun e : E ↦ (τ e).fst) P) (.stative P) := by
   intro t w w' h r hr
   have key : ∀ e : E, ¬ Disjoint (↑(τ e).withTop) r → (τ e).fst ≤ t := fun e hd ↦ by
     obtain ⟨x, hx, hx'⟩ := Interval.not_disjoint_iff.1 hd
@@ -237,36 +325,67 @@ theorem fixesPast_stative :
   exact ⟨fun ⟨e, he, hd⟩ ↦ ⟨e, (h e (key e hd)).1 he, hd⟩,
     fun ⟨e, he, hd⟩ ↦ ⟨e, (h e (key e hd)).2 he, hd⟩⟩
 
-theorem settled_perf {history : HistoricalAlternatives W T} (h : FixesPast history Q)
-    (cg : Set W) (t : T) : settled history cg t (fun w ↦ At (Interval.Ici ↑t) w (PERF Q)) := by
+theorem isSettled_perf (h : FixesPast F Q) (cg : Set W) (t : T) :
+    F.IsSettled cg t (fun w ↦ At (Interval.Ici ↑t) w (PERF Q)) := by
   intro w _ w' hw'
   refine exists_congr fun r ↦ and_congr_right fun hr ↦ h t w w' hw' r fun x hx ↦ ?_
   exact (hr hx (Interval.mem_Ici.2 le_rfl)).le
 
-theorem settled_present {history : HistoricalAlternatives W T} (h : FixesPast history Q)
-    (cg : Set W) (t : T) :
-    settled history cg t (fun w ↦ At (Interval.Ici ↑t) w (frame (Interval.pure ↑t) Q)) :=
+theorem isSettled_present (h : FixesPast F Q) (cg : Set W) (t : T) :
+    F.IsSettled cg t (fun w ↦ At (Interval.Ici ↑t) w (frame (Interval.pure ↑t) Q)) :=
   fun w _ w' hw' ↦ h t w w' hw' _ fun _ hx ↦ (Interval.mem_pure.1 (Interval.mem_inf.1 hx).2).le
 
-omit [LinearOrder T] in
-theorem not_diverse_of_settled {history : HistoricalAlternatives W T} {cg : Set W} {t : T}
-    {R : W → Prop} (h : settled history cg t R) : ¬ diverse (metaphysicalBase history) cg t R :=
-  settled_not_diverse (fun _ _ _ hw ↦ hw) h
+/-- Over a common ground satisfying settledness, a possibility modal with the metaphysical modal
+base is equivalent to its prejacent without the modal (p. 83), the equivalence the diversity
+condition is there to avoid. -/
+theorem pres_may_iff_of_isSettled {cg : Set W}
+    (h : F.IsSettled cg now (fun w ↦ At (Interval.Ici ↑now) w Q)) (hw : w ∈ cg) :
+    PRES now (MAY (metaphysicalBase F) Q) w ↔ At (Interval.Ici ↑now) w Q := by
+  rw [pres_may_iff]
+  exact h.diamond_iff hw
+
+/-- A modal base meets the diversity condition (45) for a property when some common-ground world
+sees worlds disagreeing on it. -/
+def Diverse (MB : W → T → Set W) (cg : Set W) (t : T) (R : W → Prop) : Prop :=
+  ∃ w ∈ cg, ∃ w' ∈ MB w t, ∃ w'' ∈ MB w t, R w' ∧ ¬ R w''
+
+omit [LinearOrder T] [TemporalTrace E T] in
+theorem Diverse.mono {MB MB' : W → T → Set W} {cg : Set W} {t : T} {R : W → Prop}
+    (hMB : ∀ w ∈ cg, MB w t ⊆ MB' w t) : Diverse MB cg t R → Diverse MB' cg t R :=
+  fun ⟨w, hw, w', hw', w'', hw'', h⟩ ↦ ⟨w, hw, w', hMB w hw hw', w'', hMB w hw hw'', h⟩
+
+omit [TemporalTrace E T] in
+/-- A common ground satisfies settledness (44) for a property exactly when the metaphysical modal
+base fails the diversity condition (45) for it. -/
+theorem isSettled_iff_not_diverse {cg : Set W} {t : T} {R : W → Prop} :
+    F.IsSettled cg t R ↔ ¬ Diverse (metaphysicalBase F) cg t R := by
+  refine ⟨fun h ⟨w, hw, w', hw', w'', hw'', hR, hnR⟩ ↦
+    hnR ((h w hw w'' hw'').1 ((h w hw w' hw').2 hR)), fun h w hw v hv ↦ ?_⟩
+  have hw' : w ∈ metaphysicalBase F w t := TWFrame.mem_alternatives_self
+  exact ⟨fun hRw ↦ by_contra fun hRv ↦ h ⟨w, hw, w, hw', v, hv, hRw, hRv⟩,
+    fun hRv ↦ by_contra fun hRw ↦ h ⟨w, hw, v, hv, w, hw', hRv, hRw⟩⟩
+
+omit [TemporalTrace E T] in
+/-- A settled property is not diverse over a modal base within the metaphysical one, so no such
+base is available to a possibility modal applying to it. -/
+theorem not_diverse_of_isSettled {MB : W → T → Set W} {cg : Set W} {t : T} {R : W → Prop}
+    (hMB : ∀ w ∈ cg, MB w t ⊆ metaphysicalBase F w t) (h : F.IsSettled cg t R) :
+    ¬ Diverse MB cg t R :=
+  fun hd ↦ isSettled_iff_not_diverse.1 h (hd.mono hMB)
 
 /-! ### The counterfactual implication -/
 
 /-- The paper's footnote assumption says that a past alternative of a common-ground world that is no
 alternative at the time of utterance lies outside the common ground. -/
-def PastAlternativesOutside (history : HistoricalAlternatives W T) (cg : Set W) (t₀ : T) :
-    Prop :=
-  ∀ w ∈ cg, ∀ t' ≤ t₀, ∀ w' ∈ metaphysicalBase history w t',
-    w' ∉ metaphysicalBase history w t₀ → w' ∉ cg
+def PastAlternativesOutside (F : TWFrame W T) (cg : Set W) (t₀ : T) : Prop :=
+  ∀ w ∈ cg, ∀ t' ≤ t₀, ∀ w' ∈ metaphysicalBase F w t',
+    w' ∉ metaphysicalBase F w t₀ → w' ∉ cg
 
-theorem counterfactual_outside_cg {history : HistoricalAlternatives W T} {cg : Set W} {t₀ : T}
-    (h : PastAlternativesOutside history cg t₀) (hw : w ∈ cg)
-    (hcf : PRES t₀ (PERF (MAY (metaphysicalBase history) Q)) w)
-    (hnow : ∀ t' < t₀, ∀ w' ∈ metaphysicalBase history w t₀, ¬ At (Interval.Ici ↑t') w' Q) :
-    ∃ t' < t₀, ∃ w' ∉ cg, w' ∈ metaphysicalBase history w t' ∧ At (Interval.Ici ↑t') w' Q := by
+theorem counterfactual_outside_cg {cg : Set W} {t₀ : T}
+    (h : PastAlternativesOutside F cg t₀) (hw : w ∈ cg)
+    (hcf : PRES t₀ (PERF (MAY (metaphysicalBase F) Q)) w)
+    (hnow : ∀ t' < t₀, ∀ w' ∈ metaphysicalBase F w t₀, ¬ At (Interval.Ici ↑t') w' Q) :
+    ∃ t' < t₀, ∃ w' ∉ cg, w' ∈ metaphysicalBase F w t' ∧ At (Interval.Ici ↑t') w' Q := by
   obtain ⟨t', hlt, w', hw', hat⟩ := pres_perf_may_iff.1 hcf
   exact ⟨t', hlt, w', h w hw t' hlt.le w' hw' (fun hmem ↦ hnow t' hlt w' hmem hat), hw', hat⟩
 
@@ -421,7 +540,7 @@ def Reading.ofRow (row : Datum) : Option (Reading × Bool) := do
     ← row.parse? "metaphysical" [("available", true), ("unavailable", false)])
 
 /-- The metaphysical base is assignable when the instantiation is neither in the past of the
-perspective, `settled_perf`, nor at the present, `settled_present`, nor settled by the
+perspective, `isSettled_perf`, nor at the present, `isSettled_present`, nor settled by the
 context. -/
 def Reading.Metaphysical (r : Reading) : Prop :=
   r.scope ≠ .modalPerf ∧ r.reference ≠ .present ∧ r.context ≠ .settled

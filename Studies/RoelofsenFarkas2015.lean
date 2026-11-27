@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.Algebra.Group.Action.Prod
-public import Linglib.Semantics.Questions.Highlighting
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Highlighting
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.RoelofsenFarkas2015
 public import Linglib.Data.Examples.Readers
@@ -30,7 +30,7 @@ and *doch* mark (`usable_iff_mem_marks`).
 
 * The most salient antecedent possibility is the one the antecedent formula highlights; the
   discourse context of the paper is not modelled.
-* The features are `Discourse.Response.Feature`, whose [same] is the paper's [agree]. A feature
+* The features are `Response.Feature`, whose [same] is the paper's [agree]. A feature
   is unmarked when its value is positive, as [agree] and [+] are (78), (80), and the prejacent
   of a relative feature `r` highlights `r • β` for the antecedent possibility `β`.
 * In the planets examples *odd* is the complement of *even*, so each proposition is recorded as
@@ -54,7 +54,6 @@ and *doch* mark (`usable_iff_mem_marks`).
 
 namespace RoelofsenFarkas2015
 
-open Discourse
 
 variable {W : Type*}
 
@@ -62,8 +61,9 @@ variable {W : Type*}
 
 /-- The absolute feature `s` presupposes that the prejacent expresses a proposition `q` with a
 single possibility, which it highlights with polarity `s` (68), (69). -/
-def AbsolutePresup (s : Polarity) (q : Question W) (H : Set (Polarity × Set W)) : Prop :=
-  ∃ α, q = Question.ofSet α ∧ H = {(s, α)}
+def AbsolutePresup (s : Polarity) (q : Inquisitive.Proposition (Set W))
+    (H : Set (Polarity × Set W)) : Prop :=
+  ∃ α, q = Inquisitive.Proposition.ofSet α ∧ H = {(s, α)}
 
 /-- The relative feature `r`, [agree] when positive and [reverse] when negative, presupposes
 that the antecedent highlights a unique possibility and that the prejacent highlights its image
@@ -74,10 +74,10 @@ def RelativePresup (r : Polarity) (H ant : Set (Polarity × Set W)) : Prop :=
 
 /-- An absolute feature `s` and a relative feature `r` presuppose a single antecedent possibility of
 polarity `r * s` and a prejacent expressing its image under `r` ((72)–(75)). -/
-theorem absolutePresup_and_relativePresup_iff {r s : Polarity} {q : Question W}
+theorem absolutePresup_and_relativePresup_iff {r s : Polarity} {q : Inquisitive.Proposition (Set W)}
     {H ant : Set (Polarity × Set W)} :
     AbsolutePresup s q H ∧ RelativePresup r H ant ↔
-      ∃ α, ant = {(r * s, α)} ∧ q = Question.ofSet (r • α) ∧ H = {(s, r • α)} := by
+      ∃ α, ant = {(r * s, α)} ∧ q = Inquisitive.Proposition.ofSet (r • α) ∧ H = {(s, r • α)} := by
   constructor
   · rintro ⟨⟨α', hq, hα'⟩, ⟨t, β⟩, hant, hH⟩
     rw [hα', Prod.smul_mk, Set.singleton_eq_singleton_iff, Prod.mk.injEq] at hH
@@ -103,14 +103,15 @@ variable {A : Type*} (v : A → Set W) {e o : A}
 
 theorem proposition_query_even_eq_odd (hodd : v o = (v e)ᶜ) :
     (query (atom e)).proposition v = (query (atom o)).proposition v := by
-  simp only [proposition, Question.query_ofSet, hodd, Question.polar_compl]
+  simp only [proposition, Inquisitive.Proposition.query_ofSet, hodd,
+    Inquisitive.Proposition.polar_compl]
 
 /-- A response of polarity `s` to a polar question of polarity `t` on `a` expresses `s • v a` with
 relative feature `s / t` ((49), (50), (52), (53)). -/
-theorem presup_query_ofPolarity {r s t : Polarity} (a : A) {q : Question W}
+theorem presup_query_ofPolarity {r s t : Polarity} (a : A) {q : Inquisitive.Proposition (Set W)}
     {H : Set (Polarity × Set W)}
     (h : AbsolutePresup s q H ∧ RelativePresup r H ((query (ofPolarity t a)).highlights v)) :
-    q = Question.ofSet (s • v a) ∧ r = s / t := by
+    q = Inquisitive.Proposition.ofSet (s • v a) ∧ r = s / t := by
   obtain ⟨α, hant, hq, -⟩ := absolutePresup_and_relativePresup_iff.1 h
   simp only [highlights, highlights_ofPolarity, Highlighting.project_singleton, Prod.smul_mk,
     smul_eq_mul, Polarity.mul_positive, Set.singleton_eq_singleton_iff, Prod.mk.injEq] at hant
@@ -146,8 +147,8 @@ inductive PolarityParticle where
   | yes | no | oui | non | si | ja | nein | doch
   deriving DecidableEq, Repr, Fintype
 
-/-- The fragment entry of a particle. -/
-def PolarityParticle.entry : PolarityParticle → Particle
+/-- The language file entry of a particle. -/
+def PolarityParticle.entry : PolarityParticle → Morphology.Morph
   | .yes => English.PolarityParticles.yes
   | .no => English.PolarityParticles.no
   | .oui => French.PolarityParticles.oui

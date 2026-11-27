@@ -67,8 +67,8 @@ structure CIItem (Person W : Type) where
 variable {Person W : Type} (item : CIItem Person W)
 
 /-- The two-dimensional meaning once the orientation variable is resolved to `o`. -/
-def CIItem.resolve (o : Orientation Person) : TwoDim (W → Prop) (W → Prop) :=
-  .mk (atIssue := item.atIssue) (notAtIssue := item.ciFor o)
+def CIItem.resolve (o : Orientation Person) : TwoDim W (W → Prop) :=
+  .mk item.atIssue (item.ciFor o)
 
 @[simp] theorem CIItem.resolve_atIssue (o : Orientation Person) :
     (item.resolve o).atIssue = item.atIssue := rfl

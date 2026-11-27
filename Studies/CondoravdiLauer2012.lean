@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Attitudes.Preference.Structure
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Discourse.Commitment.Sincerity
-public import Linglib.Semantics.Mood.Context
+public import Linglib.Discourse.SpeechAct.SententialForce
 public import Linglib.Data.Examples.CondoravdiLauer2012
 public import Linglib.Data.Examples.Readers
 
@@ -65,7 +65,11 @@ effective structure alone where cooperation by default ranges over all of the ad
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace CondoravdiLauer2012
+
+open Examples (Second Continuation Form)
 
 open Commitment Desire.Preferential Modality
 open PreferenceStructure (mem_maximals_discrete)
@@ -219,15 +223,15 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
 
 -- (19) [schwager-2006]
 theorem affirmation_consistent {f g : Background W}
-    (hne : (bestWorlds f g w).Nonempty) (hp : bestWorlds f g w ⊆ p)
-    (hq : bestWorlds f g w ⊆ q) : (p ∩ q).Nonempty :=
+    (hne : (f.bestWorlds g w).Nonempty) (hp : f.bestWorlds g w ⊆ p)
+    (hq : f.bestWorlds g w ⊆ q) : (p ∩ q).Nonempty :=
   let ⟨u, hu⟩ := hne; ⟨u, hp hu, hq hu⟩
 
 -- (20), (15) [kaufmann-schwager-2009]: the condition can hold of a content and its negation at
 -- once, so it does not predict the consistency of (15), unlike `imperatives_revise`
 theorem weak_affirmation_compl [Nontrivial W] :
     ∃ (f g : Background W) (w : W) (p : Set W),
-      ¬ bestWorlds f g w ⊆ pᶜ ∧ ¬ bestWorlds f g w ⊆ pᶜᶜ := by
+      ¬ f.bestWorlds g w ⊆ pᶜ ∧ ¬ f.bestWorlds g w ⊆ pᶜᶜ := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne W
   refine ⟨⊥, ⊥, x, {x}, fun h ↦ h ?_ rfl, fun h ↦ h ?_ hxy.symm⟩ <;> simp
 
@@ -235,9 +239,9 @@ theorem weak_affirmation_compl [Nontrivial W] :
 
 -- §5.2 [portner-2007]
 theorem todo_not_must {f g : Background W} {φ ψ : Set W} {u : W}
-    (hψ : ψ ∈ g w) (hφψ : ∀ v ∈ ψ, v ∉ φ) (hu : u ∈ bestWorlds f g w) (huψ : u ∈ ψ) :
-    ¬ bestWorlds f (fun v ↦ insert φ (g v)) w ⊆ φ :=
-  fun h ↦ hφψ u huψ (h (mem_bestWorlds_insert hψ hφψ hu huψ))
+    (hψ : ψ ∈ g w) (hφψ : ∀ v ∈ ψ, v ∉ φ) (hu : u ∈ f.bestWorlds g w) (huψ : u ∈ ψ) :
+    ¬ f.bestWorlds (fun v ↦ insert φ (g v)) w ⊆ φ :=
+  fun h ↦ hφψ u huψ (h (Background.mem_bestWorlds_insert hψ hφψ hu huψ))
 
 /-! ### Commitments as mood states
 
@@ -249,41 +253,41 @@ ranked by the participant's preferential commitments. -/
 /-- The mood state that a commitment state projects for `a`. -/
 def toState (K : State (A × Force) W) (a : A) : Mood.State W :=
   .ofOrderedInformationState ⟨K.commitmentSet (a, .doxastic),
-    premisePreorder (K.contents (a, .preferential))⟩
+    ≤[K.contents (a, .preferential)]⟩
 
--- (30): the declarative convention is assertion on the speaker's mood state
-theorem toState_declarative (K : State (SpeechAct.Role × Force) W) (p : Set W) :
-    toState (insert ((.speaker, .doxastic), p) K) =
-      SpeechAct.Force.update .assertion (toState K) (· ∈ p) := by
-  funext r
-  cases r
-  · rw [SpeechAct.Force.update_assertion_speaker]
-    refine Mood.State.ext ?_ ?_ rfl
-    · exact State.commitmentSet_insert_self.trans (Set.inter_comm _ _)
-    · show premisePreorder _ = premisePreorder _
-      exact congrArg premisePreorder (State.contents_insert_of_ne (by simp))
-  · rw [SpeechAct.Force.update_assertion_addressee]
-    refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
-    show premisePreorder _ = premisePreorder _
-    exact congrArg premisePreorder (State.contents_insert_of_ne (by simp))
+private theorem toState_insert_of_ne {K : State (A × Force) W} {a b : A} (h : b ≠ a) (m : Force)
+    (p : Set W) : toState (insert ((a, m), p) K) b = toState K b :=
+  Mood.State.ext (State.commitmentSet_insert_of_ne (by simp [h]))
+    (congrArg (≤[·]) (State.contents_insert_of_ne (by simp [h]))) rfl
+
+-- (30): the declarative convention is assertion on the mood state of the participant it commits
+theorem toState_declarative [DecidableEq A] (K : State (A × Force) W) (a : A) (p : Set W) :
+    toState (insert ((a, .doxastic), p) K) =
+      Function.update (toState K) a ((toState K a).assert (· ∈ p)) := by
+  funext b
+  by_cases hb : b = a
+  · subst hb
+    rw [Function.update_self]
+    exact Mood.State.ext (State.commitmentSet_insert_self.trans (Set.inter_comm _ _))
+      (congrArg (≤[·]) (State.contents_insert_of_ne (by simp))) rfl
+  · rw [Function.update_of_ne hb, toState_insert_of_ne hb]
 
 /-- The imperative convention (47), read on the participants' mood states, promotes the content
-in the speaker's ordering, the update a promise makes. Portner's To-Do List update promotes it in
-the addressee's ordering instead, and the two coincide exactly when both orderings already
-respect the content (`SpeechAct.Force.update_promise_eq_directive_iff`). -/
-theorem toState_imperative (K : State (SpeechAct.Role × Force) W) (p : Set W) :
-    toState (insert ((.speaker, .preferential), p) K) =
-      SpeechAct.Force.update .promise (toState K) (· ∈ p) := by
-  funext r
-  cases r
-  · rw [SpeechAct.Force.update_promise_speaker]
+in the ordering of the participant it commits. For the speaker this is the update of a promise,
+`SpeechAct.Force.update_promise`, where Portner's To-Do List update promotes the content in the
+addressee's ordering, and the two coincide exactly when both orderings already respect the
+content (`SpeechAct.Force.update_promise_eq_directive_iff`). -/
+theorem toState_imperative [DecidableEq A] (K : State (A × Force) W) (a : A) (p : Set W) :
+    toState (insert ((a, .preferential), p) K) =
+      Function.update (toState K) a ((toState K a).promote (· ∈ p)) := by
+  funext b
+  by_cases hb : b = a
+  · subst hb
+    rw [Function.update_self]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
-    show premisePreorder _ = premisePreorder _ ⊓ .ofCriterion (· ∈ p)
-    rw [State.contents_insert_self, premisePreorder_insert]
-  · rw [SpeechAct.Force.update_promise_addressee]
-    refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
-    show premisePreorder _ = premisePreorder _
-    exact congrArg premisePreorder (State.contents_insert_of_ne (by simp))
+    show ≤[_] = ≤[_] ⊓ .ofCriterion (· ∈ p)
+    rw [State.contents_insert_self, Preorder.ofLowerSets_insert]
+  · rw [Function.update_of_ne hb, toState_insert_of_ne hb]
 
 -- one preferential commitment of the speaker ranks the content's worlds first in the speaker's
 -- mood state and leaves the addressee's unranked
@@ -295,8 +299,7 @@ example :
       .speaker).order.le false true ∧
     (toState (insert ((.speaker, .preferential), {true}) (∅ : State (Role × Force) Bool))
       .addressee).order.le false true := by
-  rw [toState_imperative, SpeechAct.Force.update_promise_speaker,
-    SpeechAct.Force.update_promise_addressee]
+  rw [toState_imperative, Function.update_self, Function.update_of_ne (by decide)]
   have h₀ (a : Role) (v w : Bool) : (toState (∅ : State (Role × Force) Bool) a).order.le v w :=
     fun _ hq _ ↦ absurd hq (Set.notMem_empty _)
   exact ⟨⟨h₀ _ _ _, fun _ ↦ rfl⟩, fun h ↦ Bool.false_ne_true (h.2 rfl), h₀ _ _ _⟩
@@ -330,7 +333,7 @@ imperative a revision (`imperatives_revise`). -/
 theorem portner_contrary_imperatives (d : SpeechAct.Role → Mood.State W) (φ : W → Prop) :
     (d .addressee).optimal ⊆ (SpeechAct.Force.update .directive
       (SpeechAct.Force.update .directive d φ) (¬ φ ·) .addressee).optimal := by
-  simp only [SpeechAct.Force.update_directive_addressee,
+  simp only [SpeechAct.Force.update_directive, Function.update_self,
     Mood.State.promote_toOrderedInformationState, DynamicSemantics.OrderedInformationState.optimal,
     DynamicSemantics.OrderedInformationState.promote_order,
     DynamicSemantics.OrderedInformationState.promote_info]
@@ -350,16 +353,6 @@ example : (SpeechAct.Force.update .directive
 The uses of (6) to (9), after Schmerling's inventory, and the exclusions of (10) are
 data; the sequences, follow-ups and challenges instantiate the theorems above. -/
 
-/-- The second utterance of a sequence. -/
-inductive Second
-  | imperative | assertion
-  deriving DecidableEq
-
-/-- Whether the context lets the second utterance revise the first. -/
-inductive Continuation
-  | revising | conflicting
-  deriving DecidableEq
-
 /-- A sequence row of two utterances with incompatible contents. -/
 structure Sequence where
   /-- The second utterance. -/
@@ -370,9 +363,8 @@ structure Sequence where
 /-- The configuration a sequence row records. -/
 def Sequence.ofRow (row : Datum) : Option Sequence := do
   guard (row.feature? "construction" = some "sequence")
-  return ⟨← row.parse? "second" [("imperative", Second.imperative), ("assertion", .assertion)],
-    ← row.parse? "continuation"
-      [("revising", Continuation.revising), ("conflicting", .conflicting)]⟩
+  return ⟨← (Examples.second row),
+    ← (Examples.continuation row)⟩
 
 -- (11), (16)
 theorem sequence_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "sequence" →
@@ -401,16 +393,10 @@ theorem followUp_rows : ∀ row ∈ Examples.all, row.feature? "construction" = 
   simp only [coherent_iff]
   decide
 
-/-- The form of an utterance challenged as a lie or disbelieved. -/
-inductive Form
-  | imperative | performative | assertion
-  deriving DecidableEq
-
 /-- The form a challenge row records. -/
-def Form.ofRow (row : Datum) : Option Form := do
+def Examples.Form.ofRow (row : Datum) : Option Form := do
   guard (row.feature? "construction" = some "challenge")
-  return ← row.parse? "form"
-    [("imperative", Form.imperative), ("performative", .performative), ("assertion", .assertion)]
+  return ← (Examples.form row)
 
 -- (23), (25)
 theorem challenge_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "challenge" →

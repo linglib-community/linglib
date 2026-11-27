@@ -194,7 +194,8 @@
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
-      ["marker", "-thu(n)"],
+      ["marker", "-thu"],
+      ["alsoMarker", "-thun"],
       ["subject", "h"],
       ["addressee", "nh"],
       ["clause", "matrix"]
@@ -240,7 +241,8 @@
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
-      ["marker", "-thi(n)"],
+      ["marker", "-thi"],
+      ["alsoMarker", "-thin"],
       ["subject", "hh"],
       ["addressee", "hh"],
       ["clause", "matrix"]

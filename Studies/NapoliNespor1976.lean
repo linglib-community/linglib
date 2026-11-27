@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.NapoliNespor1976
 public import Linglib.Discourse.SpeechAct.Basic
-public import Linglib.Fragments.Romance.Italian.PolarityItems
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Languages.Romance.Italian.PolarityItems
+public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Data.Examples.Readers
 
@@ -32,7 +32,7 @@ its best derivation in its context.
 
 * The analysis allows a set of judgments rather than one, since an optional rule and a variety of
   speakers the paper has not found grade the examples it prints with `(?)`, `?(?)` and `?*`. A row
-  records the first mark printed; the paper's `?*` and `*?` are recorded as `??`.
+  records the first mark printed.
 * In (10) the paper reads the belief of a clausal comparative, *di quanto è Carlo*, as the
   listener's, and its rows record the listener as the holder.
 * An indirect question raises its proposition without asserting it, so a negated matrix, *Non sono
@@ -48,11 +48,16 @@ its best derivation in its context.
 
 The reduced comparatives (83)–(85), the positions of gerunds (40)–(43), the indirect questions
 (88) and (90), and *pur* and *neanche* outside comparatives (46)–(51) are not rows.
+
+The rows (9a), (63) and (64) print a split mark, of which `rows_judgment` reads the first mark.
+The second, `?` on (9a) and `??` on (63) and (64), is not among the judgments their grade allows.
 -/
 
 @[expose] public section
 
 namespace NapoliNespor1976
+
+open Examples (Holder Complementizer Standard Predicate)
 
 open SpeechAct (Force)
 
@@ -68,16 +73,6 @@ inductive Evidence where
   | explicit
   deriving DecidableEq, Repr, Fintype
 
-/-- Whose belief the comparison bears on. -/
-inductive Holder where
-  /-- The listener, now. -/
-  | addressee
-  /-- The listener at an earlier time, *di quanto tu credevi* (13). -/
-  | formerAddressee
-  /-- Someone else, *di quanto lui crede* (14). -/
-  | thirdParty
-  deriving DecidableEq, Repr
-
 /-- The constructions of the rows. -/
 inductive Construction where
   /-- A comparative of inequality, *più* or *meno* … *di quanto*. -/
@@ -88,36 +83,12 @@ inductive Construction where
   | indirectQuestion
   deriving DecidableEq, Repr
 
-/-- The standard of a comparison is a clause, *di quanto è Carlo* (4), or a belief, *di quanto tu
-credi* (5). -/
-inductive Standard where
-  | clausal
-  | belief
-  deriving DecidableEq, Repr
-
 /-- A printed *non* in the embedded clause is either ordinary negation, *non₁* (16), or *non₂*
 (17). -/
 inductive Negation where
   | none
   | non₁
   | non₂
-  deriving DecidableEq, Repr
-
-/-- The complementizer of the embedded clause. -/
-inductive Complementizer where
-  /-- *(di) quanto*, the comparative quantifier in complementizer position. -/
-  | quanto
-  | che
-  /-- *se* 'if', of an indirect question. -/
-  | se
-  deriving DecidableEq, Repr
-
-/-- The predicate of a comparative clause, when it is not deleted. -/
-inductive Predicate where
-  /-- A predicate adjective, repeated (75) or another one (82). -/
-  | adjective
-  /-- The clitic *lo* for the predicate adjective (79). -/
-  | lo
   deriving DecidableEq, Repr
 
 /-- The words of a sentence the analysis is sensitive to. -/
@@ -138,7 +109,7 @@ inductive Element where
 
 namespace Element
 
-/-- An element is a negative polarity item when its fragment entry has a licensor. -/
+/-- An element is a negative polarity item when its language file entry has a licensor. -/
 def IsNPI : Element → Prop
   | pur => Italian.PolarityItems.pur.IsNPI
   | neanche => Italian.PolarityItems.neanche.IsNPI
@@ -204,12 +175,12 @@ inductive Grade where
 instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 
 /-- The judgments a grade allows. Speakers differ on the optional deletion, unmarked or `?` (60d),
-(63); the indicative after *non₂* is `?` or `??` (27), (60b); a sentence infelicitous in its
-context is `??` (6) or worse (31). -/
+(63); the indicative after *non₂* ranges from `?` (27) to `?*` (60b); a sentence infelicitous in
+its context is `??` (6) or worse (31). -/
 def Grade.judgments : Grade → List Judgment
   | .out => [.ungrammatical]
   | .contextual => [.questionable, .ungrammatical]
-  | .indicative => [.marginal, .questionable]
+  | .indicative => [.marginal, .questionable, .nearlyUngrammatical]
   | .deletion => [.acceptable, .marginal]
   | .regular => [.acceptable]
 
@@ -359,20 +330,18 @@ def sentence? (d : Datum) : Option Sentence := do
   let matrix ← d.parse? "matrix" [("positive", Polarity.positive), ("negative", .negative)]
   let construction ← d.parse? "construction" [("piu", Construction.inequality),
     ("meno", .inequality), ("tanto", .equality), ("indirectQuestion", .indirectQuestion)]
-  let holder ← d.parse? "holder" [("addressee", Holder.addressee),
-    ("formerAddressee", .formerAddressee), ("thirdParty", .thirdParty)]
+  let holder ← (Examples.holder d)
   let negation ← d.parse? "negation" [("none", Negation.none), ("non1", .non₁), ("non2", .non₂)]
   let mood ← d.parse? "mood" moods
-  let complementizer ← d.parse? "complementizer"
-    [("quanto", Complementizer.quanto), ("che", .che), ("se", .se)]
+  let complementizer ← (Examples.complementizer d)
   let elements ← (d.features "element").mapM fun v ↦ List.lookup v
     [("pur", Element.pur), ("neanche", .neanche), ("affatto", .affatto),
       ("degreeModifier", .degreeModifier), ("certainty", .certainty),
       ("speakerGerund", .speakerGerund)]
   return { force, matrix, construction, holder, negation, mood, complementizer, elements
-           standard := d.parse? "standard" [("clausal", Standard.clausal), ("belief", .belief)]
+           standard := (Examples.standard d)
            plainMood := (d.parse? "plainMood" moods).getD .indicative
-           predicate := d.parse? "predicate" [("adjective", Predicate.adjective), ("lo", .lo)] }
+           predicate := (Examples.predicate d) }
 
 /-- The evidence a row records, for an example judged in a context. -/
 def evidence? (d : Datum) : Option Evidence :=

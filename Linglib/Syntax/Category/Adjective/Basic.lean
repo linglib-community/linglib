@@ -1,7 +1,11 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Semantics.Degree.Gradability
-public import Linglib.Semantics.EvaluativeValence
 public import Linglib.Morphology.Morph
 
 /-!
@@ -71,9 +75,10 @@ structure Adjective where
       adjective on an open scale whose standard its lexicon fixes, such as the necessity standard
       of *decent* ([beltrama-2025]); `none` takes the scale's default. -/
   lexicalStandard : Option PositiveStandard := none
-  /-- The evaluative valence, which determines the degree of an intensifier formed on the
-      adjective ([nouwen-2024]). -/
-  evaluativeValence : Option EvaluativeValence := none
+  /-- The evaluative valence of an evaluative adjective, the polarity of the value judgement it
+      expresses, positive for *good* and negative for *bad* ([nouwen-2024]). An adjective that
+      expresses no value judgement, as a mirative or modal one, has none. -/
+  evaluativeValence : Option Polarity := none
   /-- Comparative/superlative morphology. -/
   comparison : Adjective.Comparison := {}
   /-- Lexical antonym's surface form, when it has a stable one. -/
@@ -125,8 +130,9 @@ structure AntonymPair where
   posLexicalStandard : Option PositiveStandard := none
   /-- The negative pole's lexically fixed standard, when it departs from the dual's default. -/
   negLexicalStandard : Option PositiveStandard := none
-  /-- The positive pole's evaluative valence; the negative pole's is its `flip`. -/
-  evaluativeValence : Option EvaluativeValence := none
+  /-- The positive pole's evaluative valence; the negative pole's is the opposite. -/
+  evaluativeValence : Option Polarity := none
+  deriving DecidableEq, Repr
 
 namespace AntonymPair
 
@@ -147,7 +153,7 @@ def neg (p : AntonymPair) : Adjective where
   comparison := p.negComparison
   lexicalStandard := p.negLexicalStandard
   antonymForm := some p.posForm
-  evaluativeValence := p.evaluativeValence.map EvaluativeValence.flip
+  evaluativeValence := p.evaluativeValence.map (Polarity.negative * ·)
 
 @[simp] theorem pos_polarity (p : AntonymPair) : p.pos.polarity = .positive := rfl
 

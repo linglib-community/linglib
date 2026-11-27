@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Discourse.Centering.Basic
-public import Mathlib.Data.List.Zip
+public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Order.WithBot
 
@@ -14,8 +13,10 @@ backward-looking center of the first, or the first has none, and whether it is t
 center of the second. Kibble calls the tests *cohesion* and *salience*. Brennan, Friedman, and
 Pollard's four transitions, named continue, retain, smooth shift, and rough shift by Walker, Iida,
 and Cote, are the four outcomes of the two tests; Grosz, Joshi, and Weinstein's three,
-continuation, retaining, and shifting, [merge the two shifts](##toTransition_mono). Rule 2 orders
-the transitions [by the first test and then by the second](##lt_iff_toLex_lt).
+continuation, retaining, and shifting, merge the two shifts, and the merging map
+`ExtendedTransition.toTransition` is monotone (`ExtendedTransition.toTransition_mono`). Rule 2
+orders the transitions by the first test and then by the second
+(`ExtendedTransition.toLexIso`).
 
 ## Implementation notes
 
@@ -39,7 +40,7 @@ and colleagues note of the four-way table; `Transition.ofCenters` counts it as s
 
 @[expose] public section
 
-namespace Discourse.Centering
+namespace Centering
 
 /-! ### Transitions and Rule 2 -/
 
@@ -52,15 +53,31 @@ inductive Transition where
 
 namespace Transition
 
-/-- The outcome of the second test on a transition whose center is kept, `⊥` on a shift. -/
-def salience : Transition → WithBot Bool
-  | continuation => (true : Bool)
-  | retaining => (false : Bool)
-  | shifting => ⊥
+/-- A transition as the outcome of the second test where the center is kept, and `⊥` on a
+shift. -/
+def salienceEquiv : Transition ≃ WithBot Bool where
+  toFun
+    | continuation => (true : Bool)
+    | retaining => (false : Bool)
+    | shifting => ⊥
+  invFun
+    | some true => continuation
+    | some false => retaining
+    | none => shifting
+  left_inv t := by cases t <;> rfl
+  right_inv b := by rcases b with _ | _ | _ <;> rfl
 
 /-- Rule 2: continuation, then retaining, then shifting. -/
-instance : LinearOrder Transition :=
-  LinearOrder.lift' salience fun a b h ↦ by cases a <;> cases b <;> cases h <;> rfl
+instance : LinearOrder Transition := LinearOrder.lift' salienceEquiv salienceEquiv.injective
+
+/-- The transitions in the order of Rule 2 are `WithBot Bool`. -/
+def salienceIso : Transition ≃o WithBot Bool := ⟨salienceEquiv, Iff.rfl⟩
+
+@[simp] theorem salienceIso_continuation : salienceIso continuation = (true : Bool) := rfl
+
+@[simp] theorem salienceIso_retaining : salienceIso retaining = (false : Bool) := rfl
+
+@[simp] theorem salienceIso_shifting : salienceIso shifting = ⊥ := rfl
 
 end Transition
 
@@ -104,13 +121,23 @@ variable (c s : Prop) [Decidable c] [Decidable s]
 
 end ofTests
 
+/-- A transition as the outcomes of the two tests. -/
+def testsEquiv : ExtendedTransition ≃ Bool × Bool where
+  toFun t := (t.cohesion, t.salience)
+  invFun p := ofTests (p.1 = true) (p.2 = true)
+  left_inv t := by cases t <;> rfl
+  right_inv p := by rcases p with ⟨_ | _, _ | _⟩ <;> rfl
+
 /-- Rule 2: the order by the first test and then by the second. -/
 instance : LinearOrder ExtendedTransition :=
-  LinearOrder.lift' (fun t ↦ toLex (t.cohesion, t.salience)) fun _ _ h ↦
-    have h := Prod.ext_iff.mp (toLex.injective h); ext h.1 h.2
+  LinearOrder.lift' (toLex ∘ testsEquiv) (toLex.injective.comp testsEquiv.injective)
 
-theorem lt_iff_toLex_lt {t t' : ExtendedTransition} :
-    t < t' ↔ toLex (t.cohesion, t.salience) < toLex (t'.cohesion, t'.salience) := Iff.rfl
+/-- The transitions in the order of Rule 2 are the pairs of outcomes of the two tests in
+lexicographic order. -/
+def toLexIso : ExtendedTransition ≃o Bool ×ₗ Bool := ⟨testsEquiv.trans toLex, Iff.rfl⟩
+
+@[simp] theorem toLexIso_apply (t : ExtendedTransition) :
+    toLexIso t = toLex (t.cohesion, t.salience) := rfl
 
 /-- The transition of Grosz, Joshi, and Weinstein that a transition refines. -/
 def toTransition : ExtendedTransition → Transition
@@ -120,6 +147,18 @@ def toTransition : ExtendedTransition → Transition
 
 theorem toTransition_mono : Monotone toTransition := by
   intro a b; cases a <;> cases b <;> decide
+
+/-- `toTransition` as an order homomorphism. -/
+def toTransitionHom : ExtendedTransition →o Transition := ⟨toTransition, toTransition_mono⟩
+
+@[simp] theorem coe_toTransitionHom : ⇑toTransitionHom = toTransition := rfl
+
+/-- Through the two order isomorphisms, `toTransition` keeps the outcome of the second test
+where the first passes and forgets it where the first fails. -/
+theorem salienceIso_toTransition (t : ExtendedTransition) :
+    Transition.salienceIso t.toTransition =
+      if t.cohesion then (t.salience : WithBot Bool) else ⊥ := by
+  cases t <;> rfl
 
 end ExtendedTransition
 
@@ -154,40 +193,4 @@ theorem ofCenters_some (prevCb cp : Option E) (c : E) : ofCenters prevCb (some c
 
 end Transition
 
-/-! ### Scanning a discourse -/
-
-variable {R F : Type*} [LinearOrder R]
-
-/-- The transition into `cur` from `prev`, given the backward-looking center of `prev`. -/
-def transition (prevCb : Option E) (prev cur : Utterance E R F) : Transition :=
-  .ofCenters prevCb (cb prev cur) cur.cp
-
-/-- The backward-looking center of each utterance of `d` after the first. -/
-def cbs (d : List (Utterance E R F)) : List (Option E) := List.zipWith cb d d.tail
-
-/-- The transition into each utterance of `d` after the first, the first of them with no prior
-center. -/
-def transitions (d : List (Utterance E R F)) : List Transition :=
-  List.zipWith3 transition (none :: cbs d) d d.tail
-
-@[simp] theorem cbs_nil : cbs ([] : List (Utterance E R F)) = [] := rfl
-
-@[simp] theorem cbs_singleton (u : Utterance E R F) : cbs [u] = [] := rfl
-
-@[simp] theorem cbs_cons_cons (u₁ u₂ : Utterance E R F) (d : List (Utterance E R F)) :
-    cbs (u₁ :: u₂ :: d) = cb u₁ u₂ :: cbs (u₂ :: d) := rfl
-
-@[simp] theorem length_cbs (d : List (Utterance E R F)) : (cbs d).length = d.length - 1 := by
-  simp [cbs, List.length_zipWith]
-
-@[simp] theorem transitions_nil : transitions ([] : List (Utterance E R F)) = [] := rfl
-
-@[simp] theorem transitions_singleton (u : Utterance E R F) : transitions [u] = [] := rfl
-
-@[simp] theorem length_transitions (d : List (Utterance E R F)) :
-    (transitions d).length = d.length - 1 := by
-  rw [transitions, ← List.zipWith_zipWith_left (fun (f : Utterance E R F → Transition) ↦ f)
-    transition]
-  simp [List.length_zipWith]
-
-end Discourse.Centering
+end Centering

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Order.Hom.Basic
 public import Linglib.Data.Examples.RitchieSchiller2024
 public import Linglib.Data.Examples.Readers
@@ -47,6 +47,8 @@ formalized.
 @[expose] public section
 
 namespace RitchieSchiller2024
+
+open Examples (Restriction Anchor)
 
 open Quantifier.Det
 
@@ -187,34 +189,13 @@ theorem exists_specific_of_not_isDefault {p : Purpose E} (hp : ¬ s.IsDefault v 
 
 /-! ### The paper's examples -/
 
-/-- What an implicit restriction restricts by. -/
-inductive Restriction where
-  | location
-  | time
-  | availability
-  | salience
-  | manipulability
-  | color
-  | aesthetic
-  | history
-  | subkind
-  | shape
-  | plan
-  deriving DecidableEq, Fintype
-
 /-- The restrictions the cognitive heuristics deliver. -/
-def Restriction.IsHeuristic : Restriction → Prop
+def Examples.Restriction.IsHeuristic : Restriction → Prop
   | .location | .time | .availability | .salience | .manipulability => True
   | _ => False
 
 instance : DecidablePred Restriction.IsHeuristic := λ r => by
   cases r <;> unfold Restriction.IsHeuristic <;> infer_instance
-
-/-- Whether a locational or temporal restriction is to the speaker's here and now. -/
-inductive Anchor where
-  | hereNow
-  | elsewhere
-  deriving DecidableEq, Fintype
 
 /-- The conversational setup, if any, that introduces a specific purpose. -/
 inductive Setup where
@@ -242,12 +223,8 @@ instance : DecidablePred Row.IsDefault := λ _ => inferInstanceAs (Decidable (_ 
 /-- A datum read into its row; the anchor is the here and now unless the row says
 otherwise. -/
 def Row.ofDatum (e : Datum) : Option Row := do
-  let r ← e.parse? "restriction"
-    [("location", .location), ("time", .time), ("availability", .availability),
-     ("salience", .salience), ("manipulability", .manipulability), ("color", .color),
-     ("aesthetic", .aesthetic), ("history", .history), ("subkind", .subkind),
-     ("shape", .shape), ("plan", .plan)]
-  let a := (e.parse? "anchor" [("hereNow", .hereNow), ("elsewhere", .elsewhere)]).getD .hereNow
+  let r ← (Examples.restriction e)
+  let a := ((Examples.anchor e)).getD .hereNow
   let s ← e.parse? "setup"
     [("none", .none), ("question", .question), ("assertion", .assertion),
      ("directive", .directive), ("priorGoal", .priorGoal), ("displacement", .displacement)]

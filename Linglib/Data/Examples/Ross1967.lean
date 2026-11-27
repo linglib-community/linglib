@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Ross1967` — typed example data
@@ -250,5 +252,21 @@ def ex6_137 : Datum :=
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "LBC")] }
 
 def all : List Datum := [ex4_13a, ex4_15a, ex4_18a, ex4_18b, ex2_18, ex4_82a, ex4_82d, ex4_184a, ex4_184b, ex4_184c, ex4_251a, ex4_251b, ex4_251c, ex4_252, ex6_128b, ex6_135b, ex6_136, ex6_137]
+
+/-- The four constraints. -/
+inductive Constraint where
+  /-- CNPC: CNPC -/
+  | cnpc
+  /-- CSC: CSC -/
+  | csc
+  /-- SSC: SSC -/
+  | ssc
+  /-- LBC: LBC -/
+  | lbc
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `constraint`. -/
+def constraint (e : Datum) : Option Constraint :=
+  e.parse? "constraint" [("CNPC", .cnpc), ("CSC", .csc), ("SSC", .ssc), ("LBC", .lbc)]
 
 end Ross1967.Examples

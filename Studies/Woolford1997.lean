@@ -4,12 +4,12 @@ public import Linglib.Core.Data.List.Find
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Woolford1997
-public import Linglib.Fragments.NezPerce.Case
+public import Linglib.Languages.NezPerce.Case
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Obligatoriness
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.Finset.Erase
 public import Mathlib.Data.Finset.Image
@@ -54,6 +54,8 @@ patterns](##ruleValues_of_mem_derivations) where objects can be nominative.
 @[expose] public section
 
 namespace Woolford1997
+
+open Examples (Position)
 
 open Morphology DependentCase Alignment
 
@@ -119,13 +121,6 @@ theorem IsFunctional.lexical_ne (h : c.IsFunctional) (l : LexicalCase) : lexical
 
 end AbstractCase
 
-/-- Where an argument sits at LF: the specifier of Agr-S, the specifier of Agr-O, or inside VP. -/
-inductive Position where
-  | specAgrS
-  | specAgrO
-  | inVP
-  deriving DecidableEq, Repr
-
 /-- The position of an argument with a Case of Nez Perce, as the tree (9) gives it. -/
 def AbstractCase.position : AbstractCase → Position
   | .nom | .erg => .specAgrS
@@ -169,7 +164,8 @@ theorem maxAcc_negative : maxAcc [some .dat] = -1 ∧ maxAcc [some .erg, some .d
 
 /-- The slots of the arguments on entering the clause, valued where the verb assigns a lexical
 Case. -/
-def entering (args : List (Option LexicalCase)) (j : Fin args.length) : FeatureSlot AbstractCase :=
+def entering (args : List (Option LexicalCase)) (j : Fin args.length) :
+    FeatureSlot (Flat AbstractCase) :=
   .offer (args[j].map .lexical)
 
 /-- Case on arguments, the highest first: an argument keeps its lexical Case, the functional heads
@@ -609,7 +605,7 @@ theorem card_coreCases :
     nezPerce.coreCases.card = 4 ∧ thangu.coreCases.card = 3 ∧ kalkatungu.coreCases.card = 4 := by
   decide
 
--- objective and accusative are one comparative accusative, as in the fragment's paradigm, and
+-- objective and accusative are one comparative accusative, as in the language file's paradigm, and
 -- Thangu's only object Case is Schebeck's accusative (note 35)
 theorem image_label_coreCases :
     nezPerce.coreCases.image AbstractCase.label = Finset.univ.image NezPerce.Case.label ∧
@@ -720,7 +716,7 @@ def exponent (l : Glottocode) (c : AbstractCase) : Option String :=
 /-- A cell of the table (58): its Case, and the position its agreement column reports. -/
 def tableRow? (e : Datum) : Option (AbstractCase × Position) :=
   (e.parse? "cell" caseTable).bind fun c ↦
-    (e.parse? "agreement" [("subject", .specAgrS), ("object", .specAgrO), ("none", .inVP)]).map
+    ((Examples.agreement e)).map
       (c, ·)
 
 -- (58): the agreement of a Case is its position

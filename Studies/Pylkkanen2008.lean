@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Model
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.ArgumentStructure.EventIdentification
 public import Linglib.Semantics.Composition.Rules
@@ -8,7 +8,7 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Minimalist.SyntacticObject.Constituency
-public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Denotation
 public import Linglib.Data.Examples.Pylkkanen2008
@@ -209,20 +209,22 @@ def me : LexicalItem.Token := ⟨.of .D [] "I", 313⟩
 
 /-- (3), (6a): the Chaga benefactive, `[VoiceP he [Voice′ Voice [ApplP wife [Appl′ Appl_Ben [VP eat
 food]]]]]`. -/
-def chaga : PlanarSyntacticObject := he * (agentVoice * (wife * (applBen * (eat * food))))
+def chaga : PlanarSyntacticObject Minimalist.TokenLeaf := he *
+    (agentVoice * (wife * (applBen * (eat * food))))
 
 /-- (16b): `[VoiceP Mary [Voice′ Voice [VP buy [ApplP John [Appl′ Appl the book]]]]]`. -/
-def buyTree : PlanarSyntacticObject :=
+def buyTree : PlanarSyntacticObject Minimalist.TokenLeaf :=
   mary * (agentVoice * (buy * (john * (applTo * theBook))))
 
 /-- The high benefactive applicative merged with the unergative *run*, in its position of
 (6a). -/
-def unergative : PlanarSyntacticObject := he * (agentVoice * (wife * (applBen * run)))
+def unergative : PlanarSyntacticObject Minimalist.TokenLeaf := he *
+    (agentVoice * (wife * (applBen * run)))
 
 /-- (103b): `[VoiceP [ApplP I [Appl′ Appl Mary]] [Voice′ Voice run]]`, the low applicative head `h`
 over a constituent whose open argument is the external argument; *I ran Mary* with the recipient
 head. -/
-def ranMary (h : LexicalItem.Token) : PlanarSyntacticObject :=
+def ranMary (h : LexicalItem.Token) : PlanarSyntacticObject Minimalist.TokenLeaf :=
   (me * (h * mary)) * (agentVoice * run)
 
 /-- The words of the book's applicative sentences, by semantic type. -/
@@ -277,9 +279,9 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
   | _, .me => M.speaker
 
 /-- The meanings of a syntactic object in a model, by the book's rules. -/
-def meanings (t : PlanarSyntacticObject) :
+def meanings (t : PlanarSyntacticObject Minimalist.TokenLeaf) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  (t.toTree traceIndex).values rules (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
+  t.toTree.values rules (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V }))
     inferInstance (Word.val M) words
 
 /-- (3): the Chaga benefactive means the event of eating the food of which he is the agent and
@@ -337,7 +339,7 @@ end CCommand
 /-- The book's structure for an applicative head over the unergative *run*: the high applicative
 in its position of (6a), a low one in the structure of (103b). The static-possession applicative
 of [cuervo-2003] is outside the book's inventory. -/
-def unergativeTree? : Appl.Head → Option PlanarSyntacticObject
+def unergativeTree? : Appl.Head → Option (PlanarSyntacticObject Minimalist.TokenLeaf)
   | .high => some unergative
   | .low .recipient => some (ranMary applTo)
   | .low .source => some (ranMary applFrom)
@@ -345,7 +347,7 @@ def unergativeTree? : Appl.Head → Option PlanarSyntacticObject
 
 /-- An object is satisfiable when, in some model where no agent of running is its theme, it
 means a predicate of eventualities true of some eventuality. -/
-def Satisfiable (t : PlanarSyntacticObject) : Prop :=
+def Satisfiable (t : PlanarSyntacticObject Minimalist.TokenLeaf) : Prop :=
   ∃ (Entity V : Type) (M : Model Entity V),
     (∀ x e, M.running e → M.role .agent x e → ¬ M.theme x e) ∧
       ∃ P : V → Prop, ⟨.vt, P⟩ ∈ meanings M t ∧ ∃ e, P e
@@ -372,7 +374,7 @@ private theorem not_satisfiable_ranMary {h : LexicalItem.Token}
 /-- Diagnostic 1 (17), on the book's account of (103b): over the unergative *run*, an applicative
 head's structure is satisfiable exactly when the head is high, the low applicatives' structure
 being the contradiction where no agent of running is its theme. -/
-theorem unergative_satisfiable_iff {a : Appl.Head} {t : PlanarSyntacticObject}
+theorem unergative_satisfiable_iff {a : Appl.Head} {t : PlanarSyntacticObject Minimalist.TokenLeaf}
     (ht : unergativeTree? a = some t) : Satisfiable t ↔ a = .high := by
   rcases a with _ | _ | (_ | _ | _) <;> simp only [unergativeTree?, Option.some.injEq,
     reduceCtorEq] at ht <;> subst ht
@@ -455,9 +457,9 @@ theorem possessor_dative_transitivity :
 /-! ### Cause introduces a causing event, not a causer -/
 
 -- (9), (14), (13b), (16), (15b)
-theorem melted_readings (M : EventStructure.Interpretation Entity E E)
+theorem melted_readings (M : EventStructure.Model E E)
     (agent causer : Entity → E → Prop) (melt : E → Prop) (john : Entity) (e : E) :
-    (eventIdentification agent (M.vCause melt) john e ↔
+    (eventIdentification agent (ModalLogic.Diamond M.cause melt) john e ↔
         agent john e ∧ ∃ e', e ~[M.cause] e' ∧ melt e') ∧
       (eventIdentification causer melt john e ↔ causer john e ∧ melt e) :=
   ⟨Iff.rfl, Iff.rfl⟩
@@ -505,7 +507,7 @@ Cause is bundled with Voice (10). -/
 structure CauseHead where
   selects : Layer
   bundled : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- `c.Embeds l` holds when a constituent of layer `l` can occur between the root and Cause. -/
 def CauseHead.Embeds (c : CauseHead) (l : Layer) : Prop := l ≤ c.selects

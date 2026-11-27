@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Fragments.English.TemporalDeictic
-public import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
-public import Linglib.Fragments.Hebrew.TemporalDeictic
-public import Linglib.Fragments.Japanese.TemporalDeictic
-public import Linglib.Fragments.Slavic.Russian.TemporalDeictic
+public import Linglib.Languages.English.TemporalDeictic
+public import Linglib.Languages.Greek.StandardModern.TemporalDeictic
+public import Linglib.Languages.Hebrew.TemporalDeictic
+public import Linglib.Languages.Japanese.TemporalDeictic
+public import Linglib.Languages.Slavic.Russian.TemporalDeictic
 public import Linglib.Data.Examples.TsiliaZhao2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -171,7 +171,7 @@ def adverb (row : Datum) : Option DeicticAdverb :=
 satisfies the presuppositions of its tense and of the adverb restricting it. -/
 theorem accepted_iff_exists_restricted [Nontrivial T] :
     ∀ row ∈ Examples.all, ∀ C ∈ tenseCell row, ∀ a ∈ adverb row,
-      (.variable ≤ row.judgment ↔ ∃ π r th : NonemptyInterval T,
+      (row.judgment = .acceptable ∨ row.judgment = .variable ↔ ∃ π r th : NonemptyInterval T,
         Restricted (IntervalAlgebra.ofPosition C) (IntervalAlgebra.ofPosition a.cell) π r th) := by
   simp only [exists_restricted_ofPosition_iff]
   decide +kernel

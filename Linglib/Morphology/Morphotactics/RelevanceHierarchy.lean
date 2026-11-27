@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morphotactics.Template.Scale
 public import Mathlib.Order.Basic
 public import Mathlib.Data.List.Sort
 public import Mathlib.Tactic.DeriveFintype
@@ -7,31 +8,23 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Bybee's relevance hierarchy
 
-[bybee-1985] ranks the verbal inflectional categories by their relevance to the verb, the extent
-to which the category's meaning directly affects the meaning of the stem: valence, voice,
-aspect, tense, mood and agreement "are ranked for relevance to verbs in that order". A more
-relevant category is predicted to have morphological expression, inflectional or derivational,
-in more languages, to sit closer to the stem, and to fuse with it more tightly. The scale alone
-does not predict which categories are most often inflectional: generality works against the most
-relevant, so inflection is likeliest in the middle of the scale.
+[bybee-1985] ranks the categories of verbal inflection by their relevance to the verb: valence,
+voice, aspect, tense, mood and agreement, in that order. `RelevanceHierarchy` is that scale with
+its linear order.
 
-`RelevanceHierarchy` is a comparative concept, not a universal slot inventory: languages own the
-slot types of their `AffixTemplate`s (`Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a relevance claim
-pulls the order back along a partial map from slots to categories supplied by the study that
-draws the comparison. A slot sequence read stem-outward respects the hierarchy when it is
-`List.SortedLE`.
-
-## Main definitions
-
-* `Morphology.RelevanceHierarchy`: Bybee's six categories, linearly ordered from the most
-  relevant.
+The scale is compared with a template through a partial map `cat` from the template's positions
+to the scale, which a study supplies. The suffixes of the template respect the hierarchy when
+`Morphotactics.Template.SuffixesAscend cat` holds, and its prefixes when
+`Morphotactics.Template.PrefixesAscend cat` does.
 
 ## Implementation notes
 
-Bybee calls the order approximate, and her diagram of it lists number, person and gender
-agreement as three rows at the bottom; the hierarchy takes her single category of agreement,
-which is what her morpheme-order survey and later comparisons test. Categories outside her list,
-such as derivation, negation or nonfiniteness, have no rank: a slot of that kind maps to nothing.
+The scale is a comparative concept and not an inventory of positions: a language's language file
+owns
+the positions of its templates. Bybee calls the order approximate, and her diagram lists number,
+person and gender agreement as three rows; the scale takes her single category of agreement. A
+category outside her list, such as derivation, negation or nonfiniteness, has no rank, and a
+position of that kind maps to nothing.
 
 ## References
 

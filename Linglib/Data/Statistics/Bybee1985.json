@@ -1,0 +1,693 @@
+{
+  "meta": {
+    "bibkey": "bybee-1985",
+    "method": "typology",
+    "description": "The verbal categories of Bybee's fifty-language sample: the share of languages expressing each category on the verb, and for aspect, tense, mood and person the languages in which one marker stands closer to the stem than another. Also the token frequencies of the modern descendants of Old English Strong Verbs."
+  },
+  "types": [
+    {
+      "name": "Category",
+      "doc": "The verbal categories coded in the survey, as the rows of Figures 1 and 2.",
+      "levels": [
+        {
+          "name": "valence",
+          "label": "valence",
+          "doc": "Differences in the number or role of the arguments the verb stem takes."
+        },
+        {
+          "name": "voice",
+          "label": "voice",
+          "doc": "The perspective from which the situation described by the verb stem is viewed."
+        },
+        {
+          "name": "aspect",
+          "label": "aspect",
+          "doc": "The way the internal temporal constituency of the situation is viewed."
+        },
+        {
+          "name": "tense",
+          "label": "tense",
+          "doc": "The placement of the situation in time, relative to the moment of speech or another established point."
+        },
+        {
+          "name": "mood",
+          "label": "mood",
+          "doc": "The way the speaker presents the truth of the proposition, evidentials included."
+        },
+        {
+          "name": "number",
+          "label": "number",
+          "doc": "Concord by number with one or more arguments of the verb."
+        },
+        {
+          "name": "person",
+          "label": "person",
+          "doc": "Concord by person with the subject."
+        },
+        {
+          "name": "objectPerson",
+          "label": "person (object)",
+          "doc": "Concord by person with the object."
+        },
+        {
+          "name": "gender",
+          "label": "gender",
+          "doc": "Concord with arguments by lexical class."
+        }
+      ]
+    },
+    {
+      "name": "StrongClass",
+      "doc": "The Old English Strong Verb classes of the table.",
+      "levels": [
+        {
+          "name": "one",
+          "label": "I",
+          "doc": "Class I"
+        },
+        {
+          "name": "two",
+          "label": "II",
+          "doc": "Class II"
+        },
+        {
+          "name": "seven",
+          "label": "VII",
+          "doc": "Class VII"
+        }
+      ]
+    },
+    {
+      "name": "Verb",
+      "doc": "The modern descendants of the Class I, II and VII Strong Verbs.",
+      "levels": [
+        {
+          "name": "drive",
+          "label": "drive",
+          "doc": "*drive*, Class I"
+        },
+        {
+          "name": "rise",
+          "label": "rise",
+          "doc": "*rise*, Class I"
+        },
+        {
+          "name": "ride",
+          "label": "ride",
+          "doc": "*ride*, Class I"
+        },
+        {
+          "name": "write",
+          "label": "write",
+          "doc": "*write*, Class I"
+        },
+        {
+          "name": "bite",
+          "label": "bite",
+          "doc": "*bite*, Class I"
+        },
+        {
+          "name": "bide",
+          "label": "bide",
+          "doc": "*bide*, Class I"
+        },
+        {
+          "name": "reap",
+          "label": "reap",
+          "doc": "*reap*, Class I"
+        },
+        {
+          "name": "slit",
+          "label": "slit",
+          "doc": "*slit*, Class I"
+        },
+        {
+          "name": "sneak",
+          "label": "sneak",
+          "doc": "*sneak*, Class I"
+        },
+        {
+          "name": "choose",
+          "label": "choose",
+          "doc": "*choose*, Class II"
+        },
+        {
+          "name": "fly",
+          "label": "fly",
+          "doc": "*fly*, Class II"
+        },
+        {
+          "name": "shoot",
+          "label": "shoot",
+          "doc": "*shoot*, Class II"
+        },
+        {
+          "name": "lose",
+          "label": "lose",
+          "doc": "*lose*, Class II"
+        },
+        {
+          "name": "flee",
+          "label": "flee",
+          "doc": "*flee*, Class II"
+        },
+        {
+          "name": "rue",
+          "label": "rue",
+          "doc": "*rue*, Class II"
+        },
+        {
+          "name": "seethe",
+          "label": "seethe",
+          "doc": "*seethe*, Class II"
+        },
+        {
+          "name": "smoke",
+          "label": "smoke",
+          "doc": "*smoke*, Class II"
+        },
+        {
+          "name": "float",
+          "label": "float",
+          "doc": "*float*, Class II"
+        },
+        {
+          "name": "shove",
+          "label": "shove",
+          "doc": "*shove*, Class II"
+        },
+        {
+          "name": "fall",
+          "label": "fall",
+          "doc": "*fall*, Class VII"
+        },
+        {
+          "name": "hold",
+          "label": "hold",
+          "doc": "*hold*, Class VII"
+        },
+        {
+          "name": "know",
+          "label": "know",
+          "doc": "*know*, Class VII"
+        },
+        {
+          "name": "grow",
+          "label": "grow",
+          "doc": "*grow*, Class VII"
+        },
+        {
+          "name": "blow",
+          "label": "blow",
+          "doc": "*blow*, Class VII"
+        },
+        {
+          "name": "wax",
+          "label": "wax",
+          "doc": "*wax*, Class VII"
+        },
+        {
+          "name": "weep",
+          "label": "weep",
+          "doc": "*weep*, Class VII"
+        },
+        {
+          "name": "beat",
+          "label": "beat",
+          "doc": "*beat*, Class VII"
+        },
+        {
+          "name": "hew",
+          "label": "hew",
+          "doc": "*hew*, Class VII"
+        },
+        {
+          "name": "leap",
+          "label": "leap",
+          "doc": "*leap*, Class VII"
+        },
+        {
+          "name": "mow",
+          "label": "mow",
+          "doc": "*mow*, Class VII"
+        },
+        {
+          "name": "sow",
+          "label": "sow",
+          "doc": "*sow*, Class VII"
+        },
+        {
+          "name": "flow",
+          "label": "flow",
+          "doc": "*flow*, Class VII"
+        },
+        {
+          "name": "row",
+          "label": "row",
+          "doc": "*row*, Class VII"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "sampleSize",
+      "type": "nat",
+      "value": 50,
+      "doc": "The languages of the sample.",
+      "locator": "p. 24",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "expression",
+      "structure": "ExpressionShare",
+      "doc": "the percentage of the sample's languages expressing a category on the verb.",
+      "locator": "Figures 1 and 2, pp. 30-31",
+      "verified": "page-image",
+      "key": [
+        "category"
+      ],
+      "columns": [
+        {
+          "name": "category",
+          "type": "Category",
+          "doc": "The category."
+        },
+        {
+          "name": "inflectional",
+          "type": "nat",
+          "doc": "The percentage with inflectional expression, obligatory and bound (Figure 1)."
+        },
+        {
+          "name": "morphological",
+          "type": "nat",
+          "doc": "The percentage with inflectional or derivational expression (Figure 2)."
+        }
+      ],
+      "rows": [
+        {
+          "category": "valence",
+          "inflectional": 6,
+          "morphological": 90
+        },
+        {
+          "category": "voice",
+          "inflectional": 26,
+          "morphological": 56
+        },
+        {
+          "category": "aspect",
+          "inflectional": 52,
+          "morphological": 74
+        },
+        {
+          "category": "tense",
+          "inflectional": 48,
+          "morphological": 50
+        },
+        {
+          "category": "mood",
+          "inflectional": 68,
+          "morphological": 68
+        },
+        {
+          "category": "number",
+          "inflectional": 54,
+          "morphological": 66
+        },
+        {
+          "category": "person",
+          "inflectional": 56,
+          "morphological": 56
+        },
+        {
+          "category": "person (object)",
+          "inflectional": 28,
+          "morphological": 28
+        },
+        {
+          "category": "gender",
+          "inflectional": 16,
+          "morphological": 16
+        }
+      ]
+    },
+    {
+      "name": "order",
+      "structure": "OrderCount",
+      "doc": "the languages in which one category's marker stands closer to the stem than another's.",
+      "locator": "§6, pp. 34-35",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "first",
+          "type": "Category",
+          "doc": "The category named first."
+        },
+        {
+          "name": "second",
+          "type": "Category",
+          "doc": "The category named second."
+        },
+        {
+          "name": "firstCloser",
+          "type": "nat",
+          "doc": "The languages with the first category's marker closer to the stem."
+        },
+        {
+          "name": "secondCloser",
+          "type": "nat",
+          "doc": "The languages with the second category's marker closer to the stem."
+        },
+        {
+          "name": "both",
+          "type": "nat",
+          "doc": "The languages having both categories, whether or not their order can be told."
+        }
+      ],
+      "rows": [
+        {
+          "first": "aspect",
+          "second": "tense",
+          "firstCloser": 8,
+          "secondCloser": 0,
+          "both": 18
+        },
+        {
+          "first": "aspect",
+          "second": "mood",
+          "firstCloser": 10,
+          "secondCloser": 0,
+          "both": 23
+        },
+        {
+          "first": "aspect",
+          "second": "person",
+          "firstCloser": 12,
+          "secondCloser": 1,
+          "both": 21,
+          "note": "the opposite order is Navaho's"
+        },
+        {
+          "first": "tense",
+          "second": "mood",
+          "firstCloser": 8,
+          "secondCloser": 1,
+          "both": 20,
+          "note": "the opposite order is Ojibwa's"
+        },
+        {
+          "first": "tense",
+          "second": "person",
+          "firstCloser": 8,
+          "secondCloser": 1,
+          "both": 17,
+          "note": "the opposite order is Navaho's"
+        },
+        {
+          "first": "mood",
+          "second": "person",
+          "firstCloser": 13,
+          "secondCloser": 5,
+          "both": 26
+        }
+      ]
+    },
+    {
+      "name": "strongVerbs",
+      "structure": "VerbFrequency",
+      "doc": "the token frequency of a verb descended from an Old English Strong Verb.",
+      "locator": "the table of p. 120",
+      "verified": "page-image",
+      "method": "corpus",
+      "key": [
+        "verb"
+      ],
+      "columns": [
+        {
+          "name": "verb",
+          "type": "Verb",
+          "doc": "The verb."
+        },
+        {
+          "name": "strongClass",
+          "type": "StrongClass",
+          "doc": "Its Old English class."
+        },
+        {
+          "name": "regularized",
+          "type": "bool",
+          "doc": "Whether it has regularized or become Weak."
+        },
+        {
+          "name": "allForms",
+          "type": "nat",
+          "doc": "The token frequency of all its forms."
+        },
+        {
+          "name": "past",
+          "type": "nat",
+          "doc": "The token frequency of its Past Tense form."
+        }
+      ],
+      "rows": [
+        {
+          "verb": "drive",
+          "strongClass": "I",
+          "regularized": false,
+          "allForms": 203,
+          "past": 58
+        },
+        {
+          "verb": "rise",
+          "strongClass": "I",
+          "regularized": false,
+          "allForms": 199,
+          "past": 60
+        },
+        {
+          "verb": "ride",
+          "strongClass": "I",
+          "regularized": false,
+          "allForms": 126,
+          "past": 40
+        },
+        {
+          "verb": "write",
+          "strongClass": "I",
+          "regularized": false,
+          "allForms": 561,
+          "past": 179
+        },
+        {
+          "verb": "bite",
+          "strongClass": "I",
+          "regularized": false,
+          "allForms": 26,
+          "past": 7
+        },
+        {
+          "verb": "bide",
+          "strongClass": "I",
+          "regularized": true,
+          "allForms": 1,
+          "past": 0
+        },
+        {
+          "verb": "reap",
+          "strongClass": "I",
+          "regularized": true,
+          "allForms": 5,
+          "past": 1
+        },
+        {
+          "verb": "slit",
+          "strongClass": "I",
+          "regularized": true,
+          "allForms": 3,
+          "past": 1,
+          "note": "past *slit*, with the zero allomorph"
+        },
+        {
+          "verb": "sneak",
+          "strongClass": "I",
+          "regularized": true,
+          "allForms": 11,
+          "past": 4
+        },
+        {
+          "verb": "choose",
+          "strongClass": "II",
+          "regularized": false,
+          "allForms": 177,
+          "past": 37
+        },
+        {
+          "verb": "fly",
+          "strongClass": "II",
+          "regularized": false,
+          "allForms": 92,
+          "past": 27
+        },
+        {
+          "verb": "shoot",
+          "strongClass": "II",
+          "regularized": false,
+          "allForms": 117,
+          "past": 18
+        },
+        {
+          "verb": "lose",
+          "strongClass": "II",
+          "regularized": false,
+          "allForms": 274,
+          "past": 49
+        },
+        {
+          "verb": "flee",
+          "strongClass": "II",
+          "regularized": false,
+          "allForms": 40,
+          "past": 22
+        },
+        {
+          "verb": "rue",
+          "strongClass": "II",
+          "regularized": true,
+          "allForms": 0,
+          "past": 0
+        },
+        {
+          "verb": "seethe",
+          "strongClass": "II",
+          "regularized": true,
+          "allForms": 0,
+          "past": 0
+        },
+        {
+          "verb": "smoke",
+          "strongClass": "II",
+          "regularized": true,
+          "allForms": 26,
+          "past": 6
+        },
+        {
+          "verb": "float",
+          "strongClass": "II",
+          "regularized": true,
+          "allForms": 23,
+          "past": 6
+        },
+        {
+          "verb": "shove",
+          "strongClass": "II",
+          "regularized": true,
+          "allForms": 16,
+          "past": 8
+        },
+        {
+          "verb": "fall",
+          "strongClass": "VII",
+          "regularized": false,
+          "allForms": 239,
+          "past": 87
+        },
+        {
+          "verb": "hold",
+          "strongClass": "VII",
+          "regularized": false,
+          "allForms": 509,
+          "past": 125
+        },
+        {
+          "verb": "know",
+          "strongClass": "VII",
+          "regularized": false,
+          "allForms": 1473,
+          "past": 394
+        },
+        {
+          "verb": "grow",
+          "strongClass": "VII",
+          "regularized": false,
+          "allForms": 300,
+          "past": 65
+        },
+        {
+          "verb": "blow",
+          "strongClass": "VII",
+          "regularized": false,
+          "allForms": 52,
+          "past": 12
+        },
+        {
+          "verb": "wax",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 6,
+          "past": 3
+        },
+        {
+          "verb": "weep",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 28,
+          "past": 7,
+          "note": "past *wept*, a vowel change acquired later by regular sound change"
+        },
+        {
+          "verb": "beat",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 66,
+          "past": 12,
+          "note": "past *beat*, with the zero allomorph"
+        },
+        {
+          "verb": "hew",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 1,
+          "past": 1
+        },
+        {
+          "verb": "leap",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 33,
+          "past": 18
+        },
+        {
+          "verb": "mow",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 1,
+          "past": 1
+        },
+        {
+          "verb": "sow",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 6,
+          "past": 0
+        },
+        {
+          "verb": "flow",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 40,
+          "past": 4
+        },
+        {
+          "verb": "row",
+          "strongClass": "VII",
+          "regularized": true,
+          "allForms": 5,
+          "past": 2
+        }
+      ]
+    }
+  ]
+}

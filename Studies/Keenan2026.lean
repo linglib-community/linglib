@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.ModelTheory.Monadic
-public import Linglib.Semantics.Quantification.Individual
-public import Linglib.Semantics.Quantification.Polyadic
+public import Linglib.Semantics.Quantifier.Individual
+public import Linglib.Semantics.Quantifier.Polyadic
 public import Mathlib.ModelTheory.Graph
 public import Studies.KeenanStavi1986
 
@@ -29,7 +29,7 @@ in prose that there be at least two members of the restrictor; that case is the 
 sets have two members: with more members of the restrictor than subsets of the second set the
 function is constantly false, hence reducible, and its proof's relation witnesses only three
 pupils. The accusative extension and the two tests for reducibility, stated in that paper, are in
-`Quantifier.Polyadic`. Sizes are `Set.ncard`, as in `Quantification/Counting`, so the determiners
+`Quantifier.Polyadic`. Sizes are `Set.ncard`, as in `Quantifier/Counting`, so the determiners
 counting with them are meant for finite sets.
 
 ## TODO
@@ -151,7 +151,7 @@ noncomputable def moreThanC (C : Set α) : Det α := fun A B ↦ (A ∩ C).ncard
 noncomputable def asManyAsC (C : Set α) : Det α := fun A B ↦ (A ∩ B).ncard ≤ (A ∩ C).ncard
 
 theorem conservative_moreThanC (C : Set α) : (moreThanC C).Conservative := fun A B ↦ by
-  simp [moreThanC, ← Set.inter_assoc]
+  simp [moreThanC]
 
 theorem not_asManyAsC_iff {C A B : Set α} : ¬ asManyAsC C A B ↔ moreThanC C A B := not_le
 
@@ -351,7 +351,7 @@ theorem not_aac_atLeastAsManyAsAnyOther [Finite α] {s p : Set α} {a c : α} (h
     ⟨ha, fun b _ _ ↦ by simp⟩
   have hle := this.2 c hc hac
   simp [hac.symm] at hle
-  exact hp.ne_empty ((Set.ncard_eq_zero p.toFinite).1 hle)
+  exact hp.ne_empty (hle.resolve_right (Set.not_infinite.2 p.toFinite))
 
 theorem not_isPredicateAnaphor_atLeastAsManyAsAnyOther {s p : Set α} {a b : α} (ha : a ∈ s)
     (hb : b ∉ s) : ¬ IsPredicateAnaphor (atLeastAsManyAsAnyOther s p) := fun h ↦

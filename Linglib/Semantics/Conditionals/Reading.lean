@@ -5,7 +5,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Natural.Projection
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # Readings of a conditional
@@ -44,6 +44,8 @@ antecedent-worlds the antecedent is neither.
 -/
 
 @[expose] public section
+
+open Inquisitive
 
 namespace Conditional
 
@@ -112,22 +114,22 @@ discourse condition ([iatridou-1991], [haegeman-2003]). A hypothetical condition
 undecided in the common ground, and a premise conditional needs `p` committed to by some
 participant or already in the common ground. -/
 def Felicitous (K : Commitment.Table A W) (p : Set W) : Reading → Prop
-  | .hypothetical => ¬ (Question.polar p).DecidedBy K.commonGround
+  | .hypothetical => ¬ (Inquisitive.Proposition.polar p).DecidedBy K.commonGround
   | .premise => (∃ a, p ∈ K.discourseCommitments a) ∨ p ∈ K.commonGround
 
 theorem felicitous_iff_of_mem_commonGround (h : p ∈ K.commonGround) {ct : Reading} :
     ct.Felicitous K p ↔ ct = .premise := by
   cases ct
-  · exact iff_of_false (fun h' ↦ h' (Question.decidedBy_polar.2 (.inl h))) (by decide)
+  · exact iff_of_false (fun h' ↦ h' (Proposition.decidedBy_polar.2 (.inl h))) (by decide)
   · exact iff_of_true (.inr h) rfl
 
 theorem felicitous_iff_of_not_decidedBy (h₁ : ∀ a, p ∉ K.discourseCommitments a)
-    (h₂ : ¬ (Question.polar p).DecidedBy K.commonGround) {ct : Reading} :
+    (h₂ : ¬ (Inquisitive.Proposition.polar p).DecidedBy K.commonGround) {ct : Reading} :
     ct.Felicitous K p ↔ ct = .hypothetical := by
   cases ct
   · exact iff_of_true h₂ rfl
   · exact iff_of_false (fun h ↦ h.elim (fun ⟨a, ha⟩ ↦ h₁ a ha)
-      fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))) (by decide)
+      fun hp ↦ h₂ (Inquisitive.Proposition.decidedBy_polar.2 (.inl hp))) (by decide)
 
 end Felicity
 

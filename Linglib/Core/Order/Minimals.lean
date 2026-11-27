@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Core.Order.OfCriteria
+public import Linglib.Core.Order.PreorderLattice
+public import Mathlib.Order.Concept
 public import Mathlib.Order.Minimal
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Preorder.Finite
@@ -21,8 +22,7 @@ nonempty. Under a total preorder the minimal elements are [the least
 elements](##Preorder.mem_minimals_iff_forall_le), as for mathlib's `DirectedOn.minimal_iff_isLeast`,
 and the minimal elements of the sets [determine the preorder](##Preorder.eq_of_minimals_eq). Under
 the pullback of a linear order along a map they are [the elements of least
-value](##Preorder.mem_minimals_lift), and under a preorder derived from criteria they are [the
-elements satisfying every criterion](##Preorder.minimals_ofCriteria_eq) whenever some element does.
+value](##Preorder.mem_minimals_lift).
 
 ## Implementation notes
 
@@ -223,23 +223,5 @@ theorem mem_minimals_lift [LinearOrder β] :
   mem_minimals_iff_forall_le
 
 end lift
-
-/-- Under a criteria-derived preorder, when some element of the set satisfies every criterion,
-the minimal elements are exactly those that do. -/
-theorem minimals_ofCriteria_eq {C : Type*} {sat : α → C → Prop} {criteria : Set C}
-    (hex : ∃ a ∈ s, ∀ c ∈ criteria, sat a c) :
-    (Preorder.ofCriteria sat criteria).minimals s = {a ∈ s | ∀ c ∈ criteria, sat a c} :=
-  let ⟨_, hb, hsat⟩ := hex
-  Set.ext fun _ ↦
-    ⟨fun ⟨ha, hmin⟩ ↦ ⟨ha, fun c hc ↦ hmin hb (fun c' hc' _ ↦ hsat c' hc') c hc (hsat c hc)⟩,
-      fun ⟨ha, hall⟩ ↦ ⟨ha, fun _ _ _ c hc _ ↦ hall c hc⟩⟩
-
-/-- Under the preorder of a criterion, when some element of the set satisfies the criterion, the
-minimal elements are exactly those that do. -/
-theorem minimals_ofCriterion {P : α → Prop} (hex : ∃ a ∈ s, P a) :
-    (ofCriterion P).minimals s = {a ∈ s | P a} :=
-  let ⟨_, hb, hPb⟩ := hex
-  Set.ext fun _ ↦
-    ⟨fun ⟨ha, hmin⟩ ↦ ⟨ha, hmin hb (fun _ ↦ hPb) hPb⟩, fun ⟨ha, hPa⟩ ↦ ⟨ha, fun _ _ _ _ ↦ hPa⟩⟩
 
 end Preorder

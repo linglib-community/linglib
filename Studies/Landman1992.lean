@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Studies.Dowty1979
 public import Linglib.Data.Examples.Landman1992
@@ -15,7 +15,7 @@ Bennett and Partee, on which a progressive is true at an interval that a longer 
 sentence's truth in the actual world extends into the future. The imperfective of the event
 semantics over the actual world alone, true at an interval inside the run time of an actual event
 of its type, is extensional in the same way, so [it makes every progressive entail its
-perfective](##prfv_nonempty_of_impf_nonempty). Landman takes the
+perfective](##exists_perfective_of_exists_imperfective). Landman takes the
 progressive instead to relate an actual event in progress to a possibly non-actual complete event
 of its type, and builds the relation from two operations. Within a world, an event grows into the
 events of which it is a stage until it stops. When it stops, a Stalnaker-style selection function
@@ -52,9 +52,10 @@ drawing wrong.
   imposed; the activity half of the paradox is `activity_of_prog`, under the hypothesis the
   postulate supplies, that a process stage of an event of an activity type is of that type.
 * In the interrupted processes, the events are intervals, the event domain of the event
-  semantics with the identity trace, so `Aspect.IMPF` and `Aspect.PRFV` apply to the same models.
-  World `k` removes the first `k` interruptions, and the closest world is the first one from the
-  current world on. Tense is not modelled: a progressive is evaluated at its first stage.
+  semantics with the identity trace, so `Aspect.imperfective` and `Aspect.perfective` apply to
+  the same models. World `k` removes the first `k` interruptions, and the closest world is the
+  first one from the current world on. Tense is not modelled: a progressive is evaluated at its
+  first stage.
 * The swimmer of (17) and the soldier of (20) need five continuations and have a reasonable reach
   of two; only whether the reach covers the interruptions matters (`prog_interrupted_iff`).
 * Dowty's progressive is `Dowty1979.prog`, his (25), applied to the run times of the events of a
@@ -128,8 +129,8 @@ def Prog (e : E) (P : W → E → Prop) (w : W) : Prop := ∃ f v, M.Branch e w 
 
 /-- The progressive of `P` at a world as a property of intervals, those of the events in progress
 toward `P` there. -/
-def progAt (P : W → E → Prop) (w : W) : Set (NonemptyInterval T) :=
-  τ '' {e | M.occurs e w ∧ M.Prog e P w}
+def progAt (P : W → E → Prop) (w : W) : NonemptyInterval T → Prop :=
+  Event.runTimes fun e ↦ M.occurs e w ∧ M.Prog e P w
 
 variable {M} {e f : E} {w u v : W} {P : W → E → Prop}
 
@@ -184,10 +185,13 @@ def sentenceOf {E W T : Type*} [LE T] [TemporalTrace E T] (P : W → E → Prop)
 inside the run time of an actual event of its type, like Bennett and Partee's progressive, so
 wherever it holds the perfective holds too: it validates the inference from (3) to (4) that the
 imperfective paradox rejects. -/
-theorem prfv_nonempty_of_impf_nonempty {E W T : Type*} [LinearOrder T]
+theorem exists_perfective_of_exists_imperfective {E W T : Type*} [LinearOrder T]
     [TemporalTrace E T] {P : W → E → Prop} {w : W}
-    (h : (Aspect.IMPF (fun w _ ↦ {w}) P w).Nonempty) : (Aspect.PRFV (T := T) P w).Nonempty :=
-  let ⟨_, ht⟩ := h; let ⟨e, _, he⟩ := ht w rfl; ⟨Event.τ e, e, le_rfl, he⟩
+    (h : ∃ t, Aspect.imperfective (T := T) (fun _ ↦ SetRel.id) P w t) :
+    ∃ t, Aspect.perfective (T := T) (P w) t :=
+  let ⟨_, ht⟩ := h
+  let ⟨e, _, he⟩ := Aspect.imperfective_iff.1 ht w rfl
+  ⟨Event.τ e, Aspect.perfective_iff.2 ⟨e, le_rfl, he⟩⟩
 
 /-! ### Interrupted processes -/
 
@@ -329,28 +333,28 @@ theorem prog_interrupted_iff :
     · exact occurs_interrupted.2 ⟨rfl, (reach_of_le le_rfl).ge⟩
     · exact NonemptyInterval.le_def.2 ⟨le_rfl, n.le_succ⟩
 
-theorem progAt_interrupted_nonempty_iff (hn : 0 < n) :
-    ((interrupted n R).progAt (complete n) 0).Nonempty ↔ Set.Icc 1 n ⊆ R := by
+theorem exists_progAt_interrupted_iff (hn : 0 < n) :
+    (∃ t, (interrupted n R).progAt (complete n) 0 t) ↔ Set.Icc 1 n ⊆ R := by
   constructor
-  · rintro ⟨_, e, ⟨⟨h0, hr⟩, hp⟩, -⟩
+  · rintro ⟨_, e, -, ⟨h0, hr⟩, hp⟩
     rw [reach_of_lt hn] at hr
     obtain rfl : e = upto 0 := NonemptyInterval.ext (Prod.ext h0 (by rw [upto_snd]; omega))
     exact prog_interrupted_iff.1 hp
   · intro hR
-    exact ⟨upto 0, upto 0, ⟨⟨rfl, Nat.zero_le _⟩, prog_interrupted_iff.2 hR⟩, rfl⟩
+    exact ⟨upto 0, upto 0, rfl, ⟨rfl, Nat.zero_le _⟩, prog_interrupted_iff.2 hR⟩
 
-theorem progAt_interrupted_zero_nonempty : ((interrupted 0 R).progAt (complete 0) 0).Nonempty :=
-  ⟨upto 0, upto 0, ⟨⟨rfl, Nat.zero_le _⟩, prog_of_le (f := upto 1) ⟨rfl, Nat.zero_le _⟩
+theorem exists_progAt_interrupted_zero : ∃ t, (interrupted 0 R).progAt (complete 0) 0 t :=
+  ⟨upto 0, upto 0, rfl, ⟨rfl, Nat.zero_le _⟩, prog_of_le (f := upto 1) ⟨rfl, Nat.zero_le _⟩
     ⟨rfl, (reach_of_le le_rfl).ge⟩ (NonemptyInterval.le_def.2 ⟨le_rfl, Nat.zero_le _⟩)
-    ⟨rfl, le_rfl⟩⟩, rfl⟩
+    ⟨rfl, le_rfl⟩⟩
 
-theorem impf_complete_eq_empty (hn : 0 < n) :
-    Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) (complete n) 0 = ∅ := by
-  rw [Aspect.impf_singleton]
-  exact Set.eq_empty_of_forall_notMem fun _ ⟨_, _, _, h⟩ ↦ hn.not_ge h
+theorem imperfective_complete_eq_bot (hn : 0 < n) :
+    Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) (complete n) 0 = ⊥ := by
+  rw [Aspect.imperfective_id]
+  exact eq_bot_iff.2 fun _ h ↦ let ⟨_, _, _, h⟩ := Aspect.unbounded_iff.1 h; hn.not_ge h
 
-theorem prfv_complete_eq_empty (hn : 0 < n) : Aspect.PRFV (T := ℕ) (complete n) 0 = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ ⟨_, _, _, h⟩ ↦ hn.not_ge h
+theorem perfective_complete_eq_bot (hn : 0 < n) : Aspect.perfective (T := ℕ) (complete n 0) = ⊥ :=
+  eq_bot_iff.2 fun _ h ↦ let ⟨_, _, _, h⟩ := Aspect.perfective_iff.1 h; hn.not_ge h
 
 /-- Dowty's progressive makes *Mary was crossing the street* false when the truck hits her (13):
 the truck's hitting her is the normal course of events, so the actual world is the inertia world,
@@ -381,34 +385,34 @@ noncomputable abbrev miracle : Model (NonemptyInterval ℕ) ℕ := interrupted 0
 /-- The continuation branch decides the paper's judgments in context, where the imperfective of
 the event semantics makes the interrupted drawing (3) false. -/
 theorem truthValue_rows :
-    ((once.progAt (complete 1) 0).Nonempty ↔
+    ((∃ t, once.progAt (complete 1) 0 t) ↔
         Examples.ex3.verdict = some true) ∧
-      ((Aspect.PRFV (T := ℕ) (complete 1) 0).Nonempty ↔
+      ((∃ t, Aspect.perfective (T := ℕ) (complete 1 0) t) ↔
         Examples.ex4.verdict = some true) ∧
-      ((once.progAt (complete 1) 0).Nonempty ↔
+      ((∃ t, once.progAt (complete 1) 0 t) ↔
         Examples.ex13.verdict = some true) ∧
-      ((hopeless.progAt (complete 5) 0).Nonempty ↔
+      ((∃ t, hopeless.progAt (complete 5) 0 t) ↔
         Examples.ex17_sink.verdict = some true) ∧
-      ((miracle.progAt (complete 0) 0).Nonempty ↔
+      ((∃ t, miracle.progAt (complete 0) 0 t) ↔
         Examples.ex17_miracle.verdict = some true) ∧
-      ((twoTrucks.progAt (complete 2) 0).Nonempty ↔
+      ((∃ t, twoTrucks.progAt (complete 2) 0 t) ↔
         Examples.ex18.verdict = some true) ∧
-      ((hopeless.progAt (complete 5) 0).Nonempty ↔
+      ((∃ t, hopeless.progAt (complete 5) 0 t) ↔
         Examples.ex20.verdict = some true) ∧
-      ¬ ((Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) (complete 1) 0).Nonempty ↔
+      ¬ ((∃ t, Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) (complete 1) 0 t) ↔
         Examples.ex3.verdict = some true) := by
   have hu (n : ℕ) : Set.Icc 1 n ⊆ (Set.univ : Set ℕ) := Set.subset_univ _
   have hh : ¬ Set.Icc 1 5 ⊆ Set.Iic (2 : ℕ) := fun h ↦ absurd (h ⟨by decide, by decide⟩ :
     (3 : ℕ) ∈ Set.Iic 2) (by decide)
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact iff_of_true ((progAt_interrupted_nonempty_iff one_pos).2 (hu 1)) (by decide)
-  · rw [prfv_complete_eq_empty one_pos]; exact iff_of_false Set.not_nonempty_empty (by decide)
-  · exact iff_of_true ((progAt_interrupted_nonempty_iff one_pos).2 (hu 1)) (by decide)
-  · exact iff_of_false (mt (progAt_interrupted_nonempty_iff (by decide)).1 hh) (by decide)
-  · exact iff_of_true progAt_interrupted_zero_nonempty (by decide)
-  · exact iff_of_true ((progAt_interrupted_nonempty_iff (by decide)).2 (hu 2)) (by decide)
-  · exact iff_of_false (mt (progAt_interrupted_nonempty_iff (by decide)).1 hh) (by decide)
-  · rw [impf_complete_eq_empty one_pos]
-    exact fun h ↦ Set.not_nonempty_empty (h.2 (by decide))
+  · exact iff_of_true ((exists_progAt_interrupted_iff one_pos).2 (hu 1)) (by decide)
+  · rw [perfective_complete_eq_bot one_pos]; exact iff_of_false (fun ⟨_, h⟩ ↦ h) (by decide)
+  · exact iff_of_true ((exists_progAt_interrupted_iff one_pos).2 (hu 1)) (by decide)
+  · exact iff_of_false (mt (exists_progAt_interrupted_iff (by decide)).1 hh) (by decide)
+  · exact iff_of_true exists_progAt_interrupted_zero (by decide)
+  · exact iff_of_true ((exists_progAt_interrupted_iff (by decide)).2 (hu 2)) (by decide)
+  · exact iff_of_false (mt (exists_progAt_interrupted_iff (by decide)).1 hh) (by decide)
+  · rw [imperfective_complete_eq_bot one_pos]
+    exact fun h ↦ let ⟨_, hf⟩ := h.2 (by decide); hf
 
 end Landman1992

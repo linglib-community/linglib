@@ -1,6 +1,10 @@
 module
 
 public import Linglib.Semantics.Conditionals.Counterfactual
+public import Mathlib.Order.Concept
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Data.Rat.Defs
 
@@ -16,8 +20,18 @@ every minimal-change semantics, not one choice of similarity: whenever the two s
 counterfactuals are true, any counterfactual quantifying over the closest antecedent worlds
 makes the not-both-up one true as well, a closest not-both-up world in which A is down being a
 closest A-down world (§1.2), and the argument extends to Kratzer's premise semantics
-(§6.3). The paper's positive proposal, a background semantics with the inquisitive lifting of
-disjunction (§3.2, §4), is not represented.
+(§6.3).
+
+The paper's own account evaluates each alternative of the antecedent by a background semantics.
+Worlds assign a value to each causal variable and need not obey the laws; the facts at a world
+are the values of the variables there. A fact contributes to the falsity of an assumption when
+some set of facts is consistent with the assumption and stops being so once the fact is added
+(`Background.Contributes`); an assumption calls into question the facts that contribute to its
+falsity and those that depend on them (`Background.CalledIntoQuestion`); and `Background.imp a c`
+holds at a world when `c` is true throughout the law-abiding worlds of `a` that agree with it on
+every fact not called into question. On the switches this makes the two simple counterfactuals
+true, the disjunctive one true from its two alternatives (`Background.or_off`), and neither
+counterfactual from *not both up* true (`Background.not_both`).
 
 The four worlds, the wiring law and the five clauses are `World`, `lightOn` and the
 propositions `aDn` to `lightOff`, with `aOrBdn_eq_notBothUp` the De Morgan identity; under the
@@ -157,5 +171,105 @@ theorem table3_pattern :
 theorem deMorgan_antecedents_diverge :
     trueRate_notBothUp_off < trueRate_aOrBdn_off := by
   norm_num [trueRate_aOrBdn_off, trueRate_notBothUp_off]
+
+/-! ### Background semantics (§4) -/
+
+namespace Background
+
+/-- The two switches and the light. -/
+inductive Var | A | B | L
+  deriving DecidableEq, Fintype
+
+section Defs
+
+variable {V : Type*} {α : V → Type*}
+
+variable {V : Type*} {α : V → Type*}
+
+/-- Definition 3: the fact about `v` contributes to the falsity of `a` at `w`. -/
+def Contributes (w : ∀ v, α v) (a : Set (∀ v, α v)) (v : V) : Prop :=
+  ∃ F : Finset V, (∃ x ∈ a, ∀ y ∈ F, x y = w y) ∧ ¬ ∃ x ∈ a, x v = w v ∧ ∀ y ∈ F, x y = w y
+
+/-- Definition 4: `a` calls into question the fact about `v` at `w`, given which variables are
+ancestors of which. -/
+def CalledIntoQuestion (anc : V → V → Prop) (w : ∀ v, α v) (a : Set (∀ v, α v)) (v : V) :
+    Prop :=
+  Contributes w a v ∨ ∃ x, Contributes w a x ∧ anc x v
+
+/-- Definitions 5 to 7 with the maximal background: the conditional proposition `a ⇒ c`. -/
+def imp (anc : V → V → Prop) (law : Set (∀ v, α v)) (a c : Set (∀ v, α v)) :
+    Set (∀ v, α v) :=
+  {w | ∀ x ∈ a, x ∈ law → (∀ v, ¬ CalledIntoQuestion anc w a v → x v = w v) → x ∈ c}
+
+end Defs
+
+/-- A world gives each switch and the light a position. -/
+abbrev Valuation := Var → Bool
+
+/-- The light depends on each switch. -/
+def anc (x y : Var) : Prop := (x = .A ∨ x = .B) ∧ y = .L
+
+instance : DecidableRel anc := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The law of the circuit: the light is on exactly when the switches agree. -/
+def law : Set Valuation := {x | x .L = (x .A == x .B)}
+
+instance : DecidablePred (· ∈ law) := fun x ↦ inferInstanceAs (Decidable (x .L = (x .A == x .B)))
+
+/-- Both switches are up and the light is on. -/
+def w₀ : Valuation := fun _ ↦ true
+
+/-- Switch A is down. -/
+abbrev aDown : Set Valuation := {x | x .A = false}
+/-- Switch B is down. -/
+abbrev bDown : Set Valuation := {x | x .B = false}
+/-- The switches are not both up. -/
+abbrev notBoth : Set Valuation := {x | ¬ (x .A = true ∧ x .B = true)}
+/-- The light is off. -/
+abbrev off : Set Valuation := {x | x .L = false}
+/-- The light is on. -/
+abbrev on : Set Valuation := {x | x .L = true}
+
+instance (w : Valuation) (a : Set Valuation) [DecidablePred (· ∈ a)] (v : Var) :
+    Decidable (Contributes w a v) :=
+  inferInstanceAs (Decidable (∃ _ : Finset Var, _ ∧ _))
+
+instance (w : Valuation) (a : Set Valuation) [DecidablePred (· ∈ a)] (v : Var) :
+    Decidable (CalledIntoQuestion anc w a v) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+instance (a c : Set Valuation) [DecidablePred (· ∈ a)] [DecidablePred (· ∈ c)] (w : Valuation) :
+    Decidable (w ∈ imp anc law a c) :=
+  inferInstanceAs (Decidable (∀ x ∈ a, _))
+
+-- the only fact that contributes to the falsity of *A is down* is that A is up.
+theorem contributes_aDn : ∀ v, Contributes w₀ aDown v ↔ v = .A := by decide
+
+-- A up and B up contribute to the falsity of *not both up*, and the light does not.
+theorem contributes_notBoth : ∀ v, Contributes w₀ notBoth v ↔ v ≠ .L := by decide
+
+-- the maximal background of *A is down* is that B is up.
+theorem background_aDn : ∀ v, ¬ CalledIntoQuestion anc w₀ aDown v ↔ v = .B := by decide
+
+-- the maximal background of *not both up* is empty.
+theorem background_notBoth : ∀ v, CalledIntoQuestion anc w₀ notBoth v := by decide
+
+-- (1a) and (1b) are true
+theorem down_off : w₀ ∈ imp anc law aDown off ∧ w₀ ∈ imp anc law bDown off := by decide
+
+/-- (1c) is true: the antecedent has the two alternatives *A is down* and *B is down*, and the
+conditional holds from each. -/
+theorem or_off :
+    w₀ ∈ upperPolar (fun a w ↦ w ∈ imp anc law a off) ({aDown, bDown} : Set (Set Valuation)) := by
+  intro a ha
+  rcases ha with rfl | rfl
+  exacts [down_off.1, down_off.2]
+
+/-- Neither (1d) nor (1e) is true: the antecedent has one alternative, whose maximal background is
+empty, and the light is off in some of its law-abiding worlds and on in others. -/
+theorem not_both :
+    w₀ ∉ imp anc law notBoth off ∧ w₀ ∉ imp anc law notBoth on := by decide
+
+end Background
 
 end CiardelliZhangChampollion2018

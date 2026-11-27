@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Semantics.Genericity.MeaningPreservation
+public import Linglib.Semantics.Reference.CovertShift
 public import Linglib.Semantics.Reference.Kind
 public import Linglib.Data.Examples.Dayal2004
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Romance.Italian.Determiners
-public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Romance.Italian.Determiners
+public import Linglib.Languages.Mandarin.Determiners
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -29,16 +29,17 @@ may or may not apply to ∩.
 
 ## Implementation notes
 
-* Availability is the theory layer's (`Semantics/Genericity/MeaningPreservation.lean`), and each
+* Availability is the theory layer's (`Semantics/Reference/CovertShift.lean`), and each
   ranking is written as the predicate of its upper tier, Chierchia's `(· = .down)` and Dayal's
   `(· ≠ .exists)`. Whether ∩ is defined is a hypothesis, since it fails for plural properties
-  anchored to particular entities, fn. 1; for a singular property it is `Kind.down P ∈ K`, which
-  `Kind.down_notMem_of_atom` refutes.
+  anchored to particular entities, fn. 1; for a singular property it is `Kind.down ∘ P ∈ K`, which
+  `Kind.down_comp_notMem_of_isMin` refutes.
 * Blocking applies within a determiner's domain, the clause "for any set X in its domain" of
   (39a): English *a* selects the singular, so it blocks ∃ for a bare singular and leaves ∃ to a
   bare plural or a mass noun (`Determiner.Inventory.Blocks`).
 * Which side of the cut-off each sampled language falls on is the paper's analysis
-  (`lexicalizationOf`); that ι is lexicalized exactly where the fragment's inventory blocks ι is
+  (`lexicalizationOf`); that ι is lexicalized exactly where the language file's inventory blocks ι
+  is
   checked (`iota_mem_lexicalized_iff`).
 * A mass term is morphologically neutral, fn. 25, outside the singular/plural contrast, so the
   number of a kind term is an `Option Number` and a mass term has none. A Chinese noun, which
@@ -65,7 +66,7 @@ may or may not apply to ∩.
 
 namespace Dayal2004
 
-open Genericity Determiner
+open Determiner
 
 /-! ### Revised Meaning Preservation (Section 2.5) -/
 
@@ -113,11 +114,11 @@ theorem exists_iff_not_down (hι : ds.Blocks num .iota) (hx : ds.Blocks num .iot
 /-- An English bare singular has no shift, (88a), since ∩ is undefined for a singular property
 once every kind has a plural instance somewhere, *the* blocks ι and ι^x, and *a* blocks ∃. -/
 theorem english_bare_singular {S E : Type*} [PartialOrder E] {K : Set (S → Part E)}
-    {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Mereology.Atom d)
-    (hP : ∀ s, ∀ x ∈ P s, Mereology.Atom x) :
-    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular (Kind.down P ∈ K))
+    {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, IsMin d)
+    (hP : ∀ s, ∀ x ∈ P s, IsMin x) :
+    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular (Kind.down ∘ P ∈ K))
       (· ≠ .exists) τ := by
-  rw [eq_false (Kind.down_notMem_of_atom hK hP)]
+  rw [eq_false (Kind.down_comp_notMem_of_isMin hK hP)]
   decide
 
 /-- An English bare plural takes ∃ exactly where ∩ is undefined, as *parts of this machine* does

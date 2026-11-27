@@ -1,6 +1,7 @@
 module
 
 public import Studies.Karttunen1977
+public import Linglib.Semantics.Questions.Partition.Answer
 
 /-!
 # Groenendijk and Stokhof (1984): Studies on the Semantics of Questions
@@ -19,11 +20,11 @@ the information inside one cell, and answers it partially when it rules out a ce
 
 Extensions are topical properties `E → Set W` and attitudes are `SetRel W W` read through
 `SetRel.core`. Mathlib's order on `Setoid` is the dissertation's inclusion of questions
-(`Setoid.le_iff_forall_classes`), whose dual atoms are the bipartitions (`Setoid.isCoatom_iff`).
-The domain of individuals is fixed across indices, as the dissertation assumes in accepting (X);
-the update of information is classical, and giving an answer leaves out chapter IV's
-presupposition that the question is open. The mention-some question is `Question.which`. Two
-printed claims are corrected, the equation for the answers compatible with a conjunction
+(`Setoid.le_iff_forall_classes`), whose dual atoms are the bipartitions (`Setoid.isCoatom_iff`). The
+domain of individuals is fixed across indices, as the dissertation assumes in accepting (X); the
+update of information is classical, and giving an answer leaves out chapter IV's presupposition that
+the question is open. The mention-some question is `Inquisitive.Proposition.which`. Two printed
+claims are corrected, the equation for the answers compatible with a conjunction
 (`TwoCells.determined_inter_ne`) and the cells that *(at least) an M G's* rules out in figure 15
 (`Figure15.indefinite_partial_false`). Page numbers are the dissertation's printed ones.
 
@@ -45,7 +46,7 @@ printed claims are corrected, the equation for the answers compatible with a con
 
 @[expose] public section
 
-open Question Setoid
+open Question Inquisitive Inquisitive.Proposition Setoid
 open scoped SetRel
 
 namespace GroenendijkStokhof1984
@@ -80,13 +81,13 @@ theorem whichDeRe_iff {G P : E → Set W} {w v u : W} :
   simp only [Setoid.ker_def, Set.ext_iff, Set.mem_inter_iff, mem_extension,
     and_congr_right_iff]
 
-theorem who_eq_partition (P : E → Set W) : who P = partition (Set.range P) :=
-  Setoid.ext fun _ _ ↦ by rw [who_iff, partition_iff, Set.forall_mem_range]
+theorem who_eq_ofProps (P : E → Set W) : who P = Setoid.ofProps (Set.range P) :=
+  Setoid.ext fun _ _ ↦ by rw [who_iff, Setoid.ofProps_iff, Set.forall_mem_range]
 
-theorem whichDeRe_eq_partition (G P : E → Set W) (w : W) :
-    whichDeRe G P w = partition (P '' extension G w) := by
+theorem whichDeRe_eq_ofProps (G P : E → Set W) (w : W) :
+    whichDeRe G P w = Setoid.ofProps (P '' extension G w) := by
   ext v u
-  simp only [whichDeRe_iff, partition_iff, Set.forall_mem_image, mem_extension]
+  simp only [whichDeRe_iff, Setoid.ofProps_iff, Set.forall_mem_image, mem_extension]
 
 -- p. 220
 theorem who_eq_iInf_polar (P : E → Set W) : who P = ⨅ x, Setoid.polar (P x) :=
@@ -187,11 +188,12 @@ theorem not_knows_who_of_believes {D K : SetRel W W} {P : E → Set W} {x : E} (
 
 /-- Knowing the answer to a partition satisfies Karttunen's meaning postulate for *know* on the
 Hamblin set, both its clause for the true answers and its clause for an empty set of them. -/
-theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows (partition H) w R) :
-    Karttunen1977.Knows (trueAnswers H) w R := by
+theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows (Setoid.ofProps H) w R) :
+    Karttunen1977.Knows (karttunen H) w R := by
   refine ⟨knowsAnswer_of_mem_core_strongAnswer (by rwa [strongAnswer_eq_cell]), fun h₀ v hv ↦ ?_⟩
-  show trueAnswers H v = ∅
-  rw [show trueAnswers H v = trueAnswers H w from h hv, h₀]
+  show karttunen H v = ∅
+  rw [show karttunen H v = karttunen H w from
+    Setoid.ker_def.1 (by rw [ker_karttunen]; exact h hv), h₀]
 
 -- pp. 92–93
 theorem knowsAnswer_of_forall_notMem {P : E → Set W} (h : ∀ x, w ∉ P x) :
@@ -220,9 +222,9 @@ def johnBelieves : SetRel Bool Bool := {p | p.2 = false}
 /-- Karttunen's postulate counts John as knowing who walks though he believes Suzy walks too,
 against (VIII), and not as knowing who doesn't walk, against (X) (chapter II, pp. 86–88). -/
 theorem karttunen_knows :
-    Karttunen1977.Knows (trueAnswers (Set.range walk)) true john ∧
+    Karttunen1977.Knows (karttunen (Set.range walk)) true john ∧
       true ∈ johnBelieves.core (walk .suzy) ∧
-      ¬ Karttunen1977.Knows (trueAnswers (Set.range fun x ↦ (walk x)ᶜ)) true john := by
+      ¬ Karttunen1977.Knows (karttunen (Set.range fun x ↦ (walk x)ᶜ)) true john := by
   refine ⟨⟨fun v _ ↦ ?_, fun h ↦ absurd h (Set.nonempty_iff_ne_empty.1
       ⟨walk .bill, ⟨.bill, rfl⟩, trivial⟩)⟩, fun _ h ↦ h, fun ⟨h, _⟩ ↦ ?_⟩
   · rintro p ⟨⟨x, rfl⟩, hx⟩

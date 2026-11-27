@@ -21,6 +21,11 @@ machine but were never `git add`ed (`ParasiticAttitudes`,
 file is on disk; CI fails because the file is not in the git index.
 This check closes that gap.
 
+The same pass checks the layering of imports: nothing in `Linglib/Generalizations/` and no
+shared file of `Linglib/Syntax/` or `Linglib/Morphology/` imports a framework, no framework of
+syntax imports another and no framework of morphology imports another, and nothing in
+`Linglib/Data/` imports outside `Linglib/Core/` and `Linglib/Data/`.
+
 Dependencies: pure stdlib + `git`.
 """
 
@@ -32,6 +37,52 @@ from pathlib import Path
 
 IMPORT_RE = re.compile(
     r'^\s*(?:(?:public|private)\s+)?(?:meta\s+)?import\s+(?:all\s+)?((?:Linglib|Studies)(?:\.[A-Za-z0-9_]+)+)\s*$')
+
+
+# The frameworks of syntax, each a directory of `Linglib/Syntax/`, and the frameworks of
+# morphology, each a directory of `Linglib/Morphology/`. A framework of morphology may build on
+# one of syntax.
+SYNTAX_FRAMEWORKS = ("Minimalist", "HPSG", "CCG", "DependencyGrammar", "ConstructionGrammar",
+                     "Mereological")
+MORPHOLOGY_FRAMEWORKS = ("DistributedMorphology", "Nanosyntax", "ParadigmFunctionMorphology",
+                         "ConstructionMorphology")
+
+
+def framework_of(module: str) -> str | None:
+    """The framework a module belongs to, or None for a module shared by all of them."""
+    parts = module.split(".")
+    if len(parts) >= 3 and parts[1] == "Syntax" and parts[2] in SYNTAX_FRAMEWORKS:
+        return parts[2]
+    if len(parts) >= 3 and parts[1] == "Morphology" and parts[2] in MORPHOLOGY_FRAMEWORKS:
+        return parts[2]
+    return None
+
+
+def layering_error(importer: str, imported: str) -> str | None:
+    """Why `importer` may not import `imported`, or None when it may.
+
+    A generalization is stated before any framework, a file of `Linglib/Syntax/` or
+    `Linglib/Morphology/` outside the frameworks is shared by them, and one framework of syntax
+    or of morphology does not build on another of its kind.
+    `Linglib/Data/` holds observations and coding schemes that theory files import, so it
+    imports no theory itself."""
+    if importer.startswith("Linglib.Data.") and not imported.startswith(
+            ("Linglib.Data.", "Linglib.Core.")):
+        return "a file of Data imports outside Core and Data"
+    target = framework_of(imported)
+    if target is None:
+        return None
+    source = framework_of(importer)
+    if importer.startswith("Linglib.Generalizations."):
+        return f"a generalization imports the framework {target}"
+    if importer.startswith("Linglib.Syntax.") and source is None:
+        return f"a shared file of Syntax imports the framework {target}"
+    if importer.startswith("Linglib.Morphology.") and source is None:
+        return f"a shared file of Morphology imports the framework {target}"
+    for frameworks in (SYNTAX_FRAMEWORKS, MORPHOLOGY_FRAMEWORKS):
+        if source in frameworks and target in frameworks and source != target:
+            return f"the framework {source} imports the framework {target}"
+    return None
 
 
 def tracked_lean_files() -> set[str]:
@@ -62,6 +113,7 @@ def main() -> int:
     tracked_modules = {file_to_module(f) for f in tracked}
 
     errors: list[tuple[str, int, str]] = []  # (file, line_no, missing_module)
+    layering: list[tuple[str, int, str, str]] = []  # (file, line_no, module, reason)
     for rel_path in sorted(tracked):
         full = root / rel_path
         try:
@@ -75,6 +127,9 @@ def main() -> int:
             mod = m.group(1)
             if mod not in tracked_modules:
                 errors.append((rel_path, line_no, mod))
+            why = layering_error(file_to_module(rel_path), mod)
+            if why:
+                layering.append((rel_path, line_no, mod, why))
 
     if errors:
         print("ORPHAN IMPORTS DETECTED", file=sys.stderr)
@@ -88,6 +143,19 @@ def main() -> int:
             "a clean checkout. Either:\n"
             "  (a) git add the missing files, or\n"
             "  (b) remove the import lines from the importing file(s)",
+            file=sys.stderr,
+        )
+        return 1
+
+    if layering:
+        print("IMPORTS AGAINST THE LAYERING", file=sys.stderr)
+        print("", file=sys.stderr)
+        for f, line, mod, why in layering:
+            print(f"  {f}:{line}: {why} ({mod})", file=sys.stderr)
+        print("", file=sys.stderr)
+        print(
+            "A framework's map into a shared type lives in the framework, in a file named for\n"
+            "the type. Move the declaration that needs the import into the framework.",
             file=sys.stderr,
         )
         return 1

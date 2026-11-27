@@ -6,7 +6,7 @@ public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Person.Participants
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Hanink2021
 public import Mathlib.Order.Prod.Lex.Basic

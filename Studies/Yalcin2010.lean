@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.ComparativeProbability.Patterns
-public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Semantics.Modality.ComparativeLikelihood
 public import Linglib.Logic.ComparativeProbability.Content
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Degree.Comparison
@@ -31,7 +31,7 @@ the probability space account validates V1–V12 and none of I1–I3 or E1.
 
 * Each account is a likelihood relation on `Set W` with the comparative probability mixins, so
   most patterns come from `Logic/ComparativeProbability/Patterns` by instance resolution. V6
-  and V7 take Kratzer's human necessity and possibility for his account and the quantifiers
+  and V7 take Kratzer's necessity and possibility for his account and the quantifiers
   `A = Set.univ` and `A.Nonempty` over the epistemic space for the other two; V8–V10 take
   Kratzer's restricted necessity or, for probability, entailment.
 * The refutations are the paper's: footnote 8's two tied worlds against V11, the coin against
@@ -56,6 +56,8 @@ the probability space account validates V1–V12 and none of I1–I3 or E1.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Yalcin2010
 
 open ComparativeProbability ComparativePossibility Modality MeasureTheory ProbabilityTheory
@@ -69,35 +71,35 @@ section Kratzer
 
 variable {W : Type*} (O : Set (Set W))
 
-instance : IsPreorder W (premisePreorder O).le where
-  refl := (premisePreorder O).le_refl
-  trans _ _ _ := (premisePreorder _).le_trans _ _ _
+instance : IsPreorder W (≤[O]).le where
+  refl := (≤[O]).le_refl
+  trans _ _ _ := (≤[_]).le_trans _ _ _
 
 /-- On Kratzer's account `A` is at least as likely as `B` when every world of `B` is matched by
 an at least as high world of `A`. -/
-abbrev likelihood : Set W → Set W → Prop := Lewis (premisePreorder O).le
+abbrev likelihood : Set W → Set W → Prop := Lewis (≤[O]).le
 
-/-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
+/-- Epistemic *must* at `w` is Kratzer's necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
-  A ∈ humanNecessity ⊥ (fun _ ↦ O) w
+  A ∈ Background.necessity ⊥ (fun _ ↦ O) w
 
-/-- Epistemic *might* at `w` is human possibility, the dual of `must`. -/
+/-- Epistemic *might* at `w` is possibility, the dual of `must`. -/
 def might (A : Set W) (w : W) : Prop :=
-  humanPossibility ⊥ (fun _ ↦ O) w A
+  Background.possibility ⊥ (fun _ ↦ O) w A
 
-/-- The indicative *if A, B*, with its tacit *must*, is human necessity over the base
+/-- The indicative *if A, B*, with its tacit *must*, is necessity over the base
 restricted by the antecedent, as in Kratzer's restrictor analysis. -/
 def ifThen (A B : Set W) (w : W) : Prop :=
-  B ∈ humanNecessity (Background.restrict ⊥ A) (fun _ ↦ O) w
+  B ∈ (Background.restrict ⊥ A).necessity (fun _ ↦ O) w
 
 theorem must_iff (A : Set W) (w : W) :
     must O A w ↔ ∀ u, ∃ v, (v ≤[O] u) ∧ ∀ z, (z ≤[O] v) → z ∈ A := by
-  simp [must, mem_humanNecessity, Background.accessibleWorlds_bot]
+  simp [must, Background.mem_necessity, Background.accessibleWorlds_bot]
 
 theorem ifThen_iff (A B : Set W) (w : W) :
     ifThen O A B w ↔
       ∀ u ∈ A, ∃ v ∈ A, (v ≤[O] u) ∧ ∀ z ∈ A, (z ≤[O] v) → z ∈ B := by
-  simp only [ifThen, mem_humanNecessity, Background.mem_accessibleWorlds_restrict,
+  simp only [ifThen, Background.mem_necessity, Background.mem_accessibleWorlds_restrict,
     Background.accessibleWorlds_bot, Set.mem_univ, true_and]
 
 theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot
@@ -111,10 +113,10 @@ theorem kratzer_V6 [Nonempty W] (w : W) : MustToProbably (likelihood O) (must O 
   rw [must_iff] at hA
   refine ⟨fun u _ ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨v, hvu, hv⟩ := hA u
-    exact ⟨v, hv v ((premisePreorder O).le_refl v), hvu⟩
+    exact ⟨v, hv v ((≤[O]).le_refl v), hvu⟩
   · obtain ⟨w₀⟩ := ‹Nonempty W›
     obtain ⟨v, -, hv⟩ := hA w₀
-    obtain ⟨u, hu, huv⟩ := h (hv v ((premisePreorder O).le_refl v))
+    obtain ⟨u, hu, huv⟩ := h (hv v ((≤[O]).le_refl v))
     exact hu (hv u huv)
 
 theorem kratzer_V7 [Nonempty W] (w : W) : ProbablyToMight (likelihood O) (might O · w) :=
@@ -123,7 +125,7 @@ theorem kratzer_V7 [Nonempty W] (w : W) : ProbablyToMight (likelihood O) (might 
 theorem kratzer_V10 (w : W) : ConditionalToComparative (likelihood O) (ifThen O · · w) := by
   intro A B hAB u hu
   obtain ⟨v, hvA, hvu, hall⟩ := (ifThen_iff O A B w).1 hAB u hu
-  exact ⟨v, hall v hvA ((premisePreorder O).le_refl v), hvu⟩
+  exact ⟨v, hall v hvA ((≤[O]).le_refl v), hvu⟩
 
 theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w) := by
   intro A B hAB ⟨hA, hAnot⟩
@@ -131,11 +133,11 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
   refine ⟨fun u hu ↦ ?_, fun h ↦ ?_⟩
   · by_cases huA : u ∈ A
     · obtain ⟨v, hvA, hvu, hall⟩ := hAB u huA
-      exact ⟨v, hall v hvA ((premisePreorder O).le_refl v), hvu⟩
+      exact ⟨v, hall v hvA ((≤[O]).le_refl v), hvu⟩
     · obtain ⟨a, ha, hau⟩ := hA huA
       obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
-      exact ⟨v, hall v hvA ((premisePreorder O).le_refl v),
-        (premisePreorder _).le_trans _ _ _ hva hau⟩
+      exact ⟨v, hall v hvA ((≤[O]).le_refl v),
+        (≤[_]).le_trans _ _ _ hva hau⟩
   · apply hAnot
     by_contra hcon
     have hex : ∃ a ∈ A, ∀ u ∈ Aᶜ, ¬(u ≤[O] a) := by
@@ -144,10 +146,10 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
       exact hcon fun a ha ↦ hall a ha
     obtain ⟨a, ha, hnone⟩ := hex
     obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
-    obtain ⟨u, hu, huv⟩ := h (hall v hvA ((premisePreorder O).le_refl v))
+    obtain ⟨u, hu, huv⟩ := h (hall v hvA ((≤[O]).le_refl v))
     have huA : u ∈ A := by
       by_contra huA
-      exact hnone u huA ((premisePreorder _).le_trans _ _ _ huv hva)
+      exact hnone u huA ((≤[_]).le_trans _ _ _ huv hva)
     exact hu (hall u huA huv)
 
 theorem kratzer_V9 (w : W) : ChancyModusTollens (likelihood O) (ifThen O · · w) :=
@@ -176,7 +178,7 @@ theorem kratzer_refutes_E1 :
   have hle : ∀ v u : Fin 4, (v ≤[({{0, 1}, {2, 3}} : Set (Set (Fin 4)))] u)
       ↔ (u ∈ ({0, 1} : Set (Fin 4)) → v ∈ ({0, 1} : Set (Fin 4))) ∧
         (u ∈ ({2, 3} : Set (Fin 4)) → v ∈ ({2, 3} : Set (Fin 4))) := fun v u ↦ by
-    simp [Preorder.ofCriteria_le_iff]
+    simp [Preorder.ofLowerSets_le_iff]
   have hφ : Probably (likelihood ({{0, 1}, {2, 3}} : Set (Set (Fin 4))))
       {0, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨0, by simp, ?_⟩, fun hc ↦ ?_⟩
@@ -210,7 +212,7 @@ theorem kratzer_refutes_E1 :
   have hinter : ({0, 2, 3} : Set (Fin 4)) ∩ {1, 2, 3} = {2, 3} := by
     ext x; fin_cases x <;> simp
   have := (h _ _ hφ hψ).1
-  simp only [Set.inf_eq_inter, hinter] at this
+  simp only [hinter] at this
   obtain ⟨a, ha, ha0⟩ := @this 0 (by simp)
   simp only [Set.mem_ofPred_eq] at ha0
   rw [hle] at ha0

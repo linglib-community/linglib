@@ -1,9 +1,15 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Syntax.Case.Function
+public import Linglib.Syntax.Feature.Case.Function
 public import Linglib.Syntax.Category.Particle.Additive
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Coordinators
@@ -19,7 +25,8 @@ operation on the set of coordinands that its semantic type fixes, is `Coordinato
 
 * `Coordinator.Role`: the semantic type of a coordinator.
 * `Coordinator`: the morph, gloss and semantic type of a coordinator.
-* `Coordinator.Pattern`: the sides on which the coordinators of a binary coordination stand.
+* `Coordinator.Pattern`: the sides of each coordinand on which the coordinators of a binary
+  coordination stand.
 * `Coordinator.Correlative`: a pair of correlative coordinators with the single coordinator
   of the plain construction.
 * `Coordinator.IsAlsoComitative`: the coordinator's form is a form of a comitative marker, 'and'
@@ -74,11 +81,13 @@ structure Coordinator where
   role : Coordinator.Role
   deriving DecidableEq, Repr
 
-/-- The pattern of a binary coordination gives each coordinand the side its coordinator stands
-on, `none` when it is bare, so that A co-B is `(none, some .before)` and A-co B-co is
-`(some .after, some .after)`: the number of coordinators and their positions, the two parameters
-by which [stassen-2000] and [haspelmath-2007] classify coordinate constructions. -/
-abbrev Coordinator.Pattern := Option Morphology.Morph.Side × Option Morphology.Morph.Side
+/-- The pattern of a binary coordination gives each coordinand the sides on which a coordinator
+stands by it, none when it is bare, so that A co-B is `![∅, {.before}]` and A-co B-co is
+`![{.after}, {.after}]`: the number of coordinators and their positions, the two parameters by
+which [stassen-2000] and [haspelmath-2007] classify coordinate constructions. Patterns are ordered
+coordinand by coordinand, and the join of two is the construction that uses the coordinators of
+both, as Hungarian *A is és B is* joins *A és B* and *A is B is*. -/
+abbrev Coordinator.Pattern := Fin 2 → Finset Morphology.Morph.Side
 
 /-- An emphatic coordination with correlative coordinators, English *both … and*, records the
 coordinators of the two coordinands and the single coordinator of the plain construction. -/
@@ -126,7 +135,7 @@ variable (p : Pattern)
 
 /-- The syndesis of a pattern is its number of coordinators, none in asyndetic, one in
 monosyndetic and two in bisyndetic coordination. -/
-def syndesis : ℕ := [p.1, p.2].countP Option.isSome
+def syndesis : ℕ := (p 0).card + (p 1).card
 
 end Pattern
 

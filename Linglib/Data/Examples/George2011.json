@@ -1,4 +1,45 @@
-[
+{
+  "features": [
+    {
+      "key": "sentence",
+      "lean": "sentence",
+      "type": "Sentence",
+      "doc": "The sentences whose truth in their scenarios the file settles.",
+      "levels": [
+        {
+          "name": "admittedKnown",
+          "label": "admittedKnown",
+          "doc": "admittedKnown"
+        },
+        {
+          "name": "notAdmittedKnown",
+          "label": "notAdmittedKnown",
+          "doc": "notAdmittedKnown"
+        },
+        {
+          "name": "admittedButNot",
+          "label": "admittedButNot",
+          "doc": "admittedButNot"
+        },
+        {
+          "name": "fourStudents",
+          "label": "fourStudents",
+          "doc": "fourStudents"
+        },
+        {
+          "name": "jannaNewspaper",
+          "label": "jannaNewspaper",
+          "doc": "jannaNewspaper"
+        },
+        {
+          "name": "redNewspaper",
+          "label": "redNewspaper",
+          "doc": "redNewspaper"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "george2011_ex12",
     "source": {
@@ -168,3 +209,4 @@
     "verified": "page-image"
   }
 ]
+}

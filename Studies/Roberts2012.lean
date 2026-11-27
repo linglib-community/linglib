@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Semantics.Questions.Entailment
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
+public import Linglib.Semantics.Questions.Inquisitive.Entailment
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Core.Data.Fintype.Sets
 public import Linglib.Discourse.QUD.Basic
 public import Mathlib.Data.Fintype.Powerset
@@ -14,36 +14,35 @@ public import Mathlib.Tactic.IntervalCases
 /-!
 # Roberts (2012): Information structure in discourse
 
-This file formalizes the paper's worked discourse, two individuals, two foods and seven
-questions forming a strategy of inquiry, on the substrate's alternative-set questions and
-questions-under-discussion stacks. A world is the set of eating events that occurred, a
-polar question is `Question.ofSet` of its one alternative and a wh-question the join of its
-polar subquestions (1), so that the complete-answer partition (4), question entailment (8)
-and the answer-composition facts (11) are derived, `completeAnswers_wh_inter`. The stack of
-questions under discussion at a move (10g) is computed from the moves before it, the
-questions accepted so far whose complete answer the context set fails to entail, `qud`; on
-the eleven moves of the discourse it reproduces the paper's table of stacks, `qud_D₀`, each
-well formed in its context set. The strategy of inquiry (12) is read off the same function,
-the subquestions of a question being those accepted while it was the immediate question
-under discussion, `subquestions`, and in the tree so obtained completely answering the
-subquestions of a question completely answers it, `strat_answersCompletely`, the success
-criterion (11). Answerhood (3) and relevance (15) are checked on the discourse's assertions.
+This file formalizes the paper's worked discourse, two individuals, two foods and seven questions
+forming a strategy of inquiry, on the substrate's alternative-set questions and
+questions-under-discussion stacks. A world is the set of eating events that occurred, a polar
+question is `Inquisitive.Proposition.ofSet` of its one alternative and a wh-question the join of its
+polar subquestions (1), so that the complete-answer partition (4), question entailment (8) and the
+answer-composition facts (11) are derived, `completeAnswers_wh_inter`. The stack of questions under
+discussion at a move (10g) is computed from the moves before it, the questions accepted so far whose
+complete answer the context set fails to entail, `qud`; on the eleven moves of the discourse it
+reproduces the paper's table of stacks, `qud_D₀`, each well formed in its context set. The strategy
+of inquiry (12) is read off the same function, the subquestions of a question being those accepted
+while it was the immediate question under discussion, `subquestions`, and in the tree so obtained
+completely answering the subquestions of a question completely answers it,
+`strat_answersCompletely`, the success criterion (11). Answerhood (3) and relevance (15) are checked
+on the discourse's assertions.
 
 ## Implementation notes
 
-Entailment between questions is inclusion of complete-answer sets; the substrate's lattice
-order, entailment by resolution, runs the other way on the discourse's Hamblin questions
-(`wh_le_q1`), as the paper notes it would off complete answers. The substrate's
-inquisitive `Question.polar`, with alternatives a proposition and its complement, is a rival
-yes/no convention, not the paper's singleton alternative set. The context set of a move is
-the intersection of the assertions before it from a trivial initial common ground, so
-contextual entailment is entailment relative to that set; a question determined to be
-unanswerable, which the paper also retires, does not arise in the discourse. Because the
-lattice order is resolution, the substrate's `Strategy.IsComplete` holds of a node as soon as
-one child entails the parent, so (11) is stated by `Strategy.AnswersCompletely`, which a strategy
-missing the tofu question fails (`isComplete_and_not_answersCompletely_pruned`); likewise
-subquestionhood (10g iii) quantifies over complete answers, which differs from checking the
-alternatives (`not_isSubquestionOf_wh_hilary`).
+Entailment between questions is inclusion of complete-answer sets; the substrate's lattice order,
+entailment by resolution, runs the other way on the discourse's Hamblin questions (`wh_le_q1`), as
+the paper notes it would off complete answers. The substrate's inquisitive
+`Inquisitive.Proposition.polar`, with alternatives a proposition and its complement, is a rival
+yes/no convention, not the paper's singleton alternative set. The context set of a move is the
+intersection of the assertions before it from a trivial initial common ground, so contextual
+entailment is entailment relative to that set; a question determined to be unanswerable, which the
+paper also retires, does not arise in the discourse. Because the lattice order is resolution, the
+substrate's `Strategy.IsComplete` holds of a node as soon as one child entails the parent, so (11)
+is stated by `Strategy.AnswersCompletely`, which a strategy missing the tofu question fails
+(`isComplete_and_not_answersCompletely_pruned`); likewise subquestionhood (10g iii) quantifies over
+complete answers, which differs from checking the alternatives (`not_isSubquestionOf_wh_hilary`).
 
 ## References
 
@@ -59,8 +58,7 @@ alternatives (`not_isSubquestionOf_wh_hilary`).
 
 namespace Roberts2012
 
-open Question
-open Discourse
+open Question Inquisitive Inquisitive.Proposition
 
 -- `decide` on `Set`-subset goals over the finite world space.
 attribute [local instance] Set.decidableSubsetOfFintype
@@ -111,18 +109,18 @@ abbrev robinBagels : Set World := ate .robin .bagels
 abbrev robinTofu : Set World := ate .robin .tofu
 
 /-- "Did `u` eat `f`?": a yes/no question has its one proposition as alternative. -/
-abbrev polar (u : Person) (f : Food) : Question World := Question.ofSet (ate u f)
+abbrev polar (u : Person) (f : Food) : Proposition (Set World) := Proposition.ofSet (ate u f)
 /-- "What did `u` eat?": the join of its alternatives. -/
-abbrev wh (u : Person) : Question World := ⨆ f, polar u f
+abbrev wh (u : Person) : Proposition (Set World) := ⨆ f, polar u f
 /-- "Who ate what?", the discourse's move 1, joining alternatives over person–food pairs. -/
-abbrev q_1 : Question World := ⨆ uf : Person × Food, polar uf.1 uf.2
+abbrev q_1 : Proposition (Set World) := ⨆ uf : Person × Food, polar uf.1 uf.2
 
 /-- The questions of the discourse. -/
 inductive Qn | one | a | ai | aii | b | bi | bii
   deriving DecidableEq, Fintype
 
 /-- The denotation of each question. -/
-def Qn.den : Qn → Question World
+def Qn.den : Qn → Proposition (Set World)
   | .one => q_1
   | .a => wh .hilary
   | .ai => polar .hilary .bagels
@@ -468,7 +466,7 @@ strategy membership, which `wh_relevant_to_q1` proxies by partial answerhood. -/
 
 /-- The assertion "Hilary ate bagels": a declarative's alternative set is the singleton of
 its content. -/
-def hilaryBagels_assertion : Question World := Question.ofSet hilaryBagels
+def hilaryBagels_assertion : Proposition (Set World) := Proposition.ofSet hilaryBagels
 
 theorem hilaryBagels_relevant_to_q1 : hilaryBagels_assertion.IsRelevantTo {q_1} :=
   ⟨hilaryBagels, self_mem_alt_ofSet _, q_1, rfl, hilaryBagels_partiallyAnsweredBy_q1⟩

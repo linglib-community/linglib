@@ -6,7 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Dynamic.PPCDRT
 public import Linglib.Semantics.Plurality.Cumulativity
 public import Linglib.Semantics.Plurality.Reciprocal
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 
 /-!
 # Haug and Dalrymple (2020): Reciprocity: Anaphora, scope, and quantification
@@ -23,8 +23,16 @@ readings of the lawyers' secretary (24), (31), the narrow and wide readings of t
 belief (49), (51), (53), (55), the crossed reading (56), the modal (69), the mixed
 construal of the Cheyenne affix (78), multiple reciprocals (85), (86), the forks (93), the
 sailors (96), and the wide construal with three girls (136).
-`no_low_reciprocal_under_binding` derives the empty cell of §3.3: a bound antecedent
-leaves no plurality for a reciprocal inside the distribution.
+The narrow-scope DRS (52b) and the wide-scope DRS (54b) are stated as boxes: every output pairs
+each girl with the other, within each world (`narrow_dep`) or across the state (`wide_dep`), and
+the table (53) is an output (`sawNarrow_mem_box`).
+
+The readings are classified by two parameters (§3.3), the locus of the reciprocal, in situ
+or lifted to the matrix DRS, and the relation of its antecedent to the matrix subject, bound
+or group coreference (`ScopeReading`). Where no two holders of the attitude share a doxastic
+alternative, three of the four combinations have a state (`exists_scopeReading_iff`): a bound
+dref then has one value in each class of the distribution
+(`PPCDRT.subsingleton_value_of_bindingCond`), which leaves no plurality for a reciprocal in situ.
 
 The paper's relation to cumulation is stated in general. Pointwise conditions on plural
 states give cumulative readings (§2.1, `cumulative_iff_exists_relCond`), with the truth
@@ -46,10 +54,14 @@ allows (`maximizesAnaphora_iff`), hence Strong Reciprocity when the verb allows 
 
 ## Implementation notes
 
-* Distribution is represented by the set `Δ` of a `PPCDRT.PPDRSCond`; the operators `δ`,
-  `T` and `think` of (14), (46) are not defined, and each sample state is checked under
-  the `Δ` its DRS induces. The `max` operator of (97) is likewise replaced by the static
-  readings it yields.
+* Distribution is represented by the set `Δ` of a `PPCDRT.PPDRSCond`, and a DRS by
+  `PPCDRT.box`; the operators `T` and `think` of (46) are not defined, and each sample state is
+  checked under the `Δ` its DRS induces. The `max` operator of (97) is likewise replaced by the
+  static readings it yields.
+* The complement of *think* is read under distribution over the world dref alone, `Δ = {w}`, as
+  `δ_w` in (46) has it. The classes are then those of the matrix subject only when no two of
+  its values share a doxastic alternative, which the paper assumes of its examples and
+  `exists_scopeReading_iff` takes as a hypothesis.
 * Sample rows are `Option`-valued (`row`, read into assignments by `toPart`): `Part` has no
   type-level decidable equality, so the transcribed conditions are decided over the options.
 * A DRS is true when some output state satisfies its conditions. `relCond` asks every state to
@@ -68,9 +80,9 @@ allows (`maximizesAnaphora_iff`), hence Strong Reciprocity when the verb allows 
 
 ## TODO
 
-* The distribution and maximization relations `δ_u` and `max^u` of (14) and (97), so that the
-  sample states are derived from the DRSs rather than transcribed; introduction, (6) and (20),
-  is `PPCDRT.introPartial`.
+* The attitude `think` of (46), with its test operator and generalized distribution, and the
+  maximization `max^u` of (97), so that every sample state is derived from its DRS as (53) is;
+  a DRS is `PPCDRT.box`. The crossed state of (56) is likewise checked on its table only.
 * With the pointwise restrictor `∪u' ⊆ A` of (125b) in place of `∪u' = X`, Maximize Anaphora
   selects the states whose dependency is full on a maximal weakly reciprocal subset of `A`,
   the shape of the reference sets of §5 (`IsRefSet`).
@@ -94,7 +106,7 @@ allows (`maximizesAnaphora_iff`), hence Strong Reciprocity when the verb allows 
 
 namespace HaugDalrymple2020
 
-open PPCDRT PCDRT Reciprocal Plurality.Cumulativity
+open PPCDRT PCDRT Reciprocal Plurality.Cumulativity SetRel
 
 /-! ### Sample states -/
 
@@ -177,7 +189,7 @@ theorem groupIdentityCond_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
     groupIdentityCond u u' (ofRows rows) Δ ↔
       ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
         ∃ t ∈ rows, t u' = some d := by
-  simp [groupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ, and_assoc]
+  simp [groupIdentityCond, eqClass, Set.EqOn, ofRows, value, Set.ext_iff, hΔ, and_assoc]
 
 theorem distinct_ofRows :
     (∀ s ∈ ofRows rows, ∀ a ∈ s u, ∀ b ∈ s u', a ≠ b) ↔
@@ -201,7 +213,7 @@ theorem mem_dep_eqClass_ofRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) {s : ℕ �
     {a b : Ind} :
     (a, b) ∈ dep u u' (eqClass (ofRows rows) Δ (toPart s)) ↔
       ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some a ∧ t u' = some b := by
-  simp [dep, eqClass, ofRows, hΔ, and_assoc]
+  simp [dep, eqClass, Set.EqOn, ofRows, hΔ, and_assoc]
 
 /-- The values of `u` summed over the `Δ`-class of `s`, as a finset. -/
 def sumRows (rows : List (ℕ → Option Ind)) (Δl : List ℕ) (s : ℕ → Option Ind)
@@ -212,7 +224,7 @@ theorem coe_sumRows (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) (s : ℕ → Option In
     (↑(sumRows rows Δl s u) : Set Ind) =
       value u (eqClass (ofRows rows) Δ (toPart s)) := by
   ext d
-  simp [sumRows, value, eqClass, ofRows, hΔ, and_assoc]
+  simp [sumRows, value, eqClass, Set.EqOn, ofRows, hΔ, and_assoc]
 
 theorem value_ofRows : value u (ofRows rows) = ↑(sumRows rows [] (row []) u) := by
   rw [coe_sumRows (Δ := ∅) (by simp), eqClass_empty]
@@ -256,7 +268,7 @@ theorem distributedGroupIdentityCond_ofRows {rows : List (ℕ → Option Ind)} {
     distributedGroupIdentityCond u u' (ofRows rows) Δ ↔
       ∀ s ∈ rows, ∀ d : Ind, (∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u = some d) ↔
         ∃ t ∈ rows, (∀ v ∈ Δl, t v = s v) ∧ t u' = some d := by
-  simp [distributedGroupIdentityCond, eqClass, ofRows, value, Set.ext_iff, hΔ, and_assoc]
+  simp [distributedGroupIdentityCond, eqClass, Set.EqOn, ofRows, value, Set.ext_iff, hΔ, and_assoc]
 
 /-! ### Anaphora under distribution (§2.3) -/
 
@@ -528,8 +540,6 @@ end Cumulativity
 
 /-! ### Reciprocal scope (§3) -/
 
-private theorem mem_u₁w : ∀ v, v ∈ ({u₁, w} : Set ℕ) ↔ v ∈ [u₁, w] := by simp
-
 private theorem mem_w : ∀ v, v ∈ ({w} : Set ℕ) ↔ v ∈ [w] := by simp
 
 /-- Each girl thought "we will win", `∪u₂ → ∪u₁` under `δ_w` (49). -/
@@ -546,12 +556,12 @@ def girlsWide : List (ℕ → Option Ind) :=
 
 -- (49), (51), (44), §3.1
 theorem win_readings :
-    (groupIdentityCond u₂ u₁ (ofRows girlsNarrow) {u₁, w} ∧
-        ¬ bindingCond u₂ u₁ (ofRows girlsNarrow) {u₁, w}) ∧
-      bindingCond u₂ u₁ (ofRows girlsWide) {u₁, w} ∧
-        ¬ groupIdentityCond u₂ u₁ (ofRows girlsWide) {u₁, w} := by
-  rw [groupIdentityCond_ofRows mem_u₁w, bindingCond_ofRows, bindingCond_ofRows,
-    groupIdentityCond_ofRows mem_u₁w]
+    (groupIdentityCond u₂ u₁ (ofRows girlsNarrow) {w} ∧
+        ¬ bindingCond u₂ u₁ (ofRows girlsNarrow) {w}) ∧
+      bindingCond u₂ u₁ (ofRows girlsWide) {w} ∧
+        ¬ groupIdentityCond u₂ u₁ (ofRows girlsWide) {w} := by
+  rw [groupIdentityCond_ofRows mem_w, bindingCond_ofRows, bindingCond_ofRows,
+    groupIdentityCond_ofRows mem_w]
   decide
 
 /-- Each girl thought "we saw each other", the reciprocal inside the belief (53). -/
@@ -575,9 +585,9 @@ def sawCrossed : List (ℕ → Option Ind) :=
 
 -- §3.2, (53), (52)
 theorem saw_narrow :
-    groupIdentityCond u₂ u₁ (ofRows sawNarrow) {u₁, w} ∧
-      reciprocityCond u₃ u₂ (ofRows sawNarrow) {u₁, w} := by
-  rw [groupIdentityCond_ofRows mem_u₁w, reciprocityCond_ofRows mem_u₁w]
+    groupIdentityCond u₂ u₁ (ofRows sawNarrow) {w} ∧
+      reciprocityCond u₃ u₂ (ofRows sawNarrow) {w} := by
+  rw [groupIdentityCond_ofRows mem_w, reciprocityCond_ofRows mem_w]
   decide
 
 -- §3.2, (55), (54)
@@ -595,18 +605,199 @@ theorem saw_crossed :
   rw [groupIdentityCond_ofRows mem_empty, reciprocityCond_ofRows mem_empty, bindingCond_ofRows]
   decide
 
-/-- A bound antecedent cannot cooccur with a low reciprocal (§3.3). -/
-theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ : Set ℕ}
-    {v₁ v₂ v₃ : ℕ} (hΔ : v₁ ∈ Δ) (hb : bindingCond v₂ v₁ S Δ)
-    (hr : reciprocityCond v₃ v₂ S Δ) {s : ℕ → Part E} (hs : s ∈ S) {d : E}
-    (hd : d ∈ s v₂) : False := by
-  have hmem : d ∈ value v₂ S := ⟨s, hs, Part.eq_some_iff.2 hd⟩
-  rw [← hr.1 s hs] at hmem
-  obtain ⟨t, ⟨ht, hcls⟩, ht₃⟩ := hmem
-  have ht₂ : t v₂ = Part.some d := by
-    rw [hb t ht, hcls v₁ hΔ, ← hb s hs]
-    exact Part.eq_some_iff.2 hd
-  exact hr.2 t ht d (Part.eq_some_iff.1 ht₃) d (Part.eq_some_iff.1 ht₂) rfl
+/-! ### The DRSs of the two readings (§3.2) -/
+
+/-- (48): each girl with her doxastic alternative. -/
+def girlsWorlds : List (ℕ → Option Ind) :=
+  [row [(u₁, .girl1), (w, .world1)], row [(u₁, .girl2), (w, .world2)]]
+
+private theorem eq_swap_of_dom_cod {α : Type*} {R : SetRel α α} {a b : α}
+    (hd : R.dom = {a, b}) (hc : R.cod = {a, b}) (hi : R.IsIrrefl) : R = {(a, b), (b, a)} := by
+  ext ⟨x, y⟩
+  constructor
+  · intro h
+    have hx : x ∈ ({a, b} : Set α) := hd ▸ ⟨y, h⟩
+    have hy : y ∈ ({a, b} : Set α) := hc ▸ ⟨x, h⟩
+    have hne : x ≠ y := fun e ↦ hi.irrefl x (e ▸ h)
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> simp_all
+  · have key : ∀ x ∈ ({a, b} : Set α), ∀ y ∈ ({a, b} : Set α), x ≠ y → x ~[R] y := by
+      intro x hx y hy hne
+      obtain ⟨z, hz⟩ : x ∈ R.dom := hd ▸ hx
+      have hz' : z ∈ ({a, b} : Set α) := hc ▸ ⟨x, hz⟩
+      have : z ≠ x := fun e ↦ hi.irrefl x (e ▸ hz)
+      obtain rfl : z = y := by
+        rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> rcases hz' with rfl | rfl <;>
+          simp_all
+      exact hz
+    have hab : a ≠ b := by
+      rintro rfl
+      obtain ⟨z, hz⟩ : a ∈ R.dom := hd ▸ by simp
+      obtain rfl : z = a := by simpa using (hc ▸ ⟨a, hz⟩ : z ∈ ({a, a} : Set α))
+      exact hi.irrefl _ hz
+    rintro (h | h) <;> obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+    · exact key _ (by simp) _ (by simp) hab
+    · exact key _ (by simp) _ (by simp) hab.symm
+
+private theorem value_girlsWorlds :
+    value u₁ (ofRows girlsWorlds) = ({.girl1, .girl2} : Set Ind) := by
+  rw [value_ofRows, show sumRows girlsWorlds [] (row []) u₁ = {.girl1, .girl2} by decide]
+  simp
+
+/-- From the state (48), every output of the narrow-scope DRS (52b) pairs each girl with the other
+in each world. -/
+theorem narrow_dep {O : PluralAssign ℕ Ind}
+    (h : ofRows girlsWorlds ~[box [u₂, u₃]
+      [groupIdentityCond u₂ u₁, reciprocityCond u₃ u₂] {w}] O) {s : ℕ → Part Ind} (hs : s ∈ O) :
+    dep u₂ u₃ (eqClass O {w} s) = {(.girl1, .girl2), (.girl2, .girl1)} := by
+  obtain ⟨hI, hC⟩ := h
+  have hg : groupIdentityCond u₂ u₁ O {w} := hC _ (by simp)
+  have hr : reciprocityCond u₃ u₂ O {w} := hC _ (by simp)
+  obtain ⟨hd, hc, hi⟩ := dep_eqClass_of_groupIdentityCond_of_reciprocityCond hg hr
+    (fun o ho ↦ ⟨dom_of_mem_introList (u := u₂) (by simp) (by decide) hI ho,
+      dom_of_mem_introList (u := u₃) (by simp) (by decide) hI ho⟩) hs
+  rw [value_eq_of_mem_introList (v := u₁) (by decide) hI, value_girlsWorlds] at hd hc
+  exact eq_swap_of_dom_cod hd hc hi
+
+/-- The matrix subject of (54b) before the attitude: two girls. -/
+def girls : List (ℕ → Option Ind) := [row [(u₁, .girl1)], row [(u₁, .girl2)]]
+
+private theorem value_girls : value u₁ (ofRows girls) = ({.girl1, .girl2} : Set Ind) := by
+  rw [value_ofRows, show sumRows girls [] (row []) u₁ = {.girl1, .girl2} by decide]
+  simp
+
+-- (54b), (55)
+theorem wide_dep {O : PluralAssign ℕ Ind}
+    (h : ofRows girls ~[box [u₂, u₃] [bindingCond u₂ u₁, reciprocityCond u₃ u₂] ∅] O) :
+    dep u₂ u₃ O = {(.girl1, .girl2), (.girl2, .girl1)} := by
+  obtain ⟨hI, hC⟩ := h
+  have hb : bindingCond u₂ u₁ O ∅ := hC _ (by simp)
+  have hr : reciprocityCond u₃ u₂ O ∅ := hC _ (by simp)
+  obtain ⟨o, ho⟩ : O.Nonempty := by
+    obtain ⟨K, -, O', hKO, rfl⟩ := hI
+    exact hKO.1
+  obtain ⟨hd, hc, hi⟩ := dep_eqClass_of_groupIdentityCond_of_reciprocityCond
+    (binding_implies_groupIdentity u₂ u₁ O hb) hr
+    (fun o ho ↦ ⟨dom_of_mem_introList (u := u₂) (by simp) (by decide) hI ho,
+      dom_of_mem_introList (u := u₃) (by simp) (by decide) hI ho⟩) ho
+  rw [eqClass_empty, value_eq_of_mem_introList (v := u₁) (by decide) hI, value_girls] at hd hc
+  rw [eqClass_empty] at hi
+  exact eq_swap_of_dom_cod hd hc hi
+
+section Witness
+
+theorem row_append_singleton_of_ne {E : Type*} {l : List (ℕ × E)} {u v : ℕ} (a : E) (h : v ≠ u) :
+    row (l ++ [(u, a)]) v = row l v := by
+  simp only [row, List.find?_append]
+  cases l.find? (·.1 == v) <;> simp [Ne.symm h]
+
+theorem row_append_singleton_self {E : Type*} {l : List (ℕ × E)} {u : ℕ} (a : E)
+    (h : row l u = none) : row (l ++ [(u, a)]) u = some a := by
+  have : l.find? (·.1 == u) = none := by simpa [row] using h
+  simp [row, List.find?_append, this]
+
+/-- Extending each row of a state by values for a fresh dref is an introduction of it. -/
+theorem ofRows_introPartial_append {u : ℕ} {ls : List (List (ℕ × Ind) × List Ind)}
+    (hne : ls ≠ []) (h : ∀ p ∈ ls, row p.1 u = none ∧ p.2 ≠ []) :
+    ofRows (ls.map fun p ↦ row p.1) ~[introPartial u]
+      ofRows (ls.flatMap fun p ↦ p.2.map fun a ↦ row (p.1 ++ [(u, a)])) := by
+  have hext : ∀ p ∈ ls, ∀ a, toPart (row p.1) ~[extend u] toPart (row (p.1 ++ [(u, a)])) :=
+    fun p hp a ↦ mem_extend.2 ⟨by simp [(h p hp).1],
+      by simp [row_append_singleton_self a (h p hp).1],
+      fun v hv ↦ by simp [row_append_singleton_of_ne a hv]⟩
+  refine ⟨?_, ?_, ?_⟩
+  · obtain ⟨p, hp⟩ := List.exists_mem_of_ne_nil _ hne
+    obtain ⟨a, ha⟩ := List.exists_mem_of_ne_nil _ (h p hp).2
+    exact ⟨_, _, List.mem_flatMap.2 ⟨p, hp, List.mem_map.2 ⟨a, ha, rfl⟩⟩, rfl⟩
+  · rintro _ ⟨_, hi, rfl⟩
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.1 hi
+    obtain ⟨a, ha⟩ := List.exists_mem_of_ne_nil _ (h p hp).2
+    exact ⟨_, ⟨_, List.mem_flatMap.2 ⟨p, hp, List.mem_map.2 ⟨a, ha, rfl⟩⟩, rfl⟩, hext p hp a⟩
+  · rintro _ ⟨_, ho, rfl⟩
+    obtain ⟨p, hp, ho⟩ := List.mem_flatMap.1 ho
+    obtain ⟨a, -, rfl⟩ := List.mem_map.1 ho
+    exact ⟨_, ⟨_, List.mem_map.2 ⟨p, hp, rfl⟩, rfl⟩, hext p hp a⟩
+
+end Witness
+
+-- (52b), (53)
+theorem sawNarrow_mem_box :
+    ofRows girlsWorlds ~[box [u₂, u₃] [groupIdentityCond u₂ u₁, reciprocityCond u₃ u₂] {w}]
+      ofRows sawNarrow :=
+  ⟨⟨ofRows girlsNarrow,
+      ofRows_introPartial_append (u := u₂)
+        (ls := [([(u₁, .girl1), (w, .world1)], [.girl1, .girl2]),
+          ([(u₁, .girl2), (w, .world2)], [.girl1, .girl2])]) (by simp) (by decide),
+      ofRows sawNarrow,
+      ofRows_introPartial_append (u := u₃)
+        (ls := [([(u₁, .girl1), (w, .world1), (u₂, .girl1)], [.girl2]),
+          ([(u₁, .girl1), (w, .world1), (u₂, .girl2)], [.girl1]),
+          ([(u₁, .girl2), (w, .world2), (u₂, .girl1)], [.girl2]),
+          ([(u₁, .girl2), (w, .world2), (u₂, .girl2)], [.girl1])]) (by simp) (by decide), rfl⟩,
+    by simp [saw_narrow.1, saw_narrow.2]⟩
+
+/-! ### The two parameters of a reading (§3.3) -/
+
+/-- The locus of the reciprocal, ordered by scope. -/
+inductive Locus where
+  /-- In situ, inside the distribution of the complement clause. -/
+  | low
+  /-- Lifted to the matrix DRS. -/
+  | high
+  deriving DecidableEq, Repr, Fintype
+
+instance : LinearOrder Locus :=
+  LinearOrder.lift' (fun | .low => 0 | .high => 1 : Locus → ℕ) (by rintro (_ | _) (_ | _) <;> simp)
+
+@[simp] theorem Locus.lt_iff (a b : Locus) : a < b ↔ a = .low ∧ b = .high := by
+  revert a b; decide
+
+/-- The distribution in force at a locus: that of the complement clause in situ, none in the
+matrix DRS. -/
+def Locus.dist (Δ : Set ℕ) : Locus → Set ℕ
+  | .low => Δ
+  | .high => ∅
+
+/-- The relation of the reciprocal's antecedent to its own antecedent. -/
+inductive Antecedence where
+  /-- The local antecedent is a bound variable, `u₂ → u₁`. -/
+  | bound
+  /-- The local antecedent corefers with the group, `∪u₂ → ∪u₁`. -/
+  | group
+  deriving DecidableEq, Repr, Fintype
+
+/-- The condition an antecedent relation puts on the anaphor and its antecedent. -/
+def Antecedence.cond {E : Type*} : Antecedence → ℕ → ℕ → PPDRSCond E
+  | .bound => bindingCond
+  | .group => groupIdentityCond
+
+/-- The anaphoric conditions of a reciprocal `v₃` whose antecedent `v₂` is anaphoric to `v₁`, at
+locus `l` and with antecedent relation `a`: (52b) low with group coreference, (54b) high and bound,
+(56) high with group coreference. -/
+def ScopeReading {E : Type*} (l : Locus) (a : Antecedence) (v₁ v₂ v₃ : ℕ) : PPDRSCond E :=
+  fun S Δ ↦ a.cond v₂ v₁ S (l.dist Δ) ∧ reciprocityCond v₃ v₂ S (l.dist Δ)
+
+private theorem forall_eqOn_ofRows {rows : List (ℕ → Option Ind)} {Δ : Set ℕ} {Δl : List ℕ}
+    {u : ℕ} (hΔ : ∀ v, v ∈ Δ ↔ v ∈ Δl) :
+    (∀ t ∈ ofRows rows, ∀ t' ∈ ofRows rows, Set.EqOn t t' Δ → t u = t' u) ↔
+      ∀ s ∈ rows, ∀ s' ∈ rows, (∀ v ∈ Δl, s v = s' v) → s u = s' u := by
+  simp [ofRows, Set.EqOn, hΔ]
+
+/-- Where no two holders of the attitude share a doxastic alternative, three of the four
+combinations of locus and antecedent relation have a state in which the local antecedent has a
+value: a bound antecedent cannot cooccur with a low reciprocal. -/
+theorem exists_scopeReading_iff (l : Locus) (a : Antecedence) :
+    (∃ S : PluralAssign ℕ Ind, (∀ t ∈ S, ∀ t' ∈ S, Set.EqOn t t' {w} → t u₁ = t' u₁) ∧
+        ScopeReading l a u₁ u₂ u₃ S {w} ∧ (value u₂ S).Nonempty) ↔
+      ¬(l = .low ∧ a = .bound) := by
+  cases l <;> cases a
+  · exact iff_of_false (fun ⟨_, hw, ⟨hb, hr⟩, hne⟩ ↦ hne.ne_empty <|
+      value_eq_empty_of_bindingCond_of_reciprocityCond hb hw hr) (by simp)
+  · exact iff_of_true ⟨_, (forall_eqOn_ofRows mem_w).2 (by decide), saw_narrow,
+      by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
+  · exact iff_of_true ⟨_, (forall_eqOn_ofRows mem_w).2 (by decide), saw_wide,
+      by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
+  · exact iff_of_true ⟨_, (forall_eqOn_ofRows mem_w).2 (by decide),
+      ⟨saw_crossed.1, saw_crossed.2.1⟩, by rw [value_ofRows, Finset.coe_nonempty]; decide⟩ (by simp)
 
 /-- Example (69) distributed over two accessible worlds, with the reciprocal lifted above `◇`. -/
 def beatModal : List (ℕ → Option Ind) :=

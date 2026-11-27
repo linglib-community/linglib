@@ -111,9 +111,9 @@ theorem integral_le [IsFiniteMeasure μ] (h : μ ≤ₛₜ ν) (huniv : μ univ 
   rw [integral_eq_lintegral_pos_part_sub_lintegral_neg_part hμ,
     integral_eq_lintegral_pos_part_sub_lintegral_neg_part hν]
   exact sub_le_sub
-    (ENNReal.toReal_mono ((lintegral_mono fun _ ↦ Real.ofReal_le_enorm _).trans_lt hν.2).ne
+    (ENNReal.toReal_mono ((lintegral_mono fun _ ↦ Real.ofReal_le_eNorm _).trans_lt hν.2).ne
       (h.lintegral_ofReal_le hf hfm))
-    (ENNReal.toReal_mono ((lintegral_mono fun _ ↦ Real.ofReal_le_enorm _).trans_lt hμ.neg.2).ne
+    (ENNReal.toReal_mono ((lintegral_mono fun _ ↦ Real.ofReal_le_eNorm _).trans_lt hμ.neg.2).ne
       (h.lintegral_ofReal_le_of_antitone huniv hf.neg hfm.neg))
 
 /-- The integral of an antitone function is antitone in the measure, between measures of equal

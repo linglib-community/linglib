@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Schwab2023
 public import Linglib.Data.Statistics.Schwab2023
+public import Studies.Krifka1995
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Order.SetNotation
 public import Mathlib.Data.Set.Lattice.Bounded
@@ -24,7 +25,9 @@ consistently (`verdictRank_monotone`).
 The account builds on the scalar theories of polarity sensitivity of [krifka-1995a],
 [kadmon-landman-1993], [chierchia-2006] and [israel-1996]. A strengthening item is assertable
 only where the proposition is stronger than every alternative it evokes, [krifka-1995a]'s
-scalar assertion in the form of [condoravdi-2010] (`scalAssert`); an attenuating item where
+scalar assertion in the form of [condoravdi-2010] (`scalAssert`), which is exhaustification of
+the updated context (`scalAssert_eq_exh`) and agrees with Krifka's where the alternatives are
+informationally ordered (`scalAssert_eq_bfa`); an attenuating item where
 some compatible alternative would have been more informative, the condition of Schwab and Liu
 (`attenAssert`). The two conditions are opposed: when the proposition entails its alternatives,
 scalar assertion is the plain update while the attenuating condition is contradictory
@@ -74,7 +77,7 @@ updated with `p` does not already entail it, the `c + p + p' ≠ c + p` of (5) a
 def Informative (c p p' : Set W) : Prop := ¬ c ∩ p ⊆ p'
 
 theorem informative_iff (c p p' : Set W) : Informative c p p' ↔ c ∩ p ∩ p' ≠ c ∩ p := by
-  simp [Informative, Set.inter_eq_left]
+  simp [Informative]
 
 /-- (5): scalar assertion. The worlds of the context where `p` holds and no alternative holds
 that would have been informative after `p`; a strengthening item is licensed where this is
@@ -93,6 +96,23 @@ them. -/
 def IsStrongest (c p : Set W) (alts : Set (Set W)) : Prop := ∀ p' ∈ alts, c ∩ p ⊆ p'
 
 variable {c p q : Set W} {alts : Set (Set W)}
+
+-- Scalar assertion is the exhaustification of the updated context against the alternatives.
+theorem scalAssert_eq_exh (c p : Set W) (alts : Set (Set W)) :
+    scalAssert c p alts = Exhaustification.exh alts (c ∩ p) := by
+  ext w
+  simp only [scalAssert, Informative, Set.mem_ofPred_eq, Exhaustification.mem_exh,
+    Set.mem_inter_iff, and_assoc, not_exists, not_and, not_not]
+
+-- Where the alternatives are informationally ordered, it is the scalar assertion of
+-- [krifka-1995a], which removes only the alternatives that are strictly stronger.
+theorem scalAssert_eq_bfa {D : Type*} (s : Krifka1995.BFA W D) (h : s.IsOrdered c) :
+    scalAssert c s.prop (s.background '' s.alternatives) = s.scalAssert c := by
+  rw [scalAssert_eq_exh, Krifka1995.BFA.scalAssert_eq_exh h]
+  ext w
+  simp only [Exhaustification.mem_exh, Set.forall_mem_image]
+  refine and_congr_right fun hw ↦ forall₂_congr fun F' _ ↦ ?_
+  exact ⟨fun hF hi ↦ fun x hx ↦ ⟨hx.1, hF hi.2 hx⟩, fun hF hi x hx ↦ (hF ⟨hw.1, hi⟩ hx).2⟩
 
 /-- An assertion stronger than all its alternatives passes scalar assertion as the plain
 update: the licensed case of a strengthening item. -/

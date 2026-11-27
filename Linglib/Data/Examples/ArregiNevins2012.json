@@ -1,0 +1,158 @@
+{
+  "features": [
+    {
+      "key": "variety",
+      "lean": "variety",
+      "type": "Variety",
+      "doc": "The Biscayan varieties of the examples.",
+      "levels": [
+        {
+          "name": "ondarru",
+          "label": "ondarru",
+          "doc": "the variety of Ondarru"
+        },
+        {
+          "name": "zamudio",
+          "label": "zamudio",
+          "doc": "the variety of Zamudio"
+        }
+      ]
+    },
+    {
+      "key": "arguments",
+      "lean": "arguments",
+      "type": "Arguments",
+      "doc": "The arguments the auxiliary cross-references.",
+      "levels": [
+        {
+          "name": "erg2sgAbs1pl",
+          "label": "erg2sgAbs1pl",
+          "doc": "a second singular ergative and a first plural absolutive argument"
+        },
+        {
+          "name": "erg1plDat2pl",
+          "label": "erg1plDat2pl",
+          "doc": "a first plural ergative, a second plural dative and a third singular absolutive argument"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the interaction of Participant Dissimilation with Ergative Metathesis."
+  },
+  "examples": [
+    {
+      "id": "arreginevins2012_16",
+      "source": {"bibkey": "arregi-nevins-2012", "paperLabel": "(16)"},
+      "reportedIn": null,
+      "language": "basq1248",
+      "primaryText": "Su-k gu-∅ ikus-i s-endu-n.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Su-k", "you(Sg)-ERG"], ["gu-∅", "us-ABS"], ["ikus-i", "see-PRF"],
+        ["s-endu-n", "CL.E.2.SG-PST.1.PL-CPST"]
+      ],
+      "translation": "You(Sg) saw us.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["variety", "ondarru"],
+        ["arguments", "erg2sgAbs1pl"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "arreginevins2012_17a",
+      "source": {"bibkey": "arregi-nevins-2012", "paperLabel": "(17a)"},
+      "reportedIn": null,
+      "language": "basq1248",
+      "primaryText": "g-endu-su-n",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["g-endu-su-n", "CL.A.1.PL-PST.1.PL-CL.E.2.SG-CPST"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["variety", "ondarru"],
+        ["arguments", "erg2sgAbs1pl"]
+      ],
+      "comment": "An auxiliary for (16) with no Obliteration.",
+      "verified": "page-image"
+    },
+    {
+      "id": "arreginevins2012_17b",
+      "source": {"bibkey": "arregi-nevins-2012", "paperLabel": "(17b)"},
+      "reportedIn": null,
+      "language": "basq1248",
+      "primaryText": "eu-su-n",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["eu-su-n", "PST.1.PL-CL.E.2.SG-CPST"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["variety", "ondarru"],
+        ["arguments", "erg2sgAbs1pl"]
+      ],
+      "comment": "An auxiliary for (16) with Obliteration but no L-Support.",
+      "verified": "page-image"
+    },
+    {
+      "id": "arreginevins2012_17c",
+      "source": {"bibkey": "arregi-nevins-2012", "paperLabel": "(17c)"},
+      "reportedIn": null,
+      "language": "basq1248",
+      "primaryText": "s/∅/g/d-eu-su-n",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["s/∅/g/d-eu-su-n", "L-PST.1.PL-CL.E.2.SG-CPST"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["variety", "ondarru"],
+        ["arguments", "erg2sgAbs1pl"]
+      ],
+      "comment": "An auxiliary for (16) with Obliteration and L-Support; the source lists four exponents of L.",
+      "verified": "page-image"
+    },
+    {
+      "id": "arreginevins2012_20",
+      "source": {"bibkey": "arregi-nevins-2012", "paperLabel": "(20)"},
+      "reportedIn": null,
+      "language": "basq1248",
+      "primaryText": "Gu-k atzo lagun-du y-a-tzu-e-n estasiño-ra.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Gu-k", "we-ERG"], ["atzo", "yesterday"], ["lagun-du", "accompany-PRF"],
+        ["y-a-tzu-e-n", "L-PST.3.SG-CL.D.2-CL.D.PL-CPST"], ["estasiño-ra", "station-ALL.SG"]
+      ],
+      "translation": "We accompanied you(Pl) to the station.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["variety", "zamudio"],
+        ["arguments", "erg1plDat2pl"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

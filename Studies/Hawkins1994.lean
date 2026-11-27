@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.WordOrder
 public import Mathlib.Algebra.Order.Field.Basic

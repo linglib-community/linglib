@@ -9,6 +9,7 @@ public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Linglib.Core.InformationTheory.Entropy.Surprisal
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Distributions.Bernoulli
+public import Linglib.Core.Probability.Kernel.Basic
 public import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
@@ -344,17 +345,17 @@ noncomputable def erasure (e : I) : MemoryProcess W (W ⊕ Unit) W where
 variable {e e' : I} {y w : W}
 
 instance (e : I) : IsMarkovKernel (erasure L π e).encode :=
-  ⟨fun y ↦ inferInstanceAs (IsProbabilityMeasure Ber(Sum.inr (), Sum.inl y, e))⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 theorem erasure_encode_inl [DecidableEq W] (c y : W) :
     (erasure L π e).encode c {Sum.inl y} = if c = y then (toNNReal (σ e) : ℝ≥0∞) else 0 := by
   rcases eq_or_ne c y with rfl | hcy
-  · simp [erasure, Kernel.ofFunOfCountable, Kernel.coe_mk, bernoulliMeasure_def]
-  · simp [erasure, Kernel.ofFunOfCountable, Kernel.coe_mk, bernoulliMeasure_def, hcy]
+  · simp [erasure, bernoulliMeasure_def]
+  · simp [erasure, bernoulliMeasure_def, hcy]
 
 theorem erasure_encode_inr (c : W) (u : Unit) :
     (erasure L π e).encode c {Sum.inr u} = toNNReal e := by
-  simp [erasure, Kernel.ofFunOfCountable, Kernel.coe_mk, bernoulliMeasure_def]
+  simp [erasure, bernoulliMeasure_def]
 
 theorem erasure_zero_isLosslessFor : (erasure L π 0).IsLosslessFor L :=
   ⟨Sum.inl, measurable_inl,

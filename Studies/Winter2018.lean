@@ -162,7 +162,8 @@ entities as Agent and Theme. -/
 
 section Siloni
 
-variable [DecidableEq A] {D E : Type*} [SemilatticeSup D] [SemilatticeSup E]
+variable [DecidableEq A] {D E : Type*} [SemilatticeSup D] [OrderBot D] [SemilatticeSup E]
+  [OrderBot E]
   {GD : Plurality.GroupStructure D} {GE : Plurality.GroupStructure E} {V Vsym : Set E}
   {ag th agTh : E → D}
 

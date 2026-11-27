@@ -4,6 +4,7 @@ public import Studies.GeurtsPouscoulous2009
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Data.Examples.Geurts2010
+public import Linglib.Logic.Modal.Definability
 public import Mathlib.Order.Atoms
 public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.UpperLower.Basic
@@ -58,7 +59,9 @@ upward-entailing scopes](##readings_ssubset_iff), where the experiment finds no 
 
 namespace Geurts2010
 
-open Set NeoGricean Question
+open Examples (Item)
+
+open Set NeoGricean Inquisitive Inquisitive.Proposition
 
 variable {W : Type*} {s φ ψ : Set W}
 
@@ -123,9 +126,9 @@ theorem notMem_polar_Ici_of_mem_primaryImplicatures (ha : IsAtom a) (hb : IsAtom
     {s : Set α} (hq : s ⊆ Ioi ⊥) (hp : s ∈ primaryImplicatures {χ | IsUpperSet χ} (Ioi ⊥)) :
     s ∉ polar (Ici a) := by
   have hweak := mem_primaryImplicatures.1 hp
-  refine fun h ↦ (Question.mem_polar.1 h).elim
-    (hweak _ (isUpperSet_Ici a) (Ici_ssubset_Ioi_bot ha hb hab)) fun hna ↦ ?_
-  exact hweak _ (isLowerSet_Iic a).compl (compl_Iic_ssubset_Ioi_bot ha) fun y hy hya ↦
+  refine fun h ↦ (Proposition.mem_polar.1 h).elim
+    (hweak _ (IsUpperSet.Ici a) (Ici_ssubset_Ioi_bot ha hb hab)) fun hna ↦ ?_
+  exact hweak _ (IsLowerSet.Iic a).compl (compl_Iic_ssubset_Ioi_bot ha) fun y hy hya ↦
     hna hy ((ha.le_iff_eq (mem_Ioi.1 (hq hy)).ne').1 hya).ge
 
 variable [IsAtomic α]
@@ -141,7 +144,7 @@ theorem isSecondaryImplicature_upperSets_iff :
   rw [isSecondaryImplicature_iff]
   refine and_congr_right fun _ ↦ and_congr_right fun _ ↦
     ⟨fun h x hx hxt ↦ ?_, fun h χ hχ hχφ hsub ↦ ?_⟩
-  · exact h _ (isLowerSet_Iic x).compl (compl_Iic_ssubset_Ioi_bot hx)
+  · exact h _ (IsLowerSet.Iic x).compl (compl_Iic_ssubset_Ioi_bot hx)
       fun y hy hle ↦ hy.2 ((hx.le_iff_eq (mem_Ioi.1 hy.1).ne').1 hle ▸ hxt)
   · exact hχφ.2 fun y hy ↦
       let ⟨b, hb, hby⟩ := exists_isAtom_le hy
@@ -156,7 +159,7 @@ theorem Ioi_sdiff_sUnion_isSecondaryImplicature_eq_setOf_isAtom :
   refine ⟨fun ⟨hx, hn⟩ ↦ ?_, fun hx ↦ ⟨hx.bot_lt, fun ⟨t, ⟨_, _, h⟩, hxt⟩ ↦ h x hx hxt⟩⟩
   by_contra hna
   obtain ⟨b, hb, hbx⟩ := exists_isAtom_le hx
-  refine hn ⟨Ici x, ⟨isUpperSet_Ici x, ⟨fun _ hy ↦ hx.trans_le hy, fun h ↦ ?_⟩, fun y hy hxy ↦ ?_⟩,
+  refine hn ⟨Ici x, ⟨IsUpperSet.Ici x, ⟨fun _ hy ↦ hx.trans_le hy, fun h ↦ ?_⟩, fun y hy hxy ↦ ?_⟩,
     le_rfl⟩
   · exact hna (le_antisymm hbx (h hb.bot_lt) ▸ hb)
   · exact hna ((hy.le_iff_eq hx.ne').1 hxy ▸ hy)
@@ -449,11 +452,11 @@ variable {D : Type*} {sailor some all : W → Set D} {t : SetRel W D}
 -- (32)–(35), pp. 179–180: the state of (32) is a relation between worlds and values of the
 -- discourse referent, which the hearer's question is about, and the Standard Recipe runs as usual:
 -- (34) with Competence about the referent gives the model (35)
-theorem subset_inter_compl_ofSuccessors
-    (h32 : t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some)
-    (h34 : ¬ t ⊆ SetRel.ofSuccessors all) (hc : t ∈ polar (SetRel.ofSuccessors all)) :
-    t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some ∩ (SetRel.ofSuccessors all)ᶜ :=
-  subset_inter h32 ((Question.mem_polar.1 hc).resolve_left h34)
+theorem subset_inter_compl_cgraph
+    (h32 : t ⊆ SetRel.cgraph sailor ∩ SetRel.cgraph some)
+    (h34 : ¬ t ⊆ SetRel.cgraph all) (hc : t ∈ polar (SetRel.cgraph all)) :
+    t ⊆ SetRel.cgraph sailor ∩ SetRel.cgraph some ∩ (SetRel.cgraph all)ᶜ :=
+  subset_inter h32 ((Proposition.mem_polar.1 hc).resolve_left h34)
 
 end Indefinites
 
@@ -499,13 +502,8 @@ theorem rows_table2 {a : Fin 4 → Set W} (ha : StrictAnti a) :
   · simpa using ha.lt_iff_gt.symm
   · simpa using (compl_lt_compl_iff_lt.trans ha.lt_iff_gt).symm
 
-/-- The three contrasts on which Gricean reasoning derives one inference and not its neighbour. -/
-inductive Item where
-  | sameLength | longer | figs | mango | referent | everySailor
-  deriving DecidableEq
-
 /-- The statement that the theory derives the inference, over any model of the sentence. -/
-def Item.Derived : Item → Prop
+def Examples.Item.Derived : Item → Prop
   | .sameLength => ∀ {W : Type} (V : Bool → Set W) (s : Set W),
       s ∈ survivors V size (atom true) (altsScalar V (atom true) (atom false)) →
         ¬ (atom false).Believes V s
@@ -517,13 +515,13 @@ def Item.Derived : Item → Prop
   | .mango => ∀ {W : Type} (M F A : Set W), A ⊆ F → (M \ F).Nonempty → (F \ (M ∪ A)).Nonempty →
       IsSecondaryImplicature {M, F, A, M ∪ A} (M ∪ F) M
   | .referent => ∀ {W D : Type} (sailor some all : W → Set D) (t : SetRel W D),
-      t ⊆ SetRel.ofSuccessors sailor ∩ SetRel.ofSuccessors some → ¬ t ⊆ SetRel.ofSuccessors all →
-        t ∈ polar (SetRel.ofSuccessors all) → t ⊆ (SetRel.ofSuccessors all)ᶜ
+      t ⊆ SetRel.cgraph sailor ∩ SetRel.cgraph some → ¬ t ⊆ SetRel.cgraph all →
+        t ∈ polar (SetRel.cgraph all) → t ⊆ (SetRel.cgraph all)ᶜ
   | .everySailor => ∀ {W D : Type} (sailor all : W → Set D) (t : SetRel W D),
-      t ⊆ SetRel.ofSuccessors sailor → t ⊆ (SetRel.ofSuccessors all)ᶜ →
-        t ⊆ Prod.fst ⁻¹' (SetRel.ofSuccessors (sailor ⊓ all)).dom ᶜ
+      t ⊆ SetRel.cgraph sailor → t ⊆ (SetRel.cgraph all)ᶜ →
+        t ⊆ Prod.fst ⁻¹' (SetRel.cgraph (sailor ⊓ all)).dom ᶜ
 
-theorem Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mango, .everySailor]
+theorem Examples.Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mango, .everySailor]
   | .sameLength => iff_of_true (fun _ _ h ↦ (mem_survivors_scalar_iff.1 h).2.2 le_rfl) (by decide)
   -- (26b), p. 124: *big toe* is longer than *toe*, so that nothing rules out believing it
   | .longer => iff_of_false (fun h ↦ @h Unit (fun _ ↦ univ) univ
@@ -539,17 +537,16 @@ theorem Item.derived_iff : ∀ i : Item, i.Derived ↔ i ∉ [Item.longer, .mang
         (@h (Fin 3) {0} {1, 2} {2} hA hM hF)
       exact absurd (mem_singleton_iff.1 (this ▸ mem_singleton (0 : Fin 3))) (by decide)) (by decide)
   | .referent => iff_of_true (fun _ _ _ _ h32 h34 hc ↦
-      (subset_inter_compl_ofSuccessors h32 h34 hc).trans inter_subset_right) (by decide)
+      (subset_inter_compl_cgraph h32 h34 hc).trans inter_subset_right) (by decide)
   -- pp. 139, 180: (35) does not entail that (14) is false: the story need not be about every sailor
   | .everySailor => iff_of_false (fun h ↦ by
       have := @h Unit Bool (fun _ ↦ univ) (fun _ ↦ {true}) {((), false)}
-        (fun _ _ ↦ mem_univ _) (by rintro _ rfl hb; simp [SetRel.ofSuccessors] at hb)
+        (fun _ _ ↦ mem_univ _) (by rintro _ rfl hb; simp [SetRel.cgraph] at hb)
       exact this rfl ⟨true, mem_univ _, rfl⟩) (by decide)
 
 /-- Reads the item of a row and whether the text says the inference is conveyed. -/
 def inference? (ex : Datum) : Option (Item × Bool) := do
-  let item ← ex.parse? "item" [("sameLength", Item.sameLength), ("longer", .longer),
-    ("figs", .figs), ("mango", .mango), ("referent", .referent), ("everySailor", .everySailor)]
+  let item ← (Examples.item ex)
   let conveys ← ex.bool? "conveys"
   pure (item, conveys)
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Hyman2003
-public import Linglib.Morphology.Morphotactics.AffixTemplate
+public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Studies.Baker1985
 public import Mathlib.Data.List.Sections
@@ -83,7 +83,7 @@ inductive Ext
 
 /-- The Pan-Bantu default template (5), CARP: the extensions as suffix slots in the order
 Causative-Applicative-Reciprocal-Passive. -/
-def carp : AffixTemplate Ext := { suffixSlots := [.C, .A, .R, .P] }
+def carp : Morphotactics.Template Ext := { suffixSlots := [.C, .A, .R, .P] }
 
 /-- An extension's position in the template. -/
 def Ext.slot (x : Ext) : ℕ := carp.slots.idxOf x

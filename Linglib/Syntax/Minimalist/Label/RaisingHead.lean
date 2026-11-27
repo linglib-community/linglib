@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Label.Selection
+public import Linglib.Syntax.Minimalist.Label.Projection
 public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
 
 /-!
@@ -14,39 +15,43 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
 Marcolli, Chomsky and Berwick state labeling over a partial head function and require that
 function to be raising: the object Internal Merge forms is headed by the head of what it raised out
 of, so the landing site of a wh-phrase beside a C is headed by C. The raising head reads this off
-the finished object from the selection head, a lower copy satisfying selection as the phrase it
-copies and otherwise invisible (`CopyState`): where two phrases merge and the head of one has a
-lower copy inside the other, the first has raised out of the second, which projects. A planar
-embedding is a total head function extending it, and the head function `HeadFunction.raising`
-takes the daughter carrying the raising head, and the embedding's head where there is none.
+the finished object. Where selection decides between two merged objects the selecting one
+projects; where it does not and one of the two is a term of the other, that one has raised out of
+the other, which projects. A planar embedding is a total head function extending it, and
+`HeadDaughter.raising` takes the daughter that projects, and the embedding's head where neither
+does.
 
 ## Main definitions
 
-* `Minimalist.CopyState`: a selection state or a lower copy, a commutative magma with zero.
-* `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
-  raising head of a syntactic object.
-* `Minimalist.headIndex?`, `Minimalist.HeadFunction.raising`: the head daughter of a planar tree,
-  and the head function it gives.
+* `Minimalist.SyntacticObject.RaisingProjects`: which of two merged objects projects under
+  raising.
+* `Minimalist.SyntacticObject.raisingState`, `Minimalist.SyntacticObject.raisingHead`: the
+  selection state a raised object keeps, and the raising head of a syntactic object.
+* `Minimalist.headIndex?`, `Minimalist.HeadDaughter.raising`: the head daughter of a planar
+  object, the daughter that projects, and the head daughters it gives at the positions of an
+  object.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.raisingHead_merge`: the raising head of a merge is a daughter's.
-* `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
+* `Minimalist.SyntacticObject.raisingHead_eq_headLeaf`: the raising head is the head the raising
+  projection relation gives.
+* `Minimalist.SyntacticObject.raisingHead_merge`: the raising head of a Merge is a daughter's.
+* `Minimalist.exists_headIndex?_of_raisingHead`: the head daughter carries the raising head
   wherever there is one.
 
 ## Implementation notes
 
+* A raised term is a copy, the same object merged again, so that it has raised out of its sister
+  is read as containment. The object formed keeps the selection state of the sister, which a
+  higher head goes on to select.
 * The drawing convention puts specifiers to the left of their heads and heads to the left of their
   complements: a left leaf that selects nothing is a specifier and the right daughter heads, a left
   leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
   raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
-  algorithm leaves unlabeled until one of the two moves on (`HeadFunction.label`).
-* The raising head also delimits the phases of `Phase/Basic.lean`.
+  algorithm leaves unlabeled until one of the two moves on.
 
 ## TODO
 
-* The trace of a token is the lower copy of the phrase the token heads; a moved head, whose lower
-  copy would still select, is not distinguished.
 * The positions at or below the maximal projection of a head occurring once carry exactly the
   terms within its projection, where the raising head is defined along the projection line.
 
@@ -59,263 +64,142 @@ takes the daughter carrying the raising head, and the embedding's head where the
 
 namespace Minimalist
 
-open SyntacticObject
-
-/-- A constituent's copy state is its selection state, or a lower copy of the phrase a token
-heads, which satisfies selection as that phrase and is otherwise invisible to the raising
-algorithm. -/
-inductive CopyState where
-  /-- The selection state of a constituent the raising head sees. -/
-  | sel (x : SelectionState)
-  /-- A lower copy of the phrase `tok` heads. -/
-  | copy (tok : LexicalItem.Token)
-  deriving DecidableEq
-
-namespace CopyState
-
-instance : Zero CopyState := ⟨sel 0⟩
-
-/-- A lower copy satisfies the selection of a sister selecting the phrase it copies and is
-otherwise invisible; two lower copies leave nothing to see. -/
-instance : Mul CopyState where
-  mul
-    | sel x, sel y => sel (x * y)
-    | copy a, sel y => if SelectionState.of a [] * y = 0 then sel y else sel (.of a [] * y)
-    | sel x, copy a => if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a [])
-    | copy _, copy _ => 0
-
-@[simp] theorem sel_mul_sel (x y : SelectionState) : sel x * sel y = sel (x * y) := rfl
-
-theorem copy_mul_sel (a : LexicalItem.Token) (y : SelectionState) :
-    copy a * sel y = if SelectionState.of a [] * y = 0 then sel y else sel (.of a [] * y) := rfl
-
-theorem sel_mul_copy (x : SelectionState) (a : LexicalItem.Token) :
-    sel x * copy a = if x * SelectionState.of a [] = 0 then sel x else sel (x * .of a []) := rfl
-
-instance : CommMagma CopyState where
-  mul_comm
-    | sel x, sel y => congrArg sel (mul_comm x y)
-    | copy a, sel y | sel y, copy a => by
-      show (if _ = _ then _ else _) = (if _ = _ then _ else _)
-      rw [mul_comm y]
-    | copy _, copy _ => rfl
-
-instance : MulZeroClass CopyState where
-  zero_mul
-    | sel _ => rfl
-    | copy a => by rw [show (0 : CopyState) = sel 0 from rfl, sel_mul_copy]; simp
-  mul_zero
-    | sel x => congrArg sel (mul_zero x)
-    | copy a => by rw [show (0 : CopyState) = sel 0 from rfl, copy_mul_sel]; simp
-
-/-- The head a copy state provides is that of a visible constituent, and none for a lower
-copy. -/
-def head : CopyState → Option LexicalItem.Token
-  | sel x => x.head
-  | copy _ => none
-
-@[simp] theorem mul_self (l : CopyState) : l * l = 0 := by
-  rcases l with x | a
-  · show sel (x * x) = sel 0
-    rw [SelectionState.mul_self]
-  · rfl
-
-/-- The head of a product of copy states is a factor's head. -/
-instance : Head CopyState where
-  head := head
-  head_zero := rfl
-  mem_head_or_mem_head_of_mem_head_mul {x y h} hxy := by
-    rcases x with x | a <;> rcases y with y | b
-    · exact mem_head_or_mem_head_of_mem_head_mul (β := SelectionState) hxy
-    · rw [sel_mul_copy] at hxy
-      split_ifs at hxy with h0
-      · exact .inl hxy
-      · change (x * SelectionState.of b []).head = some h at hxy
-        rw [_root_.mul_comm x] at hxy
-        exact .inl (SelectionState.head_of_mul_of hxy)
-    · rw [copy_mul_sel] at hxy
-      split_ifs at hxy with h0
-      · exact .inr hxy
-      · exact .inr (SelectionState.head_of_mul_of hxy)
-    · cases hxy
-
-end CopyState
-
-/-! ### The raising head -/
-
-/-- The raising state of a constituent pairs its copy state with the tokens whose lower copies
-it contains. -/
-structure RaisingState where
-  /-- The copy state. -/
-  state : CopyState
-  /-- The tokens heading the phrases of which the constituent contains a lower copy. -/
-  copies : Multiset LexicalItem.Token
-  deriving DecidableEq
-
-namespace RaisingState
-
-instance : Zero RaisingState := ⟨⟨0, 0⟩⟩
-
-/-- Under raising, two merged constituents take the product of their copy states where it is
-defined, and otherwise the copy state of the one containing a lower copy of the other's head,
-since the other raised out of it and it projects. -/
-def raise (x y : RaisingState) : CopyState :=
-  if x.state * y.state ≠ 0 then x.state * y.state else
-  match x.state.head, y.state.head with
-  | some a, some b =>
-    if a ∈ y.copies ∧ b ∉ x.copies then y.state
-    else if b ∈ x.copies ∧ a ∉ y.copies then x.state else 0
-  | _, _ => 0
-
-instance : Mul RaisingState := ⟨fun x y ↦ ⟨raise x y, x.copies + y.copies⟩⟩
-
-theorem mul_def (x y : RaisingState) : x * y = ⟨raise x y, x.copies + y.copies⟩ := rfl
-
-theorem raise_comm (x y : RaisingState) : raise x y = raise y x := by
-  unfold raise
-  rw [mul_comm y.state]
-  split_ifs with h₁
-  · rfl
-  · rcases hx : x.state.head with _ | a <;> rcases hy : y.state.head with _ | b <;> simp only
-    grind
-
-instance : CommMagma RaisingState where
-  mul_comm x y := by simp only [mul_def, raise_comm, add_comm]
-
-/-- The raising head of a product is a factor's raising head. -/
-instance : Head RaisingState where
-  head x := x.state.head
-  head_zero := rfl
-  mem_head_or_mem_head_of_mem_head_mul {x y t} h := by
-    simp only [mul_def, raise] at h
-    split_ifs at h with h0
-    · exact mem_head_or_mem_head_of_mem_head_mul (β := CopyState) h
-    · rcases hx : x.state.head with _ | a <;> rcases hy : y.state.head with _ | b <;>
-        simp only [hx, hy] at h ⊢
-      · cases h
-      · cases h
-      · cases h
-      · split_ifs at h
-        · right; simp_all
-        · left; simp_all
-        · exact absurd (show (none : Option LexicalItem.Token) = some t from h) (by simp)
-
-end RaisingState
-
-/-- A trace's raising state is the lower copy of the phrase its token heads, with the token recorded
-among the copies; the bare trace remembers no token. -/
-def raisingTraceState : Option LexicalItem.Token → RaisingState
-  | some tok => ⟨.copy tok, {tok}⟩
-  | none => ⟨.sel (traceState none), 0⟩
+open SyntacticObject SelectionRule
 
 namespace SyntacticObject
 
-variable (s : SyntacticObject)
+/-- The selection state of an object under raising: the product of the daughters' states where
+one selects the other, and otherwise the state of the daughter the other has raised out of. -/
+def raisingState : SyntacticObject TokenLeaf → SelectionRule.stack.State :=
+  FreeCommMagma.elim (fun tok ↦ .of tok tok.item.sel)
+    (fun l r a b ↦ if a.Projects b ∨ b.Projects a then a * b
+      else if Contains l r then a else if Contains r l then b else 0)
+    fun l r a b ↦ by
+      have hlr : Contains l r → ¬ Contains r l := fun h h' ↦ contains_irrefl l (h.trans h')
+      by_cases h : a.Projects b ∨ b.Projects a
+      · have h' : b.Projects a ∨ a.Projects b := h.symm
+        simp only [h, h', ↓reduceIte]
+        exact mul_comm a b
+      · have h' : ¬ (b.Projects a ∨ a.Projects b) := fun x ↦ h x.symm
+        by_cases h1 : Contains l r
+        · simp only [h, h', h1, hlr h1, ↓reduceIte]
+        · simp only [h, h', h1, ↓reduceIte]
 
-/-- The raising state of a syntactic object. -/
-def raisingCheck : RaisingState :=
-  FreeCommMagma.lift (Leaf.elim (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState) s
+@[simp] theorem raisingState_leaf (tok : LexicalItem.Token) :
+    raisingState (leaf tok) = .of tok tok.item.sel := rfl
 
-/-- The raising head of a syntactic object, [marcolli-chomsky-berwick-2025]'s raising head
+theorem raisingState_mul (l r : SyntacticObject TokenLeaf) :
+    raisingState (l * r) =
+      if (raisingState l).Projects (raisingState r) ∨ (raisingState r).Projects (raisingState l)
+      then raisingState l * raisingState r
+      else if Contains l r then raisingState l else if Contains r l then raisingState r else 0 :=
+  FreeCommMagma.elim_mul ..
+
+/-- `x` projects over `y` under raising: it projects by selection, or `y` does not and `y` has
+raised out of `x`, being a term of it. -/
+def RaisingProjects (x y : SyntacticObject TokenLeaf) : Prop :=
+  (raisingState x).Projects (raisingState y) ∨
+    (¬ (raisingState y).Projects (raisingState x) ∧ Contains x y)
+
+instance : DecidableRel RaisingProjects := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+theorem RaisingProjects.asymm {x y : SyntacticObject TokenLeaf} (h : RaisingProjects x y) :
+    ¬ RaisingProjects y x := by
+  rintro (h' | ⟨h', hc'⟩)
+  · rcases h with h | ⟨h, -⟩
+    · exact h.asymm h'
+    · exact h h'
+  · rcases h with h | ⟨-, hc⟩
+    · exact h' h
+    · exact contains_irrefl x (hc.trans hc')
+
+instance : Std.Asymm RaisingProjects := ⟨fun _ _ ↦ RaisingProjects.asymm⟩
+
+/-- The raising head of a syntactic object, after [marcolli-chomsky-berwick-2025]'s raising head
 function: the selection head where there is one, and at a landing site the head of the phrase
 moved out of. -/
-def raisingHead : Option LexicalItem.Token := s.raisingCheck.state.head
+def raisingHead (s : SyntacticObject TokenLeaf) : Option LexicalItem.Token := (raisingState s).head
 
 @[simp] theorem raisingHead_leaf (tok : LexicalItem.Token) :
     (leaf tok).raisingHead = some tok := rfl
 
-@[simp] theorem raisingHead_trace : (trace : SyntacticObject).raisingHead = some .bareTrace := rfl
+/-- The raising head of a Merge is the raising head of the daughter that projects. -/
+theorem raisingHead_merge_eq (l r : SyntacticObject TokenLeaf) :
+    (l * r).raisingHead =
+      if RaisingProjects l r then l.raisingHead
+      else if RaisingProjects r l then r.raisingHead else none := by
+  rw [raisingHead, raisingState_mul]
+  by_cases h1 : (raisingState l).Projects (raisingState r)
+  · have hlr : RaisingProjects l r := .inl h1
+    simp [h1, hlr, raisingHead, State.head_mul_eq]
+  · by_cases h2 : (raisingState r).Projects (raisingState l)
+    · have hrl : RaisingProjects r l := .inl h2
+      simp [h1, h2, hrl, hrl.asymm, raisingHead, State.head_mul_eq]
+    · by_cases h3 : Contains l r
+      · have hlr : RaisingProjects l r := .inr ⟨h2, h3⟩
+        simp [h1, h2, h3, hlr, raisingHead]
+      · have hlr : ¬ RaisingProjects l r := by rintro (h | ⟨-, h⟩) <;> contradiction
+        by_cases h4 : Contains r l
+        · have hrl : RaisingProjects r l := .inr ⟨h1, h4⟩
+          simp [h1, h2, h3, h4, hlr, hrl, raisingHead]
+        · have hrl : ¬ RaisingProjects r l := by rintro (h | ⟨-, h⟩) <;> contradiction
+          simp [h1, h2, h3, h4, hlr, hrl]
 
-@[simp] theorem raisingHead_traceOf (tok : LexicalItem.Token) :
-    (traceOf tok).raisingHead = none := rfl
+/-- The raising head is the head the raising projection relation gives. -/
+theorem raisingHead_eq_headLeaf : raisingHead = headLeaf RaisingProjects := by
+  funext s
+  induction s using FreeCommMagma.inductionOn with
+  | of a => rfl
+  | mul l r ihl ihr => rw [raisingHead_merge_eq, headLeaf_mul, ihl, ihr]
 
-@[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
-    (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
-  map_mul (FreeCommMagma.lift _) l r
+/-- The raising head is a head function. -/
+theorem isHeadFunction_raisingHead :
+    IsHeadFunction (raisingHead : SyntacticObject TokenLeaf → Option LexicalItem.Token) :=
+  raisingHead_eq_headLeaf ▸ isHeadFunction_headLeaf _
 
-/-- `raisingCheck` as a morphism of magmas. -/
-def raisingCheckHom : SyntacticObject →ₙ* RaisingState :=
-  FreeCommMagma.lift (Leaf.elim (fun tok ↦ ⟨.sel (.of tok tok.item.sel), 0⟩) raisingTraceState)
-
-/-- The raising head of a merge is a daughter's raising head
+/-- The raising head of a Merge is a daughter's raising head
 ([marcolli-chomsky-berwick-2025] Lemma 1.13.7). -/
-theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
-    (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
-  mem_head_or_mem_head_of_mem_head_map_mul raisingCheckHom (x := l) (y := r) hlr
+theorem raisingHead_merge {l r : SyntacticObject TokenLeaf} {h : LexicalItem.Token}
+    (hlr : (l * r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
+  isHeadFunction_raisingHead.mem_or_mem hlr
 
-@[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
-  rw [raisingHead, raisingCheck_merge, RaisingState.mul_def]
-  simp only [RaisingState.raise, CopyState.mul_self, ne_eq, not_true_eq_false, ↓reduceIte]
-  rcases x.raisingCheck.state.head with _ | a
-  · rfl
-  · dsimp only
-    split_ifs with h₁ <;> first | rfl | exact (h₁.2 h₁.1).elim
+@[simp] theorem raisingHead_merge_self (x : SyntacticObject TokenLeaf) :
+    (x * x).raisingHead = none := by
+  rw [raisingHead_eq_headLeaf, headLeaf_mul_self]
 
 end SyntacticObject
 
 /-! ### Head daughters -/
 
-/-- The raising head of a planar tree, that of its unordered image. -/
-def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
-  if h : IsSyntacticObject (UnorderedTree.mk s) then (ofUnorderedTree _ h).raisingHead else none
-
-theorem raisingHead_eq_treeRaisingHead {x : SyntacticObject} {s : RoseTree Vertex}
-    (h : x.toUnorderedTree = UnorderedTree.mk s) : x.raisingHead = treeRaisingHead s := by
-  rw [treeRaisingHead, dite_eq_left (h ▸ x.isSyntacticObject_toUnorderedTree)]
-  exact congrArg raisingHead
-    (toUnorderedTree_injective (by rw [toUnorderedTree_ofUnorderedTree, h]))
-
-theorem treeRaisingHead_subtree {t : PlanarSyntacticObject} (p : t.toRoseTree.Positions) :
-    treeRaisingHead p.subtree = (t.termAt p).raisingHead :=
-  (raisingHead_eq_treeRaisingHead PlanarSyntacticObject.toUnorderedTree_termAt).symm
-
-/-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
-left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
-a left leaf that selects for the head, and otherwise looks in the right daughter. This is the
-head path it assigns. -/
-def conventionHeadPos? : RoseTree Vertex → Option (List ℕ)
-  | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
-  | .node (.inl none) [.node (.inl (some tok)) [], r] =>
+/-- The drawing convention makes a leaf its own head; at a Merge it takes a left leaf that selects
+nothing for a specifier and looks for the head in the right daughter, takes a left leaf that
+selects for the head, and otherwise looks in the right daughter. This is the head path it
+assigns. -/
+def conventionHeadPos? : PlanarSyntacticObject TokenLeaf → Option (List ℕ)
+  | .of _ => some []
+  | .mul (.of tok) r =>
       if tok.item.sel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
-  | .node (.inl none) [_, r] => (conventionHeadPos? r).map (1 :: ·)
-  | .node (.inl none) _ => none
-  | .node (.inr none) _ => none
+  | .mul _ r => (conventionHeadPos? r).map (1 :: ·)
 
-/-- The head daughter of a planar tree is the first daughter carrying its raising head, and where
-it has none, the first step of the drawing convention's head path. -/
-def headIndex? (s : RoseTree Vertex) : Option ℕ :=
-  ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
-    (conventionHeadPos? s).bind List.head?
+/-- The head daughter of a planar object is the daughter that projects under raising, and where
+neither does, the first step of the drawing convention's head path. -/
+def headIndex? (s : PlanarSyntacticObject TokenLeaf) : Option ℕ :=
+  headDaughter SyntacticObject.RaisingProjects s <|> (conventionHeadPos? s).bind List.head?
 
-/-- The raising head function, [marcolli-chomsky-berwick-2025]'s raising head extended to a total
-head function by the drawing convention: the head daughter of the subtree at each position,
-`none` off the object. -/
-def HeadFunction.raising : HeadFunction := fun t q ↦ t.toRoseTree[q]?.bind headIndex?
+/-- The head daughters under [marcolli-chomsky-berwick-2025]'s raising head, extended by the
+drawing convention where an object has no raising head: the head daughter of the planar object at
+each address, `none` off the object. -/
+def HeadDaughter.raising : HeadDaughter TokenLeaf := fun t q ↦ (t.subAt? q.toList).bind headIndex?
 
-/-- Where a planar syntactic object with daughters has a raising head, its head daughter carries
-it. -/
-theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
-    (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
-    (h : treeRaisingHead s = some ℓ) :
-    ∃ i c, headIndex? s = some i ∧ s.children[i]? = some c ∧ treeRaisingHead c = some ℓ := by
-  obtain ⟨v, cs⟩ := s
-  obtain rfl := eq_bare_of_ne_nil hs hc
-  obtain ⟨l, r, rfl⟩ : ∃ l r, cs = [l, r] :=
-    List.length_eq_two.1 ((length_eq_zero_or_two hs).resolve_left fun h0 ↦
-      hc (List.length_eq_zero_iff.1 h0))
-  obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge l r).1 hs
-  have hm : (merge (ofUnorderedTree _ hl) (ofUnorderedTree _ hr)).raisingHead
-      = treeRaisingHead (.node Vertex.bare [l, r]) :=
-    raisingHead_eq_treeRaisingHead (by
-      rw [toUnorderedTree_merge, toUnorderedTree_ofUnorderedTree, toUnorderedTree_ofUnorderedTree,
-          UnorderedTree.node_pair_mk])
-  by_cases hl' : treeRaisingHead l = some ℓ
-  · exact ⟨0, l, by simp [headIndex?, h, hl', List.findIdx?_cons], rfl, hl'⟩
-  · have hr' : treeRaisingHead r = some ℓ :=
-      (raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hr)).symm.trans
-        ((raisingHead_merge (hm.trans h)).resolve_left fun h' ↦
-          hl' ((raisingHead_eq_treeRaisingHead (toUnorderedTree_ofUnorderedTree _ hl)).symm.trans
-              h'))
-    exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
+/-- Where a Merge has a raising head, its head daughter carries it. -/
+theorem exists_headIndex?_of_raisingHead {l r : PlanarSyntacticObject TokenLeaf}
+    {ℓ : LexicalItem.Token} (h : (l * r).toSyntacticObject.raisingHead = some ℓ) :
+    ∃ i c, headIndex? (l * r) = some i ∧ (l * r).daughters[i]? = some c ∧
+      c.toSyntacticObject.raisingHead = some ℓ := by
+  have hm : (l.toSyntacticObject * r.toSyntacticObject).raisingHead = some ℓ := h
+  rw [raisingHead_merge_eq] at hm
+  split_ifs at hm with h1 h2
+  · exact ⟨0, l, by simp [headIndex?, headDaughter_mul, h1], rfl, hm⟩
+  · exact ⟨1, r, by simp [headIndex?, headDaughter_mul, h1, h2], rfl, hm⟩
 
 end Minimalist

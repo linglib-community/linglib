@@ -5,9 +5,10 @@ public import Mathlib.Order.Atoms
 public import Mathlib.Data.Set.Lattice.Order
 public import Linglib.Data.Examples.Dayal2016
 public import Linglib.Data.Examples.Readers
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Trigger
-public import Linglib.Semantics.Questions.Number
+public import Linglib.Semantics.Questions.Hamblin.Number
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
 
 /-!
 # Dayal (2016): Questions
@@ -15,12 +16,12 @@ public import Linglib.Semantics.Questions.Number
 This file formalizes the theory of questions of the second chapter of Dayal's *Questions*. A
 question denotes its Hamblin set, and the answerhood operator Ans-D returns the true member that
 entails every true member, if there is one. [Scope marking needs the false members
-too](##trueAnswers_karttunen_composition). [Ans-D is defined exactly where the situation lies in
-the domain of the *wh* phrase](##Question.isExhaustivelyResolvable_whHamblin_iff), the atoms for
+too](##karttunen_composition). [Ans-D is defined exactly where the situation lies in
+the domain of the *wh* phrase](##Question.hasStrongestTrueAnswer_whHamblin_iff), the atoms for
 singular *which N*, so [a polar question with one is
-unanswerable](##not_isExhaustivelyResolvable_polarWh_singular), while [Beck and Rullmann's
+unanswerable](##not_hasStrongestTrueAnswer_polarWh_singular), while [Beck and Rullmann's
 intersection of the true members ignores number](##Question.weakAnswer_whHamblin) and [maximality
-inside the *wh* phrase agrees with Ans-D](##mem_trueAnswers_maxHamblin_iff). The plurality of plural
+inside the *wh* phrase agrees with Ans-D](##mem_karttunen_maxHamblin_iff). The plurality of plural
 *which N* is [an implicature of competition with the singular](##Question.whFelicitous_plural). The
 existential presupposition is soft and that of a cleft hard, so [only another speaker can deny it
 and only an ordinary question suspend it](##coherent_iff).
@@ -76,7 +77,6 @@ and only an ordinary question suspend it](##coherent_iff).
 namespace Dayal2016
 
 open Question Set
-open Mereology (atom_iff_isAtom)
 open Presupposition (Hardness)
 
 /-! ### Scope marking -/
@@ -110,13 +110,13 @@ def scopeMarked : Set (Set World) := think '' whereMary
 def w₀ : World := (.paris, .london)
 
 -- (36b), (37c)
-theorem trueAnswers_whereMary : trueAnswers whereMary w₀ = {isAt .paris} := by
-  rw [whereMary, trueAnswers_range,
+theorem karttunen_whereMary : karttunen whereMary w₀ = {isAt .paris} := by
+  rw [whereMary, karttunen_range,
     show {x | w₀ ∈ isAt x} = {.paris} by ext x; simp [isAt, w₀, eq_comm], image_singleton]
 
 -- (35b), (37b)
-theorem trueAnswers_scopeMarked : trueAnswers scopeMarked w₀ = {think (isAt .london)} := by
-  rw [scopeMarked, whereMary, ← range_comp, trueAnswers_range,
+theorem karttunen_scopeMarked : karttunen scopeMarked w₀ = {think (isAt .london)} := by
+  rw [scopeMarked, whereMary, ← range_comp, karttunen_range,
     show {x | w₀ ∈ (think ∘ isAt) x} = {.london} by
       ext x
       simp only [think, ModalLogic.Box, believes, isAt, w₀, mem_ofPred_eq, Function.comp]
@@ -126,17 +126,17 @@ theorem trueAnswers_scopeMarked : trueAnswers scopeMarked w₀ = {think (isAt .l
 
 /-- Built on the true members of *Where is Mary?* alone, *What does John think? Where is Mary?*
 has no true member, although *John thinks Mary is in London* answers it. -/
-theorem trueAnswers_karttunen_composition :
-    trueAnswers (think '' trueAnswers whereMary w₀) w₀ = ∅ := by
-  rw [trueAnswers_whereMary, image_singleton]
+theorem karttunen_composition :
+    karttunen (think '' karttunen whereMary w₀) w₀ = ∅ := by
+  rw [karttunen_whereMary, image_singleton]
   ext p
-  simp only [mem_trueAnswers, mem_singleton_iff, mem_empty_iff_false, iff_false, not_and]
+  simp only [mem_karttunen, mem_singleton_iff, mem_empty_iff_false, iff_false, not_and]
   rintro rfl hw
   exact absurd (hw (.london, .london) rfl) (by simp [isAt])
 
 -- (37b)
 theorem dayalAns_scopeMarked : dayalAns scopeMarked w₀ = some (think (isAt .london)) := by
-  rw [dayalAns_eq_some_iff, IsStrongestTrueAnswer, trueAnswers_scopeMarked]
+  rw [dayalAns_eq_some_iff, IsStrongestTrueAnswer, karttunen_scopeMarked]
   exact isLeast_singleton _
 
 /-! ### Number -/
@@ -146,7 +146,7 @@ section Number
 variable {E : Type*} [CompleteLattice E]
 
 -- `Question.whDomain` is (63) and `Question.whHamblin` (44), (63); `Question.weakAnswer_whHamblin`
--- is (52) and `Question.isExhaustivelyResolvable_whHamblin_iff` (49), (50), (65), (66);
+-- is (52) and `Question.hasStrongestTrueAnswer_whHamblin_iff` (49), (50), (65), (66);
 -- `Question.whFelicitous` and `Question.notMem_whFelicitous_bot` give (57a), (65), (66).
 
 -- (51)
@@ -197,7 +197,7 @@ theorem strongAnswer_hamblin (n : Option Number) (w : E) :
 theorem dayalStrongAns_hamblin {n : Option Number} {w : E} (h : w ∈ whDomain n) :
     dayalStrongAns (whHamblin n) w = some {w} :=
   (dayalStrongAns_eq_some_iff _ _).2
-    ⟨(isExhaustivelyResolvable_whHamblin_iff n w).2 h, (strongAnswer_hamblin n w).symm⟩
+    ⟨(hasStrongestTrueAnswer_whHamblin_iff n w).2 h, (strongAnswer_hamblin n w).symm⟩
 
 -- (46)
 /-- Maximality in the *wh* phrase: the member for `x` says that `x` is the maximal individual John
@@ -205,9 +205,9 @@ likes, true in the situation `x` alone. -/
 def maxHamblin (n : Option Number) : Set (Set E) := (fun x ↦ {x}) '' whDomain n
 
 -- p. 46: maximality in the wh phrase replicates Ans-D on single wh questions
-theorem mem_trueAnswers_maxHamblin_iff {n : Option Number} {w : E} {p : Set E} :
-    p ∈ trueAnswers (maxHamblin n) w ↔ dayalStrongAns (whHamblin n) w = some p := by
-  rw [dayalStrongAns_eq_some_iff, isExhaustivelyResolvable_whHamblin_iff, strongAnswer_hamblin]
+theorem mem_karttunen_maxHamblin_iff {n : Option Number} {w : E} {p : Set E} :
+    p ∈ karttunen (maxHamblin n) w ↔ dayalStrongAns (whHamblin n) w = some p := by
+  rw [dayalStrongAns_eq_some_iff, hasStrongestTrueAnswer_whHamblin_iff, strongAnswer_hamblin]
   constructor
   · rintro ⟨⟨x, hx, rfl⟩, rfl⟩
     exact ⟨hx, rfl⟩
@@ -217,16 +217,16 @@ theorem mem_trueAnswers_maxHamblin_iff {n : Option Number} {w : E} {p : Set E} :
 /-! ### Polar questions with a *wh* phrase -/
 
 -- the weak answer of the polar question is the strong answer of the wh question
-theorem isExhaustivelyResolvable_polarWh_iff (n : Option Number) (w : E) :
-    IsExhaustivelyResolvable (polarWh n) w ↔ {w} ∈ polarWh n := by
-  rw [isExhaustivelyResolvable_iff, polarWh, weakAnswer_union_image_compl, strongAnswer_hamblin]
+theorem hasStrongestTrueAnswer_polarWh_iff (n : Option Number) (w : E) :
+    HasStrongestTrueAnswer (polarWh n) w ↔ {w} ∈ polarWh n := by
+  rw [hasStrongestTrueAnswer_iff, polarWh, weakAnswer_union_image_compl, strongAnswer_hamblin]
 
 -- (51b)
 /-- With two atoms, a polar question with a singular *wh* phrase has no strongest true member in
 any situation. -/
-theorem not_isExhaustivelyResolvable_polarWh_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b)
-    (hab : a ≠ b) (w : E) : ¬ IsExhaustivelyResolvable (polarWh (some .singular)) w := by
-  rw [isExhaustivelyResolvable_polarWh_iff, mem_polarWh]
+theorem not_hasStrongestTrueAnswer_polarWh_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b)
+    (hab : a ≠ b) (w : E) : ¬ HasStrongestTrueAnswer (polarWh (some .singular)) w := by
+  rw [hasStrongestTrueAnswer_polarWh_iff, mem_polarWh]
   rintro ⟨x, hx, h | h⟩ <;> have hx := mem_whDomain_singular.1 hx
   · have key : ∀ {c : E}, IsAtom c → c = x := fun {c} hc ↦ (hx.le_iff_eq hc.ne_bot).1
       (eq_of_Ici_eq_singleton h (le_sup_right : x ≤ c ⊔ x) ▸ (le_sup_left : c ≤ c ⊔ x))
@@ -236,9 +236,9 @@ theorem not_isExhaustivelyResolvable_polarWh_singular {a b : E} (ha : IsAtom a) 
     exact hab ((key ha).symm.trans (key hb))
 
 -- (51c)
-theorem isExhaustivelyResolvable_polarWh_plural_iff {a b : E} (ha : IsAtom a) (hb : IsAtom b)
-    (hab : a ≠ b) (w : E) : IsExhaustivelyResolvable (polarWh (some .plural)) w ↔ w = ⊤ := by
-  rw [isExhaustivelyResolvable_polarWh_iff, mem_polarWh]
+theorem hasStrongestTrueAnswer_polarWh_plural_iff {a b : E} (ha : IsAtom a) (hb : IsAtom b)
+    (hab : a ≠ b) (w : E) : HasStrongestTrueAnswer (polarWh (some .plural)) w ↔ w = ⊤ := by
+  rw [hasStrongestTrueAnswer_polarWh_iff, mem_polarWh]
   constructor
   · rintro ⟨x, hx, h | h⟩
     · exact (h.symm ▸ le_top : (⊤ : E) ∈ ({w} : Set E)).symm
@@ -322,9 +322,9 @@ inductive Woman
 open Woman
 
 private theorem not_isAtom_pair {x y : Woman} (h : x ≠ y) : ¬ IsAtom ({x, y} : Set Woman) := by
-  rw [insert_eq, ← atom_iff_isAtom]
-  exact Mereology.not_atom_sup_of_ne (atom_iff_isAtom.2 (isAtom_singleton x))
-    (atom_iff_isAtom.2 (isAtom_singleton y)) (by simpa using h)
+  rw [insert_eq]
+  exact Mereology.not_isAtom_sup_of_ne ((isAtom_singleton x))
+    ((isAtom_singleton y)) (by simpa using h)
 
 private theorem mary_ne_sue : ({mary} : Set Woman) ≠ {sue} :=
   fun h => (by decide : mary ≠ sue) (singleton_eq_singleton_iff.1 h)
@@ -334,9 +334,9 @@ example : dayalAns (whHamblin (some .singular)) ({mary} : Set Woman) = some (Ici
   dayalAns_hamblin (mem_whDomain_singular.2 (isAtom_singleton mary))
 
 -- (49)
-example : ¬ IsExhaustivelyResolvable (whHamblin (some .singular)) ({mary, sue} : Set Woman) :=
+example : ¬ HasStrongestTrueAnswer (whHamblin (some .singular)) ({mary, sue} : Set Woman) :=
   fun h => not_isAtom_pair (by decide)
-    (mem_whDomain_singular.1 ((isExhaustivelyResolvable_whHamblin_iff _ _).1 h))
+    (mem_whDomain_singular.1 ((hasStrongestTrueAnswer_whHamblin_iff _ _).1 h))
 
 -- (50)
 example : dayalAns (whHamblin (some .plural)) ({mary, betty} : Set Woman) =
@@ -351,11 +351,11 @@ example : dayalAns (whHamblin (some .plural)) ({mary} : Set Woman) = some (Ici {
      h).2 (isAtom_singleton _)⟩
 
 -- (51)
-example : (∀ w : Set Woman, ¬ IsExhaustivelyResolvable (polarWh (some .singular)) w) ∧
-    ∀ w : Set Woman, IsExhaustivelyResolvable (polarWh (some .plural)) w ↔ w = univ :=
-  ⟨not_isExhaustivelyResolvable_polarWh_singular (isAtom_singleton mary) (isAtom_singleton sue)
+example : (∀ w : Set Woman, ¬ HasStrongestTrueAnswer (polarWh (some .singular)) w) ∧
+    ∀ w : Set Woman, HasStrongestTrueAnswer (polarWh (some .plural)) w ↔ w = univ :=
+  ⟨not_hasStrongestTrueAnswer_polarWh_singular (isAtom_singleton mary) (isAtom_singleton sue)
     mary_ne_sue,
-   isExhaustivelyResolvable_polarWh_plural_iff (isAtom_singleton mary) (isAtom_singleton sue)
+   hasStrongestTrueAnswer_polarWh_plural_iff (isAtom_singleton mary) (isAtom_singleton sue)
     mary_ne_sue⟩
 
 -- (52): Beck and Rullmann's answer to the singular question when John likes Mary and Sue
@@ -406,11 +406,11 @@ def nonexistence (e : Datum) : Option Nonexistence :=
 theorem existence_rows : ∀ e ∈ Examples.all,
     ∀ h ∈ e.parse? "cleft" [("true", Hardness.hard), ("false", .soft)], ∀ x ∈ nonexistence e,
       (e.judgment = .acceptable ↔
-        Coherent {w : Set Woman | IsExhaustivelyResolvable (whHamblin none) w} h x) := by
-  have hP : {w : Set Woman | IsExhaustivelyResolvable (whHamblin none) w}.Nonempty :=
-    ⟨{mary}, (isExhaustivelyResolvable_whHamblin_iff _ _).2 ⟨trivial, singleton_ne_empty _⟩⟩
-  have hP' : {w : Set Woman | IsExhaustivelyResolvable (whHamblin none) w}ᶜ.Nonempty :=
-    ⟨∅, fun h => ((isExhaustivelyResolvable_whHamblin_iff _ _).1 h).2 rfl⟩
+        Coherent {w : Set Woman | HasStrongestTrueAnswer (whHamblin none) w} h x) := by
+  have hP : {w : Set Woman | HasStrongestTrueAnswer (whHamblin none) w}.Nonempty :=
+    ⟨{mary}, (hasStrongestTrueAnswer_whHamblin_iff _ _).2 ⟨trivial, singleton_ne_empty _⟩⟩
+  have hP' : {w : Set Woman | HasStrongestTrueAnswer (whHamblin none) w}ᶜ.Nonempty :=
+    ⟨∅, fun h => ((hasStrongestTrueAnswer_whHamblin_iff _ _).1 h).2 rfl⟩
   simp only [coherent_iff hP hP']
   decide
 

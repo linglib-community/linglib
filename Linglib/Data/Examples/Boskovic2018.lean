@@ -23,10 +23,10 @@ def ex17 : Datum :=
     primaryText := "I wonder who friends of hired Mary."
     glossedTokens := []
     context := "Extraction from a subject that has raised from the specifier of vP."
-    judgment := .unacceptable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "subjectSubextraction")] }
+    paperFeatures := [] }
 
 def ex20 : Datum :=
   { id := "boskovic2018_ex20"
@@ -39,7 +39,7 @@ def ex20 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "remnantFronting")] }
+    paperFeatures := [] }
 
 def ex22a : Datum :=
   { id := "boskovic2018_ex22a"
@@ -54,7 +54,7 @@ def ex22a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "v2Moved")] }
+    paperFeatures := [] }
 
 def ex22c : Datum :=
   { id := "boskovic2018_ex22c"
@@ -69,7 +69,22 @@ def ex22c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "v2InSitu")] }
+    paperFeatures := [] }
+
+def ex24 : Datum :=
+  { id := "boskovic2018_ex24"
+    source := ⟨"boskovic-2018", "(24)"⟩
+    reportedIn := none
+    language := "sout1528"
+    primaryText := "Jovanovu je on vidio sliku."
+    glossedTokens := [("Jovanovu", "John's.ACC.FEM.SG"), ("je", "is"), ("on", "he"), ("vidio", "seen"), ("sliku", "picture.ACC.FEM.SG")]
+    glossedWords := [⟨['J', 'o', 'v', 'a', 'n', 'o', 'v', 'u'], ['J', 'o', 'h', 'n', '\'', 's', '.', 'A', 'C', 'C', '.', 'F', 'E', 'M', '.', 'S', 'G'], [⟨['J', 'o', 'v', 'a', 'n', 'o', 'v', 'u'], ['J', 'o', 'h', 'n', '\'', 's', '.', 'A', 'C', 'C', '.', 'F', 'E', 'M', '.', 'S', 'G'], none⟩]⟩, ⟨['j', 'e'], ['i', 's'], [⟨['j', 'e'], ['i', 's'], none⟩]⟩, ⟨['o', 'n'], ['h', 'e'], [⟨['o', 'n'], ['h', 'e'], none⟩]⟩, ⟨['v', 'i', 'd', 'i', 'o'], ['s', 'e', 'e', 'n'], [⟨['v', 'i', 'd', 'i', 'o'], ['s', 'e', 'e', 'n'], none⟩]⟩, ⟨['s', 'l', 'i', 'k', 'u'], ['p', 'i', 'c', 't', 'u', 'r', 'e', '.', 'A', 'C', 'C', '.', 'F', 'E', 'M', '.', 'S', 'G'], [⟨['s', 'l', 'i', 'k', 'u'], ['p', 'i', 'c', 't', 'u', 'r', 'e', '.', 'A', 'C', 'C', '.', 'F', 'E', 'M', '.', 'S', 'G'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := "A possessor extracted from an object in its base position."
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [] }
 
 def ex25a : Datum :=
   { id := "boskovic2018_ex25a"
@@ -84,7 +99,22 @@ def ex25a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "possessorExtraction")] }
+    paperFeatures := [] }
+
+def ex27 : Datum :=
+  { id := "boskovic2018_ex27"
+    source := ⟨"boskovic-2018", "(27)"⟩
+    reportedIn := none
+    language := "sout1528"
+    primaryText := "Jovanovu sliku je on vidio."
+    glossedTokens := [("Jovanovu", "John's.ACC"), ("sliku", "picture.ACC"), ("je", "is"), ("on", "he"), ("vidio", "seen")]
+    glossedWords := [⟨['J', 'o', 'v', 'a', 'n', 'o', 'v', 'u'], ['J', 'o', 'h', 'n', '\'', 's', '.', 'A', 'C', 'C'], [⟨['J', 'o', 'v', 'a', 'n', 'o', 'v', 'u'], ['J', 'o', 'h', 'n', '\'', 's', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['s', 'l', 'i', 'k', 'u'], ['p', 'i', 'c', 't', 'u', 'r', 'e', '.', 'A', 'C', 'C'], [⟨['s', 'l', 'i', 'k', 'u'], ['p', 'i', 'c', 't', 'u', 'r', 'e', '.', 'A', 'C', 'C'], none⟩]⟩, ⟨['j', 'e'], ['i', 's'], [⟨['j', 'e'], ['i', 's'], none⟩]⟩, ⟨['o', 'n'], ['h', 'e'], [⟨['o', 'n'], ['h', 'e'], none⟩]⟩, ⟨['v', 'i', 'd', 'i', 'o'], ['s', 'e', 'e', 'n'], [⟨['v', 'i', 'd', 'i', 'o'], ['s', 'e', 'e', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := "An object fronted with the possessor in its specifier."
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [] }
 
 def ex42a : Datum :=
   { id := "boskovic2018_ex42a"
@@ -99,21 +129,8 @@ def ex42a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("construction", "rPronounExtraction")] }
+    paperFeatures := [] }
 
-def ex58 : Datum :=
-  { id := "boskovic2018_ex58"
-    source := ⟨"boskovic-2018", "(58)"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "John was arrested by Mary."
-    glossedTokens := []
-    context := "Collins's smuggling derivation of the passive: PartP to Spec,VoiceP, then the object out of it."
-    judgment := .acceptable
-    contrasts := []
-    readings := []
-    paperFeatures := [("construction", "smugglingPassive")] }
-
-def all : List Datum := [ex17, ex20, ex22a, ex22c, ex25a, ex42a, ex58]
+def all : List Datum := [ex17, ex20, ex22a, ex22c, ex24, ex25a, ex27, ex42a]
 
 end Boskovic2018.Examples

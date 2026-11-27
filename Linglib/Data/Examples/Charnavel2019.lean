@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Charnavel2019` — typed example data
@@ -276,5 +278,22 @@ def ex_4_43a : Datum :=
     paperFeatures := [("animacy", "inanimate")] }
 
 def all : List Datum := [ex_2_2a, ex_2_2b, ex_2_8b, ex_2_3a, ex_2_3b, ex_4_5, ex_4_12, ex_4_14, ex_4_17, ex_4_20, ex_4_21a, ex_4_21b, ex_4_25a, ex_4_25, ex_4_25b, ex_4_27, ex_4_39a, ex_4_39b, ex_4_38, ex_4_43a]
+
+/-- The kinds of perspective center the book tells apart. -/
+inductive Center where
+  /-- non-attitudinal source: the source of a report who holds no attitude toward its content -/
+  | nonAttitudinalSource
+  /-- attitude holder: one whose thought or speech a clause reports, the speaker included -/
+  | attitudeHolder
+  /-- empathy locus: one whose sensory or emotional experience the speaker takes up -/
+  | empathyLocus
+  /-- deictic center: A spatial point of reference, which need have no mental state -/
+  | deicticCenter
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `antecedent`. -/
+def antecedent (e : Datum) : Option Center :=
+  e.parse? "antecedent" [("non-attitudinal source", .nonAttitudinalSource), ("attitude holder", .attitudeHolder),
+    ("empathy locus", .empathyLocus), ("deictic center", .deicticCenter)]
 
 end Charnavel2019.Examples

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.Mandarin.Adverbs
-public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Languages.Mandarin.Adverbs
+public import Linglib.Languages.Mandarin.Verbs
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Semantics.Presupposition.Again
 public import Linglib.Semantics.Aspect.Phasal
@@ -288,7 +288,7 @@ inductive Trigger
   | houhui
   deriving DecidableEq, Repr
 
-/-- The fragment entry of a trigger, an adverb or a verb. -/
+/-- The language file entry of a trigger, an adverb or a verb. -/
 def Trigger.entry : Trigger → Presupposition.TriggerItem ⊕ Verb
   | .ye => .inl Mandarin.Adverbs.ye
   | .faner => .inl Mandarin.Adverbs.faner
@@ -326,7 +326,7 @@ holds or fails now. -/
 
 section Aspectual
 
-open Presupposition ModalLogic Aspect
+open Presupposition ModalLogic Aspect Bilattice
 
 /-- The candidate for a sentence with the trivalent meaning `φ` commits the speaker to its
 presupposition, where `φ` is defined, and to its assertion, where `φ` is true. -/
@@ -335,42 +335,52 @@ def Candidate.ofTrivalent (φ : W → Trivalent) : Candidate W :=
 
 variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : W → Trivalent}
 
+open Classical in
 theorem Candidate.ofTrivalent_eq_presupSentence {a : Set W}
-    (h : ∀ w, φ w ≠ .undefined → (φ w = .true ↔ w ∈ a)) :
+    (h : ∀ w, φ w ≤ₖ Trivalent.ofProp (w ∈ a)) :
     Candidate.ofTrivalent φ = presupSentence ((Trivalent.gapExt φ)ᶜ) a := by
   simp only [Candidate.ofTrivalent, presupSentence, Candidate.mk.injEq, and_true]
   congr 1
   ext w
-  exact and_congr_right (h w)
+  exact and_congr_right (Trivalent.kLE_ofProp_iff.1 (h w))
 
-/-- The meaning of an aspectual trigger with the prejacent `P`. `R` relates an index to the
-earlier ones, the `<` of (12), and `S` relates an index to the earlier index of (19), (24) and
-(38), a relation the dissertation writes `∞`. The meaning of *kaishi* is that of the phasal class
-of its fragment entry, and the other triggers of Table 4.1 are not aspectual. -/
-noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) :
-    Trigger → Option (W → Trivalent)
-  | .you | .zai => some (again R P)
-  | .reng => some (Phasal.continuation.denote S P)
-  | .buzai => some (Phasal.cessation.denote S P)
-  | .kaishi => Mandarin.kaishi.phasal.map (·.denote S P)
-  | _ => none
+/-- The meaning of an aspectual trigger with the prejacent `P`, by the class of its language file
+entry. `R` relates an index to the earlier ones, the `<` of (12), and `S` relates an index to the
+earlier index of (19), (24) and (38), a relation the dissertation writes `∞`. An iterative adverb
+is *again* along `R`, a phasal adverb or verb has the meaning of its phasal class along `S`, and
+the other triggers of Table 4.1 are not aspectual. -/
+noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) (t : Trigger) :
+    Option (W → Trivalent) :=
+  match t.entry with
+  | .inl a =>
+    match a.triggerClass with
+    | .iterative => some (again R P)
+    | .phasal c => some (c.denote S P)
+    | _ => none
+  | .inr v => v.phasal.map (·.denote S P)
 
+open Classical in
 -- (1)
-theorem eq_true_iff_of_altStructure_deletion (h : t.aspectual R S P = some φ)
-    (ht : t.altStructure = .deletion) {w : W} (hw : φ w ≠ .undefined) : φ w = .true ↔ P w := by
+theorem aspectual_kLE_of_altStructure_deletion (h : t.aspectual R S P = some φ)
+    (ht : t.altStructure = .deletion) (w : W) : φ w ≤ₖ Trivalent.ofProp (P w) := by
   cases t <;>
-    first | (cases ht; done) | (cases h; done) | (cases h; simp_all [Phasal.denote, again])
+    first
+    | (cases ht; done)
+    | (cases h; done)
+    | (cases h; exact again_kLE)
+    | (cases h; exact Phasal.denote_kLE)
 
-theorem eq_true_iff_buzai (h : Trigger.buzai.aspectual R S P = some φ) {w : W} (hw : φ w ≠ .undefined) :
-    φ w = .true ↔ ¬ P w := by
-  cases h; simp_all [Phasal.denote]
+open Classical in
+theorem aspectual_buzai_kLE (h : Trigger.buzai.aspectual R S P = some φ) (w : W) :
+    φ w ≤ₖ Trivalent.ofProp (¬ P w) := by
+  cases h; exact Phasal.denote_kLE
 
 -- Table 4.2
 theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) (hp : ctx ⊆ K ((Trivalent.gapExt φ)ᶜ))
     (hwit : ∃ s ∈ ctx, s ⊆ {w | P w}) :
     Beats (ranking ctx (.ofTrivalent φ)) (.ofTrivalent φ) (plain {w | P w}) := by
-  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_true_iff_of_altStructure_deletion h ht]
+  rw [Candidate.ofTrivalent_eq_presupSentence (aspectual_kLE_of_altStructure_deletion h ht)]
   exact obligatory_of_entailed hp hwit
 
 -- Table 4.3
@@ -378,7 +388,7 @@ theorem aspectual_omitted_of_not_entailed (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K ((Trivalent.gapExt φ)ᶜ))
     (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ (Trivalent.gapExt φ)ᶜ ∩ {w | P w}) :
     Beats (ranking ctx (.ofTrivalent φ)) (plain {w | P w}) (.ofTrivalent φ) := by
-  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_true_iff_of_altStructure_deletion h ht]
+  rw [Candidate.ofTrivalent_eq_presupSentence (aspectual_kLE_of_altStructure_deletion h ht)]
   exact omitted_of_not_entailed hp hwit
 
 end Aspectual
@@ -406,9 +416,10 @@ private theorem maximal_isConsistentExclusion_range_iff {ι : Type*} {f : ι →
     Maximal (IsConsistentExclusion (Set.range f) φ) X ↔
       ∃ u ∈ exhMW (Set.range f) φ, X = f '' {i | u ∉ f i} := by
   have key (u : W) :
-      Set.range f \ Preorder.satisfied (· ∈ ·) (Set.range f) u = f '' {i | u ∉ f i} := by
+      Set.range f \ {a ∈ (Set.range f) | u ∈ a} = f '' {i | u ∉ f i} := by
     ext b
-    simp only [mem_sdiff_satisfied, Set.mem_range, Set.mem_image, Set.mem_ofPred_eq]
+    rw [mem_sdiff_satisfied]
+    simp only [Set.mem_range, Set.mem_image, Set.mem_ofPred_eq]
     exact ⟨fun ⟨⟨i, hi⟩, hu⟩ ↦ ⟨i, hi ▸ hu, hi⟩, fun ⟨i, hu, hi⟩ ↦ ⟨⟨i, hi⟩, hi ▸ hu⟩⟩
   simp_rw [← key]
   exact ⟨Maximal.exists_eq_sdiff_satisfied,

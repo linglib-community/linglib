@@ -1,0 +1,193 @@
+module
+
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
+public import Mathlib.Order.BooleanSubalgebra
+
+/-!
+# Question entailment
+
+A question `P` entails a question `Q` when every information state that resolves `P` also resolves
+`Q`. This is the order `P ≤ Q` on `Inquisitive.Proposition (Set W)`.
+
+For a normal question it is enough to look at the alternatives: `P` entails `Q` if and only if every
+alternative of `P` resolves `Q`. See `Inquisitive.Proposition.IsNormal.le_iff_forall_alt_mem`.
+
+There is a second notion of entailment, due to [groenendijk-stokhof-1984]: every complete answer to
+`P` is a complete answer to `Q`. For partition questions the two notions agree. For Hamblin
+alternative sets they go in opposite directions, because adding alternatives makes a question weaker
+in the order but harder to answer completely.
+
+Every question has a partition, which identifies two worlds when no proposition the question
+determines tells them apart. It is the finest partition whose question the question entails: taking
+the partition is left adjoint to `fromSetoid`, and the pair is a Galois insertion. See
+`Inquisitive.Proposition.gi_partition_fromSetoid`.
+
+## References
+
+* [ciardelli-2022]
+* [ciardelli-groenendijk-roelofsen-2018]
+* [groenendijk-stokhof-1984]
+* [roberts-2012]
+-/
+
+public section
+
+namespace Inquisitive.Proposition
+
+variable {W : Type*} {P Q : Proposition (Set W)}
+
+/-! ### Entailment on generators -/
+
+theorem le_iff_forall_mem_of_coe_eq_lowerClosure {S : Set (Set W)}
+    (hS : (P : Set (Set W)) = lowerClosure S) : P ≤ Q ↔ ∀ a ∈ S, a ∈ Q := by
+  rw [← SetLike.coe_subset_coe, hS]
+  exact ⟨subset_lowerClosure.trans, (lowerClosure_min · Q.isLowerSet)⟩
+
+theorem le_iff_forall_exists_subset {S T : Set (Set W)}
+    (hS : (P : Set (Set W)) = lowerClosure S) (hT : (Q : Set (Set W)) = lowerClosure T) :
+    P ≤ Q ↔ ∀ a ∈ S, ∃ b ∈ T, a ⊆ b := by
+  rw [le_iff_forall_mem_of_coe_eq_lowerClosure hS]
+  refine forall₂_congr fun a _ ↦ ?_
+  rw [← SetLike.mem_coe, hT]
+  exact Iff.rfl
+
+/-! ### Normal questions -/
+
+theorem IsNormal.le_iff_forall_alt_mem (hP : P.IsNormal) : P ≤ Q ↔ ∀ a ∈ alt P, a ∈ Q :=
+  le_iff_forall_mem_of_coe_eq_lowerClosure hP.coe_eq_lowerClosure
+
+theorem IsNormal.le_iff_forall_alt_exists_alt (hP : P.IsNormal) (hQ : Q.IsNormal) :
+    P ≤ Q ↔ ∀ a ∈ alt P, ∃ b ∈ alt Q, a ⊆ b :=
+  le_iff_forall_exists_subset hP.coe_eq_lowerClosure hQ.coe_eq_lowerClosure
+
+/-- A normal question entails any question whose alternatives include its own: more
+alternatives make a question weaker. -/
+theorem IsNormal.le_of_alt_subset (hP : P.IsNormal) (h : alt P ⊆ alt Q) : P ≤ Q :=
+  hP.le_iff_forall_alt_mem.mpr fun _ ha ↦ mem_of_mem_alt (h ha)
+
+/-! ### Polar questions -/
+
+theorem polar_le_iff {p : Set W} : polar p ≤ Q ↔ p ∈ Q ∧ pᶜ ∈ Q := by
+  rw [polar_eq_sup, sup_le_iff, ← mem_iff_ofSet_le, ← mem_iff_ofSet_le]
+
+theorem polar_le_polar_iff {p q : Set W} :
+    polar p ≤ polar q ↔ polar q = polar p ∨ polar q = ⊤ := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h.elim (·.ge) (·.symm ▸ le_top)⟩
+  rw [polar_le_iff, mem_polar, mem_polar] at h
+  have hcover {s : Set W} (hp : p ⊆ s) (hpc : pᶜ ⊆ s) : s = Set.univ :=
+    Set.univ_subset_iff.mp (Set.union_compl_self p ▸ Set.union_subset hp hpc)
+  obtain ⟨hp | hp, hpc | hpc⟩ := h
+  · rw [hcover hp hpc, polar_univ]; exact Or.inr rfl
+  · rw [(Set.compl_subset_compl.mp hpc).antisymm hp]; exact Or.inl rfl
+  · rw [(Set.subset_compl_comm.mp hp).antisymm hpc, polar_compl]; exact Or.inl rfl
+  · rw [Set.compl_univ_iff.mp (hcover hp hpc), polar_empty]; exact Or.inr rfl
+
+/-- A question that determines two propositions determines their intersection: a state settling
+whether `p` and whether `q` settles whether both. -/
+theorem le_polar_inter {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
+    Q ≤ polar (p ∩ q) := fun σ hσ ↦ by
+  obtain h | h := mem_polar.1 (hp hσ)
+  · obtain h' | h' := mem_polar.1 (hq hσ)
+    · exact mem_polar.2 (.inl (Set.subset_inter h h'))
+    · exact mem_polar.2 (.inr (h'.trans (Set.compl_subset_compl.2 Set.inter_subset_right)))
+  · exact mem_polar.2 (.inr (h.trans (Set.compl_subset_compl.2 Set.inter_subset_left)))
+
+theorem le_polar_union {p q : Set W} (hp : Q ≤ polar p) (hq : Q ≤ polar q) :
+    Q ≤ polar (p ∪ q) := by
+  rw [← polar_compl, Set.compl_union]
+  exact le_polar_inter (by rwa [polar_compl]) (by rwa [polar_compl])
+
+/-- The propositions a question determines, those whose polar question it entails, form a Boolean
+subalgebra of the propositions. -/
+def determined (Q : Proposition (Set W)) : BooleanSubalgebra (Set W) where
+  carrier := {p | Q ≤ polar p}
+  supClosed' _ hp _ hq := le_polar_union hp hq
+  infClosed' _ hp _ hq := le_polar_inter hp hq
+  compl_mem' hp := by rwa [Set.mem_ofPred_eq, polar_compl]
+  bot_mem' := by
+    change Q ≤ polar ∅
+    rw [polar_empty]
+    exact le_top
+
+@[simp] theorem mem_determined {p : Set W} : p ∈ Q.determined ↔ Q ≤ polar p := Iff.rfl
+
+/-- A partition question determines, as an inquisitive question, the propositions it determines
+as a partition. -/
+theorem determined_fromSetoid (r : Setoid W) : (fromSetoid r).determined = r.determined :=
+  SetLike.ext fun p ↦ (determines_iff_fromSetoid_le r p).symm
+
+/-! ### The partition of a question -/
+
+/-- The partition of a question identifies two worlds when no proposition that the question
+determines tells them apart. -/
+def partition (Q : Proposition (Set W)) : Setoid W := Setoid.ofProps (Q.determined : Set (Set W))
+
+/-- The partition of a question and the question of a partition are adjoint: the partition of
+`P` is the finest one whose question `P` entails. -/
+theorem gc_partition_fromSetoid :
+    GaloisConnection (partition : Proposition (Set W) → Setoid W) fromSetoid := by
+  intro Q r
+  constructor
+  · intro h s hs
+    refine mem_fromSetoid.2 fun x hx y hy ↦ h (Setoid.ofProps_iff.2 fun p hp ↦ ?_)
+    rcases mem_polar.1 (mem_determined.1 hp hs) with hsp | hsp
+    · exact iff_of_true (hsp hx) (hsp hy)
+    · exact iff_of_false (hsp hx) (hsp hy)
+  · intro h
+    rw [← Setoid.ofProps_determined r, ← determined_fromSetoid]
+    exact Setoid.ofProps_anti fun p hp ↦ h.trans hp
+
+@[simp] theorem partition_fromSetoid (r : Setoid W) : (fromSetoid r).partition = r := by
+  rw [partition, determined_fromSetoid, Setoid.ofProps_determined]
+
+/-- The adjunction is a Galois insertion: a partition is the partition of its question. -/
+def gi_partition_fromSetoid :
+    GaloisInsertion (partition : Proposition (Set W) → Setoid W) fromSetoid :=
+  gc_partition_fromSetoid.toGaloisInsertion fun r ↦ (partition_fromSetoid r).ge
+
+/-- The normal partition questions are the questions of partitions. -/
+theorem isPartition_and_isNormal_iff_mem_range [Nonempty W] :
+    P.IsPartition ∧ P.IsNormal ↔ P ∈ Set.range fromSetoid :=
+  ⟨fun ⟨h, hN⟩ ↦ ⟨toSetoid h, fromSetoid_toSetoid h hN⟩, by
+    rintro ⟨r, rfl⟩
+    exact ⟨isPartition_fromSetoid r, isNormal_fromSetoid r⟩⟩
+
+/-! ### Complete-answer entailment -/
+
+theorem IsPartition.completeAnswers_eq (hP : P.IsPartition) (hN : P.IsNormal) :
+    completeAnswers P = P := by
+  ext σ
+  refine ⟨fun h ↦ ?_, fun hσ p hp ↦ ?_⟩
+  · rcases σ.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
+    · exact P.empty_mem
+    obtain ⟨c, hc, hwc⟩ := Set.mem_sUnion.mp (hP.sUnion_alt_eq_univ ▸ Set.mem_univ w)
+    exact mem_of_exists_alt_subset ⟨c, hc, (h c hc).resolve_right fun h' ↦ h' hw hwc⟩
+  · obtain ⟨c, hc, hσc⟩ := hN hσ
+    rcases eq_or_ne p c with rfl | hpc
+    · exact Or.inl hσc
+    · exact Or.inr (hσc.trans (hP.pairwiseDisjoint hc hp hpc.symm).le_compl_right)
+
+/-- A partition question is a contextual subquestion of every normal question it entails, since its
+complete answers are the states resolving it. -/
+theorem IsPartition.isSubquestionOf_of_le (C : Set W) (hP : P.IsPartition) (hP' : P.IsNormal)
+    (hQ : Q.IsNormal) (h : P ≤ Q) : IsSubquestionOf C P Q := fun σ hσ ↦ by
+  rw [hP.completeAnswers_eq hP'] at hσ
+  obtain ⟨q, hq, hσq⟩ := hQ (le_def.mp h hσ)
+  exact ⟨q, hq, .inl (Set.inter_subset_right.trans hσq)⟩
+
+theorem IsPartition.completeAnswers_subset_iff_le (hP : P.IsPartition) (hP' : P.IsNormal)
+    (hQ : Q.IsPartition) (hQ' : Q.IsNormal) :
+    completeAnswers P ⊆ completeAnswers Q ↔ P ≤ Q := by
+  rw [hP.completeAnswers_eq hP', hQ.completeAnswers_eq hQ', SetLike.coe_subset_coe]
+
+theorem completeAnswers_fromSetoid_subset_iff {r₁ r₂ : Setoid W} :
+    completeAnswers (fromSetoid r₁) ⊆ completeAnswers (fromSetoid r₂) ↔ r₁ ≤ r₂ := by
+  rcases isEmpty_or_nonempty W with _ | _
+  · refine iff_of_true (fun σ _ p _ ↦ Or.inl ?_) fun x ↦ isEmptyElim x
+    rw [σ.eq_empty_of_isEmpty]
+    exact Set.empty_subset p
+  · rw [(isPartition_fromSetoid r₁).completeAnswers_subset_iff_le (isNormal_fromSetoid r₁)
+      (isPartition_fromSetoid r₂) (isNormal_fromSetoid r₂), fromSetoid_le_iff]
+
+end Inquisitive.Proposition

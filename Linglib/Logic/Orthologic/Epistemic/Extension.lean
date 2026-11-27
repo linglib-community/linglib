@@ -2,43 +2,38 @@ module
 
 public import Linglib.Logic.Orthologic.Epistemic.Compatibility
 public import Linglib.Core.Order.Interval.Basic
+public import Linglib.Core.Order.Interval.Fintype
 public import Linglib.Core.Order.Ortholattice.Hom
 public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The epistemic extension of a Boolean algebra
 
 This file builds Holliday and Mandelkern's possibility model for epistemic modals out of a Boolean
-algebra `B` of non-modal propositions. A possibility is an interval `[a, i]` of `B` with `a ≠ ⊥`:
-`a` settles how things are and might be, and the information state `i` settles what must be the
-case. Two possibilities are compatible when their first components are consistent and their
-intervals overlap, and a possibility accesses the possibilities whose intervals lie within its
-own. Access is then reflexive and transitive, R-regular and knowable, so the regular propositions
-of this *epistemic frame* form an S5 epistemic ortholattice, the *epistemic extension* of `B`.
+algebra `B` of non-modal propositions. A [possibility](##Orthologic.Possibility) is an interval
+`[a, i]` of `B` with `a ≠ ⊥`: `a` settles how things are and might be, and the information state
+`i` settles what must be the case. Two possibilities are compatible when their first components
+are consistent and their intervals overlap, and a possibility
+[accesses](##Orthologic.Possibility.access) the possibilities whose intervals lie within its own.
+Access is then reflexive and transitive, R-regular and knowable, so the regular propositions of
+this [epistemic frame](##Orthologic.epistemicFrame) form an
+[S5](##Orthologic.diamondHom_le_necHom_diamondHom) epistemic ortholattice, the
+*epistemic extension* of `B`.
 
-`B` embeds into its epistemic extension, preserving every meet and join that exists in `B` and
-sending complements to orthocomplements. On an embedded proposition the modals reduce to `B`:
-`b` must be the case at `[a, i]` iff `i ≤ b`, and might be iff `a` is not disjoint from `b`. So
-`◇b` strictly extends `b` whenever `b` is neither `⊥` nor `⊤`, a modality that Wittgenstein's
-Law rules out on a Boolean algebra (`Orthologic.IsEpistemic.eq_id`). On embedded propositions
-the extension also validates principles that the logic EO+ does not derive, among them
-restricted diamond distributivity.
-
-## Main definitions
-
-* `Orthologic.Possibility B`: the intervals `[a, i]` of `B` with `a ≠ ⊥`.
-* `Orthologic.epistemicFrame B`, `Orthologic.Possibility.access`: the epistemic frame of `B`.
-* `Orthologic.embed`: the embedding of `B` into the regular propositions.
-
-## Main statements
-
-* `Orthologic.isLUB_embed_image`: `embed` preserves the joins that exist in `B`.
-* `Orthologic.mem_diamond_embed`: `b` might be the case at `[a, i]` iff `a` meets `b`.
-* `Orthologic.diamondHom_le_necHom_diamondHom`: the epistemic extension is S5.
-* `Orthologic.not_diamond_embed_subset`: `◇` does not collapse on embedded propositions.
-* `Orthologic.restricted_diamond_distributivity_embed`: a principle beyond EO+.
+`B` [embeds](##Orthologic.embed) into its epistemic extension, preserving every
+[meet](##Orthologic.isGLB_embed_image) and [join](##Orthologic.isLUB_embed_image) that exists in
+`B` and [sending complements to orthocomplements](##Orthologic.embed_compl). On an embedded
+proposition the modals reduce to `B`: `b` must be the case at `[a, i]` iff `i ≤ b`, and
+[might be](##Orthologic.mem_diamond_embed) iff `a` is not disjoint from `b`. So `◇b`
+[strictly extends](##Orthologic.not_diamond_embed_subset) `b` whenever `b` is neither `⊥` nor `⊤`,
+a modality that Wittgenstein's Law rules out on a Boolean algebra (`Orthologic.IsEpistemic.eq_id`).
+On embedded propositions the extension also validates principles that the logic EO+ does not
+derive, among them
+[restricted diamond distributivity](##Orthologic.restricted_diamond_distributivity_embed).
 
 ## Implementation notes
 
@@ -76,15 +71,10 @@ theorem toNonemptyInterval_injective :
     Function.Injective (toNonemptyInterval : Possibility B → NonemptyInterval B) :=
   fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by congr
 
-/-- A possibility is an interval with nonzero first component. -/
-def equivSubtype : Possibility B ≃ {s : NonemptyInterval B // s.fst ≠ ⊥} where
-  toFun x := ⟨x, x.fst_ne_bot⟩
-  invFun s := ⟨s.1, s.2⟩
-
 instance [DecidableEq B] : DecidableEq (Possibility B) := toNonemptyInterval_injective.decidableEq
 
-instance [Fintype (NonemptyInterval B)] [DecidableEq B] : Fintype (Possibility B) :=
-  .ofEquiv _ equivSubtype.symm
+instance [Fintype B] [DecidableLE B] [DecidableEq B] : Fintype (Possibility B) :=
+  derive_fintype% _
 
 /-- Possibilities are ordered by inclusion of their intervals. -/
 instance : PartialOrder (Possibility B) := .lift _ toNonemptyInterval_injective

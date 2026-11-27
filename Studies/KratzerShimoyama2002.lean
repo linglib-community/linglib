@@ -2,10 +2,10 @@ module
 
 public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Lattice.Bounded
-public import Linglib.Logic.Modal.Defs
-public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Languages.Japanese.Determiners
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Fragments.German.PolarityItems
+public import Linglib.Languages.German.PolarityItems
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.KratzerShimoyama2002
 public import Linglib.Data.Examples.Readers
@@ -45,8 +45,8 @@ Hamblin functional application is mathlib's `Set.seq`, and singleton denotations
 is idle on an already closed set. The existential and universal operators are what the
 coordinators *ka* and *mo* denote on the set of alternatives (`opExists_eq_denote_ka`,
 `opForall_eq_denote_mo`), and on individual alternatives they give the readings of the
-indeterminate quantifiers in `Fragments/Japanese/Determiners.lean` (`denote_image_eq_reading`),
-an identification of *ka* and *mo* with the coordinators that the fragment makes and the paper
+indeterminate quantifiers in `Languages/Japanese/Determiners.lean` (`denote_image_eq_reading`),
+an identification of *ka* and *mo* with the coordinators that the language file makes and the paper
 does not. The modal semantics is stated for an accessibility relation
 on any type of worlds, and the free-choice computations are the paper's three tables with
 the derived implicature as a hypothesis. The Beck-effect paradigm and its scrambled

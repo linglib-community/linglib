@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Bilattice.Involution
 public import Mathlib.Data.Finset.Lattice.Fold
 
@@ -22,8 +22,6 @@ top: Kleene's values lack the glut of Belnap's four values, of which they are th
 ## Main definitions
 
 * the `PartialOrder`, `OrderBot` and `SemilatticeInf` instances on `Know Trivalent`.
-* `Trivalent.IsExtensionOf`, `Trivalent.IsRegular`: a trivalent quantifier that agrees with a
-  classical one on classical predicates, and one that is monotone for the knowledge order.
 
 ## Main results
 
@@ -32,6 +30,7 @@ top: Kleene's values lack the glut of Belnap's four values, of which they are th
 * the `Negation Trivalent` instance, `Trivalent.inf_kLE_inf_left`, `Trivalent.sup_kLE_sup_left`:
   the Strong Kleene connectives are knowledge-monotone.
 * `Trivalent.kLE_ofProp_eq_true`: Bochvar's assertion operator only adds information.
+* `Trivalent.transplication_kLE`: transplication only removes it.
 * `Trivalent.meetWeak_not_truthMono`, `Trivalent.joinWeak_not_truthMono`: the Weak Kleene ones are
   not truth-monotone.
 * `Trivalent.toKnow_supervaluation`: over a nonempty family, the supervaluation is the knowledge
@@ -114,6 +113,16 @@ theorem sup_kLE_sup_left {a a' : Trivalent} (b : Trivalent) (h : a ≤ₖ a') : 
 theorem kLE_ofProp_eq_true (a : Trivalent) : a ≤ₖ ofProp (a = .true) := by
   cases a <;> decide
 
+/-- A value has at most the information of a two-valued one when, if it is defined, it is true
+exactly when the two-valued one is. -/
+theorem kLE_ofProp_iff {a : Trivalent} {P : Prop} [Decidable P] :
+    a ≤ₖ ofProp P ↔ (a ≠ .undefined → (a = .true ↔ P)) := by
+  rw [kLE_iff]; by_cases h : P <;> cases a <;> simp [h]
+
+/-- Transplication only removes information from the value it guards. -/
+theorem transplication_kLE (a b : Trivalent) : transplication a b ≤ₖ b := by
+  cases a <;> first | exact kLE_refl b | exact undefined_kLE b
+
 /-- Weak Kleene conjunction is not truth-monotone, since `undefined ≤ true` but
 `meetWeak undefined false = undefined` is not below `meetWeak true false = false`; unlike `⊓` it is
 no bilattice operation. -/
@@ -152,24 +161,5 @@ theorem supervaluation_kLE_supervaluation {α : Type*} {s t : Finset α} (P : α
     supervaluation t P ≤ₖ supervaluation s P := by
   rw [kLE_def, toKnow_supervaluation P hs, toKnow_supervaluation P (hs.mono h)]
   exact Finset.inf'_mono _ h hs
-
-/-! ### Regular extensions of a quantifier -/
-
-section Regular
-
-variable {U : Type*}
-
-open Classical in
-/-- A trivalent quantifier is an extension of `Q` when it has the value of `Q` at every classical
-predicate. -/
-def IsExtensionOf (Q : Set U → Prop) (T : (U → Trivalent) → Trivalent) : Prop :=
-  ∀ R : Set U, T (fun u ↦ ofProp (u ∈ R)) = ofProp (Q R)
-
-/-- A trivalent quantifier is regular when more information about its argument gives more
-information about its value ([kleene-1952]). -/
-def IsRegular (T : (U → Trivalent) → Trivalent) : Prop :=
-  ∀ ⦃A A' : U → Trivalent⦄, (∀ u, A u ≤ₖ A' u) → T A ≤ₖ T A'
-
-end Regular
 
 end Trivalent

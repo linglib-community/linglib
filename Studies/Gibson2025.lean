@@ -1,8 +1,9 @@
 module
 
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.WordOrder.Projectivity
+public import Linglib.Syntax.WordOrder.HeadDirection
+public import Linglib.Syntax.WordOrder.ArcLength
 public import Linglib.Syntax.DependencyGrammar.Stemma
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.Word.Basic
@@ -18,11 +19,12 @@ spine. The measure is the total dependency length of [futrell-mahowald-gibson-20
 the book's (99a) (`totalLength_99a`), and a head-final language reads the same structure in the
 mirrored order of its head-argument rules with subjects kept before their verbs (`sov_harmonic`).
 The argument is worked through the book's (122) and (123): every regime is one dependency structure
-read in a different order (`Graph.linearize`), the harmonic orders are the shortest, and each
+read in a different order (`DependencyGraph.linearize`), the harmonic orders are the shortest, and
+each
 mismatch of verb-complement direction with the direction of infinitival, subordinator, adposition,
 or relative-clause dependencies costs the lengths the book computes (`totalLength_122`,
 `totalLength_123`). The mechanism is an arc to the far end of its own phrase
-(`Graph.ncard_yield_le_dist`), which is why the one-word dependents of Table 5.4 need not align
+(`Digraph.ncard_reachSet_le_dist`), which is why the one-word dependents of Table 5.4 need not align
 (`single_word_free`), the prediction on which Dryer's branching-direction account parts from a
 head-direction one.
 
@@ -33,7 +35,7 @@ adposition its noun phrase, and a relative clause's verb the clause, with the ne
 on each arc. The book's Tables 5.1 to 5.3, WALS cross-tabulations of verb-object order with
 adposition, subordinator, and relative-clause order ([dryer-haspelmath-2013]), are prose here:
 raw-count dominance over atlas rows is not a theorem of the theory. The full mirror of (123)
-costs the same as the English order (`Graph.totalLength_mirror`); the book's head-final orders
+costs the same as the English order (`Digraph.totalLength_mirror`); the book's head-final orders
 cost more only because they keep subjects before their verbs.
 
 ## References
@@ -56,24 +58,25 @@ open Stemma (node leaf)
 variable {n : ℕ}
 
 /-- An order is head-first or head-final, section 5.2, when every head-argument arc, that is
-every arc but a subject's, takes that direction. -/
-def Harmonic (g : Graph UD.DepRel n) (d : HeadDirection) : Prop :=
-  ∀ v w, g.Adj v w → g.label v w ≠ some .nsubj → HeadDirection.ofLT v w = d
+every arc but a subject's, takes that direction: the arcs bearing each relation other than the
+subject relation have that head direction. -/
+def Harmonic (g : DependencyGraph UD.DepRel (Fin n)) (d : HeadDirection) : Prop :=
+  ∀ r, r ≠ .nsubj → (g.rel r).HasDirection d
 
-instance (g : Graph UD.DepRel n) (d : HeadDirection) : Decidable (Harmonic g d) :=
-  inferInstanceAs (Decidable (∀ _ _, _))
+instance (g : DependencyGraph UD.DepRel (Fin n)) (d : HeadDirection) : Decidable (Harmonic g d) :=
+  inferInstanceAs (Decidable (∀ _, _))
 
 /-- An order that is neither head-first nor head-final. -/
-def Disharmonic (g : Graph UD.DepRel n) : Prop := ∀ d, ¬ Harmonic g d
+def Disharmonic (g : DependencyGraph UD.DepRel (Fin n)) : Prop := ∀ d, ¬ Harmonic g d
 
-instance (g : Graph UD.DepRel n) : Decidable (Disharmonic g) :=
+instance (g : DependencyGraph UD.DepRel (Fin n)) : Decidable (Disharmonic g) :=
   inferInstanceAs (Decidable (∀ _, ¬ _))
 
 /-! ### Section 5.1: the measure, on (99a) -/
 
 /-- (99a) *Mary threw away the important documents that she brought home yesterday*, whose
 total dependency length the book computes as eighteen. -/
-def ex99a : Graph UD.DepRel 11 := Stemma.toGraph <|
+def ex99a : DependencyGraph UD.DepRel (Fin 11) := Stemma.toGraph <|
   node (.mk' "threw" .VERB)
     [(.nsubj, leaf (.mk' "Mary" .PROPN))]
     [(.advmod, leaf (.mk' "away" .ADV)),
@@ -83,38 +86,40 @@ def ex99a : Graph UD.DepRel 11 := Stemma.toGraph <|
           [(.mark, leaf (.mk' "that" .PRON)), (.nsubj, leaf (.mk' "she" .PRON))]
           [(.advmod, leaf (.mk' "home" .ADV)), (.advmod, leaf (.mk' "yesterday" .ADV))])])]
 
-theorem totalLength_99a : ex99a.totalLength = 18 := by decide
+theorem totalLength_99a : ex99a.unlabelled.totalLength = 18 := by decide
 
 /-- (99b), the particle after the long object, where the arc to *away* crosses the eight words of
 the object. -/
-def ex99b : Graph UD.DepRel 11 := ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
+def ex99b : DependencyGraph UD.DepRel (Fin 11) :=
+  ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
 
-theorem totalLength_99b : ex99b.totalLength = 25 ∧ ex99a.totalLength < ex99b.totalLength := by
+theorem totalLength_99b : ex99b.unlabelled.totalLength = 25 ∧ ex99a.unlabelled.totalLength <
+    ex99b.unlabelled.totalLength := by
   decide
 
 /-! ### Section 5.2: the mirror rules of a verb-final language, (119) to (121) -/
 
 /-- (119a) *Lana ate pizza*. -/
-def svo119 : Graph UD.DepRel 3 := Stemma.toGraph <|
+def svo119 : DependencyGraph UD.DepRel (Fin 3) := Stemma.toGraph <|
   node (.mk' "ate" .VERB)
     [(.nsubj, leaf (.mk' "Lana" .PROPN))]
     [(.obj, leaf (.mk' "pizza" .NOUN))]
 
 /-- (119b) *Lana pizza ate*. -/
-def sov119 : Graph UD.DepRel 3 := svo119.linearize [0, 2, 1] (by decide)
+def sov119 : DependencyGraph UD.DepRel (Fin 3) := svo119.linearize [0, 2, 1] (by decide)
 
 /-- (120a) *Lana gave pizza to Francine*. -/
-def svo120 : Graph UD.DepRel 5 := Stemma.toGraph <|
+def svo120 : DependencyGraph UD.DepRel (Fin 5) := Stemma.toGraph <|
   node (.mk' "gave" .VERB)
     [(.nsubj, leaf (.mk' "Lana" .PROPN))]
     [(.obj, leaf (.mk' "pizza" .NOUN)),
      (.obl, node (.mk' "to" .ADP) [] [(.obj, leaf (.mk' "Francine" .PROPN))])]
 
 /-- (120b) *Lana Francine to pizza gave*. -/
-def sov120 : Graph UD.DepRel 5 := svo120.linearize [0, 4, 3, 2, 1] (by decide)
+def sov120 : DependencyGraph UD.DepRel (Fin 5) := svo120.linearize [0, 4, 3, 2, 1] (by decide)
 
 /-- (121a) *Alfred said that Lana gave pizza to Francine*. -/
-def svo121 : Graph UD.DepRel 8 := Stemma.toGraph <|
+def svo121 : DependencyGraph UD.DepRel (Fin 8) := Stemma.toGraph <|
   node (.mk' "said" .VERB)
     [(.nsubj, leaf (.mk' "Alfred" .PROPN))]
     [(.ccomp, node (.mk' "that" .SCONJ)
@@ -126,7 +131,8 @@ def svo121 : Graph UD.DepRel 8 := Stemma.toGraph <|
 
 /-- (121b) *Alfred Lana Francine to pizza gave that said*, where each clause keeps its subject first
 and mirrors the rest. -/
-def sov121 : Graph UD.DepRel 8 := svo121.linearize [0, 3, 7, 6, 5, 4, 2, 1] (by decide)
+def sov121 : DependencyGraph UD.DepRel (Fin 8) := svo121.linearize [0, 3, 7, 6, 5, 4, 2,
+    1] (by decide)
 
 theorem sov_harmonic :
     Harmonic svo119 .headInitial ∧ Harmonic sov119 .headFinal ∧
@@ -137,7 +143,7 @@ theorem sov_harmonic :
 /-! ### Section 5.3.1: verb-object and verb-complement direction, (122) -/
 
 /-- (122) *Alfred wanted to eat bananas from Hawaii*, head-first: every arc is adjacent. -/
-def hi122 : Graph UD.DepRel 7 := Stemma.toGraph <|
+def hi122 : DependencyGraph UD.DepRel (Fin 7) := Stemma.toGraph <|
   node (.mk' "wanted" .VERB)
     [(.nsubj, leaf (.mk' "Alfred" .PROPN))]
     [(.xcomp, node (.mk' "to" .PART)
@@ -150,19 +156,21 @@ def hi122 : Graph UD.DepRel 7 := Stemma.toGraph <|
 
 /-- The head-final order with the subject next to its verb: *Hawaii from bananas eat to Alfred
 wanted*. -/
-def hf122 : Graph UD.DepRel 7 := hi122.linearize [6, 5, 4, 3, 2, 0, 1] (by decide)
+def hf122 : DependencyGraph UD.DepRel (Fin 7) := hi122.linearize [6, 5, 4, 3, 2, 0, 1] (by decide)
 
 /-- Verb-object order for *eat* but complement-verb order for *wanted*: *Alfred to eat bananas
 from Hawaii wanted*. -/
-def voCompV122 : Graph UD.DepRel 7 := hi122.linearize [0, 2, 3, 4, 5, 6, 1] (by decide)
+def voCompV122 : DependencyGraph UD.DepRel (Fin 7) := hi122.linearize [0, 2, 3, 4, 5, 6,
+    1] (by decide)
 
 /-- Object-verb order for *eat* but verb-complement order for *wanted*: *Alfred wanted to
 bananas from Hawaii eat*. -/
-def ovVComp122 : Graph UD.DepRel 7 := hi122.linearize [0, 1, 2, 4, 5, 6, 3] (by decide)
+def ovVComp122 : DependencyGraph UD.DepRel (Fin 7) := hi122.linearize [0, 1, 2, 4, 5, 6,
+    3] (by decide)
 
 theorem totalLength_122 :
-    hi122.totalLength = 6 ∧ hf122.totalLength = 7 ∧
-      voCompV122.totalLength = 15 ∧ ovVComp122.totalLength = 11 := by
+    hi122.unlabelled.totalLength = 6 ∧ hf122.unlabelled.totalLength = 7 ∧
+      voCompV122.unlabelled.totalLength = 15 ∧ ovVComp122.unlabelled.totalLength = 11 := by
   decide
 
 theorem harmonic_122 :
@@ -173,7 +181,7 @@ theorem harmonic_122 :
 /-! ### Sections 5.3.2 to 5.3.4: subordinators, adpositions, and relative clauses, (123) -/
 
 /-- (123) *Alfred said that Lana gave pizza to monkeys who wanted bananas* in English order. -/
-def en123 : Graph UD.DepRel 11 := Stemma.toGraph <|
+def en123 : DependencyGraph UD.DepRel (Fin 11) := Stemma.toGraph <|
   node (.mk' "said" .VERB)
     [(.nsubj, leaf (.mk' "Alfred" .PROPN))]
     [(.ccomp, node (.mk' "that" .SCONJ)
@@ -191,42 +199,44 @@ def en123 : Graph UD.DepRel 11 := Stemma.toGraph <|
 
 /-- The head-final order with subjects first: *Alfred Lana who bananas wanted monkeys to pizza
 gave that said*. -/
-def hfSubjFirst123 : Graph UD.DepRel 11 :=
+def hfSubjFirst123 : DependencyGraph UD.DepRel (Fin 11) :=
   en123.linearize [0, 3, 8, 10, 9, 7, 6, 5, 4, 2, 1] (by decide)
 
 /-- The head-final order with subjects next to their verbs: *who bananas wanted monkeys to pizza
 Lana gave that Alfred said*. -/
-def hf123 : Graph UD.DepRel 11 := en123.linearize [8, 10, 9, 7, 6, 5, 3, 4, 2, 0, 1] (by decide)
+def hf123 : DependencyGraph UD.DepRel (Fin 11) :=
+  en123.linearize [8, 10, 9, 7, 6, 5, 3, 4, 2, 0, 1] (by decide)
 
 /-- Verb-initial but subordinator-final: *that* follows the clause it heads. -/
-def voSubFinal123 : Graph UD.DepRel 11 :=
+def voSubFinal123 : DependencyGraph UD.DepRel (Fin 11) :=
   en123.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
 
 /-- Verb-final but subordinator-initial: *that* precedes the clause it heads. -/
-def ovSubInitial123 : Graph UD.DepRel 11 :=
+def ovSubInitial123 : DependencyGraph UD.DepRel (Fin 11) :=
   en123.linearize [2, 8, 10, 9, 7, 6, 5, 3, 4, 0, 1] (by decide)
 
 /-- Verb-initial but postpositional: *to* follows its noun phrase. -/
-def voPost123 : Graph UD.DepRel 11 :=
+def voPost123 : DependencyGraph UD.DepRel (Fin 11) :=
   en123.linearize [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 6] (by decide)
 
 /-- Verb-final but prepositional: *to* precedes its noun phrase. -/
-def ovPre123 : Graph UD.DepRel 11 :=
+def ovPre123 : DependencyGraph UD.DepRel (Fin 11) :=
   en123.linearize [6, 8, 10, 9, 7, 5, 3, 4, 2, 0, 1] (by decide)
 
 /-- Verb-initial but with the relative clause before its noun. -/
-def voRelN123 : Graph UD.DepRel 11 :=
+def voRelN123 : DependencyGraph UD.DepRel (Fin 11) :=
   en123.linearize [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 7] (by decide)
 
 /-- Verb-final but with the relative clause after its noun. -/
-def ovNRel123 : Graph UD.DepRel 11 :=
+def ovNRel123 : DependencyGraph UD.DepRel (Fin 11) :=
   en123.linearize [7, 8, 10, 9, 6, 5, 3, 4, 2, 0, 1] (by decide)
 
 theorem totalLength_123 :
-    en123.totalLength = 13 ∧ hfSubjFirst123.totalLength = 27 ∧ hf123.totalLength = 15 ∧
-      voSubFinal123.totalLength = 26 ∧ ovSubInitial123.totalLength = 30 ∧
-      voPost123.totalLength = 20 ∧ ovPre123.totalLength = 22 ∧
-      voRelN123.totalLength = 16 ∧ ovNRel123.totalLength = 20 := by
+    en123.unlabelled.totalLength = 13 ∧ hfSubjFirst123.unlabelled.totalLength = 27 ∧
+        hf123.unlabelled.totalLength = 15 ∧
+      voSubFinal123.unlabelled.totalLength = 26 ∧ ovSubInitial123.unlabelled.totalLength = 30 ∧
+      voPost123.unlabelled.totalLength = 20 ∧ ovPre123.unlabelled.totalLength = 22 ∧
+      voRelN123.unlabelled.totalLength = 16 ∧ ovNRel123.unlabelled.totalLength = 20 := by
   decide
 
 theorem harmonic_123 :
@@ -236,23 +246,24 @@ theorem harmonic_123 :
         Disharmonic ovPre123 ∧ Disharmonic voRelN123 ∧ Disharmonic ovNRel123 := by
   decide
 
-theorem totalLength_mirror_123 : en123.mirror.totalLength = 13 :=
-  en123.totalLength_mirror.trans totalLength_123.1
+theorem totalLength_mirror_123 : en123.unlabelled.mirror.totalLength = 13 :=
+  en123.unlabelled.totalLength_mirror.trans totalLength_123.1
 
 theorem subordinator_final_stretches :
-    (voSubFinal123.yield 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
-  voSubFinal123.ncard_yield_le_dist (by decide)
+    (voSubFinal123.unlabelled.reachSet 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
+  voSubFinal123.unlabelled.ncard_reachSet_le_dist (by decide)
     (fun x hx ↦ Set.mem_uIcc.mpr (by revert x hx; decide))
 
 /-! ### Section 5.3.5: one-word dependents, Table 5.4 -/
 
 /-- *very tall*, an intensifier before its adjective. -/
-def intensifierFirst : Graph UD.DepRel 2 := Stemma.toGraph <|
+def intensifierFirst : DependencyGraph UD.DepRel (Fin 2) := Stemma.toGraph <|
   node (.mk' "tall" .ADJ) [(.advmod, leaf (.mk' "very" .ADV))] []
 
 /-- A one-word dependent costs the same on either side of its head, so Table 5.4's single-word
 orders need not align with verb-object order. -/
-theorem single_word_free : intensifierFirst.mirror.totalLength = intensifierFirst.totalLength :=
-  intensifierFirst.totalLength_mirror
+theorem single_word_free : intensifierFirst.unlabelled.mirror.totalLength =
+    intensifierFirst.unlabelled.totalLength :=
+  intensifierFirst.unlabelled.totalLength_mirror
 
 end Gibson2025

@@ -274,7 +274,6 @@ private theorem support_bigDisjNE_hintikka (M : KripkeModel W Atom) {k : ℕ} :
     constructor
     · rintro ⟨t₁, ⟨h₁, hne⟩, t₂, h₂, rfl⟩
       replace h₁ := (support_iff_forall_realize (neFree_hintikka e k τ)).mp h₁
-      simp only [Finset.sup_eq_union]
       rw [Finset.image_union, (support_bigDisjNE_hintikka M r t₂).mp h₂, Finset.insert_eq]
       congr 1
       refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, fun σ hσ ↦ ?_⟩
@@ -297,7 +296,7 @@ private theorem support_bigDisjNE_hintikka (M : KripkeModel W Atom) {k : ℕ} :
         obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp (h ▸ Finset.mem_insert_of_mem hσ)
         exact ⟨w, ⟨hw, hσ⟩, rfl⟩
       · ext w
-        simp only [Finset.sup_eq_union, Finset.mem_union, Finset.mem_filter]
+        simp only [Finset.mem_union, Finset.mem_filter]
         exact ⟨fun h ↦ h.elim And.left And.left, fun hw ↦ (hmem w hw).imp (⟨hw, ·⟩) (⟨hw, ·⟩)⟩
 
 /-- A team supports the strong Hintikka formula of `T` exactly when the types of its worlds are

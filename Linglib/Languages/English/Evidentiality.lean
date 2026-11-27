@@ -1,0 +1,23 @@
+module
+
+public import Linglib.Semantics.Evidentiality.Term
+
+/-!
+# English evidentiality
+
+English has no grammatical evidentials: information source is conveyed lexically, by adverbs
+(*apparently*, *reportedly*) and parenthetical hedges, never by obligatory morphology.
+
+## References
+
+* [aikhenvald-2004]
+-/
+
+@[expose] public section
+
+namespace English.Evidentiality
+
+/-- English has no evidentials. -/
+def evidentials : List Evidential := []
+
+end English.Evidentiality

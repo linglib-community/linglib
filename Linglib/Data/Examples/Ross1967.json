@@ -1,4 +1,35 @@
-[
+{
+  "features": [
+    {
+      "key": "constraint",
+      "lean": "constraint",
+      "type": "Constraint",
+      "doc": "The four constraints.",
+      "levels": [
+        {
+          "name": "cnpc",
+          "label": "CNPC",
+          "doc": "CNPC"
+        },
+        {
+          "name": "csc",
+          "label": "CSC",
+          "doc": "CSC"
+        },
+        {
+          "name": "ssc",
+          "label": "SSC",
+          "doc": "SSC"
+        },
+        {
+          "name": "lbc",
+          "label": "LBC",
+          "doc": "LBC"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "ross1967_ex4_13a",
     "source": {"bibkey": "ross-1967", "paperLabel": "(4.13a)"},
@@ -282,3 +313,4 @@
     "verified": "page-image"
   }
 ]
+}

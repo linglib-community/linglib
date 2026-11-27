@@ -8,8 +8,9 @@ public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Semantics.Presupposition.Strengthening
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.Continuation
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Square
+public import Linglib.Semantics.Quantifier.Continuation
 public import Studies.Fox2007
 public import Studies.Katzir2007
 public import Studies.TrinhHaida2015
@@ -78,6 +79,8 @@ theory of questions here.
 @[expose] public section
 
 namespace SchwarzWagner2026
+
+open Examples (Case Excluded)
 
 open Set Exhaustification NeoGricean Aristotelian PhraseStructure Tree
 
@@ -362,20 +365,6 @@ abbrev sentence (d : Word) (v : Tree Cat Word) : Tree Cat Word :=
 /-- The words the base lexicon always has: the assertion's own. -/
 def base : Finset (Tree Cat Word) := {.terminal .Det .some_, .terminal .N .noun, .terminal .V .pred}
 
-/-- The examples, by what the language lexicalizes beyond the assertion. -/
-inductive Case
-  /-- (1) *Some players responded*: the A corner. -/
-  | bare
-  /-- (33) *Some players have not responded*: the A corner, the assertion holding a negation. -/
-  | negated
-  /-- (42) *Some players were inside*: the A corner and an antonym, (46). -/
-  | antonym
-  /-- (52) *Going to confession is permitted*: the A and O corners, *required* and *optional*. -/
-  | lexicalized
-  /-- (76) *John-wa ki-te yoi*: no other corner; necessity is complex, (77). -/
-  | minimal
-  deriving DecidableEq, Repr
-
 /-- The lexicon of each example. -/
 def lex : Case → Finset (Tree Cat Word)
   | .bare | .negated => insert (.terminal .Det .all_) base
@@ -446,7 +435,7 @@ def sqAt : Square (Set W) where
 variable {A X}
 
 theorem squareRelations_sqAt (hA : A.Nonempty) : SquareRelations (sqAt A X) :=
-  (Det.squareRelations_square hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
+  (Det.squareRelations_square.2 hA).map (F := BoundedLatticeHom (Quantifier E) (Set W))
     { toFun Q := {w | Q (X w)}
       map_sup' _ _ := rfl
       map_inf' _ _ := rfl
@@ -709,14 +698,8 @@ theorem O_notMem_simplex (h : SquareRelations (sqAt A X)) (hne : ∀ t, (sqAt A 
     · exact O_ne_A h hne hq
   · exact O_ne_I h hne (simplex_minimal_subset hO)
 
-/-- Which alternative an exclusion negates: the scalar alternative `A` or the symmetric one `O`, the
-pair of the paper's (10) and (68). -/
-inductive Excluded
-  | scalar | symmetric
-  deriving DecidableEq, Repr
-
 /-- The other alternative of the pair. -/
-def Excluded.other : Excluded → Excluded
+def Examples.Excluded.other : Excluded → Excluded
   | .scalar => .symmetric
   | .symmetric => .scalar
 
@@ -776,9 +759,8 @@ structure Row where
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let c ← ex.parse? "case" [("bare", Case.bare), ("negated", .negated), ("antonym", .antonym),
-    ("lexicalized", .lexicalized), ("minimal", .minimal)]
-  let e ← ex.parse? "excluded" [("scalar", Excluded.scalar), ("symmetric", .symmetric)]
+  let c ← (Examples.case ex)
+  let e ← (Examples.excluded ex)
   let a ← ex.parse? "available" [("yes", true), ("no", false)]
   pure ⟨c, e, a⟩
 

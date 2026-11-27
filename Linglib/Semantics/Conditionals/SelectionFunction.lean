@@ -213,7 +213,7 @@ end SelectionFunction
 variable {s}
 
 theorem selectionConditional_eq_modal {p : Set W} (hp : p.Nonempty) (q : Set W) :
-    selectionConditional s p q = s.modal (SetRel.ofSuccessors fun _ ↦ p) q :=
+    selectionConditional s p q = s.modal (SetRel.cgraph fun _ ↦ p) q :=
   Set.ext fun _ ↦ mem_selectionConditional_of_nonempty s hp
 
 end Along

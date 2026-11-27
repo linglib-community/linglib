@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Core.Order.Partition.Finpartition
-public import Linglib.Semantics.Questions.Value
+public import Linglib.Semantics.Questions.Decision
 public import Studies.Aloni2001
 public import Linglib.Data.Examples.VanRooy2003
 public import Mathlib.Data.Fintype.Powerset
@@ -14,14 +13,14 @@ Van Rooy grounds the meaning of questions in the questioner's decision problem, 
 worlds and a utility for each action in each world. Information resolves the problem when some
 action is optimal in every world it leaves open. A question, a partition of the worlds, is worth
 the average gain in decision value from learning its answer; that theory of question value,
-consumed beyond this paper, is `Semantics/Questions/Value.lean`. A wh-question denotes the
+consumed beyond this paper, is `Semantics/Questions/Decision.lean`. A wh-question denotes the
 propositions that some value is among the optimal true values of its predicate, those with no
 more relevant true value, and this one rule yields both mention-all and mention-some readings.
 
 ## Implementation notes
 
 A decision problem is a real utility on worlds and actions together with a prior measure, the
-actions forming a type, and questions over a finite set of worlds are `Finpartition`s.
+actions forming a type, and a partition question is a `Setoid` on the worlds.
 The relevance of a value in a world is a utility into a preorder; the paper's relation `>` orders
 answers, which for the newspaper example of section 5.2 is world-relative, the best place
 differing between worlds. Section 5.3 assumes the questioner most wants to resolve her problem, so
@@ -33,8 +32,8 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 ## TODO
 
 * The group-valued domain example of section 5.3, the questions (23) and (25), the individual-wise
-  relevance condition on wh-domains of section 4.2 (`Question.better_wh_of_factorsThrough` covers
-  utilities that depend only on the domain), and the argumentative value of section 5.4.
+  relevance condition on wh-domains of section 4.2 (`Inquisitive.Proposition.better_ofProps_image`
+  covers utilities that depend only on the domain), and the argumentative value of section 5.4.
 
 ## References
 
@@ -52,31 +51,13 @@ taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 
 namespace VanRooy2003
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory Question Inquisitive Inquisitive.Proposition
 
 universe u
 
 variable {W : Type u} {A G R : Type*}
 
 /-! ### Resolving a decision problem -/
-
-/-- Information `C` resolves the decision problem with utility `U` when some action is at least
-as good as every other in every world of `C`. -/
-def IsResolved (U : W → A → ℝ) (C : Set W) : Prop := ∃ a, ∀ b, ∀ w ∈ C, U w b ≤ U w a
-
-/-- The proposition an action induces is the set of worlds where no action is strictly
-better. -/
-def optimalityRegion (U : W → A → ℝ) (a : A) : Set W := {w | ∀ b, U w b ≤ U w a}
-
-/-- Information resolves the decision problem exactly when it lies within the optimality
-region of some action. -/
-theorem isResolved_iff_exists_subset_optimalityRegion (U : W → A → ℝ) (C : Set W) :
-    IsResolved U C ↔ ∃ a, C ⊆ optimalityRegion U a :=
-  ⟨fun ⟨a, h⟩ ↦ ⟨a, fun _ hw b ↦ h b _ hw⟩, fun ⟨a, h⟩ ↦ ⟨a, fun _ _ hw ↦ h hw _⟩⟩
-
-theorem iUnion_optimalityRegion [Finite A] [Nonempty A] (U : W → A → ℝ) :
-    ⋃ a, optimalityRegion U a = Set.univ :=
-  Set.eq_univ_of_forall fun w ↦ Set.mem_iUnion.2 (Finite.exists_max (U w))
 
 theorem pairwise_disjoint_optimalityRegion (U : W → A → ℝ)
     (hstrict : ∀ w, ∃ a, ∀ b, b ≠ a → U w b < U w a) :
@@ -138,7 +119,7 @@ theorem newspaper_optimalityRegions :
 /-- The mention-some answer *at least at the station* resolves the problem although it is only
 a partial answer to the partition question. -/
 theorem newspaper_station_resolves : IsResolved newspaper ({.station, .both} : Set NewsW) :=
-  (isResolved_iff_exists_subset_optimalityRegion _ _).2
+  isResolved_iff_exists_subset_optimalityRegion.2
     ⟨.station, newspaper_optimalityRegions.1.ge⟩
 
 private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := by
@@ -150,7 +131,7 @@ private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := b
   simp only [decisionValue, h, ciSup_const]
 
 private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .palace ∉ C) :
-    Question.utilityValue newspaper newsPrior C = 1 / 3 := by
+    Proposition.utilityValue newspaper newsPrior C = 1 / 3 := by
   obtain ⟨w₀, hw₀⟩ := hC
   have hpos : newsPrior C ≠ 0 := fun h ↦ uniformOn_univ_singleton_ne_zero w₀
     (measure_mono_null (Set.singleton_subset_iff.2 hw₀) h)
@@ -164,19 +145,59 @@ private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .
     le_antisymm (ciSup_le fun a ↦ (integral_mono .of_finite (integrable_const 1) fun w ↦ by
       cases w <;> cases a <;> simp [newspaper]).trans (by simp))
       (hstation ▸ integral_le_decisionValue _ Walk.station)
-  rw [Question.utilityValue, hval, newspaper_value]
+  rw [Proposition.utilityValue, hval, newspaper_value]
   norm_num
 
 /-- Taking effort into account, the mention-some answer *at least at the station* is a better
 answer than the complete answer *only at the station*, since both resolve the problem and the
 first says less. -/
 theorem newspaper_betterAnswer :
-    Question.BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
-  refine Question.betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
+    Proposition.BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
+  refine Proposition.betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
   · rw [newspaper_utilityValue (by simp) (by simp), newspaper_utilityValue (by simp) (by simp)]
   · refine Set.ssubset_iff_subset_ne.2 ⟨by simp, fun h ↦ ?_⟩
     have hb : NewsW.both ∈ ({NewsW.station} : Set NewsW) := by rw [h]; simp
     simp at hb
+
+instance : MeasurableSpace Walk := ⊤
+
+instance : DiscreteMeasurableSpace Walk := ⟨fun _ ↦ trivial⟩
+
+/-- Mention-some suffices: a respondent who names a place where the newspaper is sold, whichever
+it names where there are two, is worth as much as one who says exactly where it is sold. -/
+theorem newspaper_mentionSome (κ : Kernel NewsW Walk) [IsMarkovKernel κ]
+    (hκ : ∀ w a, κ w {a} ≠ 0 → w ∈ optimalityRegion newspaper a) :
+    valueOfInformation (decisionValue newspaper) κ newsPrior =
+      valueOfInformation (decisionValue newspaper) Kernel.id newsPrior :=
+  Proposition.valueOfInformation_eq_id_of_forall_mem_issue newspaper newsPrior hκ
+    (Proposition.optimalityRegion_mem_issue newspaper)
+
+/-- The only partition question the newspaper problem calls for is the trivial one, since its
+two mention-some answers overlap. -/
+theorem partition_issue_newspaper : (Proposition.issue newspaper).partition = ⊤ := by
+  have h := (Proposition.partition_issue_le_iff newspaper).1 le_rfl
+  have hb (x : NewsW) : (Proposition.issue newspaper).partition x .both := by
+    cases x
+    · exact h _ _ newspaper_station_resolves
+    · exact h _ _ (isResolved_iff_exists_subset_optimalityRegion.2
+        ⟨.palace, newspaper_optimalityRegions.2.ge⟩)
+    · exact Setoid.refl' _ _
+  exact Setoid.eq_top_iff.2 fun w v ↦ Setoid.trans' _ (hb w) (Setoid.symm' _ (hb v))
+
+/-- A respondent who names the station whether or not the newspaper is sold there is worth
+less. -/
+theorem newspaper_station_ne :
+    valueOfInformation (decisionValue newspaper) (Kernel.const NewsW (Measure.dirac Walk.station))
+        newsPrior ≠ valueOfInformation (decisionValue newspaper) Kernel.id newsPrior := by
+  rw [Ne, Proposition.valueOfInformation_eq_id_iff_forall_mem_issue]
+  intro h
+  have hmem (w : NewsW) : w ∈ {w | newsPrior {w} ≠ 0 ∧
+      Kernel.const NewsW (Measure.dirac Walk.station) w {Walk.station} ≠ 0} :=
+    ⟨uniformOn_univ_singleton_ne_zero w, by simp⟩
+  obtain ⟨a, ha⟩ := h .station
+  cases a
+  · exact absurd (ha .palace .palace (hmem _)) (by norm_num [newspaper])
+  · exact absurd (ha .station .station (hmem _)) (by norm_num [newspaper])
 
 end Value
 
@@ -393,7 +414,7 @@ inductive Address where
 inductive City where
   | amsterdam
   | utrecht
-  deriving DecidableEq, Fintype
+  deriving DecidableEq, Fintype, Nonempty
 
 /-- The city of an address. -/
 def Address.city : Address → City
@@ -502,17 +523,46 @@ instance : MeasurableSpace Address := ⊤
 instance : DiscreteMeasurableSpace Address := ⟨fun _ ↦ trivial⟩
 
 theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
-    Question.Better visit μ (Finpartition.ofFun Address.city) ⊥ := by
-  have hU : visit.FactorsThrough (Finpartition.ofFun Address.city).part := fun w v h ↦ by
-    rw [Finpartition.part_ofFun_eq_part_ofFun_iff] at h
-    ext c
-    simp [visit, h]
-  refine Question.better_iff.2 (.inr ⟨by rw [Question.utility_eq_valueOfInformation_id visit μ _ hU,
-    Question.utility_bot], bot_lt_iff_ne_bot.2 fun h ↦ ?_⟩)
-  have := Finpartition.part_ofFun_eq_part_ofFun_iff.2
-    (show Address.amsterdam₁.city = Address.amsterdam₂.city from rfl)
-  rw [h, Finpartition.part_bot (Finset.mem_univ _), Finpartition.part_bot (Finset.mem_univ _),
-    Finset.singleton_inj] at this
+    Better visit μ (Setoid.ker Address.city) ⊥ := by
+  refine better_of_le_issue_of_lt visit μ
+    ((fromSetoid_le_issue_iff visit).2 fun w ↦ visit_isResolved w.city fun _ hv ↦ hv)
+    (bot_lt_iff_ne_bot.2 fun h ↦ ?_)
+  have : Setoid.ker Address.city .amsterdam₁ .amsterdam₂ := rfl
+  rw [h, Setoid.bot_def] at this
+  exact absurd this (by decide)
+
+/-- What one chooses on an errand: an address for a letter, a city for a visit. -/
+abbrev Choice (toSend : Bool) : Type := bif toSend then Address else City
+
+instance : ∀ b, Nonempty (Choice b)
+  | true => inferInstanceAs (Nonempty Address)
+  | false => inferInstanceAs (Nonempty City)
+
+/-- The two decision problems of the example, as a family. -/
+def errand : (toSend : Bool) → Address → Choice toSend → ℝ
+  | true => letter
+  | false => visit
+
+/-- Someone who may either send a letter or pay a visit needs the address: the two problems
+together call for the complete answer. -/
+theorem iInf_issue_errand_le : ⨅ b, issue (errand b) ≤ fromSetoid ⊥ := by
+  refine (iInf_issue_le_fromSetoid_iff errand).2 fun w v h ↦ ?_
+  obtain ⟨a, ha⟩ := h true
+  have hw : a = w := by
+    by_contra hne
+    exact absurd (ha w w (by simp)) (by simp [errand, letter, hne])
+  have hv : a = v := by
+    by_contra hne
+    exact absurd (ha v v (by simp)) (by simp [errand, letter, hne])
+  rw [Setoid.bot_def]
+  exact hw.symm.trans hv
+
+/-- The visit alone does not: the city resolves it. -/
+theorem not_issue_visit_le : ¬ issue visit ≤ fromSetoid ⊥ := fun h ↦ by
+  have hs : {v : Address | v.city = .amsterdam} ∈ issue visit :=
+    visit_isResolved .amsterdam fun _ hv ↦ hv
+  have := mem_fromSetoid.1 (h hs) .amsterdam₁ rfl .amsterdam₂ rfl
+  rw [Setoid.bot_def] at this
   exact absurd this (by decide)
 
 /-! #### Conceptual covers -/

@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Transderivational
-public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.Sonority.Sequencing
+public import Linglib.Phonology.Segmental.NasalCompatibility
 public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
@@ -18,10 +19,11 @@ constraints](##Hebrew.imperative_normalApplication).
 
 ## Implementation notes
 
-* Segments are the classes the constraints read: Sundanese by nasality, the laryngeals
-  transparent to nasal spread; Tiberian Hebrew by sonority class and continuancy, with the
-  sibilants apart because \*SPIR bans only non-strident fricatives. Vowel quality is not
-  represented.
+* The Sundanese segments are those of the PHOIBLE chart for the printed symbols, and the
+  laryngeals, transparent to nasal spread, are the glottal class of
+  `Phonology.NasalCompatibility`. The Tiberian Hebrew segments are the classes the constraints
+  read, sonority class and continuancy, with the sibilants apart because \*SPIR bans only
+  non-strident fricatives; vowel quality is not represented there.
 * Each OO relation is the one the IO relations induce (`Transderivational.paradigm`), the
   Sundanese affixes preceding the root in the input; in every tableau it is the relation Benua
   draws.
@@ -122,128 +124,160 @@ end English
 
 Nasality is allophonic, nasal after a nasal segment and oral elsewhere, by
 `*NVORAL >> *VNAS >> IO-IDENT[NAS]` (44); it overapplies in the infixed plural
-*ɲĩãr ~ ɲ-ãl-ĩãr* and applies normally in *dəhəs ~ d-um-ə̃hə̃s* under the single ranking
+*ɲĩãr ~ ɲ-ãl-ĩãr* and applies normally in *dɤhɤs ~ d-um-ɤ̃hɤ̃s* under the single ranking
 `*NVORAL >> OO-IDENT[NAS] >> *VNAS >> IO-IDENT[NAS]` (51); data from [cohn-1990]. -/
 
 namespace Sundanese
 
-/-- Sundanese segments by the features the constraints read, laryngeals being transparent
-to nasal spread (33). -/
-inductive Seg
-  | nasalC | oralC | laryngeal | oralV | nasalV
-  deriving DecidableEq, Repr
+open Phonology
 
-/-- Nasality. -/
-def nasal : Seg → Bool
-  | .nasalC | .nasalV => true
-  | _ => false
+/-- The segment [ŋ]. -/
+def ŋ : Segment := .ofChart .«ŋ»
+/-- The segment [ɲ]. -/
+def «ɲ» : Segment := .ofChart .«ɲ»
+/-- The segment [m]. -/
+def m : Segment := .ofChart .«m»
+/-- The segment [t]. -/
+def t : Segment := .ofChart .«t»
+/-- The segment [d]. -/
+def d : Segment := .ofChart .«d»
+/-- The segment [s]. -/
+def s : Segment := .ofChart .«s»
+/-- The segment [r]. -/
+def r : Segment := .ofChart .«r»
+/-- The segment [l]. -/
+def l : Segment := .ofChart .«l»
+/-- The segment [h]. -/
+def h : Segment := .ofChart .«h»
+/-- The segment [a]. -/
+def a : Segment := .ofChart .«a»
+/-- The segment [i]. -/
+def i : Segment := .ofChart .«i»
+/-- The segment [u]. -/
+def u : Segment := .ofChart .«u»
+/-- The segment [ɤ]. -/
+def «ɤ» : Segment := .ofChart .«ɤ»
+/-- The segment [ã]. -/
+def «ã» : Segment := a.setFeature .nasal true
+/-- The segment [ĩ]. -/
+def «ĩ» : Segment := i.setFeature .nasal true
+/-- The segment [ũ]. -/
+def «ũ» : Segment := u.setFeature .nasal true
+/-- The segment [ɤ̃]. -/
+def «ɤ̃» : Segment := «ɤ».setFeature .nasal true
 
-/-- `*NVORAL` (41) bans an oral vowel in post-nasal context, laryngeals skipped. -/
-def nvOral : List Seg → ℕ :=
-  go false
-where
-  /-- `postNasal` records whether the last non-laryngeal segment was nasal. -/
-  go (postNasal : Bool) : List Seg → ℕ
-    | [] => 0
-    | .oralV :: rest => (if postNasal then 1 else 0) + go false rest
-    | .laryngeal :: rest => go postNasal rest
-    | s :: rest => go (nasal s) rest
+/-- (33): the laryngeals are transparent to nasal spread, and the constraint on post-nasal
+vowels reads a word without them. -/
+def IsSupralaryngeal (x : Segment) : Prop := NasalCompatibility.ofSegment x ≠ .glottal
 
-/-- `*VNAS` (40) bans a nasal vowel. -/
-def vNas (w : List Seg) : ℕ := w.count .nasalV
+instance : DecidablePred IsSupralaryngeal := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- A nasal vowel. -/
+def IsNasalVowel (x : Segment) : Prop := x.IsVowel ∧ x .nasal = true
+
+instance : DecidablePred IsNasalVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- `*NVORAL` (41) counts the oral vowels in post-nasal context: the vowels that are not nasal
+and whose nearest preceding segment other than a laryngeal is nasal. -/
+def nvOral (w : List Segment) : ℕ :=
+  let v := w.filter fun x : Segment ↦ IsSupralaryngeal x
+  (v.zip v.tail).countP fun (x, y) ↦ x .nasal = true ∧ y.IsVowel ∧ ¬ y .nasal = true
+
+/-- `*VNAS` (40) counts the nasal vowels. -/
+def vNas (w : List Segment) : ℕ := w.countP fun x : Segment ↦ IsNasalVowel x
+
+-- (33): a word and the word without its laryngeals have the same oral vowels in post-nasal context
+theorem nvOral_filter (w : List Segment) :
+    nvOral (w.filter fun x : Segment ↦ IsSupralaryngeal x) = nvOral w := by
+  simp [nvOral, List.filter_filter]
 
 /-- The ranking (51), `*NVORAL >> OO-IDENT[NAS] >> *VNAS >> IO-IDENT[NAS]`. -/
-def ranking : List (Unit → ParadigmConstraint Seg) :=
-  [markedness nvOral, ooIdentity () (Correspondence.Coindexation.identViolFeature nasal),
+def ranking : List (Unit → ParadigmConstraint Segment) :=
+  [markedness nvOral,
+   ooIdentity () (Correspondence.Coindexation.identViolFeature fun x : Segment ↦ x .nasal),
    markedness vNas,
-   ioFaith (Correspondence.Coindexation.identViolFeature nasal)]
+   ioFaith (Correspondence.Coindexation.identViolFeature fun x : Segment ↦ x .nasal)]
 
-/-- The four rich inputs of (43) for *ŋãtur* 'arrange', which are also its candidates
-*ŋatur, ŋatũr, ŋãtũr, ŋãtur*. -/
-def inputs : List (List Seg) :=
-  [[.nasalC, .oralV, .oralC, .oralV, .oralC], [.nasalC, .nasalV, .oralC, .oralV, .oralC],
-   [.nasalC, .oralV, .oralC, .nasalV, .oralC], [.nasalC, .nasalV, .oralC, .nasalV, .oralC]]
+/-- The four rich inputs of (43) for *ŋãtur* 'arrange', `/ŋatur/`, `/ŋãtur/`, `/ŋatũr/` and
+`/ŋãtũr/`. -/
+def inputs : List (List Segment) :=
+  [[ŋ, a, t, u, r], [ŋ, «ã», t, u, r], [ŋ, a, t, «ũ», r], [ŋ, «ã», t, «ũ», r]]
 
-/-- The output candidates of (43), by their vowels. -/
-def word : Cand4 → List Seg
-  | .a => [.nasalC, .oralV, .oralC, .oralV, .oralC]
-  | .b => [.nasalC, .oralV, .oralC, .nasalV, .oralC]
-  | .c => [.nasalC, .nasalV, .oralC, .nasalV, .oralC]
-  | .d => [.nasalC, .nasalV, .oralC, .oralV, .oralC]
+/-- The output candidates of (43), *ŋatur*, *ŋatũr*, *ŋãtũr* and *ŋãtur*. -/
+def word : Cand4 → List Segment
+  | .a => [ŋ, a, t, u, r]
+  | .b => [ŋ, a, t, «ũ», r]
+  | .c => [ŋ, «ã», t, «ũ», r]
+  | .d => [ŋ, «ã», t, u, r]
 
 -- (43)
 theorem allophony : ∀ input ∈ inputs,
     Constraint.eval {.a, .b, .c, .d}
       [Constraint.comap word nvOral, Constraint.comap word vNas,
-       fun w ↦ (Correspondence.Coindexation.parallel input (word w)).identViolFeature nasal
-         .lhs .rhs] =
+       fun w ↦ (Correspondence.Coindexation.parallel input (word w)).identViolFeature
+         (fun x : Segment ↦ x .nasal) .lhs .rhs] =
       {Cand4.d} := by
-  decide
+  decide +kernel
 
-/-- The correspondence of the plural's input `/ãl + ɲĩãr/` with its infixed output
-`ɲ-ãl-ĩãr` places the affix's segments after the root-initial nasal. -/
+/-- The correspondence of the plural's input `/ãl + ɲĩãr/` with its infixed output
+`ɲ-ãl-ĩãr` places the affix's segments after the root-initial nasal. -/
 def infixIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5)]
 
-/-- The paradigms of (48) pair the base *ɲiar* or *ɲĩãr* with the plural *ɲ-ãl-iar* or
-*ɲ-ãl-ĩãr*, from the inputs `/ɲĩãr/` and `/ãl + ɲĩãr/`. -/
-def plural : Cand4 → Correspondence.Coindexation Role Seg
-  | .a => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .oralV, .oralV, .oralC]
-      [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (diagonalPairs 4) infixIO 2
-  | .b => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .oralV, .oralV, .oralC]
-      [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (diagonalPairs 4) infixIO 2
-  | .c => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .oralV, .oralV, .oralC] (diagonalPairs 4) infixIO 2
-  | .d => paradigm [.nasalC, .nasalV, .nasalV, .oralC] [.nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
-      [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (diagonalPairs 4) infixIO 2
+/-- The paradigms of (48) pair the base *ɲiar* or *ɲĩãr* with the plural *ɲ-ãl-iar* or
+*ɲ-ãl-ĩãr*, from the inputs `/ɲĩãr/` and `/ãl + ɲĩãr/`. -/
+def plural : Cand4 → Correspondence.Coindexation Role Segment
+  | .a => paradigm [«ɲ», «ĩ», «ã», r] [«ɲ», i, a, r] [«ã», l, «ɲ», «ĩ», «ã», r]
+      [«ɲ», «ã», l, i, a, r] (diagonalPairs 4) infixIO 2
+  | .b => paradigm [«ɲ», «ĩ», «ã», r] [«ɲ», i, a, r] [«ã», l, «ɲ», «ĩ», «ã», r]
+      [«ɲ», «ã», l, «ĩ», «ã», r] (diagonalPairs 4) infixIO 2
+  | .c => paradigm [«ɲ», «ĩ», «ã», r] [«ɲ», «ĩ», «ã», r] [«ã», l, «ɲ», «ĩ», «ã», r]
+      [«ɲ», «ã», l, i, a, r] (diagonalPairs 4) infixIO 2
+  | .d => paradigm [«ɲ», «ĩ», «ã», r] [«ɲ», «ĩ», «ã», r] [«ã», l, «ɲ», «ĩ», «ã», r]
+      [«ɲ», «ã», l, «ĩ», «ã», r] (diagonalPairs 4) infixIO 2
 
 -- (48)
 theorem overapplication :
-    Constraint.evalOn plural {.a, .b, .c, .d} (recursive ranking ()) = {.d} := by decide
+    Constraint.evalOn plural {.a, .b, .c, .d} (recursive ranking ()) = {.d} := by
+  decide +kernel
 
-/-- The correspondence of `/ũm + dəhəs/` with *d-um-əhəs*. -/
+/-- The correspondence of `/ũm + dɤhɤs/` with *d-um-ɤhɤs*. -/
 def umIO : List (ℕ × ℕ) := [(0, 1), (1, 2), (2, 0), (3, 3), (4, 4), (5, 5), (6, 6)]
 
-/-- The paradigms of (51) share the canonical base *dəhəs*, and the infixed word's vowels are
-oral or nasal in the infix and in the root. -/
-def approach : Cand4 → Correspondence.Coindexation Role Seg
-  | .a => paradigm base base input
-      [.oralC, .oralV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (diagonalPairs 5) umIO 2
-  | .b => paradigm base base input
-      [.oralC, .nasalV, .nasalC, .oralV, .laryngeal, .oralV, .oralC] (diagonalPairs 5) umIO 2
-  | .c => paradigm base base input
-      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO 2
-  | .d => paradigm base base input
-      [.oralC, .nasalV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO 2
+/-- The paradigms of (51) share the canonical base *dɤhɤs*, and the infixed word's vowels are
+oral or nasal in the infix and in the root: *d-um-ɤhɤs*, *d-ũm-ɤhɤs*, *d-um-ɤ̃hɤ̃s* and
+*d-ũm-ɤ̃hɤ̃s*. -/
+def approach : Cand4 → Correspondence.Coindexation Role Segment
+  | .a => paradigm base base input [d, u, m, «ɤ», h, «ɤ», s] (diagonalPairs 5) umIO 2
+  | .b => paradigm base base input [d, «ũ», m, «ɤ», h, «ɤ», s] (diagonalPairs 5) umIO 2
+  | .c => paradigm base base input [d, u, m, «ɤ̃», h, «ɤ̃», s] (diagonalPairs 5) umIO 2
+  | .d => paradigm base base input [d, «ũ», m, «ɤ̃», h, «ɤ̃», s] (diagonalPairs 5) umIO 2
 where
-  /-- The base *dəhəs*, faithful to its input. -/
-  base : List Seg := [.oralC, .oralV, .laryngeal, .oralV, .oralC]
-  /-- The input `/ũm + dəhəs/`. -/
-  input : List Seg := [.nasalV, .nasalC, .oralC, .oralV, .laryngeal, .oralV, .oralC]
+  /-- The base *dɤhɤs*, faithful to its input. -/
+  base : List Segment := [d, «ɤ», h, «ɤ», s]
+  /-- The input `/ũm + dɤhɤs/`. -/
+  input : List Segment := [«ũ», m, d, «ɤ», h, «ɤ», s]
 
 -- (51)
 theorem normalApplication :
-    Constraint.evalOn approach {.a, .b, .c, .d} (recursive ranking ()) = {.c} := by decide
+    Constraint.evalOn approach {.a, .b, .c, .d} (recursive ranking ()) = {.c} := by
+  decide +kernel
 
-/-- The paradigms of (52) and (53) set the base *də̃hə̃s*, which would overapply to restore
-identity, against the canonical *dəhəs*. -/
-def baseChoice : Cand2 → Correspondence.Coindexation Role Seg
-  | .a => paradigm approach.base [.oralC, .nasalV, .laryngeal, .nasalV, .oralC] approach.input
-      [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO 2
+/-- The paradigms of (52) and (53) set the base *dɤ̃hɤ̃s*, which would overapply to restore
+identity, against the canonical *dɤhɤs*. -/
+def baseChoice : Cand2 → Correspondence.Coindexation Role Segment
+  | .a => paradigm approach.base [d, «ɤ̃», h, «ɤ̃», s] approach.input
+      [d, u, m, «ɤ̃», h, «ɤ̃», s] (diagonalPairs 5) umIO 2
   | .b => approach .c
 
-/-- Misapplication in the base is never optimal (52): the base *də̃hə̃s*, which overapplies nasal
+/-- Misapplication in the base is never optimal (52): the base *dɤ̃hɤ̃s*, which overapplies nasal
 harmony to restore identity, loses in the base's recursion, though summed evaluation selects it
 (53). -/
 theorem base_priority :
-    Constraint.evalOn baseChoice {.a, .b} (recursive ranking ()) = {.b} := by decide
+    Constraint.evalOn baseChoice {.a, .b} (recursive ranking ()) = {.b} := by decide +kernel
 
 -- (53)
 theorem base_overapplies_nonrecursive :
-    Constraint.evalOn baseChoice {.a, .b} (nonrecursive ranking ()) = {.a} := by decide
+    Constraint.evalOn baseChoice {.a, .b} (nonrecursive ranking ()) = {.a} := by decide +kernel
 
 end Sundanese
 
@@ -318,8 +352,13 @@ def complexCoda (w : List Seg) : ℕ := if (finalCluster w).isSome then 1 else 0
 /-- `SON-CON` (86): a coda that rises in sonority. -/
 def sonCon (w : List Seg) : ℕ :=
   match finalCluster w with
-  | some (x, y) => if Sonority.profile sonority x y = .lt then 1 else 0
+  | some (x, y) => if sonority x < sonority y then 1 else 0
   | none => 0
+
+theorem sonCon_eq_one_iff (w : List Seg) :
+    sonCon w = 1 ↔ ∃ x y, finalCluster w = some (x, y) ∧ Sonority.PeaksAt sonority [x, y] 1 := by
+  simp only [sonCon, Sonority.peaksAt_pair_one]
+  split <;> simp_all
 
 -- pp. 49, 113
 theorem sonCon_le_complexCoda (w : List Seg) : sonCon w ≤ complexCoda w := by

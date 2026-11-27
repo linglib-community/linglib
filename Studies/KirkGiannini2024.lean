@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Mathlib.Logic.Function.Basic
 
@@ -99,8 +99,7 @@ end Model
 
 /-- 𝔐 ⇝ `λq.⦇q⦈(w_c)(s_x) • λq.R(s_x, u_x, q)`, both saturated by the pure-quoted sister `q`
 (a-to-p Shunting). -/
-def mq (q : Expr) : TwoDim (W → Prop) (W → Prop) :=
-  .mk (atIssue := M.quot q wc sx) (notAtIssue := M.utter sx ux q)
+def mq (q : Expr) : TwoDim W (W → Prop) := .mk (M.quot q wc sx) (M.utter sx ux q)
 
 @[simp] theorem mq_atIssue (q : Expr) : (mq M wc sx ux q).atIssue = M.quot q wc sx := rfl
 
@@ -108,29 +107,27 @@ def mq (q : Expr) : TwoDim (W → Prop) (W → Prop) :=
 
 /-- ↓ ⇝ `λp.p̌` with p-to-a Shunting ([mccready-2010]): the peripheral proposition is conjoined
 with the at-issue one, and the single peripheral dimension is then empty. -/
-def shunt (p : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → Prop) :=
-  .mk (atIssue := p.atIssue ⊓ p.notAtIssue) (notAtIssue := ⊤)
+def shunt (p : TwoDim W (W → Prop)) : TwoDim W (W → Prop) := .mk (p.atIssue ⊓ p.notAtIssue) ⊤
 
-@[simp] theorem shunt_atIssue (p : TwoDim (W → Prop) (W → Prop)) :
+@[simp] theorem shunt_atIssue (p : TwoDim W (W → Prop)) :
     (shunt p).atIssue = p.atIssue ⊓ p.notAtIssue := rfl
 
-@[simp] theorem shunt_notAtIssue (p : TwoDim (W → Prop) (W → Prop)) :
-    (shunt p).notAtIssue = ⊤ := rfl
+@[simp] theorem shunt_notAtIssue (p : TwoDim W (W → Prop)) : (shunt p).notAtIssue = ⊤ := rfl
 
 /-- 𝔄 ⇝ ⧫ with Peripheral Intensional Function Application: the peripheral proposition is
 replaced by ⧫ of its intension, the at-issue meaning passing up unchanged. -/
-def approp (p : TwoDim (W → Prop) (W → Prop)) : TwoDim (W → Prop) (W → Prop) :=
-  .mk (atIssue := p.atIssue) (notAtIssue := □[M.appropriate] p.notAtIssue)
+def approp (p : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
+  .mk p.atIssue (□[M.appropriate] p.notAtIssue)
 
-@[simp] theorem approp_atIssue (p : TwoDim (W → Prop) (W → Prop)) :
-    (approp M p).atIssue = p.atIssue := rfl
+@[simp] theorem approp_atIssue (p : TwoDim W (W → Prop)) : (approp M p).atIssue = p.atIssue :=
+  rfl
 
-@[simp] theorem approp_notAtIssue (p : TwoDim (W → Prop) (W → Prop)) :
+@[simp] theorem approp_notAtIssue (p : TwoDim W (W → Prop)) :
     (approp M p).notAtIssue = □[M.appropriate] p.notAtIssue := rfl
 
 /-- †𝔐: † applied to 𝔐's at-issue meaning, the peripheral meaning passing up unchanged. -/
-noncomputable def daggerMQ (q : Expr) : TwoDim (W → Prop) (W → Prop) :=
-  .mk (atIssue := M.dagger wc (M.mqAtIssue wc sx) q) (notAtIssue := M.utter sx ux q)
+noncomputable def daggerMQ (q : Expr) : TwoDim W (W → Prop) :=
+  .mk (M.dagger wc (M.mqAtIssue wc sx) q) (M.utter sx ux q)
 
 theorem daggerMQ_atIssue (h : FactorsThrough M.diag (M.mqAtIssue wc)) (q : Expr) :
     (daggerMQ M wc sx ux q).atIssue = M.diag sx q :=
@@ -143,7 +140,7 @@ theorem shunt_mq_atIssue (q : Expr) (w : W) :
 /-! ### Conventional implicature items (§3) -/
 
 -- (26)
-theorem report_mq (lex : Expr → TwoDim (W → Prop) (W → Prop)) (F : (W → Prop) → W → Prop) (q : Expr)
+theorem report_mq (lex : Expr → TwoDim W (W → Prop)) (F : (W → Prop) → W → Prop) (q : Expr)
     (h : M.quot q wc sx = (lex q).atIssue) :
     (F <$> mq M wc sx ux q).atIssue = (F <$> lex q).atIssue ∧
       (F <$> mq M wc sx ux q).notAtIssue = M.utter sx ux q :=
@@ -164,10 +161,10 @@ theorem selectionConditional_daggerMQ (h : FactorsThrough M.diag (M.mqAtIssue wc
 
 /-- ↓[… 𝔄𝔐q …]: the quoted clause conjoined with the appropriateness of `q`'s verbatim use.
 A's assertion in (6), the antecedent of (35″), the prejacent of (36). -/
-def appropAssertion (q : Expr) : TwoDim (W → Prop) (W → Prop) := shunt (approp M (mq M wc sx ux q))
+def appropAssertion (q : Expr) : TwoDim W (W → Prop) := shunt (approp M (mq M wc sx ux q))
 
 /-- not ↓[… 𝔄𝔐q …]: metalinguistic negation, (3), and B's denial in (6). -/
-def metaNeg (q : Expr) : TwoDim (W → Prop) (W → Prop) := (appropAssertion M wc sx ux q).neg
+def metaNeg (q : Expr) : TwoDim W (W → Prop) := (appropAssertion M wc sx ux q).neg
 
 theorem appropAssertion_atIssue (q : Expr) (w : W) :
     (appropAssertion M wc sx ux q).atIssue w ↔

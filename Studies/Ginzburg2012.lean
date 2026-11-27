@@ -1,6 +1,9 @@
 module
 
-public import Linglib.Discourse.Gameboard.Basic
+public import Linglib.Discourse.Gameboard.Rule
+public import Linglib.Discourse.Gameboard.Question
+public import Linglib.Discourse.Gameboard.Proposition
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 public import Linglib.Data.Examples.Ginzburg2012
 public import Linglib.Data.Examples.Readers
 
@@ -10,30 +13,37 @@ public import Linglib.Data.Examples.Readers
 This file formalizes the conversational rules of [ginzburg-2012] over the dialogue gameboard
 `Gameboard`: each participant's turn holder and addressee, the commonly accepted FACTS, the MOVES
 made, the questions under discussion and, once metacommunication enters, the ungrounded utterances
-PENDING. A rule is a partial map from gameboards meeting its preconditions to updated gameboards,
-with the utterance, question or turn a nondeterministic rule chooses made an argument; the move
-rules of Ch. 4 form one inventory and the rules of grounding and clarification a second that
-includes it. Asking a question
-[keeps `non-resolve-cond` exactly](##Ginzburg2012.askQud_nonResolveCond_iff) when no fact
-resolves it, the Question Introduction Appropriateness Condition, and FACTS update
-[restores the condition](##Ginzburg2012.factUpdate_nonResolveCond); a move a genre makes
-initiating is [coherent](##Ginzburg2012.coherent_of_isInitiating); each clarification rule is a
-question and a turn merged with Utterance Interpolation, so it makes the clarified constituent
-of the maximal pending utterance
-[the focus-establishing constituent of MaxQUD](##Ginzburg2012.focusEstablishing_clarify); and
-self-repair is [Parameter Identification with the turn
-held](##Ginzburg2012.parameterIdentification_eq_repair_swapTurn).
+PENDING. The rules form a labelled relation between gameboards: a step integrates a move, or is
+the participant's own bookkeeping. The move rules of Ch. 4 are one such relation and the rules
+of grounding and clarification a second that includes it, and a conversation develops along the
+reflexive transitive closure of the steps.
+
+A move a genre makes initiating is coherent. Each clarification rule is a question merged with
+Utterance Interpolation, so it makes the clarified constituent of the maximal pending utterance
+the focus-establishing constituent of MaxQUD. Parameter Identification and self-repair
+accommodate the same question, the first as a reply and the second as a continuation.
+
+A proposition is about a question when it entails a disjunction of two simple answers to it.
+In a model with one situation that settles whether Kim left and not whether Kim is tall, the
+proposition that at most one student left is about whether Kim left and not about whether Kim is
+tall. For propositions that are sets of worlds, a potentially resolving answer to a question is
+a proposition that resolves the polar closure of the issue the question raises.
 
 The worked traces of Ch. 4 reach the tabulated gameboards, and after "Is George here? / Is WHO
-here?" the two participants' gameboards
-[differ in QUD and PENDING](##Ginzburg2012.George.differ) although both processed the same
-utterances. The turn each rule leaves is a general property of the inventory: the clarification
-rules pass it to the clarifier, repair keeps it, and QSPEC leaves it open; the rows of Chs. 1
-and 8 record who holds the turn after a clarification request, a self-repair and a bare
-follow-up question, [as the rules predict](##Ginzburg2012.Ex22.rows_turn).
+here?" the two participants' gameboards differ in QUD and PENDING although both processed the
+same utterances. QSPEC puts no condition on who
+speaks; the rows of Chs. 1 and 8 record who holds the turn after a clarification request, a
+self-repair and a bare follow-up question.
 
 ## Implementation notes
 
+* The move rules follow Ch. 4, where Accept requires `p?` to be MaxQUD; the version of Appendix B
+  drops that precondition and updates the contextual parameters of the assertion. Initiating
+  Move is stated without its effect on QUD: in the book the issue the move is relevant to
+  becomes MaxQUD and the move is co-propositional with it.
+* The trace of the dialogue in which an assertion is checked and confirmed ends with QUD empty,
+  the result of Fact update on `⟨p₁?⟩`.
+* CR Accommodation removes the clarification request from PENDING when it makes it LatestMove.
 * The schematic content types of the traces (`Content`, `Clarifiable`) fix exactly the aboutness,
   influence and resolution relations each trace's side conditions require. Utterances are
   written orthographically, and the categories and contextual parameters are those the examples
@@ -60,10 +70,11 @@ follow-up question, [as the rules predict](##Ginzburg2012.Ex22.rows_turn).
 
 @[expose] public section
 
+open Inquisitive
+
 namespace Ginzburg2012
 
-open Discourse
-open Discourse.Gameboard (Turn)
+open Gameboard
 
 /-- The syntactic categories of the examples' utterances and sub-utterances. -/
 inductive Category
@@ -138,6 +149,104 @@ inductive Agent
   | B
   deriving DecidableEq, Repr
 
+/-- The other participant. -/
+def Agent.other : Agent → Agent
+  | .A => .B
+  | .B => .A
+
+/-! ### Answerhood (§3.3.7)
+
+A proposition is about a question when it entails a disjunction of two simple answers to it,
+`Gameboard.About`. In frameworks with partial situations, "At most one student left" entails "Either
+Kim left or Kim did not leave" and not "Either Kim is tall or Kim is not tall" (p. 53). -/
+
+namespace AtMostOne
+
+/-- Situation types about Kim: leaving, being tall, and at most one student leaving, each with
+its dual. -/
+inductive Ty
+  | left
+  | notLeft
+  | tall
+  | notTall
+  | atMostOne
+  | moreThanOne
+  deriving DecidableEq
+
+instance : Compl Ty where
+  compl
+    | .left => .notLeft
+    | .notLeft => .left
+    | .tall => .notTall
+    | .notTall => .tall
+    | .atMostOne => .moreThanOne
+    | .moreThanOne => .atMostOne
+
+/-- Two possibilities for one situation: Kim left, or Kim did not leave. In both at most one
+student left, and neither settles whether Kim is tall. -/
+def ofType : Bool → Unit → Ty → Prop
+  | true, _, T => T = .left ∨ T = .atMostOne
+  | false, _, T => T = .notLeft ∨ T = .atMostOne
+
+theorem isExclusive : IsExclusive ofType := by
+  rintro (_ | _) _ T (rfl | rfl) <;> simp [ofType, compl]
+
+theorem not_isBivalent : ¬IsBivalent ofType := fun h ↦ by
+  simpa [ofType, compl] using h true () .tall
+
+/-- That at most one student left is about whether Kim left. -/
+theorem about_left :
+    About ofType ⟨(), .atMostOne⟩ (PFun.pure ⟨(), .left⟩ : Unit →. Austinian Unit Ty) := by
+  refine about_iff.mpr ⟨⟨(), .left⟩, ?_, ⟨(), .notLeft⟩, ?_, ?_⟩
+  · exact Answerhood.subset_simpleAnswers (by simp [ran_pure])
+  · exact Answerhood.compl_mem_simpleAnswers (p := (⟨(), .left⟩ : Austinian Unit Ty))
+      (by simp [ran_pure])
+  · rintro (_ | _) _ <;> simp [ofType]
+
+/-- That at most one student left is not about whether Kim is tall. -/
+theorem not_about_tall :
+    ¬About ofType ⟨(), .atMostOne⟩ (PFun.pure ⟨(), .tall⟩ : Unit →. Austinian Unit Ty) := by
+  rw [about_iff]
+  rintro ⟨a, ha, b, hb, h⟩
+  have h' := h (show true ∈ Austinian.truthSet ofType ⟨(), .atMostOne⟩ from .inr rfl)
+  simp only [Answerhood.mem_simpleAnswers, ran_pure, Set.mem_singleton_iff, exists_eq_left]
+    at ha hb
+  rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;>
+    simp [ofType, compl] at h'
+
+end AtMostOne
+
+/-! ### Resolution over sets of worlds (§3.3.7)
+
+A question whose propositions are sets of worlds is a partial function `q : R →. Set W` from
+records to propositions. -/
+
+section Answerhood
+
+variable {R W : Type*} {p : Set W} {q : R →. Set W}
+
+/-- A potentially resolving answer to `q` entails an instantiation of `q` or the negation of
+every instantiation. -/
+def PotentiallyResolves (p : Set W) (q : R →. Set W) : Prop :=
+  (∃ a ∈ q.ran, p ⊆ a) ∨ ∀ a ∈ q.ran, p ⊆ aᶜ
+
+/-- A potentially resolving answer to `q` is a proposition that resolves the polar closure of
+the issue `q` raises. -/
+theorem potentiallyResolves_iff_mem_query :
+    PotentiallyResolves p q ↔ p ∈ (Gameboard.issue q).query := by
+  simp only [PotentiallyResolves, Gameboard.issue, Proposition.mem_query, Proposition.mem_generate,
+    Inquisitive.Proposition.info_generate, Set.subset_compl_comm (s := p), Set.sUnion_subset_iff]
+  constructor
+  · rintro (h | h)
+    · exact .inl (.inr h)
+    · exact .inr h
+  · rintro ((rfl | h) | h)
+    · exact .inr fun a _ ↦ by simp
+    · exact .inl h
+    · exact .inr h
+
+end Answerhood
+
 section Rules
 
 variable {P Fact Q : Type} [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
@@ -171,160 +280,83 @@ def Copropositional (m : IllocutionaryAct Fact Q) (q : Q) : Prop :=
 instance : DecidableRel (Copropositional (Fact := Fact) (Q := Q)) :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
 
-omit [DecidableEq Fact] in
+/-- `a` addresses to `b` an utterance of which only the content `c` matters. -/
+def tells (a b : P) (c : IllocutionaryAct Fact Q) : Move P (Utterance Fact Q) :=
+  ⟨a, b, ofMove c⟩
+
+omit [DecidableEq Fact] [DecidableEq Q] in
 /-- A clarification rule pairing its question with the clarified constituent makes that
 constituent, a constituent of MaxPending, the focus-establishing constituent of MaxQUD. -/
-theorem focusEstablishing_clarify {t : Turn} {q : Utterance Fact Q → Constituent → Q}
-    {u : Constituent} {cr : Utterance Fact Q} {d d' : Board P Fact Q}
-    (h : d.clarify Copropositional t (fun v u ↦ ⟨q v u, {u}⟩) u cr = some d') :
+theorem focusEstablishing_clarification {q : Utterance Fact Q → Q} {u : Constituent}
+    {d d' : Board P Fact Q} {m : Move P (Utterance Fact Q)}
+    (h : Clarification Copropositional u (fun v ↦ ⟨q v, {u}⟩) d m d') :
     (∃ v ∈ d.maxPending, u ∈ v.constituents) ∧
       d'.qud.head?.map (·.focusEstablishing) = some {u} := by
-  obtain ⟨v, hv, hu, h⟩ := d.qud_clarify h
+  obtain ⟨v, hv, hu, h⟩ := h.qud
   exact ⟨⟨v, hv, hu⟩, by simp [h]⟩
 
 /-! ### Move rules (Ch. 4)
 
-Each rule is a partial map on gameboards, `none` when the gameboard fails its preconditions, with
-the utterance or turn a nondeterministic rule chooses made an argument. Accept and Confirm change
-the turn; Free Speech, QSPEC and checking leave it underspecified; the rest keep it. -/
-
-/-- Greeting opens a conversation with no moves made and nothing under discussion. -/
-def greeting (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.moves, d.qud with
-  | [], [] => some (d.recordMove (ofMove IllocutionaryAct.greet))
-  | _, _ => none
-
-/-- Counter-greeting answers a greeting. -/
-def counterGreeting (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.latestContent with
-  | some .greet => some (d.swapTurn.recordMove (ofMove IllocutionaryAct.counterGreet))
-  | _ => none
-
-/-- Free Speech: with nothing under discussion, any move may be made. -/
-def freeSpeech (u : Utterance Fact Q) (t : Turn) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.qud with
-  | [] => some ((t.act d).recordMove u)
-  | _ => none
-
-/-- QSPEC: a move specific to MaxQUD may be made. -/
-def qspec (u : Utterance Fact Q) (t : Turn) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.qud with
-  | i :: _ => if QSpecific u.content i.question then some ((t.act d).recordMove u) else none
-  | [] => none
-
-/-- Ask QUD-incrementation: the question asked becomes MaxQUD. -/
-def askQud (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  d.incrementQud fun
-    | .ask q => some q
-    | _ => none
-
-/-- Assert QUD-incrementation: `p?` becomes MaxQUD once `p` is asserted. -/
-def assertQud (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  d.incrementQud fun
-    | .assert p => some (Content.polar p)
-    | _ => none
-
-/-- Assertion checking: the asserter asks for confirmation of `p` while `p?` is MaxQUD. -/
-def check (u : Utterance Fact Q) (t : Turn) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.latestContent, u.content with
-  | some (.assert p), .check p' =>
-    if p = p' ∧ d.maxQud = some (Content.polar p) then some ((t.act d).recordMove u) else none
-  | _, _ => none
-
-/-- Accept: the addressee accepts the assertion of `p` while `p?` is MaxQUD. -/
-def accept (u : Utterance Fact Q) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.latestContent, u.content with
-  | some (.assert p), .accept p' =>
-    if p = p' ∧ d.maxQud = some (Content.polar p) then some (d.swapTurn.recordMove u) else none
-  | _, _ => none
-
-/-- Confirm: the addressee confirms the checked `p` while `p?` is MaxQUD. -/
-def confirm (u : Utterance Fact Q) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.latestContent, u.content with
-  | some (.check p), .confirm p' =>
-    if p = p' ∧ d.maxQud = some (Content.polar p) then some (d.swapTurn.recordMove u) else none
-  | _, _ => none
-
-/-- Fact update/QUD-downdate: an accepted or confirmed `p` joins FACTS, and the questions the
-facts now resolve leave QUD. -/
-def factUpdate (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.latestContent with
-  | some (.accept p) | some (.confirm p) =>
-    if d.maxQud = some (Content.polar p) then some ((d.addFact p).downdateQud Content.Resolves)
-    else none
-  | _ => none
-
-/-- QCoord: the asker of `q` follows it with a question `q₁` that does not influence `q`, which
-joins QUD below it. -/
-def qcoord (u : Utterance Fact Q) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.latestContent, u.content, d.qud with
-  | some (.ask q), .ask q₁, i :: rest =>
-    if i.question = q ∧ ¬ Content.Influences (Fact := Fact) q₁ q then
-      some { d.recordMove u with qud := i :: ⟨q₁, ∅⟩ :: rest } else none
-  | _, _, _ => none
+A step labelled `some m` integrates the move `m` as LatestMove, and a step labelled `none` is
+bookkeeping. Accept and Confirm are replies; Greeting, Free Speech, QSPEC and checking put no
+condition on who speaks. -/
 
 /-- The move rules of [ginzburg-2012] Ch. 4, as Appendix B lists them. -/
-inductive Rule (Fact Q : Type)
-  | greeting
-  | counterGreeting
-  | freeSpeech (u : Utterance Fact Q) (t : Turn)
-  | qspec (u : Utterance Fact Q) (t : Turn)
-  | askQud
-  | assertQud
-  | check (u : Utterance Fact Q) (t : Turn)
-  | accept (u : Utterance Fact Q)
-  | confirm (u : Utterance Fact Q)
-  | factUpdate
-  | qcoord (u : Utterance Fact Q)
+inductive Step : Board P Fact Q → Option (Move P (Utterance Fact Q)) → Board P Fact Q → Prop
+  /-- Greeting opens a conversation with no moves made and nothing under discussion. -/
+  | greeting {d : Board P Fact Q} (m : Move P (Utterance Fact Q)) :
+      d.moves = [] → d.qud = [] → m.utterance.content = .greet → d.IsContinuation m →
+      Step d (some m) (d.say m)
+  /-- Counter-greeting answers a greeting. -/
+  | counterGreeting {d : Board P Fact Q} (m : Move P (Utterance Fact Q)) :
+      d.latestContent = some .greet → d.qud = [] → m.utterance.content = .counterGreet →
+      d.IsReply m → Step d (some m) (d.say m)
+  /-- Free Speech: with nothing under discussion, any move may be made. -/
+  | freeSpeech {d : Board P Fact Q} (m : Move P (Utterance Fact Q)) :
+      d.qud = [] → Step d (some m) (d.say m)
+  /-- QSPEC: a move specific to MaxQUD may be made. -/
+  | qspec {d : Board P Fact Q} {i : InformationStructure Q Constituent}
+      (m : Move P (Utterance Fact Q)) :
+      d.qud.head? = some i → QSpecific m.utterance.content i.question →
+      Step d (some m) (d.say m)
+  /-- Ask QUD-incrementation: the question asked becomes MaxQUD. -/
+  | askQud {d : Board P Fact Q} {q : Q} :
+      d.latestContent = some (.ask q) → Step d none (d.pushQud ⟨q, ∅⟩)
+  /-- Assert QUD-incrementation: `p?` becomes MaxQUD once `p` is asserted. -/
+  | assertQud {d : Board P Fact Q} {p : Fact} :
+      d.latestContent = some (.assert p) → Step d none (d.pushQud ⟨Content.polar p, ∅⟩)
+  /-- Assertion checking: once `p` is asserted and `p?` is MaxQUD, either participant may ask
+  for confirmation of `p`. -/
+  | check {d : Board P Fact Q} {p : Fact} (m : Move P (Utterance Fact Q)) :
+      d.latestContent = some (.assert p) → m.utterance.content = .check p →
+      d.maxQud = some (Content.polar p) → Step d (some m) (d.say m)
+  /-- Accept: the addressee accepts the assertion of `p` while `p?` is MaxQUD. -/
+  | accept {d : Board P Fact Q} {p : Fact} (m : Move P (Utterance Fact Q)) :
+      d.latestContent = some (.assert p) → m.utterance.content = .accept p →
+      d.maxQud = some (Content.polar p) → d.IsReply m → Step d (some m) (d.say m)
+  /-- Confirm: the addressee confirms the checked `p` while `p?` is MaxQUD. -/
+  | confirm {d : Board P Fact Q} {p : Fact} (m : Move P (Utterance Fact Q)) :
+      d.latestContent = some (.check p) → m.utterance.content = .confirm p →
+      d.maxQud = some (Content.polar p) → d.IsReply m → Step d (some m) (d.say m)
+  /-- Fact update/QUD-downdate: an accepted or confirmed `p` joins FACTS, and the questions the
+  facts now resolve leave QUD. -/
+  | factUpdate {d : Board P Fact Q} {p : Fact} :
+      d.latestContent = some (.accept p) ∨ d.latestContent = some (.confirm p) →
+      d.maxQud = some (Content.polar p) →
+      Step d none ((d.addFact p).downdateQud Content.Resolves)
+  /-- QCoord: the asker of `q` follows it with a question `q₁` that does not influence `q`,
+  which joins QUD below it. -/
+  | qcoord {d : Board P Fact Q} {q q₁ : Q} {i : InformationStructure Q Constituent}
+      {rest : List (InformationStructure Q Constituent)} (m : Move P (Utterance Fact Q)) :
+      d.latestContent = some (.ask q) → m.utterance.content = .ask q₁ → d.qud = i :: rest →
+      i.question = q → ¬Content.Influences (Fact := Fact) q₁ q → d.IsContinuation m →
+      Step d (some m) { d.say m with qud := i :: ⟨q₁, ∅⟩ :: rest }
 
-/-- The partial map of a move rule. -/
-def Rule.apply : Rule Fact Q → Board P Fact Q → Option (Board P Fact Q)
-  | .greeting => Ginzburg2012.greeting
-  | .counterGreeting => Ginzburg2012.counterGreeting
-  | .freeSpeech u t => Ginzburg2012.freeSpeech u t
-  | .qspec u t => Ginzburg2012.qspec u t
-  | .askQud => Ginzburg2012.askQud
-  | .assertQud => Ginzburg2012.assertQud
-  | .check u t => Ginzburg2012.check u t
-  | .accept u => Ginzburg2012.accept u
-  | .confirm u => Ginzburg2012.confirm u
-  | .factUpdate => Ginzburg2012.factUpdate
-  | .qcoord u => Ginzburg2012.qcoord u
-
-/-- Apply a trace of move rules in sequence (the composition of conversational rules). -/
-def run (trace : List (Rule Fact Q)) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  trace.foldlM (fun d r ↦ r.apply d) d
-
-/-- `d'` is a possible development of `d` by the move rules. -/
-def Reachable (d d' : Board P Fact Q) : Prop := ∃ trace, run trace d = some d'
-
-/-! ### QUD well-formedness
-
-The Question Introduction Appropriateness Condition (52) p. 89 lets a question
-enter QUD only if no fact resolves it; (53) builds it into the gameboard type
-as `non-resolve-cond`, here the predicate `Gameboard.NonResolveCond`. -/
-
-omit [DecidableEq Fact] [DecidableEq Q] in
-theorem askQud_nonResolveCond_iff {d d' : Board P Fact Q} {q : Q}
-    (hm : d.latestContent = some (.ask q)) (h : askQud d = some d') :
-    d'.NonResolveCond Content.Resolves ↔
-      (¬∃ f ∈ d.facts, Content.Resolves f q) ∧ d.NonResolveCond Content.Resolves :=
-  d.nonResolveCond_incrementQud_iff _ (by rw [hm]; rfl) h
-
-theorem factUpdate_nonResolveCond {d d' : Board P Fact Q}
-    (h : factUpdate d = some d') : d'.NonResolveCond Content.Resolves := by
-  unfold factUpdate at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h <;>
-    exact Option.some.inj h.2 ▸ Gameboard.nonResolveCond_downdateQud _ _
-
-theorem factUpdate_polar {d d' : Board P Fact Q} {p : Fact}
-    (hm : d.latestContent = some (.accept p))
-    (h : factUpdate d = some d') : ∀ i ∈ d'.qud, i.question ≠ Content.polar p := by
-  have := factUpdate_nonResolveCond h
-  intro i hi hq
-  refine this i hi ⟨p, ?_, hq ▸ Content.resolves_polar p⟩
-  simp only [factUpdate, hm, Option.ite_none_right_eq_some] at h
-  exact Option.some.inj h.2 ▸ Finset.mem_insert_self _ _
+omit [DecidableEq Q] in
+theorem factUpdate_polar (d : Board P Fact Q) (p : Fact) :
+    ∀ i ∈ ((d.addFact p).downdateQud Content.Resolves).qud, i.question ≠ Content.polar p :=
+  fun i hi hq ↦ Gameboard.nonResolveCond_downdateQud _ _ i hi
+    ⟨p, Finset.mem_insert_self _ _, hq ▸ Content.resolves_polar p⟩
 
 /-! ### Conversational genres (§4.6)
 
@@ -336,125 +368,92 @@ when some development of the gameboard after it is of that type, `outcome(dgb, G
 speaker takes to be relevant to the genre, which the private part of their information state
 records (ex. 93 p. 107); here the genre is an argument. -/
 
-/-- `u` is relevant to `G` in `d` when some development of `d` extended by `u` is of type `G`. -/
-def GenreRelevant (G : Set (Board P Fact Q)) (d : Board P Fact Q) (u : Utterance Fact Q) : Prop :=
-  ∃ d', Reachable (d.recordMove u) d' ∧ d' ∈ G
+/-- `m` is relevant to `G` in `d` when some development of `d` extended by `m` is of type `G`. -/
+def GenreRelevant (G : Set (Board P Fact Q)) (d : Board P Fact Q)
+    (m : Move P (Utterance Fact Q)) : Prop :=
+  ∃ d', Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (d.say m) d' ∧ d' ∈ G
 
 /-- Initiating Move: with QUD empty, a move relevant to the assumed genre. -/
-def IsInitiating (G : Set (Board P Fact Q)) (d : Board P Fact Q) (u : Utterance Fact Q) : Prop :=
-  d.qud = [] ∧ GenreRelevant G d u
+def IsInitiating (G : Set (Board P Fact Q)) (d : Board P Fact Q)
+    (m : Move P (Utterance Fact Q)) : Prop :=
+  d.qud = [] ∧ GenreRelevant G d m
 
 /-! ### Grounding and clarification (Ch. 6, §8.2)
 
-A Clarification Context Update Rule fixes the question it accommodates and who takes the turn,
+A Clarification Context Update Rule fixes the question it accommodates and who makes the move,
 and is merged with Utterance Interpolation ((71) p. 192). In the final versions of the rules
 (Appendix B (26e) p. 374, and (31) p. 287 for repair), MaxQUD is paired with the clarified
 sub-utterance, a constituent of the maximal pending utterance, as its focus-establishing
 constituent, which a reprise fragment must then match in category (p. 254). Backwards-looking
-appropriateness repair ((31) p. 287) is Parameter Identification ((70) p. 192) without the turn
-change: the speaker of a pending utterance accommodates the issue of what they meant by one of its
-constituents and continues co-propositionally with it. -/
-
-/-- Contextual Instantiation witnesses the parameters `s` of MaxPending, as an agent does who
-believes their witnesses are the ones the speaker intended. -/
-def contextualInstantiation (s : Finset Parameter) (d : Board P Fact Q) :
-    Option (Board P Fact Q) :=
-  match d.pending with
-  | u :: rest => some { d with pending := u.instantiate s :: rest }
-  | [] => none
-
-/-- Pendification of a move rule: the move it records originates in PENDING, with no contextual
-parameter left to witness. -/
-def pendified (r : Rule Fact Q) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.pending with
-  | u :: rest =>
-    if u.parameters = ∅ then (r.apply { d with pending := rest }).filter (·.latestMove = some u)
-    else none
-  | [] => none
+appropriateness repair ((31) p. 287) is Parameter Identification ((70) p. 192) made by the
+speaker: the speaker of a pending utterance accommodates the issue of what they meant by one of
+its constituents and continues co-propositionally with it. -/
 
 variable [Clarifiable P Fact Q]
 
-/-- Parameter Identification: the addressee takes the turn to ask what the speaker meant by the
+/-- Backwards-looking appropriateness repair: the speaker continues, saying what they meant by
+a constituent `u` of MaxPending. -/
+def Repair (d : Board P Fact Q) (m : Move P (Utterance Fact Q)) (d' : Board P Fact Q) : Prop :=
+  d.IsContinuation m ∧ ∃ u, Clarification Copropositional u
+    (fun _ ↦ ⟨Clarifiable.mean (Fact := Fact) d.speaker u, {u}⟩) d m d'
+
+/-- Parameter Identification: the addressee replies, asking what the speaker meant by a
 constituent `u` of MaxPending. -/
-def parameterIdentification (u : Constituent) (cr : Utterance Fact Q) (d : Board P Fact Q) :
-    Option (Board P Fact Q) :=
-  d.clarify Copropositional .change
-    (fun _ u ↦ ⟨Clarifiable.mean (Fact := Fact) d.speaker u, {u}⟩) u cr
+def ParameterIdentification (d : Board P Fact Q) (m : Move P (Utterance Fact Q))
+    (d' : Board P Fact Q) : Prop :=
+  d.IsReply m ∧ ∃ u, Clarification Copropositional u
+    (fun _ ↦ ⟨Clarifiable.mean (Fact := Fact) d.speaker u, {u}⟩) d m d'
 
-/-- Parameter Focussing: the addressee takes the turn to ask the content of MaxPending with the
+/-- Parameter Focussing: the addressee replies, asking the content of MaxPending with the
 parameter of its constituent `u` abstracted. -/
-def parameterFocussing (u : Constituent) (cr : Utterance Fact Q) (d : Board P Fact Q) :
-    Option (Board P Fact Q) :=
-  d.clarify Copropositional .change (fun v u ↦ ⟨Clarifiable.focus (P := P) v.content u, {u}⟩) u cr
+def ParameterFocussing (d : Board P Fact Q) (m : Move P (Utterance Fact Q))
+    (d' : Board P Fact Q) : Prop :=
+  d.IsReply m ∧ ∃ u, Clarification Copropositional u
+    (fun v ↦ ⟨Clarifiable.focus (P := P) v.content u, {u}⟩) d m d'
 
-/-- CR Accommodation integrates the other party's clarification request, so the clarified speaker
-is the current addressee. -/
-def crAccommodation (u : Constituent) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  match d.pending, d.latestMove with
-  | v :: rest, some v₀ =>
-    if u ∈ v₀.constituents ∧
-        (qudContrib v.content = some (Clarifiable.mean (Fact := Fact) d.addressee u) ∨
-          qudContrib v.content = some (Clarifiable.focus (P := P) v₀.content u)) then
-      match qudContrib v.content with
-      | some q => some { (d.pushQud ⟨q, {u}⟩).recordMove v with pending := rest }
-      | none => none
-    else none
-  | _, _ => none
+/-- The rules of grounding and clarification, which include the move rules. -/
+inductive GroundingStep :
+    Board P Fact Q → Option (Move P (Utterance Fact Q)) → Board P Fact Q → Prop
+  | step {d d' : Board P Fact Q} {l : Option (Move P (Utterance Fact Q))} :
+      Step d l d' → GroundingStep d l d'
+  /-- Pending Update: an utterance becomes MaxPending. -/
+  | pendingUpdate {d : Board P Fact Q} (m : Move P (Utterance Fact Q)) :
+      GroundingStep d none (d.pendingUpdate m.utterance m.speaker m.addressee)
+  /-- Contextual Instantiation witnesses the parameters `s` of MaxPending, as an agent does who
+  believes their witnesses are the ones the speaker intended. -/
+  | contextualInstantiation {d : Board P Fact Q} {v : Utterance Fact Q}
+      {rest : List (Utterance Fact Q)} (s : Finset Parameter) :
+      d.pending = v :: rest → GroundingStep d none { d with pending := v.instantiate s :: rest }
+  /-- Pendification of the move rules: the move they integrate is MaxPending, with no
+  contextual parameter left to witness. -/
+  | pendified {d d' : Board P Fact Q} {u : Utterance Fact Q} {rest : List (Utterance Fact Q)} :
+      d.pending = u :: rest → u.parameters = ∅ →
+      Step { d with pending := rest } (some ⟨d.speaker, d.addressee, u⟩) d' →
+      GroundingStep d (some ⟨d.speaker, d.addressee, u⟩) d'
+  | repair {d d' : Board P Fact Q} {m : Move P (Utterance Fact Q)} :
+      Repair d m d' → GroundingStep d (some m) d'
+  | parameterIdentification {d d' : Board P Fact Q} {m : Move P (Utterance Fact Q)} :
+      ParameterIdentification d m d' → GroundingStep d (some m) d'
+  | parameterFocussing {d d' : Board P Fact Q} {m : Move P (Utterance Fact Q)} :
+      ParameterFocussing d m d' → GroundingStep d (some m) d'
+  /-- CR Accommodation integrates the other party's clarification request, MaxPending, so the
+  clarified speaker is the current addressee. -/
+  | crAccommodation {d : Board P Fact Q} {u : Constituent} {v v₀ : Utterance Fact Q}
+      {rest : List (Utterance Fact Q)} {q : Q} :
+      d.pending = v :: rest → d.latestMove = some v₀ → u ∈ v₀.constituents →
+      qudContrib v.content = some q →
+      q = Clarifiable.mean (Fact := Fact) d.addressee u ∨
+        q = Clarifiable.focus (P := P) v₀.content u →
+      GroundingStep d (some ⟨d.speaker, d.addressee, v⟩)
+        { (d.pushQud ⟨q, {u}⟩).recordMove v with pending := rest }
 
-/-- Backwards-looking appropriateness repair: the speaker keeps the turn to say what they meant
-by the constituent `u` of MaxPending. -/
-def repair (u : Constituent) (cr : Utterance Fact Q) (d : Board P Fact Q) :
-    Option (Board P Fact Q) :=
-  d.clarify Copropositional .keep (fun _ u ↦ ⟨Clarifiable.mean (Fact := Fact) d.speaker u, {u}⟩)
-    u cr
-
-/-- The rules of grounding and clarification, which include the move rules: Pending Update,
-Contextual Instantiation, pendification, the two Clarification Context Update Rules, CR
-Accommodation, and repair. -/
-inductive GroundingRule (P Fact Q : Type)
-  | move (r : Rule Fact Q)
-  | pendingUpdate (u : Utterance Fact Q) (speaker addressee : P)
-  | contextualInstantiation (s : Finset Parameter)
-  | pendified (r : Rule Fact Q)
-  | parameterIdentification (u : Constituent) (cr : Utterance Fact Q)
-  | parameterFocussing (u : Constituent) (cr : Utterance Fact Q)
-  | crAccommodation (u : Constituent)
-  | repair (u : Constituent) (cr : Utterance Fact Q)
-
-/-- The partial map of a rule of grounding and clarification. -/
-def GroundingRule.apply : GroundingRule P Fact Q → Board P Fact Q → Option (Board P Fact Q)
-  | .move r => r.apply
-  | .pendingUpdate u s a => fun d ↦ some (d.pendingUpdate u s a)
-  | .contextualInstantiation s => Ginzburg2012.contextualInstantiation s
-  | .pendified r => Ginzburg2012.pendified r
-  | .parameterIdentification u cr => Ginzburg2012.parameterIdentification u cr
-  | .parameterFocussing u cr => Ginzburg2012.parameterFocussing u cr
-  | .crAccommodation u => Ginzburg2012.crAccommodation u
-  | .repair u cr => Ginzburg2012.repair u cr
-
-/-- Apply a trace of rules in sequence. -/
-def GroundingRule.run (trace : List (GroundingRule P Fact Q)) (d : Board P Fact Q) :
-    Option (Board P Fact Q) :=
-  trace.foldlM (fun d r ↦ r.apply d) d
-
-/-- An utterance is coherent relative to a gameboard when some rule makes it the
-latest move (Ch. 4 M-Coherence; Appendix B Utterance Coherence). -/
-def Coherent (d : Board P Fact Q) (u : Utterance Fact Q) : Prop :=
-  ∃ r : GroundingRule P Fact Q, ∃ d', r.apply d = some d' ∧ d'.latestMove = some u
-
+omit [DecidableEq Q] in
+/-- A move a genre makes initiating is coherent (Ch. 4 M-Coherence; Appendix B Utterance
+Coherence). -/
 theorem coherent_of_isInitiating {G : Set (Board P Fact Q)} {d : Board P Fact Q}
-    {u : Utterance Fact Q} (h : IsInitiating G d u) : Coherent d u :=
-  ⟨.move (.freeSpeech u .keep), d.recordMove u,
-    by simp [GroundingRule.apply, Rule.apply, freeSpeech, h.1], by simp⟩
-
-omit [DecidableEq Fact] in
-theorem parameterIdentification_eq_repair_swapTurn (u : Constituent) (cr : Utterance Fact Q)
-    (d : Board P Fact Q) :
-    parameterIdentification u cr d = (repair u cr d).map Gameboard.swapTurn := by
-  simp only [parameterIdentification, repair, Gameboard.clarify, Gameboard.interpolate, Turn.act]
-  cases d.maxPending with
-  | none => rfl
-  | some v => simp only [Option.bind_some]; split_ifs <;> rfl
+    {m : Move P (Utterance Fact Q)} (h : IsInitiating G d m) :
+    ∃ d', GroundingStep d (some m) d' :=
+  ⟨_, .step (.freeSpeech m h.1)⟩
 
 /-! ### Worked traces (Ch. 4)
 
@@ -499,28 +498,30 @@ instance : Content Fact Q where
   decInfluences _ _ := inferInstanceAs (Decidable (_ ∧ _))
   resolves_polar _ := Or.inl rfl
 
-/-- A asks `q₀`; B asks `q₁`; A asserts `p₁`; B accepts; B asserts `p₂`; A accepts. -/
-def trace66 : List (Rule Fact Q) :=
-  [.freeSpeech (ofMove (.ask .q₀)) .keep, .askQud,
-   .qspec (ofMove (.ask .q₁)) .change, .askQud,
-   .qspec (ofMove (.assert .p₁)) .change, .assertQud,
-   .accept (ofMove (.accept .p₁)), .factUpdate,
-   .qspec (ofMove (.assert .p₂)) .keep, .assertQud,
-   .accept (ofMove (.accept .p₂)), .factUpdate]
+-- (65)
+theorem trace : ∃ d,
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
+    table d = ({.p₁, .p₂}, [.q₀],
+      [.accept .p₂, .assert .p₂, .accept .p₁, .assert .p₁, .ask .q₁, .ask .q₀]) :=
+  ⟨_, .head ⟨_, .freeSpeech (tells .A .B (.ask .q₀)) rfl⟩ <| .head ⟨_, .askQud rfl⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.ask .q₁)) rfl (by decide)⟩ <| .head ⟨_, .askQud rfl⟩ <|
+    .head ⟨_, .qspec (tells .A .B (.assert .p₁)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .B .A (.accept .p₁)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.assert .p₂)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .A .B (.accept .p₂)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ .refl, by decide⟩
 
-/-- After (65): FACTS `{p₁, p₂}`, QUD `⟨q₀⟩`, the six moves recorded. -/
-theorem trace : (run trace66 initial).map table =
-    some ({.p₁, .p₂}, [.q₀],
-      [.accept .p₂, .assert .p₂, .accept .p₁, .assert .p₁, .ask .q₁, .ask .q₀]) := by decide
-
-/-- A asserts `p₁`, checks it, B confirms. -/
-def trace68 : List (Rule Fact Q) :=
-  [.freeSpeech (ofMove (.assert .p₁)) .keep, .assertQud,
-   .check (ofMove (.check .p₁)) .keep, .confirm (ofMove (.confirm .p₁)), .factUpdate]
-
-/-- After (67): FACTS `{p₁}` and QUD empty. -/
-theorem trace68_table : (run trace68 initial).map table =
-    some ({.p₁}, [], [.confirm .p₁, .check .p₁, .assert .p₁]) := by decide
+-- (67)-(68)
+theorem trace68 : ∃ d,
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
+    table d = ({.p₁}, [], [.confirm .p₁, .check .p₁, .assert .p₁]) :=
+  ⟨_, .head ⟨_, .freeSpeech (tells .A .B (.assert .p₁)) rfl⟩ <| .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .check (tells .A .B (.check .p₁)) rfl rfl rfl⟩ <|
+    .head ⟨_, .confirm (tells .B .A (.confirm .p₁)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inr rfl) rfl⟩ .refl, by decide⟩
 
 end Ex66
 
@@ -549,17 +550,19 @@ instance : Content Fact Q where
   decInfluences _ _ := inferInstanceAs (Decidable False)
   resolves_polar _ := Or.inl rfl
 
-/-- A asks `q₀` then `q₁` (QCoord); B answers `q₀`; A accepts; B answers `q₁`. -/
-def trace79 : List (Rule Fact Q) :=
-  [.freeSpeech (ofMove (.ask .q₀)) .keep, .askQud, .qcoord (ofMove (.ask .q₁)),
-   .qspec (ofMove (.assert .p₀)) .change, .assertQud,
-   .accept (ofMove (.accept .p₀)), .factUpdate,
-   .qspec (ofMove (.assert .p₁)) .change, .assertQud]
-
-/-- After (78): FACTS `{p₀}`, QUD `⟨p₁?, q₁⟩`. -/
-theorem trace : (run trace79 initial).map table =
-    some ({.p₀}, [.polar .p₁, .q₁],
-      [.assert .p₁, .accept .p₀, .assert .p₀, .ask .q₁, .ask .q₀]) := by decide
+-- (78)
+theorem trace : ∃ d,
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, Step d l d') (initial : Board Agent Fact Q) d ∧
+    table d = ({.p₀}, [.polar .p₁, .q₁],
+      [.assert .p₁, .accept .p₀, .assert .p₀, .ask .q₁, .ask .q₀]) :=
+  ⟨_, .head ⟨_, .freeSpeech (tells .A .B (.ask .q₀)) rfl⟩ <| .head ⟨_, .askQud rfl⟩ <|
+    .head ⟨_, .qcoord (tells .A .B (.ask .q₁)) rfl rfl rfl rfl (by decide) ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.assert .p₀)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .A .B (.accept .p₀)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ <|
+    .head ⟨_, .qspec (tells .B .A (.assert .p₁)) rfl (by decide)⟩ <|
+    .head ⟨_, .assertQud rfl⟩ .refl, by decide⟩
 
 end Ex79
 
@@ -601,8 +604,10 @@ instance : DecidablePred (· ∈ casualChat) := fun _ ↦ inferInstanceAs (Decid
 
 theorem initiating_off :
     IsInitiating casualChat ((initial {.here}).recordMove (ofMove IllocutionaryAct.greet))
-      (ofMove (.assert .off)) :=
-  ⟨rfl, _, ⟨[.assertQud, .accept (ofMove (.accept .off)), .factUpdate], rfl⟩, by decide⟩
+      (tells .B .A (.assert .off)) :=
+  ⟨rfl, _, .head ⟨_, .assertQud rfl⟩ <|
+    .head ⟨_, .accept (tells .A .B (.accept .off)) rfl rfl rfl ⟨rfl, rfl⟩⟩ <|
+    .head ⟨_, .factUpdate (.inl rfl) rfl⟩ .refl, by decide⟩
 
 end Ex95
 
@@ -656,35 +661,38 @@ def w₀ : Utterance Fact Q := u₀.instantiate {.george}
 /-- B's clarification request. -/
 def u₁ : Utterance Fact Q := { form := "Is WHO here?", category := .s, content := .ask .whoAsked }
 
-/-- A: utter `u₀`, instantiate it, integrate it by Free Speech, hear `u₁`. -/
-def traceA : List (GroundingRule Agent Fact Q) :=
-  [.pendingUpdate u₀ .A .B, .contextualInstantiation {.george},
-   .pendified (.freeSpeech w₀ .keep), .move .askQud, .pendingUpdate u₁ .B .A]
+/-- (91b): A's gameboard, with `p?` under discussion and B's clarification request pending. -/
+def dgbA : Board Agent Fact Q :=
+  { speaker := .B, addressee := .A, pending := [u₁], qud := [⟨.polar .georgeHere, ∅⟩],
+    moves := [w₀] }
 
-/-- B: hear `u₀`, clarify by Parameter Focussing with `u₁`. -/
-def traceB : List (GroundingRule Agent Fact Q) :=
-  [.pendingUpdate u₀ .A .B, .parameterFocussing george u₁]
+/-- (91c): B's gameboard, with who A is asking about under discussion and A's utterance
+pending. -/
+def dgbB : Board Agent Fact Q :=
+  { speaker := .B, addressee := .A, pending := [u₀], qud := [⟨.whoAsked, {george}⟩],
+    moves := [u₁] }
 
--- (91b)
-theorem dgb_A : GroundingRule.run traceA initial = some
-    { speaker := .B, addressee := .A, pending := [u₁], qud := [⟨.polar .georgeHere, ∅⟩],
-      moves := [w₀] } := by decide
+-- A utters `u₀`, instantiates it, integrates it by Free Speech and hears `u₁`
+theorem reflTransGen_dgbA :
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, GroundingStep d l d') initial dgbA :=
+  .head ⟨_, .pendingUpdate ⟨.A, .B, u₀⟩⟩ <|
+    .head ⟨_, .contextualInstantiation {.george} rfl⟩ <|
+    .head ⟨_, .pendified rfl (by decide) (.freeSpeech _ rfl)⟩ <|
+    .head ⟨_, .step (.askQud rfl)⟩ <| .head ⟨_, .pendingUpdate ⟨.B, .A, u₁⟩⟩ .refl
 
--- (91c)
-theorem dgb_B : GroundingRule.run traceB initial = some
-    { speaker := .B, addressee := .A, pending := [u₀], qud := [⟨.whoAsked, {george}⟩],
-      moves := [u₁] } := by decide
+-- B hears `u₀` and clarifies by Parameter Focussing with `u₁`
+theorem reflTransGen_dgbB :
+    Relation.ReflTransGen (fun d d' ↦ ∃ l, GroundingStep d l d') initial dgbB :=
+  .head ⟨_, .pendingUpdate ⟨.A, .B, u₀⟩⟩ <| .head ⟨_, .parameterFocussing (m := ⟨.B, .A, u₁⟩)
+    ⟨⟨rfl, rfl⟩, george, u₀, rfl, Finset.mem_singleton_self _, rfl, rfl⟩⟩ .refl
 
-theorem differ : ∀ dA ∈ GroundingRule.run traceA initial, ∀ dB ∈ GroundingRule.run traceB initial,
-    dA.qud ≠ dB.qud ∧ dA.pending ≠ dB.pending := by
-  simp only [dgb_A, dgb_B, Option.mem_def, Option.some.injEq]
-  rintro _ rfl _ rfl
+theorem differ : dgbA.qud ≠ dgbB.qud ∧ dgbA.pending ≠ dgbB.pending := by
   decide
 
-theorem accommodate :
-    (GroundingRule.run (traceA ++ [.crAccommodation george]) initial).map
-        (fun d ↦ (d.qud.map (·.question), d.pending)) =
-      some ([.whoAsked, .polar .georgeHere], []) := by decide
+theorem accommodate : ∃ d, GroundingStep dgbA (some ⟨.B, .A, u₁⟩) d ∧
+    (d.qud.map (·.question), d.pending) = ([.whoAsked, .polar .georgeHere], []) :=
+  ⟨_, .crAccommodation (u := george) rfl rfl (Finset.mem_singleton_self _) rfl (.inr rfl),
+    by decide⟩
 
 end George
 
@@ -693,35 +701,8 @@ end George
 Only the addressee has the two clarification-request readings of "Bo?" and only the original
 speaker its self-correction reading (ex. 22); bare "Why?" is resolved differently by whoever holds
 the turn, the Turn-Taking Puzzle (ex. 23); and mid-utterance self-repair is the within-utterance
-analogue of a clarification request (ex. 24). Each turns on the turn a rule leaves, a general
-property of the inventory. -/
-
-section Turn
-
-variable {P Fact Q : Type} [Content Fact Q] {d d' : Board P Fact Q}
-
-theorem speaker_qspec {m : Utterance Fact Q} {t : Turn} (h : qspec m t d = some d') :
-    d'.speaker = (t.act d).speaker := by
-  unfold qspec at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
-  obtain ⟨-, h⟩ := h
-  cases h
-  rfl
-
-variable [DecidableEq Q] [Clarifiable P Fact Q] {u : Constituent} {cr : Utterance Fact Q}
-
-theorem speaker_parameterIdentification (h : parameterIdentification u cr d = some d') :
-    d'.speaker = d.addressee :=
-  d.speaker_clarify h
-
-theorem speaker_parameterFocussing (h : parameterFocussing u cr d = some d') :
-    d'.speaker = d.addressee :=
-  d.speaker_clarify h
-
-theorem speaker_repair (h : repair u cr d = some d') : d'.speaker = d.speaker :=
-  d.speaker_clarify h
-
-end Turn
+analogue of a clarification request (ex. 24). Each turns on who may make the move a rule
+integrates. -/
 
 /-! The rows of exx. 22–24: A asks about Bo, or which members of the audience own a parakeet, and
 either A or B follows with "Bo?" or "Why?". -/
@@ -769,18 +750,18 @@ inductive Construction
   | followUp
   deriving DecidableEq, Repr
 
-/-- A row: its construction and the turn the book records after it. -/
+/-- A row: its construction and who holds the turn after it, A being the original speaker. -/
 structure Row where
   construction : Construction
-  turn : Turn
+  next : Agent
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row :=
-  (ex.parse? (α := Row) "speaker" [("addressee", ⟨.clarification, .change⟩),
-      ("original speaker", ⟨.selfRepair, .keep⟩)]).orElse fun _ ↦
-    (ex.parse? "repair" [("other-initiated", ⟨.clarification, .change⟩),
-        ("self-initiated", ⟨.selfRepair, .keep⟩)]).orElse fun _ ↦
-      ex.parse? "turn" [("kept", ⟨.followUp, .keep⟩), ("taken", ⟨.followUp, .change⟩)]
+  (ex.parse? (α := Row) "speaker" [("addressee", ⟨.clarification, .B⟩),
+      ("original speaker", ⟨.selfRepair, .A⟩)]).orElse fun _ ↦
+    (ex.parse? "repair" [("other-initiated", ⟨.clarification, .B⟩),
+        ("self-initiated", ⟨.selfRepair, .A⟩)]).orElse fun _ ↦
+      ex.parse? "turn" [("kept", ⟨.followUp, .A⟩), ("taken", ⟨.followUp, .B⟩)]
 
 /-- The gameboard the row's second utterance meets: A's question pending, for a clarification
 request or a repair addressing its constituent "Bo", or under discussion, for a follow-up. -/
@@ -789,20 +770,32 @@ def Row.board (r : Row) : Board Agent Fact Q :=
   | .clarification | .selfRepair => initial.pushPending u₀
   | .followUp => (initial.recordMove (ofMove (.ask .q₀))).pushQud ⟨.q₀, ∅⟩
 
-/-- The rule the construction instantiates: Parameter Identification or repair over "Bo", or
-QSPEC with the influencing `why`, taking whichever turn the row records. -/
-def Row.rule (r : Row) : GroundingRule Agent Fact Q :=
-  match r.construction with
-  | .clarification => .parameterIdentification bo (ofMove (.ask (.meant bo)))
-  | .selfRepair => .repair bo (ofMove (.ask (.meant bo)))
-  | .followUp => .move (.qspec (ofMove (.ask .why)) r.turn)
-
 /-- The seven rows of exx. 22–24. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-theorem rows_turn :
-    ∀ r ∈ rows, (r.rule.apply r.board).map (·.speaker) = some (r.turn.act r.board).speaker := by
-  decide
+theorem rows_turn : ∀ r ∈ rows,
+    match r.construction with
+    | .clarification =>
+        (∃ d', ParameterIdentification r.board (tells r.next r.next.other (.ask (.meant bo))) d') ∧
+          ∀ m d', ParameterIdentification r.board m d' → m.speaker = r.next
+    | .selfRepair =>
+        (∃ d', Repair r.board (tells r.next r.next.other (.ask (.meant bo))) d') ∧
+          ∀ m d', Repair r.board m d' → m.speaker = r.next
+    | .followUp => ∃ d', Step r.board (some (tells r.next r.next.other (.ask .why))) d' := by
+  intro r hr
+  have key := (by decide : ∀ r ∈ rows, (r.construction = .clarification → r.next = .B) ∧
+    (r.construction = .selfRepair → r.next = .A)) r hr
+  obtain ⟨c, n⟩ := r
+  cases c
+  · obtain rfl : n = .B := key.1 rfl
+    exact ⟨⟨_, ⟨rfl, rfl⟩, bo, u₀, rfl, Finset.mem_singleton_self _, rfl, rfl⟩,
+      fun _ _ ⟨⟨h, _⟩, _⟩ ↦ h⟩
+  · obtain rfl : n = .A := key.2 rfl
+    exact ⟨⟨_, ⟨rfl, rfl⟩, bo, u₀, rfl, Finset.mem_singleton_self _, rfl, rfl⟩,
+      fun _ _ ⟨⟨h, _⟩, _⟩ ↦ h⟩
+  · cases n
+    · exact ⟨_, .qspec _ rfl (by decide)⟩
+    · exact ⟨_, .qspec _ rfl (by decide)⟩
 
 end Ex22
 

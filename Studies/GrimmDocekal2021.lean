@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Mereology.Topology
+public import Linglib.Semantics.Mereology.Connection
 public import Linglib.Semantics.Plurality.Groups
 public import Linglib.Data.Examples.GrimmDocekal2021
 public import Linglib.Data.Examples.Readers
@@ -28,8 +28,11 @@ and *-ojí* counts subkinds and so fails on a kind-less argument (`oji_needs_sub
 The connection relation is a parameter, the paper's proximate or external connectedness, which (63)
 binds existentially; the cluster of (61) uses a set of members and its supremum. The group
 numeral is stated over the library's `Plurality.GroupStructure`, whose `up` forms a group atom
-from a sum of individuals, which is why a group can be counted again. The paper's Table 1, the
-twenty-two nouns derived by *-í*, is lexical data for the Czech Fragment and is not retyped here.
+from a sum of individuals, which is why a group can be counted again. Clusters and the
+aggregate numeral are stated on a part structure with no null element, as the paper's is; with
+one, everything overlaps and no two maximal clusters could be separate. The paper's Table 1, the
+twenty-two nouns derived by *-í*, is lexical data for the Czech language file and is not retyped
+here.
 
 ## References
 
@@ -41,33 +44,20 @@ twenty-two nouns derived by *-í*, is lexical data for the Czech Fragment and is
 
 ## TODO
 
-Table 1's derived aggregates belong in `Fragments/Slavic/Czech/`; Krifka's kind and object unit
-operators of section 4 are not formalized.
+Table 1's derived aggregates belong in `Languages/Slavic/Czech/`; Krifka's kind and object unit
+operators of section 4 are not formalized. A model with two separate maximal clusters, on which
+the aggregate numeral counts two, is not given.
 -/
 
 @[expose] public section
 
 namespace GrimmDocekal2021
 
+open Examples (Noun Context)
+
 open Mereology
 
 /-! ### The judged noun phrases, section 2 -/
-
-/-- A noun falls into one of these classes, which numerals and operations select. -/
-inductive Noun where
-  | ordinary
-  | animate
-  /-- The noun is derived by *-í*. -/
-  | derivedAggregate
-  | pluraleTantum
-  /-- The noun is countable, and its referents typically come in multiples, *klíče* 'keys'. -/
-  | multiple
-  | substance
-  | abstract
-  /-- The phrase refers uniquely, *noha tohoto stolu* 'this table's leg'. -/
-  | unique
-  | proper
-  deriving DecidableEq, Repr
 
 /-- A phrase carries one of these numerals, or none. -/
 inductive Numeral where
@@ -98,14 +88,6 @@ inductive Operation where
   | derivation
   deriving DecidableEq, Repr
 
-/-- A reading is judged in one of these contexts. -/
-inductive Context where
-  | episodic
-  | generic
-  /-- The context is a fast-food order, section 2.2.2. -/
-  | portion
-  deriving DecidableEq, Repr
-
 /-- A row records a noun phrase and its judgment. -/
 structure Row where
   noun : Noun
@@ -117,10 +99,7 @@ structure Row where
   deriving DecidableEq, Repr
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let noun ← ex.parse? "noun"
-    [("ordinary", Noun.ordinary), ("animate", .animate), ("derivedAggregate", .derivedAggregate),
-      ("pluraleTantum", .pluraleTantum), ("multiple", .multiple), ("substance", .substance),
-      ("abstract", .abstract), ("unique", .unique), ("proper", .proper)]
+  let noun ← (Examples.noun ex)
   let numeral ← ex.parse? "numeral"
     [("none", Numeral.none), ("simple", .simple), ("group", .group), ("aggregate", .aggregate),
       ("taxonomic", .taxonomic)]
@@ -130,8 +109,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
       ("universal", .universal), ("outerCardinal", .outerCardinal), ("packaging", .packaging),
       ("grinding", .grinding), ("derivation", .derivation)]
   pure ⟨noun, numeral, operation,
-    ex.parse? "context"
-      [("episodic", Context.episodic), ("generic", .generic), ("portion", .portion)],
+    (Examples.context ex),
     ex.feature? "reading" = some "taxonomic", ex.judgment⟩
 
 /-- The rows are the judged phrases of sections 2, 4, and 5. -/
@@ -195,12 +173,14 @@ The aggregate numeral counts clusters, section 5.2. Connection is reflexive and 
 `Mereology.IsConnection`, from which overlap entails connection ((59),
 `Mereology.IsConnection.of_overlap`). A cluster ((60), (61)) is `Mereology.IsCluster`, the sum of
 entities of a property any two of which are transitively connected through such entities. Inside a
-connected component clusters are cumulative (`Mereology.cum_isClusterIn`), the cumulativity of *-í*
-nouns, *listí* and *listí* making *listí*; a maximal cluster absorbs every cluster it overlaps (63),
-so two maximal clusters do not overlap (`Mereology.disjointPred_isMaxCluster`), the paper's remark
-after (63). -/
+connected component clusters are cumulative (`Mereology.cum_isClusterIn`), the cumulativity of
+*-í* nouns, *listí* and *listí* making *listí*; a maximal cluster absorbs every cluster it
+overlaps (63), so two maximal clusters do not overlap
+(`Mereology.pairwise_not_overlap_isMaxCluster`), the paper's remark after (63). -/
 
-variable {α : Type*} [SemilatticeSup α] (C : α → α → Prop)
+section Group
+
+variable {α : Type*} [SemilatticeSup α] [OrderBot α]
 
 /-- The group numeral (55) forms a group atom from a sum of `n` members of `P`. -/
 def iceSem (G : Plurality.GroupStructure α) (n : ℕ) (P : α → ℕ → Prop) (x : α) : Prop :=
@@ -208,9 +188,13 @@ def iceSem (G : Plurality.GroupStructure α) (n : ℕ) (P : α → ℕ → Prop)
 
 -- (17), (54)
 theorem iceSem_atom {G : Plurality.GroupStructure α} {n : ℕ} {P : α → ℕ → Prop} {x : α}
-    (h : iceSem G n P x) : Mereology.Atom x :=
+    (h : iceSem G n P x) : IsAtom x :=
   let ⟨_, hy, hx, _⟩ := h
   hx ▸ G.atom_up hy
+
+end Group
+
+variable {α : Type*} [PartialOrder α] (C : α → α → Prop)
 
 /-- By (64), `n`-*oje* `P` holds of a `P`-entity `x` when the maximal `P`-clusters properly
 below `x` number `n`. -/

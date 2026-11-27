@@ -5,8 +5,10 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.Set.Monad
-public import Linglib.Logic.Trivalent.Basic
+public import Mathlib.Basic.Rel
+public import Mathlib.Control.Monad.Basic
+public import Mathlib.Data.Set.Functor
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update
@@ -29,7 +31,7 @@ makes a disjunction look externally static until one disjunct is ruled out.
 
 * A sentence denotes a `StateSet D Trivalent`, a map from assignments to sets of truth value and
   output pairs (Def. A.1), as in the paper's appendix; there is no syntax. Its relation at
-  `true` (`StateT.rel`) is the positive extension as a DPL relation. Atoms are monadic, and
+  `true` (`rel`) is the positive extension as a DPL relation. Atoms are monadic, and
   a constant atom is `pure` of its truth value.
 * The existentials of Defs. 2.3 and 3.3 are one definition with a parameter; the destructive one
   overwrites a valued variable, and the guarded one is undefined there.
@@ -93,7 +95,9 @@ private theorem mem_update_self (g : ℕ → Part D) (n : ℕ) (x : D) :
     x ∈ Function.update g n (Part.some x) n := by simp
 
 /-- A monadic predicate of a variable (Def. 2.2). -/
-noncomputable def atom (P : Set D) (n : ℕ) : StateSet D Trivalent := fun g ↦ {(valueAt P g n, g)}
+noncomputable def atom (P : Set D) (n : ℕ) : StateSet D Trivalent := do
+  let g ← get
+  pure (valueAt P g n)
 
 open Classical in
 /-- A monadic predicate of an individual constant (Def. 2.2), whose value does not depend on the
@@ -102,12 +106,13 @@ noncomputable def atomConst (P : Set D) (c : D) : StateSet D Trivalent :=
   pure (ofProp (c ∈ P))
 
 @[simp] theorem mem_atom {P : Set D} {n : ℕ} {g : ℕ → Part D}
-    {p : Trivalent × (ℕ → Part D)} : p ∈ atom P n g ↔ p = (valueAt P g n, g) := Iff.rfl
+    {p : Trivalent × (ℕ → Part D)} : p ∈ (atom P n).run g ↔ p = (valueAt P g n, g) := by
+  simp [atom]
 
 open Classical in
 @[simp] theorem mem_atomConst {P : Set D} {c : D} {g : ℕ → Part D}
-    {p : Trivalent × (ℕ → Part D)} : p ∈ atomConst P c g ↔ p = (ofProp (c ∈ P), g) :=
-  Iff.rfl
+    {p : Trivalent × (ℕ → Part D)} : p ∈ (atomConst P c).run g ↔ p = (ofProp (c ∈ P), g) := by
+  simp [atomConst]
 
 /-! ### Connectives
 
@@ -129,16 +134,37 @@ def imp (m n : StateSet D Trivalent) : StateSet D Trivalent := (fun t u ↦ tᶜ
 /-- The applicative laws of Def. A.4 are those of `StateT` over `Set`. -/
 example : LawfulApplicative (StateSet D) := inferInstance
 
+/-- A lifted unary connective applies its truth function to the value of each output. -/
+theorem mem_run_map {f : Trivalent → Trivalent} {m : StateSet D Trivalent} {g h : ℕ → Part D}
+    {v : Trivalent} : (v, h) ∈ (f <$> m).run g ↔ ∃ t, (t, h) ∈ m.run g ∧ f t = v := by
+  simp
+
+/-- A lifted binary connective runs `m`, then `n` from an output of `m`, and applies its truth
+function to their values. -/
+theorem mem_run_map_seq {f : Trivalent → Trivalent → Trivalent} {m n : StateSet D Trivalent}
+    {g i : ℕ → Part D} {v : Trivalent} :
+    (v, i) ∈ (f <$> m <*> n).run g ↔
+      ∃ t h, (t, h) ∈ m.run g ∧ ∃ u, (u, i) ∈ n.run h ∧ f t u = v := by
+  simpa using exists_comm
+
 /-! ### Extensions and truth -/
+
+/-- The relation on assignments `m` induces at the value `v`: `g` is related to the outputs of `m`
+at `g` tagged `v`. -/
+def rel (m : StateSet D Trivalent) (v : Trivalent) : SetRel (ℕ → Part D) (ℕ → Part D) :=
+  {p | (v, p.2) ∈ m.run p.1}
+
+@[simp] theorem mem_rel {m : StateSet D Trivalent} {v : Trivalent} {g h : ℕ → Part D} :
+    g ~[rel m v] h ↔ (v, h) ∈ m.run g := Iff.rfl
 
 /-- `extension v m g` is the set of outputs of `m` at `g` tagged `v`; at `true`, `false` and
 `undefined` these are the positive, negative and maybe extensions (Def. 2.5). -/
 def extension (v : Trivalent) (m : StateSet D Trivalent) (g : ℕ → Part D) :
     Set (ℕ → Part D) :=
-  {h | (v, h) ∈ m g}
+  {h | g ~[rel m v] h}
 
 @[simp] theorem mem_extension {v : Trivalent} {m : StateSet D Trivalent}
-    {g h : ℕ → Part D} : h ∈ extension v m g ↔ (v, h) ∈ m g := Iff.rfl
+    {g h : ℕ → Part D} : h ∈ extension v m g ↔ (v, h) ∈ m.run g := Iff.rfl
 
 /-- `m` is true at `g` when its positive extension is nonempty (Def. 2.6). -/
 def IsTrue (m : StateSet D Trivalent) (g : ℕ → Part D) : Prop :=
@@ -158,13 +184,10 @@ theorem isTrue_or_isFalse_iff {m : StateSet D Trivalent} {g : ℕ → Part D} :
       (extension .true m g).Nonempty ∨ (extension .false m g).Nonempty := by
   rcases (extension .true m g).eq_empty_or_nonempty with h | h <;> simp [IsTrue, IsFalse, h]
 
-theorem rel_neg (v : Trivalent) (m : StateSet D Trivalent) :
-    StateT.rel (neg m) v = StateT.rel m (vᶜ) := by
-  rw [neg, StateT.rel_map]
-  ext p
-  simp only [Set.mem_iUnion, exists_prop]
-  exact ⟨fun ⟨t, ht, hp⟩ ↦ by rwa [← ht, Trivalent.compl_compl],
-    fun hp ↦ ⟨vᶜ, Trivalent.compl_compl v, hp⟩⟩
+theorem rel_neg (v : Trivalent) (m : StateSet D Trivalent) : rel (neg m) v = rel m (vᶜ) := by
+  ext ⟨g, h⟩
+  simp only [mem_rel, neg, mem_run_map]
+  exact ⟨by rintro ⟨t, ht, rfl⟩; simpa using ht, fun h ↦ ⟨_, h, Trivalent.compl_compl v⟩⟩
 
 theorem extension_neg (v : Trivalent) (m : StateSet D Trivalent) (g : ℕ → Part D) :
     extension v (neg m) g = extension (vᶜ) m g :=
@@ -211,14 +234,15 @@ def Existential.Fresh : Existential → (ℕ → Part D) → ℕ → Prop
 
 /-- The DPL existential takes the union of `m` over the resets of `n` when it may reset `n`, and is
 maybe otherwise (Defs. 2.3 and 3.3). -/
-def dplExists (e : Existential) (n : ℕ) (m : StateSet D Trivalent) : StateSet D Trivalent := fun g ↦
-  {p | e.Fresh g n ∧ ∃ x, p ∈ m (Function.update g n (Part.some x))} ∪
+def dplExists (e : Existential) (n : ℕ) (m : StateSet D Trivalent) : StateSet D Trivalent :=
+  .mk fun g ↦
+  {p | e.Fresh g n ∧ ∃ x, p ∈ m.run (Function.update g n (Part.some x))} ∪
     {p | ¬ e.Fresh g n ∧ p = (.undefined, g)}
 
 /-- Positive closure keeps the true outputs, or else returns the input tagged false or maybe
 (Def. 2.7). -/
-def positiveClosure (m : StateSet D Trivalent) : StateSet D Trivalent := fun g ↦
-  {p | p.1 = .true ∧ p ∈ m g} ∪ {p | IsFalse m g ∧ p = (.false, g)} ∪
+def positiveClosure (m : StateSet D Trivalent) : StateSet D Trivalent := .mk fun g ↦
+  {p | p.1 = .true ∧ p ∈ m.run g} ∪ {p | IsFalse m g ∧ p = (.false, g)} ∪
     {p | IsIndet m g ∧ p = (.undefined, g)}
 
 /-- Existential quantification, the positive closure of the DPL existential (Def. 2.8). -/
@@ -227,16 +251,16 @@ def exists_ (e : Existential) (n : ℕ) (m : StateSet D Trivalent) : StateSet D 
 
 @[simp] theorem mem_dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
     {g : ℕ → Part D} {p : Trivalent × (ℕ → Part D)} :
-    p ∈ dplExists e n m g ↔
-      (e.Fresh g n ∧ ∃ x, p ∈ m (Function.update g n (Part.some x))) ∨
+    p ∈ (dplExists e n m).run g ↔
+      (e.Fresh g n ∧ ∃ x, p ∈ m.run (Function.update g n (Part.some x))) ∨
         (¬ e.Fresh g n ∧ p = (.undefined, g)) :=
   Iff.rfl
 
 @[simp] theorem mem_positiveClosure {m : StateSet D Trivalent} {g : ℕ → Part D}
     {p : Trivalent × (ℕ → Part D)} :
-    p ∈ positiveClosure m g ↔ (p.1 = .true ∧ p ∈ m g) ∨ (IsFalse m g ∧ p = (.false, g)) ∨
+    p ∈ (positiveClosure m).run g ↔ (p.1 = .true ∧ p ∈ m.run g) ∨ (IsFalse m g ∧ p = (.false, g)) ∨
       (IsIndet m g ∧ p = (.undefined, g)) := by
-  simp only [positiveClosure, Set.mem_union, Set.mem_ofPred_eq, or_assoc]
+  simp only [positiveClosure, StateT.run_mk, Set.mem_union, Set.mem_ofPred_eq, or_assoc]
 
 -- (19a)
 @[simp] theorem extension_true_positiveClosure (m : StateSet D Trivalent)
@@ -257,8 +281,8 @@ theorem extension_false_positiveClosure (m : StateSet D Trivalent) (g : ℕ → 
 
 theorem dplExists_neg (e : Existential) (n : ℕ) (m : StateSet D Trivalent) :
     dplExists e n (neg m) = neg (dplExists e n m) := by
-  funext g; ext ⟨v, h⟩
-  simp only [mem_dplExists, neg, Set.mk_mem_stateT_map, Prod.mk.injEq]
+  ext g ⟨v, h⟩
+  simp only [mem_dplExists, neg, mem_run_map, Prod.mk.injEq]
   constructor
   · rintro (⟨hf, x, t, ht, rfl⟩ | ⟨hf, rfl, rfl⟩)
     · exact ⟨t, .inl ⟨hf, x, ht⟩, rfl⟩
@@ -268,8 +292,8 @@ theorem dplExists_neg (e : Existential) (n : ℕ) (m : StateSet D Trivalent) :
     · exact .inr ⟨hf, rfl, rfl⟩
 
 theorem exists_guarded_of_ne_bot {n : ℕ} {m : StateSet D Trivalent} {g : ℕ → Part D}
-    (hg : g n ≠ ⊥) : exists_ .guarded n m g = {(.undefined, g)} := by
-  have heps : dplExists .guarded n m g = {(.undefined, g)} := by
+    (hg : g n ≠ ⊥) : (exists_ .guarded n m).run g = {(.undefined, g)} := by
+  have heps : (dplExists .guarded n m).run g = {(.undefined, g)} := by
     ext p; simp [mem_dplExists, hg]
   have hT : extension .true (dplExists .guarded n m) g = ∅ := by ext h; simp [heps]
   have hF : extension .false (dplExists .guarded n m) g = ∅ := by ext h; simp [heps]
@@ -287,64 +311,61 @@ existential is not straightforwardly compatible with that decomposition (App. A)
 existential decomposes, a random reset bound to its scope, but positive closure is not a bind. -/
 
 /-- Random assignment, resetting `n` to any individual. -/
-def reset (n : ℕ) : StateSet D PUnit := fun g ↦
-  {q | ∃ x, q = ((), Function.update g n (Part.some x))}
+def reset (n : ℕ) : StateSet D PUnit :=
+  monadLift (Set.univ : Set D) >>= fun x ↦ modify (Function.update · n (Part.some x))
 
 theorem dplExists_destructive (n : ℕ) (m : StateSet D Trivalent) :
     dplExists .destructive n m = reset n >>= fun _ ↦ m := by
-  funext g
-  ext p
-  simp only [mem_dplExists, Existential.fresh_destructive, true_and, not_true_eq_false,
-    false_and, or_false, Set.mem_stateT_bind, reset, Set.mem_ofPred_eq]
-  constructor
-  · exact fun ⟨x, hx⟩ ↦ ⟨_, ⟨x, rfl⟩, hx⟩
-  · rintro ⟨_, ⟨x, rfl⟩, hx⟩
-    exact ⟨x, hx⟩
+  ext g p
+  simp [reset]
 
 /-- Positive closure is not a bind, since a bind treats each output separately while closure drops
 the false outputs exactly when a true one exists (App. A). -/
 theorem not_exists_bind_eq_positiveClosure :
     ¬ ∃ k : Trivalent → StateSet D Trivalent, ∀ m, positiveClosure m = m >>= k := by
   rintro ⟨k, hk⟩
-  have hk₀ : ((.false : Trivalent), (⊥ : ℕ → Part D)) ∈ k .false ⊥ := by
+  have hk₀ : ((.false : Trivalent), (⊥ : ℕ → Part D)) ∈ (k .false).run ⊥ := by
     have h := hk (pure .false)
     have : ((.false : Trivalent), (⊥ : ℕ → Part D)) ∈
-        positiveClosure (pure .false) ⊥ := by
+        (positiveClosure (pure .false)).run ⊥ := by
       rw [mem_positiveClosure]
       refine .inr (.inl ⟨⟨?_, ⊥, rfl⟩, rfl⟩)
       ext h
-      simp [Set.mem_stateT_pure]
+      simp
     rw [h] at this
     simpa using this
-  let both : StateSet D Trivalent := fun g ↦ {(.true, g), (.false, g)}
-  have hf : ((.false : Trivalent), (⊥ : ℕ → Part D)) ∉ positiveClosure both ⊥ := by
+  let both : StateSet D Trivalent := .mk fun g ↦ {(.true, g), (.false, g)}
+  have hf : ((.false : Trivalent), (⊥ : ℕ → Part D)) ∉ (positiveClosure both).run ⊥ := by
     simp [mem_positiveClosure, IsFalse, IsIndet, both, Set.eq_empty_iff_forall_notMem]
-  exact hf (hk both ▸ Set.mem_stateT_bind _ _ _ _ |>.2 ⟨(.false, ⊥), by simp [both], hk₀⟩)
+  have hb : ((.false : Trivalent), (⊥ : ℕ → Part D)) ∈ (both >>= k).run ⊥ := by
+    simp only [StateT.run_bind, Set.bind_def, Set.mem_iUnion₂]
+    exact ⟨(.false, ⊥), by simp [both], hk₀⟩
+  exact hf (hk both ▸ hb)
 
 /-! ### Positive extensions and DPL
 
-At `true` the relation a sentence induces (`StateT.rel`) is its positive extension, a DPL
+At `true` the relation a sentence induces (`rel`) is its positive extension, a DPL
 relation between assignments. -/
 
 -- (26a)
 theorem rel_true_conj (m n : StateSet D Trivalent) :
-    StateT.rel (conj m n) .true = StateT.rel m .true ○ StateT.rel n .true := by
-  rw [conj, StateT.rel_map_seq]
-  ext p
-  simp only [Set.mem_iUnion, exists_prop, Trivalent.inf_eq_true_iff]
-  exact ⟨fun ⟨_, _, ⟨rfl, rfl⟩, h⟩ ↦ h, fun h ↦ ⟨_, _, ⟨rfl, rfl⟩, h⟩⟩
+    rel (conj m n) .true = rel m .true ○ rel n .true := by
+  ext ⟨g, i⟩
+  simp only [SetRel.mem_comp, mem_rel, conj, mem_run_map_seq, Trivalent.inf_eq_true_iff]
+  exact ⟨fun ⟨_, h, hm, _, hn, rfl, rfl⟩ ↦ ⟨h, hm, hn⟩,
+    fun ⟨h, hm, hn⟩ ↦ ⟨_, h, hm, _, hn, rfl, rfl⟩⟩
 
 -- (32b)
 theorem rel_false_disj (m n : StateSet D Trivalent) :
-    StateT.rel (disj m n) .false = StateT.rel m .false ○ StateT.rel n .false := by
-  rw [disj, StateT.rel_map_seq]
-  ext p
-  simp only [Set.mem_iUnion, exists_prop, Trivalent.sup_eq_false_iff]
-  exact ⟨fun ⟨_, _, ⟨rfl, rfl⟩, h⟩ ↦ h, fun h ↦ ⟨_, _, ⟨rfl, rfl⟩, h⟩⟩
+    rel (disj m n) .false = rel m .false ○ rel n .false := by
+  ext ⟨g, i⟩
+  simp only [SetRel.mem_comp, mem_rel, disj, mem_run_map_seq, Trivalent.sup_eq_false_iff]
+  exact ⟨fun ⟨_, h, hm, _, hn, rfl, rfl⟩ ↦ ⟨h, hm, hn⟩,
+    fun ⟨h, hm, hn⟩ ↦ ⟨_, h, hm, _, hn, rfl, rfl⟩⟩
 
 -- (22a)
 theorem isTest_rel_true_neg_exists (e : Existential) (n : ℕ) (m : StateSet D Trivalent) :
-    Update.IsTest (StateT.rel (neg (exists_ e n m)) .true) := by
+    Update.IsTest (rel (neg (exists_ e n m)) .true) := by
   rintro ⟨g, h⟩ hgh
   rw [rel_neg] at hgh
   have : h ∈ extension .false (exists_ e n m) g := hgh
@@ -353,13 +374,13 @@ theorem isTest_rel_true_neg_exists (e : Existential) (n : ℕ) (m : StateSet D T
 
 -- (18)
 theorem not_isTest_rel_true_neg_dplExists [Nonempty D] :
-    ¬ Update.IsTest (StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true) := by
+    ¬ Update.IsTest (rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true) := by
   obtain ⟨x⟩ := ‹Nonempty D›
   intro h
   have hmem : ((⊥ : ℕ → Part D), Function.update (⊥ : ℕ → Part D) 1 (Part.some x)) ∈
-      StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true := by
+      rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true := by
     rw [rel_neg]
-    show (.false, _) ∈ dplExists _ _ _ _
+    show (.false, _) ∈ (dplExists _ _ _).run _
     simp only [mem_dplExists]
     exact .inl ⟨trivial, x, by simp⟩
   have h1 : (⊥ : ℕ → Part D) = Function.update (⊥ : ℕ → Part D) 1 (Part.some x) := h hmem
@@ -370,41 +391,41 @@ theorem not_isTest_rel_true_neg_dplExists [Nonempty D] :
 -- (32a)
 theorem mem_extension_true_disj {m n : StateSet D Trivalent} {g i : ℕ → Part D} :
     i ∈ extension .true (disj m n) g ↔
-      (∃ h ∈ extension .true m g, ∃ u, (u, i) ∈ n h) ∨
-        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .true n h := by
-  simp only [mem_extension, disj, Set.mk_mem_stateT_map_seq]
+      (∃ h ∈ extension .true m g, ∃ u, (u, i) ∈ n.run h) ∨
+        ∃ t h, (t, h) ∈ m.run g ∧ i ∈ extension .true n h := by
+  simp only [mem_extension, disj, mem_run_map_seq]
   grind [Trivalent.sup_eq_true_iff]
 
 -- (32b)
 theorem mem_extension_false_disj {m n : StateSet D Trivalent} {g i : ℕ → Part D} :
     i ∈ extension .false (disj m n) g ↔ ∃ h ∈ extension .false m g, i ∈ extension .false n h := by
-  have : (g, i) ∈ StateT.rel (disj m n) .false ↔
-      (g, i) ∈ StateT.rel m .false ○ StateT.rel n .false := by
+  have : (g, i) ∈ rel (disj m n) .false ↔
+      (g, i) ∈ rel m .false ○ rel n .false := by
     rw [rel_false_disj]
   simpa [SetRel.mem_comp] using this
 
 -- (38a)
 theorem mem_extension_true_imp {m n : StateSet D Trivalent} {g i : ℕ → Part D} :
     i ∈ extension .true (imp m n) g ↔
-      (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n h) ∨
-        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .true n h := by
-  simp only [mem_extension, imp, Set.mk_mem_stateT_map_seq]
+      (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n.run h) ∨
+        ∃ t h, (t, h) ∈ m.run g ∧ i ∈ extension .true n h := by
+  simp only [mem_extension, imp, mem_run_map_seq]
   grind [Trivalent.sup_eq_true_iff, Trivalent.compl_eq_true_iff]
 
 -- (26b)
 theorem mem_extension_false_conj {m n : StateSet D Trivalent} {g i : ℕ → Part D} :
     i ∈ extension .false (conj m n) g ↔
-      (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n h) ∨
-        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .false n h := by
-  simp only [mem_extension, conj, Set.mk_mem_stateT_map_seq]
+      (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n.run h) ∨
+        ∃ t h, (t, h) ∈ m.run g ∧ i ∈ extension .false n h := by
+  simp only [mem_extension, conj, mem_run_map_seq]
   grind [Trivalent.inf_eq_false_iff]
 
 /-! ### Egli's theorem -/
 
 theorem mem_extension_true_conj {m n : StateSet D Trivalent} {g i : ℕ → Part D} :
     i ∈ extension .true (conj m n) g ↔ ∃ h ∈ extension .true m g, i ∈ extension .true n h := by
-  have : (g, i) ∈ StateT.rel (conj m n) .true ↔
-      (g, i) ∈ StateT.rel m .true ○ StateT.rel n .true := by
+  have : (g, i) ∈ rel (conj m n) .true ↔
+      (g, i) ∈ rel m .true ○ rel n .true := by
     rw [rel_true_conj]
   simpa [SetRel.mem_comp] using this
 
@@ -439,20 +460,19 @@ open Classical
 variable (W B U : Set D) {e : Existential} {n : ℕ} {g : ℕ → Part D}
 
 theorem mem_atom_update (x : D) {v : Trivalent} {h : ℕ → Part D} :
-    (v, h) ∈ atom W n (Function.update g n (Part.some x)) ↔
+    (v, h) ∈ (atom W n).run (Function.update g n (Part.some x)) ↔
       v = ofProp (x ∈ W) ∧ h = Function.update g n (Part.some x) := by
   rw [mem_atom, valueAt_of_mem W (mem_update_self g n x), Prod.mk.injEq]
 
 theorem neg_atom (n : ℕ) : neg (atom W n) = atom Wᶜ n := by
-  funext g
+  ext g ⟨v, h⟩
   have key : (valueAt W g n)ᶜ = valueAt Wᶜ g n := by
     rcases (g n).eq_none_or_eq_some with hg | ⟨d, hg⟩
     · simp [valueAt_of_eq_bot _ hg]
     · by_cases hd : d ∈ W <;> simp [valueAt_of_mem _ (Part.eq_some_iff.1 hg), hd]
-  ext ⟨v, h⟩
-  simp only [neg, Set.mk_mem_stateT_map, mem_atom, Prod.mk.injEq]
+  simp only [neg, mem_run_map, mem_atom, Prod.mk.injEq]
   exact ⟨by rintro ⟨t, ⟨rfl, rfl⟩, rfl⟩; exact ⟨key, rfl⟩,
-    by rintro ⟨rfl, rfl⟩; exact ⟨_, ⟨rfl, rfl⟩, key.symm⟩⟩
+    by rintro ⟨rfl, rfl⟩; exact ⟨_, ⟨rfl, rfl⟩, key⟩⟩
 
 -- (17a)
 theorem extension_true_dplExists_atom (hf : e.Fresh g n) :
@@ -555,7 +575,7 @@ theorem extension_true_bathroom [Nonempty D] (hf : e.Fresh g 1) :
         obtain ⟨rfl, hB⟩ := this
         exact .inl ⟨(Prod.mk.inj (mem_atom.1 hi)).2, hB⟩
   · rintro (⟨rfl, hB⟩ | ⟨x, hxB, hxU, rfl⟩)
-    · exact .inl ⟨i, ⟨rfl, hB⟩, _, rfl⟩
+    · exact .inl ⟨i, ⟨rfl, hB⟩, _, mem_atom.2 rfl⟩
     · refine .inr ⟨.false, Function.update g 1 (Part.some x), ?_, ?_⟩
       · show Function.update g 1 (Part.some x) ∈ extension .false (neg (exists_ e 1 (atom B 1))) g
         rw [extension_false_neg_exists_atom B hf]; exact ⟨x, hxB, rfl⟩
@@ -676,29 +696,33 @@ instance : (domainLE (D := D)).IsRefl := ⟨fun g ↦ show PFun.Dom g ⊆ PFun.D
 instance : (domainLE (D := D)).IsTrans := ⟨fun _ _ _ h₁ h₂ ↦ Set.Subset.trans (α := ℕ) h₁ h₂⟩
 
 /-- Every output of `m` values the variables its input values. -/
-def Expanding (m : StateSet D Trivalent) : Prop := ∀ t, StateT.rel m t ⊆ domainLE
+def Expanding (m : StateSet D Trivalent) : Prop := ∀ t, rel m t ⊆ domainLE
 
 theorem Expanding.domain_subset {m : StateSet D Trivalent} (hm : Expanding m)
-    {g h : ℕ → Part D} {t : Trivalent} (hh : (t, h) ∈ m g) : PFun.Dom g ⊆ PFun.Dom h :=
-  hm t (show (g, h) ∈ StateT.rel m t from hh)
+    {g h : ℕ → Part D} {t : Trivalent} (hh : (t, h) ∈ m.run g) : PFun.Dom g ⊆ PFun.Dom h :=
+  hm t (show (g, h) ∈ rel m t from hh)
 
 theorem expanding_atom (P : Set D) (n : ℕ) : Expanding (atom P n) := by
-  rintro t ⟨g, h⟩ (hm : (t, h) ∈ atom P n g)
+  rintro t ⟨g, h⟩ (hm : (t, h) ∈ (atom P n).run g)
   change PFun.Dom g ⊆ PFun.Dom h
   rw [(Prod.mk.inj (mem_atom.1 hm)).2]
 
 theorem expanding_atomConst (P : Set D) (c : D) : Expanding (atomConst P c) := by
-  rintro t ⟨g, h⟩ (hm : (t, h) ∈ atomConst P c g)
+  rintro t ⟨g, h⟩ (hm : (t, h) ∈ (atomConst P c).run g)
   change PFun.Dom g ⊆ PFun.Dom h
   rw [(Prod.mk.inj (mem_atomConst.1 hm)).2]
 
 theorem Expanding.map {f : Trivalent → Trivalent} {m : StateSet D Trivalent} (hm : Expanding m) :
-    Expanding (f <$> m) :=
-  StateT.rel_map_subset hm f
+    Expanding (f <$> m) := by
+  rintro t ⟨g, h⟩ hh
+  obtain ⟨u, hu, -⟩ := mem_run_map.1 (mem_rel.1 hh)
+  exact hm u hu
 
 theorem Expanding.map_seq {R : Trivalent → Trivalent → Trivalent} {m n : StateSet D Trivalent}
-    (hm : Expanding m) (hn : Expanding n) : Expanding (R <$> m <*> n) :=
-  StateT.rel_map_seq_subset hm hn R
+    (hm : Expanding m) (hn : Expanding n) : Expanding (R <$> m <*> n) := by
+  rintro t ⟨g, i⟩ hh
+  obtain ⟨u, h, hu, w, hw, -⟩ := mem_run_map_seq.1 (mem_rel.1 hh)
+  exact fun y hy ↦ hn.domain_subset hw (hm.domain_subset hu hy)
 
 theorem Expanding.neg {m : StateSet D Trivalent} (hm : Expanding m) : Expanding (neg m) := hm.map
 
@@ -713,7 +737,7 @@ theorem Expanding.imp {m n : StateSet D Trivalent} (hm : Expanding m) (hn : Expa
 
 theorem Expanding.dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
     (hm : Expanding m) : Expanding (dplExists e n m) := by
-  rintro t ⟨g, h⟩ (hh : (t, h) ∈ Elliott2020.dplExists e n m g)
+  rintro t ⟨g, h⟩ (hh : (t, h) ∈ (Elliott2020.dplExists e n m).run g)
   change PFun.Dom g ⊆ PFun.Dom h
   rcases mem_dplExists.1 hh with ⟨-, x, hx⟩ | ⟨-, hx⟩
   · refine fun y hy ↦ hm.domain_subset hx ?_
@@ -727,7 +751,7 @@ theorem Expanding.dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalen
 
 theorem Expanding.positiveClosure {m : StateSet D Trivalent} (hm : Expanding m) :
     Expanding (positiveClosure m) := by
-  rintro t ⟨g, h⟩ (hh : (t, h) ∈ Elliott2020.positiveClosure m g)
+  rintro t ⟨g, h⟩ (hh : (t, h) ∈ (Elliott2020.positiveClosure m).run g)
   change PFun.Dom g ⊆ PFun.Dom h
   rcases mem_positiveClosure.1 hh with ⟨-, hh⟩ | ⟨-, hh⟩ | ⟨-, hh⟩
   · exact hm.domain_subset hh
@@ -932,22 +956,21 @@ section Bridge
 open Classical
 
 theorem conj_atom_atom (L H : Set D) (n : ℕ) : conj (atom L n) (atom H n) = atom (L ∩ H) n := by
-  funext g
+  ext g ⟨v, i⟩
   have key : valueAt L g n ⊓ valueAt H g n = valueAt (L ∩ H) g n := by
     rcases (g n).eq_none_or_eq_some with hg | ⟨d, hg⟩
     · simp [valueAt_of_eq_bot _ hg]
     · simp only [valueAt_of_mem _ (Part.eq_some_iff.1 hg), Set.mem_inter_iff]
       by_cases hL : d ∈ L <;> by_cases hH : d ∈ H <;> simp [hL, hH]
-  ext ⟨v, i⟩
-  simp only [conj, Set.mk_mem_stateT_map_seq, mem_atom, Prod.mk.injEq]
+  simp only [conj, mem_run_map_seq, mem_atom, Prod.mk.injEq]
   constructor
   · rintro ⟨t, h, ⟨rfl, rfl⟩, u, ⟨rfl, rfl⟩, rfl⟩
     exact ⟨key, rfl⟩
   · rintro ⟨rfl, rfl⟩
-    exact ⟨_, _, ⟨rfl, rfl⟩, _, ⟨rfl, rfl⟩, key.symm⟩
+    exact ⟨_, _, ⟨rfl, rfl⟩, _, ⟨rfl, rfl⟩, key⟩
 
 theorem nonempty_exists_atom [Nonempty D] (e : Existential) (W : Set D) (n : ℕ)
-    (g : ℕ → Part D) : (exists_ e n (atom W n) g).Nonempty := by
+    (g : ℕ → Part D) : ((exists_ e n (atom W n)).run g).Nonempty := by
   by_cases hf : e.Fresh g n
   · rcases Set.eq_empty_or_nonempty W with hW | ⟨x, hx⟩
     · refine ⟨(.false, g), ?_⟩
@@ -964,7 +987,7 @@ theorem nonempty_exists_atom [Nonempty D] (e : Existential) (W : Set D) (n : ℕ
 variable {e : Existential} {g : ℕ → Part D}
 
 theorem mem_atomConst_iff {P : Set D} {c : D} {v : Trivalent} {h : ℕ → Part D} :
-    (v, h) ∈ atomConst P c g ↔ v = ofProp (c ∈ P) ∧ h = g := by
+    (v, h) ∈ (atomConst P c).run g ↔ v = ofProp (c ∈ P) ∧ h = g := by
   rw [mem_atomConst, Prod.mk.injEq]
 
 theorem isTrue_or_isFalse_neg_exists_atom [Nonempty D] (W : Set D) {n : ℕ} (hf : e.Fresh g n) :
@@ -1110,7 +1133,7 @@ theorem familiar_update_stone (L P H : W → Set D) :
 
 
 theorem snd_eq_of_mem_exists_atom {W : Set D} {n : ℕ} (hW : W = ∅) (hf : e.Fresh g n)
-    {p : Trivalent × (ℕ → Part D)} (hp : p ∈ exists_ e n (atom W n) g) : p.2 = g := by
+    {p : Trivalent × (ℕ → Part D)} (hp : p ∈ (exists_ e n (atom W n)).run g) : p.2 = g := by
   rw [exists_, mem_positiveClosure] at hp
   rcases hp with ⟨h1, hp⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩
   · obtain ⟨t, h⟩ := p

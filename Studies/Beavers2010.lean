@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.Affectedness
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Core.Order.UpperLower.Cover
 public import Linglib.Data.Examples.Beavers2010
 public import Linglib.Data.Examples.Readers
@@ -65,7 +65,7 @@ arrival and possession.
 * Beavers's resolution of Dowty's *hit the fence with the stick* problem, which needs Dowty's own
   discussion checked against the profiles of `Dowty1991`: Beavers counts the stick's dependent
   motion as a Proto-Patient entailment, where those profiles give it movement, a Proto-Agent one.
-* Fragment entries for *clear* and *climb*, so that every alternation names its verb.
+* language file entries for *clear* and *climb*, so that every alternation names its verb.
 
 ## References
 

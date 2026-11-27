@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Category.Adjective.Basic
@@ -39,5 +44,11 @@ def toVerb (a : ClauseEmbeddingAdjective) (copula : String) : Verb :=
   { a.toEmbedding with
     morphs := [.free copula, .root a.form]
     valency := a.valency }
+
+@[simp] theorem toEmbedding_toVerb (a : ClauseEmbeddingAdjective) (copula : String) :
+    (a.toVerb copula).toEmbedding = a.toEmbedding := rfl
+
+@[simp] theorem valency_toVerb (a : ClauseEmbeddingAdjective) (copula : String) :
+    (a.toVerb copula).valency = a.valency := rfl
 
 end ClauseEmbeddingAdjective

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Presuppositional
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Presupposition.TwoDimensional
 public import Linglib.Semantics.Homogeneity.Plural
 public import Studies.BarLevFox2020
@@ -328,8 +328,8 @@ variable (R a b) in
 /-- `pex^{IE+II}[◇(a ∨ b)]` as a two-dimensional meaning, with the prejacent `◇(a ∨ b)` at issue
 and the presupposition of `pexPossOr` not at issue. A negative factive denies belief in the
 at-issue content, which it reads apart from the presupposition. -/
-def pexPossOrTwoDim : TwoDim (W → Prop) (W → Prop) :=
-  .mk (atIssue := (· ∈ R.preimage (a ∪ b))) (notAtIssue := (pexPossOr R a b · ≠ .undefined))
+def pexPossOrTwoDim : TwoDim W (W → Prop) :=
+  .mk (· ∈ R.preimage (a ∪ b)) (pexPossOr R a b · ≠ .undefined)
 
 theorem toTrivalent_pexPossOrTwoDim : (pexPossOrTwoDim R a b).toTrivalent = pexPossOr R a b := by
   funext w
@@ -343,7 +343,7 @@ theorem free_choice_presupposed (hF : FreeChoiceWitnesses R a b)
     (TwoDim.negFactive (pexPossOrTwoDim R a b) believes).notAtIssue w ↔
       w ∈ R.preimage a ∧ w ∈ R.preimage b := by
   rw [← free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff,
-    TwoDim.negFactive_notAtIssue]
+    TwoDim.notAtIssue_negFactive]
 
 -- (33a), (34c)
 theorem negative_free_choice_presupposed {T B : Set W} (hF : FreeChoiceWitnesses R Tᶜ Bᶜ)
@@ -351,7 +351,7 @@ theorem negative_free_choice_presupposed {T B : Set W} (hF : FreeChoiceWitnesses
     (TwoDim.negFactive (pexPossOrTwoDim R Tᶜ Bᶜ) believes).notAtIssue w ↔
       w ∉ R.core T ∧ w ∉ R.core B := by
   rw [← negative_free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_true_iff,
-    TwoDim.negFactive_notAtIssue]
+    TwoDim.notAtIssue_negFactive]
 
 /-- A negative factive over `◇(a ∨ b)` asserts disbelief in each disjunct ((21b), (31d′); at `Tᶜ`
 and `Bᶜ`, (33b) and (34d)). -/
@@ -366,7 +366,7 @@ theorem exh_unaware_too_weak (hF : FreeChoiceWitnesses R a b) :
     ∃ R' : SetRel W W, □[R'] (· ∈ R.preimage a) w ∧
       ¬ □[R'] (· ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b))) w := by
   obtain ⟨w₁, hw₁a, hw₁b⟩ := hF.only_left
-  refine ⟨.ofSuccessors fun _ ↦ {w₁}, fun v (hv : v = w₁) ↦ hv ▸ hw₁a, fun hbox ↦ ?_⟩
+  refine ⟨.cgraph fun _ ↦ {w₁}, fun v (hv : v = w₁) ↦ hv ▸ hw₁a, fun hbox ↦ ?_⟩
   have := hbox w₁ (Set.mem_singleton w₁)
   rw [freeChoice hF] at this
   exact hw₁b this.1.2

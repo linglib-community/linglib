@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Sorace2000` — typed example data
@@ -28,7 +30,8 @@ def ex1a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "venire"), ("position", "changeOfLocation"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "venire"⟩]
+    paperFeatures := [] }
 
 def ex1b : Datum :=
   { id := "sorace2000_ex1b"
@@ -43,7 +46,8 @@ def ex1b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "arriver"), ("position", "changeOfLocation"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "être"⟩, ⟨2, 1, "participle", some "arriver"⟩]
+    paperFeatures := [] }
 
 def ex1c : Datum :=
   { id := "sorace2000_ex1c"
@@ -58,7 +62,8 @@ def ex1c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "komen"), ("position", "changeOfLocation"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "zijn"⟩, ⟨7, 1, "participle", some "komen"⟩]
+    paperFeatures := [] }
 
 def ex1d : Datum :=
   { id := "sorace2000_ex1d"
@@ -73,7 +78,8 @@ def ex1d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "ankommen"), ("position", "changeOfLocation"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "sein"⟩, ⟨4, 1, "participle", some "ankommen"⟩]
+    paperFeatures := [] }
 
 def ex4 : Datum :=
   { id := "sorace2000_ex4"
@@ -88,7 +94,8 @@ def ex4 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "arrivare"), ("position", "changeOfLocation"), ("aux", "be"), ("predicate", "detelicized")] }
+    spans := [⟨0, 1, "auxiliary", some "essere"⟩, ⟨1, 1, "participle", some "arrivare"⟩]
+    paperFeatures := [("predicate", "detelicized")] }
 
 def ex5a : Datum :=
   { id := "sorace2000_ex5a"
@@ -103,7 +110,8 @@ def ex5a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "cadere"), ("position", "changeOfLocation"), ("aux", "be"), ("subject", "agentive")] }
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "cadere"⟩]
+    paperFeatures := [("subject", "agentive")] }
 
 def ex5b : Datum :=
   { id := "sorace2000_ex5b"
@@ -118,7 +126,8 @@ def ex5b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "cadere"), ("position", "changeOfLocation"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "cadere"⟩]
+    paperFeatures := [] }
 
 def ex30a : Datum :=
   { id := "sorace2000_ex30a"
@@ -133,7 +142,8 @@ def ex30a : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "arrivare"), ("position", "changeOfLocation"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "arrivare"⟩]
+    paperFeatures := [] }
 
 def ex7a : Datum :=
   { id := "sorace2000_ex7a"
@@ -146,9 +156,10 @@ def ex7a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("La temperatura ha salito improvvisamente", .unacceptable)]
+    contrasts := [("La temperatura ha salito improvvisamente", .nearlyUngrammatical)]
     readings := []
-    paperFeatures := [("verb", "salire"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "salire"⟩]
+    paperFeatures := [] }
 
 def ex7b : Datum :=
   { id := "sorace2000_ex7b"
@@ -163,7 +174,8 @@ def ex7b : Datum :=
     judgment := .acceptable
     contrasts := [("Le mele hanno marcito al sole", .marginal)]
     readings := []
-    paperFeatures := [("verb", "marcire"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "marcire"⟩]
+    paperFeatures := [] }
 
 def ex8a : Datum :=
   { id := "sorace2000_ex8a"
@@ -178,7 +190,8 @@ def ex8a : Datum :=
     judgment := .acceptable
     contrasts := [("La pianta ha fiorito due volte quest'anno", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "fiorire"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "fiorire"⟩]
+    paperFeatures := [] }
 
 def ex9a : Datum :=
   { id := "sorace2000_ex9a"
@@ -193,7 +206,8 @@ def ex9a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "naître"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "être"⟩, ⟨3, 1, "participle", some "naître"⟩]
+    paperFeatures := [] }
 
 def ex9b : Datum :=
   { id := "sorace2000_ex9b"
@@ -208,7 +222,8 @@ def ex9b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "sterven"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "zijn"⟩, ⟨4, 1, "participle", some "sterven"⟩]
+    paperFeatures := [] }
 
 def ex9c : Datum :=
   { id := "sorace2000_ex9c"
@@ -223,7 +238,8 @@ def ex9c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "gebären"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "sein"⟩, ⟨5, 1, "participle", some "gebären"⟩]
+    paperFeatures := [] }
 
 def ex10a : Datum :=
   { id := "sorace2000_ex10a"
@@ -238,7 +254,8 @@ def ex10a : Datum :=
     judgment := .acceptable
     contrasts := [("Haar baby heeft deze maand enorm gegroeid", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "groeien"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "zijn"⟩, ⟨6, 1, "participle", some "groeien"⟩]
+    paperFeatures := [] }
 
 def ex10b : Datum :=
   { id := "sorace2000_ex10b"
@@ -253,12 +270,13 @@ def ex10b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "steigen"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "sein"⟩, ⟨6, 1, "participle", some "steigen"⟩]
+    paperFeatures := [] }
 
 def ex11 : Datum :=
   { id := "sorace2000_ex11"
-    source := ⟨"sorace-2000", "(11)"⟩
-    reportedIn := none
+    source := ⟨"van-hout-1993", "p. 7"⟩
+    reportedIn := some ⟨"sorace-2000", "(11)"⟩
     language := "dutc1256"
     primaryText := "De temperatuur is 3 uurlang gestegen, maar is toen weer gezakt."
     glossedTokens := [("De", "the"), ("temperatuur", "temperature"), ("is", "is"), ("3", "3"), ("uurlang", "hours"), ("gestegen", "risen"), ("maar", "but"), ("is", "is"), ("toen", "then"), ("weer", "again"), ("gezakt", "dropped")]
@@ -268,7 +286,8 @@ def ex11 : Datum :=
     judgment := .acceptable
     contrasts := [("De temperatuur heeft 3 uurlang gestegen, maar is toen weer gezakt.", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "stijgen"), ("position", "changeOfState"), ("aux", "be"), ("predicate", "detelicized")] }
+    spans := [⟨2, 1, "auxiliary", some "zijn"⟩, ⟨5, 1, "participle", some "stijgen"⟩]
+    paperFeatures := [("predicate", "detelicized")] }
 
 def ex12 : Datum :=
   { id := "sorace2000_ex12"
@@ -283,7 +302,8 @@ def ex12 : Datum :=
     judgment := .acceptable
     contrasts := [("L'enfant a devenu triste", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "devenir"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "être"⟩, ⟨2, 1, "participle", some "devenir"⟩]
+    paperFeatures := [] }
 
 def ex13 : Datum :=
   { id := "sorace2000_ex13"
@@ -298,7 +318,8 @@ def ex13 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "rougir"), ("position", "changeOfState"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avoir"⟩, ⟨2, 1, "participle", some "rougir"⟩]
+    paperFeatures := [] }
 
 def ex14a : Datum :=
   { id := "sorace2000_ex14a"
@@ -313,7 +334,8 @@ def ex14a : Datum :=
     judgment := .acceptable
     contrasts := [("Le livre a paru récemment", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "paraître"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "être"⟩, ⟨3, 1, "participle", some "paraître"⟩]
+    paperFeatures := [] }
 
 def ex14c : Datum :=
   { id := "sorace2000_ex14c"
@@ -328,7 +350,8 @@ def ex14c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "échapper"), ("position", "changeOfState"), ("aux", "be")] }
+    spans := [⟨3, 1, "auxiliary", some "être"⟩, ⟨4, 1, "participle", some "échapper"⟩]
+    paperFeatures := [] }
 
 def ex15a : Datum :=
   { id := "sorace2000_ex15a"
@@ -343,7 +366,8 @@ def ex15a : Datum :=
     judgment := .acceptable
     contrasts := [("Ancora una volta ho rimasto solo", .marginal)]
     readings := []
-    paperFeatures := [("verb", "rimanere"), ("position", "continuationOfState"), ("aux", "be")] }
+    spans := [⟨3, 1, "auxiliary", some "essere"⟩, ⟨4, 1, "participle", some "rimanere"⟩]
+    paperFeatures := [] }
 
 def ex15b : Datum :=
   { id := "sorace2000_ex15b"
@@ -358,7 +382,8 @@ def ex15b : Datum :=
     judgment := .acceptable
     contrasts := [("La guerra ha durato a lungo", .marginal)]
     readings := []
-    paperFeatures := [("verb", "durare"), ("position", "continuationOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "durare"⟩]
+    paperFeatures := [] }
 
 def ex15c : Datum :=
   { id := "sorace2000_ex15c"
@@ -373,7 +398,8 @@ def ex15c : Datum :=
     judgment := .acceptable
     contrasts := [("Il presidente ha durato in carica due anni", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "durare"), ("position", "continuationOfState"), ("aux", "be"), ("subject", "agentive")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "durare"⟩]
+    paperFeatures := [("subject", "agentive")] }
 
 def ex16 : Datum :=
   { id := "sorace2000_ex16"
@@ -388,7 +414,8 @@ def ex16 : Datum :=
     judgment := .acceptable
     contrasts := [("Mes parents sont survécus au tremblement de terre", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "survivre"), ("position", "continuationOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avoir"⟩, ⟨3, 1, "participle", some "survivre"⟩]
+    paperFeatures := [] }
 
 def ex17a : Datum :=
   { id := "sorace2000_ex17a"
@@ -401,9 +428,10 @@ def ex17a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Die Äpfel sind den ganzen Winter gehalten", .unacceptable)]
+    contrasts := [("Die Äpfel sind den ganzen Winter gehalten", .nearlyUngrammatical)]
     readings := []
-    paperFeatures := [("verb", "halten"), ("position", "continuationOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "haben"⟩, ⟨6, 1, "participle", some "halten"⟩]
+    paperFeatures := [] }
 
 def ex17b : Datum :=
   { id := "sorace2000_ex17b"
@@ -418,7 +446,8 @@ def ex17b : Datum :=
     judgment := .acceptable
     contrasts := [("Der Wanderer ist kurz verweilt", .questionable)]
     readings := []
-    paperFeatures := [("verb", "verweilen"), ("position", "continuationOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "haben"⟩, ⟨4, 1, "participle", some "verweilen"⟩]
+    paperFeatures := [] }
 
 def ex18a : Datum :=
   { id := "sorace2000_ex18a"
@@ -433,7 +462,8 @@ def ex18a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "overblijven"), ("position", "continuationOfState"), ("aux", "be")] }
+    spans := [⟨3, 1, "auxiliary", some "zijn"⟩, ⟨5, 1, "participle", some "overblijven"⟩]
+    paperFeatures := [] }
 
 def ex18b : Datum :=
   { id := "sorace2000_ex18b"
@@ -448,7 +478,8 @@ def ex18b : Datum :=
     judgment := .acceptable
     contrasts := [("Het concert is een hele tijd geduurd", .questionable)]
     readings := []
-    paperFeatures := [("verb", "duren"), ("position", "continuationOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "hebben"⟩, ⟨6, 1, "participle", some "duren"⟩]
+    paperFeatures := [] }
 
 def ex19a : Datum :=
   { id := "sorace2000_ex19a"
@@ -463,7 +494,8 @@ def ex19a : Datum :=
     judgment := .acceptable
     contrasts := [("Marie a resté à la maison avec les enfants", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "rester"), ("position", "continuationOfState"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "être"⟩, ⟨2, 1, "participle", some "rester"⟩]
+    paperFeatures := [] }
 
 def ex19b : Datum :=
   { id := "sorace2000_ex19b"
@@ -478,7 +510,8 @@ def ex19b : Datum :=
     judgment := .acceptable
     contrasts := [("De onverwachte gast heeft voor het eten gebleven", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "blijven"), ("position", "continuationOfState"), ("aux", "be")] }
+    spans := [⟨3, 1, "auxiliary", some "zijn"⟩, ⟨7, 1, "participle", some "blijven"⟩]
+    paperFeatures := [] }
 
 def ex19c : Datum :=
   { id := "sorace2000_ex19c"
@@ -493,7 +526,8 @@ def ex19c : Datum :=
     judgment := .acceptable
     contrasts := [("Die Gäste haben am Tisch sitzen geblieben", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "bleiben"), ("position", "continuationOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "sein"⟩, ⟨6, 1, "participle", some "bleiben"⟩]
+    paperFeatures := [] }
 
 def ex20a : Datum :=
   { id := "sorace2000_ex20a"
@@ -508,7 +542,8 @@ def ex20a : Datum :=
     judgment := .acceptable
     contrasts := [("I dinosauri hanno esistito 65 milioni di anni fa.", .questionable)]
     readings := []
-    paperFeatures := [("verb", "esistere"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "esistere"⟩]
+    paperFeatures := [] }
 
 def ex20b : Datum :=
   { id := "sorace2000_ex20b"
@@ -523,7 +558,8 @@ def ex20b : Datum :=
     judgment := .acceptable
     contrasts := [("La farina non ha bastato per fare la torta.", .questionable)]
     readings := []
-    paperFeatures := [("verb", "bastare"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨3, 1, "auxiliary", some "essere"⟩, ⟨4, 1, "participle", some "bastare"⟩]
+    paperFeatures := [] }
 
 def ex20c : Datum :=
   { id := "sorace2000_ex20c"
@@ -538,12 +574,14 @@ def ex20c : Datum :=
     judgment := .acceptable
     contrasts := [("La commedia ha sembrato interessante a tutti", .questionable)]
     readings := []
-    paperFeatures := [("verb", "sembrare"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "sembrare"⟩]
+    paperFeatures := [] }
 
 def ex21a : Datum :=
   { id := "sorace2000_ex21a"
     source := ⟨"sorace-2000", "(21a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "ital1282"
     primaryText := "Una lunghissima vita avrebbe appena bastato ad appagare il mio cuore."
     glossedTokens := [("Una", "a"), ("lunghissima", "very.long"), ("vita", "life"), ("avrebbe", "would.have"), ("appena", "just"), ("bastato", "sufficed"), ("ad", "to"), ("appagare", "satisfy"), ("il", "the"), ("mio", "my"), ("cuore", "heart")]
@@ -553,12 +591,14 @@ def ex21a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "bastare"), ("position", "existenceOfState"), ("aux", "have")] }
+    spans := [⟨3, 1, "auxiliary", some "avere"⟩, ⟨5, 1, "participle", some "bastare"⟩]
+    paperFeatures := [] }
 
 def ex21b : Datum :=
   { id := "sorace2000_ex21b"
     source := ⟨"sorace-2000", "(21b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "ital1282"
     primaryText := "La vita ha appartenuto solo a me."
     glossedTokens := [("La", "the"), ("vita", "life"), ("ha", "has"), ("appartenuto", "belonged"), ("solo", "only"), ("a", "to"), ("me", "me")]
@@ -568,12 +608,14 @@ def ex21b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "appartenere"), ("position", "existenceOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "appartenere"⟩]
+    paperFeatures := [] }
 
 def ex21c : Datum :=
   { id := "sorace2000_ex21c"
     source := ⟨"sorace-2000", "(21c)"⟩
     reportedIn := none
+    method := some .corpus
     language := "ital1282"
     primaryText := "Il cibo è scarseggiato tra i terremotati."
     glossedTokens := [("Il", "the"), ("cibo", "food"), ("è", "is"), ("scarseggiato", "run.short.supply"), ("tra", "among"), ("i", "the"), ("terremotati", "earthquake.victims")]
@@ -583,7 +625,8 @@ def ex21c : Datum :=
     judgment := .acceptable
     contrasts := [("Il cibo ha scarseggiato tra i terremotati.", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "scarseggiare"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "essere"⟩, ⟨3, 1, "participle", some "scarseggiare"⟩]
+    paperFeatures := [] }
 
 def ex22 : Datum :=
   { id := "sorace2000_ex22"
@@ -596,9 +639,10 @@ def ex22 : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Les dinosaures sont existé il y a 65 millions d'ans.", .unacceptable)]
+    contrasts := [("Les dinosaures sont existé il y a 65 millions d'ans.", .nearlyUngrammatical)]
     readings := []
-    paperFeatures := [("verb", "exister"), ("position", "existenceOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avoir"⟩, ⟨3, 1, "participle", some "exister"⟩]
+    paperFeatures := [] }
 
 def ex23a : Datum :=
   { id := "sorace2000_ex23a"
@@ -613,7 +657,8 @@ def ex23a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "gefallen"), ("position", "existenceOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "haben"⟩, ⟨4, 1, "participle", some "gefallen"⟩]
+    paperFeatures := [] }
 
 def ex23b : Datum :=
   { id := "sorace2000_ex23b"
@@ -628,7 +673,8 @@ def ex23b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "genügen"), ("position", "existenceOfState"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "haben"⟩, ⟨3, 1, "participle", some "genügen"⟩]
+    paperFeatures := [] }
 
 def ex23c : Datum :=
   { id := "sorace2000_ex23c"
@@ -643,7 +689,8 @@ def ex23c : Datum :=
     judgment := .acceptable
     contrasts := [("Das Buch hat auf dem Boden gelegen.", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "liegen"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨2, 1, "auxiliary", some "sein"⟩, ⟨6, 1, "participle", some "liegen"⟩]
+    paperFeatures := [] }
 
 def ex23d : Datum :=
   { id := "sorace2000_ex23d"
@@ -658,7 +705,8 @@ def ex23d : Datum :=
     judgment := .acceptable
     contrasts := [("Ich habe von ihr abgehangen.", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "abhängen"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "sein"⟩, ⟨4, 1, "participle", some "abhängen"⟩]
+    paperFeatures := [] }
 
 def ex24a : Datum :=
   { id := "sorace2000_ex24a"
@@ -673,7 +721,8 @@ def ex24a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "staan"), ("position", "existenceOfState"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "hebben"⟩, ⟨6, 1, "participle", some "staan"⟩]
+    paperFeatures := [] }
 
 def ex24b : Datum :=
   { id := "sorace2000_ex24b"
@@ -688,7 +737,8 @@ def ex24b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "bestaan"), ("position", "existenceOfState"), ("aux", "have")] }
+    spans := [⟨3, 1, "auxiliary", some "hebben"⟩, ⟨5, 1, "participle", some "bestaan"⟩]
+    paperFeatures := [] }
 
 def ex24c : Datum :=
   { id := "sorace2000_ex24c"
@@ -703,7 +753,8 @@ def ex24c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "blijken"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "zijn"⟩, ⟨5, 1, "participle", some "blijken"⟩]
+    paperFeatures := [] }
 
 def ex25a : Datum :=
   { id := "sorace2000_ex25a"
@@ -718,7 +769,8 @@ def ex25a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "sein"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "sein"⟩, ⟨6, 1, "participle", some "sein"⟩]
+    paperFeatures := [] }
 
 def ex25b : Datum :=
   { id := "sorace2000_ex25b"
@@ -733,7 +785,8 @@ def ex25b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "zijn"), ("position", "existenceOfState"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "zijn"⟩, ⟨6, 1, "participle", some "zijn"⟩]
+    paperFeatures := [] }
 
 def ex33a : Datum :=
   { id := "sorace2000_ex33a"
@@ -748,7 +801,8 @@ def ex33a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "chiacchierare"), ("position", "nonmotionalProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "chiacchierare"⟩]
+    paperFeatures := [] }
 
 def ex33b : Datum :=
   { id := "sorace2000_ex33b"
@@ -763,7 +817,8 @@ def ex33b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "travailler"), ("position", "nonmotionalProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avoir"⟩, ⟨3, 1, "participle", some "travailler"⟩]
+    paperFeatures := [] }
 
 def ex33c : Datum :=
   { id := "sorace2000_ex33c"
@@ -778,7 +833,8 @@ def ex33c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "blazen"), ("position", "nonmotionalProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "hebben"⟩, ⟨6, 1, "participle", some "blazen"⟩]
+    paperFeatures := [] }
 
 def ex33d : Datum :=
   { id := "sorace2000_ex33d"
@@ -793,7 +849,8 @@ def ex33d : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "arbeiten"), ("position", "nonmotionalProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "haben"⟩, ⟨5, 1, "participle", some "arbeiten"⟩]
+    paperFeatures := [] }
 
 def ex34 : Datum :=
   { id := "sorace2000_ex34"
@@ -808,7 +865,8 @@ def ex34 : Datum :=
     judgment := .acceptable
     contrasts := [("Il cibo inviato dall'ONU è funzionato solo come palliativo.", .marginal)]
     readings := []
-    paperFeatures := [("verb", "funzionare"), ("position", "nonmotionalProcess"), ("aux", "have"), ("subject", "nonagentive")] }
+    spans := [⟨4, 1, "auxiliary", some "avere"⟩, ⟨5, 1, "participle", some "funzionare"⟩]
+    paperFeatures := [("subject", "nonagentive")] }
 
 def ex35 : Datum :=
   { id := "sorace2000_ex35"
@@ -823,7 +881,8 @@ def ex35 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "lavorare"), ("position", "nonmotionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "lavorare"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex36a : Datum :=
   { id := "sorace2000_ex36a"
@@ -838,7 +897,8 @@ def ex36a : Datum :=
     judgment := .acceptable
     contrasts := [("Maria è ceduta alle tue insistenze", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "cedere"), ("position", "nonmotionalProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "cedere"⟩]
+    paperFeatures := [] }
 
 def ex36b : Datum :=
   { id := "sorace2000_ex36b"
@@ -853,7 +913,8 @@ def ex36b : Datum :=
     judgment := .acceptable
     contrasts := [("Il pavimento è ceduto all'improvviso", .marginal)]
     readings := []
-    paperFeatures := [("verb", "cedere"), ("position", "nonmotionalProcess"), ("aux", "have"), ("subject", "nonagentive")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "cedere"⟩]
+    paperFeatures := [("subject", "nonagentive")] }
 
 def ex37a : Datum :=
   { id := "sorace2000_ex37a"
@@ -868,7 +929,8 @@ def ex37a : Datum :=
     judgment := .acceptable
     contrasts := [("Gli atleti svedesi sono corsi alle Olimpiadi", .marginal)]
     readings := []
-    paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨3, 1, "auxiliary", some "avere"⟩, ⟨4, 1, "participle", some "correre"⟩]
+    paperFeatures := [] }
 
 def ex37b : Datum :=
   { id := "sorace2000_ex37b"
@@ -883,7 +945,8 @@ def ex37b : Datum :=
     judgment := .acceptable
     contrasts := [("De zwerver is overal gelopen", .marginal)]
     readings := []
-    paperFeatures := [("verb", "lopen"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "hebben"⟩, ⟨4, 1, "participle", some "lopen"⟩]
+    paperFeatures := [] }
 
 def ex37c : Datum :=
   { id := "sorace2000_ex37c"
@@ -898,7 +961,8 @@ def ex37c : Datum :=
     judgment := .acceptable
     contrasts := [("Marie est nagée tout l'après-midi", .marginal)]
     readings := []
-    paperFeatures := [("verb", "nager"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avoir"⟩, ⟨2, 1, "participle", some "nager"⟩]
+    paperFeatures := [] }
 
 def ex38_rennen : Datum :=
   { id := "sorace2000_ex38_rennen"
@@ -913,7 +977,8 @@ def ex38_rennen : Datum :=
     judgment := .acceptable
     contrasts := [("Uschi hat den ganzen Tag gerannt", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "rennen"), ("position", "motionalProcess"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "sein"⟩, ⟨5, 1, "participle", some "rennen"⟩]
+    paperFeatures := [] }
 
 def ex38_laufen : Datum :=
   { id := "sorace2000_ex38_laufen"
@@ -928,7 +993,8 @@ def ex38_laufen : Datum :=
     judgment := .acceptable
     contrasts := [("Uschi hat den ganzen Tag gelaufen", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "laufen"), ("position", "motionalProcess"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "sein"⟩, ⟨5, 1, "participle", some "laufen"⟩]
+    paperFeatures := [] }
 
 def ex38_schwimmen : Datum :=
   { id := "sorace2000_ex38_schwimmen"
@@ -943,7 +1009,8 @@ def ex38_schwimmen : Datum :=
     judgment := .acceptable
     contrasts := [("Uschi hat den ganzen Tag geschwommen", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "schwimmen"), ("position", "motionalProcess"), ("aux", "be")] }
+    spans := [⟨1, 1, "auxiliary", some "sein"⟩, ⟨5, 1, "participle", some "schwimmen"⟩]
+    paperFeatures := [] }
 
 def ex39a : Datum :=
   { id := "sorace2000_ex39a"
@@ -958,7 +1025,8 @@ def ex39a : Datum :=
     judgment := .acceptable
     contrasts := [("De bal is gerold", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "rollen"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "hebben"⟩, ⟨3, 1, "participle", some "rollen"⟩]
+    paperFeatures := [] }
 
 def ex39b : Datum :=
   { id := "sorace2000_ex39b"
@@ -973,7 +1041,8 @@ def ex39b : Datum :=
     judgment := .acceptable
     contrasts := [("De bal heeft naar beneden gerold", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "rollen"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
+    spans := [⟨2, 1, "auxiliary", some "zijn"⟩, ⟨5, 1, "participle", some "rollen"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex40a : Datum :=
   { id := "sorace2000_ex40a"
@@ -988,7 +1057,8 @@ def ex40a : Datum :=
     judgment := .acceptable
     contrasts := [("Hans und Rita sind im Saal getanzt", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "tanzen"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨3, 1, "auxiliary", some "haben"⟩, ⟨6, 1, "participle", some "tanzen"⟩]
+    paperFeatures := [] }
 
 def ex40b : Datum :=
   { id := "sorace2000_ex40b"
@@ -1003,7 +1073,8 @@ def ex40b : Datum :=
     judgment := .acceptable
     contrasts := [("Hans und Rita haben in den Saal getanzt", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "tanzen"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
+    spans := [⟨3, 1, "auxiliary", some "sein"⟩, ⟨7, 1, "participle", some "tanzen"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex41a : Datum :=
   { id := "sorace2000_ex41a"
@@ -1018,7 +1089,8 @@ def ex41a : Datum :=
     judgment := .acceptable
     contrasts := [("Maria è corsa velocemente.", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "correre"⟩]
+    paperFeatures := [] }
 
 def ex41b : Datum :=
   { id := "sorace2000_ex41b"
@@ -1033,7 +1105,8 @@ def ex41b : Datum :=
     judgment := .acceptable
     contrasts := [("Maria ha corso in farmacia", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "correre"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex41c : Datum :=
   { id := "sorace2000_ex41c"
@@ -1048,7 +1121,8 @@ def ex41c : Datum :=
     judgment := .acceptable
     contrasts := [("Paola è nuotata con perfetto stile", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "nuotare"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "nuotare"⟩]
+    paperFeatures := [] }
 
 def ex41d : Datum :=
   { id := "sorace2000_ex41d"
@@ -1063,7 +1137,8 @@ def ex41d : Datum :=
     judgment := .acceptable
     contrasts := [("Paola è nuotata a riva", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "nuotare"), ("position", "motionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "nuotare"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex42a : Datum :=
   { id := "sorace2000_ex42a"
@@ -1078,7 +1153,8 @@ def ex42a : Datum :=
     judgment := .acceptable
     contrasts := [("Marie est courue très vite", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "courir"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avoir"⟩, ⟨2, 1, "participle", some "courir"⟩]
+    paperFeatures := [] }
 
 def ex42b : Datum :=
   { id := "sorace2000_ex42b"
@@ -1093,7 +1169,8 @@ def ex42b : Datum :=
     judgment := .acceptable
     contrasts := [("Marie est courue jusqu'à la maison", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "courir"), ("position", "motionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
+    spans := [⟨1, 1, "auxiliary", some "avoir"⟩, ⟨2, 1, "participle", some "courir"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex43a : Datum :=
   { id := "sorace2000_ex43a"
@@ -1108,7 +1185,8 @@ def ex43a : Datum :=
     judgment := .acceptable
     contrasts := [("Ha corso voce che Maria si sposa", .marginal)]
     readings := []
-    paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
+    spans := [⟨0, 1, "auxiliary", some "essere"⟩, ⟨1, 1, "participle", some "correre"⟩]
+    paperFeatures := [("subject", "nonagentive")] }
 
 def ex43b : Datum :=
   { id := "sorace2000_ex43b"
@@ -1123,7 +1201,8 @@ def ex43b : Datum :=
     judgment := .acceptable
     contrasts := [("Ha saltato fuori che i magistrati erano corrotti", .marginal)]
     readings := []
-    paperFeatures := [("verb", "saltare"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
+    spans := [⟨0, 1, "auxiliary", some "essere"⟩, ⟨1, 1, "participle", some "saltare"⟩]
+    paperFeatures := [("subject", "nonagentive")] }
 
 def ex44a : Datum :=
   { id := "sorace2000_ex44a"
@@ -1138,7 +1217,8 @@ def ex44a : Datum :=
     judgment := .acceptable
     contrasts := [("Il pilota è atterrato sulla pista di emergenza", .marginal)]
     readings := []
-    paperFeatures := [("verb", "atterrare"), ("position", "motionalProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "atterrare"⟩]
+    paperFeatures := [] }
 
 def ex44b : Datum :=
   { id := "sorace2000_ex44b"
@@ -1153,7 +1233,8 @@ def ex44b : Datum :=
     judgment := .acceptable
     contrasts := [("L'aereo ha atterrato sulla pista di emergenza", .marginal)]
     readings := []
-    paperFeatures := [("verb", "atterrare"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "atterrare"⟩]
+    paperFeatures := [("subject", "nonagentive")] }
 
 def ex45a : Datum :=
   { id := "sorace2000_ex45a"
@@ -1168,7 +1249,8 @@ def ex45a : Datum :=
     judgment := .acceptable
     contrasts := [("La fede religiosa è tentennata anche nei più forti", .questionable)]
     readings := []
-    paperFeatures := [("verb", "tentennare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨3, 1, "auxiliary", some "avere"⟩, ⟨4, 1, "participle", some "tentennare"⟩]
+    paperFeatures := [] }
 
 def ex45b : Datum :=
   { id := "sorace2000_ex45b"
@@ -1183,7 +1265,8 @@ def ex45b : Datum :=
     judgment := .acceptable
     contrasts := [("Paolo è tentennato a lungo prima di decidersi", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "tentennare"), ("position", "uncontrolledProcess"), ("aux", "have"), ("subject", "agentive")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "tentennare"⟩]
+    paperFeatures := [("subject", "agentive")] }
 
 def ex46a : Datum :=
   { id := "sorace2000_ex46a"
@@ -1198,7 +1281,8 @@ def ex46a : Datum :=
     judgment := .acceptable
     contrasts := [("Mario è tossito", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "tossire"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "tossire"⟩]
+    paperFeatures := [] }
 
 def ex46b : Datum :=
   { id := "sorace2000_ex46b"
@@ -1213,7 +1297,8 @@ def ex46b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "tossire"), ("position", "uncontrolledProcess"), ("aux", "have"), ("subject", "agentive")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "tossire"⟩]
+    paperFeatures := [("subject", "agentive")] }
 
 def ex47a : Datum :=
   { id := "sorace2000_ex47a"
@@ -1228,7 +1313,8 @@ def ex47a : Datum :=
     judgment := .acceptable
     contrasts := [("Il telefono è squillato.", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "squillare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "squillare"⟩]
+    paperFeatures := [] }
 
 def ex47b : Datum :=
   { id := "sorace2000_ex47b"
@@ -1243,7 +1329,8 @@ def ex47b : Datum :=
     judgment := .acceptable
     contrasts := [("L'eco è risuonato nella caverna", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "risuonare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "risuonare"⟩]
+    paperFeatures := [] }
 
 def ex47c : Datum :=
   { id := "sorace2000_ex47c"
@@ -1258,7 +1345,8 @@ def ex47c : Datum :=
     judgment := .acceptable
     contrasts := [("Il tuono è rimbombato", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "rimbombare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "rimbombare"⟩]
+    paperFeatures := [] }
 
 def ex47d : Datum :=
   { id := "sorace2000_ex47d"
@@ -1273,7 +1361,8 @@ def ex47d : Datum :=
     judgment := .acceptable
     contrasts := [("La campana è rintoccata", .marginal)]
     readings := []
-    paperFeatures := [("verb", "rintoccare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨2, 1, "auxiliary", some "avere"⟩, ⟨3, 1, "participle", some "rintoccare"⟩]
+    paperFeatures := [] }
 
 def ex48_piovere : Datum :=
   { id := "sorace2000_ex48_piovere"
@@ -1288,7 +1377,8 @@ def ex48_piovere : Datum :=
     judgment := .acceptable
     contrasts := [("Ieri è piovuto tutto il giorno", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "piovere"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "piovere"⟩]
+    paperFeatures := [] }
 
 def ex48_nevicare : Datum :=
   { id := "sorace2000_ex48_nevicare"
@@ -1303,7 +1393,8 @@ def ex48_nevicare : Datum :=
     judgment := .acceptable
     contrasts := [("Ieri è nevicato tutto il giorno", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "nevicare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "nevicare"⟩]
+    paperFeatures := [] }
 
 def ex48_grandinare : Datum :=
   { id := "sorace2000_ex48_grandinare"
@@ -1318,7 +1409,8 @@ def ex48_grandinare : Datum :=
     judgment := .acceptable
     contrasts := [("Ieri è grandinato tutto il giorno", .acceptable)]
     readings := []
-    paperFeatures := [("verb", "grandinare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨1, 1, "auxiliary", some "avere"⟩, ⟨2, 1, "participle", some "grandinare"⟩]
+    paperFeatures := [] }
 
 def ex49 : Datum :=
   { id := "sorace2000_ex49"
@@ -1333,7 +1425,8 @@ def ex49 : Datum :=
     judgment := .acceptable
     contrasts := [("Mi ha piovuto sulla testa", .ungrammatical)]
     readings := []
-    paperFeatures := [("verb", "piovere"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "piovere"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex50a : Datum :=
   { id := "sorace2000_ex50a"
@@ -1348,7 +1441,8 @@ def ex50a : Datum :=
     judgment := .acceptable
     contrasts := [("È tuonato molto durante il temporale", .marginal)]
     readings := []
-    paperFeatures := [("verb", "tuonare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨0, 1, "auxiliary", some "avere"⟩, ⟨1, 1, "participle", some "tuonare"⟩]
+    paperFeatures := [] }
 
 def ex50b : Datum :=
   { id := "sorace2000_ex50b"
@@ -1363,7 +1457,8 @@ def ex50b : Datum :=
     judgment := .acceptable
     contrasts := [("È lampeggiato all'improvviso", .marginal)]
     readings := []
-    paperFeatures := [("verb", "lampeggiare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
+    spans := [⟨0, 1, "auxiliary", some "avere"⟩, ⟨1, 1, "participle", some "lampeggiare"⟩]
+    paperFeatures := [] }
 
 def ex51_tuonare : Datum :=
   { id := "sorace2000_ex51_tuonare"
@@ -1378,7 +1473,8 @@ def ex51_tuonare : Datum :=
     judgment := .marginal
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "tuonare"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "tuonare"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def ex51_lampeggiare : Datum :=
   { id := "sorace2000_ex51_lampeggiare"
@@ -1393,8 +1489,721 @@ def ex51_lampeggiare : Datum :=
     judgment := .marginal
     contrasts := []
     readings := []
-    paperFeatures := [("verb", "lampeggiare"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
+    spans := [⟨1, 1, "auxiliary", some "essere"⟩, ⟨2, 1, "participle", some "lampeggiare"⟩]
+    paperFeatures := [("predicate", "telicized")] }
 
 def all : List Datum := [ex1a, ex1b, ex1c, ex1d, ex4, ex5a, ex5b, ex30a, ex7a, ex7b, ex8a, ex9a, ex9b, ex9c, ex10a, ex10b, ex11, ex12, ex13, ex14a, ex14c, ex15a, ex15b, ex15c, ex16, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex19c, ex20a, ex20b, ex20c, ex21a, ex21b, ex21c, ex22, ex23a, ex23b, ex23c, ex23d, ex24a, ex24b, ex24c, ex25a, ex25b, ex33a, ex33b, ex33c, ex33d, ex34, ex35, ex36a, ex36b, ex37a, ex37b, ex37c, ex38_rennen, ex38_laufen, ex38_schwimmen, ex39a, ex39b, ex40a, ex40b, ex41a, ex41b, ex41c, ex41d, ex42a, ex42b, ex43a, ex43b, ex44a, ex44b, ex45a, ex45b, ex46a, ex46b, ex47a, ex47b, ex47c, ex47d, ex48_piovere, ex48_nevicare, ex48_grandinare, ex49, ex50a, ex50b, ex51_tuonare, ex51_lampeggiare]
+
+/-- A phrase that changes the telicity of the predicate, where the paper points to one. -/
+inductive PredicateShift where
+  /-- telicized: a directional or bounding phrase makes the predicate telic -/
+  | telicized
+  /-- detelicized: a durative adverbial makes the predicate atelic -/
+  | detelicized
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `predicate`. -/
+def predicate (e : Datum) : Option PredicateShift :=
+  e.parse? "predicate" [("telicized", .telicized), ("detelicized", .detelicized)]
+
+/-- The agentivity of the subject, where the paper points to it as departing from the default of the verb's type. -/
+inductive SubjectShift where
+  /-- agentive: the subject acts on purpose -/
+  | agentive
+  /-- nonagentive: the subject is inanimate, sentential or not in control -/
+  | nonagentive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `subject`. -/
+def subject (e : Datum) : Option SubjectShift :=
+  e.parse? "subject" [("agentive", .agentive), ("nonagentive", .nonagentive)]
+
+/-- The words a row marks. -/
+inductive SpanLabel where
+  /-- auxiliary: the auxiliary of the perfect -/
+  | auxiliary
+  /-- participle: the past participle of the verb under test -/
+  | participle
+  deriving DecidableEq, Repr, Fintype
+
+/-- The label of a span, where it is a declared one. -/
+def label? (p : Datum.Span) : Option SpanLabel :=
+  List.lookup p.label [("auxiliary", .auxiliary), ("participle", .participle)]
+
+/-- The auxiliaries and the verbs of the rows. -/
+inductive Lexeme where
+  /-- essere: *essere* 'be', the Italian auxiliary of the perfect with *be* -/
+  | essere
+  /-- venire: *venire* 'come' -/
+  | venire
+  /-- être: *être* 'be', the French auxiliary of the perfect with *be* -/
+  | etre
+  /-- arriver: *arriver* 'arrive' -/
+  | arriver
+  /-- zijn: *zijn* 'be' -/
+  | zijn
+  /-- komen: *komen* 'arrive' -/
+  | komen
+  /-- sein: *sein* 'be' -/
+  | sein
+  /-- ankommen: *ankommen* 'arrive' -/
+  | ankommen
+  /-- arrivare: *arrivare* 'arrive' -/
+  | arrivare
+  /-- cadere: *cadere* 'fall' -/
+  | cadere
+  /-- avere: *avere* 'have', the Italian auxiliary of the perfect with *have* -/
+  | avere
+  /-- salire: *salire* 'rise' -/
+  | salire
+  /-- marcire: *marcire* 'rot' -/
+  | marcire
+  /-- fiorire: *fiorire* 'blossom' -/
+  | fiorire
+  /-- naître: *naître* 'be born' -/
+  | naitre
+  /-- sterven: *sterven* 'die' -/
+  | sterven
+  /-- gebären: *gebären* 'give birth', whose participle *geboren* is 'born' -/
+  | gebaren
+  /-- groeien: *groeien* 'grow' -/
+  | groeien
+  /-- steigen: *steigen* 'rise' -/
+  | steigen
+  /-- stijgen: *stijgen* 'rise' -/
+  | stijgen
+  /-- devenir: *devenir* 'become' -/
+  | devenir
+  /-- avoir: *avoir* 'have', the French auxiliary of the perfect with *have* -/
+  | avoir
+  /-- rougir: *rougir* 'blush' -/
+  | rougir
+  /-- paraître: *paraître* 'appear' -/
+  | paraitre
+  /-- échapper: *échapper* 'escape' -/
+  | echapper
+  /-- rimanere: *rimanere* 'remain' -/
+  | rimanere
+  /-- durare: *durare* 'last' -/
+  | durare
+  /-- survivre: *survivre* 'survive' -/
+  | survivre
+  /-- haben: *haben* 'have', the German auxiliary of the perfect with *have* -/
+  | haben
+  /-- halten: *halten* 'last' -/
+  | halten
+  /-- verweilen: *verweilen* 'stay' -/
+  | verweilen
+  /-- overblijven: *overblijven* 'remain' -/
+  | overblijven
+  /-- hebben: *hebben* 'have', the Dutch auxiliary of the perfect with *have* -/
+  | hebben
+  /-- duren: *duren* 'last' -/
+  | duren
+  /-- rester: *rester* 'remain' -/
+  | rester
+  /-- blijven: *blijven* 'remain' -/
+  | blijven
+  /-- bleiben: *bleiben* 'remain' -/
+  | bleiben
+  /-- esistere: *esistere* 'exist' -/
+  | esistere
+  /-- bastare: *bastare* 'suffice' -/
+  | bastare
+  /-- sembrare: *sembrare* 'seem' -/
+  | sembrare
+  /-- appartenere: *appartenere* 'belong' -/
+  | appartenere
+  /-- scarseggiare: *scarseggiare* 'run short' -/
+  | scarseggiare
+  /-- exister: *exister* 'exist' -/
+  | exister
+  /-- gefallen: *gefallen* 'please' -/
+  | gefallen
+  /-- genügen: *genügen* 'suffice' -/
+  | genugen
+  /-- liegen: *liegen* 'lie' -/
+  | liegen
+  /-- abhängen: *abhängen* 'depend' -/
+  | abhangen
+  /-- staan: *staan* 'stand' -/
+  | staan
+  /-- bestaan: *bestaan* 'exist' -/
+  | bestaan
+  /-- blijken: *blijken* 'seem' -/
+  | blijken
+  /-- chiacchierare: *chiacchierare* 'chat' -/
+  | chiacchierare
+  /-- travailler: *travailler* 'work' -/
+  | travailler
+  /-- blazen: *blazen* 'blow' -/
+  | blazen
+  /-- arbeiten: *arbeiten* 'work' -/
+  | arbeiten
+  /-- funzionare: *funzionare* 'function' -/
+  | funzionare
+  /-- lavorare: *lavorare* 'work' -/
+  | lavorare
+  /-- cedere: *cedere* 'yield' -/
+  | cedere
+  /-- correre: *correre* 'run' -/
+  | correre
+  /-- lopen: *lopen* 'run' -/
+  | lopen
+  /-- nager: *nager* 'swim' -/
+  | nager
+  /-- rennen: *rennen* 'run' -/
+  | rennen
+  /-- laufen: *laufen* 'walk' -/
+  | laufen
+  /-- schwimmen: *schwimmen* 'swim' -/
+  | schwimmen
+  /-- rollen: *rollen* 'roll' -/
+  | rollen
+  /-- tanzen: *tanzen* 'dance' -/
+  | tanzen
+  /-- nuotare: *nuotare* 'swim' -/
+  | nuotare
+  /-- courir: *courir* 'run' -/
+  | courir
+  /-- saltare: *saltare* 'jump' -/
+  | saltare
+  /-- atterrare: *atterrare* 'land' -/
+  | atterrare
+  /-- tentennare: *tentennare* 'waver' -/
+  | tentennare
+  /-- tossire: *tossire* 'cough' -/
+  | tossire
+  /-- squillare: *squillare* 'ring' -/
+  | squillare
+  /-- risuonare: *risuonare* 'resound' -/
+  | risuonare
+  /-- rimbombare: *rimbombare* 'rumble' -/
+  | rimbombare
+  /-- rintoccare: *rintoccare* 'toll' -/
+  | rintoccare
+  /-- piovere: *piovere* 'rain' -/
+  | piovere
+  /-- nevicare: *nevicare* 'snow' -/
+  | nevicare
+  /-- grandinare: *grandinare* 'hail' -/
+  | grandinare
+  /-- tuonare: *tuonare* 'thunder' -/
+  | tuonare
+  /-- lampeggiare: *lampeggiare* 'flash with lightning' -/
+  | lampeggiare
+  deriving DecidableEq, Repr, Fintype
+
+/-- The lexeme a span is a form of, where it names a declared one. -/
+def lexeme? (p : Datum.Span) : Option Lexeme :=
+  p.lexeme.bind (List.lookup · [("essere", .essere), ("venire", .venire), ("être", .etre), ("arriver", .arriver), ("zijn", .zijn), ("komen", .komen), ("sein", .sein), ("ankommen", .ankommen), ("arrivare", .arrivare), ("cadere", .cadere), ("avere", .avere), ("salire", .salire), ("marcire", .marcire), ("fiorire", .fiorire), ("naître", .naitre), ("sterven", .sterven), ("gebären", .gebaren), ("groeien", .groeien), ("steigen", .steigen), ("stijgen", .stijgen), ("devenir", .devenir), ("avoir", .avoir), ("rougir", .rougir), ("paraître", .paraitre), ("échapper", .echapper), ("rimanere", .rimanere), ("durare", .durare), ("survivre", .survivre), ("haben", .haben), ("halten", .halten), ("verweilen", .verweilen), ("overblijven", .overblijven), ("hebben", .hebben), ("duren", .duren), ("rester", .rester), ("blijven", .blijven), ("bleiben", .bleiben), ("esistere", .esistere), ("bastare", .bastare), ("sembrare", .sembrare), ("appartenere", .appartenere), ("scarseggiare", .scarseggiare), ("exister", .exister), ("gefallen", .gefallen), ("genügen", .genugen), ("liegen", .liegen), ("abhängen", .abhangen), ("staan", .staan), ("bestaan", .bestaan), ("blijken", .blijken), ("chiacchierare", .chiacchierare), ("travailler", .travailler), ("blazen", .blazen), ("arbeiten", .arbeiten), ("funzionare", .funzionare), ("lavorare", .lavorare), ("cedere", .cedere), ("correre", .correre), ("lopen", .lopen), ("nager", .nager), ("rennen", .rennen), ("laufen", .laufen), ("schwimmen", .schwimmen), ("rollen", .rollen), ("tanzen", .tanzen), ("nuotare", .nuotare), ("courir", .courir), ("saltare", .saltare), ("atterrare", .atterrare), ("tentennare", .tentennare), ("tossire", .tossire), ("squillare", .squillare), ("risuonare", .risuonare), ("rimbombare", .rimbombare), ("rintoccare", .rintoccare), ("piovere", .piovere), ("nevicare", .nevicare), ("grandinare", .grandinare), ("tuonare", .tuonare), ("lampeggiare", .lampeggiare)])
+
+/-- The examples of the paper. -/
+inductive Example where
+  | ex1a
+  | ex1b
+  | ex1c
+  | ex1d
+  | ex4
+  | ex5a
+  | ex5b
+  | ex30a
+  | ex7a
+  | ex7b
+  | ex8a
+  | ex9a
+  | ex9b
+  | ex9c
+  | ex10a
+  | ex10b
+  | ex11
+  | ex12
+  | ex13
+  | ex14a
+  | ex14c
+  | ex15a
+  | ex15b
+  | ex15c
+  | ex16
+  | ex17a
+  | ex17b
+  | ex18a
+  | ex18b
+  | ex19a
+  | ex19b
+  | ex19c
+  | ex20a
+  | ex20b
+  | ex20c
+  | ex21a
+  | ex21b
+  | ex21c
+  | ex22
+  | ex23a
+  | ex23b
+  | ex23c
+  | ex23d
+  | ex24a
+  | ex24b
+  | ex24c
+  | ex25a
+  | ex25b
+  | ex33a
+  | ex33b
+  | ex33c
+  | ex33d
+  | ex34
+  | ex35
+  | ex36a
+  | ex36b
+  | ex37a
+  | ex37b
+  | ex37c
+  | ex38_rennen
+  | ex38_laufen
+  | ex38_schwimmen
+  | ex39a
+  | ex39b
+  | ex40a
+  | ex40b
+  | ex41a
+  | ex41b
+  | ex41c
+  | ex41d
+  | ex42a
+  | ex42b
+  | ex43a
+  | ex43b
+  | ex44a
+  | ex44b
+  | ex45a
+  | ex45b
+  | ex46a
+  | ex46b
+  | ex47a
+  | ex47b
+  | ex47c
+  | ex47d
+  | ex48_piovere
+  | ex48_nevicare
+  | ex48_grandinare
+  | ex49
+  | ex50a
+  | ex50b
+  | ex51_tuonare
+  | ex51_lampeggiare
+  deriving DecidableEq, Repr, Fintype
+
+/-- Every example of the file, in its order. -/
+def Example.all : List Example :=
+  [.ex1a, .ex1b, .ex1c, .ex1d, .ex4, .ex5a, .ex5b, .ex30a, .ex7a, .ex7b, .ex8a, .ex9a, .ex9b,
+    .ex9c, .ex10a, .ex10b, .ex11, .ex12, .ex13, .ex14a, .ex14c, .ex15a, .ex15b, .ex15c, .ex16,
+    .ex17a, .ex17b, .ex18a, .ex18b, .ex19a, .ex19b, .ex19c, .ex20a, .ex20b, .ex20c, .ex21a,
+    .ex21b, .ex21c, .ex22, .ex23a, .ex23b, .ex23c, .ex23d, .ex24a, .ex24b, .ex24c, .ex25a, .ex25b,
+    .ex33a, .ex33b, .ex33c, .ex33d, .ex34, .ex35, .ex36a, .ex36b, .ex37a, .ex37b, .ex37c,
+    .ex38_rennen, .ex38_laufen, .ex38_schwimmen, .ex39a, .ex39b, .ex40a, .ex40b, .ex41a, .ex41b,
+    .ex41c, .ex41d, .ex42a, .ex42b, .ex43a, .ex43b, .ex44a, .ex44b, .ex45a, .ex45b, .ex46a,
+    .ex46b, .ex47a, .ex47b, .ex47c, .ex47d, .ex48_piovere, .ex48_nevicare, .ex48_grandinare,
+    .ex49, .ex50a, .ex50b, .ex51_tuonare, .ex51_lampeggiare]
+
+/-- The row of an example. -/
+def Example.datum : Example → Datum
+  | .ex1a => _root_.Sorace2000.Examples.ex1a
+  | .ex1b => _root_.Sorace2000.Examples.ex1b
+  | .ex1c => _root_.Sorace2000.Examples.ex1c
+  | .ex1d => _root_.Sorace2000.Examples.ex1d
+  | .ex4 => _root_.Sorace2000.Examples.ex4
+  | .ex5a => _root_.Sorace2000.Examples.ex5a
+  | .ex5b => _root_.Sorace2000.Examples.ex5b
+  | .ex30a => _root_.Sorace2000.Examples.ex30a
+  | .ex7a => _root_.Sorace2000.Examples.ex7a
+  | .ex7b => _root_.Sorace2000.Examples.ex7b
+  | .ex8a => _root_.Sorace2000.Examples.ex8a
+  | .ex9a => _root_.Sorace2000.Examples.ex9a
+  | .ex9b => _root_.Sorace2000.Examples.ex9b
+  | .ex9c => _root_.Sorace2000.Examples.ex9c
+  | .ex10a => _root_.Sorace2000.Examples.ex10a
+  | .ex10b => _root_.Sorace2000.Examples.ex10b
+  | .ex11 => _root_.Sorace2000.Examples.ex11
+  | .ex12 => _root_.Sorace2000.Examples.ex12
+  | .ex13 => _root_.Sorace2000.Examples.ex13
+  | .ex14a => _root_.Sorace2000.Examples.ex14a
+  | .ex14c => _root_.Sorace2000.Examples.ex14c
+  | .ex15a => _root_.Sorace2000.Examples.ex15a
+  | .ex15b => _root_.Sorace2000.Examples.ex15b
+  | .ex15c => _root_.Sorace2000.Examples.ex15c
+  | .ex16 => _root_.Sorace2000.Examples.ex16
+  | .ex17a => _root_.Sorace2000.Examples.ex17a
+  | .ex17b => _root_.Sorace2000.Examples.ex17b
+  | .ex18a => _root_.Sorace2000.Examples.ex18a
+  | .ex18b => _root_.Sorace2000.Examples.ex18b
+  | .ex19a => _root_.Sorace2000.Examples.ex19a
+  | .ex19b => _root_.Sorace2000.Examples.ex19b
+  | .ex19c => _root_.Sorace2000.Examples.ex19c
+  | .ex20a => _root_.Sorace2000.Examples.ex20a
+  | .ex20b => _root_.Sorace2000.Examples.ex20b
+  | .ex20c => _root_.Sorace2000.Examples.ex20c
+  | .ex21a => _root_.Sorace2000.Examples.ex21a
+  | .ex21b => _root_.Sorace2000.Examples.ex21b
+  | .ex21c => _root_.Sorace2000.Examples.ex21c
+  | .ex22 => _root_.Sorace2000.Examples.ex22
+  | .ex23a => _root_.Sorace2000.Examples.ex23a
+  | .ex23b => _root_.Sorace2000.Examples.ex23b
+  | .ex23c => _root_.Sorace2000.Examples.ex23c
+  | .ex23d => _root_.Sorace2000.Examples.ex23d
+  | .ex24a => _root_.Sorace2000.Examples.ex24a
+  | .ex24b => _root_.Sorace2000.Examples.ex24b
+  | .ex24c => _root_.Sorace2000.Examples.ex24c
+  | .ex25a => _root_.Sorace2000.Examples.ex25a
+  | .ex25b => _root_.Sorace2000.Examples.ex25b
+  | .ex33a => _root_.Sorace2000.Examples.ex33a
+  | .ex33b => _root_.Sorace2000.Examples.ex33b
+  | .ex33c => _root_.Sorace2000.Examples.ex33c
+  | .ex33d => _root_.Sorace2000.Examples.ex33d
+  | .ex34 => _root_.Sorace2000.Examples.ex34
+  | .ex35 => _root_.Sorace2000.Examples.ex35
+  | .ex36a => _root_.Sorace2000.Examples.ex36a
+  | .ex36b => _root_.Sorace2000.Examples.ex36b
+  | .ex37a => _root_.Sorace2000.Examples.ex37a
+  | .ex37b => _root_.Sorace2000.Examples.ex37b
+  | .ex37c => _root_.Sorace2000.Examples.ex37c
+  | .ex38_rennen => _root_.Sorace2000.Examples.ex38_rennen
+  | .ex38_laufen => _root_.Sorace2000.Examples.ex38_laufen
+  | .ex38_schwimmen => _root_.Sorace2000.Examples.ex38_schwimmen
+  | .ex39a => _root_.Sorace2000.Examples.ex39a
+  | .ex39b => _root_.Sorace2000.Examples.ex39b
+  | .ex40a => _root_.Sorace2000.Examples.ex40a
+  | .ex40b => _root_.Sorace2000.Examples.ex40b
+  | .ex41a => _root_.Sorace2000.Examples.ex41a
+  | .ex41b => _root_.Sorace2000.Examples.ex41b
+  | .ex41c => _root_.Sorace2000.Examples.ex41c
+  | .ex41d => _root_.Sorace2000.Examples.ex41d
+  | .ex42a => _root_.Sorace2000.Examples.ex42a
+  | .ex42b => _root_.Sorace2000.Examples.ex42b
+  | .ex43a => _root_.Sorace2000.Examples.ex43a
+  | .ex43b => _root_.Sorace2000.Examples.ex43b
+  | .ex44a => _root_.Sorace2000.Examples.ex44a
+  | .ex44b => _root_.Sorace2000.Examples.ex44b
+  | .ex45a => _root_.Sorace2000.Examples.ex45a
+  | .ex45b => _root_.Sorace2000.Examples.ex45b
+  | .ex46a => _root_.Sorace2000.Examples.ex46a
+  | .ex46b => _root_.Sorace2000.Examples.ex46b
+  | .ex47a => _root_.Sorace2000.Examples.ex47a
+  | .ex47b => _root_.Sorace2000.Examples.ex47b
+  | .ex47c => _root_.Sorace2000.Examples.ex47c
+  | .ex47d => _root_.Sorace2000.Examples.ex47d
+  | .ex48_piovere => _root_.Sorace2000.Examples.ex48_piovere
+  | .ex48_nevicare => _root_.Sorace2000.Examples.ex48_nevicare
+  | .ex48_grandinare => _root_.Sorace2000.Examples.ex48_grandinare
+  | .ex49 => _root_.Sorace2000.Examples.ex49
+  | .ex50a => _root_.Sorace2000.Examples.ex50a
+  | .ex50b => _root_.Sorace2000.Examples.ex50b
+  | .ex51_tuonare => _root_.Sorace2000.Examples.ex51_tuonare
+  | .ex51_lampeggiare => _root_.Sorace2000.Examples.ex51_lampeggiare
+
+theorem Example.map_datum_all :
+    Example.all.map Example.datum = _root_.Sorace2000.Examples.all := rfl
+
+/-- The value the example records under `predicate`. -/
+def Example.predicate : Example → Option PredicateShift
+  | .ex1a => none
+  | .ex1b => none
+  | .ex1c => none
+  | .ex1d => none
+  | .ex4 => some .detelicized
+  | .ex5a => none
+  | .ex5b => none
+  | .ex30a => none
+  | .ex7a => none
+  | .ex7b => none
+  | .ex8a => none
+  | .ex9a => none
+  | .ex9b => none
+  | .ex9c => none
+  | .ex10a => none
+  | .ex10b => none
+  | .ex11 => some .detelicized
+  | .ex12 => none
+  | .ex13 => none
+  | .ex14a => none
+  | .ex14c => none
+  | .ex15a => none
+  | .ex15b => none
+  | .ex15c => none
+  | .ex16 => none
+  | .ex17a => none
+  | .ex17b => none
+  | .ex18a => none
+  | .ex18b => none
+  | .ex19a => none
+  | .ex19b => none
+  | .ex19c => none
+  | .ex20a => none
+  | .ex20b => none
+  | .ex20c => none
+  | .ex21a => none
+  | .ex21b => none
+  | .ex21c => none
+  | .ex22 => none
+  | .ex23a => none
+  | .ex23b => none
+  | .ex23c => none
+  | .ex23d => none
+  | .ex24a => none
+  | .ex24b => none
+  | .ex24c => none
+  | .ex25a => none
+  | .ex25b => none
+  | .ex33a => none
+  | .ex33b => none
+  | .ex33c => none
+  | .ex33d => none
+  | .ex34 => none
+  | .ex35 => some .telicized
+  | .ex36a => none
+  | .ex36b => none
+  | .ex37a => none
+  | .ex37b => none
+  | .ex37c => none
+  | .ex38_rennen => none
+  | .ex38_laufen => none
+  | .ex38_schwimmen => none
+  | .ex39a => none
+  | .ex39b => some .telicized
+  | .ex40a => none
+  | .ex40b => some .telicized
+  | .ex41a => none
+  | .ex41b => some .telicized
+  | .ex41c => none
+  | .ex41d => some .telicized
+  | .ex42a => none
+  | .ex42b => some .telicized
+  | .ex43a => none
+  | .ex43b => none
+  | .ex44a => none
+  | .ex44b => none
+  | .ex45a => none
+  | .ex45b => none
+  | .ex46a => none
+  | .ex46b => none
+  | .ex47a => none
+  | .ex47b => none
+  | .ex47c => none
+  | .ex47d => none
+  | .ex48_piovere => none
+  | .ex48_nevicare => none
+  | .ex48_grandinare => none
+  | .ex49 => some .telicized
+  | .ex50a => none
+  | .ex50b => none
+  | .ex51_tuonare => some .telicized
+  | .ex51_lampeggiare => some .telicized
+
+theorem Example.predicate_datum :
+    ∀ x : Example, _root_.Sorace2000.Examples.predicate x.datum = x.predicate := by
+  decide +kernel
+
+/-- The value the example records under `subject`. -/
+def Example.subject : Example → Option SubjectShift
+  | .ex1a => none
+  | .ex1b => none
+  | .ex1c => none
+  | .ex1d => none
+  | .ex4 => none
+  | .ex5a => some .agentive
+  | .ex5b => none
+  | .ex30a => none
+  | .ex7a => none
+  | .ex7b => none
+  | .ex8a => none
+  | .ex9a => none
+  | .ex9b => none
+  | .ex9c => none
+  | .ex10a => none
+  | .ex10b => none
+  | .ex11 => none
+  | .ex12 => none
+  | .ex13 => none
+  | .ex14a => none
+  | .ex14c => none
+  | .ex15a => none
+  | .ex15b => none
+  | .ex15c => some .agentive
+  | .ex16 => none
+  | .ex17a => none
+  | .ex17b => none
+  | .ex18a => none
+  | .ex18b => none
+  | .ex19a => none
+  | .ex19b => none
+  | .ex19c => none
+  | .ex20a => none
+  | .ex20b => none
+  | .ex20c => none
+  | .ex21a => none
+  | .ex21b => none
+  | .ex21c => none
+  | .ex22 => none
+  | .ex23a => none
+  | .ex23b => none
+  | .ex23c => none
+  | .ex23d => none
+  | .ex24a => none
+  | .ex24b => none
+  | .ex24c => none
+  | .ex25a => none
+  | .ex25b => none
+  | .ex33a => none
+  | .ex33b => none
+  | .ex33c => none
+  | .ex33d => none
+  | .ex34 => some .nonagentive
+  | .ex35 => none
+  | .ex36a => none
+  | .ex36b => some .nonagentive
+  | .ex37a => none
+  | .ex37b => none
+  | .ex37c => none
+  | .ex38_rennen => none
+  | .ex38_laufen => none
+  | .ex38_schwimmen => none
+  | .ex39a => none
+  | .ex39b => none
+  | .ex40a => none
+  | .ex40b => none
+  | .ex41a => none
+  | .ex41b => none
+  | .ex41c => none
+  | .ex41d => none
+  | .ex42a => none
+  | .ex42b => none
+  | .ex43a => some .nonagentive
+  | .ex43b => some .nonagentive
+  | .ex44a => none
+  | .ex44b => some .nonagentive
+  | .ex45a => none
+  | .ex45b => some .agentive
+  | .ex46a => none
+  | .ex46b => some .agentive
+  | .ex47a => none
+  | .ex47b => none
+  | .ex47c => none
+  | .ex47d => none
+  | .ex48_piovere => none
+  | .ex48_nevicare => none
+  | .ex48_grandinare => none
+  | .ex49 => none
+  | .ex50a => none
+  | .ex50b => none
+  | .ex51_tuonare => none
+  | .ex51_lampeggiare => none
+
+theorem Example.subject_datum :
+    ∀ x : Example, _root_.Sorace2000.Examples.subject x.datum = x.subject := by
+  decide +kernel
+
+/-- The lexemes the spans of the example name, each with the span's label, in order. -/
+def Example.labelledLexemes : Example → List (SpanLabel × Lexeme)
+  | .ex1a => [(.auxiliary, .essere), (.participle, .venire)]
+  | .ex1b => [(.auxiliary, .etre), (.participle, .arriver)]
+  | .ex1c => [(.auxiliary, .zijn), (.participle, .komen)]
+  | .ex1d => [(.auxiliary, .sein), (.participle, .ankommen)]
+  | .ex4 => [(.auxiliary, .essere), (.participle, .arrivare)]
+  | .ex5a => [(.auxiliary, .essere), (.participle, .cadere)]
+  | .ex5b => [(.auxiliary, .essere), (.participle, .cadere)]
+  | .ex30a => [(.auxiliary, .avere), (.participle, .arrivare)]
+  | .ex7a => [(.auxiliary, .essere), (.participle, .salire)]
+  | .ex7b => [(.auxiliary, .essere), (.participle, .marcire)]
+  | .ex8a => [(.auxiliary, .essere), (.participle, .fiorire)]
+  | .ex9a => [(.auxiliary, .etre), (.participle, .naitre)]
+  | .ex9b => [(.auxiliary, .zijn), (.participle, .sterven)]
+  | .ex9c => [(.auxiliary, .sein), (.participle, .gebaren)]
+  | .ex10a => [(.auxiliary, .zijn), (.participle, .groeien)]
+  | .ex10b => [(.auxiliary, .sein), (.participle, .steigen)]
+  | .ex11 => [(.auxiliary, .zijn), (.participle, .stijgen)]
+  | .ex12 => [(.auxiliary, .etre), (.participle, .devenir)]
+  | .ex13 => [(.auxiliary, .avoir), (.participle, .rougir)]
+  | .ex14a => [(.auxiliary, .etre), (.participle, .paraitre)]
+  | .ex14c => [(.auxiliary, .etre), (.participle, .echapper)]
+  | .ex15a => [(.auxiliary, .essere), (.participle, .rimanere)]
+  | .ex15b => [(.auxiliary, .essere), (.participle, .durare)]
+  | .ex15c => [(.auxiliary, .essere), (.participle, .durare)]
+  | .ex16 => [(.auxiliary, .avoir), (.participle, .survivre)]
+  | .ex17a => [(.auxiliary, .haben), (.participle, .halten)]
+  | .ex17b => [(.auxiliary, .haben), (.participle, .verweilen)]
+  | .ex18a => [(.auxiliary, .zijn), (.participle, .overblijven)]
+  | .ex18b => [(.auxiliary, .hebben), (.participle, .duren)]
+  | .ex19a => [(.auxiliary, .etre), (.participle, .rester)]
+  | .ex19b => [(.auxiliary, .zijn), (.participle, .blijven)]
+  | .ex19c => [(.auxiliary, .sein), (.participle, .bleiben)]
+  | .ex20a => [(.auxiliary, .essere), (.participle, .esistere)]
+  | .ex20b => [(.auxiliary, .essere), (.participle, .bastare)]
+  | .ex20c => [(.auxiliary, .essere), (.participle, .sembrare)]
+  | .ex21a => [(.auxiliary, .avere), (.participle, .bastare)]
+  | .ex21b => [(.auxiliary, .avere), (.participle, .appartenere)]
+  | .ex21c => [(.auxiliary, .essere), (.participle, .scarseggiare)]
+  | .ex22 => [(.auxiliary, .avoir), (.participle, .exister)]
+  | .ex23a => [(.auxiliary, .haben), (.participle, .gefallen)]
+  | .ex23b => [(.auxiliary, .haben), (.participle, .genugen)]
+  | .ex23c => [(.auxiliary, .sein), (.participle, .liegen)]
+  | .ex23d => [(.auxiliary, .sein), (.participle, .abhangen)]
+  | .ex24a => [(.auxiliary, .hebben), (.participle, .staan)]
+  | .ex24b => [(.auxiliary, .hebben), (.participle, .bestaan)]
+  | .ex24c => [(.auxiliary, .zijn), (.participle, .blijken)]
+  | .ex25a => [(.auxiliary, .sein), (.participle, .sein)]
+  | .ex25b => [(.auxiliary, .zijn), (.participle, .zijn)]
+  | .ex33a => [(.auxiliary, .avere), (.participle, .chiacchierare)]
+  | .ex33b => [(.auxiliary, .avoir), (.participle, .travailler)]
+  | .ex33c => [(.auxiliary, .hebben), (.participle, .blazen)]
+  | .ex33d => [(.auxiliary, .haben), (.participle, .arbeiten)]
+  | .ex34 => [(.auxiliary, .avere), (.participle, .funzionare)]
+  | .ex35 => [(.auxiliary, .avere), (.participle, .lavorare)]
+  | .ex36a => [(.auxiliary, .avere), (.participle, .cedere)]
+  | .ex36b => [(.auxiliary, .avere), (.participle, .cedere)]
+  | .ex37a => [(.auxiliary, .avere), (.participle, .correre)]
+  | .ex37b => [(.auxiliary, .hebben), (.participle, .lopen)]
+  | .ex37c => [(.auxiliary, .avoir), (.participle, .nager)]
+  | .ex38_rennen => [(.auxiliary, .sein), (.participle, .rennen)]
+  | .ex38_laufen => [(.auxiliary, .sein), (.participle, .laufen)]
+  | .ex38_schwimmen => [(.auxiliary, .sein), (.participle, .schwimmen)]
+  | .ex39a => [(.auxiliary, .hebben), (.participle, .rollen)]
+  | .ex39b => [(.auxiliary, .zijn), (.participle, .rollen)]
+  | .ex40a => [(.auxiliary, .haben), (.participle, .tanzen)]
+  | .ex40b => [(.auxiliary, .sein), (.participle, .tanzen)]
+  | .ex41a => [(.auxiliary, .avere), (.participle, .correre)]
+  | .ex41b => [(.auxiliary, .essere), (.participle, .correre)]
+  | .ex41c => [(.auxiliary, .avere), (.participle, .nuotare)]
+  | .ex41d => [(.auxiliary, .avere), (.participle, .nuotare)]
+  | .ex42a => [(.auxiliary, .avoir), (.participle, .courir)]
+  | .ex42b => [(.auxiliary, .avoir), (.participle, .courir)]
+  | .ex43a => [(.auxiliary, .essere), (.participle, .correre)]
+  | .ex43b => [(.auxiliary, .essere), (.participle, .saltare)]
+  | .ex44a => [(.auxiliary, .avere), (.participle, .atterrare)]
+  | .ex44b => [(.auxiliary, .essere), (.participle, .atterrare)]
+  | .ex45a => [(.auxiliary, .avere), (.participle, .tentennare)]
+  | .ex45b => [(.auxiliary, .avere), (.participle, .tentennare)]
+  | .ex46a => [(.auxiliary, .avere), (.participle, .tossire)]
+  | .ex46b => [(.auxiliary, .avere), (.participle, .tossire)]
+  | .ex47a => [(.auxiliary, .avere), (.participle, .squillare)]
+  | .ex47b => [(.auxiliary, .avere), (.participle, .risuonare)]
+  | .ex47c => [(.auxiliary, .avere), (.participle, .rimbombare)]
+  | .ex47d => [(.auxiliary, .avere), (.participle, .rintoccare)]
+  | .ex48_piovere => [(.auxiliary, .avere), (.participle, .piovere)]
+  | .ex48_nevicare => [(.auxiliary, .avere), (.participle, .nevicare)]
+  | .ex48_grandinare => [(.auxiliary, .avere), (.participle, .grandinare)]
+  | .ex49 => [(.auxiliary, .essere), (.participle, .piovere)]
+  | .ex50a => [(.auxiliary, .avere), (.participle, .tuonare)]
+  | .ex50b => [(.auxiliary, .avere), (.participle, .lampeggiare)]
+  | .ex51_tuonare => [(.auxiliary, .essere), (.participle, .tuonare)]
+  | .ex51_lampeggiare => [(.auxiliary, .essere), (.participle, .lampeggiare)]
+
+/-- The lexemes the spans of the example labelled `l` name, in order. -/
+def Example.lexemes (x : Example) (l : SpanLabel) : List Lexeme :=
+  (x.labelledLexemes.filter (·.1 = l)).map (·.2)
+
+theorem Example.lexemes_datum : ∀ (x : Example) (l : SpanLabel),
+    (x.datum.spans.filter (_root_.Sorace2000.Examples.label? · = some l)).filterMap _root_.Sorace2000.Examples.lexeme? =
+      x.lexemes l := by
+  decide +kernel
 
 end Sorace2000.Examples

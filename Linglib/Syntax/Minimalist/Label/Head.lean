@@ -5,29 +5,31 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Algebra.Group.Hom.Defs
-public import Linglib.Syntax.Minimalist.LexicalItem
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
-# Heads
+# Head functions
 
-A licensing of Merge is a morphism of magmas out of the syntactic objects into a commutative magma
-with zero, `0` being the failure of Merge, and its head function reads a head off each value.
-Marcolli, Chomsky and Berwick's head functions are partial, and the head of a Merge is the head of
-the daughter that projects; `Head` records that law on the target, so the head function of every
-licensing is endocentric. Where `0` absorbs, the domain of a licensing is closed under daughters
-(`ne_zero_and_ne_zero_of_mul` after `map_mul`), though not under Merge, since an exocentric Merge of
-two headed objects has no head. Selection, copy states and raising are instances.
+A head function gives the item that heads a syntactic object, where the object has a head.
+Following [marcolli-chomsky-berwick-2025], a function `h` from syntactic objects to items is a head
+function when an item is the only head its own leaf can have and the head of a Merge is the head
+of one of the two objects merged. An object then contains the leaf of its head.
 
 ## Main definitions
 
-* `Minimalist.Head`: an endocentric head on a magma with zero.
+* `Minimalist.IsHeadFunction`: a head function on syntactic objects.
 
-## Main statements
+## Main results
 
-* `Minimalist.mem_head_or_mem_head_of_mem_head_mul`: a product's head is a factor's head.
-* `Minimalist.mem_head_or_mem_head_of_mem_head_map_mul`: so is the head of the image of a
-  product under a morphism of magmas.
+* `Minimalist.IsHeadFunction.leaf_mem_terms`: an object contains the leaf of its head.
+
+## Implementation notes
+
+* A head function is partial, with values in `Option`: the Merge of two objects neither of which
+  projects is exocentric and has no head, and an item that does not label has none either.
+* A head function here is a function of the object. The head daughter at each position of a planar
+  object, which may depend on the object the position lies in, is `Minimalist.HeadDaughter` of
+  `SyntacticObject/Projection.lean`.
 
 ## References
 
@@ -38,30 +40,33 @@ two headed objects has no head. Selection, copy states and raising are instances
 
 namespace Minimalist
 
-/-- An endocentric head on a magma with zero: `0`, the failure of Merge, has no head, and the head
-of a product is the head of one of its factors, the characterization of heads in
+open SyntacticObject
+
+variable {α : Type} {h : SyntacticObject α → Option α} {s : SyntacticObject α} {a : α}
+
+/-- A head function on syntactic objects: an item is the only head of its leaf, and the head of a
+Merge is the head of a daughter, the characterization of heads in
 [marcolli-chomsky-berwick-2025], Lemma 1.13.7. -/
-class Head (β : Type*) [Mul β] [Zero β] where
-  /-- The projecting head, if any. -/
-  head : β → Option LexicalItem.Token
-  protected head_zero : head 0 = none
-  protected mem_head_or_mem_head_of_mem_head_mul {x y : β} {t : LexicalItem.Token} :
-    t ∈ head (x * y) → t ∈ head x ∨ t ∈ head y
+structure IsHeadFunction (h : SyntacticObject α → Option α) : Prop where
+  /-- An item is the only head its leaf can have. -/
+  eq_of_mem_leaf : ∀ {a b : α}, b ∈ h (leaf a) → b = a
+  /-- The head of a Merge is the head of a daughter. -/
+  mem_or_mem : ∀ {x y : SyntacticObject α} {a : α}, a ∈ h (x * y) → a ∈ h x ∨ a ∈ h y
 
-export Head (head)
+namespace IsHeadFunction
 
-variable {β : Type*} [Mul β] [Zero β] [Head β]
+/-- An object contains the leaf of its head. -/
+theorem leaf_mem_terms (hh : IsHeadFunction h) (hs : a ∈ h s) : leaf a ∈ s.terms := by
+  induction s using FreeCommMagma.inductionOn with
+  | of b =>
+    obtain rfl := hh.eq_of_mem_leaf hs
+    exact SyntacticObject.mem_terms.2 .refl
+  | mul l r ihl ihr =>
+    rw [terms_mul]
+    rcases hh.mem_or_mem hs with h' | h'
+    · exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inl (ihl h')))
+    · exact Multiset.mem_cons_of_mem (Multiset.mem_add.2 (.inr (ihr h')))
 
-@[simp] theorem head_zero : head (0 : β) = none := Head.head_zero
-
-theorem mem_head_or_mem_head_of_mem_head_mul {x y : β} {t : LexicalItem.Token}
-    (h : t ∈ head (x * y)) : t ∈ head x ∨ t ∈ head y :=
-  Head.mem_head_or_mem_head_of_mem_head_mul h
-
-/-- The head of the image of a product is the head of a factor's image: a licensing's head
-function is endocentric ([marcolli-chomsky-berwick-2025], Lemma 1.13.7). -/
-theorem mem_head_or_mem_head_of_mem_head_map_mul {M : Type*} [Mul M] (φ : M →ₙ* β) {x y : M}
-    {t : LexicalItem.Token} (h : t ∈ head (φ (x * y))) : t ∈ head (φ x) ∨ t ∈ head (φ y) :=
-  mem_head_or_mem_head_of_mem_head_mul (map_mul φ x y ▸ h)
+end IsHeadFunction
 
 end Minimalist

@@ -4,22 +4,22 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Agreement.Hierarchy
 public import Linglib.Syntax.Agreement.ResolutionRule
-public import Linglib.Syntax.Gender.AgreementClasses
-public import Linglib.Syntax.Gender.Assignment
-public import Linglib.Syntax.Number.Resolve
-public import Linglib.Syntax.Person.Lattice
-public import Linglib.Fragments.Tamil.Gender
-public import Linglib.Fragments.Swahili.Nouns
-public import Linglib.Fragments.Afar.Gender
-public import Linglib.Fragments.Romanian.Gender
-public import Linglib.Fragments.Slavic.Russian.Gender
-public import Linglib.Fragments.Hausa.Gender
-public import Linglib.Fragments.Latin.Gender
-public import Linglib.Fragments.Icelandic.Nouns
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Romance.French.Gender
-public import Linglib.Fragments.Slavic.Serbian.Gender
-public import Linglib.Fragments.Slavic.Slovenian.Gender
+public import Linglib.Syntax.Feature.Gender.AgreementClasses
+public import Linglib.Syntax.Feature.Gender.Assignment
+public import Linglib.Semantics.Plurality.Cardinality
+public import Linglib.Syntax.Feature.Person.Participants
+public import Linglib.Languages.Tamil.Gender
+public import Linglib.Languages.Swahili.Nouns
+public import Linglib.Languages.Afar.Gender
+public import Linglib.Languages.Romanian.Gender
+public import Linglib.Languages.Slavic.Russian.Gender
+public import Linglib.Languages.Hausa.Gender
+public import Linglib.Languages.Latin.Gender
+public import Linglib.Languages.Icelandic.Nouns
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Romance.French.Gender
+public import Linglib.Languages.Slavic.Serbian.Gender
+public import Linglib.Languages.Slavic.Slovenian.Gender
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Corbett1991
 public import Linglib.Data.Examples.Readers
@@ -30,9 +30,9 @@ public import Linglib.Data.Examples.Languages
 
 A language's genders are its agreement classes, assigned to nouns by ordered rules that read
 meaning or form, never form alone; German diminutives put [a formal rule before the semantic
-one](##German.assign_maedchen_ne). Hybrid nouns take semantic agreement more readily down the
-Agreement Hierarchy ([Table 8.1](##hybrids_respectHierarchy)), and in coastal Bantu [semantic
-agreement spreads up it stage by stage](##BantuStage.respectsHierarchy). Coordinations resolve
+one](##German.assign_maedchen_ne). Hybrid nouns take semantic agreement more readily rightwards
+along the Agreement Hierarchy (`hybrids_monotoneOn`), and in coastal Bantu semantic agreement
+spreads leftwards along it stage by stage (`BantuStage.monotoneOn_uncurry_hybrid`). Coordinations resolve
 by ordered rules reading the conjuncts' person, meaning or gender, and Serbo-Croat moves from
 syntactic to semantic resolution through [a stage varying between the
 two](##SerboCroat.stage2_map_resolve), [conditioned by meaning, not
@@ -41,7 +41,8 @@ declension](##SerboCroat.not_morphological).
 ## Implementation notes
 
 * Assignment systems, agreement classes, the hierarchy and resolution rules are the substrate's.
-  Rules read a language's fragment nouns or genders where there is a fragment; Lak, Slovene and
+  Rules read a language's language file nouns or genders where there is a language file; Lak,
+  Slovene and
   Ojibwa have study-local genders.
 * A hybrid records the availability of semantic agreement only where the book reports it;
   §8.3 divides the attributive position into the possessive and the rest (`FinePosition`).
@@ -49,17 +50,17 @@ declension](##SerboCroat.not_morphological).
   (`Slovene.numberResolve_ne_resolve`), so it is stated directly and matched to the substrate's
   `Number.resolve`.
 * The judgments are read off the book's glosses: a coordination's target form and its
-  conjuncts' genders from their category labels, its nouns by the fragment nouns their glosses
+  conjuncts' genders from their category labels, its nouns by the language file nouns their glosses
   name, the agreements of stacked targets from their labels. Rows still name the hybrid, target
   and agreement of chapter 8, the Swahili concords of chapter 3, and the conjuncts of Czech,
-  Archi, Luganda and Polish, whose rules read person or meaning that no fragment yet gives.
+  Archi, Luganda and Polish, whose rules read person or meaning that no language file yet gives.
 * Not modelled: chapters 4, 5, 7 and 10, Russian acronyms and indeclinables, and the optional
   Polish resolution rules of (60) to (62).
 
 ## TODO
 
 * Subgenders and consistent agreement patterns, which want chapter 6's paradigm tables in the
-  Russian fragment.
+  Russian language file.
 * §9.8: resolution is never less semantic than assignment.
 * §9.6.2: resolved forms are the semantically justified ones that mark number clearly, which
   excludes the Slovene neuter.
@@ -196,7 +197,7 @@ inductive Declension where
   | irregularIII
   deriving DecidableEq, Repr, Fintype
 
-/-- Corbett's typing of the fragment's declension classes puts *znamja* and *put'* in the
+/-- Corbett's typing of the language file's declension classes puts *znamja* and *put'* in the
 irregular third declension. -/
 def declension (n : Russian.Gender.Noun) : Option Declension :=
   if n = znamja ∨ n = put' then some .irregularIII else
@@ -259,7 +260,7 @@ def animate : Option Evaluative × Animacy → Option _root_.Swahili.Gender
   | (_, a) => if .animate ≤ a then some .genderA else none
 
 /-- The rules of §3.1.2 send augmentatives to 5/6, diminutives to 7/8 and remaining animates
-to 1/2, then each morphological class to its own gender, over the fragment's five genders (the
+to 1/2, then each morphological class to its own gender, over the language file's five genders (the
 book's 11/10 and 15 are not among them). -/
 def system : Gender.AssignmentSystem (Option Evaluative × Animacy) _root_.Swahili.Gender
     _root_.Swahili.Gender where
@@ -513,45 +514,45 @@ semantic agreement at the positions for which the book has data. -/
 
 /-- French titles such as *Sa Sainteté*: feminine throughout, a masculine personal pronoun
 less often. -/
-def frenchTitles : Hybrid Position := fun
+def frenchTitles : Position → Option Availability := fun
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
 
 /-- German *Mädchen* 'girl': neuter, the personal pronoun neuter or feminine; the predicate
 shows no gender. -/
-def madchen : Hybrid Position := fun
+def madchen : Position → Option Availability := fun
   | .attributive | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
   | .predicate => none
 
 /-- Spoken Polish *łajdaki* 'wretches': non-masculine personal except for a masculine personal
 personal pronoun. -/
-def lajdaki : Hybrid Position := fun
+def lajdaki : Position → Option Availability := fun
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .semanticOnly
 
 /-- Spanish titles: a feminine attributive, masculine elsewhere. -/
-def spanishTitles : Hybrid Position := fun
+def spanishTitles : Position → Option Availability := fun
   | .attributive => some .syntacticOnly
   | .predicate | .relativePronoun | .personalPronoun => some .semanticOnly
 
 /-- Konkani nouns denoting young females: a feminine attributive, neuter elsewhere; the relative
 pronoun is not available. -/
-def konkani : Hybrid Position := fun
+def konkani : Position → Option Availability := fun
   | .attributive => some .syntacticOnly
   | .predicate | .personalPronoun => some .semanticOnly
   | .relativePronoun => none
 
 /-- Russian *vrač* 'doctor' denoting a woman: the attributive masculine and less often feminine,
 the predicate either, the pronouns feminine and less often masculine. -/
-def vrac : Hybrid Position := fun
+def vrac : Position → Option Availability := fun
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun | .personalPronoun => some .mostlySemantic
 
 /-- Serbo-Croat plural *gazde* 'landlords': the attributive feminine and less often masculine,
 the predicate either, the relative pronoun mostly and the personal pronoun only masculine. -/
-def gazde : Hybrid Position := fun
+def gazde : Position → Option Availability := fun
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun => some .mostlySemantic
@@ -559,13 +560,13 @@ def gazde : Hybrid Position := fun
 
 /-- English boat nouns (§6.4.5): the relative pronoun *which*, the personal pronoun *she* or
 *it*. -/
-def boat : Hybrid Position := fun
+def boat : Position → Option Availability := fun
   | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
   | _ => none
 
 /-- The hybrids by the names the rows use. -/
-def hybridNames : List (String × Hybrid Position) :=
+def hybridNames : List (String × (Position → Option Availability)) :=
   [("frenchTitles", frenchTitles),
     ("mädchen", madchen),
     ("łajdaki", lajdaki),
@@ -575,8 +576,11 @@ def hybridNames : List (String × Hybrid Position) :=
     ("gazde", gazde),
     ("boat", boat)]
 
-/-- Every hybrid of Table 8.1, and the English boat nouns, respect the Agreement Hierarchy. -/
-theorem hybrids_respectHierarchy : ∀ h ∈ hybridNames, RespectsHierarchy h.2 := by decide
+/-- Every hybrid of Table 8.1, and the English boat nouns, is monotone along the Agreement
+Hierarchy where it is recorded. -/
+theorem hybrids_monotoneOn : ∀ h ∈ hybridNames,
+    MonotoneOn (fun i ↦ (h.2 i).getD .syntacticOnly) {i | (h.2 i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide
 
 /-- At the corpus level, 16.9 per cent of 3,835 of Panov's respondents favour feminine
 agreement with *vrač* for the attributive and 51.7 per cent of 3,806 for the predicate. -/
@@ -585,7 +589,9 @@ def vracFeminine : Position → Option ℚ
   | .predicate => some (517 / 1000)
   | _ => none
 
-theorem vracFeminine_respectsHierarchy : RespectsHierarchy vracFeminine := by decide +kernel
+theorem vracFeminine_monotoneOn :
+    MonotoneOn (fun i ↦ (vracFeminine i).getD 0) {i | (vracFeminine i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide +kernel
 
 /-! ### The spread of semantic agreement in Bantu (§8.3)
 
@@ -594,7 +600,7 @@ attested side by side in neighbouring languages, and the last stages treat the a
 possessive apart from the other attributive modifiers, a finer division of the hierarchy. -/
 
 /-- The positions of the hierarchy with the attributive divided into the possessive and the
-other attributive modifiers, the possessive above them. -/
+other attributive modifiers, the possessive before them. -/
 inductive FinePosition where
   | possessive
   | attributive
@@ -605,17 +611,7 @@ inductive FinePosition where
 
 namespace FinePosition
 
-/-- The rank of a fine position, the possessive on top. -/
-def rank : FinePosition → ℕ
-  | .possessive => 4
-  | .attributive => 3
-  | .predicate => 2
-  | .relativePronoun => 1
-  | .personalPronoun => 0
-
-theorem rank_injective : Function.Injective rank := by decide
-
-instance : LinearOrder FinePosition := LinearOrder.lift' rank rank_injective
+instance : LinearOrder FinePosition := LinearOrder.lift' FinePosition.ctorIdx (by decide)
 
 /-- The position of the hierarchy a fine position divides. -/
 def toPosition : FinePosition → Position
@@ -650,7 +646,7 @@ instance : LinearOrder BantuStage := LinearOrder.lift' BantuStage.ctorIdx (by de
 *kamwana* in Chichewa, (40) to (44); *kilumba* 'girl' in Kimbundu, (52) and (53); Kami
 *ng'ombe* 'cows' and *mbudzi* 'goats', (54) and (55), the possessive reported with class 10
 agreement only; Swahili *rafiki* 'friend', (47) to (49). -/
-def hybrid : BantuStage → Hybrid FinePosition
+def hybrid : BantuStage → FinePosition → Option Availability
   | chichewa => fun
     | .possessive => none
     | .personalPronoun => some .mostlySyntactic
@@ -672,21 +668,22 @@ def hybrid : BantuStage → Hybrid FinePosition
     | _ => some .semanticOnly
   | bondei => fun _ ↦ some .semanticOnly
 
-open OrderDual in
-/-- Semantic agreement spreads up the Agreement Hierarchy: of two positions at two stages, the
-higher position at the earlier stage is never the more open to semantic agreement. -/
-theorem respectsHierarchy :
-    RespectsHierarchy fun p : BantuStageᵒᵈ × FinePosition ↦ (ofDual p.1).hybrid p.2 := by
-  decide
+/-- Semantic agreement spreads leftwards along the Agreement Hierarchy: of two positions at two
+stages, the later position at the later stage is never the less open to semantic agreement. -/
+theorem monotoneOn_uncurry_hybrid :
+    MonotoneOn (fun p ↦ (Function.uncurry hybrid p).getD .syntacticOnly)
+      {p | (Function.uncurry hybrid p).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide
 
-open OrderDual in
-theorem hybrid_respectsHierarchy (s : BantuStage) : RespectsHierarchy s.hybrid :=
-  respectsHierarchy.comp_monotone (g := fun i ↦ (toDual s, i)) fun _ _ h ↦ ⟨le_rfl, h⟩
+theorem monotoneOn_hybrid (s : BantuStage) :
+    MonotoneOn (fun i ↦ (s.hybrid i).getD .syntacticOnly) {i | (s.hybrid i).isSome} :=
+  monotoneOn_uncurry_hybrid.comp
+    ((monotone_const.prodMk monotone_id).monotoneOn _) fun _ h ↦ h
 
-open OrderDual in
-theorem hybrid_monotone (i : FinePosition) :
-    RespectsHierarchy fun s : BantuStageᵒᵈ ↦ (ofDual s).hybrid i :=
-  respectsHierarchy.comp_monotone (g := fun s ↦ (s, i)) fun _ _ h ↦ ⟨h, le_rfl⟩
+theorem monotoneOn_swap_hybrid (i : FinePosition) :
+    MonotoneOn (fun s ↦ (hybrid s i).getD .syntacticOnly) {s | (hybrid s i).isSome} :=
+  monotoneOn_uncurry_hybrid.comp
+    ((monotone_id.prodMk monotone_const).monotoneOn _) fun _ h ↦ h
 
 end BantuStage
 
@@ -756,8 +753,9 @@ def stageNames : List (String × BantuStage) :=
 def kindNames : List (String × Kind) := [("syntactic", .syntactic), ("semantic", .semantic)]
 
 /-- A use of a hybrid of `hybrids` at a position of `positions`, with the agreement it shows. -/
-def hybridUse? {ι : Type} (hybrids : List (String × Hybrid ι)) (positions : List (String × ι))
-    (row : Datum) : Option (Hybrid ι × ι × Kind) := do
+def hybridUse? {ι : Type} (hybrids : List (String × (ι → Option Availability)))
+    (positions : List (String × ι)) (row : Datum) :
+    Option ((ι → Option Availability) × ι × Kind) := do
   let h ← row.parse? "hybrid" hybrids
   let t ← row.parse? "target" positions
   let k ← row.parse? "agreement" kindNames
@@ -825,7 +823,7 @@ def personRules : List (ResolutionRule Person Person) :=
 
 theorem resolve_personRules_pair :
     ∀ a ∈ [Person.first, .second, .third], ∀ b ∈ [Person.first, .second, .third],
-      resolve personRules [a, b] = some (a ⊔ b).coarsen := by
+      resolve personRules [a, b] = some (a ⊔ b) := by
   decide
 
 /-- By the number resolution rules of §9.1.2, two singular conjuncts alone take the dual where
@@ -1017,7 +1015,7 @@ def MaleAnimate (n : Romanian.Gender.Noun) : Prop :=
 
 instance : DecidablePred MaleAnimate := fun _ ↦ by unfold MaleAnimate; infer_instance
 
-/-- Collapsed over the fragment's nouns, §9.5 gives the masculine if a conjunct is a male
+/-- Collapsed over the language file's nouns, §9.5 gives the masculine if a conjunct is a male
 animate or all are masculine, and the feminine otherwise. -/
 def rules : List (ResolutionRule Romanian.Gender.Noun Value) :=
   [.any MaleAnimate .masc, .all (·.gender = .masc) .masc, otherwise .fem]
@@ -1033,7 +1031,7 @@ open _root_.Serbian.Gender
 
 /-! #### From syntactic to semantic resolution (§9.7)
 
-A conjunct is a fragment noun, read for its gender by a syntactic rule and for the sex of its
+A conjunct is a language file noun, read for its gender by a syntactic rule and for the sex of its
 referents by a semantic one. -/
 
 /-- Stage 1, as still in Slovene: the feminine if all conjuncts are feminine, else the
@@ -1126,9 +1124,10 @@ end Ojibwa
 
 A coordination is read off its glosses: its target is the last word whose gloss marks a
 non-singular number with a form the language's rules select, as `new-MASC.PL` on French *neuf-s*
-in (43), and its conjuncts are the words whose glosses name the language's fragment nouns, or
+in (43), and its conjuncts are the words whose glosses name the language's language file nouns, or
 whose labels mark the gender the rules read, as `book.MASC`. Where the rules read a conjunct's
-person or meaning and no fragment gives the nouns, a `conjunct` feature names it. A coordination
+person or meaning and no language file gives the nouns, a `conjunct` feature names it. A
+coordination
 is acceptable exactly when the language's rules select the target's form. -/
 
 /-- The form a coordination's target shows: what `form` reads off the gloss of the last word

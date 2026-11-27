@@ -6,32 +6,47 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Reference
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Reference.Definite
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Logic.Assignment
+public import Linglib.Core.Order.WithBot
 
 /-!
 # The denotation of a pronoun
 
-This file defines the denotation of a personal pronoun. A `PersonalPronoun` entry denotes the
-`Definite` that is the value of the entry's index under the assignment where that value lies in
-the entry's φ-domain, and nothing elsewhere (`PersonalPronoun.phiDom`, `PersonalPronoun.denote`).
-The φ-domain is the intersection of `Person.dom` at the context of utterance with `Number.dom`
-and `Gender.dom` at the entry's referential person and number and its gender. The denotation
-does not vary with the world of evaluation (`PersonalPronoun.isRigid_denote`), so a pronoun
-refers directly. This is the account Büring surveys: one denotation serves the bound, anaphoric
-and deictic uses, binding is abstraction over the assignment (`Λ[n]`), and, as Sauerland
+A personal pronoun denotes the value of its index under the assignment where that value lies in
+its φ-domain, and nothing elsewhere. The φ-domain is the intersection of three domains: that of
+the pronoun's referential person at the context of utterance, that of its referential number,
+and that of its own gender. The denotation does not vary with the world of evaluation, so a
+pronoun refers directly. This is the account Büring surveys: one denotation serves the bound,
+anaphoric and deictic uses, binding is abstraction over the assignment, and, as Sauerland
 proposes, an absent or unmarked feature restricts nothing.
+
+## Main definitions
+
+* `PersonalPronoun.phiDom e c`: the referents the entry `e` is defined of at the context `c`.
+* `PersonalPronoun.denote e i c`: the denotation of `e` with the index `i` at `c`.
+
+## Main results
+
+* `PersonalPronoun.isRigid_denote`: the denotation is the same at every world.
+* `PersonalPronoun.mem_phiDom_of_gender_eq_none`: a pronoun with no gender of its own presupposes
+  nothing of its referent's gender.
 
 ## Implementation notes
 
-The φ-domain reads the entry's referential person and number
-(`PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`), not its agreement
-features, so a polite pronoun that agrees as third plural presupposes its addressee
-(`PersonalPronoun.phiDom_congr`). The speaker and the addressee are the agent and the addressee
-of the context of utterance (`SpeechAct.Context`), and the female and the inanimate referents
-are the gender of referents the entity domain comes equipped with (`Gendered`).
+The φ-domain reads the entry's referential person and number and its own gender, not the labels
+it agrees as, so a polite pronoun that agrees as a third person feminine presupposes its
+addressee and nothing of the addressee's gender. The speaker and the addressee are the agent
+and the addressee of the context of utterance, and the female and the inanimate referents are
+the gender of referents the entity domain comes equipped with.
+
+The entity domain is a part structure with no null element, and the number domain is stated on
+one with a least element, where the singular is defined of the atoms. The φ-domain reads it on
+the entity domain with a bottom adjoined, so a singular pronoun is defined of its minimal
+elements.
 
 ## References
 
@@ -52,19 +67,37 @@ variable {E W P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (
 domain of its referential person at the context of utterance, the number domain of its referential
 number and the gender domain of its gender. -/
 def phiDom : Set E :=
-  Person.dom c e.referentialPerson ∩
-    Number.dom e.referentialNumber ∩
+  Person.dom c e.referentialPerson e.referentialClusivity ∩
+    (↑) ⁻¹' Number.dom (E := WithBot E) e.referentialNumber ∩
     Gender.dom e.gender
 
 @[simp] theorem mem_phiDom (x : E) :
     x ∈ e.phiDom c ↔
-      x ∈ Person.dom c e.referentialPerson ∧ x ∈ Number.dom e.referentialNumber ∧
-        x ∈ Gender.dom e.gender := by
-  simp only [phiDom, Set.mem_inter_iff, and_assoc]
+      x ∈ Person.dom c e.referentialPerson e.referentialClusivity ∧
+        (x : WithBot E) ∈ Number.dom e.referentialNumber ∧ x ∈ Gender.dom e.gender := by
+  simp only [phiDom, Set.mem_inter_iff, Set.mem_preimage, and_assoc]
+
+/-- A singular pronoun is defined of the atoms of the entity domain, its minimal elements. -/
+theorem coe_mem_dom_singular {x : E} :
+    (x : WithBot E) ∈ Number.dom (some .singular) ↔ IsMin x :=
+  WithBot.isAtom_coe
 
 theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
-  simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
+  simp only [phiDom, referentialPerson, referentialClusivity, referentialNumber, hr, hg]
+
+/-- A pronoun with no gender of its own presupposes nothing of its referent's gender, whatever
+gender it agrees as. -/
+theorem mem_phiDom_of_gender_eq_none (h : e.gender = none) (x : E) :
+    x ∈ e.phiDom c ↔
+      x ∈ Person.dom c e.referentialPerson e.referentialClusivity ∧
+        (x : WithBot E) ∈ Number.dom e.referentialNumber := by
+  simp [mem_phiDom, h]
+
+/-- A feminine pronoun is defined of no referent gendered masculine. -/
+theorem notMem_masculine_of_mem_phiDom (h : e.gender = some .Fem) {x : E} (hx : x ∈ e.phiDom c) :
+    x ∉ Gendered.masculine := by
+  simpa [h] using ((e.mem_phiDom c x).1 hx).2.2
 
 /-- A pronoun denotes the value `g i` of its index where that value lies in the φ-domain, and
 nothing elsewhere. -/

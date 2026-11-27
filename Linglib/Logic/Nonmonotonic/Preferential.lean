@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Filter.AtBotOn
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Core.Order.Minimals
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.Powerset
@@ -122,7 +123,7 @@ theorem isRational_atBotOn {β : Type*} [Preorder β] [Std.Total (α := β) (· 
 neither. Then normally `0` or `1` holds and it is not normal that `0` holds, yet given `1` or
 `2` it is not normal that `0` or `1` holds, since `2` is then minimal. -/
 theorem exists_not_isRational_atBotOn :
-    ∃ p : Preorder (Fin 3), ¬ IsRational fun φ ψ ↦ ψ ∈ @atBotOn _ _ p id φ := by
+    ∃ p : Preorder (Fin 3), ¬ IsRational fun φ ψ ↦ ψ ∈ atBotOn[p] φ := by
   let p : Preorder (Fin 3) :=
     Preorder.ofLE (fun w v ↦ w = v ∨ w = 0 ∧ v = 2) (fun _ ↦ Or.inl rfl) (by decide)
   have hle : ∀ w v, p.le w v ↔ w = v ∨ w = 0 ∧ v = 2 := fun _ _ ↦ Iff.rfl
@@ -296,7 +297,7 @@ end Selection
 consequence relation of a total preorder on the worlds. -/
 theorem isRational_and_iff_exists_atBotOn_eq [Finite W] :
     (IsRational r ∧ ∀ φ, r φ ∅ → φ = ∅) ↔
-      ∃ p : Preorder W, Std.Total p.le ∧ (fun φ ψ ↦ ψ ∈ @atBotOn _ _ p id φ) = r := by
+      ∃ p : Preorder W, Std.Total p.le ∧ (fun φ ψ ↦ ψ ∈ atBotOn[p] φ) = r := by
   refine ⟨fun ⟨h, hc⟩ ↦ ?_, fun ⟨p, _, e⟩ ↦ e ▸ ⟨isRational_atBotOn id,
     fun φ hφ ↦ Set.not_nonempty_iff_eq_empty.1 fun hne ↦
       (atBotOn_neBot_iff.2 hne).ne (empty_mem_iff_bot.1 hφ)⟩⟩

@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Pi
-public import Linglib.Fragments.German.Verbs
-public import Linglib.Fragments.Icelandic.Verbs
+public import Linglib.Languages.German.Verbs
+public import Linglib.Languages.Icelandic.Verbs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Syntax.Case.Assignment
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
@@ -182,11 +182,11 @@ def realized (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List (Ar
 section DefaultCase
 
 variable {ι : Type*} [DecidableEq ι] (lt : ι → ι → Prop) [DecidableRel lt] (D : Finset ι)
-  (s : ι → FeatureSlot C)
+  (s : ι → FeatureSlot (Flat C))
 
 /-- Default case marking, (61d), as a pass over arguments ordered by their functions: the highest
 not yet valued takes the nominative and the next the accusative. -/
-def defaultCase : ι → FeatureSlot C :=
+def defaultCase : ι → FeatureSlot (Flat C) :=
   (CaseRule.inOrder [P.nom, P.acc]).passUnvalued lt D s
 
 theorem extends_defaultCase :
@@ -306,7 +306,7 @@ def abhoeren : List (Arg German.Case) :=
 
 end Thematic
 
-/-- The paper's Icelandic verbs with the fragment entries they realize. -/
+/-- The paper's Icelandic verbs with the language file entries they realize. -/
 def entries : List (List (Arg Icelandic.Case) × Icelandic.Verbs.Verb) :=
   open Icelandic.Verbs in
   [(Thematic.dansa, dansa), (Thematic.kyssa, kyssa), (Thematic.hjalpa, hjalpa),

@@ -40,7 +40,7 @@ consumes it as machinery.
   otherwise expected material (Malay voice-marker deletion) is a reflex. Semantic reflexes of
   movement (intermediate scope, reconstruction) are interpretation facts left to their studies.
 * The marker of a morpheme reflex is the list of morphs coding it, as `Voice.marker` codes a
-  voice, so a fragment whose reflex is a voice alternation passes the voice's marker through. A
+  voice, so a language file whose reflex is a voice alternation passes the voice's marker through. A
   paradigm alternation with no segmentable exponent, such as the Hausa relative form of the
   person–aspect complex, carries the alternant as a free morph.
 * With constituents ordered by containment, a host is the target itself, properly contains it,

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.German.Verbs
+public import Linglib.Languages.German.Verbs
 public import Linglib.Syntax.Category.Verb.Defs
 public import Linglib.Data.Statistics.SolstadBott2024
 public import Studies.SolstadBott2022
@@ -262,9 +262,9 @@ theorem negative_correlation_replicates :
     ∀ r ∈ correlations, r.level = .triggerTypes → r.r.toRat < 0 := by
   decide +kernel
 
-open SolstadBott2022 in
 theorem shared_bias_distinct_projectivity :
-    VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias ∧
+    (SolstadBott2022.RoleCause SolstadBott2022.judgment .object ∧
+        SolstadBott2022.RoleCause ArgumentStructure.psychState .object) ∧
       ∀ o ∈ blockTwo, ∀ e ∈ blockTwo, o.experiment = .exp2 → e.experiment = .exp2 →
         o.trigger = .occasion → e.trigger = .experiencerStimulus →
           e.projectivity.toRat < o.projectivity.toRat :=
@@ -272,9 +272,14 @@ theorem shared_bias_distinct_projectivity :
 
 /-! ### The occasion verbs -/
 
-theorem occasion_isTrigger :
-    ∀ v ∈ German.Verbs.allVerbs, v.senseTag = .occasion →
-      v.toVerb.IsTrigger ∧ ¬ v.toVerb.IsFactive ∧ v.phasal = none ∧ v.implicative = ⊥ := by
+/-- §2.2.2: the sixteen occasion verbs of Experiments 1 and 2. -/
+def occasionVerbs : List German.Verb :=
+  open German.Verbs in
+  [anzeigen, auszeichnen, bestrafen, belohnen, belangen, danken, ehren, entlassen, gratulieren,
+    kritisieren, loben, raechen, revanchieren, verklagen, zurVerantwortungZiehen, zurechtweisen]
+
+/-- No occasion verb is factive, implicative or phasal, so none is a trigger by its entry. -/
+theorem not_isTrigger_of_mem_occasionVerbs : ∀ v ∈ occasionVerbs, ¬ v.toVerb.IsTrigger := by
   decide
 
 end SolstadBott2024

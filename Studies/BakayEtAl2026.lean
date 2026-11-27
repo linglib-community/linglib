@@ -8,7 +8,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 public import Linglib.Data.Examples.BakayEtAl2026
-public import Linglib.Fragments.Turkish.Anaphors
+public import Linglib.Languages.Turkish.Anaphors
 public import Linglib.Syntax.Binding.Tree
 public import Linglib.Data.Examples.Readers
 
@@ -69,6 +69,7 @@ available antecedents (`privileged_iff_available`), so no distractor is accessed
 namespace BakayEtAl2026
 
 open PhraseStructure PhraseStructure.Tree Binding
+open scoped SetRel
 
 /-! ### The stimuli -/
 
@@ -153,7 +154,7 @@ theorem available_iff (s : Structure) (r : Role) :
 is a clause or verb-phrase node sharing the minimal clause of `q`, so that it hangs from the
 spine of that clause. -/
 def Local (t : Tree Cat Unit) (p q : GornAddress) : Prop :=
-  p.parent ∈ labeled t {.S, .V} ∧ (p.parent, q) ∈ mateRelation (labeled t {.S})
+  p.parent ∈ labeled t {.S, .V} ∧ p.parent ~[mateRelation (labeled t {.S})] q
 
 instance (t : Tree Cat Unit) (p q : GornAddress) : Decidable (Local t p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -222,7 +223,7 @@ def Role.features (s : Structure) (r : Role) (n : Number) (c : Case) : List Feat
       else []) ++ [.number n, .marking c]
 
 /-- *Birbirleri* cues the `local` feature, the clause-mate feature and the number of the
-fragment's reciprocal, which its antecedent shares. -/
+language file's reciprocal, which its antecedent shares. -/
 def birbirleriCues : List (Cue Feature) :=
   ⟨.hierarchical, .«local»⟩ :: ⟨.itemLevel, .clauseMate⟩ ::
     (Turkish.Anaphors.birbirlerini.number.map fun n ↦ ⟨.itemLevel, .number n⟩).toList

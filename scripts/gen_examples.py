@@ -19,8 +19,9 @@ The `Linglib.lean` root import is not touched: the lakefile globs every
 submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
 JSON file format: a top-level JSON array of example objects, or an object
-`{"features": [...], "readings": {...}, "examples": [...]}` that also declares the paper's
-feature taxonomy and its readings (see Typed features and Typed readings below). Each
+`{"features": [...], "readings": {...}, "spans": {...}, "examples": [...]}` that also declares
+the paper's feature taxonomy, its readings and the labels and lexemes of its spans (see Typed
+features, Typed readings and Spans below). Each
 object's keys are the fields of the `Datum` Lean struct, plus the
 record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
@@ -32,14 +33,18 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
     "language": "stan1293",                  // Glottocode; "" for a constructed string
     "primaryText": "...",
     "discourseSegments": [],                 // empty for single-sentence
-    "glossedTokens": [["Every", "every"], ...],  // pairs as 2-arrays
+    "glossedTokens": [["Every", "every"], ...],  // pairs as 2-arrays; the gloss is "" for a
+                                             // word the source segments without glossing
     "translation": "...",
     "context": "",
-    "judgment": "acceptable",                // one of the 6 cases
+    "judgment": "acceptable",                // one of the 7 marks
+    "alsoJudged": ["marginal"],              // optional: the further marks of a split mark
     "verdict": true,                         // optional: a truth-value judgment in the context
     "contrasts": [{"form": "...", "judgment": "unacceptable"}],
     "readings":     [{"name": "strong", "judgment": "acceptable"},
                      {"name": "weak",   "judgment": "acceptable"}],
+    "spans":        [{"start": 3, "length": 3, "label": "definite"},     // optional: runs of
+                     {"start": 3, "label": "determiner", "lexeme": "na"}], // `glossedTokens`
     "paperFeatures": [["key", "value"], ...],  // the paper's own columns
     "comment": "..."
   }
@@ -60,8 +65,8 @@ Behavior:
   export). They are lists of characters, so that no theorem splits a string in the kernel.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
-  empty nor a Glottocode of `languages.csv`, unknown judgment value (also as
-  the value of an `alsoJudged` paper feature),
+  empty nor a Glottocode of `languages.csv`, unknown judgment value (also in
+  `alsoJudged`),
   malformed gloss pair, missing id or source.bibkey).
 - Idempotent: re-running on unchanged JSON produces no diff.
 - `--check` regenerates in-memory and exits 1 on any drift (CI guard);
@@ -100,6 +105,46 @@ and every level is judged in some row. The module emits the enum, its `label` an
 and a name that drifts fails here. A paper that does not declare its readings keeps them as
 strings.
 
+Spans: a row's `spans` mark runs of its `glossedTokens`, each by the `start`, the position of its first word,
+and its `length` (1 if omitted, 0 for an element the source's analysis posits without a word),
+under a `label`, with the `lexeme` the span is a form of where it is one. A file whose rows have
+spans declares their labels and lexemes beside `features`:
+
+  "spans": {"labels":   {"type": "SpanLabel", "doc": "...", "levels": [{"name": "definite", ...}]},
+            "lexemes": {"type": "Lexeme", "doc": "...", "levels": [{"name": "na", ...}]}}
+
+Every label and lexeme a span names must be a declared level, every level is named by some span,
+and a span lies within the row's gloss line. The module emits the two enums and the readers
+`label? : Datum.Span → Option SpanLabel` and `lexeme? : Datum.Span → Option Lexeme`, so that a study
+maps each lexeme to its entry in a language's file by a total function: the row names the
+entry, and the study proves that the span is written as the entry is, rather than finding the
+entry by its spelling.
+
+Boundaries: the generator segments a word at the separators of the Leipzig rules, `-`, `=` and
+`~`. A source with its own notation declares its symbols beside `features`:
+
+  "boundaries": {"type": "Boundary", "doc": "...",
+                 "levels": [{"name": "compound", "symbol": "=", "leipzig": "-", "doc": "..."}],
+                 "marks":  [{"symbol": "+", "doc": "the weak grade of consonant gradation"}]}
+
+A word is then segmented at the declared symbols and no others, each morpheme keeps the symbol
+before it as the source prints it, and a mark is dropped from the morphemes while the word keeps
+it. The module emits the enum and the reader `boundary? : GlossedMorpheme → Option Boundary`.
+`leipzig` gives the Leipzig separator the symbol is written as in the CLDF export and in the
+conformance level. Every declared symbol is one character that some word of the rows writes.
+
+Index: a file that declares `"index": {"type": "Example", "doc": "..."}` gets the finite type
+of its examples, one constructor per row named as the row is, a `Fintype`, with `Example.datum`,
+the row of each, and `Example.all`, the list of them in the file's order. A study quantifies over
+the type (`∀ x : Example, …`) and selects, excludes or lists examples by these names. Comparing two names is free for the kernel, where comparing two rows compares every
+string of both, and a statement over the rows that tests `row ∈ rows` can take gigabytes.
+The index also reads the file's declared values without parsing: each feature is a function
+`Example.<lean>` on the examples, the lexemes of the spans are `Example.lexemes : Example →
+SpanLabel → List Lexeme`, and the readings `Example.<lean> : Example → Reading → Option
+Judgment`, each read off a list defined by cases and paired with the theorem `…_datum` that it
+agrees with the reader of the row. A study reads an example through these, so that `decide` over the examples
+compares constructors rather than the strings the rows record.
+
 Dependencies: pure stdlib (json module).
 """
 
@@ -110,7 +155,8 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_module_frontier import as_module_if_possible  # noqa: E402
-from lgr import glossed_morphemes, lgr_conformance  # noqa: E402
+from judgments import MARK  # noqa: E402
+from lgr import glossed_morphemes, leipzig_pairs, lgr_conformance  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
@@ -142,9 +188,7 @@ def contribution_methods() -> dict[str, str]:
 
 CONTRIBUTION_METHODS = contribution_methods()
 
-VALID_JUDGMENTS = {
-    "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical", "variable",
-}
+VALID_JUDGMENTS = set(MARK)
 
 
 def lean_string(s: str) -> str:
@@ -170,7 +214,7 @@ def lean_identifier(example_id: str, author_year_lower: str) -> str:
 
 
 def parse_judgment(raw: str, where: str) -> str:
-    j = (raw or "").strip().lower()
+    j = (raw or "").strip()
     if j not in VALID_JUDGMENTS:
         raise ValueError(
             f"{where}: invalid judgment {raw!r}; expected one of "
@@ -231,11 +275,12 @@ def lean_chars(s: str) -> str:
     return "[" + ", ".join(f"'{esc.get(c, c)}'" for c in s) + "]"
 
 
-def emit_glossed_words(xs) -> str:
-    """Emit the `List GlossedWord` of the validated gloss pairs `xs`."""
+def emit_glossed_words(xs, boundaries=None) -> str:
+    """Emit the `List GlossedWord` of the validated gloss pairs `xs`, segmented at the boundary
+    symbols the file declares, if it declares any."""
     words = []
     for word, gloss in xs:
-        gms = glossed_morphemes(word, gloss) or []
+        gms = glossed_morphemes(word, gloss, boundaries) or []
         items = ", ".join(
             f"⟨{lean_chars(m)}, {lean_chars(g)}, {'none' if sep is None else f'some {lean_chars(sep)[1:-1]}'}⟩"
             for m, g, sep in gms)
@@ -300,7 +345,8 @@ def emit_form_judgment_list(xs, where: str, key: str) -> str:
     return "[" + ", ".join(items) + "]"
 
 
-def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
+def emit_example(ex: dict, author_year_lower: str, default_method: str,
+                 boundaries: dict | None = None) -> str:
     ex_id   = (ex.get("id") or "").strip()
     if not ex_id:
         raise ValueError("example missing required `id`")
@@ -334,22 +380,48 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     pairs_      = ex.get("glossedTokens", [])
     gloss_lines = ""
     if pairs_:
-        gloss_lines = (f"\n    glossedWords := {emit_glossed_words(pairs_)}"
-                       f"\n    lgrConformance := some {CONFORMANCE[lgr_conformance(pairs_)]}")
+        gloss_lines = f"\n    glossedWords := {emit_glossed_words(pairs_, boundaries)}"
+        level = lgr_conformance(leipzig_pairs(pairs_, boundaries))
+        if level is not None:
+            gloss_lines += f"\n    lgrConformance := some {CONFORMANCE[level]}"
     context     = ex.get("context") or ""
     judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
+    also        = ex.get("alsoJudged", [])
+    if not isinstance(also, list) or (not also and "alsoJudged" in ex):
+        raise ValueError(f"{where}.alsoJudged: expected a nonempty list of judgments")
+    also_line   = ""
+    if also:
+        marks = [parse_judgment(j, f"{where}.alsoJudged[{i}]") for i, j in enumerate(also)]
+        also_line = f"\n    alsoJudged := [{', '.join(marks)}]"
     verdict     = ex.get("verdict")
     if verdict is not None and not isinstance(verdict, bool):
         raise ValueError(f"{where}.verdict: expected a JSON boolean")
     contrasts   = emit_form_judgment_list(ex.get("contrasts", []), where + ".contrasts", "form")
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
+    spans_line  = ""
+    span_items  = []
+    for i, p in enumerate(ex.get("spans", [])):
+        w = f"{where}.spans[{i}]"
+        if (not isinstance(p, dict) or set(p) - {"start", "length", "label", "lexeme"}
+                or not isinstance(p.get("label"), str)
+                or not isinstance(p.get("lexeme", ""), str)):
+            raise ValueError(f"{w}: expected `start`, `label` and optionally `length` and `lexeme`")
+        idx, ln = p.get("start"), p.get("length", 1)
+        if type(idx) is not int or type(ln) is not int or idx < 0 or ln < 0:
+            raise ValueError(f"{w}: `start` and `length` are natural numbers")
+        if idx + ln > len(pairs_) or idx + max(ln, 1) > len(pairs_):
+            raise ValueError(f"{w}: the span lies outside the {len(pairs_)} words of the gloss line")
+        lex = "none" if "lexeme" not in p else f"some {lean_string(p['lexeme'])}"
+        span_items.append(f"⟨{idx}, {ln}, {lean_string(p['label'])}, {lex}⟩")
+    if span_items:
+        spans_line = f"\n    spans := [{', '.join(span_items)}]"
     raw = ex.get("paperFeatures", [])
     pairs = raw.items() if isinstance(raw, dict) else [
         (e[0], e[1]) if isinstance(e, list) else (e["key"], e["value"]) for e in raw]
     for k, v in pairs:
         if k == "alsoJudged":
-            parse_judgment(v, where + ".paperFeatures.alsoJudged")
+            raise ValueError(f"{where}.paperFeatures: `alsoJudged` is a key of the row")
 
     method_line = "" if method == "unclassified" else f"\n    method := some .{method}"
     verdict_line = ""
@@ -363,9 +435,9 @@ def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     primaryText := {lean_string(primary)}
     glossedTokens := {glossed}{gloss_lines}
     context := {lean_string(context)}
-    judgment := {judgment}{verdict_line}
+    judgment := {judgment}{also_line}{verdict_line}
     contrasts := {contrasts}
-    readings := {readings}
+    readings := {readings}{spans_line}
     paperFeatures := {features} }}"""
 
 
@@ -374,15 +446,17 @@ TYPE_IDENT = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 
 
 def split_data(data, where: str):
-    """The declared features, the declared readings (or `None`) and the example rows of a
-    paper's JSON."""
+    """The declared features, the declared readings (or `None`), the declared labels and lexemes
+    of spans (or `None`) and the example rows of a paper's JSON."""
     if isinstance(data, list):
-        return [], None, data
-    if (isinstance(data, dict) and set(data) <= {"features", "readings", "examples"}
-            and "examples" in data):
-        return data.get("features", []), data.get("readings"), data["examples"]
+        return [], None, None, None, None, data
+    keys = {"features", "readings", "spans", "boundaries", "index", "examples"}
+    if isinstance(data, dict) and set(data) <= keys and "examples" in data:
+        return (data.get("features", []), data.get("readings"), data.get("spans"),
+                data.get("boundaries"), data.get("index"), data["examples"])
     raise ValueError(f"{where}: top level must be an array of examples or an object with "
-                     f"`examples` and optionally `features` and `readings`")
+                     f"`examples` and optionally `features`, `readings`, `spans`, `boundaries` "
+                     f"and `index`")
 
 
 def validate_levels(levels: list, w: str) -> set:
@@ -459,6 +533,221 @@ def validate_features(features: list, examples: list, where: str) -> None:
             raise ValueError(f"{w}: no row records `{ft['key']}`")
 
 
+def validate_index(decl, taken: set, where: str, readers: tuple = ((), None)) -> None:
+    if decl is None:
+        return
+    w = f"{where}.index"
+    if set(decl) != {"type", "doc"}:
+        raise ValueError(f"{w}: needs exactly `type` and `doc`")
+    if not TYPE_IDENT.match(decl["type"]) or decl["type"] in taken:
+        raise ValueError(f"{w}: `type` {decl['type']!r} is not a fresh Lean type name")
+    features, readings = readers
+    names = list(features) + ([readings, readings + "s"] if readings else [])
+    taken_names = {"all", "datum", "map_datum_all", "lexemes", "labelledLexemes"}
+    clash = (set(names) & taken_names) | {n for n in names if names.count(n) > 1}
+    if clash:
+        raise ValueError(f"{w}: the readers of the index would share the names {sorted(clash)}")
+
+
+def emit_index(decl: dict, author_year: str, local_ids: list) -> str:
+    """The finite type of the file's examples, with the list of them and the row of each: a study
+    selects and compares examples by these names, which the kernel compares at no cost, where
+    comparing the rows themselves compares every string of both."""
+    t = decl["type"]
+    ctors = "\n".join(f"  | {i}" for i in local_ids)
+    lines, cur = [], ""
+    for i, n in enumerate(local_ids):
+        piece = f".{n}" + ("," if i < len(local_ids) - 1 else "")
+        if cur and len(cur) + 1 + len(piece) > 94:
+            lines.append(cur); cur = piece
+        else:
+            cur = f"{cur} {piece}" if cur else piece
+    lines.append(cur)
+    listed = "\n    ".join(lines)
+    arms = "\n".join(f"  | .{i} => _root_.{author_year}.Examples.{i}" for i in local_ids)
+    return (f"/-- {decl['doc']} -/\ninductive {t} where\n{ctors}\n"
+            f"  deriving DecidableEq, Repr, Fintype\n\n"
+            f"/-- Every example of the file, in its order. -/\n"
+            f"def {t}.all : List {t} :=\n  [{listed}]\n\n"
+            f"/-- The row of an example. -/\n"
+            f"def {t}.datum : {t} → Datum\n{arms}\n\n"
+            f"theorem {t}.map_datum_all :\n"
+            f"    {t}.all.map {t}.datum = _root_.{author_year}.Examples.all := rfl")
+
+
+def emit_index_readers(decl: dict, author_year: str, local_ids: list, examples: list,
+                       features: list, readings: dict | None, spans: dict | None) -> str:
+    """The readers of the index: each declared feature, the labelled lexemes of the spans and the
+    readings as total functions on the examples, by cases, each with the theorem that it agrees
+    with the reader of the row. A study that reads an example through them compares
+    constructors, where the readers of the row compare the strings the row records."""
+    t = decl["type"]
+    ns = f"_root_.{author_year}.Examples"
+    out = []
+
+    def cases(name: str, typ: str, vals: list, doc: str) -> str:
+        arms = "\n".join(f"  | .{i} => {v}" for i, v in zip(local_ids, vals))
+        return f"/-- {doc} -/\ndef {t}.{name} : {t} → {typ}\n{arms}"
+
+    for ft in features:
+        names = {lv["label"]: lv["name"] for lv in ft["levels"]}
+        vals = [[names[v] for k, v in ex.get("paperFeatures", []) if k == ft["key"]]
+                for ex in examples]
+        if ft.get("multiple", False):
+            body = cases(ft["lean"], f"List {ft['type']}",
+                         [f"[{', '.join('.' + v for v in vs)}]" for vs in vals],
+                         f"The values the example records under `{ft['key']}`.")
+        else:
+            body = cases(ft["lean"], f"Option {ft['type']}",
+                         [f"some .{vs[0]}" if vs else "none" for vs in vals],
+                         f"The value the example records under `{ft['key']}`.")
+        out.append(f"{body}\n\n"
+                   f"theorem {t}.{ft['lean']}_datum :\n"
+                   f"    ∀ x : {t}, {ns}.{ft['lean']} x.datum = x.{ft['lean']} := by\n"
+                   f"  decide +kernel")
+    if spans is not None and "lexemes" in spans:
+        lt, xt = spans["labels"]["type"], spans["lexemes"]["type"]
+        lnames = {lv["label"]: lv["name"] for lv in spans["labels"]["levels"]}
+        xnames = {lv["label"]: lv["name"] for lv in spans["lexemes"]["levels"]}
+        vals = [[f"(.{lnames[p['label']]}, .{xnames[p['lexeme']]})"
+                 for p in ex.get("spans", []) if "lexeme" in p] for ex in examples]
+        out.append(cases("labelledLexemes", f"List ({lt} × {xt})",
+                         [f"[{', '.join(vs)}]" for vs in vals],
+                         "The lexemes the spans of the example name, each with the span's label, "
+                         "in order.") + "\n\n"
+                   f"/-- The lexemes the spans of the example labelled `l` name, in order. -/\n"
+                   f"def {t}.lexemes (x : {t}) (l : {lt}) : List {xt} :=\n"
+                   f"  (x.labelledLexemes.filter (·.1 = l)).map (·.2)\n\n"
+                   f"theorem {t}.lexemes_datum : ∀ (x : {t}) (l : {lt}),\n"
+                   f"    (x.datum.spans.filter ({ns}.label? · = some l)).filterMap {ns}.lexeme? =\n"
+                   f"      x.lexemes l := by\n"
+                   f"  decide +kernel")
+    if readings is not None:
+        rt = readings["type"]
+        rnames = {lv["label"]: lv["name"] for lv in readings["levels"]}
+        vals = []
+        for ex in examples:
+            seen, vs = set(), []
+            for r in ex.get("readings", []):
+                if r["name"] not in seen:
+                    seen.add(r["name"])
+                    vs.append(f"(.{rnames[r['name']]}, .{r['judgment']})")
+            vals.append(f"[{', '.join(vs)}]")
+        lean = readings["lean"]
+        out.append(cases(f"{lean}s", f"List ({rt} × Judgment)", vals,
+                         "The readings the example judges, each with its judgment.") + "\n\n"
+                   f"/-- The judgment the example records for the reading, if it records one. -/\n"
+                   f"def {t}.{lean} (x : {t}) (r : {rt}) : Option Judgment :=\n"
+                   f"  (x.{lean}s.lookup r)\n\n"
+                   f"theorem {t}.{lean}_datum : ∀ (x : {t}) (r : {rt}),\n"
+                   f"    {ns}.{lean} x.datum r = x.{lean} r := by\n"
+                   f"  decide +kernel")
+    return "\n\n".join(out)
+
+
+def validate_boundaries(decl, taken: set, examples: list, where: str) -> None:
+    if decl is None:
+        return
+    w = f"{where}.boundaries"
+    if set(decl) - {"type", "doc", "levels", "marks"} or not {"type", "doc", "levels"} <= set(decl):
+        raise ValueError(f"{w}: needs `type`, `doc`, `levels` and optionally `marks`")
+    if not TYPE_IDENT.match(decl["type"]) or decl["type"] in taken:
+        raise ValueError(f"{w}: `type` {decl['type']!r} is not a fresh Lean type name")
+    words = "".join(p[0] for ex in examples for p in ex.get("glossedTokens", []))
+    names, symbols = set(), set()
+    for lv in decl["levels"]:
+        if set(lv) != {"name", "symbol", "leipzig", "doc"}:
+            raise ValueError(f"{w}: a level needs exactly `name`, `symbol`, `leipzig` and `doc`")
+        if not IDENT.match(lv["name"]) or lv["name"] in LEAN_KEYWORDS or lv["name"] in names:
+            raise ValueError(f"{w}: level name {lv['name']!r} is not a fresh Lean identifier")
+        if lv["leipzig"] not in ("-", "=", "~"):
+            raise ValueError(f"{w}: `leipzig` of {lv['name']!r} must be one of `-`, `=`, `~`")
+        names.add(lv["name"])
+    for d in decl["levels"] + decl.get("marks", []):
+        s = d.get("symbol")
+        if not isinstance(s, str) or len(s) != 1 or s.isalnum() or s.isspace() or s in symbols:
+            raise ValueError(f"{w}: symbol {s!r} must be one fresh character, not a letter or digit")
+        if s not in words:
+            raise ValueError(f"{w}: no word of the rows writes {s!r}")
+        symbols.add(s)
+    for m in decl.get("marks", []):
+        if set(m) != {"symbol", "doc"}:
+            raise ValueError(f"{w}: a mark needs exactly `symbol` and `doc`")
+
+
+def emit_boundaries(decl: dict) -> str:
+    ctors = "\n".join(f"  /-- `{lv['symbol']}`: {lv['doc']} -/\n  | {lv['name']}"
+                      for lv in decl["levels"])
+    table = ", ".join(f"({lean_chars(lv['symbol'])[1:-1]}, .{lv['name']})" for lv in decl["levels"])
+    return (f"/-- {decl['doc']} -/\ninductive {decl['type']} where\n{ctors}\n"
+            f"  deriving DecidableEq, Repr, Fintype\n\n"
+            f"/-- The boundary before a morpheme, by the symbol the source writes there. -/\n"
+            f"def boundary? (m : GlossedMorpheme) : Option {decl['type']} :=\n"
+            f"  m.sep.bind (List.lookup · [{table}])")
+
+
+SPAN_KINDS = (("labels", "label"), ("lexemes", "lexeme"))
+
+
+def validate_spans(decl, features: list, readings, examples: list, where: str) -> None:
+    w = f"{where}.spans"
+    if decl is None:
+        for ex in examples:
+            if ex.get("spans"):
+                raise ValueError(f"{where}: {ex.get('id')} has spans but the file declares no "
+                                 f"`spans` with their labels and lexemes")
+        return
+    if "labels" not in decl or set(decl) - {"labels", "lexemes"}:
+        raise ValueError(f"{w}: needs `labels` and optionally `lexemes`")
+    taken = {ft["type"] for ft in features} | ({readings["type"]} if readings else set())
+    names = {ft["lean"] for ft in features} | ({readings["lean"]} if readings else set())
+    if names & {"label?", "lexeme?"}:
+        raise ValueError(f"{w}: a feature or the readings use the reader name `label?` or `lexeme?`")
+    for kind, key in SPAN_KINDS:
+        d = decl.get(kind)
+        if d is None:
+            continue
+        if set(d) != {"type", "doc", "levels"}:
+            raise ValueError(f"{w}.{kind}: needs exactly `type`, `doc` and `levels`")
+        if not TYPE_IDENT.match(d["type"]) or d["type"] in taken:
+            raise ValueError(f"{w}.{kind}: `type` {d['type']!r} is not a fresh Lean type name")
+        taken.add(d["type"])
+        labels = validate_levels(d["levels"], f"{w}.{kind}")
+        seen = set()
+        for ex in examples:
+            for p in ex.get("spans", []):
+                if key in p:
+                    if p[key] not in labels:
+                        raise ValueError(f"{where}: {ex.get('id')}: {key} {p[key]!r} is not a "
+                                         f"declared level of {d['type']}")
+                    seen.add(p[key])
+        if seen != labels:
+            raise ValueError(f"{w}.{kind}: no span names {sorted(labels - seen)}")
+    if "lexemes" not in decl and any("lexeme" in p for ex in examples for p in ex.get("spans", [])):
+        raise ValueError(f"{w}: a span names a lexeme but the file declares no `lexemes`")
+
+
+def emit_spans(decl: dict) -> str:
+    out = []
+    for kind, key in SPAN_KINDS:
+        d = decl.get(kind)
+        if d is None:
+            continue
+        ctors = "\n".join(f"  /-- {lv['label']}: {lv['doc']} -/\n  | {lv['name']}" for lv in d["levels"])
+        table = ", ".join(f"({lean_string(lv['label'])}, .{lv['name']})" for lv in d["levels"])
+        if key == "label":
+            reader = (f"/-- The label of a span, where it is a declared one. -/\n"
+                      f"def label? (p : Datum.Span) : Option {d['type']} :=\n"
+                      f"  List.lookup p.label [{table}]")
+        else:
+            reader = (f"/-- The lexeme a span is a form of, where it names a declared one. -/\n"
+                      f"def lexeme? (p : Datum.Span) : Option {d['type']} :=\n"
+                      f"  p.lexeme.bind (List.lookup · [{table}])")
+        out.append(f"/-- {d['doc']} -/\ninductive {d['type']} where\n{ctors}\n"
+                   f"  deriving DecidableEq, Repr, Fintype\n\n{reader}")
+    return "\n\n".join(out)
+
+
 def emit_feature(ft: dict) -> str:
     ctors = "\n".join(f"  /-- {lv['label']}: {lv['doc']} -/\n  | {lv['name']}" for lv in ft["levels"])
     entries = [f"({lean_string(lv['label'])}, .{lv['name']})" for lv in ft["levels"]]
@@ -496,7 +785,8 @@ def emit_readings(rd: dict) -> str:
 
 
 def emit_module(author_year: str, examples: list, features: list | None = None,
-                readings: dict | None = None) -> str:
+                readings: dict | None = None, spans: dict | None = None,
+                boundaries: dict | None = None, index: dict | None = None) -> str:
     ay_lower = author_year.lower()
     if author_year not in CONTRIBUTION_METHODS:
         raise ValueError(f"no row in {CONTRIBUTIONS.relative_to(ROOT)}; add `{author_year},<method>` "
@@ -506,7 +796,8 @@ def emit_module(author_year: str, examples: list, features: list | None = None,
         body = "-- (no examples in JSON)"
         all_def = "def all : List Datum := []"
     else:
-        body = "\n\n".join(emit_example(e, ay_lower, default_method) for e in examples)
+        body = "\n\n".join(emit_example(e, ay_lower, default_method, boundaries)
+                           for e in examples)
         local_ids = [
             lean_identifier((e.get("id") or "").strip(), ay_lower)
             for e in examples
@@ -516,9 +807,20 @@ def emit_module(author_year: str, examples: list, features: list | None = None,
     feats = "".join("\n\n" + emit_feature(ft) for ft in features)
     if readings is not None:
         feats += "\n\n" + emit_readings(readings)
+    if spans is not None:
+        feats += "\n\n" + emit_spans(spans)
+    if boundaries is not None:
+        feats += "\n\n" + emit_boundaries(boundaries)
+    if index is not None and examples:
+        feats += "\n\n" + emit_index(index, author_year, local_ids)
+        readers = emit_index_readers(index, author_year, local_ids, examples, features, readings, spans)
+        if readers:
+            feats += "\n\n" + readers
+    typed = (features or readings is not None or spans is not None or boundaries is not None
+             or index is not None)
     imports = "import Linglib.Data.Examples.Schema" + (
         "\nimport Linglib.Data.Examples.Readers" if features else "") + (
-        "\nimport Mathlib.Tactic.DeriveFintype" if features or readings is not None else "")
+        "\nimport Mathlib.Tactic.DeriveFintype" if typed else "")
 
     return f"""{imports}
 
@@ -560,11 +862,17 @@ def process(author_year: str, check: bool) -> bool:
 
     try:
         where = str(json_path.relative_to(ROOT))
-        features, readings, examples = split_data(examples, where)
+        features, readings, spans, boundaries, index, examples = split_data(examples, where)
         validate_features(features, examples, where)
         validate_readings(readings, features, examples, where)
+        validate_spans(spans, features, readings, examples, where)
+        taken = {ft["type"] for ft in features} | ({readings["type"]} if readings else set())
+        taken |= {d["type"] for d in (spans or {}).values()}
+        validate_boundaries(boundaries, taken, examples, where)
+        validate_index(index, taken | ({boundaries["type"]} if boundaries else set()), where,
+                       (tuple(ft["lean"] for ft in features), readings["lean"] if readings else None))
         module_text = as_module_if_possible(
-            emit_module(author_year, examples, features, readings))
+            emit_module(author_year, examples, features, readings, spans, boundaries, index))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)
@@ -688,7 +996,8 @@ def process_languages(check: bool) -> bool:
 KEY_ORDER = [
     "id", "source", "reportedIn", "method", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
-    "judgment", "verdict", "contrasts", "readings", "paperFeatures", "comment",
+    "judgment", "alsoJudged", "verdict", "contrasts", "readings", "spans", "paperFeatures",
+    "comment",
     "verified",
 ]
 
@@ -747,7 +1056,7 @@ def _fmt_value(key: str, v, indent: str) -> str:
     if isinstance(v, list):
         if key == "glossedTokens":
             return _fmt_inline_list([_j(x) for x in v], indent)
-        if key in ("paperFeatures", "contrasts", "readings"):
+        if key in ("paperFeatures", "contrasts", "readings", "spans"):
             items = [
                 _fmt_obj_inline(x) if isinstance(x, dict) else _j(x) for x in v
             ]
@@ -781,11 +1090,12 @@ def fmt(author_year: str) -> bool:
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
     if isinstance(data, dict):
-        features, readings, examples = split_data(data, str(json_path))
+        features, readings, spans, boundaries, index, examples = split_data(data, str(json_path))
         body = format_examples(examples).rstrip("\n").replace("\n", "\n  ")
         head = ""
         for key, val in (("features", features if "features" in data else None),
-                         ("readings", readings)):
+                         ("readings", readings), ("spans", spans), ("boundaries", boundaries),
+                         ("index", index)):
             if val is not None:
                 dumped = json.dumps(val, ensure_ascii=False, indent=2).replace("\n", "\n  ")
                 head += f'  "{key}": {dumped},\n'

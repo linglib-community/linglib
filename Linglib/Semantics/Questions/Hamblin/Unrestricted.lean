@@ -1,0 +1,311 @@
+module
+
+public import Linglib.Semantics.Questions.Inquisitive.Generate
+import Linglib.Semantics.Questions.Inquisitive.Declarative
+/-!
+# Unrestricted inquisitive propositions
+
+This file defines the propositions of unrestricted inquisitive semantics and their content. Such a
+proposition is a set of possibilities, sets of worlds, that need not be closed downward, so one
+possibility may lie inside another. It is informative when its possibilities do not cover every
+world, inquisitive when it has two maximal possibilities, and attentive when it has a non-maximal
+one, that is, when its possibilities do not form an antichain. The question it generates, a
+downward-closed `Inquisitive.Proposition`, has the same informative content and, for finitely many
+possibilities, the same inquisitive content.
+
+## Main definitions
+
+* `Inquisitive.Unrestricted.IsInformative`: the possibilities do not cover every world.
+* `Inquisitive.Unrestricted.IsInquisitive`: there are two maximal possibilities.
+* `Inquisitive.Unrestricted.IsAttentive`: some possibility is not maximal.
+* `Inquisitive.Unrestricted.pro`: the propositional closure.
+* `Inquisitive.Unrestricted.restrict`: a proposition restricted to an information set.
+* `Inquisitive.Unrestricted.InteractiveSincerity`: a proposition with several possibilities keeps
+  several within the speaker's information.
+
+## Main statements
+
+* `Inquisitive.Unrestricted.nontrivial_iff_isInquisitive_or_isAttentive`: a proposition has two
+  possibilities iff it is inquisitive or attentive.
+* `Inquisitive.Unrestricted.eq_singleton_univ_iff`: the tautology is the one proposition that is
+  neither informative, inquisitive nor attentive.
+* `Inquisitive.Unrestricted.isInquisitive_iff_question`: a finite proposition is inquisitive iff
+  the question it generates is.
+* `Inquisitive.Unrestricted.univ_mem_iff`: a finite proposition contains the trivial possibility
+  iff it is neither informative nor inquisitive.
+* `Inquisitive.Unrestricted.subsingleton_restrict_iff`: a restricted proposition has at most one
+  possibility iff its possibilities consistent with the information set agree on it.
+
+## References
+
+* [ciardelli-groenendijk-roelofsen-2009]
+* [coppock-brochhagen-2013]
+-/
+
+@[expose] public section
+
+namespace Inquisitive.Unrestricted
+
+open Set
+
+variable {W : Type*} {P : Set (Set W)}
+
+/-- A proposition is a nonempty set of possibilities that omits the empty possibility unless it
+is the contradictory proposition `{∅}` ([ciardelli-groenendijk-roelofsen-2009], Definition 12). -/
+def IsProposition (P : Set (Set W)) : Prop := P.Nonempty ∧ (∅ ∉ P ∨ P = {∅})
+
+/-- A proposition is informative when its possibilities do not cover every world
+([ciardelli-groenendijk-roelofsen-2009], Definition 16). -/
+def IsInformative (P : Set (Set W)) : Prop := ⋃₀ P ≠ univ
+
+/-- A proposition is inquisitive when it has at least two maximal possibilities
+([ciardelli-groenendijk-roelofsen-2009], Definition 16). -/
+def IsInquisitive (P : Set (Set W)) : Prop := {p | Maximal (· ∈ P) p}.Nontrivial
+
+/-- A proposition is attentive when it has a non-maximal possibility
+([ciardelli-groenendijk-roelofsen-2009], Definition 16). -/
+def IsAttentive (P : Set (Set W)) : Prop := ∃ p ∈ P, ¬ Maximal (· ∈ P) p
+
+/-! ### Informative, inquisitive and attentive content -/
+
+/-- A proposition is not attentive just in case no possibility in it includes another, as the
+propositions of restricted inquisitive semantics require ([ciardelli-groenendijk-roelofsen-2009],
+Definition 1). -/
+theorem not_isAttentive_iff : ¬ IsAttentive P ↔ IsAntichain (· ⊆ ·) P := by
+  simp only [IsAttentive, not_exists, not_and, not_not]
+  exact ⟨fun h p hp q hq hpq hle ↦ hpq ((h p hp).eq_of_subset hq hle),
+    fun h _ ↦ h.maximal_mem_iff.2⟩
+
+theorem isAttentive_of_ssubset {p q : Set W} (hp : p ∈ P) (hq : q ∈ P) (h : p ⊂ q) :
+    IsAttentive P :=
+  ⟨p, hp, fun hmax ↦ h.ne (hmax.eq_of_subset hq h.subset)⟩
+
+/-- A proposition whose possibilities form an antichain is inquisitive just in case it has more
+than one possibility. -/
+theorem isInquisitive_iff_nontrivial (h : IsAntichain (· ⊆ ·) P) :
+    IsInquisitive P ↔ P.Nontrivial := by
+  rw [IsInquisitive, show {p | Maximal (· ∈ P) p} = P from ext fun _ ↦ h.maximal_mem_iff]
+
+/-- A proposition whose possibilities are nested has at most one maximal possibility, so it is
+not inquisitive. -/
+theorem not_isInquisitive_of_isChain (h : IsChain (· ⊆ ·) P) : ¬ IsInquisitive P := by
+  rintro ⟨p, hp, q, hq, hne⟩
+  rcases h.total hp.1 hq.1 with hpq | hqp
+  · exact hne (hp.eq_of_subset hq.1 hpq)
+  · exact hne (hq.eq_of_subset hp.1 hqp).symm
+
+/-- A proposition has more than one possibility just in case it is inquisitive or attentive,
+which [coppock-brochhagen-2013] call interactive ((51)); the propositions with one possibility
+are the assertions of [ciardelli-groenendijk-roelofsen-2009] (Proposition 21). -/
+theorem nontrivial_iff_isInquisitive_or_isAttentive :
+    P.Nontrivial ↔ IsInquisitive P ∨ IsAttentive P := by
+  by_cases h : IsAttentive P
+  · obtain ⟨p, hp, hnm⟩ := h
+    obtain ⟨q, hpq, hq⟩ := (not_maximal_iff_exists_gt hp).1 hnm
+    exact iff_of_true ⟨p, hp, q, hq, hpq.ne⟩ (.inr ⟨p, hp, hnm⟩)
+  · rw [or_iff_left h, isInquisitive_iff_nontrivial (not_isAttentive_iff.1 h)]
+
+/-- The tautology `{univ}` is the one proposition that is neither informative, inquisitive nor
+attentive ([ciardelli-groenendijk-roelofsen-2009], Proposition 19). -/
+theorem eq_singleton_univ_iff :
+    P = {univ} ↔ P.Nonempty ∧ ¬ IsInformative P ∧ ¬ IsInquisitive P ∧ ¬ IsAttentive P := by
+  rw [← not_or, ← nontrivial_iff_isInquisitive_or_isAttentive, not_nontrivial_iff, IsInformative,
+    not_not]
+  refine ⟨?_, fun ⟨⟨p, hp⟩, hU, hP⟩ ↦ ?_⟩
+  · rintro rfl
+    exact ⟨singleton_nonempty _, sUnion_singleton _, subsingleton_singleton⟩
+  · obtain rfl := hP.eq_singleton_of_mem hp
+    simpa using hU
+
+/-! ### The question a proposition generates -/
+
+/-- A proposition and the question it generates have the same informative content
+([ciardelli-groenendijk-roelofsen-2009], p. 99). -/
+theorem isInformative_iff_question :
+    IsInformative P ↔ (Inquisitive.Proposition.generate P).IsInformative := by
+  rw [Inquisitive.Proposition.IsInformative, Inquisitive.Proposition.info_generate]; rfl
+
+/-- The maximal possibilities of a proposition are the alternatives of the question it generates,
+so a proposition is inquisitive just in case that question has two alternatives
+([ciardelli-groenendijk-roelofsen-2009], p. 99). -/
+theorem isInquisitive_iff_nontrivial_alt :
+    IsInquisitive P ↔ (Proposition.alt (Proposition.generate P)).Nontrivial := by
+  rcases P.eq_empty_or_nonempty with rfl | hP
+  · simp [IsInquisitive]
+  · rw [Inquisitive.Proposition.alt_generate hP, IsInquisitive]
+
+/-- A finite proposition is inquisitive just in case the question it generates is not resolved by
+its own informative content ([ciardelli-groenendijk-roelofsen-2009], footnote 5). -/
+theorem isInquisitive_iff_question (hP : P.Finite) :
+    IsInquisitive P ↔ (Inquisitive.Proposition.generate P).IsInquisitive := by
+  have hN := Inquisitive.Proposition.isNormal_generate hP
+  rw [isInquisitive_iff_nontrivial_alt, Inquisitive.Proposition.IsInquisitive,
+    ← hN.exists_alt_eq_singleton_iff, exists_eq_singleton_iff_nonempty_subsingleton,
+    ← not_nontrivial_iff, and_iff_right hN.alt_nonempty, not_not]
+
+/-- A finite proposition contains the trivial possibility just in case it is neither informative
+nor inquisitive, the conjectures of [ciardelli-groenendijk-roelofsen-2009] (Proposition 25). -/
+theorem univ_mem_iff (hfin : P.Finite) (hne : P.Nonempty) :
+    univ ∈ P ↔ ¬ IsInformative P ∧ ¬ IsInquisitive P := by
+  rw [isInquisitive_iff_question hfin, isInformative_iff_question, Proposition.IsInformative,
+    Inquisitive.Proposition.IsInquisitive, not_not, not_not, Inquisitive.Proposition.info_generate]
+  constructor
+  · intro h
+    have hU : ⋃₀ P = univ := eq_univ_of_univ_subset (subset_sUnion_of_mem h)
+    exact ⟨hU, hU ▸ Inquisitive.Proposition.mem_generate.2 (.inr ⟨univ, h, subset_rfl⟩)⟩
+  · rintro ⟨hU, h⟩
+    rcases Inquisitive.Proposition.mem_generate.1 h with h0 | ⟨a, ha, hUa⟩
+    · obtain ⟨p, hp⟩ := hne
+      have hp0 : p = ∅ := subset_empty_iff.1 (h0 ▸ subset_sUnion_of_mem hp)
+      rw [hU] at h0
+      exact (hp0.trans h0.symm) ▸ hp
+    · rw [hU] at hUa
+      exact univ_subset_iff.1 hUa ▸ ha
+
+/-! ### Propositional closure and restriction -/
+
+open Classical in
+/-- The propositional closure removes the empty possibility from any set of possibilities but
+`{∅}` ([ciardelli-groenendijk-roelofsen-2009], Definition 13). -/
+noncomputable def pro (P : Set (Set W)) : Set (Set W) := if P = {∅} then P else P \ {∅}
+
+/-- A proposition restricted to an information set `k` keeps the part of each possibility that
+lies in `k` ([coppock-brochhagen-2013], (65)). -/
+noncomputable def restrict (P : Set (Set W)) (k : Set W) : Set (Set W) := pro ((k ∩ ·) '' P)
+
+/-- The propositional closure of a nonempty set of possibilities is a proposition
+([ciardelli-groenendijk-roelofsen-2009], p. 98). -/
+theorem isProposition_pro (hP : P.Nonempty) : IsProposition (pro P) := by
+  unfold pro
+  split_ifs with h
+  · exact ⟨hP, .inr h⟩
+  · exact ⟨sdiff_nonempty.2 (mt hP.subset_singleton_iff.1 h), .inl fun h ↦ h.2 rfl⟩
+
+/-- The propositional closure leaves a proposition unchanged. -/
+theorem IsProposition.pro_eq (hP : IsProposition P) : pro P = P := by
+  unfold pro
+  split_ifs with h
+  · rfl
+  · exact sdiff_singleton_eq_self (hP.2.resolve_right h)
+
+theorem isProposition_singleton (p : Set W) : IsProposition {p} := by
+  refine ⟨singleton_nonempty p, ?_⟩
+  by_cases h : p = ∅
+  · exact .inr (by rw [h])
+  · exact .inl fun h' ↦ h (mem_singleton_iff.1 h').symm
+
+theorem mem_pro {p : Set W} (hp : p.Nonempty) : p ∈ pro P ↔ p ∈ P := by
+  unfold pro
+  split_ifs
+  · rfl
+  · exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, hp.ne_empty⟩⟩
+
+theorem empty_mem_pro_iff : ∅ ∈ pro P ↔ P = {∅} := by
+  unfold pro
+  split_ifs with h
+  · exact iff_of_true (by rw [h]; exact mem_singleton _) h
+  · exact iff_of_false (fun h' ↦ h'.2 rfl) h
+
+theorem pro_subset : pro P ⊆ P := by
+  unfold pro
+  split_ifs
+  · exact subset_rfl
+  · exact sdiff_subset
+
+theorem sUnion_pro : ⋃₀ pro P = ⋃₀ P := by
+  unfold pro
+  split_ifs
+  · rfl
+  · exact sUnion_sdiff_singleton_empty P
+
+/-- Removing the empty possibility does not change the question a set of possibilities
+generates. -/
+theorem generate_pro : Proposition.generate (pro P) = Proposition.generate P := by
+  refine le_antisymm (Proposition.generate_mono pro_subset) (Proposition.generate_le_iff.2 fun p hp
+    ↦ ?_)
+  by_cases h0 : p = ∅
+  · exact h0 ▸ (Inquisitive.Proposition.generate (pro P)).empty_mem
+  · exact Inquisitive.Proposition.mem_generate.2
+      (.inr ⟨p, (mem_pro (nonempty_iff_ne_empty.2 h0)).2 hp, subset_rfl⟩)
+
+theorem isAttentive_pro_iff : IsAttentive (pro P) ↔ IsAttentive (P \ {∅}) := by
+  unfold pro
+  split_ifs with h
+  · subst h
+    simp [IsAttentive]
+  · rfl
+
+/-- The propositional closure has at most one possibility just in case the set of possibilities
+has at most one nonempty member. -/
+theorem subsingleton_pro_iff : (pro P).Subsingleton ↔ (P \ {∅}).Subsingleton := by
+  unfold pro
+  split_ifs with h
+  · subst h
+    simp
+  · rfl
+
+variable {k : Set W}
+
+/-- A proposition restricted to `k` has at most one possibility just in case its possibilities
+consistent with `k` agree on `k`. -/
+theorem subsingleton_restrict_iff :
+    (restrict P k).Subsingleton ↔
+      ∀ p ∈ P, ∀ q ∈ P, (k ∩ p).Nonempty → (k ∩ q).Nonempty → k ∩ p = k ∩ q := by
+  rw [restrict, subsingleton_pro_iff]
+  refine ⟨fun h p hp q hq hkp hkq ↦
+    h ⟨mem_image_of_mem _ hp, hkp.ne_empty⟩ ⟨mem_image_of_mem _ hq, hkq.ne_empty⟩, ?_⟩
+  rintro h _ ⟨⟨p, hp, rfl⟩, hp0⟩ _ ⟨⟨q, hq, rfl⟩, hq0⟩
+  exact h p hp q hq (nonempty_iff_ne_empty.2 hp0) (nonempty_iff_ne_empty.2 hq0)
+
+/-- A proposition restricted to `k` has several possibilities just in case two of its
+possibilities consistent with `k` differ on `k`. -/
+theorem nontrivial_restrict_iff :
+    (restrict P k).Nontrivial ↔
+      ∃ p ∈ P, ∃ q ∈ P, (k ∩ p).Nonempty ∧ (k ∩ q).Nonempty ∧ k ∩ p ≠ k ∩ q := by
+  rw [← not_subsingleton_iff, subsingleton_restrict_iff]
+  push_neg
+  rfl
+
+/-- Restricted to an information set that decides each of its possibilities, a proposition keeps
+at most one possibility. -/
+theorem subsingleton_restrict_of_subset_or_disjoint (h : ∀ p ∈ P, k ⊆ p ∨ Disjoint k p) :
+    (restrict P k).Subsingleton :=
+  subsingleton_restrict_iff.2 fun p hp q hq hkp hkq ↦ by
+    rw [inter_eq_left.2 ((h p hp).resolve_right (not_disjoint_iff_nonempty_inter.2 hkp)),
+      inter_eq_left.2 ((h q hq).resolve_right (not_disjoint_iff_nonempty_inter.2 hkq))]
+
+/-- Restricted to a single world, a proposition keeps at most one possibility. -/
+theorem subsingleton_restrict_singleton (w : W) : (restrict P {w}).Subsingleton :=
+  subsingleton_restrict_of_subset_or_disjoint fun p _ ↦
+    (em (w ∈ p)).imp singleton_subset_iff.2 disjoint_singleton_left.2
+
+/-! ### Interactive sincerity -/
+
+/-- The Maxim of Interactive Sincerity requires a proposition with several possibilities to keep
+several when restricted to the speaker's information set `k` ([coppock-brochhagen-2013], (68)). -/
+def InteractiveSincerity (P : Set (Set W)) (k : Set W) : Prop :=
+  P.Nontrivial → (restrict P k).Nontrivial
+
+theorem InteractiveSincerity.of_subsingleton (hP : P.Subsingleton) (k : Set W) :
+    InteractiveSincerity P k :=
+  fun h ↦ absurd hP h.not_subsingleton
+
+/-- A proposition with several possibilities is insincere for a speaker whose information leaves
+it at most one. -/
+theorem not_interactiveSincerity (hP : P.Nontrivial) (h : (restrict P k).Subsingleton) :
+    ¬ InteractiveSincerity P k :=
+  fun hs ↦ (hs hP).not_subsingleton h
+
+theorem interactiveSincerity_singleton_iff (w : W) :
+    InteractiveSincerity P {w} ↔ ¬ P.Nontrivial :=
+  ⟨fun hs hP ↦ not_interactiveSincerity hP (subsingleton_restrict_singleton w) hs,
+    fun h hP ↦ absurd hP h⟩
+
+/-- A proposition is sincere whatever the speaker knows just in case it has at most one
+possibility. -/
+theorem forall_interactiveSincerity_iff [Nonempty W] :
+    (∀ k, InteractiveSincerity P k) ↔ ¬ P.Nontrivial :=
+  ⟨fun h ↦ (interactiveSincerity_singleton_iff (Classical.arbitrary W)).1 (h _),
+    fun h _ hP ↦ absurd hP h⟩
+
+end Inquisitive.Unrestricted

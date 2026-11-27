@@ -11,10 +11,10 @@ public import Linglib.Core.Order.WellFoundedFixedPoint
 This file defines causal models in the sense of Halpern and Pearl. A causal model has a type `U`
 of exogenous contexts, a value type `α v` for each endogenous variable `v`, a directed graph on
 the variables (mathlib's `Digraph`), and for each variable a structural equation that gives its
-value from the context and the values of its parents in the graph. When the graph is well
-founded, every context determines exactly one assignment that satisfies the equations,
-`CausalModel.solve`. An intervention holding the variables of a finite set at given values
-replaces their equations by constants, which gives the submodel `CausalModel.intervene`, Pearl's
+value from the context and the values of its parents in the graph. When the graph is well founded,
+every context determines exactly one assignment that satisfies the equations, `CausalModel.solve`.
+An intervention, a partial assignment of values to variables, replaces the equations of the
+variables it settles by constants, which gives the submodel `CausalModel.intervene`, Pearl's
 `M_x`; its solution is the world the intervention brings about.
 
 The solution is characterized as the unique fixed point of one round of the equations, and it is
@@ -28,10 +28,10 @@ is how a finite model computes it.
 * `CausalModel.ContextAtRoots`: only the roots read the context
 * `CausalModel.step`: one round of the equations
 * `CausalModel.solve`: the solution in a context
-* `CausalModel.intervene`: the submodel of an intervention, written `M[c ← x, d ← y]` for single
-  variables, scoped in `CausalModel`
-* `[c ← x, d ← y]`: the partial assignment settling `c` and `d`, an observation, scoped in
-  `CausalModel`
+* `[c ← x, d ← y]`: the partial assignment settling `c` and `d`, an observation or an
+  intervention, scoped in `CausalModel`
+* `CausalModel.intervene`: the submodel of an intervention, written `M[c ← x, d ← y]` for the
+  partial assignment `[c ← x, d ← y]`, scoped in `CausalModel`
 
 ## Main results
 
@@ -47,9 +47,10 @@ An equation reads the whole assignment, and `dependsOn_eqn` says that it only re
 (mathlib's `DependsOn`), so equations are written without the parents' subtype. For a finite
 inductive type of variables the default proof of `dependsOn_eqn` discharges it. The graph is data,
 the edges a paper draws, and bounds what an equation may read rather than recording what it does
-read; a submodel keeps the graph, since a constant equation reads nothing. An intervention gives
-values only to the variables it holds, `x : ∀ v : X, α v`, as Pearl's realization of `X` and
-mathlib's `Function.updateFinset` do. The solution is `WellFounded.fixedPoint` of `step`, whose
+read; a submodel keeps the graph, since a constant equation reads nothing. An intervention is a
+partial assignment, the type of an observation, so that holding a fact and observing it are two
+uses of one object, and it carries a decision of where it is defined so that the solution of a
+submodel computes. The solution is `WellFounded.fixedPoint` of `step`, whose
 construction fills the coordinates an equation ignores arbitrarily, hence `[∀ v, Nonempty (α v)]`.
 
 A concrete model in a study is written to one recipe. The exogenous context is a structure whose
@@ -183,46 +184,86 @@ end Solve
 
 section Intervene
 
-variable [DecidableEq V]
-
 variable (M) in
-/-- The submodel `M.intervene X x` holds the variables of `X` at their values in `x`: their
-equations become constants, and every other equation is kept (Pearl's submodel `M_x`). -/
-def intervene (X : Finset V) (x : ∀ v : X, α v) : CausalModel U V α where
+/-- The submodel `M.intervene s` holds every variable the partial assignment `s` settles at its
+value there: their equations become constants, and every other equation is kept (Pearl's submodel
+`M_x`). -/
+def intervene (s : ∀ v, Part (α v)) [∀ v, Decidable (s v).Dom] : CausalModel U V α where
   graph := M.graph
-  eqn v u y := Function.updateFinset (M.step u y) X x v
+  eqn v u y := if h : (s v).Dom then (s v).get h else M.eqn v u y
   dependsOn_eqn v u _ _ h := by
-    simp only [Function.updateFinset]
     split
     · rfl
     · exact M.dependsOn_eqn v u h
 
-instance [hM : M.IsAcyclic] (X : Finset V) (x : ∀ v : X, α v) : (M.intervene X x).IsAcyclic :=
+instance [hM : M.IsAcyclic] (s : ∀ v, Part (α v)) [∀ v, Decidable (s v).Dom] :
+    (M.intervene s).IsAcyclic :=
   hM
 
-variable {X : Finset V} {x : ∀ v : X, α v} {v : V}
+variable {s : ∀ v, Part (α v)} [∀ v, Decidable (s v).Dom] {v : V}
 
-theorem intervene_eqn_of_mem (h : v ∈ X) (u : U) (y : ∀ v, α v) :
-    (M.intervene X x).eqn v u y = x ⟨v, h⟩ := by
-  simp [intervene, Function.updateFinset, h]
+theorem intervene_eqn_of_dom (h : (s v).Dom) (u : U) (y : ∀ v, α v) :
+    (M.intervene s).eqn v u y = (s v).get h := by
+  simp [intervene, h]
 
-theorem intervene_eqn_of_notMem (h : v ∉ X) (u : U) (y : ∀ v, α v) :
-    (M.intervene X x).eqn v u y = M.eqn v u y := by
-  simp [intervene, Function.updateFinset, h, step]
+theorem intervene_eqn_of_eq_some {x : α v} (h : s v = Part.some x) (u : U) (y : ∀ v, α v) :
+    (M.intervene s).eqn v u y = x := by
+  have hd : (s v).Dom := h ▸ Part.some_dom x
+  rw [intervene_eqn_of_dom hd]
+  exact Part.get_eq_of_mem (h ▸ Part.mem_some x) hd
+
+theorem intervene_eqn_of_eq_bot (h : s v = ⊥) (u : U) (y : ∀ v, α v) :
+    (M.intervene s).eqn v u y = M.eqn v u y := by
+  have hd : ¬(s v).Dom := h ▸ Part.not_none_dom
+  simp [intervene, hd]
 
 /-- Intervening on no variables leaves the model as it is. -/
-@[simp] theorem intervene_empty (x : ∀ v : (∅ : Finset V), α v) : M.intervene ∅ x = M := by
+@[simp] theorem intervene_bot : M.intervene ⊥ = M := by
   obtain ⟨g, eqn, h⟩ := M
-  simp [intervene, step, Function.updateFinset]
+  simp only [intervene, mk.injEq, true_and]
+  funext v u y
+  simp
 
-/-- `M[c ← x]` is the submodel holding `c` at `x`, and `M[c ← x, d ← y]` intervenes on `c` and
-then on `d`. -/
+/-- Intervening with `s₁` and then with `s₂` is intervening with a partial assignment that
+extends `s₂` and is `s₁` wherever `s₂` settles nothing. -/
+theorem intervene_intervene {s₁ s₂ r : ∀ v, Part (α v)} [∀ v, Decidable (s₁ v).Dom]
+    [∀ v, Decidable (s₂ v).Dom] [∀ v, Decidable (r v).Dom] (h₂ : s₂ ≤ r)
+    (h₁ : ∀ v, ¬(s₂ v).Dom → r v = s₁ v) : (M.intervene s₁).intervene s₂ = M.intervene r := by
+  have key (v : V) (u : U) (y : ∀ v, α v) :
+      ((M.intervene s₁).intervene s₂).eqn v u y = (M.intervene r).eqn v u y := by
+    by_cases hd₂ : (s₂ v).Dom
+    · rw [intervene_eqn_of_dom hd₂, intervene_eqn_of_dom (Part.Dom.mono (h₂ v) hd₂)]
+      exact (Part.get_eq_of_mem (h₂ v _ (Part.get_mem hd₂)) _).symm
+    · rw [intervene_eqn_of_eq_bot (Part.eq_bot_iff_not_dom.mpr hd₂)]
+      have e := h₁ v hd₂
+      by_cases hd₁ : (s₁ v).Dom
+      · have hm : (s₁ v).get hd₁ ∈ r v := by rw [e]; exact Part.get_mem hd₁
+        rw [intervene_eqn_of_dom hd₁, intervene_eqn_of_dom (Part.dom_iff_mem.mpr ⟨_, hm⟩)]
+        exact (Part.get_eq_of_mem hm _).symm
+      · rw [intervene_eqn_of_eq_bot (Part.eq_bot_iff_not_dom.mpr hd₁),
+          intervene_eqn_of_eq_bot (e.trans (Part.eq_bot_iff_not_dom.mpr hd₁))]
+  obtain ⟨g, eqn, hdep⟩ := M
+  simp only [intervene, mk.injEq, true_and]
+  funext v u y
+  exact key v u y
+
+/-- Intervening with one partial assignment and then with a second that agrees with it wherever
+both settle a variable is intervening with their join. -/
+theorem intervene_intervene_of_isLUB {s₁ s₂ r : ∀ v, Part (α v)} [∀ v, Decidable (s₁ v).Dom]
+    [∀ v, Decidable (s₂ v).Dom] [∀ v, Decidable (r v).Dom] (h : IsLUB {s₁, s₂} r) :
+    (M.intervene s₁).intervene s₂ = M.intervene r :=
+  intervene_intervene (mem_upperBounds_pair.mp h.1).2 fun v hd ↦ by
+    have hv := isLUB_pair_pi_iff.mp h v
+    rw [Part.eq_bot_iff_not_dom.mpr hd] at hv
+    exact le_antisymm (hv.2 (mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩))
+      (mem_upperBounds_pair.mp hv.1).1
+
+/-- `M[c ← x]` is the submodel holding `c` at `x`, and `M[c ← x, d ← y]` the one holding `c` at
+`x` and `d` at `y`: the submodel of the partial assignment `[c ← x, d ← y]`. -/
 scoped syntax:max (name := interveneNotation) term noWs "[" (term " ← " term),+ "]" : term
 
 macro_rules (kind := interveneNotation)
-  | `($M[$c ← $x]) => `(CausalModel.intervene $M (singleton $c) (uniqueElim $x))
-  | `($M[$c ← $x, $[$cs ← $xs],*]) =>
-    `((CausalModel.intervene $M (singleton $c) (uniqueElim $x))[$[$cs ← $xs],*])
+  | `($M[$[$cs ← $xs],*]) => `(CausalModel.intervene $M [$[$cs ← $xs],*])
 
 end Intervene
 

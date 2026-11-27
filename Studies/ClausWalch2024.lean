@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Statistics.ClausWalch2024
-public import Linglib.Fragments.English.NumeralModifiers
-public import Linglib.Fragments.German.NumeralModifiers
+public import Linglib.Languages.English.NumeralModifiers
+public import Linglib.Languages.German.NumeralModifiers
 public import Studies.Blok2015
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Basic.Sign.Defs
@@ -23,12 +23,12 @@ complement set salient, following Blok.
 
 ## Implementation notes
 
-* The German modifiers are the German Fragment's entries, and for salience *bis zu* and
+* The German modifiers are the German language file's entries, and for salience *bis zu* and
   *höchstens* raise what Blok gives *up to* and *at most*; the paper calls them equivalents and
   reports Blok's contrast for German.
 * A description makes the complement set salient when what it asserts is compatible with no
   instance of the predicate, which is Blok's *if any* diagnostic. Blok's *up to* asserts only a
-  lower bound, on her scale of the whole numbers; with the upper bound of its Fragment reading
+  lower bound, on her scale of the whole numbers; with the upper bound of its language file reading
   *bis zu* would pattern with *höchstens* (`salience_raised_bisZu`).
 * The complement of a partial outcome has the opposite valence, as lives lost are to lives saved.
 * A framing effect is the sign of the difference of the printed percentages; the significance
@@ -163,7 +163,7 @@ theorem framingEffect_hoechstens (s : Scenario) : framingEffect (s.upper .hoechs
 
 /-! ### Readings alone -/
 
-/-- The Fragment entry of a modifier. -/
+/-- The language file entry of a modifier. -/
 def Modifier.entry : Modifier → Numerals.NumeralModifier
   | .bisZu => German.NumeralModifiers.bisZu
   | .hoechstens => German.NumeralModifiers.hoechstens

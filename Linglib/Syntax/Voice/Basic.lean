@@ -1,6 +1,12 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Voice.Construction
+public import Linglib.Syntax.Voice.Defs
 public import Linglib.Morphology.Morph
 
 /-!
@@ -14,7 +20,7 @@ here realize the types they are named for.
 
 ## Main definitions
 
-* `Voice`, `Voice.of`: an initial and a derived diathesis, with a pivot and a marker.
+* `Voice.of`: the voice with given frames and links.
 * `Voice.IsPassivization`, `IsAntipassivization`, `IsDecausativization`, …: a voice realizing a
   type of voice alternation.
 * `Voice.Relates`, `Verb.Alternates`: a voice relating two diatheses of a verb.
@@ -67,29 +73,6 @@ def Coding.ofMarker (ms : List Morphology.Morph) : Coding :=
   if ms = [] then .uncoded
   else if ms.all fun m ↦ m.kind.position?.isSome then .synthetic
   else .analytic
-
-end Voice
-
-/-- A voice relates an initial and a derived diathesis of its participants, privileges a slot of
-the derived diathesis as its pivot, and is coded by a marker on the verb; its classification is
-computed from the two diatheses. -/
-structure Voice where
-  /-- The number of participants. -/
-  arity : ℕ
-  /-- The initial diathesis. -/
-  initial : Diathesis arity
-  /-- The derived diathesis, which leaves out the participants the voice suppresses. -/
-  derived : Diathesis arity
-  /-- The syntactically privileged term of the derived construction is by default its first core
-  slot (S or A), unless a symmetrical voice selects another, and is `none` for an impersonal
-  construction ([creissels-2024] §8.1.7). -/
-  pivot : Option ArgumentFrame.Slot := derived.coreSlots.head?
-  /-- The morphs (affixes or an auxiliary) coding the voice on the verb, in surface order; empty
-      for a zero-marked or an unmarked voice. -/
-  marker : List Morphology.Morph := []
-  deriving DecidableEq, Repr
-
-namespace Voice
 
 open ArgumentFrame (Slot)
 
@@ -212,7 +195,7 @@ instance : Decidable v.IsCoded := inferInstanceAs (Decidable (_ ≠ _))
 
 /-! ### Marking -/
 
-/-- The voice with the given marker. A fragment states a voice with its marker, as in
+/-- The voice with the given marker. A language file states a voice with its marker, as in
 `Voice.passive.marked [.suff "x"]`; the bare constants are unmarked. -/
 def marked (ms : List Morphology.Morph) : Voice := { v with marker := ms }
 
@@ -290,7 +273,8 @@ def antipassive (p : ArgumentFrame.Position := .adpositional) : Voice :=
 /-- The voice that leaves the `i`-th complement of `fr` unexpressed but implied, with
 interpretation `a`; every participant keeps its slot. Examples are Fillmore's null complements and
 Levin's unexpressed object alternations. -/
-def leaveImplicit (fr : ArgumentFrame) (i : ℕ) (a : Option ImplicitInterp := none) : Voice :=
+def leaveImplicit (fr : ArgumentFrame) (i : ℕ) (a : Finset ImplicitInterp := Finset.univ) :
+    Voice :=
   of fr (fr.leaveImplicit i a) (fr.slots.map some)
 
 /-- The anticausative suppresses the initial A from participant structure and makes the
@@ -304,12 +288,12 @@ def causative : Voice := of .intransitive .np [some (complement 0), some externa
 
 /-- The reflexive cumulates the initial A and P in one S, an individual bearing both roles
 ([creissels-2024] §8.3.3). The object is left implicit, understood as the subject itself. -/
-def reflexive : Voice := leaveImplicit .np 0 (some .reflexive)
+def reflexive : Voice := leaveImplicit .np 0 {.reflexive}
 
 /-- The reciprocal cumulates the initial A and P in one S, a group whose members bear both roles
 toward one another ([creissels-2024] §8.3.3). The object is left implicit, understood as the
 subject's members. -/
-def reciprocal : Voice := leaveImplicit .np 0 (some .reciprocal)
+def reciprocal : Voice := leaveImplicit .np 0 {.reciprocal}
 
 /-- The applicative nucleativizes an applied participant as a second P beside the initial A
 and P ([creissels-2024] §8.3.5). -/
@@ -324,7 +308,7 @@ def patientVoice : Voice := { refl .np with pivot := some (complement 0) }
 an oblique marking a case of type `r` unchanged and makes the oblique the pivot
 ([creissels-2024] §8.5.2). -/
 def obliqueVoice (r : Case.Kind) : Voice :=
-  { refl ⟨some .nominal, [.nominal, .adpositional (some r)]⟩ with pivot := some (complement 1) }
+  { refl ⟨some .nominal, [.nominal, .adpositional {r}]⟩ with pivot := some (complement 1) }
 
 /-- The locative voice is the oblique voice of a spatial oblique. -/
 abbrev locativeVoice : Voice := obliqueVoice .spatial
@@ -374,18 +358,18 @@ theorem applicative_isPApplicativization : applicative.IsPApplicativization := b
 initial P in participant structure without making it a core term. -/
 theorem isAntipassivization_antipassive_iff (p : ArgumentFrame.Position) :
     (antipassive p).IsAntipassivization ↔ (antipassive p).fateOfRole .P = .denucleativized := by
-  cases p <;> first
-    | exact of_decide_eq_true rfl
-    | rename_i a; rcases a with _ | (_ | _ | _ | _ | _) <;> decide
+  cases p with
+  | implicit i => revert i; decide
+  | _ => exact of_decide_eq_true rfl
 
 /-- The antipassive is an antipassivization whether the derived construction encodes the initial
 P as an oblique, leaves it implicit or incorporates it ([creissels-2024] §10.2); when the implicit
 P is understood as the subject itself it is a reflexivization instead. -/
 theorem antipassive_isAntipassivization :
-    antipassive.IsAntipassivization ∧ (antipassive (.implicit none)).IsAntipassivization ∧
+    antipassive.IsAntipassivization ∧ (antipassive .implicit).IsAntipassivization ∧
       (antipassive .incorporated).IsAntipassivization ∧
-      ¬ (antipassive (.implicit (some .reflexive))).IsAntipassivization ∧
-      (antipassive (.implicit (some .reflexive))).IsCumulation := by
+      ¬ (antipassive (.implicit {.reflexive})).IsAntipassivization ∧
+      (antipassive (.implicit {.reflexive})).IsCumulation := by
   decide
 
 theorem reflexive_cumulates : reflexive.Cumulates := by decide
@@ -410,12 +394,13 @@ section Relates
 
 variable {n : ℕ} (c d : Diathesis n)
 
-/-- A voice relates two diatheses `c` and `d` of a verb when their frames refine its initial and
-derived frames and each participant is placed as the voice says. A participant of an initial slot
-goes to the voice's image of that slot, or out of the construction if there is none; a participant
-that `c` leaves out goes, if anywhere, to a derived slot that is the image of no initial slot. -/
+/-- A voice relates two diatheses `c` and `d` of a verb when their frames are at most its initial
+and derived frames and each participant is placed as the voice says. A participant of an initial
+slot goes to the voice's image of that slot, or out of the construction if there is none; a
+participant that `c` leaves out goes, if anywhere, to a derived slot that is the image of no initial
+slot. -/
 def Relates : Prop :=
-  v.initial.toArgumentFrame ≤ c.toArgumentFrame ∧ v.derived.toArgumentFrame ≤ d.toArgumentFrame ∧
+  c.toArgumentFrame ≤ v.initial.toArgumentFrame ∧ d.toArgumentFrame ≤ v.derived.toArgumentFrame ∧
     ∀ i, (∀ s ∈ c.links.get i, d.links.get i = v.image s) ∧
       (c.links.get i = none → ∀ t ∈ d.links.get i, v.preimages t = [])
 
@@ -428,10 +413,10 @@ end Relates
 def _root_.Verb.Alternates (w : Verb) (v : Voice) : Prop :=
   ∃ c ∈ w.valency.diatheses, ∃ d ∈ w.valency.diatheses, v.Relates c d
 
-/-- Deciding the alternation skips a diathesis whose frame does not refine the initial one before
+/-- Deciding the alternation skips a diathesis whose frame is not at most the initial one before
 looking for a derived one. -/
 instance (w : Verb) (v : Voice) : Decidable (w.Alternates v) :=
-  decidable_of_iff (∃ c ∈ w.valency.diatheses, v.initial.toArgumentFrame ≤ c.toArgumentFrame ∧
+  decidable_of_iff (∃ c ∈ w.valency.diatheses, c.toArgumentFrame ≤ v.initial.toArgumentFrame ∧
       ∃ d ∈ w.valency.diatheses, v.Relates c d)
     ⟨fun ⟨c, hc, _, d, hd, h⟩ ↦ ⟨c, hc, d, hd, h⟩, fun ⟨c, hc, d, hd, h⟩ ↦ ⟨c, hc, h.1, d, hd, h⟩⟩
 

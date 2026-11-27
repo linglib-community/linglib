@@ -100,11 +100,11 @@ section Pass
 variable [DecidableEq ι] (lt : ι → ι → Prop) [DecidableRel lt]
 
 /-- One domain: the hierarchy as one pass. -/
-def Rules.pass (r : Rules) (D : Finset ι) (s : ι → FeatureSlot (Case × Mechanism)) :
-    ι → FeatureSlot (Case × Mechanism) :=
+def Rules.pass (r : Rules) (D : Finset ι) (s : ι → FeatureSlot (Flat (Case × Mechanism))) :
+    ι → FeatureSlot (Flat (Case × Mechanism)) :=
   r.toCaseRule.pass lt D s
 
-variable {lt} {r : Rules} {D : Finset ι} {s : ι → FeatureSlot (Case × Mechanism)} {x y : ι}
+variable {lt} {r : Rules} {D : Finset ι} {s : ι → FeatureSlot (Flat (Case × Mechanism))} {x y : ι}
   {c : Case}
 
 /-! ### What the passes assign -/
@@ -209,12 +209,12 @@ theorem Rules.pass_unmarked (hx : x ∈ D) (hs : s x = .unvalued)
 
 /-- Rules with no dependent case leave the state as it is. -/
 theorem Rules.dependent_pass_of_eq_none (hh : r.high = none) (hl : r.low = none)
-    (s : ι → FeatureSlot (Case × Mechanism)) : r.dependent.pass lt D s = s :=
+    (s : ι → FeatureSlot (Flat (Case × Mechanism))) : r.dependent.pass lt D s = s :=
   CaseRule.pass_of_forall_eq_none fun _ _ ↦ by simp [Rules.dependent, hh, hl]
 
 /-- Rules with no elsewhere case leave the state as it is. -/
 theorem Rules.elsewhere_pass_of_eq_none (hu : r.unmarked = none)
-    (s : ι → FeatureSlot (Case × Mechanism)) : r.elsewhere.pass lt D s = s :=
+    (s : ι → FeatureSlot (Flat (Case × Mechanism))) : r.elsewhere.pass lt D s = s :=
   CaseRule.pass_of_forall_eq_none fun _ _ ↦ by simp [Rules.elsewhere, hu]
 
 end Pass
@@ -228,7 +228,7 @@ variable [DecidableEq ι]
 /-- Case for the distinct NPs `xs`, listed from the highest down, `lex` giving the case a lexical
     head has valued: the dependent rules, then the elsewhere case. -/
 def Rules.assign (r : Rules) (lex : ι → Option Case) (xs : List ι) :
-    ι → FeatureSlot (Case × Mechanism) :=
+    ι → FeatureSlot (Flat (Case × Mechanism)) :=
   r.pass (xs.idxOf ⁻¹'o (· < ·)) xs.toFinset (lexical fun x ↦ .offer (lex x))
 
 /-- The valuation of an NP no dependent rule reaches: its lexical case, or the elsewhere case. -/

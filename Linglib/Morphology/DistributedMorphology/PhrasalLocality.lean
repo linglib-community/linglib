@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Projection.Tree
 public import Linglib.Core.Data.RoseTree.Context
 
 /-!

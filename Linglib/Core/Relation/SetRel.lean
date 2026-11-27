@@ -4,28 +4,39 @@ public import Mathlib.Basic.Rel
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Logic.Function.Iterate
 public import Mathlib.Order.SetNotation
+public import Mathlib.Order.Hom.Basic
+public import Mathlib.Order.Closure
+public import Mathlib.Logic.Relation
 
 /-!
-# Complements, asymmetric parts and transitive closure of relations as sets of pairs
+# Correspondences, closures and equivalences of relations as sets of pairs
 
-`[UPSTREAM]` supplements to `Mathlib/Basic/Rel.lean`. The core and the preimage of a relation
-are dual under complement (`SetRel.core_compl`, `SetRel.preimage_compl`), the core is antitone
-in the relation (`SetRel.core_subset_core_left`) and sends unions to intersections
-(`SetRel.core_iUnion`), and the transitive closure of a relation
-(`SetRel.transGen`) has as core the intersection of the iterated cores
-(`SetRel.core_transGen`). The asymmetric part of a relation (`SetRel.asymmetrize`) complements
-mathlib's symmetric part `SetRel.symmetrize`.
+`[UPSTREAM]` supplements to `Mathlib/Basic/Rel.lean`.
+
+A *correspondence* is a set-valued function `f : α → Set β`. Its graph is the relation
+`SetRel.cgraph f` that relates `a` to the members of `f a`, the set of pairs that mathlib's
+`HasOpenCGraph` is a predicate of. Correspondences and relations are the same thing
+(`SetRel.cgraphOrderIso`), and a relation on a type is reflexive, symmetric or transitive exactly
+when its correspondence satisfies the matching condition on the sets `f a`.
+
+The core and the preimage of a relation are dual under complement, the core is antitone in the
+relation, and a relation is determined by its preimages. The transitive closure `SetRel.transGen`
+is a closure operator whose closed elements are the transitive relations. The asymmetric part
+`SetRel.asymmetrize` is what is left of a relation outside mathlib's symmetric part
+`SetRel.symmetrize`. Composition distributes over union.
 
 ## Main definitions
 
-* `SetRel.ofSuccessors`: a set-valued function `α → Set β` as a relation, whose core at `a` is
-  inclusion of `f a` (`SetRel.mem_core_ofSuccessors`) and whose image is the union of the values
-  (`SetRel.image_ofSuccessors`).
-* `SetRel.asymmetrize`: the pairs a relation relates in one direction only.
-* `SetRel.restrictRange`: the pairs of a relation that end in a set, the greatest such relation
-  inside it (`SetRel.subset_restrictRange_iff`).
-* `SetRel.transGen`: the transitive closure of `R : SetRel α α`, `Relation.TransGen` of its
-  pointwise relation.
+* `SetRel.cgraph`: the graph of a correspondence, as a relation.
+* `SetRel.cgraphOrderIso`: correspondences are relations.
+* `SetRel.transGen`: the transitive closure, as a closure operator.
+* `SetRel.asymmetrize`: the asymmetric part.
+* `SetRel.IsPreorder`, `SetRel.IsEquiv`: preorders and equivalence relations.
+
+## Implementation notes
+
+`SetRel.comp_union` and `SetRel.union_comp` are the statements of mathlib pull request 44241 and
+go when it is merged and the pin moves past it.
 -/
 
 @[expose] public section
@@ -34,7 +45,7 @@ namespace SetRel
 
 variable {α β : Type*} {R R₁ R₂ : SetRel α β} {t : Set β} {a b c : α}
 
-/-! ### Complements -/
+/-! ### Core and preimage -/
 
 theorem core_compl (R : SetRel α β) (t : Set β) : R.core tᶜ = (R.preimage t)ᶜ := by
   ext; grind
@@ -42,23 +53,18 @@ theorem core_compl (R : SetRel α β) (t : Set β) : R.core tᶜ = (R.preimage t
 theorem preimage_compl (R : SetRel α β) (t : Set β) : R.preimage tᶜ = (R.core t)ᶜ := by
   rw [← compl_compl (R.preimage _), ← core_compl, compl_compl]
 
-theorem core_iUnion {ι : Sort*} (R : ι → SetRel α β) (t : Set β) :
-    core (⋃ i, R i) t = ⋂ i, (R i).core t := by
-  ext; simp only [mem_core, Set.mem_iUnion, Set.mem_iInter]; grind
-
 theorem core_iInter {ι : Sort*} (R : SetRel α β) (t : ι → Set β) :
     R.core (⋂ i, t i) = ⋂ i, R.core (t i) :=
-  Set.ext fun _ ↦ by
-    simp only [mem_core, Set.mem_iInter]
-    exact ⟨fun h i _ hb ↦ h hb i, fun h _ hb i ↦ h i hb⟩
+  image_core_gc.u_iInf
+
+theorem core_sInter (R : SetRel α β) (S : Set (Set β)) : R.core (⋂₀ S) = ⋂ t ∈ S, R.core t :=
+  image_core_gc.u_sInf
 
 @[gcongr]
 theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t :=
   fun _ ha _ hb ↦ ha (h hb)
 
-instance isRefl_id : (SetRel.id : SetRel α α).IsRefl := ⟨fun _ ↦ rfl⟩
-
-/-! ### The image as an order embedding -/
+/-! ### Relations are determined by their images and preimages -/
 
 /-- Relations are ordered as their images are. -/
 theorem image_le_image_iff : R₁.image ≤ R₂.image ↔ R₁ ⊆ R₂ :=
@@ -67,10 +73,12 @@ theorem image_le_image_iff : R₁.image ≤ R₂.image ↔ R₁ ⊆ R₂ :=
       exact r',
     fun h _ ↦ image_subset_image_left h⟩
 
-theorem image_id_eq : (SetRel.id : SetRel α α).image = id :=
-  funext image_id
+/-- Relations are ordered as their preimages are. -/
+theorem preimage_le_preimage_iff : R₁.preimage ≤ R₂.preimage ↔ R₁ ⊆ R₂ :=
+  (image_le_image_iff (R₁ := R₁.inv) (R₂ := R₂.inv)).trans
+    ⟨fun h ↦ by simpa using inv_mono h, inv_mono⟩
 
-/-! ### Decidability over finite codomains -/
+/-! ### Decidability over finite types -/
 
 instance [Fintype β] (R : SetRel α β) (t : Set β) (a : α) [∀ b, Decidable (a ~[R] b)]
     [DecidablePred (· ∈ t)] : Decidable (a ∈ R.core t) :=
@@ -80,11 +88,73 @@ instance [Fintype β] (R : SetRel α β) (t : Set β) (a : α) [∀ b, Decidable
     [DecidablePred (· ∈ t)] : Decidable (a ∈ R.preimage t) :=
   decidable_of_iff (∃ b ∈ t, a ~[R] b) mem_preimage.symm
 
+instance [Fintype α] (R : SetRel α β) (s : Set α) (b : β) [∀ a, Decidable (a ~[R] b)]
+    [DecidablePred (· ∈ s)] : Decidable (b ∈ R.image s) :=
+  decidable_of_iff (∃ a ∈ s, a ~[R] b) mem_image.symm
+
 instance [Fintype β] (R : SetRel α β) (a : α) [∀ b, Decidable (a ~[R] b)] : Decidable (a ∈ R.dom) :=
   decidable_of_iff (∃ b, a ~[R] b) mem_dom.symm
 
 instance [Fintype α] (R : SetRel α β) (b : β) [∀ a, Decidable (a ~[R] b)] : Decidable (b ∈ R.cod) :=
   decidable_of_iff (∃ a, a ~[R] b) mem_cod.symm
+
+/-! ### Converse -/
+
+theorem inv_image_prodMap {γ δ : Type*} (f : α → γ) (g : β → δ) (R : SetRel α β) :
+    SetRel.inv (Prod.map f g '' R) = Prod.map g f '' R.inv := by
+  ext ⟨x, y⟩; simp only [mem_inv, Set.mem_image, Prod.exists, Prod.map_apply, Prod.mk.injEq]; grind
+
+/-! ### Composition and union -/
+
+theorem comp_union {γ : Type*} (R : SetRel α β) (S S' : SetRel β γ) :
+    R ○ (S ∪ S') = (R ○ S) ∪ (R ○ S') := by
+  grind
+
+theorem union_comp {γ : Type*} (R R' : SetRel α β) (S : SetRel β γ) :
+    (R ∪ R') ○ S = (R ○ S) ∪ (R' ○ S) := by
+  grind
+
+/-! ### Reflexive relations -/
+
+instance isRefl_id : (SetRel.id : SetRel α α).IsRefl := ⟨fun _ ↦ rfl⟩
+
+/-! ### Irreflexive relations -/
+
+/-- A relation is irreflexive exactly when no point lies in the image of its own singleton. -/
+theorem forall_disjoint_image_singleton_iff {R : SetRel α α} :
+    (∀ a, Disjoint (R.image {a}) {a}) ↔ R.IsIrrefl := by
+  simp only [Set.disjoint_singleton_right, mem_image, Set.mem_singleton_iff, exists_eq_left]
+  exact ⟨fun h ↦ ⟨h⟩, fun h ↦ h.irrefl⟩
+
+/-! ### Preorders and equivalence relations -/
+
+/-- `R` is a preorder: reflexive and transitive. -/
+protected abbrev IsPreorder (R : SetRel α α) : Prop := _root_.IsPreorder α (· ~[R] ·)
+
+/-- `R` is an equivalence relation: reflexive, symmetric and transitive. -/
+protected abbrev IsEquiv (R : SetRel α α) : Prop := _root_.IsEquiv α (· ~[R] ·)
+
+instance isPreorder_univ : SetRel.IsPreorder (Set.univ : SetRel α α) where
+  refl _ := trivial
+  trans _ _ _ _ _ := trivial
+
+instance isPreorder_id : SetRel.IsPreorder (SetRel.id : SetRel α α) where
+  refl _ := rfl
+  trans _ _ _ := Eq.trans
+
+instance isPreorder_inter {R₁ R₂ : SetRel α α} [R₁.IsPreorder] [R₂.IsPreorder] :
+    (R₁ ∩ R₂).IsPreorder where
+  refl _ := ⟨R₁.rfl, R₂.rfl⟩
+  trans _ _ _ h h' := ⟨R₁.trans h.1 h'.1, R₂.trans h.2 h'.2⟩
+
+instance isEquiv_univ : SetRel.IsEquiv (Set.univ : SetRel α α) where
+  symm _ _ _ := trivial
+
+instance isEquiv_id : SetRel.IsEquiv (SetRel.id : SetRel α α) where
+  symm _ _ := Eq.symm
+
+instance isEquiv_inter {R₁ R₂ : SetRel α α} [R₁.IsEquiv] [R₂.IsEquiv] : (R₁ ∩ R₂).IsEquiv where
+  symm _ _ h := ⟨R₁.symm h.1, R₂.symm h.2⟩
 
 /-! ### The asymmetric part -/
 
@@ -97,76 +167,139 @@ variable (R) in
 `SetRel.symmetrize` within it. -/
 def asymmetrize : SetRel α α := R \ R.inv
 
-@[simp] theorem mem_asymmetrize : a ~[R.asymmetrize] b ↔ a ~[R] b ∧ ¬ b ~[R] a := .rfl
+@[simp, grind =] theorem mem_asymmetrize : a ~[R.asymmetrize] b ↔ a ~[R] b ∧ ¬ b ~[R] a := .rfl
 
 theorem asymmetrize_subset_self : R.asymmetrize ⊆ R := Set.sdiff_subset
 
+theorem asymmetrize_eq_sdiff_symmetrize : R.asymmetrize = R \ R.symmetrize := by
+  ext ⟨a, b⟩; simp [symmetrize, asymmetrize]
+
 instance isIrrefl_asymmetrize : R.asymmetrize.IsIrrefl := ⟨fun _ h ↦ h.2 h.1⟩
+
+instance isTrans_asymmetrize [R.IsTrans] : R.asymmetrize.IsTrans :=
+  ⟨fun _ _ _ h h' ↦ ⟨R.trans h.1 h'.1, fun h'' ↦ h.2 (R.trans h'.1 h'')⟩⟩
 
 instance [DecidablePred (· ∈ R)] : DecidablePred (· ∈ R.asymmetrize) := fun p ↦
   inferInstanceAs (Decidable (p ∈ R ∧ ¬ (p.2, p.1) ∈ R))
 
 theorem asymmetrize_image_prodMap {β : Type*} {f : α → β} (hf : Function.Injective f) :
     asymmetrize (Prod.map f f '' R) = Prod.map f f '' R.asymmetrize := by
-  ext ⟨x, y⟩
-  constructor
-  · rintro ⟨⟨⟨a, b⟩, h, he⟩, hn⟩
-    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
-    exact ⟨(a, b), ⟨h, fun h' ↦ hn ⟨(b, a), h', rfl⟩⟩, rfl⟩
-  · rintro ⟨⟨a, b⟩, ⟨h, hn⟩, he⟩
-    obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
-    refine ⟨⟨(a, b), h, rfl⟩, fun ⟨⟨b', a'⟩, h', he'⟩ ↦ hn ?_⟩
-    obtain ⟨hb, ha⟩ := Prod.mk.inj he'
-    exact hf ha ▸ hf hb ▸ h'
+  rw [asymmetrize, inv_image_prodMap, ← Set.image_sdiff (hf.prodMap hf)]; rfl
 
 end Asymmetrize
 
-/-! ### Relations from set-valued functions -/
+/-! ### Correspondences -/
 
-/-- A set-valued function as a relation, relating `a` to every member of `f a`. -/
-def ofSuccessors (f : α → Set β) : SetRel α β := {p | p.2 ∈ f p.1}
+/-- The graph of a correspondence `f : α → Set β`, the relation of `a` to every member of
+`f a`. -/
+def cgraph (f : α → Set β) : SetRel α β := {p | p.2 ∈ f p.1}
 
-variable {f : α → Set β} {y : β}
+variable {f g : α → Set β} {y : β}
 
-@[simp] theorem mem_ofSuccessors : a ~[ofSuccessors f] y ↔ y ∈ f a := .rfl
+@[simp, grind =] theorem mem_cgraph : a ~[cgraph f] y ↔ y ∈ f a := .rfl
 
-theorem mem_core_ofSuccessors : a ∈ (ofSuccessors f).core t ↔ f a ⊆ t := .rfl
+theorem mem_core_cgraph : a ∈ (cgraph f).core t ↔ f a ⊆ t := .rfl
 
-theorem image_ofSuccessors (f : α → Set β) (s : Set α) :
-    (ofSuccessors f).image s = ⋃ a ∈ s, f a := by
+theorem mem_preimage_cgraph : a ∈ (cgraph f).preimage t ↔ (f a ∩ t).Nonempty :=
+  ⟨fun ⟨b, hb, hab⟩ ↦ ⟨b, hab, hb⟩, fun ⟨b, hab, hb⟩ ↦ ⟨b, hb, hab⟩⟩
+
+theorem dom_cgraph (f : α → Set β) : (cgraph f).dom = {a | (f a).Nonempty} := rfl
+
+instance (f : α → Set β) [∀ a, DecidablePred (· ∈ f a)] : DecidablePred (· ∈ cgraph f) :=
+  fun p ↦ inferInstanceAs (Decidable (p.2 ∈ f p.1))
+
+theorem image_cgraph (f : α → Set β) (s : Set α) :
+    (cgraph f).image s = ⋃ a ∈ s, f a := by
   ext; simp [image]
 
-@[simp] theorem image_ofSuccessors_singleton (f : α → Set β) (a : α) :
-    (ofSuccessors f).image {a} = f a := by
+@[simp] theorem image_cgraph_singleton (f : α → Set β) (a : α) :
+    (cgraph f).image {a} = f a := by
   ext; simp [image]
 
-theorem mem_preimage_ofSuccessors : a ∈ (ofSuccessors f).preimage t ↔ (f a ∩ t).Nonempty :=
-  ⟨fun ⟨b, ht, hb⟩ ↦ ⟨b, hb, ht⟩, fun ⟨b, hb, ht⟩ ↦ ⟨b, ht, hb⟩⟩
+theorem image_singleton_eq_ball_inv (R : SetRel α β) (a : α) : R.image {a} = R.inv.ball a := by
+  ext; simp [image]
 
-/-- A relation is irreflexive exactly when no point lies in the image of its own singleton. -/
-theorem forall_disjoint_image_singleton_iff {R : SetRel α α} :
-    (∀ a, Disjoint (R.image {a}) {a}) ↔ R.IsIrrefl := by
-  simp only [Set.disjoint_singleton_right, mem_image, Set.mem_singleton_iff, exists_eq_left]
-  exact ⟨fun h ↦ ⟨h⟩, fun h ↦ h.irrefl⟩
+/-- A relation is the graph of the correspondence sending a point to the points it relates
+to. -/
+theorem cgraph_ball_inv (R : SetRel α β) : cgraph (fun a ↦ R.inv.ball a) = R := rfl
+
+@[gcongr]
+theorem cgraph_subset_cgraph (h : f ≤ g) : cgraph f ⊆ cgraph g := fun _ hb ↦ h _ hb
+
+@[simp] theorem cgraph_subset_cgraph_iff : cgraph f ⊆ cgraph g ↔ f ≤ g :=
+  ⟨fun h _ _ hb ↦ h (mem_cgraph.2 hb), cgraph_subset_cgraph⟩
+
+/-- Correspondences are relations: the graph of a correspondence is an order isomorphism, whose
+inverse sends a relation to the correspondence of each point to the points it relates to. -/
+def cgraphOrderIso : (α → Set β) ≃o SetRel α β where
+  toFun := cgraph
+  invFun R a := R.inv.ball a
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_rel_iff' := cgraph_subset_cgraph_iff
+
+@[simp] theorem coe_cgraphOrderIso : ⇑(cgraphOrderIso : (α → Set β) ≃o SetRel α β) = cgraph :=
+  rfl
+
+@[simp] theorem cgraphOrderIso_symm_apply (R : SetRel α β) (a : α) :
+    cgraphOrderIso.symm R a = R.inv.ball a := rfl
+
+theorem isRefl_cgraph_iff {f : α → Set α} : (cgraph f).IsRefl ↔ ∀ a, a ∈ f a :=
+  ⟨fun h ↦ h.refl, fun h ↦ ⟨h⟩⟩
+
+theorem isSymm_cgraph_iff {f : α → Set α} : (cgraph f).IsSymm ↔ ∀ a, ∀ b ∈ f a, a ∈ f b :=
+  ⟨fun h a b hb ↦ h.symm a b hb, fun h ↦ ⟨fun a b hb ↦ h a b hb⟩⟩
+
+theorem isTrans_cgraph_iff {f : α → Set α} : (cgraph f).IsTrans ↔ ∀ a, ∀ b ∈ f a, f b ⊆ f a :=
+  ⟨fun h a b hb c hc ↦ h.trans a b c hb hc, fun h ↦ ⟨fun a b _ hb hc ↦ h a b hb hc⟩⟩
 
 /-! ### Transitive closure -/
 
-/-- The transitive closure of a relation. -/
-def transGen (R : SetRel α α) : SetRel α α := {p | Relation.TransGen (· ~[R] ·) p.1 p.2}
+/-- The transitive closure of a relation, as a closure operator: the closed relations are the
+transitive ones. -/
+def transGen : ClosureOperator (SetRel α α) :=
+  .ofPred (fun R ↦ {p | Relation.TransGen (· ~[R] ·) p.1 p.2}) SetRel.IsTrans
+    (fun _ _ h ↦ .single h) (fun _ ↦ ⟨fun _ _ _ ↦ Relation.TransGen.trans⟩)
+    (fun _ S h hS ⟨a, b⟩ hab ↦ haveI := hS
+      Relation.transGen_minimal (r' := (· ~[S] ·)) (fun _ _ h' ↦ h h') a b hab)
 
 variable {R : SetRel α α} {s : Set α}
 
-@[simp] theorem mem_transGen : a ~[R.transGen] b ↔ Relation.TransGen (· ~[R] ·) a b := .rfl
+@[simp, grind =] theorem mem_transGen :
+    a ~[transGen R] b ↔ Relation.TransGen (· ~[R] ·) a b := .rfl
 
-theorem subset_transGen : R ⊆ R.transGen := fun _ h ↦ .single h
+theorem isClosed_transGen_iff : transGen.IsClosed R ↔ R.IsTrans := .rfl
 
-instance : R.transGen.IsTrans where
-  trans _ _ _ := Relation.TransGen.trans
+theorem subset_transGen : R ⊆ transGen R := transGen.le_closure R
 
-theorem core_transGen_subset_core : R.transGen.core s ⊆ R.core s :=
+instance isTrans_transGen : (transGen R).IsTrans := transGen.isClosed_closure R
+
+instance isPreorder_transGen [R.IsRefl] : (transGen R).IsPreorder where
+  refl a := .single (R.refl a)
+  trans _ _ _ := (transGen R).trans
+
+instance isSymm_transGen [R.IsSymm] : (transGen R).IsSymm where
+  symm a b h := by
+    change Relation.TransGen (· ~[R] ·) a b at h
+    induction h with
+    | single h => exact .single (R.symm h)
+    | tail _ h ih => exact Relation.TransGen.head (R.symm h) ih
+
+/-- The transitive closure of `R` is the least transitive relation containing `R`. -/
+theorem transGen_subset_iff {S : SetRel α α} [S.IsTrans] : transGen R ⊆ S ↔ R ⊆ S :=
+  ClosureOperator.IsClosed.closure_le_iff (isClosed_transGen_iff.2 inferInstance)
+
+@[gcongr]
+theorem transGen_mono {R₁ R₂ : SetRel α α} (h : R₁ ⊆ R₂) : transGen R₁ ⊆ transGen R₂ :=
+  transGen.monotone h
+
+@[simp] theorem transGen_eq_self [R.IsTrans] : transGen R = R :=
+  ClosureOperator.IsClosed.closure_eq (isClosed_transGen_iff.2 inferInstance)
+
+theorem core_transGen_subset_core : (transGen R).core s ⊆ R.core s :=
   core_subset_core_left subset_transGen
 
-theorem core_transGen : R.transGen.core s = ⋂ n, R.core^[n + 1] s := by
+theorem core_transGen : (transGen R).core s = ⋂ n, R.core^[n + 1] s := by
   ext a
   simp only [Set.mem_iInter]
   refine ⟨fun h n ↦ ?_, fun h b hab ↦ ?_⟩
@@ -185,43 +318,5 @@ theorem core_transGen : R.transGen.core s = ⋂ n, R.core^[n + 1] s := by
       obtain ⟨n, hn⟩ := ih
       exact ⟨n + 1, fun t ht ↦ hn (R.core t)
         (by rwa [Function.iterate_succ_apply] at ht) hbc⟩
-
-/-! ### Restriction of the range -/
-
-section RestrictRange
-
-variable {α β : Type*} {R S : SetRel α β} {t u : Set β}
-
-/-- `R.restrictRange t` keeps the pairs of `R` that end in `t`: the composition of `R` with the
-test of `t`. -/
-def restrictRange (R : SetRel α β) (t : Set β) : SetRel α β := {p | p ∈ R ∧ p.2 ∈ t}
-
-@[simp] theorem mem_restrictRange {p : α × β} : p ∈ R.restrictRange t ↔ p ∈ R ∧ p.2 ∈ t := .rfl
-
-theorem restrictRange_subset : R.restrictRange t ⊆ R := fun _ h ↦ h.1
-
-theorem restrictRange_mono (h : t ⊆ u) : R.restrictRange t ⊆ R.restrictRange u :=
-  fun _ hp ↦ ⟨hp.1, h hp.2⟩
-
-theorem restrictRange_restrictRange :
-    (R.restrictRange t).restrictRange u = R.restrictRange (t ∩ u) :=
-  Set.ext fun _ ↦ and_assoc
-
-/-- The restriction is the greatest relation inside `R` all of whose pairs end in `t`. -/
-theorem subset_restrictRange_iff : S ⊆ R.restrictRange t ↔ S ⊆ R ∧ S.core t = Set.univ :=
-  ⟨fun h ↦ ⟨fun _ hp ↦ (h hp).1, Set.eq_univ_of_forall fun _ _ hb ↦ (h hb).2⟩,
-    fun h p hp ↦ ⟨h.1 hp, Set.eq_univ_iff_forall.1 h.2 p.1 hp⟩⟩
-
-theorem restrictRange_eq_self : R.restrictRange t = R ↔ R.core t = Set.univ :=
-  ⟨fun h ↦ (subset_restrictRange_iff.1 h.ge).2,
-    fun h ↦ restrictRange_subset.antisymm (subset_restrictRange_iff.2 ⟨subset_rfl, h⟩)⟩
-
-/-- Every successor along the restriction to `t` lies in `u` iff every successor along `R` that
-lies in `t` lies in `u`. -/
-theorem core_restrictRange : (R.restrictRange t).core u = R.core (tᶜ ∪ u) :=
-  Set.ext fun _ ↦ ⟨fun h _ hb ↦ or_iff_not_imp_left.2 fun ht ↦ h ⟨hb, not_not.1 ht⟩,
-    fun h _ hb ↦ (h hb.1).resolve_left (not_not.2 hb.2)⟩
-
-end RestrictRange
 
 end SetRel

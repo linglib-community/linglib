@@ -6,12 +6,13 @@ public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
-public import Linglib.Syntax.Gender.AgreementClasses
-public import Linglib.Syntax.Number.Resolve
+public import Linglib.Syntax.Feature.Gender.AgreementClasses
+public import Linglib.Semantics.Plurality.Cardinality
+public import Linglib.Semantics.Plurality.Configuration
 public import Linglib.Syntax.Agreement.ConjunctAgreement
-public import Linglib.Syntax.Agreement.HasPhi
-public import Linglib.Fragments.Bayso.Number
-public import Linglib.Fragments.Teop.Nouns
+public import Linglib.Syntax.Feature.Bundle
+public import Linglib.Languages.Bayso.Number
+public import Linglib.Languages.Teop.Nouns
 public import Studies.Corbett1991
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Corbett2000
@@ -68,9 +69,10 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   Corbett's typology of gender; the Predicate Hierarchy is a linear order on the predicate's
   four sub-positions, and the rows of Table 6.11 are profiles over it.
 * The options for agreement with conjoined noun phrases (§6.5.1) are the substrate's
-  `Agreement.ConjunctAgreement`, which derives the exclusion of the more distant last conjunct
-  (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`). An example fits an option
-  when its target agrees (`HasPhi.Agree`) with the conjunct the option picks or with the resolved
+  `Agreement.ConjunctAgreement`; those found are agreement with the nearest conjunct, with the
+  first and with all, which leaves out the last conjunct when it is the more distant. An
+  example fits an option when its target agrees in φ-features (`Agreement.Bundle.index`) with
+  the conjunct the option picks or with the resolved
   features, all read off the glosses' category labels (`GlossedWord.features`), a conjunct
   whose gloss marks no number being singular; the target's side is read off the order of the
   words.
@@ -79,7 +81,7 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   with the book's readings of them as theorems.
 * Second systems and constructed numbers are represented by what their forms cover; the
   data of Kiowa, Hopi, Rembarrnga and the Slavonic honorifics live here for want of
-  fragments.
+  language files.
 
 ## TODO
 
@@ -522,23 +524,65 @@ theorem teop_inverse :
 
 namespace Rembarrnga
 
-/-- The logical minimum of referents is two for the inclusive and one otherwise. Beside the
-inclusive, the first person of Rembarrnga is the exclusive. -/
-def minimum : Person → ℕ
-  | .firstInclusive => 2
-  | _ => 1
+open Person (Configuration)
 
-/-- In the minimal-augmented analysis of Table 5.18, the form for at least the minimum of
-referents counts those beyond it. -/
-def relative (p : Person) (n : ℕ) : Number :=
-  match n - minimum p with
-  | 0 => .minimal
-  | 1 => .unitAugmented
-  | _ => .augmented
+/-- The traditional analysis of Table 5.17 counts the members of a referent. -/
+def traditional (x : Configuration) : Number :=
+  if x.card ≤ 1 then .singular else if x.card = 2 then .dual
+  else if x.card = 3 then .trial else .plural
+
+/-- The minimal-augmented analysis of Table 5.18 counts the others beyond the logical minimum
+of the referent's person, two members for the speaker with the addressee and one otherwise. -/
+def relative (x : Configuration) : Number :=
+  if x.others ≤ Configuration.minimum x.participants then .minimal
+  else if x.others = Configuration.minimum x.participants + 1 then .unitAugmented
+  else .augmented
 
 theorem unitAugmented_one_more :
-    relative .firstInclusive 3 = relative .firstExclusive 2 ∧
-      Number.fromCard? 3 ≠ Number.fromCard? 2 := by
+    relative ⟨{.speaker, .addressee}, 1⟩ = relative ⟨{.speaker}, 1⟩ ∧
+      traditional ⟨{.speaker, .addressee}, 1⟩ ≠ traditional ⟨{.speaker}, 1⟩ := by
+  decide
+
+theorem relative_eq_minimal_iff {x : Configuration} (hx : x ≠ ⊥) :
+    relative x = .minimal ↔
+      x ∈ Mereology.atomize (Configuration.OfParticipants x.participants) := by
+  have h := Configuration.ne_bot_iff_minimum_le.1 hx
+  rw [Configuration.atomize_ofParticipants_iff, Configuration.ext_iff]
+  simp only [relative, true_and]
+  split_ifs <;> simp <;> omega
+
+theorem relative_eq_unitAugmented_iff {x : Configuration} (hx : x ≠ ⊥) :
+    relative x = .unitAugmented ↔
+      x ∈ Mereology.atomize (Number.Feature.restrict .minimal false
+        (Configuration.OfParticipants x.participants)) := by
+  have h := Configuration.ne_bot_iff_minimum_le.1 hx
+  rw [Configuration.atomize_restrict_minimal_false_ofParticipants_iff, Configuration.ext_iff]
+  simp only [relative, true_and]
+  split_ifs <;> simp <;> omega
+
+/-- Within a person the traditional values determine the minimal-augmented ones: the second
+analysis draws no distinction the first lacks. -/
+theorem relative_eq_of_traditional_eq {x y : Configuration} (hx : x ≠ ⊥) (hy : y ≠ ⊥)
+    (hp : x.participants = y.participants) (h : traditional x = traditional y) :
+    relative x = relative y := by
+  obtain ⟨s, n⟩ := x
+  obtain ⟨t, m⟩ := y
+  obtain rfl : s = t := hp
+  have hs : s.card ≤ 2 := s.card_le_univ
+  have hn := Configuration.ne_bot_iff_minimum_le.1 hx
+  have hm := Configuration.ne_bot_iff_minimum_le.1 hy
+  have hmin : (Configuration.minimum s = 1 ∧ s.card = 0) ∨
+      (Configuration.minimum s = 0 ∧ 1 ≤ s.card) := by
+    rcases s.eq_empty_or_nonempty with rfl | hne
+    · simp
+    · exact Or.inr ⟨Configuration.minimum_of_nonempty hne, Finset.card_pos.2 hne⟩
+  simp only [traditional, relative, Configuration.card] at h ⊢
+  split_ifs at h ⊢ <;> first | rfl | (exfalso; omega)
+
+-- Table 5.17
+theorem traditional_ne_of_relative_eq :
+    relative ⟨{.speaker}, 2⟩ = relative ⟨{.speaker}, 3⟩ ∧
+      traditional ⟨{.speaker}, 2⟩ ≠ traditional ⟨{.speaker}, 3⟩ := by
   decide
 
 end Rembarrnga
@@ -562,6 +606,15 @@ theorem constructed :
     ¬ (sgDuPl.map pronounNumber).Nodup ∧ ¬ (sgDuPl.map verbNumber).Nodup ∧
       (sgDuPl.map fun n ↦ (pronounNumber n, verbNumber n)).Nodup := by
   decide
+
+/-- A referent the pronoun counts as more than one and the verb as at most two is one of two
+members, the `[−atomic, +minimal]` region of its person: the two markers construct the dual. -/
+theorem constructed_iff_dual {x : Person.Configuration} :
+    1 < x.card ∧ x.card ≤ 2 ↔
+      x ∈ Number.Feature.restrict .minimal true (Number.Feature.restrict .atomic false
+        (Person.Configuration.OfParticipants x.participants)) := by
+  rw [Person.Configuration.dual_ofParticipants_iff]
+  exact ⟨fun h ↦ ⟨rfl, by omega⟩, fun h ↦ by omega⟩
 
 end Hopi
 
@@ -612,18 +665,22 @@ theorem bayso_concord_not_injective :
 
 /-- British English *committee* takes syntactic agreement only in attributive position and
 either agreement elsewhere, (19) to (22). -/
-def britishCommittee : Hybrid Position :=
+def britishCommittee : Position → Option Availability :=
   fun | .attributive => some .syntacticOnly | .predicate | .relativePronoun => some .both
       | .personalPronoun => some .both
 
 /-- American English *committee* takes plural agreement rarely in the predicate and admits it
 in the personal pronoun. -/
-def americanCommittee : Hybrid Position :=
+def americanCommittee : Position → Option Availability :=
   fun | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
       | .personalPronoun => some .both | _ => none
 
-theorem committee_respectHierarchy :
-    RespectsHierarchy britishCommittee ∧ RespectsHierarchy americanCommittee := by decide
+theorem committee_monotoneOn :
+    MonotoneOn (fun i ↦ (britishCommittee i).getD .syntacticOnly)
+        {i | (britishCommittee i).isSome} ∧
+      MonotoneOn (fun i ↦ (americanCommittee i).getD .syntacticOnly)
+        {i | (americanCommittee i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; exact ⟨by decide, by decide⟩
 
 /-- Nixon's corpus gives the percentage of plural agreement with corporate nouns by target, the
 pronouns pooling the possessive with the personal. -/
@@ -633,7 +690,8 @@ def nixon : Position → Option ℚ
   | .personalPronoun => some (274 / 10)
   | _ => none
 
-theorem nixon_respectsHierarchy : RespectsHierarchy nixon := by decide +kernel
+theorem nixon_monotoneOn : MonotoneOn (fun i ↦ (nixon i).getD 0) {i | (nixon i).isSome} := by
+  simp only [MonotoneOn, Set.mem_ofPred_eq]; decide +kernel
 
 /-- The varieties of English. -/
 inductive Variety where
@@ -666,16 +724,7 @@ inductive PredicateTarget where
 
 namespace PredicateTarget
 
-/-- The position of a target in the Predicate Hierarchy. -/
-def rank : PredicateTarget → ℕ
-  | .verb => 3
-  | .participle => 2
-  | .adjective => 1
-  | .noun => 0
-
-theorem rank_injective : Function.Injective rank := by decide
-
-instance : LinearOrder PredicateTarget := LinearOrder.lift' rank rank_injective
+instance : LinearOrder PredicateTarget := LinearOrder.lift' PredicateTarget.ctorIdx (by decide)
 
 end PredicateTarget
 
@@ -692,10 +741,6 @@ namespace Honorific
 /-- A row of the table gives the language and its four sub-positions. -/
 def ofRow (language : String) (v p a n : Availability) : Honorific :=
   ⟨language, fun | .verb => v | .participle => p | .adjective => a | .noun => n⟩
-
-/-- By the Predicate Hierarchy, the likelihood of semantic agreement never decreases from the
-verb to the noun. -/
-abbrev Respects (h : Honorific) : Prop := Antitone h.profile
 
 end Honorific
 
@@ -723,7 +768,9 @@ def slavonic : List Honorific :=
     .ofRow "Russian, long-form adjective"
       .syntacticOnly .syntacticOnly .mostlySemantic .semanticOnly]
 
-theorem slavonic_respect : ∀ h ∈ slavonic, h.Respects := by decide
+/-- By the Predicate Hierarchy, the likelihood of semantic agreement never decreases from the
+verb to the noun. -/
+theorem slavonic_monotone : ∀ h ∈ slavonic, Monotone h.profile := by decide
 
 /-! ### Conjoined noun phrases (§6.5) -/
 
@@ -758,37 +805,40 @@ section Fits
 variable (r : Morphology.Features) (d : HeadDirection) (cs : List Morphology.Features)
   (t : Morphology.Features)
 
-/-- A target with the features `t` on side `d` of conjuncts `cs` that resolve to `r` fits the
-option `a` when it agrees with what the option gives it access to: the conjunct it picks, or the
-resolved features under agreement with all (§6.5.1). -/
+/-- A target with the features `t` beside conjuncts `cs` that resolve to `r` fits the option `a`
+when it agrees with what the option gives it access to: the conjunct it picks, or the resolved
+features under agreement with all (§6.5.1). -/
 def Fits : ConjunctAgreement → Prop
-  | .all => HasPhi.Agree t r
-  | a => ∃ x ∈ a.conjuncts d cs, HasPhi.Agree t x
+  | .all => Compat (Bundle.ofFeatures t).index (Bundle.ofFeatures r).index
+  | .single e => ∃ x ∈ (ConjunctAgreement.single e).conjuncts cs,
+      Compat (Bundle.ofFeatures t).index (Bundle.ofFeatures x).index
 
-instance : DecidablePred (Fits r d cs t)
-  | .all => inferInstanceAs (Decidable (HasPhi.Agree t r))
-  | .nearest | .first => inferInstanceAs (Decidable (∃ x ∈ _, _))
+instance : DecidablePred (Fits r cs t)
+  | .all => inferInstanceAs (Decidable (Compat _ _))
+  | .single _ => inferInstanceAs (Decidable (∃ x ∈ _, _))
 
-/-- The target fits the option `a` and no other, unless the nearest and the first conjuncts
-carry the same features, so that the two options are not told apart. -/
+/-- A target on side `d` of the conjuncts fits the option `a` and no other of the options found,
+agreement with the nearest conjunct, with the first and with all, unless the other selects
+conjuncts with the same features. -/
 def FitsOnly (a : ConjunctAgreement) : Prop :=
-  Fits r d cs t a ∧ ∀ b, Fits r d cs t b →
-    b = a ∨ ConjunctAgreement.nearest.conjuncts d cs = ConjunctAgreement.first.conjuncts d cs
+  Fits r cs t a ∧ ∀ b ∈ [.nearest d, .first, .all], Fits r cs t b →
+    b.conjuncts cs = a.conjuncts cs
 
 instance : DecidablePred (FitsOnly r d cs t) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∧ ∀ _, _))
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ ∀ b ∈ [_, _, _], _))
 
 end Fits
 
 /-- Table 6.12 gives the percentage of number resolution with Russian conjoined noun phrases by
 target. -/
-def russianConjoined : Position → Option ℚ
-  | .attributive => some 12
-  | .predicate => some 70
-  | .relativePronoun => some 100
-  | .personalPronoun => some 100
+def russianConjoined : Position → ℚ
+  | .attributive => 12
+  | .predicate => 70
+  | .relativePronoun => 100
+  | .personalPronoun => 100
 
-theorem russianConjoined_respectsHierarchy : RespectsHierarchy russianConjoined := by decide
+theorem russianConjoined_monotone : Monotone russianConjoined := by
+  unfold Monotone; decide
 
 /-- A row of Table 6.13 gives the percentage of plural predicates with conjoined subjects by the
 animacy of the conjuncts and their position relative to the predicate. -/
@@ -917,13 +967,13 @@ def resolved? (row : Datum) : Option Morphology.Features :=
       (.russian, .of (number := number russian)), (.kashubian, .of (number := number russian)),
       (.moroccanArabic, .of (number := number russian))]
 
-/-- Each conjoined example fits the option Corbett names for it, and no other, unless its nearest
-and first conjuncts carry the same features (§6.5.1). -/
+/-- Each conjoined example fits the option Corbett names for it, and no other of the options
+found unless that one selects conjuncts with the same features (§6.5.1). -/
 theorem conjoined_rows : ∀ row ∈ Examples.all,
     ∀ a ∈ row.parse? "conjunctAgreement"
-      [("nearest", ConjunctAgreement.nearest), ("first", .first), ("all", .all)],
+      [("nearest", ConjunctAgreement.nearest), ("first", fun _ ↦ .first), ("all", fun _ ↦ .all)],
     ∃ cs ∈ conjuncts? row, ∃ t ∈ target? row, ∃ d ∈ targetSide? row, ∃ r ∈ resolved? row,
-      FitsOnly r d cs t a := by
+      FitsOnly r d cs t (a d) := by
   decide +kernel
 
 -- (28), (30)
@@ -969,7 +1019,7 @@ theorem hungarian_rows : ∀ row ∈ Examples.all, row.language = .hungarian →
 theorem moroccan_rows : ∀ row ∈ Examples.all, row.language = .moroccanArabic →
     ∃ cs ∈ conjuncts? row, ∃ t ∈ target? row, ∃ d ∈ targetSide? row, ∃ r ∈ resolved? row,
       (row.judgment = .acceptable ↔
-        Fits r d cs t .all ∨ d = .headInitial ∧ Fits r d cs t .nearest) := by
+        Fits r cs t .all ∨ d = .headInitial ∧ Fits r cs t (.nearest d)) := by
   decide +kernel
 
 end Corbett2000

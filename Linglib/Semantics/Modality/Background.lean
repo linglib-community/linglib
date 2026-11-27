@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Minimals
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.Preorder.Finite
@@ -25,14 +26,13 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 * `Background.accessibleWorlds f w`: the worlds verifying every premise of `f w`.
 * `Background.IsRealistic`, `Background.IsTotallyRealistic`, `Background.IsConsistent`.
 * `Background.restrict f α`: `f` with the premise `α` added at every world.
-* `premisePreorder A`, `w ≤[A] z`, `w <[A] z`: the ordering a premise set induces.
-* `bestWorlds f g w`: the minimal worlds accessible under `f` ranked by `g`.
+* `f.bestWorlds g w`: the minimal worlds accessible under `f` ranked by `g`.
 
 ## Implementation notes
 
-* `w ≤[A] z` and `w <[A] z` are notation for the order of `premisePreorder A`. A `DecidableRel`
-  instance on that order would be keyed on every `≤`-goal downstream, so a study that decides a
-  premise ordering supplies a local instance for its own ordering source.
+* The ordering a premise set induces is written `≤[A]`, notation of the scope `PremiseOrdering`.
+  A `DecidableRel` instance on that order would be keyed on every `≤`-goal downstream, so a study
+  that decides a premise ordering supplies a local instance for its own ordering source.
 
 ## References
 
@@ -42,6 +42,8 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Modality
 
@@ -106,18 +108,6 @@ end Background
 
 /-! ### The ordering -/
 
-/-- The preorder that an ordering source induces ranks `w` below `z` when every proposition of `A`
-true at `z` is true at `w`. It is the criteria-derived preorder with truth as satisfaction. -/
-abbrev premisePreorder (A : Set (Set W)) : Preorder W :=
-  Preorder.ofCriteria (· ∈ ·) A
-
-/-- `w ≤[A] z` says that `w` is at least as good as `z` under the ordering source `A`, verifying
-every premise of `A` that `z` verifies. -/
-notation:50 w " ≤[" A "] " z => @LE.le _ (@Preorder.toLE _ (premisePreorder A)) w z
-
-/-- `w <[A] z` says that `w` is strictly better than `z` under the ordering source `A`. -/
-notation:50 w " <[" A "] " z => @LT.lt _ (@Preorder.toLT _ (premisePreorder A)) w z
-
 section Accessible
 
 variable {g : Background W} {w b v : W}
@@ -135,42 +125,38 @@ theorem mem_accessibleWorlds_iff_le (hb : b ∈ g.accessibleWorlds w) :
 
 end Accessible
 
-/-- Adding a premise to an ordering source meets its ordering with the ordering of that premise. -/
-theorem premisePreorder_insert (φ : Set W) (A : Set (Set W)) :
-    premisePreorder (insert φ A) = premisePreorder A ⊓ .ofCriterion (· ∈ φ) :=
-  Preorder.ofCriteria_insert _ φ A
-
 /-! ### Best worlds -/
 
 /-- The best accessible worlds from `w` are the minimal accessible worlds under the ordering
 source at `w`, the members that no other member strictly betters. The dominance form, at least as
 good as every member, is empty on an ordering that is not total, such as Kratzer's
 practical-inference example, so minimality is the faithful reading. Kratzer's official necessity
-is the limit-free `humanNecessity`, the principal filter of this set exactly under the Limit
-Assumption (`humanNecessity_eq_principal`). -/
-def bestWorlds (f g : Background W) (w : W) : Set W :=
-  (premisePreorder (g w)).minimals (f.accessibleWorlds w)
+is the limit-free `Background.necessity`, the principal filter of this set exactly under the Limit
+Assumption (`Background.necessity_eq_principal`). -/
+def Background.bestWorlds (f g : Background W) (w : W) : Set W :=
+  (≤[g w]).minimals (f.accessibleWorlds w)
 
-theorem mem_bestWorlds {f g : Background W} {w u : W} :
-    u ∈ bestWorlds f g w ↔
+theorem Background.mem_bestWorlds {f g : Background W} {w u : W} :
+    u ∈ f.bestWorlds g w ↔
       u ∈ f.accessibleWorlds w ∧ ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] u) → (u ≤[g w] v) :=
   Iff.rfl
 
-@[simp] theorem bestWorlds_bot (f : Background W) (w : W) :
-    bestWorlds f ⊥ w = f.accessibleWorlds w := by
-  simp [bestWorlds]
+@[simp] theorem Background.bestWorlds_bot (f : Background W) (w : W) :
+    f.bestWorlds ⊥ w = f.accessibleWorlds w := by
+  simp [Background.bestWorlds]
 
-theorem bestWorlds_eq_accessibleWorlds_sup {f g : Background W} {w : W}
+theorem Background.bestWorlds_eq_accessibleWorlds_sup {f g : Background W} {w : W}
     (h : ((f ⊔ g).accessibleWorlds w).Nonempty) :
-    bestWorlds f g w = (f ⊔ g).accessibleWorlds w := by
+    f.bestWorlds g w = (f ⊔ g).accessibleWorlds w := by
   rw [Background.accessibleWorlds_sup] at h ⊢
   obtain ⟨b, hbf, hbg⟩ := h
-  rw [bestWorlds, Preorder.minimals_ofCriteria_eq ⟨b, hbf, Background.mem_accessibleWorlds.1 hbg⟩]
+  rw [Background.bestWorlds, Preorder.minimals_ofLowerSets_eq ⟨b, hbf,
+    Background.mem_accessibleWorlds.1 hbg⟩]
   exact Set.ext fun _ ↦ and_congr_right' Background.mem_accessibleWorlds.symm
 
-theorem mem_bestWorlds_insert {f g : Background W} {p q : Set W} {w u : W}
-    (hq : q ∈ g w) (hpq : ∀ v ∈ q, v ∉ p) (hu : u ∈ bestWorlds f g w) (huq : u ∈ q) :
-    u ∈ bestWorlds f (fun v ↦ insert p (g v)) w := by
+theorem Background.mem_bestWorlds_insert {f g : Background W} {p q : Set W} {w u : W}
+    (hq : q ∈ g w) (hpq : ∀ v ∈ q, v ∉ p) (hu : u ∈ f.bestWorlds g w) (huq : u ∈ q) :
+    u ∈ f.bestWorlds (fun v ↦ insert p (g v)) w := by
   refine ⟨hu.1, fun v hv hvu ↦ ?_⟩
   have hvq : v ∈ q := hvu q (Set.mem_insert_of_mem p hq) huq
   intro r hr
@@ -178,9 +164,9 @@ theorem mem_bestWorlds_insert {f g : Background W} {p q : Set W} {w u : W}
   · exact fun hrv ↦ absurd hrv (hpq v hvq)
   · exact hu.2 hv (fun r' hr' ↦ hvu r' (Set.mem_insert_of_mem p hr')) r hr
 
-theorem mem_bestWorlds_of_subset {f f' g : Background W} {w u : W}
-    (h : f'.accessibleWorlds w ⊆ f.accessibleWorlds w) (hu : u ∈ bestWorlds f g w)
-    (hu' : u ∈ f'.accessibleWorlds w) : u ∈ bestWorlds f' g w :=
+theorem Background.mem_bestWorlds_of_subset {f f' g : Background W} {w u : W}
+    (h : f'.accessibleWorlds w ⊆ f.accessibleWorlds w) (hu : u ∈ f.bestWorlds g w)
+    (hu' : u ∈ f'.accessibleWorlds w) : u ∈ f'.bestWorlds g w :=
   Preorder.mem_minimals_of_subset h hu hu'
 
 end Modality

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Slavic.Czech.Phonology
+public import Linglib.Languages.Slavic.Czech.Phonology
 public import Linglib.Data.Wordlist.Short1993
 public import Mathlib.Data.Finset.Card
 
@@ -8,7 +8,8 @@ public import Mathlib.Data.Finset.Card
 # Short (1993): Czech
 
 Short's chapter on Czech in Comrie and Corbett's *The Slavonic Languages* describes the phonemes
-that the Czech phonology fragment gives as segments. This file checks the fragment against the
+that the Czech phonology language file gives as segments. This file checks the language file
+against the
 chapter: the twenty-five consonantal phonemes, the obstruents paired in [voice], the reflexes of
 the second palatalization of velars, and the reading of the spelling on the words the chapter
 prints, against its phonemic transcription where it gives one.

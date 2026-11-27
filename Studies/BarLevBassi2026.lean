@@ -2,14 +2,17 @@ module
 
 public import Studies.GuerriniWehbe2025
 public import Linglib.Semantics.Focus.Polarity
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Data.Examples.BarLevBassi2026
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Gloss
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.English.Pronouns
 
 /-!
 # Bar-Lev and Bassi (2026): Infelicity with homogeneity
@@ -39,7 +42,7 @@ answers, and accommodating it gives [their sentence](##BarLevBassi2026.pexPlural
   predicate at some world.
 * A row holds a plural definite and, as its alternatives, the quantified counterparts the paper
   judges in the same context. The word printed in capitals in an acceptable counterpart shows the
-  background question, by which fragment entry it is: a quantifier or an auxiliary. This is the
+  background question, by which language file entry it is: a quantifier or an auxiliary. This is the
   paper's method of taking the stress of the overt quantifier as the guide to the question.
 
 ## TODO
@@ -73,6 +76,7 @@ answers, and accommodating it gives [their sentence](##BarLevBassi2026.pexPlural
 namespace BarLevBassi2026
 
 open Exhaustification Homogeneity BarLev2021 GuerriniWehbe2025 Presupposition Focus Question
+  Inquisitive Inquisitive.Proposition
 
 /-! ### The homogeneity presupposition and informativity (§2, §3) -/
 
@@ -286,6 +290,7 @@ A plural definite is odd where its quantified counterpart needs stress on the qu
 stress on the counterpart shows the background question, and the plural definite is acceptable
 when the head that question asks to be F-marked is pronounced. -/
 
+attribute [local instance 2000] List.decidableBAll in
 /-- The word a sentence prints in capitals, the bearer of its focal stress. -/
 def stressed? (s : String) : Option (List Char) :=
   (((Gloss.split [' '] s.toList).map Gloss.trim).find? fun t ↦

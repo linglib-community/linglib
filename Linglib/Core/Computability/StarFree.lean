@@ -86,7 +86,9 @@ theorem IsStarFree.of_factorsThrough {β : Type*} {g : List α → β} {n : ℕ}
   have hcls : Function.FactorsThrough L.syntacticClass g := fun _ _ e ↦
     syntacticClass_eq_iff.mpr fun _ _ ↦ iff_of_eq (hL (hg (hg rfl e) rfl))
   refine ⟨Set.finite_univ_iff.mp ?_, n, fun x ↦ ?_⟩
-  · exact L.syntacticClass_surjective.range_eq ▸ hcls.finite_range hfin
+  · refine (hfin.image (Function.extend g L.syntacticClass fun _ ↦ 1)).subset fun x _ ↦ ?_
+    obtain ⟨w, rfl⟩ := L.syntacticClass_surjective x
+    exact ⟨_, Set.mem_range_self w, hcls.extend_apply _ w⟩
   · obtain ⟨w, rfl⟩ := L.syntacticClass_surjective x
     simpa [syntacticClass_flatten] using hcls (hpow w)
 
@@ -107,7 +109,7 @@ theorem not_isStarFree_setOf_even_length [Nonempty α] :
 /-- Star-free languages are closed under inverse homomorphisms of free monoids. -/
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
-    Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
+    Language.IsStarFree {w : List α | (φ (FreeMonoid.ofList w)).toList ∈ L} := by
   have := h.1
   obtain ⟨S, hS⟩ := L.recognizes_toSyntacticMonoid.comap φ
   exact .of_recognizes h.2 _ S (Set.ext_iff.mp hS)

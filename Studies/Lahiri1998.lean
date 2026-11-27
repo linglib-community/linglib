@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Fragments.HindiUrdu.PolarityItems
+public import Linglib.Languages.HindiUrdu.PolarityItems
 public import Linglib.Data.Examples.Lahiri1998
 public import Linglib.Data.Examples.Readers
 
@@ -106,17 +106,16 @@ alternative entails the assertion of the weakest indefinite. -/
 theorem ue_clash (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) :=
   let ⟨P, hP⟩ := hPs
-  not_evenPresup_of_subset hμ ⟨P, hP, rfl⟩ (exist_subset_exist_top P)
+  not_evenPresup_image hμ hP (exist_subset_exist_top P)
 
 /-- Under a downward-entailing operator the scalar presupposition of *bhii* is satisfiable, holding
 exactly when no alternative is as likely as the assertion. -/
 theorem de_presup (hμ : Monotone μ) {Q : Set World → Set World} (hQ : Antitone Q) :
     evenPresup μ (Q (exist ⊤ φ)) (Q '' alternatives Ps φ) ↔
       ∀ P ∈ Ps, μ (Q (exist ⊤ φ)) ≠ μ (Q (exist P φ)) := by
-  rw [evenPresup_iff_ne hμ]
-  · simp [alternatives, Set.image_image]
-  · simp only [alternatives, Set.image_image, Set.forall_mem_image]
-    exact fun P _ ↦ hQ (exist_subset_exist_top P)
+  rw [alternatives, Set.image_image]
+  exact evenPresup_image_iff_ne (S := fun P ↦ Q (exist P φ)) hμ fun P _ ↦
+    hQ (exist_subset_exist_top P)
 
 theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) ∧
@@ -189,7 +188,7 @@ inductive Alternatives where
   | property
   deriving DecidableEq, Repr
 
-/-- A row is a judged example, recording its environment, the fragment entry of its item with
+/-- A row is a judged example, recording its environment, the language file entry of its item with
 the alternatives it introduces, and the judgment. -/
 structure Row where
   env : Environment
@@ -197,7 +196,7 @@ structure Row where
   alternatives : Alternatives
   judgment : Judgment
 
-/-- The fragment entry of a row's item, with its alternatives; the paper does not classify
+/-- The language file entry of a row's item, with its alternatives; the paper does not classify
 *kabhii bhii* 'ever', read here with the property alternatives of *koii* and *kuch*. -/
 noncomputable def item? (r : Datum) : Option (PolarityItem × Alternatives) :=
   r.parse? "npi" [("koii bhii", (koiiBhii, .property)), ("koi bhii", (koiiBhii, .property)),

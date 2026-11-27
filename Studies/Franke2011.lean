@@ -18,6 +18,9 @@ public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.Franke2011
 public import Linglib.Pragmatics.Probabilistic.Literal
+public import Linglib.Pragmatics.SignalingGame.Equilibrium
+public import Linglib.Pragmatics.SignalingGame.BestResponse
+public import Linglib.Pragmatics.SignalingGame.Pure
 
 /-!
 # Franke (2011): Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation
@@ -41,12 +44,15 @@ fixed points are perfect Bayesian equilibria.
 * In the probabilistic model a player type is a set of pure strategies, and the unbiased belief
   in it is the kernel `unbiased` that is uniform over its choices. The prior is a measure, the
   expected gain is the probability that the receiver guesses the state, and the posterior after a
-  message of a pure sender, as in the Nash equilibria of §7, is the prior conditioned on the
-  states that send it. The truth filter of (117) and (122) is applied by maximising over true
-  messages and reading an unsent message literally, which agrees with the paper along every
-  chain. After a sent message the receiver keeps the states most probable for the Bayesian
-  listener of the unbiased belief in the sender type
+  message of a pure sender is the prior conditioned on the states that send it. The truth filter
+  of (117) and (122) is applied by maximising over true messages and reading an unsent message
+  literally, which agrees with the paper along every chain. After a sent message the receiver keeps
+  the states most probable for the Bayesian listener of the unbiased belief in the sender type
   (`receiverResponse_eq_argmax_listener`).
+* An interpretation game is the guessing game at its prior (`InterpGame.toSignalingGame`), and a
+  pure Nash equilibrium is `SignalingGame.IsEquilibrium` of its utilities at every state. It
+  holds exactly when the receiver's guess undoes the sender's message
+  (`InterpGame.isNashEquilibrium_iff_leftInverse`).
 * (83) refines by the prior the literal reading of a message nobody sends; the probabilistic
   model and Figure 16 leave it unrefined, as here. Condition (132) is stated with the inequality
   its proof needs; the paper prints it reversed.
@@ -110,28 +116,49 @@ theorem mem_trueMessages [Fintype M] {t : T} {m : M} :
     m ∈ G.trueMessages t ↔ G.meaning m t := by
   simp [trueMessages]
 
-/-- A pure profile is a Nash equilibrium (§7) when no message would get a state guessed that its
-own message does not, and after every message the receiver guesses a most probable state of the
-posterior, the prior conditioned on the states that send it. -/
-def IsNashEquilibrium [Fintype T] (σ : T → M) (ρ : M → T) : Prop :=
-  (∀ t m, ρ m = t → ρ (σ t) = t) ∧ ∀ m, ρ m ∈ univ.argmax fun t ↦ G.prior[|σ ⁻¹' {m}] {t}
+/-- The signaling game of an interpretation game: the guessing game at its prior. -/
+noncomputable def toSignalingGame : SignalingGame T M T := .guess G.prior
 
-theorem isNashEquilibrium_of_leftInverse [Fintype T] [MeasurableSingletonClass T]
-    [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0) {σ : T → M} {ρ : M → T}
-    (h : LeftInverse ρ σ) : G.IsNashEquilibrium σ ρ := by
-  refine ⟨fun t _ _ ↦ h t, fun m ↦ ?_⟩
-  by_cases hm : ∃ t, σ t = m
-  · obtain ⟨t, rfl⟩ := hm
-    have hpre : σ ⁻¹' {σ t} = {t} := Set.ext fun s ↦ by simp [h.injective.eq_iff]
-    have := cond_isProbabilityMeasure (μ := G.prior) (hprior t)
-    rw [hpre, h t]
-    refine mem_argmax.mpr ⟨mem_univ t, fun s _ ↦ ?_⟩
-    rw [cond_apply_self (hprior t) (measure_ne_top _ _)]
-    exact prob_le_one
-  · rw [show σ ⁻¹' {m} = ∅ from Set.eq_empty_of_forall_notMem fun s hs ↦ hm ⟨s, hs⟩, cond_empty]
-    exact mem_argmax.mpr ⟨mem_univ _, fun _ _ ↦ le_rfl⟩
+instance [IsFiniteMeasure G.prior] : IsFiniteMeasure G.toSignalingGame.prior := ‹_›
 
 end InterpGame
+
+/-! ### Nash equilibria
+
+In an interpretation game the receiver guesses the state and both players gain `1` when the guess
+is right, so the game is the guessing game at its prior. A pure strategy profile is a Nash
+equilibrium when, at every state, neither player gains by another strategy. -/
+
+section Nash
+
+universe u
+
+variable {T M : Type u} [MeasurableSpace T] (G : InterpGame T M) {σ : T → M} {ρ : M → T}
+
+/-- A pure strategy profile is a Nash equilibrium when at every state neither player gains by
+changing strategy alone. -/
+def InterpGame.IsNashEquilibrium (σ : T → M) (ρ : M → T) : Prop :=
+  ∀ t, SignalingGame.IsEquilibrium (G.toSignalingGame.utilityAt t) (SignalingGame.profile σ ρ)
+
+/-- A pure strategy profile is a Nash equilibrium exactly when the receiver's guess undoes the
+sender's message. -/
+theorem InterpGame.isNashEquilibrium_iff_leftInverse :
+    G.IsNashEquilibrium σ ρ ↔ LeftInverse ρ σ := by
+  refine ⟨fun h t ↦ ?_, fun h t b x ↦ ?_⟩
+  · have := h t true fun _ ↦ t
+    by_contra hne
+    simp [SignalingGame.utilityAt, InterpGame.toSignalingGame, SignalingGame.guess,
+      SignalingGame.profile, hne] at this
+    norm_num at this
+  · have h1 : G.toSignalingGame.utilityAt t b (SignalingGame.profile σ ρ) = 1 := by
+      cases b <;> simp [SignalingGame.utilityAt, InterpGame.toSignalingGame, SignalingGame.guess,
+        h t]
+    rw [h1]
+    cases b <;> simp only [SignalingGame.utilityAt, InterpGame.toSignalingGame,
+      SignalingGame.guess] <;> exact Set.indicator_le_self' (fun _ _ ↦ zero_le_one) _ |>.trans
+        (by simp)
+
+end Nash
 
 /-! ### Interpretation games from belief-value tables
 
@@ -443,10 +470,8 @@ select the implicature (§7). -/
 theorem isNashEquilibrium_scalar_and_reversed :
     game.IsNashEquilibrium scalarSender scalarReceiver ∧
       game.IsNashEquilibrium reversedSender reversedReceiver :=
-  ⟨game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl,
-    game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl⟩
+  ⟨game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl,
+    game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl⟩
 
 /-- Both chains reach the attested play at their first sophisticated level and stay there, so
 "some" conveys not-all. -/
@@ -529,10 +554,8 @@ def crossedReceiver : Message → State
 theorem isNashEquilibrium_freeChoice_and_crossed :
     game.IsNashEquilibrium freeChoiceSender freeChoiceReceiver ∧
       game.IsNashEquilibrium crossedSender crossedReceiver :=
-  ⟨game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl,
-    game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
-      fun t ↦ by cases t <;> rfl⟩
+  ⟨game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl,
+    game.isNashEquilibrium_iff_leftInverse.2 fun t ↦ by cases t <;> rfl⟩
 
 /-- Both chains reach the free choice play at level 4 (Figure 7), where it is a fixed point. -/
 theorem free_choice :
@@ -1159,6 +1182,23 @@ theorem receiverResponse_eq_argmax_listener [IsFiniteMeasure G.prior] {S : T →
   simp only [mem_argmax, mem_univ, true_and]
   exact forall_congr' fun t' ↦ by rw [← not_lt, ← not_lt, RSA.listener_real_singleton_lt_iff]
 
+/-- After a message some state sends, the receiver's response is his best response, in the
+guessing game of the interpretation game, to the unbiased belief in the sender type. -/
+theorem coe_receiverResponse_eq_receiverBestResponses [Nonempty T] [IsFiniteMeasure G.prior]
+    (hprior : ∀ t, G.prior {t} ≠ 0) {S : T → Finset M} {m : M} (hm : inverse S m ≠ ∅) :
+    (receiverResponse G S m : Set T) = G.toSignalingGame.receiverBestResponses (unbiased S) m := by
+  obtain ⟨t₀, ht₀⟩ := nonempty_iff_ne_empty.mpr hm
+  have hpos : (unbiased S ∘ₘ G.prior) {m} ≠ 0 :=
+    (Measure.comp_apply_singleton_ne_zero_iff _ _).2
+      ⟨t₀, hprior t₀, fun h ↦ (unbiased_real_pos_iff.2 (mem_inverse.1 ht₀)).ne'
+        (by rw [measureReal_def, h, ENNReal.toReal_zero])⟩
+  rw [receiverResponse_eq_argmax_listener hm]
+  ext t
+  rw [mem_coe, mem_argmax, RSA.listener_apply_eq_posterior G.prior (unbiased S) hpos]
+  have key := SignalingGame.mem_receiverBestResponses_guess_iff (M := M) G.prior (unbiased S)
+    (m := m) (s := t)
+  exact ⟨fun h ↦ key.2 fun t' ↦ h.2 t' (mem_univ _), fun h ↦ ⟨mem_univ _, fun t' _ ↦ key.1 h t'⟩⟩
+
 /-! ### Theorems 1 and 2: the light system is the heavy system with flat or near-flat priors -/
 
 -- (76), (129)
@@ -1625,14 +1665,14 @@ variable {G : InterpGame T M}
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
 theorem satisfied_alternatives_subset_iff {t' t : T} :
-    Preorder.satisfied (· ∈ ·) (alternatives G) t' ⊆ Preorder.satisfied (· ∈ ·) (alternatives G) t ↔
+    {a ∈ (alternatives G) | t' ∈ a} ⊆ {a ∈ (alternatives G) | t ∈ a} ↔
       G.trueMessages t' ⊆ G.trueMessages t := by
-  simp only [Set.subset_def, Preorder.mem_satisfied, and_imp, alternatives, Set.forall_mem_range,
+  simp only [Set.subset_def, Set.mem_ofPred_eq, and_imp, alternatives, Set.forall_mem_range,
     Set.mem_range_self, true_and, Set.mem_ofPred_eq, subset_iff, InterpGame.mem_trueMessages]
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
 theorem satisfied_alternatives_ssubset_iff {t' t : T} :
-    Preorder.satisfied (· ∈ ·) (alternatives G) t' ⊂ Preorder.satisfied (· ∈ ·) (alternatives G) t ↔
+    {a ∈ (alternatives G) | t' ∈ a} ⊂ {a ∈ (alternatives G) | t ∈ a} ↔
       G.trueMessages t' ⊂ G.trueMessages t := by
   simp only [ssubset_iff_subset_not_subset, satisfied_alternatives_subset_iff]
 
@@ -1688,12 +1728,12 @@ variable {W : Type*} (ALT : Set (Set W)) (φ : Set W)
 /-- `A` is monotonically determined by the alternatives when, whenever every alternative true at
 `w` is true at `v`, `A` at `w` forces `A` at `v`. -/
 def MonotoneDetermined (A : Set W) : Prop :=
-  ∀ w v, Preorder.satisfied (· ∈ ·) ALT w ⊆ Preorder.satisfied (· ∈ ·) ALT v → w ∈ A → v ∈ A
+  ∀ w v, {a ∈ ALT | w ∈ a} ⊆ {a ∈ ALT | v ∈ a} → w ∈ A → v ∈ A
 
 theorem satisfied_insert_subset_iff_of_monotoneDetermined {A : Set W}
     (hA : MonotoneDetermined ALT A) {w v : W} :
-    Preorder.satisfied (· ∈ ·) (insert A ALT) w ⊆ Preorder.satisfied (· ∈ ·) (insert A ALT) v ↔
-      Preorder.satisfied (· ∈ ·) ALT w ⊆ Preorder.satisfied (· ∈ ·) ALT v := by
+    {a ∈ (insert A ALT) | w ∈ a} ⊆ {a ∈ (insert A ALT) | v ∈ a} ↔
+      {a ∈ ALT | w ∈ a} ⊆ {a ∈ ALT | v ∈ a} := by
   refine ⟨fun h a ⟨ha, hwa⟩ ↦ ⟨ha, (h ⟨Set.mem_insert_of_mem _ ha, hwa⟩).2⟩,
     fun h a ⟨ha, hwa⟩ ↦ ⟨ha, ?_⟩⟩
   rcases ha with rfl | ha
@@ -1702,8 +1742,8 @@ theorem satisfied_insert_subset_iff_of_monotoneDetermined {A : Set W}
 -- Fact 2
 theorem satisfied_insert_ssubset_iff_of_monotoneDetermined {A : Set W}
     (hA : MonotoneDetermined ALT A) {w v : W} :
-    Preorder.satisfied (· ∈ ·) (insert A ALT) w ⊂ Preorder.satisfied (· ∈ ·) (insert A ALT) v ↔
-      Preorder.satisfied (· ∈ ·) ALT w ⊂ Preorder.satisfied (· ∈ ·) ALT v := by
+    {a ∈ (insert A ALT) | w ∈ a} ⊂ {a ∈ (insert A ALT) | v ∈ a} ↔
+      {a ∈ ALT | w ∈ a} ⊂ {a ∈ ALT | v ∈ a} := by
   simp only [ssubset_iff_subset_not_subset,
     satisfied_insert_subset_iff_of_monotoneDetermined ALT hA]
 
@@ -1714,10 +1754,10 @@ theorem exhMW_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined 
 
 -- Fact 2
 theorem not_satisfied_ssubset_insert_compl :
-    Preorder.satisfied (· ∈ ·) ({{true}} : Set (Set Bool)) false ⊂
-        Preorder.satisfied (· ∈ ·) {{true}} true ∧
-      ¬ Preorder.satisfied (· ∈ ·) ({{false}, {true}} : Set (Set Bool)) false ⊂
-        Preorder.satisfied (· ∈ ·) {{false}, {true}} true := by
+    {a ∈ ({{true}} : Set (Set Bool)) | false ∈ a} ⊂
+        {a ∈ ({{true}} : Set (Set Bool)) | true ∈ a} ∧
+      ¬ {a ∈ ({{false}, {true}} : Set (Set Bool)) | false ∈ a} ⊂
+        {a ∈ ({{false}, {true}} : Set (Set Bool)) | true ∈ a} := by
   refine ⟨⟨fun a ⟨ha, h⟩ ↦ ?_, fun h ↦ Bool.false_ne_true (h ⟨rfl, rfl⟩).2⟩,
     fun h ↦ Bool.noConfusion (h.1 ⟨Set.mem_insert _ _, rfl⟩).2⟩
   obtain rfl := ha
@@ -1761,7 +1801,7 @@ def alt₂ : Set (Set (Bool × Bool)) := insert (A ∩ B) alt₁
 
 theorem exhMW_alt₁ : exhMW alt₁ (A ∪ B) = {(true, false), (false, true)} := by
   ext ⟨a, b⟩
-  simp only [mem_exhMW, MinimalFor, Set.subset_def, Preorder.mem_satisfied, alt₁,
+  simp only [mem_exhMW, MinimalFor, Set.subset_def, Set.mem_ofPred_eq, alt₁,
     Set.mem_insert_iff, Set.mem_singleton_iff, A, B, Set.mem_union, Set.mem_ofPred_eq,
     Prod.forall, Bool.forall_bool, Prod.mk.injEq]
   cases a <;> cases b <;> simp

@@ -65,6 +65,8 @@ Figure 6 is thus committed as after an assertion but only dependently (`figure6_
 
 @[expose] public section
 
+open Inquisitive
+
 namespace Faller2019
 
 open Commitment Filter
@@ -144,7 +146,7 @@ theorem assert_discourseCommitments :
 
 theorem assert_evid : ((.adequate, a), φ) ∈ (K.assert φ a).evid := Set.mem_insert _ _
 
-theorem assert_stack : (K.assert φ a).stack = Question.ofSet φ :: K.stack := rfl
+theorem assert_stack : (K.assert φ a).stack = Inquisitive.Proposition.ofSet φ :: K.stack := rfl
 
 theorem assert_commonGround : (K.assert φ a).commonGround = K.commonGround := rfl
 
@@ -187,7 +189,7 @@ theorem reportative_evid_adequate (c : A) :
     (K.reportative φ a p).evid.contents (.adequate, c) = K.evid.contents (.adequate, c) :=
   State.contents_insert_of_ne (by simp)
 
-theorem reportative_stack : (K.reportative φ a p).stack = Question.ofSet φ :: K.stack := rfl
+theorem reportative_stack : (K.reportative φ a p).stack = Proposition.ofSet φ :: K.stack := rfl
 
 theorem not_discourseCommitments_reportative_empty (h : a ≠ p) :
     φ ∉ ((empty : DS A W).reportative φ a p).discourseCommitments a := by
@@ -218,7 +220,7 @@ theorem denial_discourseCommitments_animator (h : a ≠ p) :
     reportative_discourseCommitments_animator _ _ _ _ h]
 
 /-- The denial replaces `φ` on the Table by `φᶜ` (37). -/
-theorem denial_stack : (K.denial φ a p).stack = Question.ofSet φᶜ :: K.stack := rfl
+theorem denial_stack : (K.denial φ a p).stack = Inquisitive.Proposition.ofSet φᶜ :: K.stack := rfl
 
 theorem denial_evid : ((.reportative, a), φ) ∈ (K.denial φ a p).evid ∧
     ((.bpg, a), φᶜ) ∈ (K.denial φ a p).evid :=
@@ -249,7 +251,7 @@ theorem figure6_discourseCommitments_eq_assert (h : a ≠ p) :
 /-- After the animator's commitment, `φ` is still on the Table and the common ground is unchanged,
 since `φ` is now only proposed for it (Figure 6). -/
 theorem figure6_stack :
-    ((K.reportative φ a p).collaborate φ a).stack = Question.ofSet φ :: K.stack ∧
+    ((K.reportative φ a p).collaborate φ a).stack = Inquisitive.Proposition.ofSet φ :: K.stack ∧
       ((K.reportative φ a p).collaborate φ a).commonGround = K.commonGround :=
   ⟨rfl, rfl⟩
 

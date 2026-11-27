@@ -186,7 +186,7 @@ theorem superoptimalSet_beSmall [LinearOrder T] [WellFoundedLT T] (hv : StrictMo
 theorem stage_three_beSmall :
     stage univ (beSmall (Fin.val : Fin 3 → ℕ)) 3 =
       superoptimalSet univ (beSmall (Fin.val : Fin 3 → ℕ)) := by
-  rw [stage_beSmall Fin.val_injective (by simp [Fin.range_val, isLowerSet_Iio]),
+  rw [stage_beSmall Fin.val_injective (by simp [Fin.range_val, IsLowerSet.Iio]),
     superoptimalSet_beSmall Fin.val_strictMono]
   ext ⟨a, b⟩
   simp only [mem_ofPred_eq, mem_diagonal_iff, Fin.is_lt, and_true]

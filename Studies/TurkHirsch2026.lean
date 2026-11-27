@@ -3,11 +3,14 @@ module
 public import Mathlib.Data.Set.Lattice.Image
 public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.Alternatives.Structural
-public import Linglib.Semantics.Questions.HamblinSet
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Negation.Polarity
-public import Linglib.Fragments.Turkish.QuestionParticles
+public import Linglib.Languages.Turkish.QuestionParticles
 public import Linglib.Data.Examples.TurkHirsch2026
 
 /-!
@@ -44,7 +47,8 @@ without any bound, `Tree.alternatives_withAlternatives_subset`.
 
 Propositions are sets of worlds. Σ and NEG are the positive and the negative `Polarity`, and
 denote its action on propositions, the identity and complementation. The deontic modal is
-truth at the best worlds, `Modality.bestWorlds`, of a modal base and an ordering source. The
+truth at the best worlds, `Modality.Background.bestWorlds`, of a modal base and an ordering
+source. The
 lexicon is a finite set of
 terminals of `PhraseStructure.Tree`, so that category match is the terminal clause of
 `Tree.withAlternatives`; the denotation of a tree is its terminal's operator and the identity
@@ -72,7 +76,7 @@ as rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch
 
 namespace TurkHirsch2026
 
-open Modality Question PhraseStructure
+open Modality Question Inquisitive Inquisitive.Proposition PhraseStructure
 
 /-! ### The polar morphemes and the deontic modal -/
 
@@ -97,7 +101,7 @@ and NEG complementation, and the deontic modal is necessity over the modal base 
 source. -/
 def Word.den : Word → Set W → Set W
   | .polarity s => (s • ·)
-  | .deontic => fun p ↦ {w | bestWorlds f g w ⊆ p}
+  | .deontic => fun p ↦ {w | f.bestWorlds g w ⊆ p}
 
 /-- A tree denotes its terminal's operator, and the identity elsewhere. -/
 def den : Tree Cat Word → Set W → Set W
@@ -223,8 +227,8 @@ theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p
   refine ⟨⟨Set.mem_insert_of_mem _ rfl, hw⟩, ?_⟩
   rintro q ⟨rfl | rfl, hwq⟩ <;> [exact absurd hwq hw; exact le_rfl]
 
-/-- *=mI* is obligatory in polar questions such as (4), as the fragment records. -/
-example : Turkish.QuestionParticles.mi.distribution .polar .matrix = some .obligatory := rfl
+/-- *=mI* is obligatory in polar questions such as (4), as the language file records. -/
+example : Turkish.QuestionParticles.mi.distribution (.polar, .matrix) = some .obligatory := rfl
 
 open Turkish.Phonology in
 /-- In its default position in (4), *=mI* follows the markers of the predicate *uyu-du*. -/
@@ -232,5 +236,12 @@ example : ∃ t ∈ Examples.ex_4.glossedTokens,
     ofSegmented? t.1 = some (Turkish.realize [u, y, u] (Turkish.QuestionParticles.mi.insert
       [⟨_, .di⟩, ⟨_, .person .one (.personNumber .third .singular)⟩])) := by
   decide
+
+/-- *=mI* follows the focus of its question, where the atlas codes the Turkish question particle
+as final. -/
+theorem mi_anchor :
+    Turkish.QuestionParticles.mi.anchor = .focus .after ∧
+      Data.WALS.F92A.allData.lookup "tur" = some .final := by
+  decide +kernel
 
 end TurkHirsch2026

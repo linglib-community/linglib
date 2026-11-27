@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Pragmatics.NeoGricean.Basic
-public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Questions.Hamblin.Closure
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Data.Examples.Fox2007
 public import Mathlib.Order.OrderIsoNat
@@ -192,7 +192,8 @@ theorem notMem : w ∉ ({s, n, e} : Set (Set W)) := by
 theorem exhMW_eq : exhMW {w, s, n, e} w = symmDiff s n := by
   obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, -⟩ := h
   ext u
-  simp only [mem_exhMW, MinimalFor, Preorder.satisfied_subset_iff, Preorder.ofCriteria_le_iff,
+  simp only [mem_exhMW, MinimalFor, ← Preorder.ofLowerSets_le_iff_subset]
+  simp only [Preorder.ofLowerSets_le_iff,
     mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq, Set.mem_symmDiff, mem_union]
   refine ⟨fun ⟨hu, hmin⟩ ↦ by_contra fun hc ↦ han ((hmin (Or.inl has) ⟨fun _ ↦ hu,
     fun _ ↦ by tauto, fun h' ↦ (han h').elim, fun h' ↦ (han (hn h')).elim⟩).2.2.1 (by tauto)), ?_⟩
@@ -438,8 +439,8 @@ theorem free_choice_hornAlt (hfc : ((O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b
     exhIter (hornAlt O O' a b) 2 (O (a ⊔ b)) = (O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
   have hl := exhIE_hornAlt_left hO hO' ha
   have hr : exhIE (hornAlt O O' a b) (O b) = O b \ (O a ∪ O' (a ⊔ b)) := by
-    rw [← hornAlt_comm, ← sup_comm]
-    exact exhIE_hornAlt_left hO hO' (by rwa [sup_comm])
+    rw [← hornAlt_comm, ← sup_comm b a]
+    exact exhIE_hornAlt_left hO hO' (by rwa [sup_comm b a])
   obtain ⟨x, hx⟩ := ha
   obtain ⟨y, hy⟩ := hb
   have hxy : O a ≠ O (a ⊔ b) := fun h' ↦ hy.2 (Or.inl (h' ▸ hO le_sup_right hy.1))
@@ -776,7 +777,7 @@ end Sauerland
 
 section Hamblin
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 
 variable {ι : Type*} {a : ι → Set W} (ha : Irredundant a)
 include ha

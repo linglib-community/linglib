@@ -31,15 +31,13 @@ of Appl's own complement.
 ## Main results
 
 * `Minimalist.Appl.Site.low_or_affected_or_high`: every site in a nonempty structure has a type.
-* `Minimalist.Appl.Site.embeds_of_isWellFormed`: the selector embeds the complement head.
-* `Minimalist.Appl.Site.not_affected_of_state`: no affected applicative is under a state.
 
 ## Implementation notes
 
 Cuervo defines the affected applicative as one taking a stative vP. Any site with two neighbours
-counts as affected here, as her remark on causatives embedding an activity or a change has it;
-under a change the complement is a state by well-formedness. Pylkkänen's high applicative takes a
-VP and Cuervo's a vP, so the category of Appl's complement is left to the studies.
+counts as affected here, as her remark on causatives embedding an activity or a change has it.
+Pylkkänen's high applicative takes a VP and Cuervo's a vP, so the category of Appl's complement is
+left to the studies.
 
 ## References
 
@@ -104,9 +102,6 @@ instance : DecidablePred Low := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred High := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred Affected := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The head that merges at the site, given the relation a low one establishes. -/
-def head (r : LowRelation) : Head := if s.Low then .low r else .high
-
 /-- The sites in the structure `l`, from the highest. -/
 def all (l : List LittleV) : List Site :=
   (List.range (l.length + 1)).map fun i ↦ ⟨l.take i, l.drop i⟩
@@ -121,12 +116,6 @@ theorem Affected.not_low (h : s.Affected) : ¬ s.Low := h.2
 
 theorem Affected.not_high (h : s.Affected) : ¬ s.High := h.1
 
-theorem head_eq_low_iff : s.head r = .low r ↔ s.Low := by
-  unfold head; split_ifs <;> simp_all
-
-theorem head_eq_high_iff : s.head r = .high ↔ ¬ s.Low := by
-  unfold head; split_ifs <;> simp_all
-
 /-- The types exhaust the sites in a nonempty structure. -/
 theorem low_or_affected_or_high (h : s.heads ≠ []) : s.Low ∨ s.Affected ∨ s.High := by
   by_cases hb : s.below = [] <;> by_cases ha : s.above = [] <;>
@@ -139,30 +128,6 @@ theorem mem_all_iff : s ∈ all l ↔ s.heads = l := by
   · subst h
     exact List.mem_map.2 ⟨s.above.length,
       List.mem_range.2 (by simp only [heads, List.length_append]; omega), by simp [heads]⟩
-
-/-! ### Sites in a well-formed structure -/
-
-/-- In a well-formed structure, the head that takes ApplP embeds the head of Appl's
-complement. -/
-theorem embeds_of_isWellFormed (hw : LittleV.IsWellFormed s.heads) :
-    ∀ v ∈ s.selector, ∀ w ∈ s.complementHead, v.Embeds w :=
-  (List.isChain_append.1 hw.2).2.2
-
-/-- An affected applicative is the complement of a dynamic head. -/
-theorem Affected.selector_dynamic (hw : LittleV.IsWellFormed s.heads) (h : s.Affected) :
-    ∀ v ∈ s.selector, v.Dynamic := fun v hv ↦ by
-  obtain ⟨w, t, hb⟩ := List.exists_cons_of_ne_nil h.2
-  exact (embeds_of_isWellFormed hw v hv w (by simp [complementHead, hb])).dynamic
-
-/-- No affected applicative is the complement of a state. -/
-theorem not_affected_of_state (hw : LittleV.IsWellFormed s.heads)
-    (h : s.selector = some .vBE) : ¬ s.Affected :=
-  fun ha ↦ ha.selector_dynamic hw _ h rfl
-
-/-- Under a change, Appl's complement is a state. -/
-theorem eq_vBE_of_selector_eq_vGO (hw : LittleV.IsWellFormed s.heads)
-    (h : s.selector = some .vGO) : ∀ w ∈ s.complementHead, w = .vBE :=
-  fun w hw' ↦ LittleV.vGO_embeds_iff.1 (embeds_of_isWellFormed hw _ h w hw')
 
 end Site
 

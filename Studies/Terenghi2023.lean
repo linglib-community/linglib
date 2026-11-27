@@ -4,7 +4,7 @@ public import Mathlib.Tactic.Order
 public import Linglib.Semantics.Reference.Determiner
 public import Linglib.Data.Wordlist.Terenghi2023
 public import Linglib.Data.Examples.Languages
-public import Linglib.Fragments.Romance.Spanish.Determiners
+public import Linglib.Languages.Romance.Spanish.Determiners
 
 /-!
 # Terenghi (2023): Missing person
@@ -239,7 +239,8 @@ theorem portuguese_local_centred :
 
 /-! ### Spanish
 
-The fragment enters the Spanish demonstratives as Butt and Benjamin describe them: *este* near the
+The language file enters the Spanish demonstratives as Butt and Benjamin describe them: *este* near
+the
 speaker, *ese* at any distance from the speaker, *aquel* away from both participants. -/
 
 -- (10a); Table 3.2

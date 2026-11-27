@@ -1,0 +1,371 @@
+{
+  "features": [
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "Clause",
+      "doc": "The Nepali clauses, by the case of the subject.",
+      "levels": [
+        {
+          "name": "nominativeSubject",
+          "label": "nominativeSubject",
+          "doc": "a nonpast transitive clause, with a nominative subject and a nominative object"
+        },
+        {
+          "name": "ergativeSubject",
+          "label": "ergativeSubject",
+          "doc": "a past transitive clause, with an ergative subject and a nominative object"
+        },
+        {
+          "name": "dativeSubject",
+          "label": "dativeSubject",
+          "doc": "a clause with a dative subject and a nominative object"
+        }
+      ]
+    },
+    {
+      "key": "controller",
+      "lean": "controller",
+      "type": "Controller",
+      "doc": "The argument whose features the form of the verb shows.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the subject"
+        },
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "the object"
+        },
+        {
+          "name": "default",
+          "label": "default",
+          "doc": "neither: the verb is in its default form"
+        }
+      ]
+    },
+    {
+      "key": "pattern",
+      "lean": "pattern",
+      "type": "Pattern",
+      "doc": "The Hindi-Urdu transitive patterns of (21), by the marking of the subject and the object.",
+      "levels": [
+        {
+          "name": "ergativeSubject",
+          "label": "ergativeSubject",
+          "doc": "perfective, the subject with ne and the object unmarked"
+        },
+        {
+          "name": "ergativeSubjectMarkedObject",
+          "label": "ergativeSubjectMarkedObject",
+          "doc": "perfective, the subject with ne and the object with ko"
+        },
+        {
+          "name": "unmarkedArguments",
+          "label": "unmarkedArguments",
+          "doc": "not perfective, the subject and the object unmarked"
+        },
+        {
+          "name": "markedObject",
+          "label": "markedObject",
+          "doc": "not perfective, the subject unmarked and the object with ko"
+        },
+        {
+          "name": "dativeSubject",
+          "label": "dativeSubject",
+          "doc": "the subject with ko and the object unmarked"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the file."
+  },
+  "examples": [
+    {
+      "id": "bobaljik2008_24a",
+      "source": {"bibkey": "bickel-yadava-2000", "paperLabel": "(5a)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(24a)"},
+      "language": "nepa1254",
+      "primaryText": "ma yas pasal-mā patrikā kin-ch-u.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ma", "1sNOM"], ["yas", "DEM:OBL"], ["pasal-mā", "store-LOC"], ["patrikā", "newspaper:NOM"],
+        ["kin-ch-u.", "buy-NPT-1s"]
+      ],
+      "translation": "I buy the newspaper in this store.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["clause", "nominativeSubject"],
+        ["controller", "subject"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_24b",
+      "source": {"bibkey": "bickel-yadava-2000", "paperLabel": "(5b)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(24b)"},
+      "language": "nepa1254",
+      "primaryText": "maile yas pasal-mā patrikā kin-ẽ.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["maile", "1sERG"], ["yas", "DEM:OBL"], ["pasal-mā", "store-LOC"],
+        ["patrikā", "newspaper:NOM"], ["kin-ẽ.", "buy-PT1s"]
+      ],
+      "translation": "I bought the newspaper in this store.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["clause", "ergativeSubject"],
+        ["controller", "subject"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_24b_object",
+      "source": {"bibkey": "bickel-yadava-2000", "paperLabel": "(5b)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(24b)"},
+      "language": "nepa1254",
+      "primaryText": "maile yas pasal-mā patrikā kin-yo.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["maile", "1sERG"], ["yas", "DEM:OBL"], ["pasal-mā", "store-LOC"],
+        ["patrikā", "newspaper:NOM"], ["kin-yo.", "buy-PT3sM"]
+      ],
+      "translation": "I bought the newspaper in this store.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["clause", "ergativeSubject"],
+        ["controller", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_26",
+      "source": {"bibkey": "bickel-yadava-2000", "paperLabel": "(7a)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(26)"},
+      "language": "nepa1254",
+      "primaryText": "malāī timī man par-ch-au.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["malāī", "1sDAT"], ["timī", "2mhNOM"], ["man", "liking"], ["par-ch-au.", "occur-NPT-2mh"]
+      ],
+      "translation": "I like you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["clause", "dativeSubject"],
+        ["controller", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_26_subject",
+      "source": {"bibkey": "bickel-yadava-2000", "paperLabel": "(7a)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(26)"},
+      "language": "nepa1254",
+      "primaryText": "malāī timī man par-ch-u.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["malāī", "1sDAT"], ["timī", "2mhNOM"], ["man", "liking"], ["par-ch-u.", "occur-NPT-1s"]
+      ],
+      "translation": "I like you.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["clause", "dativeSubject"],
+        ["controller", "subject"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_22a",
+      "source": {"bibkey": "woolford-1999", "paperLabel": "(10a)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(22a)"},
+      "language": "hind1269",
+      "primaryText": "Raam-ne roTii khaayii thii.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Raam-ne", "Ram-erg"], ["roTii", "bread(nom,fem)"], ["khaayii", "eat(perf,fem)"],
+        ["thii.", "be(past,fem)"]
+      ],
+      "translation": "Ram had eaten bread.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["pattern", "ergativeSubject"],
+        ["controller", "object"]
+      ],
+      "comment": "The source attributes the example to Mahajan (1990: 73).",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_22b",
+      "source": {"bibkey": "woolford-1999", "paperLabel": "(10c)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(22b)"},
+      "language": "hind1269",
+      "primaryText": "siitaa-ne laRkii-ko dekhaa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["siitaa-ne", "Sita(fem)-erg"], ["laRkii-ko", "girl-dat"], ["dekhaa", "see(perf,3sg.masc.)"]
+      ],
+      "translation": "Sita saw the girl.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["pattern", "ergativeSubjectMarkedObject"],
+        ["controller", "default"]
+      ],
+      "comment": "The source attributes the example to Mahajan (1990: 87).",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_22c",
+      "source": {"bibkey": "woolford-1999", "paperLabel": "(10d)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(22c)"},
+      "language": "hind1269",
+      "primaryText": "siitaa kelaa khaatii thii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["siitaa", "Sita(nom,fem)"], ["kelaa", "banana(masc.)"], ["khaatii", "eat(imp,fem)"],
+        ["thii", "be(past,fem)"]
+      ],
+      "translation": "Sita (habitually) ate bananas.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["pattern", "unmarkedArguments"],
+        ["controller", "subject"]
+      ],
+      "comment": "The source attributes the example to Mahajan (1990: 72).",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_22d",
+      "source": {"bibkey": "woolford-1999", "paperLabel": "(10e)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(22d)"},
+      "language": "hind1269",
+      "primaryText": "niinaa bacce-ko uThaayegii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["niinaa", "Nina(nom)"], ["bacce-ko", "child-dat"], ["uThaayegii", "lift(fut,fem)"]
+      ],
+      "translation": "Nina will pick the child up.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["pattern", "markedObject"],
+        ["controller", "subject"]
+      ],
+      "comment": "The source attributes the example to Mohanan (1994: 59).",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_22e",
+      "source": {"bibkey": "woolford-1999", "paperLabel": "(10b)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(22e)"},
+      "language": "hind1269",
+      "primaryText": "siitaa-ko larke pasand the.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["siitaa-ko", "Sita-dat"], ["larke", "boys(nom)"], ["pasand", "like"],
+        ["the.", "be(past,masc.pl)"]
+      ],
+      "translation": "Sita likes the boys.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["pattern", "dativeSubject"],
+        ["controller", "object"]
+      ],
+      "comment": "The source attributes the example to Mahajan (1991, (7)).",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_4d",
+      "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(47a)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(4d)"},
+      "language": "icel1247",
+      "primaryText": "Um veturinn voru konunginum gefnar ambáttir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Um", "in"], ["veturinn", "the-winter"], ["voru", "were"], ["konunginum", "the-king(D)"],
+        ["gefnar", "given"], ["ambáttir.", "slaves(N)"]
+      ],
+      "translation": "In the winter, the king was given (female) slaves.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["controller", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "bobaljik2008_15",
+      "source": {"bibkey": "harley-1995", "paperLabel": "(2)"},
+      "reportedIn": {"bibkey": "bobaljik-2008", "paperLabel": "(15)"},
+      "language": "icel1247",
+      "primaryText": "Morgum studentum líka verkið",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Morgum", "many"], ["studentum", "students-D"], ["líka", "like-3.pl"],
+        ["verkið", "the_job-N"]
+      ],
+      "translation": "Many students like the job",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["controller", "subject"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

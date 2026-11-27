@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Nominality
 public import Mathlib.Order.Prod.Lex.Basic
-public import Linglib.Fragments.Turkish.ObjectMarking
+public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Syntax.Clause.Alignment
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Filtration
@@ -123,7 +123,7 @@ theorem hebrew_marks_definites (a : Animacy) (d : DefinitenessScale) :
   revert a d; decide
 
 /-- Turkish marks every object but the non-specific ones, so unlike Hebrew it marks specific
-indefinites obligatorily (Figure 2, Tableaux 1–2); the zone is the fragment's, read through the
+indefinites obligatorily (Figure 2, Tableaux 1–2); the zone is the language file's, read through the
 definiteness of a position. -/
 abbrev turkishDOM : Set (Animacy × DefinitenessScale) :=
   {c | c.2.definiteness ∈ Turkish.ObjectMarking.accusative}
@@ -200,11 +200,11 @@ theorem dom_obligatory_zone_upperSet : ∀ z ∈ allDOMZones, IsUpperSet z := by
   simp only [allDOMZones, List.mem_cons, List.not_mem_nil, or_false]
   rintro z (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)
   all_goals first
-    | exact isUpperSet_Ici _
+    | exact IsUpperSet.Ici _
     | exact isUpperSet_univ
     | exact isUpperSet_empty
-    | exact (isUpperSet_Ici _).union (isUpperSet_Ici _)
-    | exact (isUpperSet_Ici _).preimage (DefinitenessScale.definiteness_monotone.comp monotone_snd)
+    | exact (IsUpperSet.Ici _).union (IsUpperSet.Ici _)
+    | exact (IsUpperSet.Ici _).preimage (DefinitenessScale.definiteness_monotone.comp monotone_snd)
 
 /-- Every attested system fits the prominence order, so no language obligatorily marks a less
 prominent object while leaving a more prominent one unmarked. -/
@@ -264,9 +264,9 @@ theorem three_zone_systems_fit :
   rintro _ (rfl | rfl | rfl | rfl) <;>
     refine ⟨?_, (fitsGraded_overtness_iff ?_).2 ⟨?_, ?_⟩⟩
   all_goals first
-    | exact isUpperSet_Ici _
+    | exact IsUpperSet.Ici _
     | exact isUpperSet_univ
-    | exact (isUpperSet_Ici _).union (isUpperSet_Ici _)
+    | exact (IsUpperSet.Ici _).union (IsUpperSet.Ici _)
     | exact Set.subset_univ _
     | exact Set.subset_union_of_subset_left (Set.Ici_subset_Ici.2 (by decide)) _
     | exact Set.union_subset (Set.subset_union_of_subset_left (Set.Ici_subset_Ici.2 (by decide)) _)
@@ -284,7 +284,7 @@ theorem isUpperSet_iff_eq_empty_or_Ici {α : Type*} [LinearOrder α] [WellFounde
     {s : Set α} : IsUpperSet s ↔ s = ∅ ∨ ∃ a, s = Set.Ici a :=
   ⟨IsUpperSet.eq_empty_or_Ici, by
     rintro (rfl | ⟨a, rfl⟩)
-    exacts [isUpperSet_empty, isUpperSet_Ici a]⟩
+    exacts [isUpperSet_empty, IsUpperSet.Ici a]⟩
 
 /-- A zone depends on animacy alone. -/
 def AnimacyOnly (z : Set (Animacy × DefinitenessScale)) : Prop :=

@@ -2,11 +2,11 @@ module
 
 public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Logic.Trivalent.Basic
+public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Semantics.Genericity.Normality
 public import Studies.Ladusaw1979
 public import Linglib.Data.Examples.KadmonLandman1993
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Mathlib.Data.Set.Basic
 public import Linglib.Data.Examples.Readers
 
@@ -336,15 +336,15 @@ Exception tolerance is the freedom to choose another precisification. -/
 /-- Under the normality a precisification induces (161), the normal instances of a restrictor are
 those with every property of the precisification. -/
 def precisificationNormality {Property Entity : Type*} (apply : Property → Set Entity) :
-    Genericity.Normality (Set Property) Entity :=
-  .ofAccess (domainOf · apply)
+    Set Property → Genericity.Normality Entity :=
+  fun v ↦ .restrict (domainOf v apply)
 
 /-- Under one precisification, the generic (159) holds when every instance of the restrictor with
 the precisified properties satisfies the scope, GEN under the normality the precisification
 induces. -/
 def genericTrue {Property Entity : Type*} (apply : Property → Set Entity) (R : Set Entity)
     (scope : Entity → Prop) (v : Set Property) : Prop :=
-  v ∈ (precisificationNormality apply).gen R {e | scope e}
+  (precisificationNormality apply v).gen R {e | scope e}
 
 /-- A generic is supervaluationistically true when it is true under every precisification. -/
 def genericSuperTrue {Property Entity : Type*} (X : VagueRestriction Property)

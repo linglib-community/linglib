@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Mereology.Basic
-public import Linglib.Fragments.English.Nouns
+public import Linglib.Languages.English.Nouns
 public import Linglib.Semantics.Mereology.Individuation
 
 /-!
@@ -28,8 +28,8 @@ overlaps; *lentil*, over a frame of the same kind, counts its units.
 
 A specific schema is a function from predicates to perspectives in the paper; an entry here
 records the perspective the schema of utterance selects on the predicate it applies to, with
-its maximality, since only that value enters the counting base. Overlap is the substrate's
-`Mereology.Overlap`, a shared non-null part. The cardinality comparisons licensed by `[+O]`,
+its maximality, since only that value enters the counting base. ¬ Disjoint is the substrate's
+`Mereology.SolidOverlap`, a shared non-null part. The cardinality comparisons licensed by `[+O]`,
 the perceptual content of frames, the composition with verbs of Appendix B, and the notional
 classes of Table 9.1 are not formalized.
 
@@ -67,11 +67,11 @@ def Frame.substance (stuff : Set α) : Frame α := ⟨stuff, none⟩
 @[simp] theorem Frame.objects_substance (stuff : Set α) : (substance stuff).objects = stuff :=
   rfl
 
-variable [SemilatticeSup α]
+variable [SemilatticeSup α] [OrderBot α]
 
 /-- A frame whose extension is its units and their sums, the unit and collection fields of
 (28)–(29): granular for disjoint units, a collective artifact for overlapping ones. -/
-def Frame.ofUnits (units : Set α) : Frame α := ⟨{x | AlgClosure (· ∈ units) x}, some units⟩
+def Frame.ofUnits (units : Set α) : Frame α := ⟨supClosure units, some units⟩
 
 @[simp] theorem Frame.objects_ofUnits (units : Set α) : (ofUnits units).objects = units := rfl
 
@@ -86,7 +86,7 @@ theorem nullSchema_eq (P : Set α) : nullSchema P = P :=
 identifying function, `[±O]`; whether the extension is closed under sum, the `(*)` of (33);
 and the perspective the schema of utterance selects, `[+S]`, or none for the null schema,
 `[−S]`. -/
-structure Entry (α : Type*) [SemilatticeSup α] where
+structure Entry (α : Type*) [SemilatticeSup α] [OrderBot α] where
   frame : Frame α
   objectFn : Prop
   [decObjectFn : Decidable objectFn]
@@ -110,25 +110,25 @@ def base : Set α := if E.objectFn then E.frame.objects else E.frame.extn
 def cbase : Set α := E.perspective.getD (nullSchema E.base)
 
 /-- The extension is the counting base, closed under sum when the entry is. -/
-def extn : Set α := if E.sumClosed then {x | AlgClosure (· ∈ E.cbase) x} else E.cbase
+def extn : Set α := if E.sumClosed then supClosure E.cbase else E.cbase
 
 /-- Grammatical counting (A1) is defined over disjoint counting bases only: an entry is count
 when its base is disjoint. -/
-def IsCount : Prop := DisjointPred E.cbase
+def IsCount : Prop := E.cbase.PairwiseDisjoint id
 
 variable {E}
 
 /-- A `[+S]` entry is count: its perspective is disjoint. -/
 theorem isCount_of_perspective {D : Set α} (h : E.perspective = some D) : E.IsCount := by
   rw [IsCount, cbase, h, Option.getD_some]
-  exact (E.perspective_max D h).disjointPred
+  exact (E.perspective_max D h).pairwiseDisjoint
 
 theorem cbase_of_null (h : E.perspective = none) : E.cbase = E.base := by
   rw [cbase, h, Option.getD_none, nullSchema_eq]
 
 /-- A `[−S]` entry is count exactly when the predicate its schema applies to is disjoint. -/
 theorem isCount_iff_of_null (h : E.perspective = none) :
-    E.IsCount ↔ DisjointPred E.base := by
+    E.IsCount ↔ E.base.PairwiseDisjoint id := by
   rw [IsCount, cbase_of_null h]
 
 
@@ -167,53 +167,55 @@ theorem isCount_unitShift (E : Entry α) (D : Set α)
 contains something in the argument's extension; counting proceeds by the receptacle's
 counting base, which the argument does not touch. -/
 def containerExtn (R P : Entry α) (contain : α → α → Prop) : Set α :=
-  {x | AlgClosure (· ∈ R.cbase) x ∧ ∀ z ∈ R.cbase, z ≤ x → ∃ v ∈ P.extn, contain z v}
+  {x | x ∈ supClosure R.cbase ∧ ∀ z ∈ R.cbase, z ≤ x → ∃ v ∈ P.extn, contain z v}
 
 /-- The container classifier presupposes, (45), that the argument's extension is cumulative,
 which every sum-closed extension is. -/
-theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed) : CUM (· ∈ E.extn) := by
+theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed) : CUM E.extn := by
   simp only [Entry.extn, h, ↓reduceIte]
-  exact algClosure_cum
+  exact supClosed_supClosure
 
 /-- A singular count extension with two distinct units is not cumulative: the sum of two units
 is not a unit, so *#a bowl of an apple*. -/
 theorem not_cum_extn_of_singular {E : Entry α} (hs : ¬ E.sumClosed) (hc : E.IsCount)
-    {u v : α} (hu : u ∈ E.cbase) (hv : v ∈ E.cbase) (hne : u ≠ v) (hu0 : ¬ IsBot u)
-    (hv0 : ¬ IsBot v) : ¬ CUM (· ∈ E.extn) := by
+    {u v : α} (hu : u ∈ E.cbase) (hv : v ∈ E.cbase) (hne : u ≠ v) (hu0 : u ≠ ⊥)
+    (hv0 : v ≠ ⊥) : ¬ CUM E.extn := by
   simp only [Entry.extn, hs, ↓reduceIte]
   intro hcum
   have hsum : u ⊔ v ∈ E.cbase := hcum hu hv
   by_cases huv : u ⊔ v = u
-  · exact hc hu hv hne ⟨v, hv0, sup_eq_left.1 huv, le_rfl⟩
-  · exact hc hu hsum (Ne.symm huv) ⟨u, hu0, le_rfl, le_sup_left⟩
+  · exact not_disjoint_of_le hv0 (sup_eq_left.1 huv) (hc hu hv hne).symm
+  · exact not_disjoint_of_le hu0 le_sup_left (hc hu hsum (Ne.symm huv))
 
 /-! ### Granular frames -/
 
-theorem not_disjointPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units)
-    (hv : v ∈ units) (hne : u ≠ v) (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) :
-    ¬ DisjointPred (Frame.ofUnits units).extn := fun h ↦ by
+theorem not_pairwiseDisjoint_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units)
+    (hv : v ∈ units) (hne : u ≠ v) (hu0 : u ≠ ⊥) (hv0 : v ≠ ⊥) :
+    ¬ (Frame.ofUnits units).extn.PairwiseDisjoint id := fun h ↦ by
   by_cases huv : u ⊔ v = u
-  · exact h (.base hu) (.base hv) hne ⟨v, hv0, sup_eq_left.1 huv, le_rfl⟩
-  · exact h (.base hu) (.sum (.base hu) (.base hv)) (Ne.symm huv) ⟨u, hu0, le_rfl, le_sup_left⟩
+  · exact not_disjoint_of_le hv0 (sup_eq_left.1 huv)
+      (h (subset_supClosure hu) (subset_supClosure hv) hne).symm
+  · exact not_disjoint_of_le hu0 le_sup_left (h (subset_supClosure hu)
+      (supClosed_supClosure (subset_supClosure hu) (subset_supClosure hv)) (Ne.symm huv))
 
 /-- A `[−O,−S]` entry over a frame of units and their sums with two distinct non-null units is
 mass: the grains of *rice* and *čočka* are in the basic predicate, not in the counting base. -/
 theorem rice_mass {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units) (hne : u ≠ v)
-    (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) (E : Entry α) (hF : E.frame = Frame.ofUnits units)
+    (hu0 : u ≠ ⊥) (hv0 : v ≠ ⊥) (E : Entry α) (hF : E.frame = Frame.ofUnits units)
     (hO : ¬ E.objectFn) (hS : E.perspective = none) : ¬ E.IsCount := by
   rw [Entry.isCount_iff_of_null hS]
   simp only [Entry.base, hO, ↓reduceIte, hF]
-  exact not_disjointPred_extn_ofUnits hu hv hne hu0 hv0
+  exact not_pairwiseDisjoint_extn_ofUnits hu hv hne hu0 hv0
 
 /-- The `[+O,+S]` entry over a frame of disjoint units, *lentil* (36)–(37): the perspective
 is the units themselves. -/
-def lentil (units : Set α) (hd : DisjointPred units) (sumClosed : Prop)
+def lentil (units : Set α) (hd : units.PairwiseDisjoint id) (sumClosed : Prop)
     [Decidable sumClosed] : Entry α :=
   ⟨Frame.ofUnits units, True, sumClosed, some units,
-    fun _ hD ↦ Option.some_inj.1 hD ▸ hd.isMaxDisjointIn_self⟩
+    fun _ hD ↦ Option.some_inj.1 hD ▸ isMaxDisjointIn_self hd⟩
 
 /-- *lentil* is count, with the units as its counting base. -/
-theorem lentil_count {units : Set α} (hd : DisjointPred units) (sumClosed : Prop)
+theorem lentil_count {units : Set α} (hd : units.PairwiseDisjoint id) (sumClosed : Prop)
     [Decidable sumClosed] :
     (lentil units hd sumClosed).IsCount ∧ (lentil units hd sumClosed).cbase = units :=
   ⟨Entry.isCount_of_perspective rfl, rfl⟩
@@ -226,9 +228,6 @@ section Model
 
 /-- Parts are subsets of three atoms; overlap is a shared non-empty part. -/
 abbrev Part := Finset (Fin 3)
-
-instance : DecidableRel (Overlap (α := Part)) := fun s t ↦
-  decidable_of_iff (¬ Disjoint s t) overlap_iff_not_disjoint.symm
 
 /-- The functional units of *furniture*: a table, a mirror, and the vanity they compose. -/
 def furnitureUnits : Set Part := {s | s = {0} ∨ s = {1} ∨ s = {0, 1}}
@@ -253,7 +252,7 @@ def furniture : Entry Part :=
 
 theorem furniture_mass : ¬ furniture.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
-  show ¬ DisjointPred furnitureUnits
+  show ¬ furnitureUnits.PairwiseDisjoint id
   decide
 
 /-- Two perspectives on the furniture units, the pieces and the vanity, are both maximal and
@@ -261,14 +260,14 @@ differ, which is why the null schema's base overlaps. -/
 theorem furniture_two_perspectives :
     IsMaxDisjointIn piecePerspective furnitureUnits ∧
       IsMaxDisjointIn vanityPerspective furnitureUnits ∧
-      piecePerspective ≠ vanityPerspective ∧ ¬ DisjointPred furniture.cbase := by
+      piecePerspective ≠ vanityPerspective ∧ ¬ furniture.cbase.PairwiseDisjoint id := by
   have h₁ : IsMaxDisjointIn piecePerspective furnitureUnits := by decide
   have h₂ : IsMaxDisjointIn vanityPerspective furnitureUnits := by decide
   have hne : piecePerspective ≠ vanityPerspective := fun h ↦
     absurd (h ▸ Or.inl rfl : ({0} : Part) ∈ vanityPerspective) (by decide)
   refine ⟨h₁, h₂, hne, ?_⟩
   rw [Entry.cbase_of_null rfl]
-  exact h₁.not_disjointPred h₂ hne
+  exact h₁.not_pairwiseDisjoint h₂ hne
 
 /-- *huonekalut* (41): *furniture* with the null schema replaced by the piece perspective, and
 count. -/
@@ -287,17 +286,17 @@ instance : DecidablePred (· ∈ riceGrains) := fun s ↦
 /-- *rice* (38): `[−O,−S]` over the grains and their sums. -/
 def rice : Entry Part := ⟨Frame.ofUnits riceGrains, False, True, none, fun _ h ↦ by simp at h⟩
 
-theorem riceGrains_disjoint : DisjointPred riceGrains := by decide
+theorem riceGrains_disjoint : riceGrains.PairwiseDisjoint id := by decide
 
 /-- The rice grains are disjoint and in the basic predicate, yet *rice* is mass, while *grains of
 rice* (50) is count ((Q2), 9.5.3). -/
 theorem rice_accessibility :
     riceGrains ⊆ rice.frame.extn ∧ ¬ rice.IsCount ∧
-      unitShift rice riceGrains riceGrains_disjoint.isMaxDisjointIn_self =
+      unitShift rice riceGrains (isMaxDisjointIn_self riceGrains_disjoint) =
         lentil riceGrains riceGrains_disjoint True ∧
       (lentil riceGrains riceGrains_disjoint True).IsCount ∧
       (lentil riceGrains riceGrains_disjoint True).cbase = riceGrains :=
-  ⟨fun _ h ↦ .base h,
+  ⟨fun _ h ↦ subset_supClosure h,
     rice_mass (α := Part) (u := {0}) (v := {1}) (Or.inl rfl) (Or.inr (Or.inl rfl)) (by decide)
       (by decide) (by decide) rice rfl id rfl,
     rfl, (lentil_count _ _).1, (lentil_count _ _).2⟩
@@ -308,9 +307,9 @@ def mud : Entry Part :=
 
 theorem mud_mass : ¬ mud.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
-  show ¬ DisjointPred {s : Part | s.Nonempty}
-  exact fun h ↦
-    @h {0} (by decide) {0, 1} (by decide) (by decide) ⟨{0}, by decide, le_rfl, by decide⟩
+  show ¬ {s : Part | s.Nonempty}.PairwiseDisjoint id
+  exact fun h ↦ (by decide : ¬ Disjoint ({0} : Part) {0, 1})
+    (@h {0} (by decide) {0, 1} (by decide) (by decide))
 
 /-- The categorization agrees with the English lexicon: a numeral counts *lentil* and neither
 *furniture* nor *rice*. -/

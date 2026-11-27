@@ -7,31 +7,16 @@ public import Linglib.Core.Probability.Distributions.Gaussian
 /-!
 # Noisy harmonic grammar
 
-Boersma and Pater make harmonic grammar stochastic by adding independent Gaussian noise to every
-constraint weight at each evaluation, so that a candidate wins with the probability that its noisy
-harmony is the highest. Flemming reads this as a random utility model whose utilities are the
-noisy harmonies. The candidates share the weights, so their noisy harmonies are correlated, and the
-model is the choice rule `choiceProb` at the pushforward of the weight noise rather than at a
-product of independent laws. The harmony difference of two candidates is Gaussian with variance
-`v * (d ⬝ᵥ d)` for their violation difference `d`, so how noisy a comparison is depends on the
-violation profile and not only on the harmonies, unlike in MaxEnt, where the utilities are
-independent.
+Noisy Harmonic Grammar adds independent Gaussian noise `weightNoise` to every constraint weight at
+each evaluation. A candidate wins with the probability `weightNoiseChoiceProb` that its noisy
+harmony is the highest. This is a random utility model whose utilities are the noisy harmonies.
+Because the candidates share the weights, their noisy harmonies are correlated.
 
-## Main definitions
-
-* `weightNoise`: independent `N(0, v)` noise on every constraint weight.
-* `weightNoiseChoiceProb`: the probability that a candidate has the highest harmony under noisy
-  weights, the random-utility choice probability under the law of the noisy harmonies.
-
-## Main results
-
-* `map_weightNoise_harmonyScore_sub`: the harmony difference of two candidates is Gaussian with
-  variance `v * (d ⬝ᵥ d)`.
-* `variance_harmonyScore_sub`, `covariance_harmonyScore_sub`: the variances and covariances of
-  the harmony differences.
-* `weightNoise_setOf_harmonyScore_lt`, `weightNoiseChoiceProb_of_forall_ne_eq`,
-  `weightNoiseChoiceProb_fin_two`: the probability that one candidate beats another is the probit
-  of their harmony difference over its standard deviation.
+The harmony difference of two candidates [is
+Gaussian](##HarmonicGrammar.map_weightNoise_harmonyScore_sub) with variance `v * (d ⬝ᵥ d)`, where
+`d` is their violation difference. So the probability that one candidate beats another [is the
+probit](##HarmonicGrammar.weightNoise_setOf_harmonyScore_lt) of their harmony difference over its
+standard deviation, which depends on the violation profile and not only on the harmonies.
 
 ## Implementation notes
 

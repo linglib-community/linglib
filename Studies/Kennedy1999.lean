@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Data.Examples.Kennedy1999
-public import Linglib.Fragments.English.Adjectives
-public import Linglib.Fragments.English.MeasurePhrases
-public import Mathlib.Order.Interval.Set.Basic
+public import Linglib.Languages.English.Adjectives
+public import Linglib.Languages.English.MeasurePhrases
+public import Linglib.Semantics.Degree.Extent
 
 /-!
 # Kennedy (1999): Projecting the Adjective
@@ -75,21 +75,18 @@ def extent : Polarity → D → Set D
   | .positive, x => Set.Iic x
   | .negative, x => Set.Ici x
 
-private theorem Iic_eq_univ_of_eq_Ici (h : Set.Iic x = Set.Ici y) : Set.Iic x = Set.univ :=
-  have hyx : y ≤ x := h.ge (Set.self_mem_Ici)
-  Set.eq_univ_of_forall fun z ↦ (le_total z x).elim id fun hxz ↦ h.ge (hyx.trans hxz)
+theorem isExtent_extent (p : Polarity) (x : D) : p.IsExtent (extent p x) := by
+  cases p
+  exacts [Polarity.isExtent_Iic x, Polarity.isExtent_Ici x]
+
+theorem extent_nonempty (p : Polarity) (x : D) : (extent p x).Nonempty := by
+  cases p <;> exact ⟨x, le_rfl⟩
 
 /-- An extent determines its polarity unless it is the whole scale, which is not a proper extent
 (28), (29): the positive and the negative extents are disjoint (p. 254). -/
 theorem polarity_eq_of_extent_eq (hp : extent p x ≠ Set.univ) (h : extent p x = extent q y) :
-    p = q := by
-  cases p <;> cases q
-  · rfl
-  · exact absurd (Iic_eq_univ_of_eq_Ici h) hp
-  · refine absurd ?_ hp
-    rw [h]
-    exact Iic_eq_univ_of_eq_Ici h.symm
-  · rfl
+    p = q :=
+  (isExtent_extent p x).polarity_eq (isExtent_extent q y) (extent_nonempty p x) (h ▸ hp) h.subset
 
 -- The whole of a closed scale is an extent of both sorts, which is why (28), (29) ask for proper.
 example [BoundedOrder D] : extent .positive (⊤ : D) = extent .negative (⊥ : D) := by

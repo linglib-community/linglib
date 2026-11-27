@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Logic.Aristotelian.Square
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Square
 public import Linglib.Data.Examples.Belnap1970
 
 /-!
@@ -126,7 +127,7 @@ Belnap's assertiveness condition, so the relations hold exactly where the forms 
 assertive. -/
 theorem squareRelations_contentSquare (hR : ∃ x, x ∈ C) :
     SquareRelations (contentSquare C) :=
-  contentSquare_eq_square hR ▸ Det.squareRelations_square hR
+  contentSquare_eq_square hR ▸ Det.squareRelations_square.2 hR
 
 /-! ### Obversion, I-conversion, Barbara -/
 

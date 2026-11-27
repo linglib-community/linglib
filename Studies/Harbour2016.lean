@@ -5,15 +5,16 @@ public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Finset.NAry
 public import Mathlib.Data.Finset.Lattice.Fold
-public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Person.System
+public import Linglib.Syntax.Feature.Person.Decomposition
+public import Linglib.Syntax.Feature.Person.Partition
+public import Linglib.Syntax.Feature.Person.Specification
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Studies.Harbour2014
 public import Studies.Cysouw2003
 public import Linglib.Semantics.Plurality.FeatureAction
 public import Linglib.Syntax.Category.Pronoun.Basic
-public import Linglib.Fragments.Tamil.Pronouns
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.Tamil.Pronouns
+public import Linglib.Languages.English.Determiners
 public import Linglib.Semantics.Reference.Determiner
 
 /-!
@@ -25,7 +26,7 @@ adds its lattice pairwise and the minus value subtracts its maximum. A language 
 feature is present and, when both are, which composes first; composing [±author] outermost [yields
 the quadripartition](##Examples.quad_cells_eq_participantSets) and [±participant] outermost [the
 tripartition](##Examples.tri_card). These parameters [generate exactly five
-partitions](##graph_mem_image_iff), those of the bivalent geometry he sets aside, while the
+partitions](##ofFeatures_mem_image_iff), those of the bivalent geometry he sets aside, while the
 three-feature theories he rejects generate [every system in which a coordination's person is the
 join of its conjuncts'](##Person.exists_bundle_eq_iff), seven in all, the hearer bipartition and
 Zwicky's tripartition among them.
@@ -37,12 +38,12 @@ signs keep [the exclusive apart from the inclusive](##tamil_clusivity_distinguis
 One other suffices for the person partition, whose four cells are fixed by the presence of the
 speaker and the hearer, so the ontology is `Fin 3` and the third-person group is not modeled;
 every result is checked on this finite model. Lexical Complementarity applies once, after both
-features, not cyclically (appendix B.1.2.3). Pairwise addition is mathlib's `⊻`; `ominus` and
-`act` come from `Semantics/Plurality/FeatureAction.lean`. The subsidiary parameter of the
-tripartition, which value of [±author] represents the third person, changes no partition and is
-not modeled. A setting's partition is compared with the three-feature systems on participant
-sets, two participant sets being related when a cell holds a referent with each; every cell is a
-union of the classes of referents with the same participants.
+features, not cyclically (appendix B.1.2.3). The actions of the features (`act`) and Lexical
+Complementarity (`lexComp`) come from `Semantics/Plurality/FeatureAction.lean`. The subsidiary
+parameter of the tripartition, which value of [±author] represents the third person, changes no
+partition and is not modeled. A setting's partition is compared with the three-feature systems on
+participant sets, two participant sets being related when a cell holds a referent with each; every
+cell is a union of the classes of referents with the same participants.
 
 ## References
 
@@ -63,12 +64,11 @@ open Plurality.FeatureAction
 section Construction
 variable {Ω : Type*} [DecidableEq Ω]
 
-/-- Refining a cell `c` against its siblings removes every sibling cell properly contained in
-it, Lexical Complementarity (31), and then discards the empty set, which no person denotes
-(§4.4). -/
+/-- Refining a cell `c` against its siblings applies Lexical Complementarity (31) and then
+discards the empty set, which no person denotes (§4.4). -/
 def refine (siblings : List (Finset (Finset Ω))) (c : Finset (Finset Ω)) :
     Finset (Finset Ω) :=
-  (siblings.foldl (fun acc d ↦ if d ⊂ c then acc \ d else acc) c).erase ∅
+  (lexComp siblings.toFinset c).erase ∅
 
 /-- The cells of a partition are the raw denotations of its sign assignments, each refined
 against the whole family. -/
@@ -121,21 +121,27 @@ namespace Examples
 
 abbrev Ω := Fin 3      -- 0 = speaker i, 1 = hearer u, 2 = other o
 
-/-- The author lattice `ℒau` has the single group `{i}`. -/
-def ℒau : Finset (Finset Ω) := {{0}}
-/-- The participant lattice `ℒpt` has the groups `{i}`, `{u}` and `{i, u}`. -/
-def ℒpt : Finset (Finset Ω) := {{0}, {1}, {0, 1}}
+/-- The author lattice `ℒau` is the lattice of groups of the speaker. -/
+def ℒau : Finset (Finset Ω) := Ioc ∅ {0}
+/-- The participant lattice `ℒpt` is the lattice of groups of the speaker and the hearer. -/
+def ℒpt : Finset (Finset Ω) := Ioc ∅ {0, 1}
 /-- The π lattice has every nonempty set of referents as a group. -/
 def ℒπ  : Finset (Finset Ω) := Ioc ∅ univ
 
 -- p. 74
-theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide
+theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ :=
+  ⟨Ioc_subset_Ioc_right (by decide), Ioc_subset_Ioc_right (subset_univ _)⟩
 
 /-! #### Quadripartition — author composes outermost ([harbour-2016] §4.3.5) -/
 
 /-- The raw quadripartition cell for the author sign `sa` and the participant sign `sp` applies
 the participant value first and the author value outermost. -/
 def quadRaw (sa sp : Bool) : Finset (Finset Ω) := act sa ℒau (act sp ℒpt ℒπ)
+
+-- (65): before Lexical Complementarity, `+author +participant` holds the groups containing `i`
+theorem quadRaw_true_true : quadRaw true true = containing {0} univ := by
+  rw [quadRaw, act_true, act_true, ℒau, ℒpt, ℒπ, Ioc_sups_Ioc (subset_univ _),
+    Ioc_sups_containing_of_subset (by decide) (subset_univ _)]
 
 /-- The raw quadripartition cells are those of the setting with both features, the participant
 feature composing first. -/
@@ -185,8 +191,8 @@ def participants (s : Finset Ω) : Finset SpeechAct.Role :=
 the referents whose participants the corresponding person value covers. -/
 theorem quad_cells_eq_participantSets :
     ∀ s ∈ ℒπ,
-      (s ∈ inclusive ↔ participants s ∈ Person.firstInclusive.participantSets) ∧
-      (s ∈ exclusive ↔ participants s ∈ Person.firstExclusive.participantSets) ∧
+      (s ∈ inclusive ↔ participants s ∈ Person.Specification.firstInclusive.sets) ∧
+      (s ∈ exclusive ↔ participants s ∈ Person.Specification.firstExclusive.sets) ∧
       (s ∈ secondP ↔ participants s ∈ Person.second.participantSets) ∧
       (s ∈ thirdP ↔ participants s ∈ Person.third.participantSets) := by
   decide
@@ -246,7 +252,7 @@ when it includes the addressee (p. 10). Each feature is preserved by union, so i
 generate the person of a coordination is the join of its conjuncts' persons; conversely, the
 participant sets lacking a feature are those below a single set, and every such system is generated
 by the features it respects (`Person.exists_bundle_eq_iff`). The systems number seven
-(`Person.forall_sup_eq_iff`): the five of Table 4.1 and the two
+(`Person.Partition.card_image_ofFeatures`): the five of Table 4.1 and the two
 Harbour names as these theories' overgeneration, the hearer bipartition and the tripartition Zwicky
 problematized, which groups inclusive with second person (p. 190). The bivalent geometry (9), which
 bars [±hearer] without [±author], generates exactly the five (p. 193); Harbour rejects it as one of
@@ -254,7 +260,7 @@ sixteen geometries with nothing to select it (p. 194). -/
 
 open SpeechAct
 
-open Person (Feature Features Bears bundle bundle_eq_bundle_iff)
+open Person (Feature Features Bears bundle bundle_eq_bundle_iff Partition)
 
 theorem bundle_hearer_eq_iff {s t : Finset Role} :
     bundle {.addressee} s = bundle {.addressee} t ↔ (.addressee ∈ s ↔ .addressee ∈ t) := by
@@ -265,23 +271,18 @@ theorem bundle_hearer_participant_eq_iff {s t : Finset Role} :
       (s.Nonempty ↔ t.Nonempty) ∧ (.addressee ∈ s ↔ .addressee ∈ t) := by
   revert s t; decide
 
-/-- The graph of the system `F` generates, as a finset of pairs of participant sets. -/
-def graph (F : Features) : Finset (Finset Role × Finset Role) :=
-  univ.filter fun p ↦ bundle F p.1 = bundle F p.2
-
-theorem card_image_graph : (univ.image graph).card = 7 := by decide
-
 /-- Geometry (9) admits [±hearer] only with [±author]. -/
 def Admissible (F : Features) : Prop := .addressee ∈ F → .speaker ∈ F
 
 instance : DecidablePred Admissible := fun _ ↦ by unfold Admissible; infer_instance
 
-theorem card_image_graph_admissible : ((univ.filter Admissible).image graph).card = 5 := by
+theorem card_image_ofFeatures_admissible :
+    ((univ.filter Admissible).image Partition.ofFeatures).card = 5 := by
   decide
 
-theorem graph_not_admissible :
-    ∀ F, ¬ Admissible F →
-      graph F = graph {.addressee} ∨ graph F = graph {.addressee, .participant} := by
+theorem ofFeatures_not_admissible :
+    ∀ F, ¬ Admissible F → Partition.ofFeatures F = .ofFeatures {.addressee} ∨
+      Partition.ofFeatures F = .ofFeatures {.addressee, .participant} := by
   decide
 
 /-! ### The parameter space and its yield
@@ -291,40 +292,41 @@ theories generate, and the settings yield exactly the systems of the bivalent ge
 setting yields the hearer bipartition or Zwicky's tripartition. The account's five partitions
 come from two features with no geometry: the order of composition supplies the fifth. -/
 
-/-- The system a setting yields on participant sets: two participant sets are related when a
-cell of its partition holds a referent with each. -/
-def Setting.graph (σ : Setting) : Finset (Finset Role × Finset Role) :=
-  univ.filter fun p ↦ ∃ c ∈ σ.cells Examples.ℒau Examples.ℒpt Examples.ℒπ,
-    ∃ s ∈ c, ∃ t ∈ c, Examples.participants s = p.1 ∧ Examples.participants t = p.2
+/-- The partition a setting yields on participant sets: two participant sets share a part when
+the same cells hold a referent with each. -/
+def Setting.partition (σ : Setting) : Partition :=
+  .ofFun fun P ↦ (σ.cells Examples.ℒau Examples.ℒpt Examples.ℒπ).filter fun c ↦
+    ∃ s ∈ c, Examples.participants s = P
 
 -- Table 4.1: the monopartition, the author and participant bipartitions, the tripartition with
 -- the author feature composing first, and the quadripartition with the participant feature first
-theorem graph_setting (b : Bool) :
-    (⟨false, false, b⟩ : Setting).graph = graph ∅ ∧
-      (⟨true, false, b⟩ : Setting).graph = graph {.speaker} ∧
-      (⟨false, true, b⟩ : Setting).graph = graph {.participant} ∧
-      (⟨true, true, true⟩ : Setting).graph = graph {.participant, .speaker} ∧
-      (⟨true, true, false⟩ : Setting).graph = graph {.speaker, .addressee} := by
+theorem partition_setting (b : Bool) :
+    (⟨false, false, b⟩ : Setting).partition = .ofFeatures ∅ ∧
+      (⟨true, false, b⟩ : Setting).partition = .ofFeatures {.speaker} ∧
+      (⟨false, true, b⟩ : Setting).partition = .ofFeatures {.participant} ∧
+      (⟨true, true, true⟩ : Setting).partition = .ofFeatures {.participant, .speaker} ∧
+      (⟨true, true, false⟩ : Setting).partition = .ofFeatures {.speaker, .addressee} := by
   revert b; decide
 
 -- p. 193: the systems of the bivalent geometry
-theorem image_graph_eq : univ.image Setting.graph = (univ.filter Admissible).image graph := by
+theorem image_partition_eq :
+    univ.image Setting.partition = (univ.filter Admissible).image Partition.ofFeatures := by
   decide
 
 /-- The parameters of π generate the system of a set of three features exactly when the set is
 admissible in the bivalent geometry: two features, their order of composition and no geometry
 yield all and only the partitions the geometry stipulates. -/
-theorem graph_mem_image_iff (F : Features) :
-    graph F ∈ univ.image Setting.graph ↔ Admissible F := by
-  rw [image_graph_eq]; revert F; decide
+theorem ofFeatures_mem_image_iff (F : Features) :
+    Partition.ofFeatures F ∈ univ.image Setting.partition ↔ Admissible F := by
+  rw [image_partition_eq]; revert F; decide
 
 -- Zwicky's tripartition, inclusive with second person, is no setting's yield
-theorem graph_hearer_participant_not_mem :
-    graph {.addressee, .participant} ∉ univ.image Setting.graph := by
-  rw [graph_mem_image_iff]; decide
+theorem ofFeatures_hearer_participant_not_mem :
+    Partition.ofFeatures {.addressee, .participant} ∉ univ.image Setting.partition := by
+  rw [ofFeatures_mem_image_iff]; decide
 
-theorem card_image_graph_setting : (univ.image Setting.graph).card = 5 := by
-  rw [image_graph_eq]; exact card_image_graph_admissible
+theorem card_image_partition_setting : (univ.image Setting.partition).card = 5 := by
+  rw [image_partition_eq]; exact card_image_ofFeatures_admissible
 
 /-! ### Spatial deixis (chapter 7)
 

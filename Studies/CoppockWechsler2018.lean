@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.CoppockWechsler2018
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Semantics.Reference.Monster
 public import Studies.Pearson2015
@@ -49,7 +49,7 @@ derives where the egophoric form is excluded, not where it is required.
 
 namespace CoppockWechsler2018
 
-open Commitment Question Filter
+open Commitment Inquisitive Inquisitive.Proposition Filter
 open Pearson2015 (Centered SayDeSe)
 
 variable {W E P T : Type*}

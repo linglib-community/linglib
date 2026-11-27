@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Computability.Edge
 public import Linglib.Phonology.Tone.Basic
+public import Linglib.Phonology.Autosegmental.TierTree.TwoTier
 
 /-!
 # Grammatical tone
@@ -83,6 +84,34 @@ variable {S : Type*}
 def IsValued (τ : TBU S) : Prop := τ.tone ≠ .empty
 
 instance : DecidablePred (IsValued (S := S)) := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+section Representation
+
+open Autosegmental
+
+variable {S : Type}
+
+/-- A unit as an autosegmental representation: its content is the slot, and its tone is linked
+to it when the unit is valued. -/
+def toAR (τ : TBU S) : AR (TwoTier TRN S) :=
+  AR.primitive (if τ.IsValued then [τ.tone] else []) τ.seg
+
+/-- A host as a representation, as a monoid homomorphism out of the free monoid on its units. -/
+def toARHom : FreeMonoid (TBU S) →* AR (TwoTier TRN S) := FreeMonoid.lift toAR
+
+/-- A host bears at each unit the tone of that unit when it is valued, and nothing when it is
+free. -/
+theorem mem_melody_prod_map_toAR {host : List (TBU S)} {k : ℕ} {t : TRN} :
+    t ∈ (host.map toAR).prod.melody AR.twoTier k .upper ↔
+      ∃ hk : k < host.length, host[k].IsValued ∧ host[k].tone = t :=
+  (AR.mem_melody_prod_map_primitive (fun τ : TBU S ↦ if τ.IsValued then [τ.tone] else [])
+    TBU.seg).trans (exists_congr fun _ ↦ by
+      split_ifs with h
+      · simp only [List.mem_singleton, h, true_and]
+        exact eq_comm
+      · simp [h])
+
+end Representation
 
 end TBU
 

@@ -82,8 +82,7 @@ theorem exists_lt_of_nonQuantizedChange (h : NonQuantizedChange θ (Result m b) 
 theorem snd_eq_of_quantizedChange {s₀ : S} {g : D} (hθ : ∀ x s e, θ x s e → s = s₀)
     (h : QuantizedChange θ (Result m b) φ g) {x : α} {e : E} (hx : φ x e) :
     m s₀ x (τ e).snd = g :=
-  let ⟨s, hs, _, _, h₃⟩ := h x e hx
-  hθ x s e hs ▸ h₃
+  h.eq_of_result (f := fun x e ↦ m s₀ x (τ e).snd) (fun x s e hs hr ↦ hθ x s e hs ▸ hr.2.2) hx
 
 -- p. 357
 theorem not_quantizedChange_of_snd_ne {s₀ : S} (hθ : ∀ x s e, θ x s e → s = s₀) {x x' : α}

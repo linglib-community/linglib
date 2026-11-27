@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Modality.Necessity
 
 /-!
@@ -16,15 +16,8 @@ progressive holds at the run times of the events in progress, and composes with 
 the tenses like the other viewpoint operators.
 
 Over a totally realistic modal base the actual world is the only best world: there the progressive
-[falls inside the imperfective over the actual world alone](##PROG_subset_IMPF), which requires an
-actual event of the type, and the inference from progressive to perfective returns.
-
-## Main definitions
-
-* `Aspect.NonfinalPart`: an event includes another as a part whose run time is a nonfinal
-  subinterval of its own.
-* `Aspect.InProgress`: an event is in progress toward an event type.
-* `Aspect.PROG`: the progressive as an interval property.
+entails the imperfective over the actual world alone, `progressive_le_imperfective`, which
+requires an actual event of the type, and the inference from progressive to perfective returns.
 
 ## Implementation notes
 
@@ -43,7 +36,7 @@ actual event of the type, and the inference from progressive to perfective retur
 
 namespace Aspect
 
-open Event (τ)
+open Event (τ runTimes runTimes_τ)
 open Modality
 
 variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [TemporalTrace E T]
@@ -57,22 +50,23 @@ circumstantial base `circ e P` under the ordering source `ni e`, the proposition
 interrupted, some event of type `P` includes `e` as a nonfinal part. -/
 def InProgress (circ : E → (W → E → Prop) → Background W) (ni : E → Background W) (e : E)
     (P : W → E → Prop) (w : W) : Prop :=
-  ∀ v ∈ bestWorlds (circ e P) (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e'
+  ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e'
 
 /-- The progressive of `P` holds at the run times of the events in progress toward `P`. -/
-def PROG (circ : E → (W → E → Prop) → Background W) (ni : E → Background W)
-    (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  fun w ↦ τ '' {e | InProgress circ ni e P w}
+def progressive (circ : E → (W → E → Prop) → Background W) (ni : E → Background W)
+    (P : W → E → Prop) (w : W) : NonemptyInterval T → Prop :=
+  runTimes fun e ↦ InProgress circ ni e P w
 
 variable {circ : E → (W → E → Prop) → Background W} {ni : E → Background W} {e e' : E}
   {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
 theorem inProgress_iff :
     InProgress circ ni e P w ↔
-      ∀ v ∈ bestWorlds (circ e P) (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e' :=
+      ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e' :=
   .rfl
 
-theorem mem_PROG : t ∈ PROG circ ni P w ↔ ∃ e, InProgress circ ni e P w ∧ τ e = t := Iff.rfl
+theorem progressive_iff :
+    progressive circ ni P w t ↔ ∃ e, τ e = t ∧ InProgress circ ni e P w := .rfl
 
 theorem NonfinalPart.lt (h : NonfinalPart e e') : τ e < τ e' := h.2.lt
 
@@ -82,13 +76,14 @@ theorem InProgress.exists_of_isTotallyRealistic (hf : (circ e P).IsTotallyRealis
     (h : InProgress circ ni e P w) : ∃ e', NonfinalPart e e' ∧ P w e' :=
   h w (hf.bestWorlds_eq_singleton (ni e) w ▸ rfl)
 
-/-- Over totally realistic modal bases the progressive falls inside the imperfective over the world
-of evaluation alone. -/
-theorem PROG_subset_IMPF (hf : ∀ e, (circ e P).IsTotallyRealistic) :
-    PROG circ ni P w ⊆ IMPF (fun w _ ↦ {w}) P w := by
-  rintro _ ⟨e, he, rfl⟩
+/-- Over totally realistic modal bases the progressive entails the imperfective over the world of
+evaluation alone. -/
+theorem progressive_le_imperfective (hf : ∀ e, (circ e P).IsTotallyRealistic) :
+    progressive circ ni P w ≤ imperfective (fun _ ↦ SetRel.id) P w := by
+  intro t ht
+  obtain ⟨e, rfl, he⟩ := progressive_iff.1 ht
   obtain ⟨e', he', hP⟩ := he.exists_of_isTotallyRealistic (hf e)
-  rw [impf_singleton]
-  exact ⟨e', he'.lt.le, hP⟩
+  rw [imperfective_id]
+  exact unbounded_iff.2 ⟨e', he'.lt.le, hP⟩
 
 end Aspect

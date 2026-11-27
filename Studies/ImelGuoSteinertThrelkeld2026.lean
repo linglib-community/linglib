@@ -2,9 +2,9 @@ module
 
 public import Linglib.Semantics.Modality.Universals
 public import Linglib.Data.Examples.ImelGuoSteinertThrelkeld2026
-public import Linglib.Fragments.Washo.Modals
+public import Linglib.Languages.Washo.Modals
 public import Studies.MocnikAbramovitz2019
-public import Linglib.Fragments.Greek.StandardModern.Modals
+public import Linglib.Languages.Greek.StandardModern.Modals
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 public import Mathlib.Probability.UniformOn
 public import Mathlib.Tactic.Linarith
@@ -497,7 +497,7 @@ noncomputable def needTable5 : Measure ForceFlavor :=
 /-- The corpus need distribution sums to one. -/
 instance : IsProbabilityMeasure needTable5 := by
   constructor
-  simp only [needTable5, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+  simp only [needTable5, add_apply, smul_apply, measure_univ, smul_eq_mul,
     mul_one]
   rw [ENNReal.div_add_div_same, ENNReal.div_add_div_same, ENNReal.div_add_div_same,
     ENNReal.div_add_div_same, ENNReal.div_add_div_same,

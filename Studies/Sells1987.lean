@@ -1,22 +1,29 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Order.Defs.Unbundled
+public import Mathlib.Order.UpperLower.Principal
 public import Linglib.Data.Examples.Sells1987
-public import Linglib.Fragments.Ewe.Pronouns
-public import Linglib.Fragments.Icelandic.Reciprocals
-public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Languages.Ewe.Pronouns
+public import Linglib.Languages.Icelandic.Reciprocals
+public import Linglib.Discourse.LogophoricRole
 public import Linglib.Data.Examples.Readers
 
 /-!
 # Sells (1987): Aspects of Logophoricity
 
-Sells takes logophoricity apart into three discourse roles, the source, the self and the pivot.
-A discourse environment says of each role whether the external speaker holds it or someone inside
-the sentence does, the internal protagonist. A role-oriented form takes as antecedent whoever
-holds its role, so the protagonist can antecede it exactly where that role is internal: Japanese
-*zibun* is oriented to the pivot, Icelandic *sig* to the self, and the phrases *that fool*,
-*mysteriously* and *beloved* to the source, the self and the pivot.
+A report has three discourse roles, the source, the self and the pivot, and a discourse
+environment says of each whether the external speaker holds it or someone inside the sentence
+does, the internal protagonist. We define `Environment.internal e`, the set of roles the
+environment `e` gives the protagonist, and show that the four environments are exactly the lower
+sets of the hierarchy of roles (`exists_internal_eq_iff`, and `Environment.internalOrderIso` as an
+order isomorphism), from which the hierarchy is recovered (`le_iff_forall_mem_internal`).
+
+A role-oriented form takes as antecedent whoever holds its role, so the protagonist can antecede it
+exactly where that role is internal. A role `r` fits an observation on some examples,
+`Fits obs rows r`, when the observation holds of exactly the examples in whose environment `r` is
+internal. The pivot is the one role that fits the binding of Japanese *zibun*
+(`fits_zibun_iff`), each of the phrases *that fool*, *mysteriously* and *beloved* is fitted by one
+role (`fits_diagnostic_iff`), and the self fits Icelandic *sig*.
 
 ## Implementation notes
 
@@ -27,6 +34,9 @@ holds its role, so the protagonist can antecede it exactly where that role is in
 * An example enters with the environment the paper assigns it. An adverbial clause in which the
   speaker takes no one's point of view has no head to specify a role, and is entered with every
   role external.
+* `Environment.internal` takes values in `Finset LogophoricRole`, which keeps membership
+  decidable, and `Environment.internalOrderEmbedding` bundles it with the proof that each value is a
+  lower set.
 
 ## TODO
 
@@ -43,37 +53,33 @@ holds its role, so the protagonist can antecede it exactly where that role is in
 
 namespace Sells1987
 
+open Examples (all Environment Diagnostic environment diagnostic reading)
+
 /-! ### Discourse environments -/
 
-/-- The discourse environments of the paper's first table. -/
-inductive Environment where
-  /-- Direct speech, in which the external speaker holds every role. -/
-  | directSpeech
-  /-- Third-person point of view, in which the speaker reports from where someone in the sentence
-  stands. It arises by construction, as in an adverbial clause, and not from a predicate. -/
-  | thirdPerson
-  /-- The complement of a psychological verb such as *distress*, through which the speaker reports
-  the state of mind of someone in the sentence. -/
-  | psychVerb
-  /-- The complement of a verb of communication such as *say*, the fully logophoric case. -/
-  | logophoricVerb
-  deriving DecidableEq, Fintype, Repr
+namespace Examples.Environment
 
-/-- The roles an environment predicates of the internal protagonist, the rest being the external
-speaker's. -/
-def Environment.internal : Environment → Finset LogophoricRole
+/-- The environments in the order of Table 1, from direct speech to the logophoric verbs. -/
+instance : LinearOrder Environment := LinearOrder.lift' (·.ctorIdx) (by decide)
+
+/-- Table 1: the roles an environment predicates of the internal protagonist, the rest being the
+external speaker's. -/
+def internal : Environment → Finset LogophoricRole
   | .directSpeech => ∅
   | .thirdPerson => {.pivot}
   | .psychVerb => {.pivot, .self}
   | .logophoricVerb => {.pivot, .self, .source}
 
-variable {e : Environment} {r r' : LogophoricRole}
+variable {e e' : Environment} {r r' : LogophoricRole}
 
-/-- The hierarchy of roles is the one the table shows, `r` lying below `r'` when `r` is internal
-in every environment in which `r'` is. -/
-theorem le_iff_forall_mem_internal :
-    r ≤ r' ↔ ∀ e : Environment, r' ∈ e.internal → r ∈ e.internal := by
-  cases r <;> cases r' <;> decide
+theorem internal_subset_internal : e.internal ⊆ e'.internal ↔ e ≤ e' := by
+  revert e e'; decide
+
+end Examples.Environment
+
+open Examples.Environment
+
+variable {e : Environment} {r r' : LogophoricRole}
 
 /-- The table has exactly the role specifications that respect the hierarchy. -/
 theorem exists_internal_eq_iff {s : Finset LogophoricRole} :
@@ -82,36 +88,64 @@ theorem exists_internal_eq_iff {s : Finset LogophoricRole} :
       (∃ e : Environment, e.internal = s) ↔ ∀ a ∈ s, ∀ b ≤ a, b ∈ s := by decide
   exact (h s).trans ⟨fun h _ _ hba ha ↦ h _ ha _ hba, fun h _ ha _ hba ↦ h hba ha⟩
 
-theorem Environment.pivot_mem_internal_iff : .pivot ∈ e.internal ↔ e ≠ .directSpeech := by
-  cases e <;> decide
+namespace Examples.Environment
 
-theorem Environment.self_mem_internal_iff :
-    .self ∈ e.internal ↔ e = .psychVerb ∨ e = .logophoricVerb := by
-  cases e <;> decide
+/-- `Environment.internal` as an order embedding into the lower sets of roles. -/
+def internalOrderEmbedding : Environment ↪o LowerSet LogophoricRole :=
+  .ofMapLEIff (fun e ↦ ⟨e.internal, exists_internal_eq_iff.1 ⟨e, rfl⟩⟩) fun _ _ ↦
+    Finset.coe_subset.trans internal_subset_internal
 
-theorem Environment.source_mem_internal_iff : .source ∈ e.internal ↔ e = .logophoricVerb := by
-  cases e <;> decide
+@[simp]
+theorem coe_internalOrderEmbedding (e : Environment) :
+    (internalOrderEmbedding e : Set LogophoricRole) = e.internal :=
+  rfl
+
+@[simp]
+theorem mem_internalOrderEmbedding : r ∈ internalOrderEmbedding e ↔ r ∈ e.internal :=
+  Iff.rfl
+
+theorem internalOrderEmbedding_surjective : Function.Surjective internalOrderEmbedding := fun s ↦ by
+  classical
+  obtain ⟨e, he⟩ := exists_internal_eq_iff (s := (s : Set LogophoricRole).toFinset).2
+    (by simp [s.lower])
+  exact ⟨e, SetLike.coe_injective (by simp [he])⟩
+
+/-- The environments are the lower sets of the hierarchy of roles, in the order of Table 1. -/
+noncomputable def internalOrderIso : Environment ≃o LowerSet LogophoricRole :=
+  RelIso.ofSurjective _ internalOrderEmbedding_surjective
+
+@[simp]
+theorem coe_internalOrderIso : ⇑internalOrderIso = internalOrderEmbedding :=
+  rfl
+
+end Examples.Environment
+
+/-- The hierarchy of roles is the one the table shows, `r` lying below `r'` when `r` is internal
+in every environment in which `r'` is. -/
+theorem le_iff_forall_mem_internal :
+    r ≤ r' ↔ ∀ e : Environment, r' ∈ e.internal → r ∈ e.internal := by
+  refine ⟨fun h e ↦ (internalOrderEmbedding e).lower h, fun h ↦ ?_⟩
+  obtain ⟨e, he⟩ := internalOrderEmbedding_surjective (.Iic r')
+  have h' : r' ∈ internalOrderEmbedding e → r ∈ internalOrderEmbedding e := h e
+  rw [he] at h'
+  exact h' (LowerSet.mem_Iic_iff.2 le_rfl)
 
 /-! ### The examples -/
-
-/-- The environment the paper assigns an example. -/
-def environment? (d : Datum) : Option Environment :=
-  d.parse? "environment"
-    [("logophoric verb", .logophoricVerb), ("psych-verb", .psychVerb), ("3POV", .thirdPerson),
-      ("external", .directSpeech)]
-
-/-- The examples the paper gives of the pronoun or the discourse-oriented phrase `value`. -/
-def examplesOf (key value : String) : List Datum :=
-  Examples.all.filter (·.feature? key = some value)
 
 /-- A role fits an observation on some examples when each has an environment and the observation
 holds of exactly those in whose environment the role is internal. -/
 def Fits (obs : Datum → Prop) (rows : List Datum) (r : LogophoricRole) : Prop :=
-  ∀ d ∈ rows, ∃ e ∈ environment? d, (obs d ↔ r ∈ e.internal)
+  ∀ d ∈ rows, ∃ e ∈ environment d, (obs d ↔ r ∈ e.internal)
 
 instance (obs : Datum → Prop) [DecidablePred obs] (rows : List Datum) :
     Decidable (Fits obs rows r) :=
-  inferInstanceAs (Decidable (∀ d ∈ rows, ∃ e ∈ environment? d, _))
+  inferInstanceAs (Decidable (∀ d ∈ rows, ∃ e ∈ environment d, _))
+
+/-- The examples the paper gives of the pronoun `form`. -/
+def withPronoun (form : String) : List Datum := all.filter (·.feature? "pronoun" = some form)
+
+/-- The examples the paper gives of the discourse-oriented phrase `k`. -/
+def withDiagnostic (k : Diagnostic) : List Datum := all.filter (diagnostic · = some k)
 
 /-- The pronoun of the example has the internal protagonist as antecedent, the indexing the paper
 judges. -/
@@ -119,44 +153,37 @@ abbrev Bound (d : Datum) : Prop := d.judgment = .acceptable
 
 /-- The discourse-oriented phrase of the example can be understood from the side of the internal
 protagonist. -/
-def OfProtagonist (d : Datum) : Prop := ("internal protagonist", Judgment.acceptable) ∈ d.readings
+abbrev OfProtagonist (d : Datum) : Prop := reading d .internalProtagonist = some .acceptable
 
-instance : DecidablePred OfProtagonist := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+/-- The role each discourse-oriented phrase is a diagnostic of. -/
+def Examples.Diagnostic.role : Diagnostic → LogophoricRole
+  | .thatFool => .source
+  | .mysteriously => .self
+  | .beloved => .pivot
 
 /-- The pivot is the one role that fits the binding of Japanese *zibun*. The
 protagonist binds it under verbs of saying and psychological verbs, negated or not, and in
 adverbial clauses reported from the protagonist's point of view, but not in a *when* clause, which
 does not invite that point of view. -/
-theorem fits_zibun_iff : Fits Bound (examplesOf "pronoun" "zibun") r ↔ r = .pivot := by
+theorem fits_zibun_iff : Fits Bound (withPronoun "zibun") r ↔ r = .pivot := by
   cases r <;> decide
 
-/-- The source is the one role that fits *that fool*, an evaluation that can be the protagonist's
-under a verb of saying alone. -/
-theorem fits_thatFool_iff :
-    Fits OfProtagonist (examplesOf "diagnostic" "that fool") r ↔ r = .source := by
-  cases r <;> decide
+/-- The role a discourse-oriented phrase is a diagnostic of is the one role that fits it: the
+source for *that fool*, an evaluation that can be the protagonist's under a verb of saying alone,
+the self for *mysteriously*, and the pivot for *beloved*, which goes with the protagonist in all
+three environments. -/
+theorem fits_diagnostic_iff {k : Diagnostic} :
+    Fits OfProtagonist (withDiagnostic k) r ↔ r = k.role := by
+  cases k <;> cases r <;> decide
 
-/-- The self is the one role that fits *mysteriously*, where the mystery is the protagonist's
-under a verb of saying or a psychological verb and the speaker's under third-person point of
-view. -/
-theorem fits_mysteriously_iff :
-    Fits OfProtagonist (examplesOf "diagnostic" "mysteriously") r ↔ r = .self := by
-  cases r <;> decide
-
-/-- The pivot is the one role that fits *beloved*, which goes with the protagonist in all three
-environments. -/
-theorem fits_beloved_iff :
-    Fits OfProtagonist (examplesOf "diagnostic" "beloved") r ↔ r = .pivot := by
-  cases r <;> decide
-
-theorem fits_sig : Fits Bound (examplesOf "pronoun" Icelandic.Reciprocals.sig.form) .self := by
+theorem fits_sig : Fits Bound (withPronoun Icelandic.Reciprocals.sig.form) .self := by
   decide
 
 /-- The source does not fit the Ewe logophoric pronoun *yè*, which appears under 'say' and also
 under a psychological predicate, where the source is the external speaker's. The paper remarks of
 such examples that the self is relevant beside the source, and later suggests the source as the
 orientation of logophoric pronouns. -/
-theorem fits_ye_iff : Fits Bound (examplesOf "pronoun" Ewe.Pronouns.ye.form) r ↔ r ≠ .source := by
+theorem fits_ye_iff : Fits Bound (withPronoun Ewe.Pronouns.ye.form) r ↔ r ≠ .source := by
   cases r <;> decide
 
 end Sells1987

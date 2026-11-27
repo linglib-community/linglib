@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Computability.Edge
@@ -8,27 +13,13 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # CCG categories
 
-The categories of combinatory categorial grammar are built from atoms by a rightward and a
-leftward slash, each slash carrying one of Baldridge's modalities. Every category is uniquely an
-atom, its *target*, followed by a sequence of *arguments*, slash–category pairs; Kuhlmann, Koller
-and Satta write it `A|ₘXₘ ⋯ |₁X₁`, and the composition rules of every CCG formalism have the
-form `X/Y Yβ ⇒ Xβ` over an argument sequence `β`. Categories are stated over an arbitrary type
-`α` of atoms, so a grammar with featured atoms instantiates its own inventory.
-
-## Main definitions
-
-* `CCG.Modality`: the slash modalities, a bounded order with `dot = ⊥`, `star = ⊤`, and
-  `diamond` and `cross` incomparable.
-* `CCG.Cat`: categories over a type `α` of atoms.
-* `CCG.Cat.Arg`, `CCG.Cat.pushArgs`: an argument, and the category `xβ`.
-* `CCG.Cat.target`, `CCG.Cat.args`: the target and the arguments of a category.
-* `CCG.Cat.equivTargetArgs`: a category is its target together with its arguments.
-* `CCG.Cat.count`: the count of an atom.
-
-## Main statements
-
-* `CCG.Cat.atom_pushArgs_eq_iff`: a category is `aβ` exactly when `a` is its target and `β` its
-  arguments.
+A category of combinatory categorial grammar is an atom, such as `S` or `NP`, or a slash category.
+`X/Y` combines with a `Y` on its right to give an `X`, and `X\Y` with a `Y` on its left. Each
+slash carries a modality, which limits the rules the slash may take part in. Every category is
+in exactly one way an atom, its *target*, followed by a sequence of *arguments*, each a slash
+with the category it seeks (`Cat.equivTargetArgs`). A transitive verb `(S\NP)/NP` has target `S`
+and two arguments. Categories are stated over an arbitrary type of atoms, so that a grammar
+chooses its own.
 
 ## Notation
 
@@ -46,7 +37,6 @@ fully parenthesized (`(S \ NP) / NP`).
 * [steedman-2019]
 * [baldridge-2002]
 * [kuhlmann-koller-satta-2015]
-* [van-benthem-1986]
 -/
 
 @[expose] public section
@@ -95,25 +85,24 @@ end Modality
 
 /-! ### Categories -/
 
-/-- CCG categories over a type `α` of atomic categories, built from atoms by directional
-slashes that each carry a `Modality`. -/
+/-- CCG categories over a type `α` of atomic categories, built from atoms by slashes that each
+look to a side and carry a `Modality`. -/
 inductive Cat (α : Type*) where
   /-- An atomic category. -/
   | atom : α → Cat α
-  /-- `X/ₘY` looks right for a `Y` to give an `X`, at modality `m`. -/
-  | rslash : Cat α → Modality → Cat α → Cat α
-  /-- `X\ₘY` looks left for a `Y` to give an `X`, at modality `m`. -/
-  | lslash : Cat α → Modality → Cat α → Cat α
+  /-- `X/ₘY`, when `side` is `right`, and `X\ₘY`, when it is `left`, look to that side for a `Y`
+  to give an `X`, at modality `m`. -/
+  | slash (side : Edge) (x : Cat α) (m : Modality) (y : Cat α) : Cat α
   deriving Repr, DecidableEq
 
-scoped notation:60 X "/" Y => Cat.rslash X Modality.dot Y
-scoped notation:60 X "\\" Y => Cat.lslash X Modality.dot Y
-scoped notation:60 X "/⋄" Y => Cat.rslash X Modality.diamond Y
-scoped notation:60 X "\\⋄" Y => Cat.lslash X Modality.diamond Y
-scoped notation:60 X "/×" Y => Cat.rslash X Modality.cross Y
-scoped notation:60 X "\\×" Y => Cat.lslash X Modality.cross Y
-scoped notation:60 X "/⋆" Y => Cat.rslash X Modality.star Y
-scoped notation:60 X "\\⋆" Y => Cat.lslash X Modality.star Y
+scoped notation:60 X "/" Y => Cat.slash Edge.right X Modality.dot Y
+scoped notation:60 X "\\" Y => Cat.slash Edge.left X Modality.dot Y
+scoped notation:60 X "/⋄" Y => Cat.slash Edge.right X Modality.diamond Y
+scoped notation:60 X "\\⋄" Y => Cat.slash Edge.left X Modality.diamond Y
+scoped notation:60 X "/×" Y => Cat.slash Edge.right X Modality.cross Y
+scoped notation:60 X "\\×" Y => Cat.slash Edge.left X Modality.cross Y
+scoped notation:60 X "/⋆" Y => Cat.slash Edge.right X Modality.star Y
+scoped notation:60 X "\\⋆" Y => Cat.slash Edge.left X Modality.star Y
 
 namespace Cat
 
@@ -132,15 +121,10 @@ structure Arg (α : Type*) where
   deriving Repr, DecidableEq
 
 /-- `x.push a` is `x` with `a` as its new outermost argument. -/
-def push (x : Cat α) : Arg α → Cat α
-  | ⟨.right, m, y⟩ => .rslash x m y
-  | ⟨.left, m, y⟩ => .lslash x m y
+def push (x : Cat α) (a : Arg α) : Cat α := .slash a.side x a.modality a.cat
 
-@[simp] theorem push_right (x y : Cat α) (m : Modality) :
-    x.push ⟨.right, m, y⟩ = .rslash x m y := rfl
-
-@[simp] theorem push_left (x y : Cat α) (m : Modality) :
-    x.push ⟨.left, m, y⟩ = .lslash x m y := rfl
+@[simp] theorem push_mk (x y : Cat α) (s : Edge) (m : Modality) :
+    x.push ⟨s, m, y⟩ = .slash s x m y := rfl
 
 /-- `x.pushArgs β` is the category `xβ`, which adds the arguments `β` to `x` innermost first, so
 that `x.pushArgs [a₁, a₂]` has `a₂` as its outermost argument. -/
@@ -158,19 +142,14 @@ def pushArgs (x : Cat α) (β : List (Arg α)) : Cat α := β.foldl push x
 role of a function's return type. -/
 def target : Cat α → α
   | .atom a => a
-  | .rslash x _ _ => target x
-  | .lslash x _ _ => target x
+  | .slash _ x _ _ => target x
 
 @[simp] theorem target_atom (a : α) : target (atom a) = a := rfl
 
-@[simp] theorem target_rslash (x y : Cat α) (m : Modality) :
-    target (rslash x m y) = target x := rfl
+@[simp] theorem target_slash (s : Edge) (x y : Cat α) (m : Modality) :
+    target (slash s x m y) = target x := rfl
 
-@[simp] theorem target_lslash (x y : Cat α) (m : Modality) :
-    target (lslash x m y) = target x := rfl
-
-@[simp] theorem target_push (x : Cat α) (a : Arg α) : (x.push a).target = x.target := by
-  obtain ⟨_ | _, _, _⟩ := a <;> rfl
+@[simp] theorem target_push (x : Cat α) (a : Arg α) : (x.push a).target = x.target := rfl
 
 @[simp] theorem target_pushArgs (x : Cat α) (β : List (Arg α)) :
     (x.pushArgs β).target = x.target := by
@@ -179,19 +158,14 @@ def target : Cat α → α
 /-- The arguments of a category, innermost first. -/
 def args : Cat α → List (Arg α)
   | .atom _ => []
-  | .rslash x m y => x.args ++ [⟨.right, m, y⟩]
-  | .lslash x m y => x.args ++ [⟨.left, m, y⟩]
+  | .slash s x m y => x.args ++ [⟨s, m, y⟩]
 
 @[simp] theorem args_atom (a : α) : args (atom a) = [] := rfl
 
-@[simp] theorem args_rslash (x y : Cat α) (m : Modality) :
-    args (rslash x m y) = x.args ++ [⟨.right, m, y⟩] := rfl
+@[simp] theorem args_slash (s : Edge) (x y : Cat α) (m : Modality) :
+    args (slash s x m y) = x.args ++ [⟨s, m, y⟩] := rfl
 
-@[simp] theorem args_lslash (x y : Cat α) (m : Modality) :
-    args (lslash x m y) = x.args ++ [⟨.left, m, y⟩] := rfl
-
-@[simp] theorem args_push (x : Cat α) (a : Arg α) : (x.push a).args = x.args ++ [a] := by
-  obtain ⟨_ | _, _, _⟩ := a <;> rfl
+@[simp] theorem args_push (x : Cat α) (a : Arg α) : (x.push a).args = x.args ++ [a] := rfl
 
 @[simp] theorem args_pushArgs (x : Cat α) (β : List (Arg α)) :
     (x.pushArgs β).args = x.args ++ β := by
@@ -200,8 +174,7 @@ def args : Cat α → List (Arg α)
 @[simp] theorem atom_target_pushArgs_args (c : Cat α) : (atom c.target).pushArgs c.args = c := by
   induction c with
   | atom => rfl
-  | rslash x m y ih => simp [ih]
-  | lslash x m y ih => simp [ih]
+  | slash s x m y ih => simp [ih]
 
 /-- Every category is uniquely its target followed by its arguments. -/
 def equivTargetArgs : Cat α ≃ α × List (Arg α) where
@@ -228,38 +201,6 @@ def forwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
 target `t`. -/
 def backwardTypeRaise (x : Cat α) (t : Cat α) : Cat α :=
   t \ (t / x)
-
-variable [DecidableEq α]
-
-/-! ### The count invariant -/
-
-/-- The count of the atom `a` in a category ([van-benthem-1986]) adds `1` for each occurrence in
-result position and subtracts `1` for each occurrence in argument position, so that every
-combinatory rule preserves it (`CCG.Rule.count_eq`). -/
-def count (a : α) : Cat α → ℤ
-  | .atom b => if b = a then 1 else 0
-  | .rslash x _ y => count a x - count a y
-  | .lslash x _ y => count a x - count a y
-
-@[simp] theorem count_atom (a b : α) : count a (atom b) = if b = a then 1 else 0 := rfl
-
-@[simp] theorem count_rslash (a : α) (x y : Cat α) (m : Modality) :
-    count a (rslash x m y) = count a x - count a y := rfl
-
-@[simp] theorem count_lslash (a : α) (x y : Cat α) (m : Modality) :
-    count a (lslash x m y) = count a x - count a y := rfl
-
-@[simp] theorem count_push (a : α) (x : Cat α) (b : Arg α) :
-    (x.push b).count a = x.count a - b.cat.count a := by
-  obtain ⟨_ | _, _, _⟩ := b <;> rfl
-
-theorem count_pushArgs (a : α) (x : Cat α) (β : List (Arg α)) :
-    (x.pushArgs β).count a = x.count a - (β.map (·.cat.count a)).sum := by
-  induction β generalizing x with
-  | nil => simp
-  | cons b β ih =>
-    simp only [pushArgs_cons, ih, count_push, List.map_cons, List.sum_cons]
-    omega
 
 end Cat
 

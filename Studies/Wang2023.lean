@@ -177,10 +177,10 @@ theorem presup_plural : presup (E := E) .plural = Set.univ := Number.dom_plural
 theorem presup_singular_ssubset_dual (ha : IsAtom a) (hb : IsAtom b) (hab : a ≠ b) :
     presup (E := E) .singular ⊂ presup .dual := by
   refine ⟨fun x hx ↦ ?_, fun h ↦ ?_⟩
-  · have hxA := Mereology.atom_iff_isAtom.1 ((Number.mem_dom_singular x).1 hx)
+  · have hxA := ((Number.mem_dom_singular x).1 hx)
     exact ⟨x, x, hxA, hxA, le_sup_left⟩
-  · exact Mereology.not_atom_sup_of_ne (Mereology.atom_iff_isAtom.2 ha)
-      (Mereology.atom_iff_isAtom.2 hb) hab
+  · exact Mereology.not_isAtom_sup_of_ne (ha)
+      (hb) hab
       ((Number.mem_dom_singular _).1 (h ⟨a, b, ha, hb, le_rfl⟩))
 
 -- (80)

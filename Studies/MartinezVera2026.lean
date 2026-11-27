@@ -3,11 +3,11 @@ module
 public import Linglib.Data.Examples.MartinezVera2026
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Discourse.SpeechAct.Role
-public import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
+public import Linglib.Languages.Quechua.SaraguroKichwa.Evidentiality
 public import Linglib.Semantics.ConventionalImplicature
-public import Linglib.Semantics.Evidential.Basic
+public import Linglib.Semantics.Evidentiality.Evidence
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -37,10 +37,10 @@ commitments, without their addressee, and the propositions by which it addresses
 discussion, addressing being partial answerhood. Exhaustification is innocent exclusion; the paper
 glosses the alternatives it may deny as those entailing the prejacent, under which a correction
 would not entail `¬p`. Highlighting is the paper's notion, not the compositional highlighting of
-`Semantics/Questions/Highlighting.lean`. The operator name `present` is Faller's. The examples are
-evaluated in a model whose worlds are sets of events. The paper's survey of *=mi* across Quechuan,
-after Faller, Sánchez, Tellings, Grzech and Bendezú, finds the analyses hard to compare at present
-and is not formalized.
+`Semantics/Questions/Inquisitive/Highlighting.lean`. The operator name `present` is Faller's. The
+examples are evaluated in a model whose worlds are sets of events. The paper's survey of *=mi*
+across Quechuan, after Faller, Sánchez, Tellings, Grzech and Bendezú, finds the analyses hard to
+compare at present and is not formalized.
 
 ## TODO
 
@@ -66,6 +66,8 @@ and is not formalized.
 
 @[expose] public section
 
+open Inquisitive
+
 namespace MartinezVera2026
 
 open ConventionalImplicature (TwoDim)
@@ -76,27 +78,22 @@ variable {A W : Type*}
 
 /-! ### Evidentials -/
 
-/-- `evidence ev s e p` is the not-at-issue proposition of the evidential `e` ((40b), (42b)),
-that `s` has evidence for `p` from a source `e` covers, where `ev s π p` is the set of worlds in
-which `s` has evidence of kind `π` for `p`. For *-rka* this is direct perceptual evidence and for
-*-shka* reportative evidence. -/
-def evidence (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
-    (p : Set W) : Set W :=
-  {w | ∃ π ∈ e.covers, w ∈ ev s π p}
-
 /-- `withEvidential ev s e S` applies the evidential `e` to the sentence `S` by rule I ((40a),
-(42a)), keeping the scope at issue and adding the speaker's evidence for it not at issue. -/
+(42a)), keeping the scope at issue and adding not at issue that `s` has evidence for it from a
+source `e` covers ((40b), (42b)), where `ev s π p` is the set of worlds in which `s` has evidence
+of kind `π` for `p`. For *-rka* this is direct perceptual evidence and for *-shka* reportative
+evidence. -/
 def withEvidential (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
-    (S : TwoDim (W → Prop) (Set W)) : TwoDim (W → Prop) (Set W) :=
-  S.ciApply fun p ↦ (· ∈ evidence ev s e p)
+    (S : TwoDim W (Set W)) : TwoDim W (Set W) :=
+  S.ciApply fun p ↦ (· ∈ e.evidence (ev s) p)
 
 variable (ev : A → Evidential.Parameter → Set W → Set W) (s : A) (e : Evidential)
 
-@[simp] theorem withEvidential_atIssue (S : TwoDim (W → Prop) (Set W)) :
+@[simp] theorem withEvidential_atIssue (S : TwoDim W (Set W)) :
     (withEvidential ev s e S).atIssue = S.atIssue := rfl
 
 @[simp] theorem ofPred_notAtIssue_withEvidential_pure (p : Set W) :
-    Set.ofPred (withEvidential ev s e (pure p)).notAtIssue = evidence ev s e p := by
+    Set.ofPred (withEvidential ev s e (pure p)).notAtIssue = e.evidence (ev s) p := by
   ext; simp [withEvidential]
 
 /-! ### Moves and contexts -/
@@ -115,7 +112,7 @@ namespace Move
 
 /-- The operator `assert` (39) commits the speaker to the scope, by means of which she addresses
 the question under discussion, and to the not-at-issue content. -/
-def assert (s : A) (S : TwoDim (W → Prop) (Set W)) : Move A W where
+def assert (s : A) (S : TwoDim W (Set W)) : Move A W where
   speaker := s
   commitments := {S.atIssue, Set.ofPred S.notAtIssue}
   addressers := {S.atIssue}
@@ -123,7 +120,7 @@ def assert (s : A) (S : TwoDim (W → Prop) (Set W)) : Move A W where
 /-- The operator `present` (41) brings the scope to the addressee's attention, addresses the
 question under discussion by means of it or its negation, and commits the speaker only to the
 not-at-issue content. -/
-def present (s : A) (S : TwoDim (W → Prop) (Set W)) : Move A W where
+def present (s : A) (S : TwoDim W (Set W)) : Move A W where
   speaker := s
   commitments := {Set.ofPred S.notAtIssue}
   addressers := {S.atIssue, S.atIssueᶜ}
@@ -135,29 +132,27 @@ def biasedQuestion (s : A) (q : Set W) : Move A W := ⟨s, ∅, {q}⟩
 /-- A declarative with a direct evidential is asserted and one with a reportative is presented
 ((40c), (42c)), and `declare s e S` is the move of a declarative with evidential `e`, if the paper
 analyzes `e`. -/
-def declare (s : A) (e : Evidential) (S : TwoDim (W → Prop) (Set W)) : Option (Move A W) :=
-  match e.evidenceType? with
-  | some .attested => some (assert s S)
-  | some .reported => some (present s S)
-  | _ => none
+def declare (s : A) (e : Evidential) (S : TwoDim W (Set W)) : Option (Move A W) :=
+  if e.IsDirect then some (assert s S) else if e.IsReportative then some (present s S) else none
 
-theorem declare_of_isDirect {e : Evidential} (he : e.IsDirect) (S : TwoDim (W → Prop) (Set W)) :
+theorem declare_of_isDirect {e : Evidential} (he : e.IsDirect) (S : TwoDim W (Set W)) :
     declare s e S = some (assert s S) := by
-  simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
+  simp [declare, he]
 
 theorem declare_of_isReportative {e : Evidential} (he : e.IsReportative)
-    (S : TwoDim (W → Prop) (Set W)) : declare s e S = some (present s S) := by
-  simp [declare, Evidential.evidenceType?_eq_some_iff.2 he]
+    (S : TwoDim W (Set W)) : declare s e S = some (present s S) := by
+  have hd : ¬ e.IsDirect := fun h ↦ by cases h.eq he
+  simp [declare, hd, he]
 
-@[simp] theorem declare_rka (S : TwoDim (W → Prop) (Set W)) : declare s rka S = some (assert s S) :=
+@[simp] theorem declare_rka (S : TwoDim W (Set W)) : declare s rka S = some (assert s S) :=
   declare_of_isDirect s (by decide) S
 
-@[simp] theorem declare_shka (S : TwoDim (W → Prop) (Set W)) :
-    declare s shka S = some (present s S) :=
+@[simp] theorem declare_shka (S : TwoDim W (Set W)) : declare s shka S = some (present s S) :=
   declare_of_isReportative s (by decide) S
 
 -- The paper does not analyze the inferential *-shi* (footnote 6).
-example (S : TwoDim (W → Prop) (Set W)) : declare s shi S = none := rfl
+example (S : TwoDim W (Set W)) : declare s shi S = none := by
+  simp [declare, show ¬ shi.IsDirect by decide, show ¬ shi.IsReportative by decide]
 
 end Move
 
@@ -166,7 +161,7 @@ structure Context (A W : Type*) where
   /-- The moves on record. -/
   moves : Set (Move A W)
   /-- The question under discussion. -/
-  qud : Question W
+  qud : Inquisitive.Proposition (Set W)
 
 namespace Context
 
@@ -175,12 +170,11 @@ def update (c : Context A W) (m : Move A W) : Context A W := ⟨insert m c.moves
 
 /-- `c.declare s e S` puts on record the move of a declarative with evidential `e`, if the paper
 analyzes `e`. -/
-def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim (W → Prop) (Set W)) :
-    Context A W :=
+def declare (c : Context A W) (s : A) (e : Evidential) (S : TwoDim W (Set W)) : Context A W :=
   ((Move.declare s e S).map c.update).getD c
 
 /-- Asking a question that addresses no prior one makes it the question under discussion. -/
-def ask (c : Context A W) (Q : Question W) : Context A W := ⟨c.moves, Q⟩
+def ask (c : Context A W) (Q : Inquisitive.Proposition (Set W)) : Context A W := ⟨c.moves, Q⟩
 
 /-- The commitment state of the record commits the speaker of each move to each of its
 commitments. -/
@@ -244,13 +238,13 @@ theorem highlighted_update_iff {m : Move A W} :
 
 /-- Presenting `p` licenses clausal *=mi* on `p` ((48), (50), (51)), wherever `¬p` addresses the
 question under discussion. -/
-theorem miDefined_update_present (S : TwoDim (W → Prop) (Set W))
+theorem miDefined_update_present (S : TwoDim W (Set W))
     (h : c.qud.PartiallyAnsweredBy S.atIssueᶜ) :
     MiDefined (c.update (.present s S)) Set.univ S.atIssue :=
   miDefined_of_highlighted_compl (highlighted_update_iff.2 ⟨.inl (by simp [Move.present]), h⟩)
 
 /-- Asserting a consistent `p` adds nothing that licenses clausal *=mi* on `p` ((47), (49)). -/
-theorem miDefined_update_assert_iff (S : TwoDim (W → Prop) (Set W)) (hp : S.atIssue.Nonempty) :
+theorem miDefined_update_assert_iff (S : TwoDim W (Set W)) (hp : S.atIssue.Nonempty) :
     MiDefined (c.update (.assert s S)) Set.univ S.atIssue ↔ MiDefined c Set.univ S.atIssue := by
   simp only [miDefined_univ_iff, highlighted_update_iff, Move.assert, Set.mem_singleton_iff]
   constructor
@@ -285,7 +279,7 @@ theorem contextSetOf_update {m : Move A W} {w : W} :
       (m.speaker = s → ∀ p ∈ m.commitments, w ∈ p) ∧ w ∈ c.contextSetOf s := by
   simp [Context.mem_contextSetOf, Context.update]
 
-variable (S : TwoDim (W → Prop) (Set W))
+variable (S : TwoDim W (Set W))
 
 -- (18a), footnote 9
 theorem contextSetOf_assert_assert_compl :
@@ -353,7 +347,7 @@ def Answer.prop : Answer → Set (Set Event)
   | variant k => happened (vary k false)
 
 /-- The question under discussion of the model asks which event happened. -/
-def whichEvent : Question (Set Event) := Question.which Set.univ happened
+def whichEvent : Proposition (Set (Set Event)) := Proposition.which Set.univ happened
 
 /-- The alternatives of *=mi* on a clause are all propositions ((44d), (51d)), and those of *=mi*
 on the constituent at a site are the variants at that site ((46d)). -/
@@ -367,7 +361,7 @@ def evModel (_ : Role) (_ : Evidential.Parameter) (_ : Set (Set Event)) : Set (S
 
 /-- `sentence s e p` is the declarative of `s` with evidential `e` and scope `p`. -/
 def sentence (s : Role) (e : Evidential) (p : Set (Set Event)) :
-    TwoDim ((Set Event) → Prop) (Set (Set Event)) :=
+    TwoDim (Set Event) (Set (Set Event)) :=
   withEvidential evModel s e (pure p)
 
 /-- A `Prior` is the discourse before a *=mi* sentence as the paper describes its examples. It is
@@ -517,21 +511,22 @@ theorem mem_alternatives_iff {a : Answer} {k : Site} :
     · exact ⟨false, rfl⟩
 
 theorem happened_mem_alt_whichEvent (e : Event) : happened e ∈ whichEvent.alt :=
-  Question.mem_alt_which_of_maximal e trivial ⟨{e}, Set.mem_singleton e⟩
+  Inquisitive.Proposition.mem_alt_which_of_maximal e trivial ⟨{e}, Set.mem_singleton e⟩
     fun _ _ h ↦ by rw [happened_subset_happened.1 h]
 
 theorem partiallyAnsweredBy_whichEvent (a : Answer) : whichEvent.PartiallyAnsweredBy a.prop := by
   cases a with
-  | scope => exact Question.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
-  | negation => exact Question.partiallyAnsweredBy_compl_of_mem_alt (happened_mem_alt_whichEvent _)
-  | variant k => exact Question.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
+  | scope => exact Proposition.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
+  | negation => exact Proposition.partiallyAnsweredBy_compl_of_mem_alt (happened_mem_alt_whichEvent
+    _)
+  | variant k => exact Proposition.partiallyAnsweredBy_of_mem_alt (happened_mem_alt_whichEvent _)
 
 theorem partiallyAnsweredBy_polar_iff (a : Answer) :
-    (Question.polar Answer.scope.prop).PartiallyAnsweredBy a.prop ↔ ∀ k, a ≠ .variant k := by
+    (Proposition.polar Answer.scope.prop).PartiallyAnsweredBy a.prop ↔ ∀ k, a ≠ .variant k := by
   have hne : Answer.scope.prop ≠ ∅ := Set.nonempty_iff_ne_empty.1 ⟨{fun _ ↦ true}, rfl⟩
   have hnu : Answer.scope.prop ≠ Set.univ := fun h ↦
     empty_notMem_happened (fun _ ↦ true) (show ∅ ∈ Answer.scope.prop by rw [h]; trivial)
-  rw [Question.partiallyAnsweredBy_polar_iff hne hnu]
+  rw [Inquisitive.Proposition.partiallyAnsweredBy_polar_iff hne hnu]
   cases a with
   | scope => simp
   | negation => simp [Answer.prop]
@@ -738,7 +733,7 @@ def context : Context Role (Set Event) :=
   match r.continuation with
   | .deniesScope => c.update (.assert .speaker (pure Answer.negation.prop))
   | .deniesEvidence => c.update
-      (.assert .speaker (pure (evidence evModel .speaker r.evidential Answer.scope.prop)ᶜ))
+      (.assert .speaker (pure (r.evidential.evidence (evModel .speaker) Answer.scope.prop)ᶜ))
   | .confirmsThenDeniesScope => (c.update (.assert .speaker (pure Answer.scope.prop))).update
       (.assert .speaker (pure Answer.negation.prop))
 
@@ -765,7 +760,7 @@ theorem nonempty_contextSetOf_iff (he : r.evidential.IsDirect ∨ r.evidential.I
       Set.not_nonempty_iff_eq_empty]
     · refine ⟨∅, mem_contextSetOf_present_assert_compl _ _ (by simp [Context.mem_contextSetOf])
         ?_ (empty_notMem_happened _)⟩
-      simpa [sentence, withEvidential, evidence, evModel] using he.1.exists_mem
+      simpa [sentence, withEvidential, Evidential.evidence, evModel] using he.nonempty.exists_mem
     · rw [← ofPred_notAtIssue_withEvidential_pure evModel]
       exact contextSetOf_update_assert_compl_notAtIssue _ _ rfl
         (by simp [Move.present, sentence, ofPred_notAtIssue_withEvidential_pure])

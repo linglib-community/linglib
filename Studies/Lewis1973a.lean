@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Set.Card
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 public import Mathlib.SetTheory.Ordinal.Rank
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Relation.ReflTransGen
@@ -51,6 +52,8 @@ world since `c₁` has no parents. Nomic dependence and the regularity analysis 
 namespace Lewis1973a
 
 open CausalModel Conditional Relation
+
+open scoped Filter
 
 /-! ### Counterfactual and causal dependence -/
 
@@ -159,8 +162,8 @@ private theorem eq_solve_of_violations_subset (hx : x c = b) (h : violations M u
   eq_solve_of_isFixedPt <| funext fun v ↦ by
     rw [step_apply]
     rcases eq_or_ne v c with rfl | hv
-    · rw [intervene_eqn_of_mem (Finset.mem_singleton_self v)]; exact hx.symm
-    · rw [intervene_eqn_of_notMem (by simpa using hv)]
+    · rw [intervene_eqn_of_eq_some (Function.update_self ..)]; exact hx.symm
+    · rw [intervene_eqn_of_eq_bot (Function.update_of_ne hv ..)]
       exact (not_not.1 fun hn ↦ hv (h hn)).symm
 
 private theorem divergence_solve_intervene (hb : b ≠ M.solve u c) :
@@ -177,7 +180,7 @@ private theorem violations_solve_intervene (hb : b ≠ M.solve u c) :
   · rwa [solve_intervene_singleton_self]
   · rw [divergence_solve_intervene hb]
   · by_contra hvc
-    exact hv (solve_intervene_of_notMem (by simpa using hvc))
+    exact hv (solve_intervene_of_eq_bot (Function.update_of_ne hvc ..))
 
 -- Every other world where `c` is `b` departs no later than the intervention and violates no fewer
 -- laws, and departs earlier or violates more.
@@ -208,7 +211,7 @@ theorem mem_variablyStrictImp_iff_solve_intervene {ord : U → Preorder (∀ v, 
   have hlt (x : ∀ v, α v) (hx : x c = b) (hne : x ≠ M[c ← b].solve u) :
       M[c ← b].solve u < x :=
     hord _ _ (score_solve_intervene_lt hx hne)
-  have h : @Filter.atBotOn _ _ (ord u) id {x | x c = b} = pure (M[c ← b].solve u) :=
+  have h : atBotOn[ord u] {x | x c = b} = pure (M[c ← b].solve u) :=
     Filter.atBotOn_eq_pure (solve_intervene_singleton_self c b)
       (fun x hx ↦ by
         rcases eq_or_ne x (M[c ← b].solve u) with rfl | hne

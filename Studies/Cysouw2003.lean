@@ -2,14 +2,15 @@ module
 
 public import Linglib.Data.Examples.Cysouw2003
 public import Linglib.Core.Order.UpperLower.Finset
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Core.Data.Setoid.Basic
-public import Linglib.Syntax.Person.Features
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.Tagalog.Pronouns
-public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Syntax.Feature.Person.Decomposition
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.Tagalog.Pronouns
+public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Core.Order.Concept
 public import Linglib.Data.Examples.Readers
+public import Linglib.Syntax.Category.Pronoun.Reference
 
 /-!
 # Cysouw (2003): The paradigmatic structure of person marking
@@ -251,7 +252,7 @@ abbrev Structure := Setoid Category
 homophony reaches them, the third person first and the first person last. -/
 abbrev Singular := {c : Category // c.IsSingular}
 
-instance : LinearOrder Singular := LinearOrder.lift' (fun a ↦ a.1.person.prominence) (by decide)
+instance : LinearOrder Singular := LinearOrder.lift' (fun a ↦ a.1.person) (by decide)
 
 /-- The marking of 'we', the columns of the book's Table 4.2, opposes minimal to augmented
 inclusive, or inclusive to exclusive, or has one form. -/
@@ -308,11 +309,11 @@ def HorizontalHomophony : Prop := ∃ (a : Singular) (b : Category), b.IsGroup �
 /-- The singular `a` shares its morpheme with a group of its own person, the first person with
 the exclusive or the inclusive, the second with 2+3, the third with 3+3. -/
 def HorizontalHomophonyAt (a : Singular) : Prop :=
-  ∃ b : Category, b.IsGroup ∧ b.person.coarsen = a.1.person ∧ s a b
+  ∃ b : Category, b.IsGroup ∧ b.person = a.1.person ∧ s a b
 
 /-- A singular category shares a morpheme with a group of another person. -/
 def DiagonalHomophony : Prop :=
-  ∃ (a : Singular) (b : Category), b.IsGroup ∧ b.person.coarsen ≠ a.1.person ∧ s a b
+  ∃ (a : Singular) (b : Category), b.IsGroup ∧ b.person ≠ a.1.person ∧ s a b
 
 /-- Two groups share a morpheme, homophony inside the first person complex not counted. -/
 def VerticalHomophony : Prop :=
@@ -749,9 +750,9 @@ theorem explicitness_rungs :
       Kind.maranao.pattern.explicitness = ⊥ := by
   decide +kernel
 
-/-! ### Two paradigms from the Fragments -/
+/-! ### Two paradigms from the language files -/
 
-/-- The English subject forms by referential category are the paradigm of the fragment's
+/-- The English subject forms by referential category are the paradigm of the language file's
 nominative pronouns. -/
 def englishSubject : Category → Finset String :=
   PersonalPronoun.paradigm (English.Pronouns.personal.filter (.nom ∈ ·.cases))

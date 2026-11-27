@@ -5,11 +5,11 @@ public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Discourse.SpeechAct.Basic
-public import Linglib.Logic.Trivalent.Basic
-public import Linglib.Fragments.Mayan.Chuj.Verbs
-public import Linglib.Fragments.Mayan.Chuj.Voice
-public import Linglib.Fragments.Mayan.Chuj.Extraction
-public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Logic.Trivalent.Connectives
+public import Linglib.Languages.Mayan.Chuj.Verbs
+public import Linglib.Languages.Mayan.Chuj.Voice
+public import Linglib.Languages.Mayan.Chuj.Extraction
+public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 public import Linglib.Morphology.Word.Leipzig
@@ -43,7 +43,7 @@ models](##context_rows), and with the sums it [mispredicts four](##sums_mispredi
 * A row's judgments are of the readings it names. Its item, its negation, the site of its DP and
   whether its verb is volitional are read off its glossed words: the site from the Agent Focus
   marking of `Chuj.Extraction.realize`, the passive of `Chuj.passive` and the verbs of
-  `Fragments/Mayan/Chuj/Verbs.lean`, whose subjects' entailments also give volitionality. Each
+  `Languages/Mayan/Chuj/Verbs.lean`, whose subjects' entailments also give volitionality. Each
   context the study models is a typed definition quoting the paper.
 * The bounds of *algún* and *uno cualquiera*, the first a quantity implicature, are part of the
   assertion here.
@@ -125,16 +125,17 @@ abbrev atoms : Finset (Finset ι) := univ.map ⟨({·}), singleton_injective⟩
 abbrev sums : Finset (Finset ι) := univ.filter Finset.Nonempty
 
 -- fn. 14
-theorem mem_sums_iff {y : Finset ι} : y ∈ sums ↔ Mereology.AlgClosure (· ∈ atoms) y := by
+theorem mem_sums_iff {y : Finset ι} :
+    y ∈ sums ↔ y ∈ supClosure ((atoms : Finset (Finset ι)) : Set (Finset ι)) := by
   simp only [mem_filter, mem_univ, true_and]
   constructor
-  · refine Nonempty.cons_induction (fun a ↦ .base (by simp)) fun a s h _ ih ↦ ?_
-    rw [cons_eq_insert, insert_eq, ← sup_eq_union]
-    exact .sum (.base (by simp)) ih
+  · refine Nonempty.cons_induction (fun a ↦ subset_supClosure (by simp)) fun a s h _ ih ↦ ?_
+    rw [cons_eq_insert, insert_eq]
+    exact supClosed_supClosure (subset_supClosure (by simp)) ih
   · intro hy
-    induction hy using Mereology.AlgClosure.induction with
-    | base h => obtain ⟨a, -, rfl⟩ := mem_map.1 h; exact singleton_nonempty a
-    | sum _ _ ih _ => exact ih.mono le_sup_left
+    induction hy using supClosure_induction with
+    | mem _ h => obtain ⟨a, -, rfl⟩ := mem_map.1 (mem_coe.1 h); exact singleton_nonempty a
+    | sup _ _ _ _ ih _ => exact ih.mono le_sup_left
 
 variable (ι) in
 /-- A scenario fixes the worlds each anchor projects: the worlds where the decision behind the VP
@@ -163,7 +164,7 @@ def Scenario.worlds (s : Scenario ι) : EventBinder → Finset (Finset ι)
 /-- The domain-fixing function `f` of (59), as the relation from each anchor to the worlds it
 projects. -/
 def Scenario.projection (s : Scenario ι) : SetRel EventBinder (Finset ι) :=
-  .ofSuccessors fun e ↦ ↑(s.worlds e)
+  .cgraph fun e ↦ ↑(s.worlds e)
 
 /-- `Claim D s e w` is the claim of a *yalnhej* DP whose noun has extension `D`, anchored to
 `e`. -/
@@ -392,23 +393,23 @@ def xunThinksAnyone : Context := (scenario none {{0}} .assertion (some nonempty)
 
 /-- The rows whose contexts the study models, with their models. (34) gives no context, so it has
 the one most favourable to random choice. -/
-def contexts : List (Datum × Context) :=
-  [(Examples.ex_22_23a, notAllUnknownWhich), (Examples.ex_22_23b, knowsWhich),
-   (Examples.ex_22_24, knowsAll), (Examples.ex_26_27a, ignorant), (Examples.ex_26_27b, knowsAll),
-   (Examples.ex_26_27c, knowsWhich), (Examples.ex_28_29a, ignorant),
-   (Examples.ex_28_29b, knowsWhich), (Examples.ex_28_29c, knowsAll),
-   (Examples.ex_34, indiscriminate), (Examples.ex_31_32a, indiscriminate),
-   (Examples.ex_31_32b, specific), (Examples.ex_31_33, allTaken),
-   (Examples.ex_35_36a, ignorant), (Examples.ex_35_36b, knowsAll),
-   (Examples.ex_35_36c, knowsWhich), (Examples.ex_37_38a, oneAtRandom),
-   (Examples.ex_37_38b, specific), (Examples.ex_39_40a, ignorant),
-   (Examples.ex_39_40b, knowsAll), (Examples.ex_39_40c, knowsWhich),
-   (Examples.ex_41_42a, oneAtRandom), (Examples.ex_41_42b, specific),
-   (Examples.ex_43_44, indiscriminate), (Examples.ex_46_47, ignorant),
-   (Examples.ex_50b, specific), (Examples.ex_52a, knowsWhich),
-   (Examples.ex_82_49, pickOneAtRandom), (Examples.ex_82_85, anyPermitted),
-   (Examples.ex_86, anyPermitted), (Examples.ex_90_89, xunThinksAnyone),
-   (Examples.ex_123, allTaken)]
+def contexts : List (Examples.Example × Context) :=
+  [(.ex_22_23a, notAllUnknownWhich), (.ex_22_23b, knowsWhich),
+   (.ex_22_24, knowsAll), (.ex_26_27a, ignorant), (.ex_26_27b, knowsAll),
+   (.ex_26_27c, knowsWhich), (.ex_28_29a, ignorant),
+   (.ex_28_29b, knowsWhich), (.ex_28_29c, knowsAll),
+   (.ex_34, indiscriminate), (.ex_31_32a, indiscriminate),
+   (.ex_31_32b, specific), (.ex_31_33, allTaken),
+   (.ex_35_36a, ignorant), (.ex_35_36b, knowsAll),
+   (.ex_35_36c, knowsWhich), (.ex_37_38a, oneAtRandom),
+   (.ex_37_38b, specific), (.ex_39_40a, ignorant),
+   (.ex_39_40b, knowsAll), (.ex_39_40c, knowsWhich),
+   (.ex_41_42a, oneAtRandom), (.ex_41_42b, specific),
+   (.ex_43_44, indiscriminate), (.ex_46_47, ignorant),
+   (.ex_50b, specific), (.ex_52a, knowsWhich),
+   (.ex_82_49, pickOneAtRandom), (.ex_82_85, anyPermitted),
+   (.ex_86, anyPermitted), (.ex_90_89, xunThinksAnyone),
+   (.ex_123, allTaken)]
 
 /-! #### What a row shows -/
 
@@ -450,18 +451,17 @@ def extractedFrom (w : GlossedWord) : Option ArgumentRole :=
 
 /-- The site of the item's DP: an adjunct when its *wh*-word means 'where'; otherwise an argument
 of the clause's verb, internal as the subject of a passive (`Chuj.passive`), external or internal
-as `extractedFrom` finds the subject or the object of a transitive verb, and as the subject of an
-intransitive verb internal if the verb is unaccusative and external if it is unergative. The site
-of a DP whose clause has no verb of `Chuj.Verbs.all`, or whose intransitive verb is classified as
-neither, is not read off. -/
+as `extractedFrom` finds the subject or the object of a transitive verb, and external as the
+subject of intransitive *chanhalw* 'dance', which the paper presents as an external argument
+((22)). The site of a DP whose clause has no verb of `Chuj.Verbs.all`, or whose verb is another
+intransitive, is not read off. -/
 def siteOf (row : Datum) : Option Site :=
   if ((clauseOf row).drop 1).head?.any (·.lexicalGloss? = some "where".toList) then some .adjunct
   else (verbOf row).bind fun (v, w) ↦
     if Bears w (.morpheme .verb Chuj.passive.marker) then some .internal
     else if ArgumentFrame.np ∈ v.valency.frames then
       (extractedFrom w).map fun r ↦ if r = .A then .external else .internal
-    else if v.IsUnaccusative then some .internal
-    else if v.IsUnergative then some .external
+    else if v = Chuj.Verbs.chanhalw then some .external
     else none
 
 /-- The sites a row leaves open: the one read off, or any. -/
@@ -519,7 +519,8 @@ instance (i : ModalIndefinite Item) (row : Datum) (c : Context) : Decidable (Agr
 
 /-- With the noun restricted to atoms, the model predicts the judgment of every reading in every
 row whose context it models. -/
-theorem context_rows : ∀ p ∈ contexts, ∀ i ∈ itemIn p.1, Agrees i.atomic p.1 p.2 := by
+theorem context_rows :
+    ∀ p ∈ contexts, ∀ i ∈ itemIn p.1.datum, Agrees i.atomic p.1.datum p.2 := by
   decide +kernel
 
 /-- With the noun of *yalnhej* closed under sums, as (59) has it, the model's judgments differ
@@ -527,8 +528,9 @@ from the paper's in exactly four rows: (22) in (23a), where the speaker knows th
 danced, and (37), (41) and (82) in (38a), (42a) and (49), where the agent is to choose one at
 random. -/
 theorem sums_mispredict :
-    (contexts.filter fun p ↦ (itemIn p.1).any fun i ↦ !decide (Agrees i p.1 p.2)).map Prod.fst =
-      [Examples.ex_22_23a, Examples.ex_37_38a, Examples.ex_41_42a, Examples.ex_82_49] := by
+    (contexts.filter fun p ↦
+        (itemIn p.1.datum).any fun i ↦ !decide (Agrees i p.1.datum p.2)).map Prod.fst =
+      [.ex_22_23a, .ex_37_38a, .ex_41_42a, .ex_82_49] := by
   decide +kernel
 
 /-- A reading is available unembedded when the item gives it on an object, given an
@@ -543,8 +545,8 @@ instance (i : ModalIndefinite Item) (r : String) : Decidable (i.Available r) := 
 def analysed : List String := ["random choice", "epistemic", "harmonic"]
 
 -- (54), (57)–(58), (93), (111)–(112), (119)–(121), fn. 20 (i)
-theorem reading_rows : ∀ row ∈ Examples.all, row ∉ contexts.map Prod.fst →
-    ∀ i ∈ itemIn row, ∀ r ∈ row.readings, r.1 ∈ analysed →
+theorem reading_rows : ∀ x : Examples.Example, x ∉ contexts.map Prod.fst →
+    ∀ i ∈ itemIn x.datum, ∀ r ∈ x.datum.readings, r.1 ∈ analysed →
       (r.2 == .acceptable) = decide (i.atomic.Available r.1) := by
   decide +kernel
 
@@ -555,9 +557,10 @@ theorem which_rows : ∀ row ∈ Examples.all,
   decide +kernel
 
 -- every row with a context, an analysed item and an analysed reading is checked
-theorem contexts_complete : ∀ row ∈ Examples.all, row.context ≠ "" → (itemIn row).isSome →
-    (row.readings.any fun r ↦ r.1 ∈ analysed) →
-      row ∈ contexts.map Prod.fst ∨ row ∈ [Examples.ex_30b, Examples.ex_51b, Examples.ex_53b] := by
+theorem contexts_complete :
+    ∀ x : Examples.Example, x.datum.context ≠ "" → (itemIn x.datum).isSome →
+      (x.datum.readings.any fun r ↦ r.1 ∈ analysed) →
+        x ∈ contexts.map Prod.fst ∨ x ∈ [.ex_30b, .ex_51b, .ex_53b] := by
   decide +kernel
 
 -- the passive (37), the locative (41), Agent Focus (26), a transitive's object (31), an

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.ModelTheory.Semantics
 public import Linglib.Logic.Modal.FirstOrder.Syntax
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Constant-domain Kripke semantics
@@ -56,6 +57,10 @@ The interpretation function `I(w)(·)` of first-order modal semantics
 world, read off the world's structure. -/
 
 variable (K : ModalStructure L W M)
+
+/-- The accessibility relation of a model, the relation that `□` and `◇` of
+`Logic/Modal/Basic.lean` take. -/
+def accessible : SetRel W W := .cgraph fun w ↦ ↑(K.access w)
 
 /-- The relation a relation symbol denotes at a world. -/
 def relInterp {n : ℕ} (R : L.Relations n) (w : W) : (Fin n → M) → Prop :=
@@ -151,6 +156,16 @@ variable (K : ModalStructure L W M) (w : W) (v : α → M)
 @[simp] theorem realize_diamond (φ : ModalFormula L α) :
     (diamond φ).Realize K w v ↔ ∃ w' ∈ K.access w, φ.Realize K w' v := by
   simp [diamond, not_forall]
+
+/-- The box of the language is necessity along the model's accessibility relation. -/
+theorem realize_box_iff_box (φ : ModalFormula L α) :
+    (box φ).Realize K w v ↔ ModalLogic.Box K.accessible (fun w' ↦ φ.Realize K w' v) w := .rfl
+
+/-- The diamond of the language is possibility along the model's accessibility relation. -/
+theorem realize_diamond_iff_diamond (φ : ModalFormula L α) :
+    (diamond φ).Realize K w v ↔
+      ModalLogic.Diamond K.accessible (fun w' ↦ φ.Realize K w' v) w := by
+  rw [realize_diamond]; rfl
 
 @[simp] theorem realize_rel₁ (R : L.Relations 1) (t : L.Term α) :
     ((R.modalFormula₁ t).Realize K w v) ↔

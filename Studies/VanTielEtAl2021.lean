@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.VanTielEtAl2021
 public import Linglib.Data.Statistics.VanTielEtAl2021
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -219,8 +219,8 @@ theorem some_few_no_entailment (θ : Word → ℕ) (hs : 1 ≤ θ .some) (hs' : 
 open English.Determiners Quantifier Det
 open scoped Denotes
 
-/-- A word of the study is a quantificational determiner of `Fragments/English/Determiners.lean`
-when the fragment has it. -/
+/-- A word of the study is a quantificational determiner of `Languages/English/Determiners.lean`
+when the language file has it. -/
 def Word.toDeterminer? : Word → Option QuantificationalDeterminer
   | .none => .some none_
   | .few => .some English.Determiners.few
@@ -242,13 +242,15 @@ theorem scopeAntitone_of_mem_fewReadings {d : Det.Family.{0}} (hd : d ∈ fewRea
   obtain ⟨θ, rfl⟩ := hd
   exact scopeAntitone_atMost θ
 
-/-- The readings of a word the fragment shares are the fragment's, and for *few*, whose standard
-the fragment leaves to context, those of the threshold lexicon. -/
+/-- The readings of a word the language file shares are the language file's, and for *few*, whose
+standard
+the language file leaves to context, those of the threshold lexicon. -/
 noncomputable def Word.readings (w : Word) (q : QuantificationalDeterminer) :
     Set Det.Family.{0} :=
   if w = .few then fewReadings else ⟦q⟧
 
-/-- Experiment 2 coded a word the fragment shares monotone decreasing exactly when the word has a
+/-- Experiment 2 coded a word the language file shares monotone decreasing exactly when the word
+has a
 reading antitone in its scope on every finite domain. *Half*, whose reading is neither monotone
 nor antitone, was coded increasing. -/
 theorem monotonicity_eq_decreasing_iff {w : Word} {q : QuantificationalDeterminer}

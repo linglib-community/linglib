@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Agreement.ConjunctAgreement
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Data.Fintype.Option
@@ -115,19 +115,19 @@ def checkedOnce (d : HeadDirection) (cs : List α) : List α :=
 the nearest conjunct, the first if it precedes the coordination and the last if it follows it
 (§4.3). -/
 theorem checkedOnce_eq_conjuncts_nearest (d : HeadDirection) (cs : List α) :
-    checkedOnce d cs = ConjunctAgreement.nearest.conjuncts d cs := by
+    checkedOnce d cs = (ConjunctAgreement.nearest d).conjuncts cs := by
+  rw [ConjunctAgreement.conjuncts_nearest]
   cases d
   · rcases cs with _ | ⟨c, _ | _⟩ <;> simp [checkedOnce, derivationOrder, List.reduceOption]
   · have : (cs.map some).reduceOption = cs := by simp [List.reduceOption, List.filterMap_map]
     rw [checkedOnce, derivationOrder.eq_def, List.inits_append, List.findSome?_append,
       List.findSome?_eq_none_iff.2 fun s hs ↦ ite_eq_right_iff.2 fun h ↦ ?_]
-    · simp [List.reduceOption_append, this]
+    · simp [List.reduceOption_append, this, List.rtake_one]
     · simpa using ((List.mem_inits _ _).1 hs).subset h
 
 @[simp] theorem mem_checkedOnce {d : HeadDirection} {cs : List α} {x : α} :
-    x ∈ checkedOnce d cs ↔ x ∈ d.nearest cs := by
-  rw [checkedOnce_eq_conjuncts_nearest, ConjunctAgreement.conjuncts_nearest, Option.mem_toList,
-    Option.mem_def]
+    x ∈ checkedOnce d cs ↔ x ∈ d.headEdge.takeAt 1 cs := by
+  rw [checkedOnce_eq_conjuncts_nearest, ConjunctAgreement.conjuncts_nearest]
 
 end Derivation
 
@@ -199,8 +199,7 @@ theorem Admits.forall_mem {L : List Conjunct → Prop} {P : Conjunct → Prop} {
 
 theorem licensed_swap_reverse {cs : List Conjunct} :
     Licensed (checkedOnce d.swap) cats cs.reverse ↔ Licensed (checkedOnce d) cats cs := by
-  simp [Licensed, Coordinable, Satisfies, checkedOnce_eq_conjuncts_nearest,
-    HeadDirection.nearest_swap_reverse]
+  simp [Licensed, Coordinable, Satisfies, Edge.takeAt_reverse]
 
 -- §3.1, p. 33
 theorem admits_swap_reverse :
@@ -222,20 +221,15 @@ theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
 
 /-- The phrase next to the selector is selected in its own category (§3.1). -/
 theorem mem_cats_of_mem_nearest (h : Admits (Licensed (checkedOnce d) cats) ps) :
-    ∀ p ∈ d.nearest ps, p ∈ cats := by
-  have key {ps : List Cat} (h : Admits (Licensed (checkedOnce .headInitial) cats) ps) :
-      ∀ p ∈ ps.head?, p ∈ cats := by
-    obtain ⟨cs, hcs, -, hsel, hS⟩ := h
-    cases mem_sections_map_ofCat.1 hcs with
-    | nil => simp
-    | @cons x p _ _ hxp _ =>
-      intro q hq
-      obtain rfl := Option.mem_some_iff.1 hq
-      have := hsel x List.mem_cons_self
-      rwa [eq_phrase_of_mem_ofCat hxp fun h ↦ hS (by simp [h])] at this
-  cases d
-  · exact key h
-  · simpa [List.head?_reverse] using key (admits_swap_reverse (d := .headFinal) |>.2 h)
+    ∀ p ∈ d.headEdge.takeAt 1 ps, p ∈ cats := by
+  obtain ⟨cs, hcs, -, hsel, hS⟩ := h
+  have h' : Admits (fun cs ↦ ∀ x ∈ cs, x.cat ∈ cats ∧ x ≠ nullN) (d.headEdge.takeAt 1 ps) :=
+    ⟨d.headEdge.takeAt 1 cs,
+      mem_sections_map_ofCat.2 (Edge.forall₂_takeAt _ _ (mem_sections_map_ofCat.1 hcs)),
+      fun x hx ↦ ⟨hsel x ((Edge.takeAt_infix ..).subset hx),
+        fun e ↦ hS (mem_checkedOnce.2 (e ▸ hx))⟩⟩
+  exact h'.forall_mem (fun _ h ↦ h) fun x _ hx ⟨hc, hn⟩ ↦ by
+    rwa [eq_phrase_of_mem_ofCat hx hn] at hc
 
 /-- A phrase displaced to the left is related to the position its selector selects by a phrase of
 category `displacedLeft c`: a clause, base-generated in an Ā-position, by a null operator of
@@ -256,7 +250,7 @@ theorem admits_tfae (hp : p ∉ cats) : List.TFAE
     rintro ⟨q, h | h⟩ <;> exact (mem_cats_or_of_admits h.satisfies p (by simp)).resolve_left hp
   tfae_have 2 → 4 := fun h ↦ (mem_cats_or_of_admits h.satisfies p (by simp)).resolve_left hp
   tfae_have 3 → 4 := fun h ↦ by
-    have := mem_cats_of_mem_nearest h (displacedLeft p) (by cases d <;> rfl)
+    have := mem_cats_of_mem_nearest h (displacedLeft p) (by cases d <;> simp [List.rtake_one])
     by_cases hC : p = .C
     · exact ⟨hC, by simpa [displacedLeft, hC] using this⟩
     · exact absurd (by simpa [displacedLeft, hC] using this) hp
@@ -265,21 +259,21 @@ theorem admits_tfae (hp : p ∉ cats) : List.TFAE
     refine ⟨N, ?_⟩
     cases d
     · exact .inl ⟨[phrase N, nullN], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN]⟩
     · exact .inr ⟨[nullN, phrase N], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN, List.rtake_one]⟩
   tfae_have 4 → 2 := by
     rintro ⟨rfl, hN⟩
     exact ⟨[nullN], by simp [ofCat], by simp [Licensed, Coordinable, Satisfies, cat, hN]⟩
   tfae_have 4 → 3 := by
     rintro ⟨rfl, hN⟩
     refine ⟨[phrase N], by simp [ofCat, displacedLeft], ?_⟩
-    cases d <;> simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]
+    cases d <;> simp [Licensed, Coordinable, Satisfies, cat, hN, List.rtake_one]
   tfae_finish
 
 -- fn. 30
 theorem mem_cats_of_admits_all
-    (h : Admits (Satisfies (ConjunctAgreement.all.conjuncts d) cats) ps) : ∀ p ∈ ps, p ∈ cats :=
+    (h : Admits (Satisfies ConjunctAgreement.all.conjuncts cats) ps) : ∀ p ∈ ps, p ∈ cats :=
   h.forall_mem (P := fun x ↦ x.cat ∈ cats ∧ x ≠ nullN)
     (fun _ h x hx ↦ ⟨h.1 x hx, fun e ↦ h.2 (e ▸ hx)⟩)
     fun x _ hx ⟨hc, hn⟩ ↦ by rwa [eq_phrase_of_mem_ofCat hx hn] at hc
@@ -369,7 +363,7 @@ theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some
 theorem argument_rows_first : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
     side? e = some .headFinal → 2 ≤ (e.features "conjunct").length →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
-      (Admits (Licensed (ConjunctAgreement.first.conjuncts .headFinal) cats) ps ↔
+      (Admits (Licensed ConjunctAgreement.first.conjuncts cats) ps ↔
         e.judgment ≠ .acceptable) := by
   decide
 

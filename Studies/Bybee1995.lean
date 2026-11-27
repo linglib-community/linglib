@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Wordlist.Bybee1995
-public import Linglib.Fragments.English.Phonology
+public import Linglib.Languages.English.Phonology
 public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Phonology.Prosody.Syllable

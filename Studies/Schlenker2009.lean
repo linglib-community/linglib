@@ -277,12 +277,12 @@ theorem isLocalContext_believe :
     exact ((hx _ rfl Set.univ w₀ hw₀).2 fun _ _ ↦ trivial) w hw |>.1
 
 theorem image_snd_localContext_believe :
-    Prod.snd '' {q : W × W | q.1 ∈ C ∧ q.2 ∈ Dox q.1} = (SetRel.ofSuccessors Dox).image C := by
+    Prod.snd '' {q : W × W | q.1 ∈ C ∧ q.2 ∈ Dox q.1} = (SetRel.cgraph Dox).image C := by
   ext; simp [and_comm]
 
 -- p. 3
 theorem satisfied_believe_iff {P : Set W} :
-    Satisfied C (believe Dox) (Prod.snd ⁻¹' P) ↔ (SetRel.ofSuccessors Dox).image C ⊆ P := by
+    Satisfied C (believe Dox) (Prod.snd ⁻¹' P) ↔ (SetRel.cgraph Dox).image C ⊆ P := by
   rw [satisfied_iff (isLocalContext_believe Dox), ← Set.image_subset_iff,
     image_snd_localContext_believe]
 

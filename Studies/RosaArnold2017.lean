@@ -2,12 +2,13 @@ module
 
 public import Linglib.Data.Examples.RosaArnold2017
 public import Linglib.Data.Statistics.RosaArnold2017
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Morphology.Word.Agree
 public import Studies.KehlerRohde2013
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Linarith
 public import Linglib.Data.Examples.Readers
+public import Linglib.Syntax.Binding.Pronoun
 
 /-!
 # Rosa and Arnold (2017): Predictability affects production
@@ -70,7 +71,8 @@ structure Cell where
 
 /-- The gender contrast of a pair of characters: `same` exactly when their φ-features agree,
 the pairs a third-person singular pronoun cannot tell apart. -/
-def Gender.ofPair (w₁ w₂ : Word) : Gender := if HasPhi.Agree w₁ w₂ then .same else .different
+def Gender.ofPair (w₁ w₂ : Word) : Gender :=
+  if Compat w₁.agreement.index w₂.agreement.index then .same else .different
 
 /-- Lisa, of *Lisa gave the leftover pie to Brendan*. -/
 def lisa : Word :=
@@ -84,8 +86,8 @@ def brendan : Word :=
 
 theorem lisa_brendan :
     Gender.ofPair lisa brendan = .different ∧
-      English.Pronouns.she.toPronoun.CandidateAntecedent lisa ∧
-      ¬ English.Pronouns.she.toPronoun.CandidateAntecedent brendan := by
+      Binding.CandidateAntecedent English.Pronouns.she.toWord lisa ∧
+      ¬ Binding.CandidateAntecedent English.Pronouns.she.toWord brendan := by
   decide
 
 /-! ### The production model
@@ -140,7 +142,7 @@ theorem topical_not_fits (M : Model) (hM : M.Topical) : ¬ M.Fits (rate .retelli
 /-! ### Coherence and the goal effect (Experiment 2) -/
 
 /-- The coherence codes in Kehler's classification, Background having no counterpart there. -/
-def CoherenceCode.toCoherence : CoherenceCode → Option Discourse.Coherence.Relation
+def CoherenceCode.toCoherence : CoherenceCode → Option Coherence.Relation
   | .elaboration => some .elaboration
   | .explanation => some .explanation
   | .occasion => some .occasion

@@ -1,15 +1,15 @@
 module
 
 public import Linglib.Data.Examples.JinKoenig2021
-public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Tense.Before
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Negation
-public import Linglib.Fragments.Romance.French.Negation
-public import Linglib.Fragments.Januubi.Negation
-public import Linglib.Fragments.Mandarin.Negation
-public import Linglib.Fragments.ZarmaSonrai.Negation
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Negation
+public import Linglib.Languages.Romance.French.Negation
+public import Linglib.Languages.Januubi.Negation
+public import Linglib.Languages.Mandarin.Negation
+public import Linglib.Languages.ZarmaSonrai.Negation
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -150,9 +150,9 @@ end ENConcept
 
 /-! ### Negative inferences of the operators (Sections 6.2 to 6.4) -/
 
-open Tense in
+open Tense Temporal in
 -- BEFORE: at a time of the main clause the *before*-clause does not hold, (13b).
-example {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)} (h : beforeEver A B) :
+example {T : Type*} [LinearOrder T] {A B : NonemptyInterval T → Prop} (h : beforeEver A B) :
     ∃ t ∈ timeTrace A, t ∉ timeTrace B :=
   h.exists_notMem
 
@@ -224,7 +224,7 @@ inductive Language
   deriving DecidableEq, Repr
 
 open Negation in
-/-- The standard negators of a language, from its fragment. -/
+/-- The standard negators of a language, from its language file. -/
 def Language.standard : Language → List Marker
   | .english => English.Negation.standard
   | .french => French.Negation.standard
@@ -233,7 +233,7 @@ def Language.standard : Language → List Marker
   | .zarmaSonrai => ZarmaSonrai.Negation.standard
 
 open Negation in
-/-- The negators of a language's fragment, under the forms the rows cite them by. -/
+/-- The negators of a language's language file, under the forms the rows cite them by. -/
 def Language.negators : Language → List (String × Marker)
   | .english => [("not", English.Negation.not)]
   | .french => [("ne pas", French.Negation.nePas), ("ne", French.Negation.ne)]

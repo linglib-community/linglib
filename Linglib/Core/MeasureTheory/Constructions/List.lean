@@ -51,7 +51,7 @@ one. -/
 theorem tsum_measure_cylinder :
     ∑' x : List α, μ x.cylinder = ∫⁻ y, (y.length : ℝ≥0∞) + 1 ∂μ := by
   simp_rw [← Nat.cast_add_one]
-  rw [← (Equiv.sigmaFiberEquiv List.length).tsum_eq, ENNReal.tsum_sigma',
+  rw [← (Equiv.sigmaFiberEquiv List.length).tsum_eq, tsum_sigma',
     lintegral_natCast_eq_tsum_measure_lt (f := fun y : List α ↦ y.length + 1) .of_discrete]
   exact tsum_congr fun n ↦ (tsum_measure_cylinder_length μ n).trans (by simp)
 

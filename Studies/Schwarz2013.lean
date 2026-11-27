@@ -2,13 +2,13 @@ module
 
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Fering.Determiners
-public import Linglib.Fragments.Akan.Determiners
-public import Linglib.Fragments.MauritianCreole.Determiners
-public import Linglib.Fragments.HaitianCreole.Determiners
-public import Linglib.Fragments.Lakhota.Determiners
-public import Linglib.Fragments.Hausa.Determiners
+public import Linglib.Languages.German.Determiners
+public import Linglib.Languages.Fering.Determiners
+public import Linglib.Languages.Akan.Determiners
+public import Linglib.Languages.MauritianCreole.Determiners
+public import Linglib.Languages.HaitianCreole.Determiners
+public import Linglib.Languages.Lakhota.Determiners
+public import Linglib.Languages.Hausa.Determiners
 
 /-!
 # Schwarz (2013): Two Kinds of Definites Cross-linguistically
@@ -19,11 +19,11 @@ one anaphoricity, the survey finds languages whose only overt definite article i
 weak definites as bare nominals (Akan *nó*, Mauritian Creole *la*), languages with two overt
 articles (Lakhota *kiŋ* and *k'uŋ*, Hausa *-n* and *ɗîn*), and Haitian Creole *la*, a single article
 covering both use families that fits neither pattern. Each language's pattern, which strengths its
-inventory marks and whether one article marks both, is derived from its fragment's
+inventory marks and whether one article marks both, is derived from its language file's
 `Determiners.inventory`, and the bridging split, part-whole bridging with the weak article and
 producer bridging with the strong one, is `Definite.Bridging.strength`. The Lakhota
 classification is tentative in the survey itself, whose footnote 16 concedes Ingham's anaphoric
-*kiŋ*; the project fragment encodes that anaphoric use, under which *kiŋ* marks both strengths
+*kiŋ*; the project language file encodes that anaphoric use, under which *kiŋ* marks both strengths
 (`anaphoric_kin_syncretic`).
 
 ## Implementation notes

@@ -27,6 +27,8 @@ given an observation of a state drawn from the prior leaves the prior invariant.
   likelihood and the posterior leave the prior, the prior predictive and the joint invariant.
 * `ProbabilityTheory.posterior_real_singleton_lt_posterior_of_pair`: under priors carried by
   two atoms, the posterior at an atom is strictly increasing in its prior mass.
+* `ProbabilityTheory.posterior_real_singleton_of_forall_eq`: when the states of positive prior
+  mass all emit alike, an observation leaves the prior as it was.
 * `ProbabilityTheory.integral_le_integral_posterior`: conditioning on an observation raises
   the expectation of a statistic that monovaries with the observation's likelihood on the
   states of positive prior mass.
@@ -182,6 +184,16 @@ theorem comp_real_mul_posterior_real [Fintype Ω] (ω : Ω) (x : 𝓧) :
   · rw [posterior_real_singleton κ μ hx, mul_div_cancel₀]
     rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
 
+
+/-- At every state and observation, the mass of the observation times the posterior mass of the
+state is the prior mass of the state times its likelihood. -/
+theorem comp_mul_posterior_singleton [Fintype Ω] (ω : Ω) (x : 𝓧) :
+    (κ ∘ₘ μ) {x} * (κ†μ) x {ω} = μ {ω} * κ ω {x} := by
+  have h := comp_real_mul_posterior_real κ μ ω x
+  simp only [measureReal_def, ← ENNReal.toReal_mul] at h
+  exact (ENNReal.toReal_eq_toReal_iff' (ENNReal.mul_ne_top (measure_ne_top _ _)
+    (measure_ne_top _ _)) (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))).1 h
+
 theorem real_lt_posterior_real_singleton_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
     (hω : μ {ω} ≠ 0) :
     μ.real {ω} < ((κ†μ) x).real {ω} ↔ (κ ∘ₘ μ).real {x} < (κ ω).real {x} := by
@@ -195,6 +207,32 @@ theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
   have hμ : 0 < μ.real {ω} := ENNReal.toReal_pos hω (measure_ne_top _ _)
   rw [posterior_real_singleton κ μ hx, div_lt_iff₀ hm, mul_lt_mul_iff_of_pos_left hμ]
+
+/-- An observation leaves the mass of a state of positive prior mass where it was exactly when
+the state emits the observation as often as the prior predicts it. -/
+theorem posterior_real_singleton_eq_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
+    (hω : μ {ω} ≠ 0) :
+    ((κ†μ) x).real {ω} = μ.real {ω} ↔ (κ ω).real {x} = (κ ∘ₘ μ).real {x} := by
+  have hm : (κ ∘ₘ μ).real {x} ≠ 0 := by rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
+  have hμ : μ.real {ω} ≠ 0 := by rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
+  rw [posterior_real_singleton κ μ hx, div_eq_iff hm, mul_right_inj' hμ]
+
+/-- When the states of positive prior mass all emit alike, an observation leaves the prior as it
+was: the kernel carries no information about the state. -/
+theorem posterior_real_singleton_of_forall_eq [Fintype Ω] [IsProbabilityMeasure μ] {x : 𝓧}
+    (hx : (κ ∘ₘ μ) {x} ≠ 0) (h : ∀ ω ω', μ {ω} ≠ 0 → μ {ω'} ≠ 0 → κ ω = κ ω') (ω : Ω) :
+    ((κ†μ) x).real {ω} = μ.real {ω} := by
+  obtain hω | hω := eq_or_ne (μ {ω}) 0
+  · rw [posterior_real_singleton κ μ hx, measureReal_def, hω]; simp
+  · refine (posterior_real_singleton_eq_iff κ μ hx hω).2 ?_
+    rw [Measure.comp_real_singleton_eq_integral, integral_fintype .of_finite]
+    have : ∀ ω', μ.real {ω'} • (κ ω').real {x} = μ.real {ω'} • (κ ω).real {x} := fun ω' ↦ by
+      obtain hω' | hω' := eq_or_ne (μ {ω'}) 0
+      · simp [measureReal_def, hω']
+      · rw [h ω' ω hω' hω]
+    simp_rw [this, ← Finset.sum_smul, smul_eq_mul]
+    rw [show ∑ i, μ.real {i} = 1 by
+      rw [← probReal_univ (μ := μ), ← Finset.coe_univ, sum_measureReal_singleton], one_mul]
 
 /-! ### Expectations under the posterior
 

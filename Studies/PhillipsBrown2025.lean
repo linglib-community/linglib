@@ -1,10 +1,11 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Questions.Partition.OfProps
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Core.Order.OfCriteria
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Powerset
@@ -52,6 +53,8 @@ is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defin
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace PhillipsBrown2025
 
 open Desire Presupposition
@@ -66,7 +69,7 @@ variable {W : Type*} (G N : List (Finset W)) (s : Setoid W) (bel p : Set W)
 def Live (w : W) : Prop := ∃ v ∈ s.cell w, v ∈ bel
 
 /-- The desires an answer entails, by whose inclusion answers are ordered. -/
-abbrev entailed : W → Set (Finset W) := Preorder.satisfied (fun w g ↦ s.cell w ⊆ ↑g) {g | g ∈ G}
+abbrev entailed : W → Set (Finset W) := fun w ↦ {g ∈ {g | g ∈ G} | s.cell w ⊆ ↑g}
 
 /-- `S wants p` holds when every best live answer entails `p`. -/
 def Want : Prop := ∀ w, MaximalFor (Live s bel) (entailed G s) w → s.cell w ⊆ p
@@ -96,6 +99,10 @@ variable [Fintype W] [DecidableEq W] [DecidableRel s] [DecidablePred (· ∈ bel
   [DecidablePred (· ∈ p)]
 
 instance (w : W) : Decidable (Live s bel w) := inferInstanceAs (Decidable (∃ v ∈ s.cell w, _))
+
+instance (w z : W) : Decidable (entailed G s w ⊆ entailed G s z) :=
+  decidable_of_iff (∀ g ∈ G, s.cell w ⊆ ↑g → s.cell z ⊆ ↑g)
+    ⟨fun h _ hg ↦ ⟨hg.1, h _ hg.1 hg.2⟩, fun h _ hg hw ↦ (h ⟨hg, hw⟩).2⟩
 
 instance (w : W) : Decidable (MaximalFor (Live s bel) (entailed G s) w) :=
   inferInstanceAs (Decidable (Live s bel w ∧ ∀ z, Live s bel z → _ → _))
@@ -141,9 +148,9 @@ theorem want_strawsonEntails (hpq : p ⊆ q) :
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
 theorem want_bot_iff :
     Want G ⊥ bel p ↔ BestWorlds.Want ((↑) '' {s | s ∈ G}) bel p := by
-  simp only [Want, BestWorlds.want_iff, Preorder.ofCriteria_le_iff, Set.forall_mem_image,
+  simp only [Want, BestWorlds.want_iff, Preorder.ofLowerSets_le_iff, Set.forall_mem_image,
     MaximalFor, Live,
-    entailed, Preorder.satisfied, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
+    entailed, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
     Set.singleton_subset_iff, Set.ofPred_subset_ofPred, Finset.mem_coe, and_imp]
   simp +contextual [Set.mem_ofPred_eq]
 
@@ -201,8 +208,8 @@ theorem closure_under_doxastic_equivalence (A : Set (Set World))
   h.mono_on (by decide +kernel)
 
 local instance :
-    DecidableRel (Modality.premisePreorder ({↑benefit} : Set (Set World))).le :=
-  fun w z ↦ decidable_of_iff (z ∈ benefit → w ∈ benefit) (by simp [Preorder.ofCriteria_le_iff])
+    DecidableRel (≤[({↑benefit} : Set (Set World))]).le :=
+  fun w z ↦ decidable_of_iff (z ∈ benefit → w ∈ benefit) (by simp [Preorder.ofLowerSets_le_iff])
 
 /-- A context-sensitive preference relation overgenerates (§2.2), since the value of feeling
 rested makes *Nap* true, and with it *Fail*. -/
@@ -214,11 +221,11 @@ theorem cpr_overgenerates :
 
 /-- The question considering whether the act is done and whether its benefit obtains
 (Figure 3). -/
-def qBenefit : Setoid World := Setoid.ofProps {act, benefit}
+def qBenefit : Setoid World := Setoid.ofProps {↑act, ↑benefit}
 
 /-- The question considering whether the act is done and whether its cost obtains
 (Figure 5). -/
-def qCost : Setoid World := Setoid.ofProps {act, cost}
+def qCost : Setoid World := Setoid.ofProps {↑act, ↑cost}
 
 instance : DecidableRel qBenefit := inferInstanceAs (DecidableRel (Setoid.ofProps _))
 instance : DecidableRel qCost := inferInstanceAs (DecidableRel (Setoid.ofProps _))
@@ -269,7 +276,7 @@ happy. -/
 def qStacked : Setoid LuWorld := Setoid.ker fun w ↦ if w.rain then none else some w.happy
 
 /-- The level playing field (Figure 9). -/
-def qFair : Setoid LuWorld := Setoid.ofProps {rain, happy}
+def qFair : Setoid LuWorld := Setoid.ofProps {↑rain, ↑happy}
 
 instance : DecidableRel qStacked := inferInstanceAs (DecidableRel (Setoid.ker _))
 instance : DecidableRel qFair := inferInstanceAs (DecidableRel (Setoid.ofProps _))

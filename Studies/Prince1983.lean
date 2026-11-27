@@ -542,7 +542,7 @@ theorem noClash_pg_replicate (d : Edge) (a : Altitude) (n : ℕ) :
     have h2 := pg_replicate_getD d a (show i + 1 < n by omega)
     rw [List.getD_eq_getElem _ _ (by omega)] at h1 h2
     rw [h1, h2]
-    cases d <;> cases a <;> simp [startDist] <;> (try split_ifs) <;> omega
+    cases d <;> cases a <;> simp [startDist] <;> split_ifs <;> omega
 
 private theorem edgeIdx?_getD {e : Edge} {n : ℕ} {g : Grid} {i : ℕ} (h : edgeIdx? e n g = some i) :
     i < g.length ∧ n ≤ g.getD i 0 := by

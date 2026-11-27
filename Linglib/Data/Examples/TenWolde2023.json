@@ -1,0 +1,449 @@
+{
+  "features": [
+    {
+      "key": "noun",
+      "lean": "noun",
+      "type": "Noun",
+      "doc": "The first nouns of the three case studies.",
+      "levels": [
+        {
+          "name": "cake",
+          "label": "cake",
+          "doc": "an inanimate first noun"
+        },
+        {
+          "name": "beast",
+          "label": "beast",
+          "doc": "an animate first noun"
+        },
+        {
+          "name": "hell",
+          "label": "hell",
+          "doc": "an abstract first noun"
+        }
+      ]
+    },
+    {
+      "key": "construction",
+      "lean": "construction",
+      "type": "Construction",
+      "doc": "The of-binominal constructions.",
+      "levels": [
+        {
+          "name": "nPP",
+          "label": "N+PP",
+          "doc": "the prototypical N+PP"
+        },
+        {
+          "name": "headClassifier",
+          "label": "head-classifier",
+          "doc": "the head-classifier"
+        },
+        {
+          "name": "pseudoPartitive",
+          "label": "pseudo-partitive",
+          "doc": "the pseudo-partitive"
+        },
+        {
+          "name": "ebnp",
+          "label": "EBNP",
+          "doc": "the evaluative binominal noun phrase"
+        },
+        {
+          "name": "em",
+          "label": "EM",
+          "doc": "the evaluative modifier"
+        },
+        {
+          "name": "bi",
+          "label": "BI",
+          "doc": "the binominal intensifier"
+        }
+      ]
+    }
+  ],
+  "index": {
+    "type": "Example",
+    "doc": "The dated examples of the three case studies."
+  },
+  "examples": [
+    {
+      "id": "tenwolde2023_5_1d",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.1d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "a cake of spices",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "ante 1325, OED: the gloss of Kakenole in W. de Bibbesworth.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "cake"],
+        ["construction", "N+PP"],
+        ["year", "1325"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "tenwolde2023_5_7a",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.7a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "That . . . he offre a silueren peny, and a round kaak of breed.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": ". . . he offers a silver penny and a round cake of bread",
+      "context": "1382, OED.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "cake"],
+        ["construction", "pseudo-partitive"],
+        ["year", "1382"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_4",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.4)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "for he accustomed, to feade him selfe with a cake of rye, the whiche he grounde, and baked vppon the coles . . .",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1556, EEBO.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "cake"],
+        ["construction", "head-classifier"],
+        ["year", "1556"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_10a",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.10a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "as much as the industrial exhibit now housed in the former palace of Soviet-Chinese Friendship in Shanghai differs from what was originally intended when that towering wedding cake of a building was gratefully received as a present from the Soviet Union",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1973, COHA.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "cake"],
+        ["construction", "EBNP"],
+        ["year", "1973"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_11",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.11)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "The JLA would have a cake of a time getting this done",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "2016, a forum post; the corpora have no clear example of cake in the evaluative modifier.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "cake"],
+        ["construction", "EM"],
+        ["year", "2016"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_12",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.12)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "þet te beast of helle, hwen he snakereð toward ow forte biten on ow . . .",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "So that the beast of hell, when he sneaks towards you in order to bite you . . .",
+      "context": "ca 1200, PPCME.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "beast"],
+        ["construction", "N+PP"],
+        ["year", "1200"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "tenwolde2023_5_14b",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.14b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "and in that pastyme hauyng to euery beast of venery but two dogges at the moste",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1541, EEBO.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "beast"],
+        ["construction", "head-classifier"],
+        ["year", "1541"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_17b",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.17b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "how great a beast of a man (a cruell thyng to be spoken) shal he be made then?",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1555, EEBO; the close of a longer sentence.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "beast"],
+        ["construction", "EBNP"],
+        ["year", "1555"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_19a",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.19a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "aye, I lost the finest beast of a mare in all Devonshire",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1678, EEBO.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "beast"],
+        ["construction", "EM"],
+        ["year", "1678"]
+      ],
+      "comment": "A potential evaluative modifier: the context also allows the reading of a large mare.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_20a",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.20a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "what Americans face – or rather refuse to face – on their doorstep is a beast of a frightening new order: A Clockwork Orange set to ranchera music.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "2010, COCA.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "beast"],
+        ["construction", "BI"],
+        ["year", "2010"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_23d",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.23d)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "it should also cause the vtter losse and dampnacion in hell of many thousand souls",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1530, EEBO.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "N+PP"],
+        ["year", "1530"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_25b",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.25b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "She made no reckoning of his importunate and dilligent seruice, which drewe a Hell of tormentinge thoughts vppon Tarisius.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1588, OED.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "head-classifier"],
+        ["year", "1588"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_28",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.28)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "heere woe and there woe, and a very hell of woes is heaped vppon mee",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1601, EEBO.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "pseudo-partitive"],
+        ["year", "1601"]
+      ],
+      "comment": "A potential pseudo-partitive reading.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_27b",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.27b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "With the click of a mouse he could fire a hell of microwaves up at the ionosphere",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "2006, COCA.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "pseudo-partitive"],
+        ["year", "2006"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_29a",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.29a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "For if you were by my unkindness shaken, As I by yours, y' haue past a hell of time",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1609, OED: Shakespeare, Sonnet 120.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "EBNP"],
+        ["year", "1609"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_30",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.30)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "This is a hell of a council of war.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1776, OED.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "EM"],
+        ["year", "1776"]
+      ],
+      "comment": "The book gives this example for the indistinct transition from the evaluative binominal to the evaluative modifier.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_31a",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.31a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "an' tell de boys he in a hell of a hurry, sah!",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1867, COHA.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "EM"],
+        ["year", "1867"]
+      ],
+      "comment": "Among the first unambiguous evaluative modifiers.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "tenwolde2023_5_33a",
+      "source": {"bibkey": "ten-wolde-2023", "paperLabel": "(5.33a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "Thomas Burchard, testified that several nights since he had been fleeced at the same hell of a large sum",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "1839, COHA.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["noun", "hell"],
+        ["construction", "BI"],
+        ["year", "1839"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    }
+  ]
+}

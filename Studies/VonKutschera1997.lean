@@ -1,7 +1,7 @@
 module
 
-public import Mathlib.Basic.Countable.Defs
 public import Studies.Thomason1984
+public import Linglib.Logic.Modal.Definability
 
 /-!
 # Von Kutschera (1997): T × W Completeness
@@ -11,14 +11,16 @@ he credits to Di Maio and Zanardo. The
 Hilbert calculus `TW` adds to linear tense logic S5 modalities for historical necessity and for
 truth in all worlds, their interaction with the tenses, and Gabbay's irreflexivity rule, whose
 soundness rests on [a formula's depending only on the atoms it mentions](##sat_iff_of_agree). The
-calculus is [sound](##soundness) and [complete](##completeness) for models with an arbitrary
-valuation. His frames are Thomason's, but his models drop Thomason's condition on assignments, so
+calculus is [sound](##soundness) for models with an arbitrary valuation. His frames are Thomason's,
+but his models drop Thomason's condition on assignments, so
 [an atom's historical necessity is valid for Thomason and unprovable in `TW`](##not_provable_imp_N).
 
 ## TODO
 
-* `completeness`: von Kutschera's proof builds, from the maximal consistent sets of `TW`, a
-  separated model refuting an unprovable sentence, using Gabbay's irreflexivity lemma.
+* Completeness, the paper's main theorem: every formula true at every point of every model is
+  provable in `TW`. Von Kutschera's proof builds, from the maximal consistent sets of `TW`, a
+  separated model refuting an unprovable sentence, using Gabbay's irreflexivity lemma. The
+  language needs infinitely many atoms for the irreflexivity rule to have a fresh one.
 * The equivalence of T × W and separated models (Theorem 1.1, p. 243), and the alternative
   axiomatization with an *actually* operator sketched at the end of the paper.
 
@@ -56,7 +58,7 @@ A formula's truth at a point depends only on the valuation of the atoms it menti
 theorem sat_iff_of_agree {T World : Type*} [LinearOrder T] (F : TWFrame World T)
     (V₁ V₂ : Atom → T → World → Prop) :
     ∀ (a : Formula Atom), (∀ p, mentions a p → ∀ t w, V₁ p t w ↔ V₂ p t w) →
-      ∀ t w, (F.sat V₁ a t w ↔ F.sat V₂ a t w)
+      ∀ t w, (F.sat V₁ a ⟨w, t⟩ ↔ F.sat V₂ a ⟨w, t⟩)
   | .atom p,  h, t, w => h p rfl t w
   | .neg a,   h, t, w => by
       simp only [TWFrame.sat_neg]; rw [sat_iff_of_agree F V₁ V₂ a h t w]
@@ -81,7 +83,7 @@ theorem sat_iff_of_agree {T World : Type*} [LinearOrder T] (F : TWFrame World T)
 def Valid (a : Formula Atom) : Prop :=
   ∀ {T : Type u} {World : Type v} [LinearOrder T]
     (F : TWFrame World T) (V : Atom → T → World → Prop) (t : T) (w : World),
-    F.sat V a t w
+    F.sat V a ⟨w, t⟩
 
 open Formula in
 /-- The Hilbert calculus `TW` of [von-kutschera-1997] has propositional axioms, the tense axioms
@@ -185,7 +187,7 @@ theorem soundness {a : Formula Atom} (h : Provable a) : Valid.{u, v} a := by
   | a4c _ =>
       simp only [sat_imp, sat_N, sat_M]
       rintro ⟨w₀, hw₀, ha⟩ w' hw'
-      exact ⟨w₀, (F.sim t).iseqv.trans ((F.sim t).iseqv.symm hw') hw₀, ha⟩
+      exact ⟨w₀, (F.sim t).trans' ((F.sim t).symm' hw') hw₀, ha⟩
   | a5b _ => simp only [sat_imp, sat_box, sat_dia]; exact fun ⟨w₀, ha⟩ _ ↦ ⟨w₀, ha⟩
   | a7 _ => simp only [sat_imp, sat_box, sat_N]; exact fun h w' _ ↦ h w'
   | a6 _ =>
@@ -196,15 +198,15 @@ theorem soundness {a : Formula Atom} (h : Provable a) : Valid.{u, v} a := by
       simp only [sat_imp, sat_box, sat_Pst, sat_Fut]
       rintro ⟨t', ht', hbox⟩ w'; exact ⟨t', ht', hbox w'⟩
   | mp _ _ ihab iha => exact (TWFrame.sat_imp F V _ _ t w).1 (ihab V t w) (iha V t w)
-  | necH _ ih => exact fun t' _ ↦ ih V t' w
-  | necN _ ih => exact fun w' _ ↦ ih V t w'
-  | necBox _ ih => exact fun w' _ ↦ ih V t w'
+  | necH _ ih => exact (sat_H F V _ t w).2 fun t' _ ↦ ih V t' w
+  | necN _ ih => exact (sat_N F V _ t w).2 fun w' _ ↦ ih V t w'
+  | necBox _ ih => exact (sat_box F V _ t w).2 fun w' ↦ ih V t w'
   | @ir a q _ hq ih =>
       classical
       let V' : Atom → T → World → Prop := fun p t'' w'' ↦ if p = q then t < t'' else V p t'' w''
-      have hbox : F.sat V' (Formula.and (.neg (.atom q)) (.G (.atom q))).box t w := by
-        intro w' _; refine ⟨?_, fun t' ht' ↦ ?_⟩ <;> simp only [sat_neg, sat_atom, V']
-        exacts [lt_irrefl t, Tense.mem_toSetRel_future.1 ht']
+      have hbox : F.sat V' (Formula.and (.neg (.atom q)) (.G (.atom q))).box ⟨w, t⟩ := by
+        simp only [sat_box, sat_and, sat_neg, sat_G, sat_atom, V', ite_true]
+        exact fun _ ↦ ⟨lt_irrefl t, fun _ ht' ↦ ht'⟩
       have hagree : ∀ p, mentions a p → ∀ tt ww, V p tt ww ↔ V' p tt ww := by
         intro p hp tt ww
         have hpq : p ≠ q := fun e ↦ hq (e ▸ hp)
@@ -212,25 +214,18 @@ theorem soundness {a : Formula Atom} (h : Provable a) : Valid.{u, v} a := by
       exact (sat_iff_of_agree F V V' a hagree t w).mpr
         ((TWFrame.sat_imp F V' _ _ t w).1 (ih V' t w) hbox)
 
-/-- `TW` is complete for its models, the main theorem. The language needs infinitely many atoms for
-the irreflexivity rule to have a fresh one. -/
-theorem completeness [Countable Atom] [Infinite Atom] {a : Formula Atom} (h : Valid.{0, 0} a) :
-    Provable a := by
-  -- TODO: the canonical separated model of the maximal consistent sets of `TW` (see `## TODO`).
-  sorry
-
 /-- An atom's implying its own historical necessity is valid over Thomason's assignments, by his
 (6), and is not provable in `TW`, whose models allow any valuation. -/
 theorem not_provable_imp_N (p : Atom) :
     (∀ {T World : Type} [LinearOrder T] (F : TWFrame World T) (V : Atom → T → World → Prop),
       Thomason1984.IsAssignment F V → ∀ t w,
-        F.sat V ((Formula.atom p).imp (Formula.atom p).N) t w) ∧
+        F.sat V ((Formula.atom p).imp (Formula.atom p).N) ⟨w, t⟩) ∧
     ¬ Provable ((Formula.atom p).imp (Formula.atom p).N) := by
   refine ⟨fun F V hV t w ↦ (sat_imp F V _ _ t w).2 fun h ↦
     (Thomason1984.sat_N_iff hV (a := .atom p) trivial).2 h, fun h ↦ ?_⟩
   have hv : Valid.{0, 0} ((Formula.atom p).imp (Formula.atom p).N) := soundness h
   have hs := hv (T := Unit) (World := Bool) ⟨fun _ ↦ ⊤, fun _ _ _ ↦ le_rfl⟩
     (fun _ _ w ↦ w = true) () true
-  exact Bool.false_ne_true ((sat_imp _ _ _ _ _ _).1 hs rfl false trivial)
+  exact Bool.false_ne_true ((sat_N _ _ _ _ _).1 ((sat_imp _ _ _ _ _ _).1 hs rfl) false trivial)
 
 end VonKutschera1997

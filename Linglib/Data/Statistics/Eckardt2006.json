@@ -1,0 +1,194 @@
+{
+ "meta": {
+  "bibkey": "eckardt-2006",
+  "method": "corpus",
+  "description": "The contexts in which the Old French negation particles are found in a positive sense without *ne*, summarized from dictionaries, text collections and the secondary literature on Old French. A blank cell records that the sources consulted have no such use, not that it was impossible.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Particle",
+   "doc": "The French negation particles.",
+   "levels": [
+    {
+     "name": "mie",
+     "label": "mie",
+     "doc": "'crumb'"
+    },
+    {
+     "name": "goutte",
+     "label": "goutte",
+     "doc": "'drop'"
+    },
+    {
+     "name": "point",
+     "label": "point",
+     "doc": "'point'"
+    },
+    {
+     "name": "rien",
+     "label": "rien",
+     "doc": "'thing'"
+    },
+    {
+     "name": "personne",
+     "label": "personne",
+     "doc": "'person'"
+    },
+    {
+     "name": "pas",
+     "label": "pas",
+     "doc": "'step'"
+    }
+   ]
+  },
+  {
+   "name": "Context",
+   "doc": "The contexts of Table 4.",
+   "levels": [
+    {
+     "name": "negation",
+     "label": "embedded under negation, under negative verbs",
+     "doc": "a clause embedded under a negation or a negative verb"
+    },
+    {
+     "name": "sans",
+     "label": "under sans (without)",
+     "doc": "the complement of *sans*"
+    },
+    {
+     "name": "rhetoricalQuestion",
+     "label": "in rhetorical questions",
+     "doc": "a rhetorical question"
+    },
+    {
+     "name": "question",
+     "label": "in questions",
+     "doc": "a question"
+    },
+    {
+     "name": "indirectQuestion",
+     "label": "in indirect questions",
+     "doc": "an indirect question"
+    },
+    {
+     "name": "conditional",
+     "label": "antecedent of a conditional",
+     "doc": "the antecedent of a conditional"
+    },
+    {
+     "name": "comparative",
+     "label": "comparatives",
+     "doc": "a comparative"
+    },
+    {
+     "name": "other",
+     "label": "various other 'downward-entailing' contexts",
+     "doc": "other downward-entailing contexts"
+    }
+   ]
+  }
+ ],
+ "constants": [],
+ "tables": [
+  {
+   "name": "positiveUses",
+   "structure": "PositiveUse",
+   "doc": "the particles found in a positive sense in a context.",
+   "locator": "Table 4",
+   "verified": "page-image",
+   "key": [
+    "context"
+   ],
+   "columns": [
+    {
+     "name": "context",
+     "type": "Context",
+     "doc": "The context."
+    },
+    {
+     "name": "particles",
+     "type": "list Particle",
+     "doc": "The particles the table lists for it."
+    }
+   ],
+   "rows": [
+    {
+     "context": "embedded under negation, under negative verbs",
+     "particles": [
+      "mie",
+      "goutte",
+      "point",
+      "rien",
+      "personne",
+      "pas"
+     ]
+    },
+    {
+     "context": "under sans (without)",
+     "particles": [
+      "goutte",
+      "point",
+      "rien",
+      "personne"
+     ]
+    },
+    {
+     "context": "in rhetorical questions",
+     "particles": [
+      "mie",
+      "point",
+      "rien",
+      "personne",
+      "pas"
+     ]
+    },
+    {
+     "context": "in questions",
+     "particles": [
+      "mie",
+      "point",
+      "rien",
+      "personne"
+     ]
+    },
+    {
+     "context": "in indirect questions",
+     "particles": [
+      "mie",
+      "goutte",
+      "point",
+      "rien",
+      "personne"
+     ]
+    },
+    {
+     "context": "antecedent of a conditional",
+     "particles": [
+      "mie",
+      "point",
+      "rien",
+      "personne"
+     ]
+    },
+    {
+     "context": "comparatives",
+     "particles": [
+      "mie",
+      "point",
+      "personne"
+     ]
+    },
+    {
+     "context": "various other 'downward-entailing' contexts",
+     "particles": [
+      "goutte",
+      "point",
+      "rien",
+      "personne"
+     ]
+    }
+   ]
+  }
+ ]
+}

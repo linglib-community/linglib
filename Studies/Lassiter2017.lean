@@ -1,11 +1,12 @@
 module
 
+public import Mathlib.Order.Hom.Bounded
 public import Mathlib.Order.LatticeIntervals
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 public import Linglib.Semantics.Attitudes.Preference.ExpectedValue
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Studies.Lassiter2015
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 
@@ -38,20 +39,25 @@ probability zero (`not_strictMono_of_might_zero`); with a positive threshold *mi
 stronger than *possible* (`exists_mem_possible_not_mem_might`).
 
 Chapters 7 and 8 give the scalar semantics of *good* and *ought*. Goodness is expected value, the
-probability-weighted average of world values over a proposition
-(`Desire.ExpectedValue.expectedValue`); it is an interval scale and intermediate on disjoint
-unions. *Ought* is constrained rather than defined (`Constraints`): Sloman's Principle relates it
-to goodness (an obligatory proposition is strictly better than each of its alternatives, after
-Sloman), the Smith Principle restricts agglomeration to exhaustive pairs, and Weakening
-closes obligation under disjunction. Sloman's Principle alone excludes conflicting oughts,
-`ought φ` together with `ought ¬φ` (`Constraints.not_compl`), and the Smith Principle carries the
-Smith argument from `ought (M ∨ S)` and `ought ¬M` to `ought S` (`Smith.ought_S`), on a sample
-model that meets the Sloman requirements of all three. On Cariani's four-world
-counter-model to Weakening, where `A` and `B` each beat their negations in expected value but
-`A ∨ B` ties with its negation, Sloman's Principle and Weakening together make `ought A` and
-`ought B` incompatible (`Cariani.not_ought_and`). The scalar reading of *ought* as a threshold on
-an intermediate scale derives Weakening and, given ought-exclusivity, the Smith Principle; both
-derivations live with the expected-value substrate.
+probability-weighted average of world values over a proposition, which is an intermediate measure
+of propositions. *Ought* is constrained rather than defined: Sloman's Principle relates it to
+goodness (an obligatory proposition is strictly better than each of its alternatives, after
+Sloman), the Smith Principle restricts agglomeration to exhaustive pairs, and Weakening closes
+obligation under disjunction. Sloman's Principle alone excludes conflicting oughts, `ought φ`
+together with `ought ¬φ`, and the Smith Principle carries the Smith argument from `ought (M ∨ S)`
+and `ought ¬M` to `ought S`, on a sample model that meets the Sloman requirements of all three. On
+Cariani's four-world counter-model to Weakening, where `A` and `B` each beat their negations in
+expected value but `A ∨ B` ties with its negation, Sloman's Principle and Weakening together make
+`ought A` and `ought B` incompatible.
+
+Read as the positive form of a measure of obligation, *ought* takes its logic from that measure.
+If the measure is intermediate, obligation is closed under the disjunction of disjoint
+propositions, and it satisfies the Smith Principle when no proposition is obligatory together with
+its negation, which Sloman's Principle ensures over polar alternatives. The positive form of
+expected value carries the Smith argument on the sample model in this way. It is not closed under
+disjunction in general, since on Cariani's model a threshold from 0 up to 25 lies below the
+expected values of `A` and of `B` and not below that of `A ∨ B`, and it can hold of a proposition
+and its negation, as a threshold below −25 does there.
 
 ## Implementation notes
 
@@ -70,7 +76,9 @@ For chapters 7 and 8, the goodness scale and the alternative sets of the constra
 parameters; the consequences take the needed alternative memberships as hypotheses, the polar
 sets `{φ, ¬φ}` being the book's weakest choice. The counter-model instantiates the scale by
 expected value over an equiprobable domain of four worlds indexed by the truth values of `A` and
-`B`.
+`B`. Intermediacy is `MeasurementTheory.IsIntermediate`, which constrains the join of disjoint
+propositions, the case of the book's formula for the expected value of a disjunction; the
+derivation of Weakening from intermediacy is stated for disjoint propositions accordingly.
 
 ## TODO
 
@@ -119,6 +127,15 @@ noncomputable def likelihood (A : Set W) : Probability :=
 
 -- p. 84
 @[simp] theorem likelihood_empty : likelihood P ∅ = ⊥ := Subtype.ext (by simp)
+
+/-- Likelihood as a bounded order homomorphism from propositions to the probability scale. -/
+noncomputable def likelihoodHom : BoundedOrderHom (Set W) Probability where
+  toFun := likelihood P
+  monotone' _ _ h := Subtype.mk_le_mk.2 (measureReal_mono h)
+  map_top' := likelihood_univ P
+  map_bot' := likelihood_empty P
+
+@[simp] theorem coe_likelihoodHom : ⇑(likelihoodHom P) = likelihood P := rfl
 
 end Scale
 
@@ -229,8 +246,8 @@ theorem possible_eq_preimage : possible P = likelihood P ⁻¹' Set.Ioi ⊥ := b
   rw [mem_possible_iff, Set.mem_preimage, Set.mem_Ioi, ← Subtype.coe_lt_coe, coe_likelihood,
     Set.Icc.coe_bot]
 
-/-- The English fragment agrees, since its *possible* takes the minimum standard and its
-*impossible* the maximum of the dual (§5.2.5). The fragment's possibility scale is only lower
+/-- The English language file agrees, since its *possible* takes the minimum standard and its
+*impossible* the maximum of the dual (§5.2.5). The language file's possibility scale is only lower
 closed; the maximum of the probability scale is the book's claim that *possible* shares the scale
 of *likely*. -/
 example : English.Adjectives.possible.standard = some .minEndpoint ∧
@@ -277,6 +294,11 @@ theorem rank_injective : Function.Injective rank := fun a b h ↦ by
   cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
 
 instance : LinearOrder EpistemicItem := LinearOrder.lift' rank rank_injective
+
+/-- The rank as an order embedding into `Fin 5`. -/
+def rankOrderEmbedding : EpistemicItem ↪o Fin 5 := .ofMapLEIff rank fun _ _ ↦ Iff.rfl
+
+@[simp] theorem coe_rankOrderEmbedding : ⇑rankOrderEmbedding = rank := rfl
 
 /-- *Must* and *certain* compare the probability weakly with their thresholds, *might*, *likely*
 and *possible* strictly (6.29). -/
@@ -377,7 +399,7 @@ theorem exists_mem_possible_not_mem_might {θ : ℝ} (h0 : 0 < θ) (h1 : θ ≤ 
   · rwa [mem_possible_iff, hP0]
   · simp only [Set.mem_preimage, Set.mem_Ioi, hP0, lt_irrefl, not_false_eq_true]
 
-open Desire.ExpectedValue
+open Desire MeasurementTheory
 
 section Constraints
 
@@ -404,17 +426,34 @@ theorem Constraints.not_and_of_le (hne : (φ ∪ ψ)ᶜ ∈ alt (φ ∪ ψ))
 
 end Constraints
 
-section Goodness
+/-! ### *Ought* as a positive form (§8.14) -/
 
-variable {W : Type*} [MeasurableSpace W]
+section Scalar
 
-/-- Goodness as expected value over the whole domain, the book's default `prob(D) = 1`. -/
-noncomputable def goodness (pr : MeasureTheory.Measure W) (V : W → ℝ) (φ : Set W) : ℝ :=
-  expectedValue pr V Set.univ φ
+variable {W α : Type*} [LinearOrder α] {m : Set W → α} {θ : α} {φ ψ : Set W}
 
-end Goodness
+-- (8.78)
+theorem weakening_of_isIntermediate (hm : IsIntermediate m) (hd : Disjoint φ ψ) (hφ : θ < m φ)
+    (hψ : θ < m ψ) : θ < m (φ ∪ ψ) :=
+  hm.sup_mem (s := Set.Ioi θ) hd hφ hψ
 
-attribute [local simp] goodness expectedValue_eq_sum Finset.sum_filter Fintype.sum_prod_type
+/-- The positive form of an intermediate measure satisfies the Smith Principle when it holds of no
+proposition together with its negation (8.79). -/
+theorem smith_of_isIntermediate (hm : IsIntermediate m) (hex : ∀ ⦃χ⦄, θ < m χ → ¬ θ < m χᶜ)
+    (h : φ ∪ ψ = Set.univ) (hφ : θ < m φ) (hψ : θ < m ψ) : θ < m (φ ∩ ψ) :=
+  hm.inf_mem (s := Set.Ioi θ) (.Ioi θ) h hφ (hex hψ)
+
+-- §8.9, §8.11: with polar alternatives Sloman's Principle supplies the exclusivity
+theorem smith_of_sloman {μ : Set W → ℝ} {alt : Set W → Set (Set W)} [Nonempty W]
+    (hm : IsIntermediate m) (hs : ∀ ⦃χ⦄, θ < m χ → ∀ ξ ∈ alt χ, ξ ≠ χ → μ ξ < μ χ)
+    (halt : ∀ χ, χᶜ ∈ alt χ) (h : φ ∪ ψ = Set.univ) (hφ : θ < m φ) (hψ : θ < m ψ) :
+    θ < m (φ ∩ ψ) :=
+  smith_of_isIntermediate hm (fun χ h₁ h₂ ↦ lt_asymm (hs h₁ _ (halt χ) ne_compl_self.symm)
+    (hs h₂ _ (by simpa using halt χᶜ) ne_compl_self)) h hφ hψ
+
+end Scalar
+
+attribute [local simp] expectedValue_eq_sum Finset.sum_filter Fintype.sum_prod_type
   Fintype.sum_bool ProbabilityTheory.uniformOn_univ_real_singleton
 
 /-! ### The Smith scenario -/
@@ -432,7 +471,7 @@ instance : Fintype Smith := ⟨{military, service, neither}, fun w ↦ by cases 
 
 instance : MeasurableSpace Smith := ⊤
 
-instance : MeasurableSingletonClass Smith := ⟨fun _ ↦ trivial⟩
+instance : DiscreteMeasurableSpace Smith := ⟨fun _ ↦ trivial⟩
 
 /-- Smith serves in the military. -/
 def M : Set Smith := {military}
@@ -452,15 +491,25 @@ private theorem card_eq : Fintype.card Smith = 3 := rfl
 attribute [local simp] M S value card_eq Finset.univ Fintype.elems Finset.sum_insert
 
 theorem sloman :
-    goodness prior value (M ∪ S)ᶜ < goodness prior value (M ∪ S) ∧
-      goodness prior value M < goodness prior value Mᶜ ∧
-      goodness prior value Sᶜ < goodness prior value S := by
+    expectedValue prior value (M ∪ S)ᶜ < expectedValue prior value (M ∪ S) ∧
+      expectedValue prior value M < expectedValue prior value Mᶜ ∧
+      expectedValue prior value Sᶜ < expectedValue prior value S := by
   classical norm_num [-Finset.sum_const]
+
+private theorem inter_compl : (M ∪ S) ∩ Mᶜ = S := by ext w; cases w <;> simp
+
+private theorem union_compl : M ∪ S ∪ Mᶜ = Set.univ := by ext w; cases w <;> simp
 
 theorem ought_S {μ : Set Smith → ℝ} {ought : Set Smith → Prop} {alt : Set Smith → Set (Set Smith)}
     (h : Constraints μ ought alt) (h₁ : ought (M ∪ S)) (h₂ : ought Mᶜ) : ought S :=
-  have : (M ∪ S) ∩ Mᶜ = S := by ext w; cases w <;> simp
-  this ▸ h.smith (by ext w; cases w <;> simp) h₁ h₂
+  inter_compl ▸ h.smith union_compl h₁ h₂
+
+-- Figure 8.4 under the derivation (8.79)
+theorem lt_expectedValue_S {θ : ℝ} (h₀ : 0 ≤ θ) (h : θ < expectedValue prior value (M ∪ S)) :
+    θ < expectedValue prior value S := by
+  have hM : expectedValue prior value Mᶜᶜ = 0 := by classical norm_num [-Finset.sum_const]
+  exact inter_compl ▸ (isIntermediate_expectedValue .of_finite).inf_mem (.Ioi θ)
+    union_compl h (hM ▸ h₀.not_gt)
 
 end Smith
 
@@ -489,33 +538,46 @@ def B : Set World := {w | w.2 = true}
 
 attribute [local simp] A B value
 
-theorem goodness_A : goodness prior value A = 25 := by
+theorem expectedValue_A : expectedValue prior value A = 25 := by
   classical norm_num [-Finset.sum_const]
 
-theorem goodness_compl_A : goodness prior value Aᶜ = -25 := by
+theorem expectedValue_compl_A : expectedValue prior value Aᶜ = -25 := by
   classical norm_num [-Finset.sum_const]
 
-theorem goodness_B : goodness prior value B = 25 := by
+theorem expectedValue_B : expectedValue prior value B = 25 := by
   classical norm_num [-Finset.sum_const]
 
-theorem goodness_compl_B : goodness prior value Bᶜ = -25 := by
+theorem expectedValue_compl_B : expectedValue prior value Bᶜ = -25 := by
   classical norm_num [-Finset.sum_const]
 
-theorem goodness_union : goodness prior value (A ∪ B) = 0 := by
+theorem expectedValue_A_union_B : expectedValue prior value (A ∪ B) = 0 := by
   classical norm_num [-Finset.sum_const]
 
-theorem goodness_compl_union : goodness prior value (A ∪ B)ᶜ = 0 := by
+theorem expectedValue_compl_A_union_B : expectedValue prior value (A ∪ B)ᶜ = 0 := by
   classical norm_num [-Finset.sum_const]
 
 theorem sloman :
-    goodness prior value Aᶜ < goodness prior value A ∧
-      goodness prior value Bᶜ < goodness prior value B := by
-  rw [goodness_A, goodness_compl_A, goodness_B, goodness_compl_B]; norm_num
+    expectedValue prior value Aᶜ < expectedValue prior value A ∧
+      expectedValue prior value Bᶜ < expectedValue prior value B := by
+  rw [expectedValue_A, expectedValue_compl_A, expectedValue_B, expectedValue_compl_B]; norm_num
+
+-- Table 8.4: the positive form of expected value is not closed under disjunction
+theorem lt_and_lt_and_not_lt_union {θ : ℝ} (h₀ : 0 ≤ θ) (h : θ < 25) :
+    θ < expectedValue prior value A ∧ θ < expectedValue prior value B ∧
+      ¬ θ < expectedValue prior value (A ∪ B) := by
+  rw [expectedValue_A, expectedValue_B, expectedValue_A_union_B]
+  exact ⟨h, h, h₀.not_gt⟩
+
+-- p. 255: the positive form of expected value can hold of a proposition and its negation
+theorem lt_and_lt_compl {θ : ℝ} (h : θ < -25) :
+    θ < expectedValue prior value A ∧ θ < expectedValue prior value Aᶜ := by
+  rw [expectedValue_A, expectedValue_compl_A]
+  exact ⟨h.trans (by norm_num), h⟩
 
 theorem not_ought_and {ought : Set World → Prop} {alt : Set World → Set (Set World)}
-    (h : Constraints (goodness prior value) ought alt) (halt : (A ∪ B)ᶜ ∈ alt (A ∪ B)) :
+    (h : Constraints (expectedValue prior value) ought alt) (halt : (A ∪ B)ᶜ ∈ alt (A ∪ B)) :
     ¬ (ought A ∧ ought B) :=
-  h.not_and_of_le halt (goodness_compl_union ▸ goodness_union ▸ le_rfl)
+  h.not_and_of_le halt (expectedValue_compl_A_union_B ▸ expectedValue_A_union_B ▸ le_rfl)
 
 end Cariani
 

@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Semantics.Aspect.AspectualClass
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.Sinhala.Verbs
+public import Linglib.Languages.Sinhala.Verbs
 public import Studies.KoontzGarboden2009
 public import Linglib.Core.Order.Cover
 public import Mathlib.Tactic.DeriveFintype
@@ -184,7 +184,7 @@ inductive Root where
   | kada | gila | mara | minimara | kapa | vinaashKara
   deriving DecidableEq, Fintype, Repr
 
-/-- `r.verb` is the fragment verb of the root `r`. -/
+/-- `r.verb` is the language file verb of the root `r`. -/
 def Root.verb : Root → Verb
   | .kada => kadann
   | .gila => gilann

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Syntax.Cat
-public import Linglib.Syntax.Tree.Projection
+public import Linglib.Syntax.Tree.Cat
+public import Linglib.Syntax.Projection.Tree
 public import Linglib.Data.Examples.Ross1967
 public import Linglib.Data.Examples.Readers
 
@@ -44,6 +44,8 @@ definition of islands as the domains of chopping rules are not formalized.
 @[expose] public section
 
 namespace Ross1967
+
+open Examples (Constraint)
 
 open PhraseStructure
 open PhraseStructure.Cat (N V P Adj Conj)
@@ -341,16 +343,8 @@ inductive Rule
   | copying
   deriving DecidableEq, Repr
 
-/-- The four constraints. -/
-inductive Constraint
-  | cnpc
-  | csc
-  | ssc
-  | lbc
-  deriving DecidableEq, Repr
-
 /-- The constraint's condition on a movement. -/
-def Constraint.Fires : Constraint → Movement → Prop
+def Examples.Constraint.Fires : Constraint → Movement → Prop
   | .cnpc, m => m.CNPC
   | .csc, m => m.CSC
   | .ssc, m => m.SSC
@@ -372,8 +366,7 @@ def Row.ofDatum (r : Datum) : Option Row := do
   let m ← Ross1967.movement r.source.paperLabel
   let rule ← r.parse? "rule" [("question", Rule.chopping), ("relativization", .chopping),
     ("topicalization", .chopping), ("leftDislocation", .copying)]
-  let c := r.parse? "constraint" [("CNPC", Constraint.cnpc), ("CSC", .csc), ("SSC", .ssc),
-    ("LBC", .lbc)]
+  let c := (Examples.constraint r)
   pure ⟨m, rule, c, r.judgment⟩
 
 /-- The examples. -/

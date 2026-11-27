@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Fragments.Greek.StandardModern.Complementizers
-public import Linglib.Fragments.Greek.StandardModern.Verbs
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Languages.Greek.StandardModern.Complementizers
+public import Linglib.Languages.Greek.StandardModern.Verbs
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Data.Examples.Roussou2010
@@ -31,9 +31,9 @@ are rows, read by `rows` as the analysis predicts.
 
 ## Implementation notes
 
-The matrix predicates are entries of the Greek fragment, classified for selection as the paper
+The matrix predicates are entries of the Greek language file, classified for selection as the paper
 classifies them; the classification is the paper's, with the recollection sense of *thimáme*
-the fragment's stative entry, and *nomízo*'s need of an operator for its *na*-complement a
+the language file's stative entry, and *nomízo*'s need of an operator for its *na*-complement a
 lexical mark. The type-level incompatibility of the outside mergers with *na* is stated on the
 composition substrate's types, propositions as `t` and properties as `⟨e,t⟩`. Control, the
 dynamic modal reading of *kséro* with *na*, the Romance and English parallels, and the paper's
@@ -103,7 +103,7 @@ noncomputable def puClause (p : Set W) : W → Trivalent :=
   fun w ↦ Trivalent.transplication (Trivalent.ofProp (w ∈ p)) .true
 
 /-- The *an*-clause is the polar set of the proposition and its negation. -/
-def anClause (p : Set W) : Question W := Question.polar p
+def anClause (p : Set W) : Inquisitive.Proposition (Set W) := Inquisitive.Proposition.polar p
 
 theorem puClause_ne_undefined_iff (p : Set W) (w : W) : puClause p w ≠ .undefined ↔ w ∈ p := by
   simp [puClause]
@@ -117,7 +117,7 @@ theorem posExt_puClause_subset (p : Set W) :
   simp_all [puClause, otiClause]
 
 theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
-  Question.not_isInformative_polar p
+  Inquisitive.Proposition.not_isInformative_polar p
 
 open Interpreter in
 theorem comp_over_na_type_clash (b : Ty Base) :
@@ -145,7 +145,7 @@ inductive Class
   | recollection
   deriving DecidableEq, Repr
 
-/-- The paper's classification of the fragment's predicates. -/
+/-- The paper's classification of the language file's predicates. -/
 def classOf (v : Verb) : Option Class :=
   if v == anarotjeme then some .interrogative
   else if v == ksero then some .knowing
@@ -231,7 +231,7 @@ theorem epistemic_na_present (k : Config) (b : Bool) (hc : k.comp = na)
 
 /-! ### The rows -/
 
-/-- The fragment entry named by a row. -/
+/-- The language file entry named by a row. -/
 def verbOf : String → Option Verb
   | "ksero" => some ksero
   | "anarotjeme" => some anarotjeme

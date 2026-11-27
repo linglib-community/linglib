@@ -10,28 +10,19 @@ public import Linglib.Morphology.Morphotactics.TemplateMatch
 /-!
 # The association conventions
 
-This file defines the universal conventions that associate the melodic elements of a plane with
-the slots of a template, as McCarthy states them after Clements and Ford. Each tier takes a
-natural class of slots as its melody-bearing elements, the C-slots for a root or an affix and the
-V-slots for a vocalism. First, the unassociated melodic elements associate one to one, from left
-to right, with the free bearing slots. Second, a single unassociated melodic element that remains
-associates with every free bearing slot. Third, a bearing slot still free takes the melodic
-element on the nearest slot to its left. A slot with a line from any plane is unavailable to
-every other, the prohibition against many-to-one association. A language-particular rule that
-erases a line is followed by the conventions again, which restore or respread it.
+The association conventions link the melodic elements of a plane to the slots of a template, as
+[mccarthy-1981] states them after [clements-ford-1979]. Each tier bears on a class of slots, the
+C-slots for a root or an affix and the V-slots for a vocalism, and a slot with a line from one
+plane is unavailable to every other.
 
-## Main definitions
+We define the three conventions on one plane. `AR.associateOneToOne` links the unassociated
+melodic elements one to one, from left to right, with the free slots. `AR.associateRemaining`
+links a single melodic element that remains to every free slot. `AR.spread` gives a slot still
+free the melodic element of the nearest slot to its left. `AR.associate` applies the three in
+order, and `AR.link` and `AR.delink` add lines to a plane and erase those on a slot.
 
-* `AR.associateOneToOne`, `associateRemaining`, `spread`: the three conventions on
-  one plane.
-* `AR.associate`: the three in order.
-* `AR.link`, `AR.delink`: lines added to a plane, and the erasure of the
-  lines of a plane on a slot.
-
-## Main results
-
-* `AR.associate_mapMelody`: the conventions never look at the melodic elements, so they
-  commute with relabeling them.
+The conventions do not read the melodic elements, so they commute with relabelling them
+(`AR.associate_mapMelody`).
 
 ## References
 
@@ -73,12 +64,12 @@ variable [DecidableEq ι]
 
 /-- The match with the lines `L` added to plane `i`. -/
 def link (L : List (ℕ × ℕ)) : AR (Multiplanar ι (Sponsored α M) (Sponsored Slot M)) :=
-  f.addLines i L.toFinset
+  f.addLines (some i) none L.toFinset
 
 /-- The match with the lines of plane `i` on slot `s` erased, as a language-particular rule erases
 them before the conventions apply again. -/
 def delink (s : ℕ) : AR (Multiplanar ι (Sponsored α M) (Sponsored Slot M)) :=
-  f.filterLines i (·.2 ≠ s)
+  f.filterLines (some i) none (·.2 ≠ s)
 
 theorem link_mapMelody (L : List (ℕ × ℕ)) : (f.mapMelody φ).link i L = (f.link i L).mapMelody φ :=
   (mapMelody_addLines f φ i _).symm

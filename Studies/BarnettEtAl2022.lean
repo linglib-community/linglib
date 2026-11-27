@@ -244,9 +244,7 @@ noncomputable def speaker (β : ℝ) : Kernel (Fin (n + 1) → Fin 9) (Fin 9) :=
   Kernel.ofFunOfCountable fun w ↦ (reveal n β w).map w
 
 instance (β : ℝ) : IsMarkovKernel (speaker n β) :=
-  ⟨fun w ↦ by
-    rw [speaker, Kernel.ofFunOfCountable_apply]
-    infer_instance⟩
+  inferInstanceAs (IsMarkovKernel (Kernel.ofFunOfCountable _))
 
 variable (n) in
 /-- The pragmatic listener inverts the speaker against the uniform prior. -/

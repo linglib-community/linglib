@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Linglib.Data.Examples.Umbach2004
 
 /-!
@@ -61,7 +61,7 @@ follows the main text.
 
 namespace Umbach2004
 
-open Question
+open Inquisitive Inquisitive.Proposition
 
 variable {W α : Type*}
 

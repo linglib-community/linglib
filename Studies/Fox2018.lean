@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Questions.Hamblin.Closure
+public import Linglib.Semantics.Questions.Hamblin.Degree
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Studies.Fox2007
 public import Studies.FoxHackl2006
@@ -28,11 +29,11 @@ their denotations are admissible.
 
 ## Implementation notes
 
-* Questions are Hamblin sets `Set (Set W)` rather than `Question` lower sets, since the paper's sets
-  are not antichains. The three-location model is a family of atoms `a : ι → Set W` with every set
-  of atoms true at some world (`Rich`); the closures of the atoms under conjunction and under
-  disjunction, `infClosure (range a)` and `supClosure (range a)`, are the paper's two denotations
-  (21)''a and (21)''b.
+* Questions are Hamblin sets `Set (Set W)` rather than `Inquisitive.Proposition` lower sets, since
+  the paper's sets are not antichains. The three-location model is a family of atoms `a : ι → Set W`
+  with every set of atoms true at some world (`Rich`); the closures of the atoms under conjunction
+  and under disjunction, `infClosure (range a)` and `supClosure (range a)`, are the paper's two
+  denotations (21)''a and (21)''b.
 * The exhaustification (32) is Fox's simplification of [bar-lev-fox-2017]'s operator,
   `Exhaustification.cell`, which agrees with theirs wherever it is consistent (fn. 33).
 * The answer operator `ans` quantifies over the cell identifiers instead of taking the unique one
@@ -56,7 +57,7 @@ their denotations are admissible.
 
 namespace Fox2018
 
-open Question Exhaustification Set
+open Question Inquisitive Inquisitive.Proposition Exhaustification Set
 open scoped SetRel
 
 variable {W : Type*}
@@ -133,8 +134,8 @@ theorem isCellValued_exh : IsCellValued (exh H) H :=
 /-- With the exhaustification (11), Cell Identification (19) is Dayal's presupposition at every
 world of the context set ((12) and its converse). -/
 theorem cellIdentification_exh_iff :
-    CellIdentification (exh H) H A ↔ ∀ w ∈ A, IsExhaustivelyResolvable H w := by
-  rw [forall_isExhaustivelyResolvable_iff_exh_inter]
+    CellIdentification (exh H) H A ↔ ∀ w ∈ A, HasStrongestTrueAnswer H w := by
+  rw [forall_hasStrongestTrueAnswer_iff_exh_inter]
   exact ⟨fun h w hw ↦ h _ ⟨w, hw, rfl⟩, fun h _ ⟨w, hw, hC⟩ ↦ hC ▸ h w hw⟩
 
 theorem nonVacuity_exh_iff :
@@ -148,10 +149,10 @@ theorem nonVacuity_exh_iff :
     obtain ⟨w, hw, hwp⟩ := h p hp
     exact ⟨_, ⟨w, hw, rfl⟩, by rw [exh_eq_strongAnswer H w hwp]⟩
 
-theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
+theorem hasStrongestTrueAnswer_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
     (ha : ∀ i j, a i ⊆ a j → i = j) (w : W) :
-    IsExhaustivelyResolvable (range a) w ↔ ∃! i, w ∈ a i := by
-  rw [isExhaustivelyResolvable_range_iff]
+    HasStrongestTrueAnswer (range a) w ↔ ∃! i, w ∈ a i := by
+  rw [hasStrongestTrueAnswer_range_iff]
   exact exists_congr fun i ↦ and_congr_right fun _ ↦
     ⟨fun h j hj ↦ (ha _ _ (h j hj)).symm, fun h j hj ↦ by rw [h j hj]⟩
 
@@ -243,34 +244,34 @@ variable {ι : Type*} {a : ι → Set W}
 
 -- The atoms true at a world, the criteria it satisfies.
 set_option hygiene false in
-local notation "atoms " w:max => Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w
+local notation "atoms " w:max => {i | w ∈ a i}
 
 /-- Every set of atoms is the set true at some world. -/
 def Rich (a : ι → Set W) : Prop :=
-  ∀ T : Finset ι, ∃ w, Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w = ↑T
+  ∀ T : Finset ι, ∃ w, {i | w ∈ a i} = ↑T
 
 /-- The worlds at which exactly the atoms of `T` are true form a cell of the logical partition of
 either closure. -/
 def atomCell (a : ι → Set W) (T : Finset ι) : Set W :=
-  {v | Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ v = ↑T}
+  {v | {i | v ∈ a i} = ↑T}
 
 theorem mem_atomCell {T : Finset ι} {v : W} : v ∈ atomCell a T ↔ atoms v = ↑T := Iff.rfl
 
 theorem strongAnswer_infClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
     strongAnswer (infClosure (range a)) w = atomCell a T := by
   ext v
-  rw [strongAnswer_eq_cell, partition_infClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
+  rw [strongAnswer_eq_cell, ofProps_infClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
 theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
     strongAnswer (supClosure (range a)) w = atomCell a T := by
   ext v
-  rw [strongAnswer_eq_cell, partition_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
+  rw [strongAnswer_eq_cell, ofProps_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
 theorem satisfied_infClosure_range_subset_iff {u v : W} :
-    Preorder.satisfied (· ∈ ·) (infClosure (range a)) u ⊆
-      Preorder.satisfied (· ∈ ·) (infClosure (range a)) v ↔ atoms u ⊆ atoms v := by
+    {q ∈ infClosure (range a) | u ∈ q} ⊆ {q ∈ infClosure (range a) | v ∈ q} ↔
+      atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
     exact mem_satisfied_iff.2
@@ -281,8 +282,8 @@ theorem satisfied_infClosure_range_subset_iff {u v : W} :
     exact mem_biInter_iff_subset.2 ((mem_biInter_iff_subset.1 hu).trans h)
 
 theorem satisfied_supClosure_range_subset_iff {u v : W} :
-    Preorder.satisfied (· ∈ ·) (supClosure (range a)) u ⊆
-      Preorder.satisfied (· ∈ ·) (supClosure (range a)) v ↔ atoms u ⊆ atoms v := by
+    {q ∈ supClosure (range a) | u ∈ q} ⊆ {q ∈ supClosure (range a) | v ∈ q} ↔
+      atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
     exact mem_satisfied_iff.2
@@ -521,10 +522,8 @@ theorem not_admissible_of_union {W : Type*} {H : Set (Set W)} {q₁ q₂ : Set W
 
 variable {D : Type*} [LinearOrder D]
 
-theorem isStrongestTrueAnswer_Ici (w : D) : IsStrongestTrueAnswer (range Ici) w (Ici w) := by
-  refine ⟨⟨⟨w, rfl⟩, self_mem_Ici⟩, ?_⟩
-  rintro _ ⟨⟨d, rfl⟩, hw⟩
-  exact Ici_subset_Ici.2 hw
+theorem isStrongestTrueAnswer_Ici (w : D) : IsStrongestTrueAnswer (range Ici) w (Ici w) :=
+  isStrongestTrueAnswer_degreeHamblin (μ := id) w
 
 -- (16a), (17a), (18a)
 theorem admissible_Ici [Nonempty D] : Admissible (range Ici : Set (Set D)) :=
@@ -533,7 +532,7 @@ theorem admissible_Ici [Nonempty D] : Admissible (range Ici : Set (Set D)) :=
 
 -- (16b), (17b), (18b): on a dense scale the negative degree question is inadmissible
 theorem not_admissible_Iio [DenselyOrdered D] : ¬ Admissible (range Iio : Set (Set D)) :=
-  fun ⟨_, ⟨w, hw⟩, hCI, _⟩ ↦ FoxHackl2006.negation_not_isExhaustivelyResolvable id
+  fun ⟨_, ⟨w, hw⟩, hCI, _⟩ ↦ FoxHackl2006.negation_not_hasStrongestTrueAnswer id
     Function.surjective_id w (cellIdentification_exh_iff.1 hCI w hw)
 
 variable {ι : Type*}
@@ -591,7 +590,7 @@ theorem not_admissible_compl_shift {b₁ b₂ : ι} (h : b₁ ≠ b₂) :
   · rw [← compl_inter]
     refine ⟨_, lift_mem_shift (insert_nonempty b₁ {b₂}), ?_⟩
     ext s
-    simp [insert_subset_iff]
+    simp [insert_subset_iff, imp_iff_not_or]
   · exact fun h' ↦ h' (show ({b₂} : Set ι) ∈ {s | {b₁} ⊆ s}ᶜ by simpa using h)
       (show ({b₂} : Set ι) ∈ {s | {b₂} ⊆ s} by simp)
   · exact fun h' ↦ h' (show ({b₁} : Set ι) ∈ {s | {b₂} ⊆ s}ᶜ by simpa using h.symm)

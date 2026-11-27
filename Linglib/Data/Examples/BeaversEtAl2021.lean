@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `BeaversEtAl2021` — typed example data
@@ -272,5 +274,32 @@ def beavers_etal2021_38b : Datum :=
     paperFeatures := [("diagnostic", "additive restitutive"), ("root class", "result")] }
 
 def all : List Datum := [beavers_etal2021_1c, beavers_etal2021_7a, beavers_etal2021_10a, beavers_etal2021_11c, beavers_etal2021_13, beavers_etal2021_15a, beavers_etal2021_16a, beavers_etal2021_25a, beavers_etal2021_26, beavers_etal2021_28a, beavers_etal2021_28b, beavers_etal2021_29b, beavers_etal2021_31, beavers_etal2021_32, beavers_etal2021_33b, beavers_etal2021_35b, beavers_etal2021_36b, beavers_etal2021_38b]
+
+/-- The two classes of root the paper compares. -/
+inductive RootClass where
+  /-- property concept: a root that describes a state and entails no change -/
+  | propertyConcept
+  /-- result: a root whose state arises from a change -/
+  | result
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `root class`. -/
+def rootClass (e : Datum) : Option RootClass :=
+  e.parse? "root class" [("property concept", .propertyConcept), ("result", .result)]
+
+/-- The diagnostics the examples apply. -/
+inductive Diagnostic where
+  /-- change denial: a continuation that denies that a change gave rise to the state -/
+  | changeDenial
+  /-- restitutive again: *again* with a reading on which only the state held before -/
+  | restitutiveAgain
+  /-- additive restitutive: an additive particle with a restitutive reading -/
+  | additiveRestitutive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("change denial", .changeDenial), ("restitutive again", .restitutiveAgain),
+    ("additive restitutive", .additiveRestitutive)]
 
 end BeaversEtAl2021.Examples

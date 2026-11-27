@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Insert
 public import Linglib.Data.Examples.Yalcin2007
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Dynamic.Consequence
 public import Linglib.Semantics.Modality.DomainSemantics
 public import Studies.Hintikka1962

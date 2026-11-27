@@ -6,9 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Mood.Verbal
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
-public import Linglib.Fragments.Romance.French.Verbs
-public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Languages.Romance.French.Verbs
+public import Linglib.Languages.Romance.Spanish.Verbs
 
 /-!
 # Portner and Rubinstein (2020): Desire, belief, and semantic composition: variation in mood selection with desire predicates
@@ -47,6 +48,8 @@ outcomes](##want_alice_and_want_sue) but [not hope for both](##not_hope_both).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace PortnerRubinstein2020
 
 open Modality Mood
@@ -71,8 +74,8 @@ def Content.target : Content W → Component
 
 /-- The ordered information state a content induces at a world. -/
 def Content.state : Content W → W → DynamicSemantics.OrderedInformationState W
-  | .single f => stateAt f ⊥
-  | .pair g f => stateAt f g
+  | .single f => .ofBackground f ⊥
+  | .pair g f => .ofBackground f g
 
 /-- The Spanish moods relate a clause to a world through the force of the mood applied to the
 content. A mood and a content that target different components do not combine. -/
@@ -80,10 +83,10 @@ def spanish (m : Grammatical) (c : Content W) : Option ((W → Prop) → W → P
   if m.target = c.target then some fun p w ↦ m.interp (c.state w) p else none
 
 @[simp] theorem spanish_indicative_single (f : Background W) :
-    spanish .indicative (.single f) = some fun p w ↦ ∀ᶠ v in simpleNecessity f w, p v := rfl
+    spanish .indicative (.single f) = some fun p w ↦ ∀ᶠ v in f.simpleNecessity w, p v := rfl
 
 @[simp] theorem spanish_subjunctive_pair (g f : Background W) :
-    spanish .subjunctive (.pair g f) = some fun p w ↦ goodPossibility f g w {v | p v} := rfl
+    spanish .subjunctive (.pair g f) = some fun p w ↦ f.goodPossibility g w {v | p v} := rfl
 
 @[simp] theorem spanish_subjunctive_single (f : Background W) :
     spanish .subjunctive (.single f) = none := rfl
@@ -105,9 +108,9 @@ noncomputable def french (m : Grammatical) (c : Content W) : Option ((W → Prop
 -- (49)
 theorem goodPossibility_eq_simpleNecessity_sup {f g : Background W}
     (h : (f ⊔ g).IsConsistent) :
-    (fun p w ↦ goodPossibility f g w {v | p v}) =
-      fun (p : W → Prop) w ↦ ∀ᶠ v in simpleNecessity (f ⊔ g) w, p v :=
-  funext₂ fun _ w ↦ propext (goodPossibility_iff_mem_simpleNecessity_sup (h w))
+    (fun p w ↦ f.goodPossibility g w {v | p v}) =
+      fun (p : W → Prop) w ↦ ∀ᶠ v in (f ⊔ g).simpleNecessity w, p v :=
+  funext₂ fun _ w ↦ propext (Background.goodPossibility_iff_mem_simpleNecessity_sup (h w))
 
 /-- Simplification changes the mood a content is interpreted in and never its meaning: French
 moods give a content exactly the meanings Spanish moods give it (p. 366). -/
@@ -185,12 +188,12 @@ theorem french_hope_eq_spanish_hope :
 /-- No one hopes for each of two outcomes their beliefs rule out together. -/
 theorem not_hope_both {p q : Set W} {w : W}
     (hpq : ∀ v ∈ B.dox.accessibleWorlds w, ¬ (v ∈ p ∧ v ∈ q)) :
-    ¬ (goodPossibility B.dox B.bulc w p ∧ goodPossibility B.dox B.bulc w q) := by
+    ¬ (B.dox.goodPossibility B.bulc w p ∧ B.dox.goodPossibility B.bulc w q) := by
   rintro ⟨hp, hq⟩
   obtain ⟨b, hb⟩ := B.consistent w
   exact hpq b ((Background.accessibleWorlds_sup _ _ w).subset hb).1
-    ⟨mem_simpleNecessity_sup_of_goodPossibility hp hb,
-      mem_simpleNecessity_sup_of_goodPossibility hq hb⟩
+    ⟨Background.mem_simpleNecessity_sup_of_goodPossibility hp hb,
+      Background.mem_simpleNecessity_sup_of_goodPossibility hq hb⟩
 
 /-! ### The fragments -/
 
@@ -241,10 +244,11 @@ def dox : Background World :=
 def bul : Background World := fun _ ↦ {marriesAlice, marriesSue}
 
 theorem bestWorlds_doxPlus_bul (w : World) :
-    bestWorlds doxPlus bul w = {(true, false), (false, true)} := by
+    doxPlus.bestWorlds bul w = {(true, false), (false, true)} := by
   ext ⟨a, b⟩
   cases a <;> cases b <;>
-    simp [mem_bestWorlds, doxPlus, bul, Preorder.ofCriteria_le_iff, marriesAlice, marriesSue]
+    simp [Background.mem_bestWorlds, doxPlus, bul, Preorder.ofLowerSets_le_iff, marriesAlice,
+      marriesSue]
 
 /-- An attitude holder who desires to marry Alice and to marry Sue, and whose one consistent
 desire is to marry Alice. -/
@@ -262,7 +266,7 @@ def marriage : Backgrounds World where
 theorem want_alice_and_want_sue (w : World) :
     ∃ φ, spanish .subjunctive marriage.want = some φ ∧
       φ (· ∈ marriesAlice) w ∧ φ (· ∈ marriesSue) w :=
-  ⟨fun p w ↦ goodPossibility doxPlus bul w {v | p v}, rfl,
+  ⟨fun p w ↦ doxPlus.goodPossibility bul w {v | p v}, rfl,
     ⟨(true, false), by simp [doxPlus, marriesAlice, marriesSue],
       fun _ _ hv ↦ hv marriesAlice (by simp [bul]) rfl⟩,
     ⟨(false, true), by simp [doxPlus, marriesAlice, marriesSue],
@@ -272,7 +276,7 @@ theorem want_alice_and_want_sue (w : World) :
 -- Alice, since marrying Sue is a best outcome
 theorem bestWorlds_want_alice_eq_false (w : World) :
     Desire.BestWorlds.want doxPlus.accessibleWorlds bul marriesAlice w = .false := by
-  have hS : ((false, true) : World) ∈ bestWorlds doxPlus bul w := by
+  have hS : ((false, true) : World) ∈ doxPlus.bestWorlds bul w := by
     simp [bestWorlds_doxPlus_bul]
   exact Desire.BestWorlds.want_eq_false_iff.2
     ⟨⟨⟨(true, false), by simp [doxPlus, marriesAlice, marriesSue], rfl⟩, (false, true), hS.1,
@@ -282,7 +286,7 @@ theorem bestWorlds_want_alice_eq_false (w : World) :
 -- over them makes each marriage hoped for
 theorem hope_alice_and_hope_sue (w : World) :
     (bul.accessibleWorlds w).Nonempty ∧
-      goodPossibility dox bul w marriesAlice ∧ goodPossibility dox bul w marriesSue :=
+      dox.goodPossibility bul w marriesAlice ∧ dox.goodPossibility bul w marriesSue :=
   ⟨⟨(true, true), by simp [bul, marriesAlice, marriesSue]⟩,
     ⟨(true, false), by simp [dox, marriesAlice, marriesSue],
       fun _ _ hv ↦ hv marriesAlice (by simp [bul]) rfl⟩,
@@ -294,32 +298,33 @@ theorem hope_alice_and_hope_sue (w : World) :
 /-- The best sets are the classes of best worlds satisfying the same premises of the ordering
 source. -/
 def bestSets (f g : Background W) (w : W) : Set (Set W) :=
-  {X | ∃ b ∈ bestWorlds f g w, X = {v ∈ bestWorlds f g w |
-    Preorder.satisfied (· ∈ ·) (g w) v = Preorder.satisfied (· ∈ ·) (g w) b}}
+  {X | ∃ b ∈ f.bestWorlds g w, X = {v ∈ f.bestWorlds g w |
+    {a ∈ (g w) | v ∈ a} = {a ∈ (g w) | b ∈ a}}}
 
 -- Appendix B: under the Limit Assumption local necessity is truth throughout a best set.
 theorem goodPossibility_iff_exists_mem_bestSets {f g : Background W} {p : Set W} {w : W}
-    (hlim : LimitAssumption f g w) :
-    goodPossibility f g w p ↔ ∃ X ∈ bestSets f g w, ∀ v ∈ X, v ∈ p := by
-  let o := premisePreorder (g w)
+    (hlim : f.LimitAssumption g w) :
+    f.goodPossibility g w p ↔ ∃ X ∈ bestSets f g w, ∀ v ∈ X, v ∈ p := by
+  let o := ≤[g w]
   refine ⟨fun ⟨u, hu, hp⟩ ↦ ?_, fun ⟨_, ⟨b, hb, hX⟩, hp⟩ ↦ ⟨b, hb.1, fun v hv hvb ↦ ?_⟩⟩
   · obtain ⟨b, hb, hbu⟩ := hlim u hu
     exact ⟨_, ⟨b, hb, rfl⟩, fun v ⟨hv, hvb⟩ ↦ hp v hv.1
-      (o.le_trans _ _ _ (Preorder.antisymmRel_ofCriteria_iff.2 hvb).1 hbu)⟩
+      (o.le_trans _ _ _ (Preorder.antisymmRel_ofLowerSets_iff.2 hvb).1 hbu)⟩
   · exact hp v (hX ▸ ⟨⟨hv, fun ⦃z⦄ hz hzv ↦ o.le_trans _ _ _ hvb
       (hb.2 hz (o.le_trans _ _ _ hzv hvb))⟩,
-      Preorder.antisymmRel_ofCriteria_iff.1 ⟨hvb, hb.2 hv hvb⟩⟩)
+      Preorder.antisymmRel_ofLowerSets_iff.1 ⟨hvb, hb.2 hv hvb⟩⟩)
 
 -- Appendix B as printed: no set holds exactly the pairs of best worlds with the same premises.
 theorem not_exists_printed_bestSet (w : World) : ¬ ∃ X : Set World, ∀ u v,
-    u ∈ X ∧ v ∈ X ↔ Preorder.satisfied (· ∈ ·) (bul w) u = Preorder.satisfied (· ∈ ·) (bul w) v ∧
-      u ∈ bestWorlds doxPlus bul w ∧ v ∈ bestWorlds doxPlus bul w := by
+    u ∈ X ∧ v ∈ X ↔ {a ∈ (bul w) | u ∈ a} = {a ∈ (bul w) | v ∈ a} ∧
+      u ∈ doxPlus.bestWorlds bul w ∧ v ∈ doxPlus.bestWorlds bul w := by
   rintro ⟨X, hX⟩
-  have hA : ((true, false) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
-  have hS : ((false, true) : World) ∈ bestWorlds doxPlus bul w := by simp [bestWorlds_doxPlus_bul]
+  have hA : ((true, false) : World) ∈ doxPlus.bestWorlds bul w := by simp [bestWorlds_doxPlus_bul]
+  have hS : ((false, true) : World) ∈ doxPlus.bestWorlds bul w := by simp [bestWorlds_doxPlus_bul]
   have heq := ((hX _ _).1 ⟨((hX _ _).2 ⟨rfl, hA, hA⟩).1, ((hX _ _).2 ⟨rfl, hS, hS⟩).1⟩).1
-  have h : marriesAlice ∈ Preorder.satisfied (· ∈ ·) (bul w) ((false, true) : World) :=
-    heq ▸ ⟨by simp [bul], rfl⟩
+  have h : marriesAlice ∈ {a ∈ bul w | ((false, true) : World) ∈ a} :=
+    heq.subset (show marriesAlice ∈ {a ∈ bul w | ((true, false) : World) ∈ a} from
+      ⟨by simp [bul], rfl⟩)
   exact nomatch (h.2 : (false, true) ∈ marriesAlice)
 
 end PortnerRubinstein2020

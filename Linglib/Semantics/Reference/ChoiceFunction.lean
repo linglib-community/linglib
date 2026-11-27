@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Function
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 
 /-!
 # Choice functions

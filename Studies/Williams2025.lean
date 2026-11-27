@@ -3,13 +3,13 @@ module
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.NormNum
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Events.Closure
-public import Linglib.Semantics.Events.Lifespan
+public import Linglib.Semantics.Tense.Lifespan
 public import Studies.Kratzer1998
 public import Studies.White2014
-public import Linglib.Fragments.English.Verbs.Attitude
-public import Linglib.Fragments.English.Verbs.Implicative
+public import Linglib.Languages.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Implicative
 public import Linglib.Data.Examples.Williams2025
 public import Linglib.Data.StructureDataset.Williams2025
 
@@ -35,13 +35,13 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
 * mathlib orders intervals by inclusion: the paper's `τ(e) ⊆ t` is `(τ e) ≤ t`, its `t' < t` in
   (30a) and (30b) is `t'.Precedes t`, the `t ≤ t'` of (37) is `t.snd ≤ t'.fst`, and `LB` is `.fst`.
 * A non-finite complement is an AspP under the heads of (29), the past tense of the gerund and the
-  perfect, each relating the reference time above it to the one below (`Head.rel`), and (30a) and
+  perfect, each relating the reference time above it to the one below (`Head.cell`), and (30a) and
   (30b) print the two relations alike (`den`). The perfect is Kratzer's,
   `Kratzer1998.AspectHead.perfect`, strict precedence, not the `ViewpointType.perfect` relation,
   whose intervals may touch, and under any heads a complement closes to it (`closure_den_cons`).
   The paper gives no structure for the perfect gerund of (8) and (10), here the gerund's past over
   the perfect. Plain infinitives are simultaneous with the matrix reference time, after Wurmbrand.
-* Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`, shared with
+* Pre-existence is `Tense.PreExists` of `Semantics/Tense/Lifespan.lean`, shared with
   `Studies/Bondarenko2020`, at the subjective now of the derivations (32), (34) and (36), here the
   run time of the forgetting (`PreEx`). The contradiction of (36) holds whatever the predicate, so a
   form needs the modal when no predicate of events meets pre-existence under it (`lf`), and with
@@ -55,10 +55,11 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
 * The continuations *but he did not have to* and *but he didn't* of §3.1 deny that the action was
   planned, in the sense of the modal (37) (`Planned`), and that it occurred (`Event.closure`).
   Over a plain infinitive the modal, which the paper adapts from Copley, is the prospective over
-  the worlds of the plan (`mod_aspP_iff`), built as `Aspect.modalOfRel` builds the imperfective.
+  the worlds of the plan (`mod_aspP_iff`), built as `Aspect.imperfective` is.
   The scenarios count days in `ℚ`, Monday `1`, Tuesday `2` and Wednesday `3`, so that a perfect
   gerund has room between the event and the forgetting.
-* The English fragment has an implicative *forget* taking an infinitive and a factive one taking a
+* The English language file has an implicative *forget* taking an infinitive and a factive one
+  taking a
   finite clause or a gerund, `English.Verbs.forget` and `English.Verbs.forget_rog`; Williams'
   uniformity hypothesis takes them to be one verb.
 
@@ -86,6 +87,7 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
 namespace Williams2025
 
 open Event (τ)
+open ModalLogic
 
 variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
 
@@ -95,14 +97,16 @@ variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
 abbrev Complement (W E T : Type*) [LinearOrder T] := W → NonemptyInterval T → E → Prop
 
 /-- The closure (27) of a complement binds its event. -/
-def Complement.closure (C : Complement W E T) : W → Set (NonemptyInterval T) :=
-  fun w ↦ {t | Event.closure (fun v ↦ C v t) w}
+def Complement.closure (C : Complement W E T) : W → NonemptyInterval T → Prop :=
+  fun w t ↦ Event.closure (fun v ↦ C v t) w
 
 /-- In AspP, (26), perfective aspect locates the event within the reference time. -/
 def aspP (P : W → E → Prop) : Complement W E T :=
   fun w t e ↦ (τ e) ≤ t ∧ P w e
 
-theorem closure_aspP (P : W → E → Prop) : (aspP P).closure = Aspect.PRFV P := rfl
+theorem closure_aspP (P : W → E → Prop) (w : W) :
+    (aspP P).closure w = Aspect.perfective (T := T) (P w) :=
+  funext fun _ ↦ propext Aspect.perfective_iff.symm
 
 /-- The heads of (29) above the AspP of a non-finite complement. -/
 inductive Head where
@@ -112,21 +116,22 @@ inductive Head where
   | perf
   deriving DecidableEq
 
-/-- The relation a head imposes between the reference time `t` above it and the reference time `t'`
-of its complement: the past tense of the gerund, (30a), puts `t'` before `t`, and so does the
+/-- The cell of a head says how the reference time `t'` of its complement stands to the reference
+time `t` above it: the past tense of the gerund, (30a), puts `t'` before `t`, and so does the
 perfect, (30b), which the paper takes from Kratzer. -/
-def Head.rel : Head → NonemptyInterval T → NonemptyInterval T → Prop
-  | .past, t, t' => t'.Precedes t
-  | .perf, t, t' => Kratzer1998.AspectHead.perfect.rel t t'
+def Head.cell : Head → IntervalAlgebra
+  | .past => IntervalAlgebra.precedes
+  | .perf => Kratzer1998.AspectHead.perfect.cell
 
 -- (30a), (30b): both heads are anterior
-theorem Head.rel_iff (h : Head) {t t' : NonemptyInterval T} : h.rel t t' ↔ t'.Precedes t := by
-  cases h <;> exact .rfl
+theorem Head.relation_mem_cell (h : Head) {t t' : NonemptyInterval T} :
+    Allen.relation t' t ∈ h.cell ↔ t'.Precedes t := by
+  cases h <;> simp [Head.cell]
 
 /-- A head over a complement holds at the reference time `t` where the complement holds at a
-reference time the head relates to `t`. -/
+reference time that stands to `t` in the head's cell. -/
 def Head.denote (h : Head) (C : Complement W E T) : Complement W E T :=
-  fun w t e ↦ ∃ t', h.rel t t' ∧ C w t' e
+  fun w t e ↦ ◇[IntervalAlgebra.toSetRel h.cell] (fun t' ↦ C w t' e) t
 
 /-- The non-finite complement whose AspP is under the heads `hs`, outermost first, (30): the plain
 infinitive `den []`, the gerund `den [.past]`, the perfect infinitive `den [.perf]` and the perfect
@@ -138,7 +143,7 @@ def den (hs : List Head) (P : W → E → Prop) : Complement W E T :=
 its plan the complement holds at a time from `t` on. -/
 def mod (plan : E → NonemptyInterval T → W → Set W) (C : Complement W E T) :
     Complement W E T :=
-  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.snd ≤ t'.fst ∧ t' ∈ C.closure w'
+  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.snd ≤ t'.fst ∧ C.closure w' t'
 
 variable {P : W → E → Prop} {C : Complement W E T}
   {plan : E → NonemptyInterval T → W → Set W} {h : Head} {hs : List Head} {w : W}
@@ -160,58 +165,62 @@ theorem snd_le_of_den (hd : den hs P w t e) : (τ e).snd ≤ t.snd := by
   | nil => exact hd.1.2
   | cons h _ ih =>
     obtain ⟨_, ht, hd⟩ := hd
-    exact (ih hd).trans ((h.rel_iff.1 ht).le.trans t.fst_le_snd)
+    exact (ih hd).trans ((h.relation_mem_cell.1 ht).le.trans t.fst_le_snd)
 
 -- (32), (34)
 theorem precedes_of_den_cons (hd : den (h :: hs) P w t e) : (τ e).Precedes t :=
   let ⟨_, ht, hd⟩ := hd
-  (snd_le_of_den hd).trans_lt (h.rel_iff.1 ht)
+  (snd_le_of_den hd).trans_lt (h.relation_mem_cell.1 ht)
 
 -- (32), (34): with dense time, a complement under any heads closes to Kratzer's perfect, its event
 -- over by the reference time
-theorem closure_den_cons [DenselyOrdered T] (h : Head) (hs : List Head) (P : W → E → Prop) :
-    (den (h :: hs) P).closure = Kratzer1998.AspectHead.perfect.denote P := by
-  ext w t
-  refine ⟨fun ⟨e, hd⟩ ↦ ⟨e, precedes_of_den_cons hd, pred_of_den hd⟩, ?_⟩
+theorem closure_den_cons [DenselyOrdered T] (h : Head) (hs : List Head) (P : W → E → Prop)
+    (w : W) : (den (h :: hs) P).closure w = Kratzer1998.AspectHead.perfect.denote (P w) := by
+  ext t
+  rw [Kratzer1998.AspectHead.denote_iff]
+  refine ⟨fun ⟨e, hd⟩ ↦ ⟨e, Kratzer1998.AspectHead.relation_mem_cell_perfect.2
+    (precedes_of_den_cons hd), pred_of_den hd⟩, ?_⟩
   rintro ⟨e, he, hP⟩
   refine ⟨e, ?_⟩
-  replace he : (τ e).Precedes t := he
+  replace he : (τ e).Precedes t := Kratzer1998.AspectHead.relation_mem_cell_perfect.1 he
   induction hs generalizing h t with
-  | nil => exact ⟨τ e, h.rel_iff.2 he, le_rfl, hP⟩
+  | nil => exact ⟨τ e, h.relation_mem_cell.2 he, le_rfl, hP⟩
   | cons h' _ ih =>
     obtain ⟨m, hm, hmt⟩ := exists_between he
-    exact ⟨.pure m, h.rel_iff.2 hmt, ih h' (.pure m) hm⟩
+    exact ⟨.pure m, h.relation_mem_cell.2 hmt, ih h' (.pure m) hm⟩
 
 /-! ### Pre-existence -/
 
 /-- Pre-existence, (28b), holds at the forgetting `e` when the complement describes an event at the
 subjective now, the run time of `e`, that starts before `e` does. -/
 def PreEx (C : Complement W E T) (e : E) (w : W) : Prop :=
-  Event.PreExists τ (C w (τ e)) (τ e)
+  Tense.PreExists τ (C w (τ e)) (τ e)
 
-theorem PreEx.closure (h : PreEx C e w) : τ e ∈ C.closure w :=
-  Event.PreExists.exists h
+theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
+  Tense.PreExists.exists h
 
 -- (32), (34): the presupposition of an anterior complement is its truth at the subjective now
 theorem preEx_den_cons_iff :
-    PreEx (den (h :: hs) P) e w ↔ τ e ∈ (den (h :: hs) P).closure w :=
-  Event.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_den_cons
+    PreEx (den (h :: hs) P) e w ↔ (den (h :: hs) P).closure w (τ e) :=
+  Tense.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_den_cons
 
 -- (36)
 theorem not_preEx_aspP : ¬ PreEx (aspP P) e w :=
-  Event.not_preExists_of_le fun _ h ↦ h.1
+  Tense.not_preExists_of_le fun _ h ↦ h.1
 
 -- (39), (40)
 theorem preEx_mod_iff :
     PreEx (mod plan C) e w ↔ ∃ s, mod plan C w (τ e) s ∧ (τ s).fst < (τ e).fst :=
-  Event.preExists_iff
+  Tense.preExists_iff
 
 -- (37): over a plain infinitive the plan modal is the prospective over the plan state's modal
 -- domain, as the imperfective is inclusion over its own
-theorem mod_aspP_iff {s : E} : mod plan (aspP P) w t s ↔ t ∈ Aspect.modalOfRel
-    (fun w t ↦ plan s t w) Aspect.ViewpointType.prospective.ttTSitRelation P w :=
-  ⟨fun h w' hw ↦ let ⟨_, ht, e, he, hP⟩ := h w' hw; ⟨e, ht.trans he.1, hP⟩,
-    fun h w' hw ↦ let ⟨e, he, hP⟩ := h w' hw; ⟨τ e, he, e, le_rfl, hP⟩⟩
+theorem mod_aspP_iff {s : E} : mod plan (aspP P) w t s ↔
+    □[{p | p.2 ∈ plan s t p.1}] (fun v ↦ Aspect.ViewpointType.prospective.denote (P v) t) w :=
+  ⟨fun h w' hw ↦ let ⟨_, ht, e, he, hP⟩ := h w' hw
+      Aspect.denote_prospective_iff.2 ⟨e, ht.trans he.1, hP⟩,
+    fun h w' hw ↦ let ⟨e, he, hP⟩ := Aspect.denote_prospective_iff.1 (h w' hw)
+      ⟨τ e, he, e, le_rfl, hP⟩⟩
 
 /-! ### The modal as a last resort, (15) -/
 
@@ -234,7 +243,8 @@ theorem forall_needsMod_den_iff [DenselyOrdered T] [Nonempty W]
   obtain ⟨e, f, hef⟩ := hE
   refine (H (fun _ x ↦ x = e) f (Classical.arbitrary W) (preEx_den_cons_iff.2 ?_)).elim
   rw [closure_den_cons]
-  exact ⟨e, hef, rfl⟩
+  exact Kratzer1998.AspectHead.denote_iff.2
+    ⟨e, Kratzer1998.AspectHead.relation_mem_cell_perfect.2 hef, rfl⟩
 
 open Classical in
 /-- At LF the modal heads the complement of *forget* as a last resort, where its form contradicts
@@ -265,8 +275,8 @@ implicative entry and the gerund of its factive one alike, but only the plain in
 modal. -/
 theorem mca_overgenerates [DenselyOrdered T] [Nonempty W]
     (hE : ∃ e f : E, (τ e).Precedes (τ f)) :
-    (∃ fr ∈ English.Verbs.forget.valency.frames, frame [] ≤ fr) ∧
-      (∃ fr ∈ English.Verbs.forget_rog.valency.frames, frame [.past] ≤ fr) ∧
+    (∃ fr ∈ English.Verbs.forget.valency.frames, fr ≤ frame []) ∧
+      (∃ fr ∈ English.Verbs.forget_rog.valency.frames, fr ≤ frame [.past]) ∧
       (∀ hs, White2014.Modalized (frame hs)) ∧
       ∀ hs, (∀ P : W → E → Prop, NeedsMod (den hs P)) ↔ hs = [] :=
   ⟨by decide, by decide, fun _ ↦ by unfold frame; split <;> decide,
@@ -284,7 +294,7 @@ def Presupposes (hs : List Head)
 /-- Some state plans the predicate, which *…but he did not have to stop by the flower shop*
 denies. -/
 def Planned (P : W → E → Prop) (plan : E → NonemptyInterval T → W → Set W) (w : W) : Prop :=
-  ∃ t, t ∈ (mod plan (aspP P)).closure w
+  ∃ t, (mod plan (aspP P)).closure w t
 
 -- (5a), (12a)
 theorem presupposes_nil_planned : Presupposes W E [] Planned :=
@@ -297,7 +307,7 @@ theorem presupposes_cons_closure [DenselyOrdered T] [Nonempty W]
     Presupposes W E (h :: hs) fun P _ ↦ Event.closure P := by
   intro P plan e w hp
   rw [lf_cons hE, preEx_den_cons_iff, closure_den_cons] at hp
-  obtain ⟨e', -, he'⟩ := hp
+  obtain ⟨e', -, he'⟩ := Kratzer1998.AspectHead.denote_iff.1 hp
   exact ⟨e', he'⟩
 
 private theorem exists_precedes_rat :
@@ -312,8 +322,10 @@ theorem not_presupposes_cons_planned :
   obtain ⟨_, _, hs'⟩ := H (fun w e ↦ w = true ∧ e = .pure 0) (fun _ _ _ ↦ {false}) (.pure 1) true
     (by
       rw [lf_cons exists_precedes_rat, preEx_den_cons_iff, closure_den_cons]
-      exact ⟨.pure 0, show (0 : ℚ) < 1 by norm_num, rfl, rfl⟩)
-  obtain ⟨_, -, hf, -⟩ := mod_aspP_iff.1 hs' false rfl
+      exact Kratzer1998.AspectHead.denote_iff.2 ⟨.pure 0,
+        Kratzer1998.AspectHead.relation_mem_cell_perfect.2 (show (0 : ℚ) < 1 by norm_num),
+        rfl, rfl⟩)
+  obtain ⟨_, -, hf, -⟩ := Aspect.denote_prospective_iff.1 (mod_aspP_iff.1 hs' false rfl)
   exact Bool.false_ne_true hf
 
 -- (2): John was told on day `0` to stop by, forgot on day `1` in the world `false` and stops by on
@@ -324,8 +336,8 @@ theorem not_presupposes_nil_closure :
   obtain ⟨_, hf, -⟩ := H (fun w e ↦ w = true ∧ e = .pure 2) (fun _ _ _ ↦ {true}) (.pure 1) false
     (by
       rw [lf_nil, preEx_mod_iff]
-      exact ⟨.pure 0, mod_aspP_iff.2 fun _ hw ↦ ⟨.pure 2, show (1 : ℚ) ≤ 2 by norm_num, hw, rfl⟩,
-        show (0 : ℚ) < 1 by norm_num⟩)
+      exact ⟨.pure 0, mod_aspP_iff.2 fun _ hw ↦ Aspect.denote_prospective_iff.2
+        ⟨.pure 2, show (1 : ℚ) ≤ 2 by norm_num, hw, rfl⟩, show (0 : ℚ) < 1 by norm_num⟩)
   exact Bool.false_ne_true hf
 
 local notation "Presupposes'" => Presupposes Bool (NonemptyInterval ℚ)
@@ -357,8 +369,8 @@ theorem contradiction_rows :
 theorem preEx_lf_cons_eq_iff [DenselyOrdered T] [Nonempty W]
     (hE : ∃ e f : E, (τ e).Precedes (τ f)) {e₀ f : E} :
     PreEx (lf plan (h :: hs) fun (_ : W) e ↦ e = e₀) f w ↔ (τ e₀).Precedes (τ f) := by
-  rw [lf_cons hE, preEx_den_cons_iff, closure_den_cons]
-  exact ⟨fun ⟨_, he, h⟩ ↦ h ▸ he, fun he ↦ ⟨e₀, he, rfl⟩⟩
+  rw [lf_cons hE, preEx_den_cons_iff, closure_den_cons, Kratzer1998.AspectHead.denote_iff]
+  simp
 
 /-- In (21) Mary's twin tells her on day `d` to call her back, starting the plan state `.pure d`,
 whose plan is the world `true`, where Mary calls on day `4`; every other state plans the world
@@ -371,10 +383,12 @@ theorem preEx_twin_iff {d : ℚ} :
     PreEx (lf (twinPlan d) [] fun w e ↦ w = true ∧ e = .pure 4) (.pure 2) false ↔ d < 2 := by
   rw [lf_nil, preEx_mod_iff]
   refine ⟨fun ⟨s, hs, hlt⟩ ↦ ?_, fun hd ↦ ⟨.pure d, mod_aspP_iff.2 fun _ hw ↦
-    ⟨.pure 4, show (2 : ℚ) ≤ 4 by norm_num, hw.2 rfl, rfl⟩, hd⟩⟩
+    Aspect.denote_prospective_iff.2
+      ⟨.pure 4, show (2 : ℚ) ≤ 4 by norm_num, hw.2 rfl, rfl⟩, hd⟩⟩
   obtain rfl : s = .pure d := by
     by_contra hne
-    obtain ⟨_, -, hf, -⟩ := mod_aspP_iff.1 hs false (by simp [twinPlan, hne])
+    obtain ⟨_, -, hf, -⟩ := Aspect.denote_prospective_iff.1
+      (mod_aspP_iff.1 hs false (by simp [twinPlan, hne]))
     exact Bool.false_ne_true hf
   exact hlt
 
@@ -421,11 +435,11 @@ theorem table1_rows [DenselyOrdered T] [Nonempty W] (hE : ∃ e f : E, (τ e).Pr
 
 /-- Pre-existence as (28b) prints it, with the time of the complement bound existentially. -/
 def PreExPrinted (C : Complement W E T) (e : E) (w : W) : Prop :=
-  ∃ t, Event.PreExists τ (C w t) (τ e)
+  ∃ t, Tense.PreExists τ (C w t) (τ e)
 
 -- (28b): as printed, a plain infinitive presupposes that an event of its predicate started first
-theorem preExPrinted_aspP_iff : PreExPrinted (aspP P) e w ↔ Event.PreExists τ (P w) (τ e) := by
-  simp only [PreExPrinted, Event.preExists_iff, aspP]
+theorem preExPrinted_aspP_iff : PreExPrinted (aspP P) e w ↔ Tense.PreExists τ (P w) (τ e) := by
+  simp only [PreExPrinted, Tense.preExists_iff, aspP]
   exact ⟨fun ⟨_, e', ⟨_, hP⟩, hlt⟩ ↦ ⟨e', hP, hlt⟩,
     fun ⟨e', hP, hlt⟩ ↦ ⟨τ e', e', ⟨le_rfl, hP⟩, hlt⟩⟩
 

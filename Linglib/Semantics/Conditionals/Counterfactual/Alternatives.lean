@@ -1,24 +1,20 @@
 module
 
-public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Semantics.Conditionals.Counterfactual
+public import Linglib.Logic.Trivalent.Supervaluation
 
 /-!
 # Counterfactuals over sets of antecedent propositions
 
-This file defines counterfactuals whose antecedent denotes a finite set of propositions, such as
-the disjuncts of a disjunctive antecedent or the antecedent's truthmakers. Such a counterfactual
-can be read collectively, quantifying over the closest worlds of the union of the propositions,
-which is Lewis's treatment of a disjunctive antecedent and does not validate the simplification
-of disjunctive antecedents, or distributively, requiring the counterfactual of each proposition,
-which does. The homogeneous reading is super-truth over the propositions: true when every
-proposition's counterfactual holds, false when none does, and indeterminate otherwise.
-
-## Main definitions
-
-* `Conditional.disjunctiveImp`: the counterfactual over the union of the propositions.
-* `Conditional.distributiveImp`: the counterfactual of each proposition.
-* `Conditional.homogeneousImp`: the all-or-nothing verdict over the propositions.
+This file defines counterfactuals whose antecedent denotes a set `S` of propositions, such as the
+disjuncts of a disjunctive antecedent or the antecedent's truthmakers. The collective reading
+`disjunctiveImp ord S C` is the counterfactual `closestImp ord (⋃₀ S) C` of the union of the
+propositions, which is Lewis's treatment of a disjunctive antecedent. The distributive reading
+`distributiveImp ord S C` is `⋂ A ∈ S, closestImp ord A C`, the counterfactual of each
+proposition, which validates the simplification of disjunctive antecedents. The homogeneous
+reading `homogeneousImp ord S C w` is the supervaluation of `w ∈ closestImp ord A C` over
+`A ∈ S`: true when every proposition's counterfactual holds, false when none does, and undefined
+otherwise.
 
 ## References
 
@@ -32,76 +28,75 @@ proposition's counterfactual holds, false when none does, and indeterminate othe
 
 namespace Conditional
 
-variable {W : Type*} (ord : W → Preorder W) (S : Finset (Finset W)) (C : Set W)
+variable {W : Type*} (ord : W → Preorder W) (S : Set (Set W)) (C : Set W)
 
 /-- The distributive reading, on which the counterfactual holds of each proposition in `S`. -/
-def distributiveImp : Set W := ⋂ A ∈ S, closestImp ord ↑A C
+def distributiveImp : Set W := ⋂ A ∈ S, closestImp ord A C
 
-variable {ord S C} {w : W}
-
-@[simp] theorem mem_distributiveImp :
-    w ∈ distributiveImp ord S C ↔ ∀ A ∈ S, w ∈ closestImp ord ↑A C :=
-  Set.mem_iInter₂
-
-variable [DecidableEq W]
-
-variable (ord S C) in
-/-- The counterfactual over `S` quantifies over the closest worlds of the union of its
-propositions. -/
-def disjunctiveImp : Set W := closestImp ord ↑(S.sup id) C
-
-theorem coe_sup_id : (↑(S.sup id) : Set W) = ⋃ A ∈ S, (↑A : Set W) := by
-  ext; simp
-
-theorem disjunctiveImp_eq_closestImp_iUnion :
-    disjunctiveImp ord S C = closestImp ord (⋃ A ∈ S, (↑A : Set W)) C := by
-  rw [disjunctiveImp, coe_sup_id]
-
-theorem disjunctiveImp_singleton (A : Finset W) :
-    disjunctiveImp ord {A} C = closestImp ord ↑A C := by
-  simp [disjunctiveImp]
-
-theorem disjunctiveImp_pair (A B : Finset W) :
-    disjunctiveImp ord {A, B} C = closestImp ord (↑A ∪ ↑B) C := by
-  simp [disjunctiveImp]
-
-theorem mem_distributiveImp_pair {A B : Finset W} :
-    w ∈ distributiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C ∧ w ∈ closestImp ord ↑B C := by
-  simp
-
-theorem mem_disjunctiveImp_pair_of_mem_distributiveImp {A B : Finset W}
-    (h : w ∈ distributiveImp ord {A, B} C) : w ∈ disjunctiveImp ord {A, B} C := by
-  rw [disjunctiveImp_pair]
-  exact mem_closestImp_union (mem_distributiveImp_pair.1 h).1 (mem_distributiveImp_pair.1 h).2
-
-section Homogeneity
-
-variable (ord S C) [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] (w : W)
+/-- The collective reading, the counterfactual of the union of the propositions in `S`. -/
+def disjunctiveImp : Set W := closestImp ord (⋃₀ S) C
 
 /-- The all-or-nothing verdict over `S`, super-truth over its propositions' counterfactuals. -/
-def homogeneousImp : Trivalent := Trivalent.supervaluation S fun A ↦ w ∈ closestImp ord ↑A C
+noncomputable def homogeneousImp (w : W) : Trivalent :=
+  Trivalent.supervaluationOn S fun A ↦ w ∈ closestImp ord A C
 
-instance : Decidable (w ∈ disjunctiveImp ord S C) :=
-  inferInstanceAs (Decidable (w ∈ closestImp ord ↑(S.sup id) C))
+variable {ord S C} {T : Set (Set W)} {A B : Set W} {w : W}
 
-instance : Decidable (w ∈ distributiveImp ord S C) :=
-  decidable_of_iff _ mem_distributiveImp.symm
+@[simp] theorem mem_distributiveImp :
+    w ∈ distributiveImp ord S C ↔ ∀ A ∈ S, w ∈ closestImp ord A C :=
+  Set.mem_iInter₂
 
-variable {ord S C w}
+theorem distributiveImp_anti (h : S ⊆ T) : distributiveImp ord T C ⊆ distributiveImp ord S C :=
+  Set.biInter_subset_biInter_left h
+
+@[simp] theorem distributiveImp_singleton : distributiveImp ord {A} C = closestImp ord A C :=
+  Set.biInter_singleton ..
+
+theorem distributiveImp_pair :
+    distributiveImp ord {A, B} C = closestImp ord A C ∩ closestImp ord B C :=
+  Set.biInter_pair ..
+
+theorem mem_distributiveImp_pair :
+    w ∈ distributiveImp ord {A, B} C ↔ w ∈ closestImp ord A C ∧ w ∈ closestImp ord B C := by
+  rw [distributiveImp_pair, Set.mem_inter_iff]
+
+@[simp] theorem disjunctiveImp_singleton : disjunctiveImp ord {A} C = closestImp ord A C := by
+  rw [disjunctiveImp, Set.sUnion_singleton]
+
+theorem disjunctiveImp_pair : disjunctiveImp ord {A, B} C = closestImp ord (A ∪ B) C := by
+  rw [disjunctiveImp, Set.sUnion_pair]
+
+theorem mem_disjunctiveImp_pair_of_mem_distributiveImp (h : w ∈ distributiveImp ord {A, B} C) :
+    w ∈ disjunctiveImp ord {A, B} C := by
+  rw [disjunctiveImp_pair]
+  exact mem_closestImp_union (mem_distributiveImp_pair.mp h).1 (mem_distributiveImp_pair.mp h).2
 
 theorem homogeneousImp_eq_true_iff :
     homogeneousImp ord S C w = .true ↔ w ∈ distributiveImp ord S C := by
-  rw [homogeneousImp, Trivalent.supervaluation_eq_true_iff, mem_distributiveImp]
+  rw [homogeneousImp, Trivalent.supervaluationOn_eq_true_iff, mem_distributiveImp]
 
 theorem homogeneousImp_eq_false_iff :
-    homogeneousImp ord S C w = .false ↔ S.Nonempty ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
-  Trivalent.supervaluation_eq_false_iff ..
+    homogeneousImp ord S C w = .false ↔ S.Nonempty ∧ ∀ A ∈ S, w ∉ closestImp ord A C :=
+  Trivalent.supervaluationOn_eq_false_iff
 
 theorem homogeneousImp_eq_undefined_iff :
     homogeneousImp ord S C w = .undefined ↔
-      (∃ A ∈ S, w ∈ closestImp ord ↑A C) ∧ ∃ A ∈ S, w ∉ closestImp ord ↑A C :=
-  Trivalent.supervaluation_eq_undefined_iff ..
+      (∃ A ∈ S, w ∈ closestImp ord A C) ∧ ∃ A ∈ S, w ∉ closestImp ord A C :=
+  Trivalent.supervaluationOn_eq_undefined_iff
 
-end Homogeneity
+instance [Decidable (w ∈ closestImp ord A C)] : Decidable (w ∈ distributiveImp ord {A} C) :=
+  decidable_of_iff _ (Set.ext_iff.mp distributiveImp_singleton w).symm
+
+instance [Decidable (w ∈ closestImp ord A C)] [Decidable (w ∈ distributiveImp ord S C)] :
+    Decidable (w ∈ distributiveImp ord (insert A S) C) :=
+  decidable_of_iff (w ∈ closestImp ord A C ∧ w ∈ distributiveImp ord S C) <| by
+    simp only [mem_distributiveImp, Set.forall_mem_insert]
+
+instance [Decidable (w ∈ closestImp ord A C)] : Decidable (w ∈ disjunctiveImp ord {A} C) :=
+  decidable_of_iff _ (Set.ext_iff.mp disjunctiveImp_singleton w).symm
+
+instance [Decidable (w ∈ closestImp ord (A ∪ B) C)] :
+    Decidable (w ∈ disjunctiveImp ord {A, B} C) :=
+  decidable_of_iff _ (Set.ext_iff.mp disjunctiveImp_pair w).symm
 
 end Conditional

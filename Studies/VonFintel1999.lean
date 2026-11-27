@@ -47,6 +47,8 @@ entailing.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace VonFintel1999
 
 open Presupposition Modality Conditional Desire.BestWorlds
@@ -70,11 +72,12 @@ noncomputable def gladBetter : W → Trivalent :=
   Trivalent.condEvent (· ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ)
     (fun w ↦ Better (g w) (dox w) (rel w \ p))
 
+open Classical in
 /-- The set-comparison *glad* is still Strawson upward entailing in its complement (§3.3). -/
 theorem isStrawsonUE_gladBetter : IsStrawsonUE (gladBetter dox rel g) :=
   .of_monotone (a := fun p w ↦ Better (g w) (dox w) (rel w \ p))
     (fun _ _ h _ hw a ha b hb ↦ hw a ha b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩)
-    fun _ _ h ↦ by simp_all [gladBetter]
+    fun _ _ ↦ Trivalent.condEvent_kLE
 
 /-- On the best-worlds *glad*, *a wants p and believes p* entails *a is glad that p*, the
 inference [kadmon-landman-1993] draw, when the modal base contains the belief worlds. -/
@@ -91,12 +94,12 @@ theorem not_gladBetter_of_want :
       (w : Fin 3), dox w ⊆ p ∧ want rel g p w = .true ∧ gladBetter dox rel g p w = .false := by
   refine ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {{1}}, {0, 1}, 0, by simp, ?_, ?_⟩
   · refine want_eq_true_iff.2 ⟨⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
-    simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+    simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofLowerSets_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
     decide
   · simp only [gladBetter, Trivalent.condEvent_eq_false_iff]
     refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
-    simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+    simp only [Better, Preorder.ofLowerSets_lt_iff, Preorder.ofLowerSets_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
     decide
 
@@ -107,11 +110,12 @@ noncomputable def regretBetter : W → Trivalent :=
   Trivalent.condEvent (· ∈ (Trivalent.gapExt (glad dox rel g p))ᶜ)
     (fun w ↦ Better (g w) (rel w \ p) (dox w))
 
+open Classical in
 /-- The set-comparison *sorry* is Strawson upward entailing in its complement. -/
 theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
   .of_monotone (a := fun p w ↦ Better (g w) (rel w \ p) (dox w))
     (fun _ _ h _ hw b hb a ha ↦ hw b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩ a ha)
-    fun _ _ h ↦ by simp_all [regretBetter]
+    fun _ _ ↦ Trivalent.condEvent_kLE
 
 /-- The set-comparison *sorry* is not Strawson downward entailing, so it would not license; the
 paper keeps the best-worlds `regret`. World `2` is the preferred one; the subject believes `0`
@@ -122,12 +126,12 @@ theorem not_isStrawsonDE_regretBetter :
     have := h (p := {0}) (q := {0, 1}) (by simp) 0 (by
         simp only [regretBetter, Trivalent.condEvent_eq_true_iff]
         refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
-        simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+        simp only [Better, Preorder.ofLowerSets_lt_iff, Preorder.ofLowerSets_le_iff,
           Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
         decide)
       (by simpa [regretBetter, glad] using ⟨⟨0, by simp⟩, ⟨1, by simp⟩⟩)
-    simp only [regretBetter, Trivalent.condEvent_eq_true_iff, Better, Preorder.ofCriteria_lt_iff,
-      Preorder.ofCriteria_le_iff, Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
+    simp only [regretBetter, Trivalent.condEvent_eq_true_iff, Better, Preorder.ofLowerSets_lt_iff,
+      Preorder.ofLowerSets_le_iff, Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
       true_and] at this
     exact absurd (this.2 1 (by decide)) (by decide)
 
@@ -166,14 +170,14 @@ end Only
 
 /-- With a genuine ordering source, the antecedent of Kratzer's conditional necessity is not
 downward entailing (73). -/
-theorem not_antitone_humanNecessity_restrict :
+theorem not_antitone_necessity_restrict :
     ¬ Antitone fun α : Set (Fin 2) ↦
-      {w | {0} ∈ humanNecessity (Background.restrict (fun _ ↦ ∅) α) (fun _ ↦ {{0}}) w} :=
+      {w | {0} ∈ (Background.restrict (fun _ ↦ ∅) α).necessity (fun _ ↦ {{0}}) w} :=
   fun h ↦ by
     have := @h {1} .univ (Set.subset_univ _) 0
-    simp only [humanNecessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def,
-      bestWorlds, Preorder.mem_minimals_iff,
-      Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
+    simp only [Background.necessity_eq_principal_of_finite, Filter.mem_principal, Set.subset_def,
+      Background.bestWorlds, Preorder.mem_minimals_iff,
+      Background.mem_accessibleWorlds, Background.restrict, Preorder.ofLowerSets_le_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
       Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
       Set.mem_ofPred_eq] at this

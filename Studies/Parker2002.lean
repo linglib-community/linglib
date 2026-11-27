@@ -1,132 +1,60 @@
 module
 
-public import Linglib.Phonology.Segmental.Sonority
-public import Mathlib.Data.Fintype.Prod
+public import Linglib.Phonology.Segmental.Sonority.Obstruent
+public import Studies.Anttila1997
+public import Linglib.Phonology.Segmental.Sonority.Sequencing
+public import Linglib.Languages.English.Phonology
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Sigma
-import Mathlib.Tactic.Order
+import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Parker (2002): the sonority hierarchy
 
-Parker measures the acoustic correlates of sonority and proposes a universal hierarchy of sixteen
-classes (Table 5.28), which languages conflate by merging adjacent classes. The modal hierarchy
-of five classes, Clements's, is such a conflation (`Class.coarsens_toSonority`).
+`Parker2002.Class` is the sixteen sonority classes: the four obstruent classes of
+`Phonology.Sonority.ObstruentClass` below twelve further classes in a chain. `Class.rankWith o`
+ranks them with the obstruents ranked by `ObstruentClass.rank o`; it is injective unless
+`o = .eq`. The
+order on `Class` is the one the rankings share, `a ≤ b ↔ ∀ o, rankWith o a ≤ rankWith o b`, a
+partial order in which only the voiceless fricatives and the voiced stops are unordered, and
+every strictly monotone ranking of the sixteen classes induces the order of some `rankWith o`
+(`Class.le_iff_rankWith_le`).
 
-Within the obstruents, fricatives outrank stops and voiced obstruents voiceless ones, two orders
-Parker takes as fixed. An obstruent class is its values of [continuant] and [voice], and the two
-orders together are the product order. A ranking strictly monotone for it is then fixed by how it
-compares the voiceless fricatives with the voiced stops, so that (3.6) lists every such ranking
-(`le_iff_hierarchy_le`). However the classes are ranked, [continuant] and [voice] do not both
-divide them into contiguous classes (`not_contiguous_continuant_and_voice`): (3.6a) keeps those of
-[continuant] contiguous, Parker's default (3.6b) those of [voice], and the tie (3.6c) none
-(`contiguous_hierarchy`). Unlike the four features of the modal hierarchy, then, [continuant] and
-[voice] cannot both cut the sonority hierarchy at one point.
+`Class.toSonority` sends a class to its class in the hierarchy of obstruents, nasals, liquids,
+glides and vowels. That hierarchy coarsens every `rankWith o` (`Class.coarsens_toSonority`), and
+the classes it merges are contiguous on each.
 
-## Main definitions
+The five vowel classes are ordered by height and peripherality, low above mid above high above
+/ə/ above /ɨ/. `Class.nucleusEmbedding` embeds the nuclear sonority of Anttila's Finnish
+grammar, which orders nuclei by height alone, as the low, mid and high vowels.
 
-* `Parker2002.Obstruent`: an obstruent class, by its values of [continuant] and [voice], ordered
-  by the product order.
-* `Parker2002.hierarchy`: the rankings of the obstruents in (3.6), indexed by how they compare
-  the voiceless fricatives with the voiced stops.
-* `Parker2002.Class`, `Parker2002.Class.rankWith`: the classes of Table 5.28 and their ranks, with
-  the obstruents ranked by a hierarchy of (3.6); `Class.rank` takes Parker's default.
+On the scale `Sonority.ofSegmentWith o`, the segments of *snug* are sequenced and those of
+*nsug* and *stick* are not (`peaksAt_snug_not_sequenced_nsug`).
+
+## Implementation notes
+
+The source's table of the sixteen classes lists the voiced stops and the voiceless fricatives at
+two ranks in either order, the voiced stops higher by default. `Class.rankWith` takes the order
+as an argument instead of fixing the default, and `Class` carries the partial order instead of a
+linear one, so that a statement about `≤` holds on both rankings. The acoustic measurements and
+the regression of sonority on intensity have no counterpart here.
 
 ## References
 
-* [parker-2002]: the modal hierarchy (3.3) (p. 62), the obstruent hierarchies (3.6) and their
-  adherents (3.7) (pp. 68–70), the placement of /h/ and English /r/ (pp. 237–238), and Table 5.28
-  (p. 240)
+* [parker-2002]
+* [anttila-1997]
 -/
 
 @[expose] public section
 
 namespace Parker2002
 
-open Phonology
+open Phonology Phonology.Sonority.ObstruentClass
 
-/-! ### Obstruent classes -/
-
-/-- An obstruent class, by its values of [continuant] and [voice]. -/
-@[ext]
-structure Obstruent where
-  /-- Whether the class is [+continuant], a class of fricatives. -/
-  continuant : Bool
-  /-- Whether the class is [+voice]. -/
-  voice : Bool
-  deriving DecidableEq, Repr, Fintype, Inhabited
-
-namespace Obstruent
-
-/-- The voiceless stops and affricates. -/
-def voicelessStop : Obstruent := ⟨false, false⟩
-
-/-- The voiceless fricatives. -/
-def voicelessFricative : Obstruent := ⟨true, false⟩
-
-/-- The voiced stops and affricates. -/
-def voicedStop : Obstruent := ⟨false, true⟩
-
-/-- The voiced fricatives. -/
-def voicedFricative : Obstruent := ⟨true, true⟩
-
-/-- A class as its pair of values. -/
-def toProd (o : Obstruent) : Bool × Bool := (o.continuant, o.voice)
-
-theorem toProd_injective : Function.Injective toProd := fun _ _ h ↦
-  Obstruent.ext (congrArg Prod.fst h) (congrArg Prod.snd h)
-
-/-- The product order, which puts fricatives above stops and voiced obstruents above voiceless
-ones, the two orders Parker takes as fixed. -/
-instance : PartialOrder Obstruent := PartialOrder.lift toProd toProd_injective
-
-instance : DecidableLE Obstruent := fun a b ↦
-  inferInstanceAs (Decidable (a.continuant ≤ b.continuant ∧ a.voice ≤ b.voice))
-
-instance : DecidableLT Obstruent := decidableLTOfDecidableLE
-
-/-- The features of a class. -/
-def column (o : Obstruent) : Segment :=
-  (([−sonorant] : Segment).setFeature .continuant o.continuant).setFeature .voice o.voice
-
-end Obstruent
-
-open Obstruent
-
-/-- The ranking of the obstruent classes in (3.6) that compares the voiceless fricatives with the
-voiced stops by `o`: below them for `lt` (3.6b), level with them for `eq` (3.6c), and above them
-for `gt` (3.6a). -/
-def hierarchy (o : Ordering) : Obstruent → ℕ
-  | ⟨false, false⟩ => 1
-  | ⟨true, false⟩ => if o = .gt then 3 else 2
-  | ⟨false, true⟩ => if o = .lt then 3 else 2
-  | ⟨true, true⟩ => 4
-
-theorem strictMono_hierarchy (o : Ordering) : StrictMono (hierarchy o) := by
-  revert o
-  simp only [StrictMono]
-  decide +kernel
-
-/-- Every ranking strictly monotone for the product order is a hierarchy of (3.6). -/
-theorem le_iff_hierarchy_le {α : Type*} [LinearOrder α] {r : Obstruent → α} (hr : StrictMono r)
-    (x y : Obstruent) :
-    r x ≤ r y ↔ hierarchy (compare (r voicelessFricative) (r voicedStop)) x ≤
-      hierarchy (compare (r voicelessFricative) (r voicedStop)) y := by
-  have h₁ : r voicelessStop < r voicelessFricative := hr (by decide)
-  have h₂ : r voicelessStop < r voicedStop := hr (by decide)
-  have h₃ : r voicelessFricative < r voicedFricative := hr (by decide)
-  have h₄ : r voicedStop < r voicedFricative := hr (by decide)
-  simp only [voicelessStop, voicelessFricative, voicedStop, voicedFricative] at *
-  rcases lt_trichotomy (r ⟨true, false⟩) (r ⟨false, true⟩) with h | h | h <;>
-    [rw [compare_lt_iff_lt.2 h]; rw [compare_eq_iff_eq.2 h]; rw [compare_gt_iff_gt.2 h]] <;>
-    rcases x with ⟨_ | _, _ | _⟩ <;> rcases y with ⟨_ | _, _ | _⟩ <;> simp [hierarchy] <;> order
-
-/-! ### The hierarchy -/
-
-/-- The sonority classes of Table 5.28. -/
+/-- Table 5.28: the sonority classes. -/
 inductive Class where
   /-- The obstruents of a class. -/
-  | obstruent (o : Obstruent)
+  | obstruent (o : Sonority.ObstruentClass)
   /-- /h/. -/
   | h
   /-- The nasals. -/
@@ -155,23 +83,66 @@ inductive Class where
 
 namespace Class
 
-/-- The rank of a class in Table 5.28, with the obstruents ranked by the hierarchy of (3.6) that
-`o` fixes. -/
+/-- Table 5.28: the rank of a class, with the obstruents ranked by `ObstruentClass.rank o`. The
+table as printed is `rankWith .lt`, `rankWith .gt` exchanges its second and third ranks, and
+`rankWith .eq` merges them. -/
 def rankWith (o : Ordering) : Class → ℕ
-  | obstruent x => hierarchy o x
+  | obstruent x => Sonority.ObstruentClass.rank o x
   | h => 5 | nasal => 6 | trill => 7 | flap => 8 | lateral => 9 | rhotic => 10 | glide => 11
   | highCentral => 12 | schwa => 13 | high => 14 | mid => 15 | low => 16
 
-/-- The rank of a class in Table 5.28, with voiced stops above voiceless fricatives, Parker's
-default (3.6b). -/
-def rank : Class → ℕ := rankWith .lt
+theorem rankWith_injective {o : Ordering} (ho : o ≠ .eq) : Function.Injective (rankWith o) := by
+  revert o
+  decide +kernel
 
-theorem rank_injective : Function.Injective rank := by decide +kernel
+/-- The order the rankings of Table 5.28 share, in which only the voiceless fricatives and the
+voiced stops are unordered (p. 241). -/
+instance : PartialOrder Class :=
+  PartialOrder.lift (fun c ↦ (rankWith .lt c, rankWith .gt c)) fun _ _ h ↦
+    rankWith_injective (by decide) (congrArg Prod.fst h)
 
-/-- Table 5.28 in Parker's default order (3.6b). -/
-instance : LinearOrder Class := LinearOrder.lift' rank rank_injective
+instance : DecidableLE Class := fun a b ↦
+  inferInstanceAs (Decidable (rankWith .lt a ≤ rankWith .lt b ∧ rankWith .gt a ≤ rankWith .gt b))
 
-/-- The class of the modal hierarchy that a class falls in, with /h/ among the obstruents. -/
+instance : DecidableLT Class := decidableLTOfDecidableLE
+
+theorem le_iff_forall_rankWith_le {a b : Class} : a ≤ b ↔ ∀ o, rankWith o a ≤ rankWith o b := by
+  revert a b
+  decide +kernel
+
+@[simp] theorem obstruent_le_obstruent {x y : Sonority.ObstruentClass} :
+    obstruent x ≤ obstruent y ↔ x ≤ y := by
+  revert x y
+  decide
+
+theorem strictMono_obstruent : StrictMono obstruent := by
+  simp only [StrictMono]
+  decide
+
+theorem strictMono_rankWith (o : Ordering) : StrictMono (rankWith o) := by
+  revert o
+  simp only [StrictMono]
+  decide +kernel
+
+/-- A ranking of the classes strictly monotone for the shared order induces the order of the
+ranking of Table 5.28 that compares the voiceless fricatives with the voiced stops as it does
+(p. 241). -/
+theorem le_iff_rankWith_le {α : Type*} [LinearOrder α] {r : Class → α} (hr : StrictMono r)
+    (x y : Class) :
+    r x ≤ r y ↔
+      rankWith (compare (r (obstruent voicelessFricative)) (r (obstruent voicedStop))) x ≤
+        rankWith (compare (r (obstruent voicelessFricative)) (r (obstruent voicedStop))) y := by
+  have key : ∀ x y : Class, (∃ a b, x = obstruent a ∧ y = obstruent b) ∨ x ≤ y ∨ y ≤ x := by
+    decide +kernel
+  obtain ⟨a, b, rfl, rfl⟩ | h | h := key x y
+  · exact le_iff_rank_le (hr.comp strictMono_obstruent) a b
+  · exact iff_of_true (hr.monotone h) ((strictMono_rankWith _).monotone h)
+  · rcases h.eq_or_lt with rfl | h
+    · simp
+    · exact iff_of_false (hr h).not_ge (strictMono_rankWith _ h).not_ge
+
+/-- The class of the hierarchy of obstruents, nasals, liquids, glides and vowels that a class
+falls in, with /h/ among the obstruents. -/
 def toSonority : Class → Sonority
   | obstruent _ | h => .obstruent
   | nasal => .nasal
@@ -179,40 +150,69 @@ def toSonority : Class → Sonority
   | glide => .glide
   | highCentral | schwa | high | mid | low => .vowel
 
-/-- The modal hierarchy coarsens Table 5.28 (p. 240). -/
-theorem coarsens_toSonority : Sonority.Coarsens toSonority rank := by
+/-- The hierarchy of obstruents, nasals, liquids, glides and vowels coarsens Table 5.28, however
+the voiceless fricatives and the voiced stops are ranked (p. 241). -/
+theorem coarsens_toSonority (o : Ordering) : Sonority.Coarsens toSonority (rankWith o) := by
+  revert o
   unfold Sonority.Coarsens
   decide +kernel
 
+theorem monotone_toSonority : Monotone toSonority := fun a b h ↦ coarsens_toSonority .lt a b h.1
+
+/-- `toSonority` as an order homomorphism. -/
+@[simps]
+def toSonorityHom : Class →o Sonority := ⟨toSonority, monotone_toSonority⟩
+
+-- p. 240: a language conflates the scale by collapsing adjacent ranks
+theorem ordConnectedAlong_toSonority (o : Ordering) (c : Sonority) :
+    (toSonority ⁻¹' {c}).OrdConnectedAlong (rankWith o) :=
+  (coarsens_toSonority o).ordConnectedAlong ⟨{c}, Set.ordConnected_singleton, rfl⟩
+
+/-! ### Vowels -/
+
+/-- (1.9): the nuclear sonority of [anttila-1997] among the classes, as the low, mid and high
+vowels. -/
+def ofNucleus : Anttila1997.Sonority → Class
+  | .a => low
+  | .o => mid
+  | .i => high
+
+theorem strictMono_ofNucleus : StrictMono ofNucleus := by
+  simp only [StrictMono]
+  decide
+
+/-- `ofNucleus` as an order embedding. -/
+def nucleusEmbedding : Anttila1997.Sonority ↪o Class :=
+  .ofStrictMono ofNucleus strictMono_ofNucleus
+
+@[simp] theorem coe_nucleusEmbedding : ⇑nucleusEmbedding = ofNucleus := rfl
+
+@[simp] theorem toSonority_ofNucleus (s : Anttila1997.Sonority) :
+    toSonority (ofNucleus s) = .vowel := by
+  cases s <;> rfl
+
 end Class
 
-/-! ### Contiguity -/
+/-! ### Sonority sequencing -/
 
-open Sonority
+section Sequencing
 
-example (v : Bool) :
-    IsNaturalClass (Finset.univ.image column)
-        ((Finset.univ.filter (·.continuant = v)).image column) ∧
-      IsNaturalClass (Finset.univ.image column)
-        ((Finset.univ.filter (·.voice = v)).image column) := by
-  revert v
+open English.Phonology Sonority
+
+/-- (1.1): the segments of *snug* are sequenced, with the peak on the vowel, and those of the
+reversed onset *nsug* are not, however the obstruents are ranked (p. 8). -/
+theorem peaksAt_snug_not_sequenced_nsug (o : Ordering) :
+    PeaksAt (ofSegmentWith o) [s, n, wedge, g] 2 ∧
+      ¬ Sequenced (ofSegmentWith o) [n, s, wedge, g] := by
+  revert o
   decide +kernel
 
-/-- No ranking divides the obstruents into contiguous classes of both [continuant] and [voice]. -/
-theorem not_contiguous_continuant_and_voice {α : Type*} [LinearOrder α] (r : Obstruent → α) :
-    ¬ ((∀ v, Contiguous r {o | o.continuant = v}) ∧ ∀ v, Contiguous r {o | o.voice = v}) :=
-  not_contiguous_of_independent r fun x y ↦ ⟨⟨x, y⟩, rfl, rfl⟩
-
-/-- (3.6a) keeps the classes of [continuant] contiguous, (3.6b) those of [voice], and (3.6c)
-none ((3.6)). -/
-theorem contiguous_hierarchy (v : Bool) :
-    (Contiguous (hierarchy .gt) {o | o.continuant = v} ∧
-      ¬ Contiguous (hierarchy .gt) {o | o.voice = v}) ∧
-    (¬ Contiguous (hierarchy .lt) {o | o.continuant = v} ∧
-      Contiguous (hierarchy .lt) {o | o.voice = v}) ∧
-    ¬ Contiguous (hierarchy .eq) {o | o.continuant = v} ∧
-      ¬ Contiguous (hierarchy .eq) {o | o.voice = v} := by
-  revert v
+-- p. 8: a fricative before a stop, as in *stick*, is a second peak
+theorem not_sequenced_stick (o : Ordering) :
+    ¬ Sequenced (ofSegmentWith o) [s, t, smallCapitalI, k] := by
+  revert o
   decide +kernel
+
+end Sequencing
 
 end Parker2002

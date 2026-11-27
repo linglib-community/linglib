@@ -60,7 +60,7 @@ machine as the singleton-output, empty-flush case.
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
 
 The Myhill–Nerode characterization of the Mealy-computable functions by their
-residuals is in `Core/Computability/Residual.lean`.
+residuals is in `Core/Computability/Mealy/MyhillNerode.lean`.
 
 ## TODO
 
@@ -141,6 +141,25 @@ theorem runFrom_append :
 
 @[simp] theorem length_runFrom : (T.runFrom s xs).length = xs.length := by
   induction xs generalizing s <;> simp [*]
+
+/-- A relation that every output bears to its input holds between a word and its run. -/
+theorem forall₂_runFrom {R : α → β → Prop} (h : ∀ s a, R a (T.output s a)) :
+    List.Forall₂ R xs (T.runFrom s xs) := by
+  induction xs generalizing s with
+  | nil => exact .nil
+  | cons x xs ih => exact .cons (h s x) (ih _)
+
+theorem forall₂_run {R : α → β → Prop} (h : ∀ s a, R a (T.output s a)) :
+    List.Forall₂ R xs (T.run xs) :=
+  T.forall₂_runFrom T.start xs h
+
+theorem map_runFrom {γ : Type*} {g : β → γ} {g' : α → γ} (h : ∀ s a, g (T.output s a) = g' a) :
+    (T.runFrom s xs).map g = xs.map g' := by
+  induction xs generalizing s <;> simp [*]
+
+theorem map_run {γ : Type*} {g : β → γ} {g' : α → γ} (h : ∀ s a, g (T.output s a) = g' a) :
+    (T.run xs).map g = xs.map g' :=
+  T.map_runFrom T.start xs h
 
 @[simp] theorem length_run : (T.run xs).length = xs.length := T.length_runFrom T.start xs
 

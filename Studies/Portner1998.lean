@@ -26,7 +26,7 @@ Roman army, whose defeat no world compatible with her abilities contains; a Mary
 has the abilities that put such worlds in the base. These scenarios [decide the paper's
 judgments](##truthValue_rows), where the imperfective of the event semantics over the actual world
 alone, inside which the progressive over a totally realistic base falls
-(`Aspect.PROG_subset_IMPF`), gets (11) wrong.
+(`Aspect.progressive_le_imperfective`), gets (11) wrong.
 
 ## Implementation notes
 
@@ -49,6 +49,8 @@ alone, inside which the progressive over a totally realistic base falls
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Portner1998
 
@@ -96,10 +98,11 @@ theorem crossing_ne_walkIntoBus : crossing ≠ walkIntoBus := fun h ↦ by
   simp [crossing, walkIntoBus] at this
 
 theorem prog_crossing : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit := by
-  have hbest : bestWorlds ⊥ notInterrupted Bus.hit = {.crosses} := by
+  have hbest : Background.bestWorlds ⊥ notInterrupted Bus.hit = {.crosses} := by
     have hacc : ((⊥ : Background Bus) ⊔ notInterrupted).accessibleWorlds .hit = {.crosses} := by
       ext v; cases v <;> simp [notInterrupted]
-    rw [bestWorlds_eq_accessibleWorlds_sup (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
+    rw [Background.bestWorlds_eq_accessibleWorlds_sup
+      (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
   rw [InProgress, circ, ite_eq_right crossing_ne_walkIntoBus, hbest]
   rintro v rfl
   exact ⟨iv 0 3, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
@@ -108,13 +111,13 @@ theorem prog_walkIntoBus : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) w
   rw [InProgress, circ, ite_eq_left rfl]
   intro v hv
   have hacc : withBus.accessibleWorlds Bus.hit = {.hit} := by ext u; cases u <;> simp [withBus]
-  obtain rfl : v = .hit := by simpa [hacc] using (mem_bestWorlds.1 hv).1
+  obtain rfl : v = .hit := by simpa [hacc] using (Background.mem_bestWorlds.1 hv).1
   exact ⟨iv 0 2, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
 
 /-- A modal base fixed by the event alone cannot make both (11) and (39) true, so the base must
 depend on the description (p. 779). -/
 theorem not_prog_crossing_and_walkIntoBus (f : Background Bus)
-    (hne : (bestWorlds f notInterrupted .hit).Nonempty) :
+    (hne : (f.bestWorlds notInterrupted .hit).Nonempty) :
     ¬ (InProgress (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit ∧
       InProgress (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit) := by
   rintro ⟨h₁, h₂⟩
@@ -129,10 +132,10 @@ theorem not_dowtyProg_bus :
     iv 0 1 ∉ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf crossing) .hit :=
   fun ⟨_, _, h⟩ ↦ let ⟨_, ⟨h1, _⟩, _⟩ := h .hit rfl; absurd h1 (by decide)
 
-theorem impf_crossing_eq_empty :
-    Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) crossing Bus.hit = ∅ := by
-  rw [Aspect.impf_singleton]
-  exact Set.eq_empty_of_forall_notMem fun _ ⟨_, _, h, _⟩ ↦ absurd h (by decide)
+theorem imperfective_crossing_eq_bot :
+    Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) crossing Bus.hit = ⊥ := by
+  rw [Aspect.imperfective_id]
+  exact eq_bot_iff.2 fun _ h ↦ let ⟨_, _, h, _⟩ := unbounded_iff.1 h; absurd h (by decide)
 
 /-! ### The Roman army (18)
 
@@ -160,12 +163,12 @@ theorem not_prog_ordinary (w : Army) :
     ¬ InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut w := by
   rw [InProgress]
   intro h
-  have hbest : Army.killsDozens ∈ bestWorlds ordinary defeatsSoldiers w := by
-    refine mem_bestWorlds.2 ⟨by simp [ordinary], fun v hv hle ↦ ?_⟩
+  have hbest : Army.killsDozens ∈ ordinary.bestWorlds defeatsSoldiers w := by
+    refine Background.mem_bestWorlds.2 ⟨by simp [ordinary], fun v hv hle ↦ ?_⟩
     have hv' : v ≠ .wipesOut := by simpa [ordinary] using hv
     cases v
     · exact absurd rfl hv'
-    · exact (premisePreorder _).le_refl _
+    · exact (≤[_]).le_refl _
     · exact absurd rfl (hle {.killedEarly}ᶜ (by simp [defeatsSoldiers]) (by simp))
   obtain ⟨_, -, h1, -⟩ := h _ hbest
   exact absurd h1 (by decide)
@@ -175,7 +178,7 @@ theorem prog_hero :
   have hacc : ((⊥ : Background Army) ⊔ defeatsSoldiers).accessibleWorlds .wipesOut =
       {.wipesOut} := by
     ext v; cases v <;> simp [defeatsSoldiers]
-  rw [InProgress, bestWorlds_eq_accessibleWorlds_sup
+  rw [InProgress, Background.bestWorlds_eq_accessibleWorlds_sup
     (by rw [hacc]; exact Set.singleton_nonempty _), hacc]
   rintro v rfl
   exact ⟨iv 0 10, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
@@ -195,12 +198,12 @@ theorem truthValue_rows :
         Examples.ex18_hero.verdict = some true) ∧
       ¬ (iv 0 1 ∈ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf crossing) .hit ↔
         Examples.ex11.verdict = some true) ∧
-      ¬ ((Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) crossing Bus.hit).Nonempty ↔
+      ¬ ((∃ t, Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) crossing Bus.hit t) ↔
         Examples.ex11.verdict = some true) := by
   refine ⟨iff_of_true prog_crossing (by decide), iff_of_true prog_walkIntoBus (by decide),
     iff_of_false (not_prog_ordinary _) (by decide), iff_of_true prog_hero (by decide),
     fun h ↦ not_dowtyProg_bus (h.2 (by decide)), ?_⟩
-  rw [impf_crossing_eq_empty]
-  exact fun h ↦ Set.not_nonempty_empty (h.2 (by decide))
+  rw [imperfective_crossing_eq_bot]
+  exact fun h ↦ let ⟨_, hf⟩ := h.2 (by decide); hf
 
 end Portner1998

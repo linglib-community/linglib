@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Reference.Rigidity
 
 /-!

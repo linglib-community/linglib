@@ -1,7 +1,8 @@
 module
 
-public import Linglib.Logic.Modal.Epistemic
+public import Linglib.Discourse.CommonGround
 public import Linglib.Discourse.SpeechAct.Role
+public import Linglib.Logic.Modal.Systems
 public import Mathlib.Order.Concept
 
 /-!
@@ -195,9 +196,10 @@ abbrev World := Finset Role
 /-- Each interlocutor knows whether she holds the conception and nothing about the other. -/
 def privately (a : Role) : SetRel World World := {p | a ∈ p.1 ↔ a ∈ p.2}
 
-instance (a : Role) : IsS5Frame (privately a) where
+instance (a : Role) : (privately a).IsEquiv where
   refl _ := Iff.rfl
-  eucl _ _ _ h₁ h₂ := h₁.symm.trans h₂
+  symm _ _ := Iff.symm
+  trans _ _ _ := Iff.trans
 
 /-! ### Example (2) -/
 

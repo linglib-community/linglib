@@ -67,6 +67,17 @@ theorem truthful_apply_singleton [MeasurableSingletonClass U] (sem : U → Set W
   · rw [Set.indicator_of_notMem h, Set.singleton_inter_eq_empty.2 (by simpa using h),
       measure_empty]
 
+/-- Relabelling the states by `e` and the utterances by `π` relabels the truthful channel. -/
+theorem truthful_relabel {W' U' : Type*} [MeasurableSpace U'] [Countable U']
+    [MeasurableSingletonClass U'] [Countable U] [MeasurableSingletonClass U] (e : W ≃ W')
+    (π : U ≃ U') (sem : U → Set W) (w : W) :
+    (truthful sem w).map π = truthful (fun u' ↦ e '' sem (π.symm u')) (e w) := by
+  refine Measure.ext_of_singleton fun u' ↦ ?_
+  rw [Measure.map_apply .of_discrete (.singleton u'),
+    show π ⁻¹' {u'} = {π.symm u'} by ext; simp [Equiv.eq_symm_apply], truthful_apply_singleton,
+    truthful_apply_singleton, Set.indicator_image e.injective]
+  rfl
+
 end Truthful
 
 section Pipeline
@@ -169,12 +180,23 @@ theorem listener_apply_singleton (u : U) (w : W) :
     listener μ S u {w} = S w {u} * μ {w} / ∑ w', S w' {u} * μ {w'} :=
   Kernel.ofDensity_apply_singleton μ _ u w
 
-theorem listener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U']
-    [Countable U'] [MeasurableSingletonClass U'] [Fintype W'] [MeasurableSingletonClass W']
-    (e : W ≃ W') {μ' : Measure W'} {S' : W' → Measure U'} {u : U} {u' : U'}
-    (hμ : ∀ w, μ' {e w} = μ {w}) (hS : ∀ w, S' (e w) {u'} = S w {u}) (w : W) :
-    listener μ' S' u' {e w} = listener μ S u {w} :=
-  Kernel.ofDensity_apply_singleton_of_equiv e hμ hS w
+/-- Relabelling the states by `e` and the utterances by `π` relabels the listener alike: Bayes'
+rule commutes with the relabelling. -/
+theorem listener_relabel {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U'] [Countable U']
+    [MeasurableSingletonClass U'] [Fintype W'] [MeasurableSingletonClass W'] (e : W ≃ W')
+    (π : U ≃ U') :
+    ((listener μ S).comap π.symm .of_discrete).map e =
+      listener (μ.map e) fun w' ↦ (S (e.symm w')).map π := by
+  ext u' : 1
+  have hf : (fun u w ↦ S w {u}) = fun u ↦ (fun w' ↦ S (e.symm w') {u}) ∘ e := by
+    funext u w
+    simp
+  rw [Kernel.map_apply _ .of_discrete, Kernel.comap_apply, listener, listener, hf,
+    Kernel.ofDensity_map μ Measurable.of_discrete.aemeasurable Measurable.of_discrete.aemeasurable,
+    Kernel.ofDensity_apply, Kernel.ofDensity_apply]
+  congr 2 with w'
+  rw [Measure.map_apply .of_discrete (.singleton u'),
+    show π ⁻¹' {u'} = {π.symm u'} by ext; simp [Equiv.eq_symm_apply]]
 
 variable {μ S} {u : U} {w : W}
 
@@ -497,17 +519,15 @@ theorem literalListener_apply_singleton_eq_one_iff_eq_singleton [IsFiniteMeasure
         hμ x (measure_mono_null (Set.singleton_subset_iff.2 (by simpa using ⟨hx, hne⟩)) h0),
       fun h ↦ by rw [Set.sdiff_eq_empty.2 (show sem u ⊆ {w} from fun x hx ↦ h x hx), measure_empty]⟩
 
-theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
-    [DiscreteMeasurableSpace W'] [MeasurableSpace U'] [Countable U'] [MeasurableSingletonClass U']
-    [Fintype W] [Fintype W'] (e : W ≃ W') {μ : Measure W} {μ' : Measure W'} {sem : U → Set W}
-    {sem' : U' → Set W'} {u : U} {u' : U'} (hμ : ∀ w, μ' {e w} = μ {w})
-    (hsem : ∀ w, e w ∈ sem' u' ↔ w ∈ sem u) (w : W) :
-    literalListener μ' sem' u' {e w} = literalListener μ sem u {w} := by
-  rw [literalListener_eq_ofDensity, literalListener_eq_ofDensity]
-  refine Kernel.ofDensity_apply_singleton_of_equiv e hμ (fun w ↦ ?_) w
-  by_cases h : w ∈ sem u
-  · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((hsem w).2 h), Pi.one_apply, Pi.one_apply]
-  · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (mt (hsem w).1 h)]
+/-- Relabelling the states by `e` and the utterances by `π` relabels the literal listener alike. -/
+theorem literalListener_relabel {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U']
+    [Countable U'] [MeasurableSingletonClass U'] [Fintype W] [Fintype W']
+    [MeasurableSingletonClass W'] (e : W ≃ W') (π : U ≃ U') :
+    ((literalListener μ sem).comap π.symm .of_discrete).map e =
+      literalListener (μ.map e) fun u' ↦ e '' sem (π.symm u') := by
+  rw [literalListener, listener_relabel]
+  congr 1 with w'
+  rw [truthful_relabel e, e.apply_symm_apply]
 
 end Boolean
 
@@ -596,8 +616,8 @@ answer where the utterance is true, over the prior mass of the states where it i
 theorem literalListener_map_apply_singleton [Countable W] [DiscreteMeasurableSpace W]
     [Countable U] (μ : Measure W) (sem : U → Set W) (q : W → X) (u : U) (x : X) :
     (literalListener μ sem).map q u {x} = μ (sem u ∩ q ⁻¹' {x}) / μ (sem u) := by
-  rw [Kernel.map_apply_singleton, literalListener_apply, cond_apply .of_discrete,
-    ENNReal.div_eq_inv_mul]
+  rw [Kernel.map_apply' _ .of_discrete _ (.singleton _), literalListener_apply,
+    cond_apply .of_discrete, ENNReal.div_eq_inv_mul]
 
 /-- Within a finite context set, a literal listener's probability of an answer is the prior mass
 of the states of the set where the utterance is true and that have the answer, over the prior

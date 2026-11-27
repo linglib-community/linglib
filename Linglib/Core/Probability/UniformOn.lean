@@ -99,8 +99,7 @@ theorem uniformOn_absolutelyContinuous_of_subset (ht : t.Finite) (hst : s ⊆ t)
 theorem uniformOn_finset_apply_singleton [DecidableEq Ω] (s : Finset Ω) (ω : Ω) :
     uniformOn ↑s {ω} = if ω ∈ s then (#s : ℝ≥0∞)⁻¹ else 0 := by
   rw [← Finset.coe_singleton, uniformOn_apply_finset]
-  split_ifs with h <;> simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, h,
-    div_eq_mul_inv]
+  split_ifs with h <;> simp [Finset.inter_singleton_of_notMem, h, div_eq_mul_inv]
 
 theorem uniformOn_finset_real_singleton [DecidableEq Ω] (s : Finset Ω) (ω : Ω) :
     (uniformOn (s : Set Ω)).real {ω} = if ω ∈ s then (#s : ℝ)⁻¹ else 0 := by

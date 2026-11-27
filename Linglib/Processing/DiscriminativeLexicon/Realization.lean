@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Paradigm.Analogy
+public import Linglib.Morphology.Inflection.Paradigm.Analogy
 public import Linglib.Processing.DiscriminativeLexicon.Coding
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 

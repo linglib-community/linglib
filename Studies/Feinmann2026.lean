@@ -2,8 +2,9 @@ module
 
 public import Linglib.Data.Examples.Feinmann2026
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
-public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Answerhood
+public import Linglib.Semantics.Questions.Partition.Answer
 
 /-!
 # Feinmann (2026): A Note on Relevance
@@ -56,6 +57,8 @@ rows of `Data.Examples.Feinmann2026`.
 
 @[expose] public section
 
+open Inquisitive
+
 open MeasureTheory ProbabilityTheory Setoid
 open scoped ENNReal
 
@@ -89,9 +92,9 @@ theorem standardRelevant_iff :
 -- A standardly relevant sentence gives a partial answer in the sense of Roberts: on the
 -- context set it rules out an alternative of the question.
 theorem StandardRelevant.partiallyAnsweredBy (h : StandardRelevant Q c φ) :
-    (Question.fromSetoid Q).PartiallyAnsweredBy (c ∩ φ) :=
+    (Inquisitive.Proposition.fromSetoid Q).PartiallyAnsweredBy (c ∩ φ) :=
   let ⟨_, q, ⟨hq, _⟩, h⟩ := h
-  ⟨q, Question.mem_alt_fromSetoid_of_mem_classes Q hq,
+  ⟨q, Inquisitive.Proposition.mem_alt_fromSetoid_of_mem_classes Q hq,
     .inr fun _ hv hvq ↦ Set.disjoint_left.1 h ⟨hvq, hv.1⟩ hv.2⟩
 
 -- The two partial answers agree on a consistent sentence when the context set leaves every
@@ -99,9 +102,9 @@ theorem StandardRelevant.partiallyAnsweredBy (h : StandardRelevant Q c φ) :
 -- evaluates that alternative, and none rules out a cell.
 theorem standardRelevant_iff_partiallyAnsweredBy [Nonempty W] (hne : (c ∩ φ).Nonempty)
     (hlive : ∀ w, (Q.cell w ∩ c).Nonempty) (hopen : ∀ w, ¬ c ⊆ Q.cell w) :
-    StandardRelevant Q c φ ↔ (Question.fromSetoid Q).PartiallyAnsweredBy (c ∩ φ) := by
+    StandardRelevant Q c φ ↔ (Proposition.fromSetoid Q).PartiallyAnsweredBy (c ∩ φ) := by
   refine ⟨StandardRelevant.partiallyAnsweredBy, fun ⟨p, hp, h⟩ ↦ ?_⟩
-  rw [Question.alt_fromSetoid] at hp
+  rw [Inquisitive.Proposition.alt_fromSetoid] at hp
   obtain ⟨u, rfl⟩ := hp
   refine standardRelevant_iff.2 ⟨hne, closerToAnswer_iff.2 ⟨Set.inter_subset_left, ?_⟩⟩
   rcases h with h | h

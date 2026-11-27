@@ -2,9 +2,9 @@ module
 
 public import Linglib.Core.Combinatorics.SimpleGraph.Induce
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Syntax.Case.Function
+public import Linglib.Syntax.Feature.Case.Function
 public import Studies.Blake1994
-public import Linglib.Fragments.Japanese.Case
+public import Linglib.Languages.Japanese.Case
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 
 /-!
@@ -19,7 +19,7 @@ the lines it lacks: with no line from purpose to anything but direction, [a gram
 another function has direction](##direction_mem_of_purpose_mem), the arrangement that [French *à*
 and German *zu* select among the three orders of purpose, direction and recipient](##arrangement),
 while on the map with all three lines [any two of them are a contiguous area](##vacuous).
-Of the cases of the fragments, [the Latin dative covers a contiguous area of the first map
+Of the cases of the language files, [the Latin dative covers a contiguous area of the first map
 but for its infrequent use for purpose](##latin_dative), and [Japanese *ni* does not of the
 second](##japanese_ni).
 
@@ -27,7 +27,7 @@ second](##japanese_ni).
 
 A map has its own functions, at the grain at which some language tells them apart, so each map is
 a graph on its own type of nodes, and `toFunction` gives the function of a case or adposition
-each node stands for. Direction is motion to a goal in any localization, and the source of the
+each node stands for. Direction is motion to a goal in any configuration, and the source of the
 instrumental map covers the giver of *a pension from the government* with the place of *aus
 Paris*.
 
@@ -42,7 +42,7 @@ a linear map, as [in the case hierarchy](##conforms_iff_connected).
 
 ## TODO
 
-The grams of the figures are stated here as drawn. Of the fragments' own cases and adpositions
+The grams of the figures are stated here as drawn. Of the language files' own cases and adpositions
 only the Latin dative and Japanese *ni* list the functions of these maps from a grammar; the
 English prepositions of the figures do not yet.
 
@@ -79,7 +79,7 @@ inductive DativeFunction where
 namespace DativeFunction
 
 /-- The function of a case or adposition a node stands for, direction as the goal with no
-localization. -/
+configuration. -/
 def toFunction : DativeFunction → Case.Function
   | direction => .spatial none .goal
   | purpose => .purpose
@@ -90,7 +90,7 @@ def toFunction : DativeFunction → Case.Function
   | beneficiary => .beneficiary
   | judicantis => .judicantis
 
-/-- The node a function belongs to, a goal in any localization to direction. -/
+/-- The node a function belongs to, a goal in any configuration to direction. -/
 def ofFunction : Case.Function → Option DativeFunction
   | .spatial _ .goal => some direction
   | .purpose => some purpose
@@ -181,7 +181,7 @@ inductive InstrumentalFunction where
 namespace InstrumentalFunction
 
 /-- The function of a case or adposition a node stands for, source as the source with no
-localization. -/
+configuration. -/
 def toFunction : InstrumentalFunction → Case.Function
   | recipient => .argument .R
   | beneficiary => .beneficiary
@@ -193,7 +193,7 @@ def toFunction : InstrumentalFunction → Case.Function
   | passiveAgent => .passiveAgent
   | source => .spatial none .source
 
-/-- The node a function belongs to, a source in any localization to source. -/
+/-- The node a function belongs to, a source in any configuration to source. -/
 def ofFunction : Case.Function → Option InstrumentalFunction
   | .argument .R => some recipient
   | .beneficiary => some beneficiary
@@ -355,7 +355,7 @@ theorem around :
       .recipient ∈ seychellesEk ∧ .cause ∈ seychellesEk ∧ .beneficiary ∉ seychellesEk := by
   decide
 
-/-! ### Two cases of the fragments
+/-! ### Two cases of the language files
 
 The chapter places no Latin or Japanese gram on its maps. In the prose of the grammar the Latin
 dative has every function of the first map but direction, which is left to the poets. Its use

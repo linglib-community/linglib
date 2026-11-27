@@ -172,13 +172,27 @@ instance (α : ℝ) (C : U → ℝ) (m : U → E → ℝ) : IsFiniteKernel (S1 �
 
 variable {m : U → E → ℝ} {α : ℝ} {C : U → ℝ} {u u' : U} {o : E}
 
+-- Relabelling the expressions by `τ` relabels the speaker, at the relabelled costs.
+theorem S1_map {U' : Type*} [Fintype U'] [MeasurableSpace U'] [MeasurableSingletonClass U']
+    (τ : U ≃ U') (α : ℝ) (C : U' → ℝ) {m' : U' → E → ℝ} (h : ∀ v, m' (τ v) = m v) :
+    (S1 α (C ∘ τ) m).map τ = S1 α C m' := by
+  have hκ : (S1 α (C ∘ τ) m).comap (Equiv.refl E).symm .of_discrete = S1 α (C ∘ τ) m :=
+    Kernel.ext fun _ ↦ rfl
+  rw [← hκ, S1, speaker_dirac_relabel, S1]
+  congr 1
+  · funext u'
+    simp
+  · funext u'
+    rw [Equiv.coe_refl, Measure.map_id, L0, L0, gradedListener_eq_ofDensity,
+      gradedListener_eq_ofDensity, Kernel.ofDensity_apply, Kernel.ofDensity_apply,
+      ← h (τ.symm u'), τ.apply_symm_apply]
+
 theorem S1_apply_singleton_of_equiv {U' : Type*} [Fintype U'] [MeasurableSpace U']
     [MeasurableSingletonClass U'] (τ : U ≃ U') (α : ℝ) (C : U' → ℝ) {m' : U' → E → ℝ}
     (h : ∀ v, m' (τ v) = m v) (o : E) (u : U) :
-    S1 α C m' o {τ u} = S1 α (C ∘ τ) m o {u} :=
-  speaker_dirac_apply_singleton_of_equiv τ α C (fun v ↦ by
-    rw [L0, L0, gradedListener_eq_ofDensity, gradedListener_eq_ofDensity, Kernel.ofDensity_apply,
-      Kernel.ofDensity_apply, h]) u
+    S1 α C m' o {τ u} = S1 α (C ∘ τ) m o {u} := by
+  rw [← S1_map τ α C h, Kernel.map_apply' _ .of_discrete _ (.singleton _),
+    show τ ⁻¹' {τ u} = {u} by ext; simp]
 
 private theorem L0_ne_zero (h : 0 < m u o) : L0 m u {o} ≠ 0 :=
   gradedListener_apply_singleton_ne_zero_iff.2 ⟨h, uniformOn_univ_singleton_ne_zero o⟩

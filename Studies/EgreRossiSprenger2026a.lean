@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Probability
-public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Logic.Propositional.Trivalent
 public import Studies.Adams1975
 
 /-!
@@ -18,7 +18,7 @@ conjunction and the Product Rule.
 
 ## Implementation notes
 
-* The language is the shared `Trivalent.Formula` and a Cooper valuation is its evaluation by
+* The language is the shared `Propositional.Formula` and a Cooper valuation is its evaluation by
   `Trivalent.Connectives.cooper` on a Boolean model, so the paper's `⊤` and `⊥` are the formulas
   `p ∨ ¬p` and `p ∧ ¬p` of an atom.
 * Worlds carry a classical valuation of the atoms through a map `t : W → ι → Bool`, after the
@@ -64,6 +64,7 @@ conjunction and the Product Rule.
 namespace EgreRossiSprenger2026a
 
 open Trivalent hiding true false
+open Propositional
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
@@ -152,7 +153,7 @@ end ValueLaws
 
 /-! ### Cooper valuations
 
-The language `L→` is `Trivalent.Formula`, atoms closed under `¬`, `∧`, `∨` and `→`, and a Cooper
+The language `L→` is `Propositional.Formula`, atoms closed under `¬`, `∧`, `∨` and `→`, and a Cooper
 valuation (Definition 1) evaluates it by `Connectives.cooper` on the Boolean model of a classical
 valuation of the atoms. The paper's `⊤` and `⊥` abbreviate a classical tautology and
 contradiction. -/

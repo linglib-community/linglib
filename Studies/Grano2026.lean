@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Grano2026
-public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Languages.English.Auxiliaries
 public import Linglib.Semantics.Degree.PositiveStandard
 public import Linglib.Semantics.Modality.Typology
 public import Mathlib.Data.Fin.VecNotation

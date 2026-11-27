@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Semantics.Degree.Roundness
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 

@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Degree.PositiveStandard
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.AspectualClass
 public import Linglib.Semantics.Quantity.Dimension
 
 /-!

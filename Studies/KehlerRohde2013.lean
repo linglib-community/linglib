@@ -3,12 +3,12 @@ module
 public import Linglib.Core.Probability.Kernel.OfDensity
 public import Linglib.Data.Statistics.KehlerRohde2013
 public import Linglib.Discourse.Accessibility
-public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Center
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Discourse.Coherence
-public import Linglib.Fragments.English.Pronouns
+public import Linglib.Languages.English.Pronouns
 public import Linglib.Syntax.Voice.Basic
-import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
+public import Linglib.Syntax.Binding.Pronoun
 
 /-!
 # Kehler and Rohde (2013): A Probabilistic Reconciliation of Coherence-Driven and Centering-Driven Theories of Pronoun Interpretation
@@ -54,9 +54,9 @@ status](##not_cbFactored).
 
 namespace KehlerRohde2013
 
-open MeasureTheory ProbabilityTheory Discourse.Centering
+open MeasureTheory ProbabilityTheory Centering
 open scoped ENNReal
-open Discourse.AccessibilityLevel (Head)
+open AccessibilityLevel (Head)
 open Morphology (Word Features)
 
 /-! ### The model -/
@@ -340,7 +340,7 @@ theorem not_heuristic (ν : Measure Role) (ρ : Instruction → Measure Relation
 /-! ### The end state -/
 
 /-- The paper's relations in Kehler's classification. -/
-def Relation.toCoherence : Relation → Discourse.Coherence.Relation
+def Relation.toCoherence : Relation → Coherence.Relation
   | .occasion => .occasion
   | .elaboration => .elaboration
   | .explanation => .explanation
@@ -349,7 +349,7 @@ def Relation.toCoherence : Relation → Discourse.Coherence.Relation
 
 /-- A relation focuses the end state when its second segment continues from the end state of the
 first, as Occasion does and Result, whose second segment is the effect (pp. 9–10). -/
-def FocusesEndState : Discourse.Coherence.Relation → Prop
+def FocusesEndState : Coherence.Relation → Prop
   | .occasion | .result => True
   | _ => False
 
@@ -565,8 +565,8 @@ def brittany : Word :=
     Features.of (person := some .third) (number := some .singular) (gender := some .Fem)⟩
 
 theorem she_ambiguous_over_stimuli :
-    English.Pronouns.she.toPronoun.CandidateAntecedent amanda ∧
-      English.Pronouns.she.toPronoun.CandidateAntecedent brittany := by
+    Binding.CandidateAntecedent English.Pronouns.she.toWord amanda ∧
+      Binding.CandidateAntecedent English.Pronouns.she.toWord brittany := by
   decide
 
 /-- The voice of a context sentence of (20): the active, and the long passive, which keeps Amanda
@@ -612,15 +612,15 @@ theorem cp_contextSentence (v : Voice) : (contextSentence v).cp = some (contextS
   · rw [contextSentence_passive]; decide
 
 theorem cb_contextSentence (v : Voice) {cur : Utterance Word GrammaticalRole Head}
-    (h : contextSubject v ∈ cur) : cb (contextSentence v) cur = some (contextSubject v) :=
-  cb_eq_of_cp_eq (cp_contextSentence v) h
+    (h : contextSubject v ∈ cur) : cb (contextSentence v) cur.cf = some (contextSubject v) :=
+  cb_eq_of_cp_eq (cp_contextSentence v) (cur.mem_cf.2 h)
 
 /-- A pronominalization rate that depends on the context's subject only through whether it is the
 backward-looking center is the same in both voices, so it cannot print as the subject rates of
 Table 9, .62 and .87. -/
 theorem not_cbFactored (g : Prop → ℝ) (cur : Voice → Utterance Word GrammaticalRole Head)
     (hcur : ∀ v, contextSubject v ∈ cur v) :
-    ¬ ∀ v, RoundsTo (g (cb (contextSentence v) (cur v) = some (contextSubject v)))
+    ¬ ∀ v, RoundsTo (g (cb (contextSentence v) (cur v).cf = some (contextSubject v)))
       (pronominalizations v .subject).proportion := by
   intro h
   have h₁ := h .active

@@ -28,7 +28,7 @@ not taller for a man than he is wide for a man.
   measure into a linear order, and a comparison class by a finite set, which restricts the
   quasi-order as Klein's comparison classes do.
 * The comparative is Kennedy's, as in the paper: MORE applied to the greatest degree the
-  than-clause reaches is `MaxComparative .gt` over the two measures (`more_iff`), stated as
+  than-clause reaches is `MaxComparative .gt` between the two degrees (`more_iff`), stated as
   the point comparison `μ ⁻¹' Set.Ioi n`.
 * Universal degrees are rationals: the paper's universal scale is the rationals from zero to one.
 * The paper sets this against analyses that take indirect comparisons to be metaphorical extensions
@@ -54,9 +54,8 @@ open Finset
 /-! ### The comparative -/
 
 theorem more_iff {E F : Type*} (μ₁ : E → ℚ) (μ₂ : F → ℚ) (x : E) (y : F) :
-    MaxComparative .gt (· = .inl x) (· = .inr y) (Sum.elim μ₁ μ₂) ↔
-      x ∈ μ₁ ⁻¹' Set.Ioi (μ₂ y) :=
-  maxComparative_eq_iff _ _ _
+    MaxComparative .gt {μ₂ y} {μ₁ x} ↔ x ∈ μ₁ ⁻¹' Set.Ioi (μ₂ y) :=
+  maxComparative_singleton
 
 theorem not_more_of_least_of_greatest {D D' E F : Type*} [LinearOrder D] [DecidableEq D]
     [LinearOrder D'] [DecidableEq D'] {μ : E → D} {ν : F → D'} {C : Finset E} {C' : Finset F}

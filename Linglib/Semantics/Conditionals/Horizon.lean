@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Presupposition.Strawson
 
 /-!
@@ -80,6 +80,7 @@ open Presupposition Trivalent
 
 variable {I W : Type*} (horizon : I → Set W) (q : Set W)
 
+open Classical in
 /-- The modal-horizon counterfactual is Strawson anti-additive in its antecedent ([gajewski-2011],
 Appendix 1). -/
 theorem isStrawsonAntiAdditive_horizonCounterfactual :
@@ -89,7 +90,7 @@ theorem isStrawsonAntiAdditive_horizonCounterfactual :
       show i ∈ strictImp horizon (p ∪ p') q ↔ i ∈ strictImp horizon p q ∧ i ∈ strictImp horizon p' q
       rw [strictImp_union_left]
       exact Iff.rfl)
-    fun _ _ h ↦ by simp_all [mem_strictImp]
+    fun _ _ ↦ condEvent_kLE
 
 theorem isStrawsonDE_horizonCounterfactual :
     IsStrawsonDE (horizonCounterfactual horizon · q) :=

@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Basic.Rel
 public import Linglib.Data.Examples.Carlson1977
-public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Quantifier.Individual
 
 /-!
 # Carlson (1977): A unified analysis of the English bare plural

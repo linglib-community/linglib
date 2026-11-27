@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Homogeneity.Defs
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Exhaustification.InnocentInclusion

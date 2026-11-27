@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.DeoThomas2025
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
@@ -21,20 +21,20 @@ relevantly](##Context.IsOptimal), and asserts its prejacent.
 
 ## Implementation notes
 
-A construal is a `Question`, whose alternatives `Question.alt` are the maximal resolving
-states, so (30a) holds by construction and (30b) is `Question.info`. The context of (31)
-carries the common ground, the construals, and the speaker's Quality and Relevance verdicts
-as primitives, with the paper's requirements that every construal cover the common ground
-and that any two construals be comparable by width, which is what makes the optimal construal
-unique. Partition construals are `Question.fromSetoid`, so refinement is the order on
-`Setoid`. Grains are `grain`, whose cells are centred on the multiples of
-the width, so that a measure phrase denotes the cell it lies at the centre of, (24); Figure 1's
+A construal is a `Inquisitive.Proposition`, whose alternatives `Inquisitive.Proposition.alt` are the
+maximal resolving states, so (30a) holds by construction and (30b) is
+`Inquisitive.Proposition.info`. The context of (31) carries the common ground, the construals, and
+the speaker's Quality and Relevance verdicts as primitives, with the paper's requirements that every
+construal cover the common ground and that any two construals be comparable by width, which is what
+makes the optimal construal unique. Partition construals are `Inquisitive.Proposition.fromSetoid`,
+so refinement is the order on `Setoid`. Grains are `grain`, whose cells are centred on the multiples
+of the width, so that a measure phrase denotes the cell it lies at the centre of, (24); Figure 1's
 year and half-year grains are `grain 1` and `grain (1 / 2)` on `ℝ`. Worlds for the constituent
-question of §4.1 are the extensions of its predicate. The exhaustive interpretation of the
-prejacent is a mandatory implicature that the paper leaves to Gricean reasoning, §4.1 and §4.9,
-and is not formalized; neither are the interpretation of the prejacent relative to the
-granularity of the current question in (36), the minimal-sufficiency construal of §4.3, whose
-alternatives are fixed by a causal structure, nor the Focus Principle, (21).
+question of §4.1 are the extensions of its predicate. The exhaustive interpretation of the prejacent
+is a mandatory implicature that the paper leaves to Gricean reasoning, §4.1 and §4.9, and is not
+formalized; neither are the interpretation of the prejacent relative to the granularity of the
+current question in (36), the minimal-sufficiency construal of §4.3, whose alternatives are fixed by
+a causal structure, nor the Focus Principle, (21).
 
 ## References
 
@@ -53,7 +53,7 @@ alternatives are fixed by a causal structure, nor the Focus Principle, (21).
 
 namespace DeoThomas2025
 
-open Question
+open Inquisitive Inquisitive.Proposition
 
 variable {W : Type*}
 
@@ -62,17 +62,17 @@ variable {W : Type*}
 /-- `P` is wider than `Q`, (32), when the two cover the same common ground, no alternative of `Q` is
 properly contained in an alternative of `P`, and some alternative of `P` is properly contained in an
 alternative of `Q`. -/
-def WiderThan (P Q : Question W) : Prop :=
+def WiderThan (P Q : Proposition (Set W)) : Prop :=
   P.info = Q.info ∧ (∀ q ∈ alt Q, ∀ p ∈ alt P, ¬ q ⊂ p) ∧ ∃ p ∈ alt P, ∃ q ∈ alt Q, p ⊂ q
 
-theorem WiderThan.irrefl (P : Question W) : ¬ WiderThan P P :=
+theorem WiderThan.irrefl (P : Proposition (Set W)) : ¬ WiderThan P P :=
   fun ⟨_, h, p, hp, q, hq, hpq⟩ ↦ h p hp q hq hpq
 
-theorem WiderThan.asymm {P Q : Question W} (h : WiderThan P Q) : ¬ WiderThan Q P :=
+theorem WiderThan.asymm {P Q : Proposition (Set W)} (h : WiderThan P Q) : ¬ WiderThan Q P :=
   fun ⟨_, h', _⟩ ↦ let ⟨p, hp, q, hq, hpq⟩ := h.2.2; h' p hp q hq hpq
 
 -- §4.4
-theorem widerThan_ofSet {P : Question W} {s p : Set W} (hs : P.info = s) (hp : p ∈ alt P)
+theorem widerThan_ofSet {P : Proposition (Set W)} {s p : Set W} (hs : P.info = s) (hp : p ∈ alt P)
     (hne : p ≠ s) : WiderThan P (ofSet s) := by
   have hsub : ∀ q ∈ alt P, q ⊆ s := fun q hq ↦
     hs ▸ (Set.subset_sUnion_of_mem hq).trans (sUnion_alt_subset_info P)
@@ -91,18 +91,18 @@ structure Context (W : Type*) where
   /-- The common ground. -/
   info : Set W
   /-- The construals of the underspecified question. -/
-  uq : Set (Question W)
+  uq : Set (Proposition (Set W))
   /-- The speaker has sufficient evidence that a true answer is accessible, (34a). -/
-  quality : Question W → Prop
+  quality : Proposition (Set W) → Prop
   /-- The speaker considers answering the question relevant to the discourse goals, (34b). -/
-  relevance : Question W → Prop
+  relevance : Proposition (Set W) → Prop
   nonempty : uq.Nonempty
   info_eq : ∀ q ∈ uq, q.info = info
   comparable : ∀ q ∈ uq, ∀ q' ∈ uq, q ≠ q' → WiderThan q q' ∨ WiderThan q' q
 
 namespace Context
 
-variable (c : Context W) (q : Question W)
+variable (c : Context W) (q : Proposition (Set W))
 
 /-- A question is answerable when it satisfies Quality and Relevance, (34). -/
 def Answerable : Prop := c.quality q ∧ c.relevance q
@@ -116,11 +116,12 @@ def IsOptimal : Prop :=
 
 variable {c q}
 
-theorem IsWidest.unique {q' : Question W} (h : c.IsWidest q) (h' : c.IsWidest q') : q = q' :=
+theorem IsWidest.unique {q' : Proposition (Set W)} (h : c.IsWidest q) (h' : c.IsWidest q') :
+    q = q' :=
   by_contra fun hne ↦ (c.comparable q h.1 q' h'.1 hne).elim (h'.2 q h.1) (h.2 q' h'.1)
 
 -- (35)
-theorem IsOptimal.unique {q' : Question W} (h : c.IsOptimal q) (h' : c.IsOptimal q') :
+theorem IsOptimal.unique {q' : Proposition (Set W)} (h : c.IsOptimal q) (h' : c.IsOptimal q') :
     q = q' :=
   by_contra fun hne ↦
     (c.comparable q h.1 q' h'.1 hne).elim (h'.2.2 q h.1 h.2.1) (h.2.2 q' h'.1 h'.2.1)
@@ -129,7 +130,7 @@ theorem IsOptimal.unique {q' : Question W} (h : c.IsOptimal q) (h' : c.IsOptimal
 theorem IsWidest.isOptimal (h : c.IsWidest q) (ha : c.Answerable q) : c.IsOptimal q :=
   ⟨h.1, ha, fun q' hq' _ ↦ h.2 q' hq'⟩
 
-theorem IsOptimal.not_answerable {q' : Question W} (h : c.IsOptimal q) (hq' : q' ∈ c.uq)
+theorem IsOptimal.not_answerable {q' : Proposition (Set W)} (h : c.IsOptimal q) (hq' : q' ∈ c.uq)
     (hw : WiderThan q' q) : ¬ c.Answerable q' :=
   fun ha ↦ h.2.2 q' hq' ha hw
 
@@ -167,16 +168,18 @@ end Context
 open Classical in
 /-- *Just* with the current question `cq` and prejacent `p` presupposes that `cq` is the optimal
 construal of the underspecified question and asserts `p`, (36). -/
-noncomputable def just (c : Context W) (cq : Question W) (p : Set W) : W → Trivalent :=
+noncomputable def just (c : Context W) (cq : Proposition (Set W)) (p : Set W) : W → Trivalent :=
   Trivalent.condEvent (fun _ ↦ c.IsOptimal cq) (· ∈ p)
 
-variable {c : Context W} {cq cq' : Question W} {p p' : Set W} {w w' : W}
+variable {c : Context W} {cq cq' : Proposition (Set W)} {p p' : Set W} {w w' : W}
 
-@[simp] theorem just_eq_undefined_iff : just c cq p w = .undefined ↔ ¬ c.IsOptimal cq := by simp [just]
+@[simp] theorem just_eq_undefined_iff :
+    just c cq p w = .undefined ↔ ¬ c.IsOptimal cq := by simp [just]
 
 @[simp] theorem just_eq_true_iff : just c cq p w = .true ↔ c.IsOptimal cq ∧ w ∈ p := by simp [just]
 
-theorem eq_of_just_ne_undefined (h : just c cq p w ≠ .undefined) (h' : just c cq' p' w' ≠ .undefined) : cq = cq' := by
+theorem eq_of_just_ne_undefined (h : just c cq p w ≠ .undefined)
+    (h' : just c cq' p' w' ≠ .undefined) : cq = cq' := by
   simp only [ne_eq, just_eq_undefined_iff, not_not] at h h'
   exact h.unique h'
 
@@ -260,10 +263,10 @@ variable {A : Type*}
 
 /-- The mention-all construal of *which x is P?*, over worlds that are extensions of `P`, has one
 alternative per nonempty extension. -/
-def mentionAll : Question (Set A) := which {E : Set A | E.Nonempty} fun E ↦ {E}
+def mentionAll : Proposition (Set (Set A)) := which {E : Set A | E.Nonempty} fun E ↦ {E}
 
 /-- The mention-some construal has one alternative per individual, the worlds in which it is `P`. -/
-def mentionSome : Question (Set A) := which Set.univ fun a ↦ {E | a ∈ E}
+def mentionSome : Proposition (Set (Set A)) := which Set.univ fun a ↦ {E | a ∈ E}
 
 /-- The mention-all construal of a constituent question is wider than the mention-some one (§4.1).
 -/

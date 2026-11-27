@@ -6,6 +6,8 @@ public import Mathlib.Order.Interval.Finset.Basic
 public import Mathlib.Order.Closure
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Basic
+import Mathlib.Data.Fintype.Lattice
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Order-connected sets and contiguous maps
@@ -21,11 +23,14 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
 
 * `Set.ordConnectedHull`: the least order-connected set containing a set, as a closure operator.
 * `IsContiguous`: a map whose fibres are order-connected.
+* `Set.OrdConnectedAlong`: a set that is the preimage under a map of an order-connected set.
 
 ## Main statements
 
 * `isContiguous_iff_ordConnected_preimage`: contiguity in terms of fibres.
 * `Monotone.isContiguous`: monotone maps are contiguous.
+* `List.isContiguous_get_replicate_append`, `List.isContiguous_get_flatMap_replicate`: contiguity
+  of a list built from blocks.
 * `isContiguous_iff_exists_monotone`: contiguous maps are those with the kernel of a monotone map
   to `ℕ`.
 * `Finset.eq_Icc_top_of_ordConnected_coe`: an order-connected finset containing `⊤` is
@@ -34,6 +39,8 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
   set.
 * `isLowerSet_iff_ordConnected_and_bot_mem`: the nonempty lower sets are the order-connected
   sets containing `⊥`.
+* `Set.not_ordConnectedAlong_of_surjective`: two Boolean maps whose values combine freely do
+  not both have fibres order-connected along a map to a linear order.
 -/
 
 @[expose] public section
@@ -187,3 +194,101 @@ theorem isContiguous_iff_exists_monotone (p : ι → F) :
     exact (hker i j).mpr (hg.isContiguous hij hjk ((hker i k).mp heq))
 
 end LinearOrder
+
+/-- A block of copies of `a` before a contiguous list that does not contain `a` is contiguous. -/
+theorem List.isContiguous_get_replicate_append {α : Type*} {a : α} {L : List α} (n : ℕ)
+    (hL : IsContiguous L.get) (ha : a ∉ L) : IsContiguous (List.replicate n a ++ L).get := by
+  intro i j k hij hjk h
+  have hi := i.2; have hj := j.2; have hk := k.2
+  simp only [List.length_append, List.length_replicate] at hi hj hk
+  simp only [List.get_eq_getElem, List.getElem_append, List.length_replicate,
+    List.getElem_replicate] at h ⊢
+  have hij' : i.1 ≤ j.1 := hij
+  have hjk' : j.1 ≤ k.1 := hjk
+  by_cases h1 : i.1 < n
+  · by_cases h3 : k.1 < n
+    · simp only [h1, show j.1 < n by omega, ↓reduceDIte]
+    · simp only [h1, h3, ↓reduceDIte] at h
+      exact absurd (h ▸ List.getElem_mem _) ha
+  · simp only [h1, show ¬ k.1 < n by omega, ↓reduceDIte] at h
+    simp only [h1, show ¬ j.1 < n by omega, ↓reduceDIte]
+    exact @hL ⟨i - n, by omega⟩ ⟨j - n, by omega⟩ ⟨k - n, by omega⟩
+      (by simp [Fin.le_def]; omega) (by simp [Fin.le_def]; omega) h
+
+/-- Blocks of copies of distinct elements, one after another, form a contiguous list. -/
+theorem List.isContiguous_get_flatMap_replicate {α : Type*} {l : List (ℕ × α)}
+    (h : (l.map Prod.snd).Nodup) :
+    IsContiguous (l.flatMap fun p ↦ List.replicate p.1 p.2).get := by
+  induction l with
+  | nil => exact fun i ↦ i.elim0
+  | cons p l ih =>
+    rw [List.map_cons, List.nodup_cons] at h
+    refine List.isContiguous_get_replicate_append _ (ih h.2) fun hm ↦ h.1 ?_
+    obtain ⟨q, hq, hpq⟩ := List.mem_flatMap.mp hm
+    exact (List.eq_of_mem_replicate hpq) ▸ List.mem_map_of_mem hq
+
+/-! ### Sets order-connected along a map -/
+
+namespace Set
+
+variable {α β γ : Type*} {S : Set α}
+
+section Preorder
+
+variable [Preorder β] [Preorder γ] {f : α → β} {g : α → γ}
+
+/-- A set is order-connected along `f` when it is the preimage under `f` of an order-connected
+set. -/
+def OrdConnectedAlong (S : Set α) (f : α → β) : Prop := ∃ I : Set β, I.OrdConnected ∧ S = f ⁻¹' I
+
+theorem ordConnectedAlong_iff :
+    S.OrdConnectedAlong f ↔ ∀ a ∈ S, ∀ b ∈ S, ∀ c, f a ≤ f c → f c ≤ f b → c ∈ S := by
+  refine ⟨?_, fun h ↦ ⟨{x | ∃ a ∈ S, ∃ b ∈ S, f a ≤ x ∧ x ≤ f b}, ⟨?_⟩, ?_⟩⟩
+  · rintro ⟨I, hI, rfl⟩ a ha b hb c hac hcb
+    exact hI.out ha hb ⟨hac, hcb⟩
+  · rintro x ⟨a, ha, -, -, hax, -⟩ y ⟨-, -, b, hb, -, hyb⟩ z ⟨hxz, hzy⟩
+    exact ⟨a, ha, b, hb, hax.trans hxz, hzy.trans hyb⟩
+  · ext c
+    exact ⟨fun hc ↦ ⟨c, hc, c, hc, le_rfl, le_rfl⟩,
+      fun ⟨a, ha, b, hb, hac, hcb⟩ ↦ h a ha b hb c hac hcb⟩
+
+instance [Fintype α] [DecidableLE β] [DecidablePred (· ∈ S)] :
+    Decidable (S.OrdConnectedAlong f) :=
+  decidable_of_iff _ ordConnectedAlong_iff.symm
+
+@[simp] theorem ordConnectedAlong_id {S : Set β} : S.OrdConnectedAlong id ↔ S.OrdConnected :=
+  ⟨fun ⟨_, hI, h⟩ ↦ h ▸ hI, fun h ↦ ⟨S, h, rfl⟩⟩
+
+/-- A set order-connected along `g` is order-connected along any `f` whose order `g` preserves. -/
+theorem OrdConnectedAlong.of_le_imp_le (h : ∀ a b, f a ≤ f b → g a ≤ g b)
+    (hS : S.OrdConnectedAlong g) : S.OrdConnectedAlong f :=
+  ordConnectedAlong_iff.2 fun a ha b hb c hac hcb ↦
+    ordConnectedAlong_iff.1 hS a ha b hb c (h a c hac) (h c b hcb)
+
+/-- Maps that induce the same order have the same order-connected sets along them. -/
+theorem ordConnectedAlong_congr (h : ∀ a b, f a ≤ f b ↔ g a ≤ g b) :
+    S.OrdConnectedAlong f ↔ S.OrdConnectedAlong g := by
+  simp only [ordConnectedAlong_iff, h]
+
+end Preorder
+
+/-- Two Boolean maps whose values combine freely do not both have fibres order-connected along a
+map to a linear order. -/
+theorem not_ordConnectedAlong_of_surjective [LinearOrder β] (f : α → β) {φ ψ : α → Bool}
+    (h : Function.Surjective fun a ↦ (φ a, ψ a)) :
+    ¬ ((∀ v, {a | φ a = v}.OrdConnectedAlong f) ∧ ∀ v, {a | ψ a = v}.OrdConnectedAlong f) := by
+  rintro ⟨hφ, hψ⟩
+  -- the lower of the two neighbours of a least combination lies between it and the other
+  have h' : ∀ x y, ∃ a, φ a = x ∧ ψ a = y := fun x y ↦
+    (h (x, y)).imp fun a ha ↦ ⟨congrArg Prod.fst ha, congrArg Prod.snd ha⟩
+  choose w hw using h'
+  obtain ⟨⟨x, y⟩, hm⟩ := Finite.exists_min fun p : Bool × Bool ↦ f (w p.1 p.2)
+  rcases le_total (f (w (!x) y)) (f (w x (!y))) with hle | hle
+  · have := ordConnectedAlong_iff.1 (hφ x) (w x y) (hw x y).1 (w x (!y)) (hw x (!y)).1 (w (!x) y)
+      (hm (!x, y)) hle
+    simp [(hw (!x) y).1] at this
+  · have := ordConnectedAlong_iff.1 (hψ y) (w x y) (hw x y).2 (w (!x) y) (hw (!x) y).2 (w x (!y))
+      (hm (x, !y)) hle
+    simp [(hw x (!y)).2] at this
+
+end Set

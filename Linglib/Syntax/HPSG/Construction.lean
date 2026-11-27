@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.HPSG.Description
+public import Linglib.Logic.RSRL.Semantics
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
@@ -13,63 +13,28 @@ public import Mathlib.Tactic.FinCases
 /-!
 # The construct hierarchy of Sign-Based Construction Grammar in RSRL
 
-A construct pairs a mother sign with daughter signs, and a construction is a constraint on the
-constructs of one sort. Construct sorts are classified by how they are headed and by the kind of
-clause they form. A sort below one sort of each dimension inherits the constraints on both,
-since a constraint on a sort holds of every entity below it. This file states in RSRL the
-fragment of Sign-Based Construction Grammar with which Sag analyses the English filler-gap
-clauses.
+In Sign-Based Construction Grammar a *construct* is a mother sign with its daughter signs, and a
+*construction* is a constraint on the constructs of one sort. This file states in RSRL the part
+of the grammar with which Sag analyses the English filler-gap clauses, such as *My bagels, she
+likes*.
 
-The headed construction gives the mother the category of its head daughter. The filler-head
-construction identifies the filler daughter with the first sign on the head daughter's `GAP`
-list and passes the rest of the list to the mother. Each filler-gap clause adds constraints on
-the categories of its daughters and on the inversion, independence and verb form of its head,
-the clause types fix the semantic type and verb form of the mother, and the topicalized,
-wh-exclamative and the-clause constructions give the head daughter exactly one gap. The
-principle `memberDef` defines list membership, uniquely on lists without cycles.
-
-## Main definitions
-
-* `HPSG.Construction.Srt`: the sorts, with the hierarchies of categories, verb forms, semantic
-  types, lists, signs, constructs and clauses.
-* `HPSG.Construction.sig`: the signature.
-* `HPSG.Construction.fillerHeadPrinciple`: the filler-head construction.
-* `HPSG.Construction.constraints`: the constructions, each a constraint on one sort.
-* `HPSG.Construction.grammar`: the grammar that states the constructions.
-* `HPSG.Construction.ListMem`: the elements of a list in an interpretation.
-* `HPSG.Construction.memberDef`: the principle that defines list membership.
-
-## Main results
-
-* `HPSG.Construction.forall_satisfies_grammar_iff_of_nsWhIntCl`: a nonsubject wh-interrogative
-  satisfies the grammar exactly when it satisfies the four constructions it inherits.
-* `HPSG.Construction.satisfies_mtrGap_iff`: in a model of the grammar, the mother of a
-  filler-head construct has the `GAP` list that remains of its head daughter's.
-* `HPSG.Construction.satisfies_hdCat_iff`: in a model of the grammar, the head daughter of a
-  headed construct has the features of its mother's category.
-* `HPSG.Construction.not_le_covertExpr`: no daughter of a construct is covert.
-* `HPSG.Construction.models_memberDef_iff`: on lists without cycles, a well-typed interpretation
-  models `memberDef` exactly when `member` is list membership.
+Construct sorts are classified by how they are headed and by the kind of clause they form, and a
+sort below one of each inherits the constraints on both. The *filler-head* construction
+identifies the filler daughter with the first sign on the head daughter's `GAP` list and passes
+the rest of the list to the mother (`HPSG.Construction.sortAt_mtr_gap_iff`). The principle
+`HPSG.Construction.memberDef` defines the relation symbol `member` as list membership.
 
 ## Implementation notes
 
-As in Sag's grammars, a `GAP` list contains signs. Signs are overt or covert, only overt signs are
-daughters of constructs, and a word leaves a covert sign of sort `gap` on its `GAP` list for an
-argument that it does not realize. The features of `SYN` and the index of `SEM` are attributes of
-the sign itself. The filler-head construction identifies the `SYN` value of the filler with that of
-the gap except for `WH` and `REL`, which are not in the signature, so the filler and the gap share
-their `CAT` and `GAP` values, and, in Sag's synopsis of the framework, their index. Daughters are
-attributes named by their role rather than members of a `DTRS` list. As in Sag's signature, a verbal
-category has a verb form and an independence value and a verb an inversion value; of the features he
-declares, only those that the constructions here mention are in the signature, so `WH`, `REL`,
-`VAL`, `SELECT`, `AUX` and `STORE` are not, and the semantic type of the mother stands in for its
-meaning. Sag places the topicalized clause below the filler-head construct alone and gives its head
-daughter an austinean meaning, which the mother's meaning inherits; here the mother's type is
-stated.
+As in Sag's grammars, a `GAP` list contains signs, and a word leaves a covert sign of sort `gap`
+on it for an argument that it does not realize. Daughters are attributes named by their role,
+not members of a `DTRS` list. The signature has only the features that the constructions here
+mention; `WH`, `REL`, `VAL`, `SELECT`, `GRAM` and `STORE` are left out, and the semantic type of
+the mother stands in for its meaning.
 
-The aux-initial construction is stated in `Studies/SagEtAl2020` and the coordinate construction
-in `Studies/SagWasowBender2003`. The worked constructs are in `Studies/Sag2010`, which checks
-the paper's judgments against the grammar and derives the island status of the five clauses.
+The subject-predicate, predicational head-complement and aux-initial constructions are in
+`Studies/SagEtAl2020`, the coordinate construction in `Studies/SagWasowBender2003`, and the
+worked constructs in `Studies/Sag2010`.
 
 ## References
 
@@ -106,15 +71,17 @@ inductive Srt
   | sign | overtExpr | covertExpr | gap
   -- constructs
   | construct | phrasalCxt | headedCxt | clause | coordCxt | fillerHeadCxt | auxInitialCxt
+  | subjHeadCxt | predHdCompCxt
   -- clause types
   | coreCl | relativeCl | declarativeCl | interrogativeCl | exclamativeCl
   -- clauses that are headed constructs
   | topCl | whExclCl | nsWhIntCl | whRelCl | finWhRelCl | infWhRelCl | theCl | polarIntCl
-  | auxInitialExclCl
+  | auxInitialExclCl | subjPredCl
   deriving DecidableEq, Fintype, Repr
 
-/-- The immediate supersorts of a sort. Each filler-gap clause other than the topicalized clause
-and each aux-initial clause has two, a headed construct and a clause type. -/
+/-- The immediate supersorts of a sort. Each filler-gap clause other than the topicalized clause,
+each aux-initial clause and the subject-predicate clause has two, a headed construct and a clause
+type. -/
 def Srt.parents : Srt → List Srt
   | .top => []
   | .cat | .vform | .boolean | .semType | .list | .idx | .sign | .construct => [.top]
@@ -131,7 +98,7 @@ def Srt.parents : Srt → List Srt
   | .gap => [.covertExpr]
   | .phrasalCxt => [.construct]
   | .headedCxt | .clause | .coordCxt => [.phrasalCxt]
-  | .fillerHeadCxt | .auxInitialCxt => [.headedCxt]
+  | .fillerHeadCxt | .auxInitialCxt | .subjHeadCxt | .predHdCompCxt => [.headedCxt]
   | .coreCl | .relativeCl => [.clause]
   | .declarativeCl | .interrogativeCl | .exclamativeCl => [.coreCl]
   | .topCl => [.fillerHeadCxt]
@@ -142,6 +109,7 @@ def Srt.parents : Srt → List Srt
   | .finWhRelCl | .infWhRelCl => [.whRelCl]
   | .polarIntCl => [.auxInitialCxt, .interrogativeCl]
   | .auxInitialExclCl => [.auxInitialCxt, .exclamativeCl]
+  | .subjPredCl => [.subjHeadCxt, .declarativeCl]
 
 /-- The length of the longest chain from a sort up to `top`. -/
 def Srt.rank : Srt → ℕ
@@ -152,10 +120,11 @@ def Srt.rank : Srt → ℕ
   | .covertExpr | .phrasalCxt => 2
   | .verb | .comp | .nominal | .adj | .adv | .fin | .inf | .gap | .headedCxt | .clause
   | .coordCxt => 3
-  | .noun | .prep | .fillerHeadCxt | .auxInitialCxt | .coreCl | .relativeCl => 4
+  | .noun | .prep | .fillerHeadCxt | .auxInitialCxt | .subjHeadCxt | .predHdCompCxt | .coreCl
+  | .relativeCl => 4
   | .declarativeCl | .interrogativeCl | .exclamativeCl | .topCl | .whRelCl => 5
   | .whExclCl | .nsWhIntCl | .finWhRelCl | .infWhRelCl | .theCl | .polarIntCl
-  | .auxInitialExclCl => 6
+  | .auxInitialExclCl | .subjPredCl => 6
 
 theorem Srt.rank_lt_of_mem_parents : ∀ σ : Srt, ∀ τ ∈ σ.parents, τ.rank < σ.rank := by
   decide +kernel
@@ -171,10 +140,11 @@ instance : DecidableLE Srt :=
 
 /-- The attributes. A construct has a mother and daughters. A sign has a category, a `GAP` list,
 a semantic type and an index. A verbal category has a verb form and is independent or not, and a
-verb is inverted or not. A nonempty list has a first element and a rest. -/
+verb is inverted or not and has a positive or a negative value for `AUX`. A nonempty list has a
+first element and a rest. -/
 inductive Attr
-  | MTR | HDDTR | FILLERDTR | CONJ1 | CONJ2 | CAT | VFORM | IC | INV | GAP | SEM | INDEX | FIRST
-  | REST
+  | MTR | HDDTR | FILLERDTR | CONJ1 | CONJ2 | CAT | VFORM | IC | INV | AUX | GAP | SEM | INDEX
+  | FIRST | REST
   deriving DecidableEq, Fintype, Repr
 
 /-- The sorts that introduce each attribute, with its value sort there. The mother of a phrasal
@@ -187,7 +157,7 @@ def Attr.decl : Attr → List (Srt × Srt)
   | .CAT => [(.sign, .cat)]
   | .VFORM => [(.verbal, .vform)]
   | .IC => [(.verbal, .boolean)]
-  | .INV => [(.verb, .boolean)]
+  | .INV | .AUX => [(.verb, .boolean)]
   | .GAP => [(.sign, .list)]
   | .SEM => [(.sign, .semType)]
   | .INDEX => [(.sign, .idx)]
@@ -220,7 +190,7 @@ instance {U : Type*} (ρ : sig.Rel) : DecidablePred (· ∈ @noRel U ρ) := fun 
 its head daughter. -/
 def headedPrinciple : Constraint sig where
   sort := .headedCxt
-  body := .pathEq (.path [.MTR, .CAT]) (.path [.HDDTR, .CAT])
+  atoms := [.eq [.MTR, .CAT] [.HDDTR, .CAT]]
 
 /-- The filler-head construction ([sag-2010] (58), [sag-2012] (141)). The head daughter is
 verbal. The filler daughter shares its category, its `GAP` list and its index with the first
@@ -228,40 +198,39 @@ sign on the head daughter's `GAP` list, and the mother's `GAP` list is the rest 
 daughter's. -/
 def fillerHeadPrinciple : Constraint sig where
   sort := .fillerHeadCxt
-  body :=
-    .and (.sortAssign (.path [.HDDTR, .CAT]) .verbal)
-      (.and (.pathEq (.path [.FILLERDTR, .CAT]) (.path [.HDDTR, .GAP, .FIRST, .CAT]))
-        (.and (.pathEq (.path [.FILLERDTR, .GAP]) (.path [.HDDTR, .GAP, .FIRST, .GAP]))
-          (.and (.pathEq (.path [.FILLERDTR, .INDEX]) (.path [.HDDTR, .GAP, .FIRST, .INDEX]))
-            (.pathEq (.path [.MTR, .GAP]) (.path [.HDDTR, .GAP, .REST])))))
+  atoms :=
+    [.sort [.HDDTR, .CAT] .verbal,
+      .eq [.FILLERDTR, .CAT] [.HDDTR, .GAP, .FIRST, .CAT],
+      .eq [.FILLERDTR, .GAP] [.HDDTR, .GAP, .FIRST, .GAP],
+      .eq [.FILLERDTR, .INDEX] [.HDDTR, .GAP, .FIRST, .INDEX],
+      .eq [.MTR, .GAP] [.HDDTR, .GAP, .REST]]
 
 /-- The core clause construction of [sag-2010]: the mother of a core clause is finite or
 infinitival. -/
 def corePrinciple : Constraint sig where
   sort := .coreCl
-  body := .sortAssign (.path [.MTR, .CAT, .VFORM]) .core
+  atoms := [.sort [.MTR, .CAT, .VFORM] .core]
 
 /-- The mother of a declarative clause has an austinean semantic type. -/
 def declarativePrinciple : Constraint sig where
   sort := .declarativeCl
-  body := .sortAssign (.path [.MTR, .SEM]) .austinean
+  atoms := [.sort [.MTR, .SEM] .austinean]
 
 /-- The mother of an interrogative clause denotes a question. -/
 def interrogativePrinciple : Constraint sig where
   sort := .interrogativeCl
-  body := .sortAssign (.path [.MTR, .SEM]) .question
+  atoms := [.sort [.MTR, .SEM] .question]
 
 /-- The mother of an exclamative clause denotes a fact. -/
 def exclamativePrinciple : Constraint sig where
   sort := .exclamativeCl
-  body := .sortAssign (.path [.MTR, .SEM]) .fact
+  atoms := [.sort [.MTR, .SEM] .fact]
 
 /-- The relative construction ([sag-2010] (91)): the mother of a relative clause is neither
 inverted nor independent. -/
 def relativePrinciple : Constraint sig where
   sort := .relativeCl
-  body := .and (.sortAssign (.path [.MTR, .CAT, .INV]) .minus)
-    (.sortAssign (.path [.MTR, .CAT, .IC]) .minus)
+  atoms := [.sort [.MTR, .CAT, .INV] .minus, .sort [.MTR, .CAT, .IC] .minus]
 
 /-- The topicalization construction ([sag-2010] (61)). The filler daughter is nonverbal. The head
 daughter is an uninverted, independent, finite projection of a verb, which excludes the
@@ -269,57 +238,57 @@ complementizer-headed clause that a the-clause allows, and it has exactly one ga
 austinean. -/
 def topPrinciple : Constraint sig where
   sort := .topCl
-  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
-    (.and (.sortAssign (.path [.HDDTR, .CAT]) .verb)
-      (.and (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus)
-        (.and (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus)
-          (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
-            (.and (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)
-              (.sortAssign (.path [.MTR, .SEM]) .austinean))))))
+  atoms :=
+    [.sort [.FILLERDTR, .CAT] .nonverbal,
+      .sort [.HDDTR, .CAT] .verb,
+      .sort [.HDDTR, .CAT, .INV] .minus,
+      .sort [.HDDTR, .CAT, .IC] .plus,
+      .sort [.HDDTR, .CAT, .VFORM] .fin,
+      .sort [.HDDTR, .GAP, .REST] .elist,
+      .sort [.MTR, .SEM] .austinean]
 
 /-- The wh-exclamative construction ([sag-2010] (70)). The filler daughter is nonverbal, and the
 head daughter is uninverted and finite and has exactly one gap. -/
 def whExclPrinciple : Constraint sig where
   sort := .whExclCl
-  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
-    (.and (.sortAssign (.path [.HDDTR, .CAT, .INV]) .minus)
-      (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
-        (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist)))
+  atoms :=
+    [.sort [.FILLERDTR, .CAT] .nonverbal,
+      .sort [.HDDTR, .CAT, .INV] .minus,
+      .sort [.HDDTR, .CAT, .VFORM] .fin,
+      .sort [.HDDTR, .GAP, .REST] .elist]
 
 /-- The nonsubject wh-interrogative construction ([sag-2010] (80)). The filler daughter is
 nonverbal, and the head daughter is inverted exactly when it is independent. -/
 def nsWhIntPrinciple : Constraint sig where
   sort := .nsWhIntCl
-  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
-    (.pathEq (.path [.HDDTR, .CAT, .INV]) (.path [.HDDTR, .CAT, .IC]))
+  atoms := [.sort [.FILLERDTR, .CAT] .nonverbal, .eq [.HDDTR, .CAT, .INV] [.HDDTR, .CAT, .IC]]
 
 /-- The wh-relative construction ([sag-2010] (90)) gives the mother the semantic type of a
 modifier. -/
 def whRelPrinciple : Constraint sig where
   sort := .whRelCl
-  body := .sortAssign (.path [.MTR, .SEM]) .modifier
+  atoms := [.sort [.MTR, .SEM] .modifier]
 
 /-- The finite wh-relative construction ([sag-2010] (92)). The mother is finite and the filler
 daughter nominal, a noun phrase or a prepositional phrase. -/
 def finWhRelPrinciple : Constraint sig where
   sort := .finWhRelCl
-  body := .and (.sortAssign (.path [.MTR, .CAT, .VFORM]) .fin)
-    (.sortAssign (.path [.FILLERDTR, .CAT]) .nominal)
+  atoms := [.sort [.MTR, .CAT, .VFORM] .fin, .sort [.FILLERDTR, .CAT] .nominal]
 
 /-- The infinitival wh-relative construction of [sag-2010]. The filler daughter is a
 prepositional phrase and the head daughter is infinitival. -/
 def infWhRelPrinciple : Constraint sig where
   sort := .infWhRelCl
-  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .prep)
-    (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .inf)
+  atoms := [.sort [.FILLERDTR, .CAT] .prep, .sort [.HDDTR, .CAT, .VFORM] .inf]
 
 /-- The the-clause construction ([sag-2010] (108)). The filler daughter is nonverbal, and the
 head daughter is finite and has exactly one gap. -/
 def thePrinciple : Constraint sig where
   sort := .theCl
-  body := .and (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal)
-    (.and (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin)
-      (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist))
+  atoms :=
+    [.sort [.FILLERDTR, .CAT] .nonverbal,
+      .sort [.HDDTR, .CAT, .VFORM] .fin,
+      .sort [.HDDTR, .GAP, .REST] .elist]
 
 /-- The constructions of the fragment. -/
 def constraints : List (Constraint sig) :=
@@ -329,7 +298,7 @@ def constraints : List (Constraint sig) :=
     thePrinciple]
 
 /-- The grammar of the fragment. -/
-abbrev grammar : Grammar sig := .ofList (constraints.map Constraint.toDescription)
+abbrev grammar : Grammar sig := .ofConstraints constraints
 
 /-- The signature admits the paths of the filler-head construction from the sort it constrains,
 and it admits no filler daughter in a coordinate construct. -/
@@ -356,58 +325,37 @@ theorem map_sort_inherited_fillerGap :
 
 variable {U : Type*} {I : Interpretation sig U} {g : ℕ → U} {u : U}
 
-theorem satisfies_body (hI : I.Models grammar) {c : Constraint sig} (hc : c ∈ constraints)
-    (hu : I.S u ≤ c.sort) : I.Satisfies (fun _ ↦ u) u c.body :=
-  hI.satisfies_body (List.mem_map_of_mem hc) hu
-
-/-- An entity of the nonsubject wh-interrogative sort satisfies the grammar exactly when it
-satisfies the headed, filler-head, core clause, interrogative and nonsubject wh-interrogative
-constructions. Only the last is stated on its sort. -/
+/-- An entity of the nonsubject wh-interrogative sort satisfies the grammar exactly when the
+atoms of the headed, filler-head, core clause, interrogative and nonsubject wh-interrogative
+constructions hold of it. Only the last is stated on its sort. -/
 theorem forall_satisfies_grammar_iff_of_nsWhIntCl (hu : I.S u = .nsWhIntCl) :
     (∀ d ∈ grammar, I.Satisfies g u d) ↔
       ∀ c ∈ [headedPrinciple, fillerHeadPrinciple, corePrinciple, interrogativePrinciple,
-        nsWhIntPrinciple], I.Satisfies g u c.body := by
-  rw [grammar, Interpretation.forall_satisfies_map_toDescription_iff, hu]
+        nsWhIntPrinciple], ∀ a ∈ c.atoms, a.Holds I u := by
+  rw [Interpretation.forall_satisfies_ofConstraints_iff, hu]
   rfl
 
 /-- In a model of the grammar, the mother of a filler-head construct has a `GAP` list of sort
 `σ` exactly when the rest of its head daughter's list does, since the filler discharges the
 first gap and the rest passes up. The mother's list is therefore empty exactly when the head
 daughter has one gap. -/
-theorem satisfies_mtrGap_iff (hI : I.Models grammar) (hu : I.S u ≤ .fillerHeadCxt) (σ : Srt) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) σ) ↔
-      I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) σ) := by
-  have h := satisfies_body hI (c := fillerHeadPrinciple) (by simp [constraints]) hu
-  simp only [fillerHeadPrinciple, Interpretation.satisfies_and] at h
-  obtain ⟨-, -, -, -, v, hv, hv'⟩ := h
-  simp only [Interpretation.satisfies_sortAssign]
-  constructor <;> rintro ⟨w, hw, hle⟩
-  · obtain rfl : w = v := Option.mem_unique hw hv
-    exact ⟨w, hv', hle⟩
-  · obtain rfl : w = v := Option.mem_unique hw hv'
-    exact ⟨w, hv, hle⟩
+theorem sortAt_mtr_gap_iff (hI : I.Models grammar) (hu : I.S u ≤ .fillerHeadCxt) (σ : Srt) :
+    I.SortAt u [.MTR, .GAP] σ ↔ I.SortAt u [.HDDTR, .GAP, .REST] σ :=
+  (hI.pathEq fillerHeadPrinciple hu).sortAt_iff
 
 /-- In a model of the grammar, the mother and the head daughter of a headed construct share
 their category, so a feature of the mother's category has the same value on the head's. -/
-theorem satisfies_hdCat_iff (hI : I.Models grammar) (hu : I.S u ≤ .headedCxt) (p : Path sig)
-    (σ : Srt) :
-    I.Satisfies (fun _ ↦ u) u (.sortAssign (.path (.MTR :: .CAT :: p)) σ) ↔
-      I.Satisfies (fun _ ↦ u) u (.sortAssign (.path (.HDDTR :: .CAT :: p)) σ) := by
-  obtain ⟨v, hv, hv'⟩ := satisfies_body hI (c := headedPrinciple) (by simp [constraints]) hu
-  simp only [Interpretation.satisfies_sortAssign]
-  rw [show (Attr.MTR :: .CAT :: p : Path sig) = [.MTR, .CAT] ++ p from rfl,
-    show (Attr.HDDTR :: .CAT :: p : Path sig) = [.HDDTR, .CAT] ++ p from rfl,
-    Interpretation.termDenot_path_append, Interpretation.termDenot_path_append,
-    Option.mem_def.1 hv, Option.mem_def.1 hv']
+theorem sortAt_mtr_cat_iff (hI : I.Models grammar) (hu : I.S u ≤ .headedCxt) (p : Path sig)
+    (σ : Srt) : I.SortAt u (.MTR :: .CAT :: p) σ ↔ I.SortAt u (.HDDTR :: .CAT :: p) σ :=
+  (hI.pathEq headedPrinciple hu (p := [.MTR, .CAT]) (q := [.HDDTR, .CAT])).sortAt_append_iff p
 
-theorem satisfies_le_of_mem_termDenot (hI : I.IsWellTyped) {p : Path sig} {α : Attr} {σ : Srt}
-    (hσ : ∀ d ∈ Attr.decl α, d.1 ≤ σ) {v : U}
-    (hv : v ∈ I.termDenot g (.path (p ++ [α])) u) :
-    I.Satisfies g u (.sortAssign (.path p) σ) := by
-  rw [Interpretation.termDenot_path_append, Option.mem_def, Option.bind_eq_some_iff] at hv
-  obtain ⟨w, hw, hα⟩ := hv
-  obtain ⟨τ, hτ, -⟩ := hI α w v (by simpa [Term.path, Interpretation.termDenot] using hα)
-  obtain ⟨d, hd, hle, -⟩ := exists_mem_decl_of_appropOfDecl_eq_some _ hτ
+/-- In a well-typed interpretation, a path that an attribute continues leads to an entity of a
+sort that introduces the attribute. -/
+theorem sortAt_of_sortAt_concat (hI : I.IsWellTyped) {p : Path sig} {α : Attr} {σ τ : Srt}
+    (hσ : ∀ d ∈ Attr.decl α, d.1 ≤ σ) (h : I.SortAt u (p ++ [α]) τ) : I.SortAt u p σ := by
+  obtain ⟨w, hw, v, hv, -⟩ := Interpretation.sortAt_append.1 h
+  obtain ⟨ρ, hρ, -⟩ := hI α w v (by simpa [Interpretation.eval_cons] using hv)
+  obtain ⟨d, hd, hle, -⟩ := exists_mem_decl_of_appropOfDecl_eq_some _ hρ
   exact ⟨w, hw, hle.trans (hσ d hd)⟩
 
 /-- No daughter or mother of a construct is covert in a well-typed interpretation, since the

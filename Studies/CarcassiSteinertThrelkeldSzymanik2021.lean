@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.InformationTheory.BinaryEntropy
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Mathlib.Order.UpperLower.Closure
 
 /-!

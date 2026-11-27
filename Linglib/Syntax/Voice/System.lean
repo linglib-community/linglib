@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Voice.Basic
@@ -16,7 +21,7 @@ Of the four characteristics Erlewine, Levin and van Urk give an Austronesian-typ
 the privileged argument realized in one form or position whatever its function is
 `Voice.pivot`, and verb morphology varying with its choice, obliques included, is `Voice.marker`
 and `IsMultiple`; the extraction restriction to the pivot and the marking of non-pivot subjects
-are recorded where a fragment states them.
+are recorded where a language file states them.
 
 ## Main definitions
 

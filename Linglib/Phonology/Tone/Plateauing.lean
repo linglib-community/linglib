@@ -10,7 +10,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Linglib.Core.Data.List.TakeDrop
 public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Phonology.Subregular.Function.Dependence
 public import Linglib.Phonology.Autosegmental.Hull
 public import Linglib.Phonology.Tone.AssociationState
 

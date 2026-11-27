@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Agreement.Hierarchy
 public import Linglib.Data.Examples.WechslerZlatic2000
 
@@ -21,10 +21,13 @@ bundle with the bundle it reads, which on *deca* puts feminine singular on the m
 neuter plural on the pronoun at once, while a relative pronoun reads concord and index both,
 through the features its form is marked for (57). Since only the index touches the semantics,
 semantic agreement can surface on a concord reader only if it surfaces on the pronouns: the
-index readers form a lower set of [corbett-1991]'s Agreement Hierarchy however the open
+index readers form an upper set of [corbett-1991]'s Agreement Hierarchy however the open
 predicate position is resolved.
 
 ## Implementation notes
+
+* The two agreement relations are compatibility of the substrate's projections of a bundle,
+  `Agreement.Bundle.concord` and `Agreement.Bundle.index`.
 
 * Lexical entries carry the singular citation form's concord number for count nouns and the
   lexically fixed values for collectives and pluralia tantum, whose declension is the value
@@ -380,7 +383,7 @@ def concordBundle (c : Case) (n : Flat Number) (g : Flat UD.Gender) : Bundle
 /-- The bundle of an index-reading target, a pronoun or a finite verb, in the features it is
 marked for; finite verbs and auxiliaries are unmarked for gender (p. 816). -/
 def indexBundle (p : Flat Person) (n : Flat Number) (g : Flat UD.Gender) : Bundle
-  | .person => p
+  | .person => Agreement.Dimension.Slot.ofFlat .person p
   | .number => n
   | .gender => g
   | _ => ⊥
@@ -392,11 +395,12 @@ def Noun.concordAt (n : Noun) (c : Case) : Bundle :=
 /-- The noun's index bundle. -/
 def Noun.indexTarget (n : Noun) : Bundle := indexBundle n.index.person n.index.number n.index.gender
 
-/-- Concord: the target's bundle is compatible with the noun's concord at the case. -/
-def ConcordAgrees (a : Bundle) (n : Noun) (c : Case) : Prop := Compat a (n.concordAt c)
+/-- Concord: the target's concord is compatible with the noun's at the case. -/
+def ConcordAgrees (a : Bundle) (n : Noun) (c : Case) : Prop :=
+  Compat a.concord (n.concordAt c).concord
 
-/-- Index agreement: the target's bundle is compatible with the noun's index. -/
-def IndexAgrees (p : Bundle) (n : Noun) : Prop := Compat p n.indexTarget
+/-- Index agreement: the target's index is compatible with the noun's. -/
+def IndexAgrees (p : Bundle) (n : Noun) : Prop := Compat p.index n.indexTarget.index
 
 instance (a : Bundle) (n : Noun) (c : Case) : Decidable (ConcordAgrees a n c) :=
   inferInstanceAs (Decidable (Compat _ _))
@@ -428,10 +432,12 @@ theorem deca_mixed_agreement :
 theorem indexAgrees_iff_concordAgrees {n : Noun} (hn : ConInd n) (c : Case)
     (num : Flat Number) (g : Flat UD.Gender) :
     IndexAgrees (indexBundle ⊥ num g) n ↔ ConcordAgrees (concordBundle c num g) n c := by
-  simp only [IndexAgrees, ConcordAgrees, Noun.indexTarget, Noun.concordAt, compat_pi_iff]
-  refine ⟨fun h d ↦ ?_, fun h d ↦ ?_⟩ <;> have h1 := h .number <;> have h2 := h .gender <;>
-    cases d <;> simp_all [indexBundle, concordBundle, hn.1, hn.2, bot_compat,
-      compat_self]
+  simp only [IndexAgrees, ConcordAgrees, compat_pi_iff, Subtype.forall, Bundle.index_apply,
+    Bundle.concord_apply, Noun.indexTarget, Noun.concordAt]
+  refine ⟨fun h d hd ↦ ?_, fun h d hd ↦ ?_⟩ <;>
+    have h1 := h .number (by decide) <;> have h2 := h .gender (by decide) <;>
+    cases d <;> simp_all [indexBundle, concordBundle, hn.1, hn.2, bot_compat, compat_self,
+      Agreement.Dimension.phi, Agreement.Dimension.concord]
 
 /-! ### Relative pronouns (57) -/
 
@@ -448,7 +454,7 @@ agree with their head nouns in both CONCORD and INDEX, but not all pronouns are 
 all features" (p. 821). -/
 def Modifies (r : RelativePronoun) (n : Noun) : Prop :=
   (∃ m ∈ r.mod, Compat m.1 ↑n.concord.number ∧ Compat m.2 ↑n.concord.gender) ∧
-    Compat r.index n.indexTarget
+    Compat r.index.index n.indexTarget.index
 
 instance (r : RelativePronoun) (n : Noun) : Decidable (Modifies r n) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -593,7 +599,7 @@ def readsIndex (predicate : Bool) : Position → Prop
 instance (p : Bool) : DecidablePred (readsIndex p) := fun t ↦ by
   cases t <;> simp only [readsIndex] <;> infer_instance
 
-theorem indexReaders_lowerSet (p : Bool) : IsLowerSet {t | readsIndex p t} := by
+theorem indexReaders_upperSet (p : Bool) : IsUpperSet {t | readsIndex p t} := by
   intro t u hle hmem
   revert t u
   cases p <;> decide

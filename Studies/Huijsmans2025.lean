@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Tense.Evidential
+public import Linglib.Semantics.Evidentiality.Temporal.Frame
 
 /-!
 # Huijsmans (2025): Timing of evidence and epistemic modal claims
@@ -21,7 +21,7 @@ take *səm* and *will*, and contexts with evidence arising at or after it take *
 gone missing.
 
 The rival analysis in terms of an evidence acquisition time relates that time to the event
-time on the library's `Tense.EvidentialFrame`. Evidence that has become true can
+time on the library's `Evidential.Frame`. Evidence that has become true can
 be acquired only afterwards, so the inferential's presupposition entails downstream evidence
 (`downstream_of_inferentialPresup`); the converse fails, and the contexts where the speaker
 learns of rain or of a night's clam-digging after the wetting or the cold are the wedge:
@@ -106,13 +106,13 @@ def modalBaseAt (mb : Set (T → W → Prop)) (t : T) : Background W :=
 reference time in every best world. -/
 def futureClaim (mb : Set (T → W → Prop)) (h : Background W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
-  bestWorlds (modalBaseAt mb t) h w ⊆ {w' | ∃ t', t ≤ t' ∧ p t' w'}
+  (modalBaseAt mb t).bestWorlds h w ⊆ {w' | ∃ t', t ≤ t' ∧ p t' w'}
 
 /-- The at-issue content of *č̓ɛ* and *must*, (87) and (96), is that the prejacent holds at the
 reference time in every best world. -/
 def necessityClaim (mb : Set (T → W → Prop)) (h : Background W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
-  bestWorlds (modalBaseAt mb t) h w ⊆ {w' | p t w'}
+  (modalBaseAt mb t).bestWorlds h w ⊆ {w' | p t w'}
 
 theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : Background W}
     {p : T → W → Prop} {t : T} {w : W} (hc : necessityClaim mb h p t w) :
@@ -123,23 +123,23 @@ theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : Backgro
 
 /-- On the rival analysis (39), the future morphemes require the evidence to be acquired before the
 event, and the inferential at or after it, the frame's `Downstream`. -/
-def EatFuture (f : EvidentialFrame T) : Prop :=
-  ({ eventToAcquisition := ⟦future⟧ } : EvidentialFrame.Constraint).Holds f
+def EatFuture (f : Evidential.Frame T) : Prop :=
+  ({ eventToAcquisition := ⟦future⟧ } : Evidential.Frame.Constraint).Holds f
 
-instance (f : EvidentialFrame T) : Decidable (EatFuture f) :=
-  inferInstanceAs (Decidable (EvidentialFrame.Constraint.Holds _ f))
+instance (f : Evidential.Frame T) : Decidable (EatFuture f) :=
+  inferInstanceAs (Decidable (Evidential.Frame.Constraint.Holds _ f))
 
-theorem eatFuture_iff {f : EvidentialFrame T} : EatFuture f ↔ f.acquisitionTime < f.eventTime := by
-  simp [EatFuture, EvidentialFrame.Constraint.Holds]
+theorem eatFuture_iff {f : Evidential.Frame T} : EatFuture f ↔ f.acquisitionTime < f.eventTime := by
+  simp [EatFuture, Evidential.Frame.Constraint.Holds]
 
 /-- A modal-base proposition can be acquired only once it holds. -/
-def AcquiredAfterOnset (mb : Set (T → W → Prop)) (w : W) (f : EvidentialFrame T) : Prop :=
+def AcquiredAfterOnset (mb : Set (T → W → Prop)) (w : W) (f : Evidential.Frame T) : Prop :=
   ∀ q ∈ mb, ∀ m, IsEarliest q w m → m ≤ f.acquisitionTime
 
 /-- If the prejacent's earliest moment is the event time, the inferential's presupposition entails
 downstream evidence (Section 4.2). -/
 theorem downstream_of_inferentialPresup {mb : Set (T → W → Prop)} {p : T → W → Prop} {w : W}
-    {f : EvidentialFrame T} (hacq : AcquiredAfterOnset mb w f)
+    {f : Evidential.Frame T} (hacq : AcquiredAfterOnset mb w f)
     (hev : IsEarliest p w f.eventTime) (h : InferentialPresup mb p w) : f.Downstream := by
   obtain ⟨q, hq, mq, mp, hmq, hmp, hle⟩ := h
   rw [hmp.unique hev] at hle
@@ -170,7 +170,7 @@ variable (c : Context)
 
 def mb : Set (ℤ → Unit → Prop) := {q | ∃ o ∈ c.onsets, q = from' o}
 
-def frame : EvidentialFrame ℤ :=
+def frame : Evidential.Frame ℤ :=
   { speechTime := c.speech, eventTime := c.prejacent, acquisitionTime := c.acquisition }
 
 -- (35)

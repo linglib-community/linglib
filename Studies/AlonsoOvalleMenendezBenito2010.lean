@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 public import Linglib.Data.Examples.Readers
@@ -141,7 +141,7 @@ instance (w : Room) : DecidablePred (inRoom w) := fun r => inferInstanceAs (Deci
 abbrev house : Finset Room := {.bedroom, .livingRoom, .bathroom, .kitchen}
 
 /-- Pedro's epistemic alternatives, the rooms he takes to be possible from any world. -/
-def epist (A : Finset Room) : SetRel Room Room := .ofSuccessors fun _ ↦ ↑A
+def epist (A : Finset Room) : SetRel Room Room := .cgraph fun _ ↦ ↑A
 
 instance (A : Finset Room) (w r : Room) : Decidable (w ~[epist A] r) :=
   inferInstanceAs (Decidable (r ∈ A))
@@ -163,7 +163,7 @@ instance (w : Candidate) : DecidablePred (hires w) := fun c => inferInstanceAs (
 
 /-- The permitted hires, from any world. -/
 def permitted : SetRel Candidate Candidate :=
-  .ofSuccessors fun _ ↦ ↑({.phdA, .phdB} : Finset Candidate)
+  .cgraph fun _ ↦ ↑({.phdA, .phdB} : Finset Candidate)
 
 instance (w c : Candidate) : Decidable (w ~[permitted] c) :=
   inferInstanceAs (Decidable (c ∈ ({.phdA, .phdB} : Finset Candidate)))

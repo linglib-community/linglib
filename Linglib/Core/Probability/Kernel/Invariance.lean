@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
 public import Mathlib.Probability.Kernel.Invariance
 public import Mathlib.Probability.Kernel.Irreducible
@@ -24,6 +25,11 @@ probability measure. When the kernel is irreducible with respect to the counting
 state reaching every state, it has exactly one, and that measure charges every state; conversely a
 Markov kernel whose invariant probability measures all charge every state is irreducible.
 
+On two states `a` and `b`, a Markov kernel moves the mass of `a` affinely, toward
+`κ b {a} / (κ b {a} + κ a {b})` by the factor `1 - κ b {a} - κ a {b}`; that point is the invariant
+probability of `a`, and from any start the chain converges to it whenever the factor has modulus
+below one.
+
 ## Main statements
 
 * `ProbabilityTheory.Kernel.Invariant.map`: if `η (f a) = (κ a).map f` for all `a`, an invariant
@@ -40,6 +46,9 @@ Markov kernel whose invariant probability measures all charge every state is irr
   every point.
 * `ProbabilityTheory.Kernel.isIrreducible_count_of_measure_singleton_ne_zero`: a Markov kernel on
   a finite type whose invariant probability measures all charge every point is irreducible.
+* `ProbabilityTheory.Kernel.invariant_iff_of_pair`,
+  `ProbabilityTheory.Kernel.tendsto_pow_comp_real_singleton_of_pair`: on two states, invariance is
+  detailed balance, and the chain converges to its invariant probability.
 
 ## Implementation notes
 
@@ -188,7 +197,7 @@ theorem Invariant.eq_of_isIrreducible [IsMarkovKernel κ] [IsIrreducible Measure
     refine hwinv.measure_singleton_ne_zero (fun h0 ↦ ?_) a₀ 
       (by rw [Measure.finsetSum_smul_dirac_singleton, hwa₀, ENNReal.ofReal_zero])
     have := congrArg (· {a}) h0
-    simp only [Measure.finsetSum_smul_dirac_singleton, Measure.coe_zero,
+    simp only [Measure.finsetSum_smul_dirac_singleton, FunLike.coe_zero,
       Pi.zero_apply, ENNReal.ofReal_eq_zero] at this
     exact ha (le_antisymm this (hw a))
   have hc : c = 1 := by
@@ -230,6 +239,83 @@ theorem isIrreducible_count_of_measure_singleton_ne_zero [IsMarkovKernel κ]
       measure_mono_null (t := Rᶜ) (fun x hx hxR ↦ hx (by simp [piecewise_apply, hxR])) hRc
     exact (Measure.comp_congr hae).trans hμ.def
   exact h μ hμp hκ b (hout b fun ⟨n, hn⟩ ↦ hn (hab n))
+
+/-! ### Two states -/
+
+section Pair
+
+variable {a b : α} (hab : a ≠ b) (hall : ∀ c, c = a ∨ c = b)
+include hab hall
+
+/-- Two probability measures on two points that agree at one of them are equal. -/
+theorem _root_.MeasureTheory.Measure.ext_of_measureReal_singleton_of_pair [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] (h : μ.real {a} = ν.real {a}) : μ = ν := by
+  have hμ := measureReal_singleton_add_singleton_of_pair μ hab fun c _ ↦ hall c
+  have hν := measureReal_singleton_add_singleton_of_pair ν hab fun c _ ↦ hall c
+  refine Measure.ext_of_measureReal_singleton fun c ↦ ?_
+  rcases hall c with rfl | rfl
+  · exact h
+  · linarith
+
+variable [IsMarkovKernel κ] [IsProbabilityMeasure μ]
+
+/-- On two states, one step sends the mass `x` of `a` to `κ b {a} + (1 - κ b {a} - κ a {b}) x`. -/
+theorem comp_real_singleton_eq_add_mul_of_pair :
+    (κ ∘ₘ μ).real {a} = (κ b).real {a} + (1 - (κ b).real {a} - (κ a).real {b}) * μ.real {a} := by
+  have hμ := measureReal_singleton_add_singleton_of_pair μ hab fun c _ ↦ hall c
+  have hκ := measureReal_singleton_add_singleton_of_pair (κ a) hab fun c _ ↦ hall c
+  rw [Measure.comp_real_singleton_of_pair κ μ hab (fun c _ ↦ hall c)]
+  linear_combination (κ b).real {a} * hμ + μ.real {a} * hκ
+
+/-- On two states, invariance is detailed balance between them. -/
+theorem invariant_iff_of_pair :
+    κ.Invariant μ ↔ μ.real {a} * (κ a).real {b} = μ.real {b} * (κ b).real {a} := by
+  have hμ := measureReal_singleton_add_singleton_of_pair μ hab fun c _ ↦ hall c
+  have h := comp_real_singleton_eq_add_mul_of_pair hab hall (κ := κ) (μ := μ)
+  refine ⟨fun hκ ↦ ?_, fun hκ ↦ Measure.ext_of_measureReal_singleton_of_pair hab hall ?_⟩
+  · rw [hκ.def] at h
+    linear_combination h - (κ b).real {a} * hμ
+  · linear_combination h - hκ - (κ b).real {a} * hμ
+
+theorem Invariant.real_singleton_of_pair (hκ : κ.Invariant μ)
+    (h₀ : (κ b).real {a} + (κ a).real {b} ≠ 0) :
+    μ.real {a} = (κ b).real {a} / ((κ b).real {a} + (κ a).real {b}) := by
+  have hμ := measureReal_singleton_add_singleton_of_pair μ hab fun c _ ↦ hall c
+  rw [eq_div_iff h₀]
+  linear_combination (invariant_iff_of_pair hab hall).1 hκ + (κ b).real {a} * hμ
+
+/-- On two states, the distance of the mass of `a` from its invariant probability shrinks by the
+factor `1 - κ b {a} - κ a {b}` at each step. -/
+theorem pow_comp_real_singleton_sub_of_pair (n : ℕ) (h₀ : (κ b).real {a} + (κ a).real {b} ≠ 0) :
+    ((κ ^ n) ∘ₘ μ).real {a} - (κ b).real {a} / ((κ b).real {a} + (κ a).real {b}) =
+      (1 - (κ b).real {a} - (κ a).real {b}) ^ n *
+        (μ.real {a} - (κ b).real {a} / ((κ b).real {a} + (κ a).real {b})) := by
+  induction n with
+  | zero =>
+    rw [pow_zero, one_def, Measure.id_comp]
+    simp
+  | succ n ih =>
+    rw [pow_succ', mul_def, ← Measure.comp_assoc,
+      comp_real_singleton_eq_add_mul_of_pair hab hall, pow_succ, mul_comm (_ ^ n), mul_assoc, ← ih]
+    field_simp
+    ring
+
+/-- On two states, a chain whose factor `1 - κ b {a} - κ a {b}` has modulus below one converges,
+from any start, to the invariant probability `κ b {a} / (κ b {a} + κ a {b})` of `a`. -/
+theorem tendsto_pow_comp_real_singleton_of_pair (h₀ : 0 < (κ b).real {a} + (κ a).real {b})
+    (h₂ : (κ b).real {a} + (κ a).real {b} < 2) :
+    Filter.Tendsto (fun n : ℕ ↦ ((κ ^ n) ∘ₘ μ).real {a}) Filter.atTop
+      (nhds ((κ b).real {a} / ((κ b).real {a} + (κ a).real {b}))) := by
+  have h := ((tendsto_pow_atTop_nhds_zero_of_abs_lt_one
+    (r := 1 - (κ b).real {a} - (κ a).real {b}) (abs_lt.2 ⟨by linarith, by linarith⟩)).mul_const
+      (μ.real {a} - (κ b).real {a} / ((κ b).real {a} + (κ a).real {b}))).add_const
+      ((κ b).real {a} / ((κ b).real {a} + (κ a).real {b}))
+  rw [zero_mul, zero_add] at h
+  refine h.congr fun n ↦ ?_
+  rw [← pow_comp_real_singleton_sub_of_pair hab hall n h₀.ne']
+  ring
+
+end Pair
 
 end Finite
 

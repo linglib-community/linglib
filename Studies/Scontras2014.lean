@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Fragments.English.MeasurePhrases
-public import Linglib.Semantics.Mereology.Topology
+public import Linglib.Languages.English.MeasurePhrases
+public import Linglib.Semantics.Mereology.Connection
 public import Linglib.Data.Examples.Scontras2014
 public import Linglib.Data.Examples.Readers
 
@@ -10,7 +10,8 @@ public import Linglib.Data.Examples.Readers
 
 Scontras's third chapter studies quantizing nouns, the words that package a substance for counting
 or measuring. Diagnostics adapted from Rothstein separate three readings of *n Q of S* and three
-classes of noun (`Data/Examples/Scontras2014`), and the English fragment lists each example's noun
+classes of noun (`Data/Examples/Scontras2014`), and the English language file lists each example's
+noun
 under the class the chapter assigns it (`rows_nounClass`). A container noun like *glass* is a plain
 predicate whose container reading arises from intersective modification by the preposition *of*,
 contributing the filled-with relation ((38), `containerReading`); a measure term like *liter* is a
@@ -28,7 +29,7 @@ measure term by lexical reinterpretation as the class of containers of a unit qu
 Countable units are the maximally self-connected instances of a kind in Grimm's mereotopology,
 parthood with a connection relation ((72), (73), `Mereology.IsConnection`) and
 self-connection ((74), `Mereology.IsSelfConnected`), and a partition returns such units ((75),
-(76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred`) does not stop the water
+(76), `IsMSCPartition`); no-overlap alone ((66), pairwise non-overlap) does not stop the water
 in a glass from counting as two. Either way the members of a partition form an antichain, so
 each of them measures one relative atom under the relative-atom measure of (68)
 (`pAtomMeasure_eq_one`), which is what lets cardinal numerals count them.
@@ -46,10 +47,8 @@ each of them measures one relative atom under the relative-atom measure of (68)
   the measure takes one value on the predicate, `Set.Subsingleton` of its image.
 * Of the axioms bridging connection and parthood, integrity (73a) and unity (73b) follow from
   reflexivity, symmetry and monotonicity (73c) (`IsConnection.of_le`,
-  `IsConnection.of_overlap`). Overlap (71) carries the library's non-null clause, with which it
-  agrees on carriers without a null individual (`Mereology.overlap_iff_exists_le`); on a carrier
-  with one, the clause-free version holds of any two individuals and makes self-connection
-  trivial. The maximality of (75) is mathlib's `Maximal`.
+  `IsConnection.of_overlap`). Overlap (71) is `Mereology.Overlap`, on a part structure with no
+  null individual. The maximality of (75) is mathlib's `Maximal`.
 
 ## References
 
@@ -154,9 +153,9 @@ theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition C k
   (setOfPred_maximal_antichain _).subset h
 
 -- (66)
-theorem isAntichain_of_disjointPred [NoBotOrder E] {Q : E → Prop}
-    (h : DisjointPred {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
-  fun x hx _ hy hxy hle ↦ h hx hy hxy (.of_le (not_isBot x) hle)
+theorem isAntichain_of_pairwise_not_overlap {Q : E → Prop}
+    (h : {x | Q x}.Pairwise fun x y ↦ ¬ Overlap x y) : IsAntichain (· ≤ ·) {x | Q x} :=
+  fun _ hx _ hy hxy hle ↦ h hx hy hxy (.of_le hle)
 
 theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
     (hy : Q y) : {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x} = {y} := by
@@ -201,7 +200,7 @@ inductive QuantizingNounClass where
   deriving DecidableEq
 
 open English.MeasurePhrases in
-/-- The singular forms of the English nouns of a class, from the fragment's inventory of it. -/
+/-- The singular forms of the English nouns of a class, from the language file's inventory of it. -/
 def QuantizingNounClass.forms : QuantizingNounClass → List String
   | .measureTerm => measureTerms.map (·.form)
   | .containerNoun => containerNouns.map (·.form)

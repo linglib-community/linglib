@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Tactic.DeriveFintype
@@ -9,7 +14,7 @@ public import Mathlib.Order.Interval.Finset.Defs
 These theory-neutral types describe relativization across languages. The relativizable
 positions of Keenan and Comrie's Accessibility Hierarchy form a bounded linear order; a relative
 clause has a placement relative to its head; something occupies the relativized position
-(NP_rel); and the fragments record each language's relativizers.
+(NP_rel); and the language files record each language's relativizers.
 
 ## Main declarations
 
@@ -23,7 +28,8 @@ clause has a placement relative to its head; something occupies the relativized 
 ## Implementation notes
 
 A relativizer's realization is a finite relation between positions and NP_rel types, given as a
-`Finset`-valued function so that fragments enter it by cases and every check decides. A fragment
+`Finset`-valued function so that language files enter it by cases and every check decides. A
+language file
 records one entry per relativizer, as a grammar describes it, with free variation where the
 grammar reports it (Hebrew *she-* with a gap or a resumptive at the direct object).
 A classification of relative clauses is a predicate on `NPRel` pulled back along the

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
-public import Linglib.Fragments.Slavic.Czech.Particles
+public import Linglib.Languages.Slavic.Czech.Particles
 public import Studies.StankovaSimik2025
 public import Studies.Simik2024
 public import Linglib.Semantics.Questions.Bias
@@ -32,8 +32,7 @@ low like inner negation but non-propositional like FALSUM.
 
 namespace Stankova2026
 
-open Question Simik2024
-open StankovaSimik2025 (LicensedAt)
+open Question Inquisitive Inquisitive.Proposition Simik2024
 
 /-! ### The three positions -/
 
@@ -121,14 +120,15 @@ theorem licenses_fakt_iff : Licenses pos .fakt ↔ pos ≠ .outer := by
 /-- On the two readings of [simik-2024], the concord column of Table 1 is
 [stankova-simik-2025]'s licensing of *žádný*. -/
 theorem licenses_nciLicensed_iff_licensedAt (n : Polarity) :
-    Licenses (.ofReading n) .nciLicensed ↔ LicensedAt StankovaSimik2025.Indefinite.nci.entry n := by
+    Licenses (.ofReading n) .nciLicensed ↔
+      n.Admits StankovaSimik2025.Examples.Indefinite.nci.entry := by
   cases n <;> decide
 
 /-- On the two readings of [simik-2024], the polarity column of Table 1 is
 [stankova-simik-2025]'s licensing of *nějaký*. -/
 theorem licenses_ppiOutscoping_iff_licensedAt (n : Polarity) :
     Licenses (.ofReading n) .ppiOutscoping ↔
-      LicensedAt StankovaSimik2025.Indefinite.ppi.entry n := by
+      n.Admits StankovaSimik2025.Examples.Indefinite.ppi.entry := by
   cases n <;> decide
 
 /-! ### The diagnostic particles ([stankova-2026] §2.2, Table 1)
@@ -145,19 +145,19 @@ open Czech.Particles (nahodou jeste fakt copak)
 
 /-- [stankova-2026]'s Table 1: which diagnostic each particle
 realizes. -/
-def table1 : List (Particle × Diagnostic) :=
+def table1 : List (Clause.Marker × Diagnostic) :=
   [(nahodou, .nahodou), (jeste, .jeste), (fakt, .fakt)]
 
 /-- The Table 1 diagnostic realized by `p`, if any. -/
-def diagnostic? (p : Particle) : Option Diagnostic :=
+def diagnostic? (p : Clause.Marker) : Option Diagnostic :=
   table1.lookup p
 
 /-- A particle is compatible with a negation position when the position licenses the
 particle's Table 1 diagnostic, vacuously for a particle outside the table. -/
-def Compatible (p : Particle) (pos : Position) : Prop :=
+def Compatible (p : Clause.Marker) (pos : Position) : Prop :=
   ∀ d ∈ diagnostic? p, Licenses pos d
 
-instance (p : Particle) (pos : Position) : Decidable (Compatible p pos) := by
+instance (p : Clause.Marker) (pos : Position) : Decidable (Compatible p pos) := by
   unfold Compatible; infer_instance
 
 theorem nahodou_identifies_outer (pos : Position) : Compatible nahodou pos → pos = .outer := by
@@ -275,7 +275,7 @@ def biasCheckedExamples :
 
 theorem bias_examples_match_profile :
     ∀ x ∈ biasCheckedExamples,
-      x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechBiasProfile x.2.1 x.2.2.1 := by
+      x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechForms (x.2.1, x.2.2.1) := by
   decide
 
 end Stankova2026

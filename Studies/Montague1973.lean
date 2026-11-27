@@ -8,8 +8,8 @@ module
 public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Reference.Rigidity
-public import Linglib.Semantics.Quantification.Continuation
-public import Linglib.Semantics.Quantification.Polyadic
+public import Linglib.Semantics.Quantifier.Continuation
+public import Linglib.Semantics.Quantifier.Polyadic
 public import Mathlib.Data.Fin.VecNotation
 
 /-!

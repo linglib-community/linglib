@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Basic
+public import Linglib.Morphology.DistributedMorphology.WordTree
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!

@@ -49,7 +49,8 @@ open Morphology (Morph)
 open Svenonius2004
 open Bulgarian.Verbs
 
-/-- The simplex homogeneous verbs of (2) in the fragment, with *peja*, which (24b), (25g) and (26a)
+/-- The simplex homogeneous verbs of (2) in the language file, with *peja*, which (24b), (25g) and
+(26a)
 treat as homogeneous; the paper analyses them as aspectless. -/
 def homogeneous : List Verb := [misla, obicham, znam, blesta, pisha, cheta, peja]
 

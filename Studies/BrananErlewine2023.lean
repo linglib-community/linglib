@@ -55,6 +55,8 @@ tell pied-piping from anti-pied-piping.
 
 namespace BrananErlewine2023
 
+open Examples (Process LeftmostRequirement)
+
 open PhraseStructure Minimalist Focus Reflex OrderDual
 
 /-! ### The particle is not a quantifier -/
@@ -204,17 +206,7 @@ end LeftAlignedOn
 
 /-! ### Particle placement -/
 
-/-- When a phase is spelled out, a particle adjoins to a phrase left-aligned with the focus,
-preferably to such a phrase, or to any phrase overlapping the focus, in the strong, the weak and
-the free variant of the rule ((117)). -/
-inductive LeftmostRequirement
-  | strong
-  | weak
-  | free
-  deriving DecidableEq, Repr
-
-namespace LeftmostRequirement
-
+namespace Examples.LeftmostRequirement
 variable {r : LeftmostRequirement} {m : List GornAddress} {host focus : GornAddress}
 
 /-- The phrases a variant lets host the particle for a focus. -/
@@ -257,8 +249,7 @@ theorem Allows.exactlyTargets_or_piedPipes_or_antiPiedPipes (h : r.Allows m host
   · exact h.eq_or_lt.imp_right .inl
   · exact h.eq_or_lt.elim (fun e ↦ .inl e.symm) fun h ↦ .inr (.inr h)
 
-end LeftmostRequirement
-
+end Examples.LeftmostRequirement
 /-! ### Phases and their constituents -/
 
 /-- The constituents the examples name. -/
@@ -446,12 +437,6 @@ inductive Mismatch
   | antiPiedPiping
   deriving DecidableEq, Repr
 
-/-- A focus is marked by a particle on a phrase or by movement of the phrase. -/
-inductive Process
-  | particle
-  | movement
-  deriving DecidableEq, Repr
-
 /-- The relation of host to focus that a label names. -/
 def Mismatch.Holds : Mismatch → GornAddress → GornAddress → Prop
   | none, host, focus => host = focus
@@ -504,13 +489,13 @@ structure Row where
 /-- The row of an example. -/
 def Row.ofDatum (d : Datum) : Option Row := do
   let fr ← frame d.source.paperLabel
-  let process ← d.parse? "process" [("particle", Process.particle), ("movement", .movement)]
+  let process ← (Examples.process d)
   let host ← (d.parse? "msf" partLabels).bind fr.site
   let skipped ← (d.features "skipped").mapM fun n ↦ (partLabels.lookup n).bind fr.site
   let readings ← d.readings.mapM fun rd ↦
     ((partLabels.lookup rd.1).bind fr.site).map (·, rd.2)
   pure ⟨process, BrananErlewine2023.prominent fr.phase skipped, host, readings,
-    d.parse? "leftmost" [("strong", .strong), ("weak", .weak), ("free", .free)],
+    (Examples.leftmost d),
     d.parse? "mismatch" [("none", .none), ("piedPiping", .piedPiping),
       ("antiPiedPiping", .antiPiedPiping)]⟩
 

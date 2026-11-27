@@ -20,33 +20,22 @@ possible states are the worlds, and a proposition is true at a world containing 
 verifiers. When the states form a complete lattice, the subject-matter of a proposition is the
 fusion of all its verifiers and falsifiers.
 
-## Main definitions
+Conjunction, negation and disjunction preserve exclusivity and exhaustivity
+(`Truthmaker.Exclusive.conj`, `Truthmaker.Exhaustive.conj`). A proposition is exclusive exactly
+when no possible state makes it both true and false (`Truthmaker.exclusive_iff`), and, when every
+possible state is part of a world, exhaustive exactly when it is true or false at every world
+(`Truthmaker.exhaustive_iff`). Negation keeps the subject-matter and conjunction fuses
+subject-matters (`Truthmaker.subjectMatter_compl`, `Truthmaker.subjectMatter_conj`).
 
-* `Truthmaker.conj`, `Truthmaker.disj`: conjunction and disjunction.
-* `Truthmaker.Exclusive`, `Truthmaker.Exhaustive`: the two halves of bivalence.
-* `Truthmaker.subjectMatter`: the fusion of all verifiers and falsifiers.
-* `Truthmaker.Canonical.possible`, `Truthmaker.Canonical.atom`: Fine's canonical space, whose
-  states are sets of literals, and its atomic propositions.
-* `Truthmaker.Canonical.mirror`: the literal with the same atom and the opposite polarity.
-
-## Main results
-
-* `Truthmaker.compl_conj`, `Truthmaker.compl_disj`: De Morgan's laws.
-* `Truthmaker.Exclusive.conj`, `Truthmaker.Exhaustive.conj`: conjunction preserves exclusivity
-  and exhaustivity, and so do negation and disjunction.
-* `Truthmaker.exclusive_iff`: a proposition is exclusive exactly when no possible state makes it
-  both true and false.
-* `Truthmaker.exhaustive_iff`: when every possible state is part of a world, a proposition is
-  exhaustive exactly when it is true or false at every world.
-* `Truthmaker.Canonical.maximal_possible_iff`, `Truthmaker.Canonical.exists_le_maximal_possible`:
-  the worlds of the canonical space contain exactly one of each literal and its mirror, and every
-  consistent set of literals is part of one.
-* `Truthmaker.subjectMatter_compl`, `Truthmaker.subjectMatter_conj`: negation keeps the
-  subject-matter, and conjunction fuses subject-matters.
-* `Truthmaker.Canonical.mem_upperClosure_disj_compl_atom`,
-  `Truthmaker.Canonical.subjectMatter_disj_compl_atom_injective`: the excluded middle `a ∨ ¬a` of
-  an atom is true at every world, yet distinct atoms give excluded middles with distinct
-  subject-matters, each an impossible state.
+In the canonical space the states are sets of literals, `Truthmaker.Canonical.mirror` sends a
+literal to the one with the same atom and the opposite polarity, and the possible states are the
+sets containing no literal with its mirror image. Its worlds contain exactly one of each literal
+and its mirror image, and every possible state is part of one
+(`Truthmaker.Canonical.maximal_possible_iff`, `Truthmaker.Canonical.exists_le_maximal_possible`).
+The excluded middle of an atom is true at every world, yet distinct atoms give excluded middles
+with distinct subject-matters, each an impossible state
+(`Truthmaker.Canonical.mem_upperClosure_disj_compl_atom`,
+`Truthmaker.Canonical.subjectMatter_disj_compl_atom_injective`).
 
 ## Implementation notes
 
@@ -224,6 +213,16 @@ def mirror (x : α × Bool) : α × Bool :=
 
 theorem mirror_involutive : Function.Involutive (mirror (α := α)) :=
   mirror_mirror
+
+/-- Mirroring as a permutation of the literals. -/
+def mirrorPerm : Equiv.Perm (α × Bool) :=
+  mirror_involutive.toPerm
+
+@[simp] theorem coe_mirrorPerm : ⇑(mirrorPerm (α := α)) = mirror :=
+  rfl
+
+@[simp] theorem mirrorPerm_symm : (mirrorPerm (α := α)).symm = mirrorPerm :=
+  rfl
 
 theorem mirror_ne (x : α × Bool) : mirror x ≠ x :=
   fun h ↦ Bool.not_ne_self x.2 (congrArg Prod.snd h)

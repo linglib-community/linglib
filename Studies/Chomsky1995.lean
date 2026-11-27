@@ -2,11 +2,12 @@ module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
-public import Linglib.Syntax.Projection
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Verbs.Basic
+public import Linglib.Syntax.Command.DominanceImage
+public import Linglib.Syntax.Projection.GornAddress
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.English.Verbs.Basic
 
 /-!
 # Chomsky 1995: bare phrase structure and the linear correspondence axiom
@@ -22,7 +23,14 @@ unless traces are exempt, and then one of any two sister terminals is a trace. A
 precedes its head and the head the inside of a branching complement, and a branching specifier is
 ordered consistently only because the X′ does not c-command. The LCA is stated for any tree order
 and instantiated on the positions of a planar syntactic object, where the book's (11), *the man
-saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
+saw it*, violates it.
+
+Under the copy theory of movement a raised term occurs twice in the object, its two occurrences
+told apart by their sisters, and the trace the LCA exempts is the lower one. The verb and object of
+(11) form the book's (14), a head and its complement, which violates the LCA, and (15), the
+complement merged again with that phrase, which satisfies it. Raising targets a category, which
+projects: the subject of (11), merged again with the phrase of the inflectional head, is the
+specifier of that head, and it is the target that projects although neither selects the other.
 
 ## Main definitions
 
@@ -35,6 +43,12 @@ saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
 
 * Positions individuate occurrences, so the LCA is read on the positions of a planar object,
   whose order it ignores by `linearizes_bareCCommand_image_iff`.
+* The trace of a raised term is its lower copy under c-command,
+  `PlanarSyntacticObject.IsLowerCopy`, and the terminals the LCA orders are
+  `PlanarSyntacticObject.pronounced`, the leaves outside every lower copy.
+* Raising is the Merge of (15). A clitic attaching to a higher head and a noun incorporating, the
+  raisings the book gives for a single-terminal complement, adjoin to a head.
+* The inflectional head I is a `T` that selects a verb phrase.
 * Dominance in Kayne's image is reflexive, so that a terminal specifier, the `j` of (154),
   precedes the head.
 * Example and note numbers are those of the book's chapter 4.
@@ -118,13 +132,13 @@ def IsVisible (x : α) : Prop := IsMinimalProjection H x ∨ IsMaximalProjection
 /-- In bare c-command, the book's (157), a visible node c-commands each node disconnected from it
 that every node properly dominating it dominates. -/
 def bareCCommand : SetRel α α :=
-  {p | IsVisible H p.1 ∧ ¬ p.1 ≤ p.2 ∧ ¬ p.2 ≤ p.1 ∧ p.1 ~[commandRelation univ] p.2}
+  {(a, b) | IsVisible H a ∧ Commands univ a b}
 
 variable {H} {R : SetRel α α} {T : Set α} {a b h j m p x J K L P : α}
 
 theorem mem_bareCCommand : a ~[bareCCommand H] b ↔
-    IsVisible H a ∧ ¬ a ≤ b ∧ ¬ b ≤ a ∧ ∀ x < a, x ≤ b := by
-  simp [bareCCommand, mem_commandRelation]
+    IsVisible H a ∧ IncompRel (· ≤ ·) a b ∧ ∀ x < a, x ≤ b := by
+  simp [bareCCommand, commands_iff, mem_commandRelation, and_comm]
 
 theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Prop} (e : α ≃o β)
     (hH : ∀ a b, H' (e a) (e b) ↔ H a b) : Prod.map e e '' bareCCommand H = bareCCommand H' := by
@@ -136,8 +150,8 @@ theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Pr
   rw [show (e a, e b) = Prod.map e e (a, b) from rfl,
     (e.injective.prodMap e.injective).mem_set_image]
   refine mem_bareCCommand.trans (Iff.trans ?_ mem_bareCCommand.symm)
-  rw [hv, e.le_iff_le, e.le_iff_le, e.surjective.forall]
-  simp only [e.lt_iff_lt, e.le_iff_le]
+  rw [hv, e.surjective.forall]
+  simp only [IncompRel, e.lt_iff_lt, e.le_iff_le]
 
 /-- Bare c-command commutes with order isomorphisms, so the LCA in the bare theory ignores the
 order of sisters (note 108). -/
@@ -153,14 +167,13 @@ variable [IsForestOrder α]
 
 theorem mem_bareCCommand_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b)
     (hv : IsVisible H a) : a ~[bareCCommand H] b :=
-  ⟨hv, CovBy.not_le_of_ne ha hb hab, CovBy.not_le_of_ne hb ha hab.symm,
-    mem_commandRelation_of_covBy ha hb.le⟩
+  ⟨hv, commands_of_covBy ha hb hab⟩
 
 /-- A node does not precede a visible sister, so two visible sisters are unordered, as the
 terminals `m` and `p` of (154). -/
 theorem not_precedes_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hvb : IsVisible H b) :
     ¬ Precedes (bareCCommand H) a b := by
-  refine not_mem_dominanceImage_asymmetrize_of_covBy (fun _ _ h ↦ ⟨h.2.1, h.2.2.1⟩)
+  refine not_mem_dominanceImage_asymmetrize_of_covBy (fun _ _ h ↦ h.2.incompRel)
     (fun h ↦ ?_) ha hb
   rcases eq_or_ne a b with rfl | hab
   · exact h
@@ -197,29 +210,30 @@ theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d
 /-- Every node a visible specifier dominates precedes the head. -/
 theorem precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvJ : IsVisible H J) (hj : J ≤ j) : Precedes (bareCCommand H) j h := by
-  refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, fun hJh ↦ ?_, fun hhJ ↦ ?_,
+  refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, ⟨fun hJh ↦ ?_, fun hhJ ↦ ?_⟩,
     fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hJ hx).trans (hL.le.trans hh.le)⟩, fun hc ↦ ?_⟩
   · exact (IsForestOrder.le_total_of_le_of_le hJh hh.le).elim (CovBy.not_le_of_ne hJ hL hJL)
       (CovBy.not_le_of_ne hL hJ hJL.symm)
   · exact CovBy.not_le_of_ne hL hJ hJL.symm (hh.le.trans hhJ)
-  · exact CovBy.not_le_of_ne hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
+  · exact CovBy.not_le_of_ne hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2 L hh.lt)
 
 /-- A visible head precedes the nodes properly inside its complement but not the complement
 itself, so the order specifier-head-complement needs a branching complement. -/
 theorem precedes_of_complement (hh : L ⋖ h) (hP : L ⋖ P) (hhP : h ≠ P) (hvh : IsVisible H h)
     (hp : P < p) : Precedes (bareCCommand H) h p := by
-  refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2 ⟨hvh, fun hhp ↦ ?_, fun hph ↦ ?_,
-    fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
+  refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2
+    ⟨hvh, ⟨fun hhp ↦ ?_, fun hph ↦ ?_⟩, fun x hx ↦
+      (IsForestOrder.le_of_lt_of_covBy hh hx).trans (hP.le.trans hp.le)⟩, fun hc ↦ ?_⟩
   · exact (IsForestOrder.le_total_of_le_of_le hhp hp.le).elim (CovBy.not_le_of_ne hh hP hhP)
       (CovBy.not_le_of_ne hP hh hhP.symm)
   · exact CovBy.not_le_of_ne hP hh hhP.symm (hp.le.trans hph)
-  · exact CovBy.not_le_of_ne hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
+  · exact CovBy.not_le_of_ne hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2 P hp)
 
 /-- When the X′ is invisible the head precedes nothing in the specifier. -/
 theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvL : ¬ IsVisible H L) (hj : J ≤ j) : ¬ Precedes (bareCCommand H) h j := by
   rintro ⟨⟨x, y⟩, ⟨hxy, -⟩, hxh, hyj⟩
-  obtain ⟨hvx, hn₁, hn₂, hc⟩ := mem_bareCCommand.1 hxy
+  obtain ⟨hvx, ⟨hn₁, hn₂⟩, hc⟩ := mem_bareCCommand.1 hxy
   rcases hxh.eq_or_lt with rfl | hxh
   · exact (IsForestOrder.le_total_of_le_of_le (hc L hh.lt |>.trans hyj) hj).elim
       (CovBy.not_le_of_ne hL hJ hJL.symm) (CovBy.not_le_of_ne hJ hL hJL)
@@ -235,13 +249,13 @@ theorem Linearizes.not_isVisible (hl : Linearizes (bareCCommand H) T) (hJ : K �
     (hhT : h ∈ T) : ¬ IsVisible H L := fun hvL ↦ by
   have hah : Precedes (bareCCommand H) a h := precedes_of_spec hJ hL hJL hh hvJ hα.le
   have hha : Precedes (bareCCommand H) h a := precedes_iff.2 ⟨L, hh.le, a, le_rfl,
-    mem_bareCCommand.2 ⟨hvL, fun hLa ↦ ?_, fun haL ↦ ?_,
+    mem_bareCCommand.2 ⟨hvL, ⟨fun hLa ↦ ?_, fun haL ↦ ?_⟩,
       fun x hx ↦ (IsForestOrder.le_of_lt_of_covBy hL hx).trans (hJ.le.trans hα.le)⟩, fun hc ↦ ?_⟩
   · exact (linearizes_iff.1 hl).2.1 a haT ((linearizes_iff.1 hl).2.2 a haT h hhT a haT hah hha)
   · exact (IsForestOrder.le_total_of_le_of_le hLa hα.le).elim (CovBy.not_le_of_ne hL hJ hJL.symm)
       (CovBy.not_le_of_ne hJ hL hJL)
   · exact CovBy.not_le_of_ne hJ hL hJL (hα.le.trans haL)
-  · exact CovBy.not_le_of_ne hJ hL hJL ((mem_bareCCommand.1 hc).2.2.2 J hα)
+  · exact CovBy.not_le_of_ne hJ hL hJL ((mem_bareCCommand.1 hc).2.2 J hα)
 
 end Bare
 
@@ -253,14 +267,14 @@ open RoseTree PhraseStructure Minimalist
 
 /-! ### The positions of a syntactic object -/
 
-variable (t : PlanarSyntacticObject)
+variable (t : PlanarSyntacticObject Minimalist.TokenLeaf)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
-def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadFunction.raising
+def HeadDaughterAt (m d : t.toRoseTree.Positions) : Prop := headDaughterRel (HeadDaughter.raising
     t) m d
 
 instance : DecidableRel (HeadDaughterAt t) := fun m d ↦
-  inferInstanceAs (Decidable (headDaughterRel (HeadFunction.raising t) m d))
+  inferInstanceAs (Decidable (headDaughterRel (HeadDaughter.raising t) m d))
 
 theorem headDaughterAt_covBy {m d : t.toRoseTree.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
   Positions.covBy_iff.2 (headDaughterRel_covBy _ h)
@@ -277,12 +291,6 @@ instance (x : t.toRoseTree.Positions) : Decidable (IsVisible (HeadDaughterAt t) 
 instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
   decidable_of_iff' _ mem_bareCCommand
 
-/-- The pronounced terminals of `t`, the positions of its heads; traces are exempt from the
-LCA. -/
-def pronounced : Set t.toRoseTree.Positions := {p | t.IsHeadAt p}
-
-instance : DecidablePred (· ∈ pronounced t) := fun p ↦ inferInstanceAs (Decidable (t.IsHeadAt p))
-
 theorem not_linearizes (ht : ¬ IsMax (⊥ : t.toRoseTree.Positions)) :
     ¬ Linearizes (bareCCommand (HeadDaughterAt t)) {p | IsMax p} :=
   not_linearizes_of_not_isMax (fun _ _ ↦ headDaughterAt_covBy t)
@@ -297,7 +305,7 @@ def positionCat : ArgumentFrame.Position → Option Cat
 
 /-- The selectional stack of a verb's citation frame lists its complements and then its external
 argument, the specifier of the verb in (11). -/
-def selStack (v : English.Verbs.Verb) : SelStack :=
+def selStack (v : English.Verbs.Verb) : List Cat :=
   (v.valency.frames.head?.map fun fr ↦
     (fr.complements ++ fr.external.toList).filterMap positionCat).getD []
 
@@ -315,11 +323,13 @@ def saw : LexicalItem.Token :=
 def it : LexicalItem.Token := ⟨.of .D [] English.Pronouns.it.form, 0⟩
 
 /-- *The man saw it*, (11). -/
-def theManSawIt : PlanarSyntacticObject := {{↑the, ↑man}, {↑saw, ↑it}}
+def theManSawIt : PlanarSyntacticObject Minimalist.TokenLeaf := {{↑the, ↑man}, {↑saw, ↑it}}
 
-/-- (11) with *man* and *it* raised, leaving their traces. -/
-def theManSawItRaised : PlanarSyntacticObject :=
-  {{↑the, .traceOf man}, {↑saw, .traceOf it}}
+/-- (14), a head and its complement, with the verb and object of (11): *saw it*. -/
+def sawIt : PlanarSyntacticObject Minimalist.TokenLeaf := {↑saw, ↑it}
+
+/-- (15), the complement of (14) raised: *it* merged again with *saw it*. -/
+def sawItRaised : PlanarSyntacticObject Minimalist.TokenLeaf := {↑it, sawIt}
 
 /-- The position at an address. -/
 def position (l : List ℕ) (h : (⟨l⟩ : GornAddress) ∈ t.toRoseTree.validPaths := by exact rfl) :
@@ -328,8 +338,8 @@ def position (l : List ℕ) (h : (⟨l⟩ : GornAddress) ∈ t.toRoseTree.validP
 
 -- (11)
 theorem maximalProjectionAt_theManSawIt :
-    maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[1, 0]⟩ = ⊥ ∧
-      maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[0, 0]⟩ = ⟨[0]⟩ := by
+    maximalProjectionAt (HeadDaughter.raising theManSawIt) ⟨[1, 0]⟩ = ⊥ ∧
+      maximalProjectionAt (HeadDaughter.raising theManSawIt) ⟨[0, 0]⟩ = ⟨[0]⟩ := by
   decide
 
 -- (11), (10)
@@ -348,19 +358,88 @@ theorem levels_theManSawIt :
       ¬ IsVisible (HeadDaughterAt theManSawIt) (position theManSawIt [1]) := by
   decide
 
-/-- (11) violates the LCA even with traces exempt, since *the* and *man* are unordered, and so
-are *saw* and *it*. -/
+/-- (11) violates the LCA, since *the* and *man* are unordered, and so are *saw* and *it*. -/
 theorem not_linearizes_theManSawIt :
-    ¬ Linearizes (bareCCommand (HeadDaughterAt theManSawIt)) (pronounced theManSawIt) := by
+    ¬ Linearizes (bareCCommand (HeadDaughterAt theManSawIt))
+      (theManSawIt.pronounced CCommands) := by
   decide
 
-/-- With *man* and *it* raised the LCA holds, and the string is *the saw*. -/
-theorem linearizes_theManSawItRaised :
-    Linearizes (bareCCommand (HeadDaughterAt theManSawItRaised)) (pronounced theManSawItRaised) ∧
-      (∀ p, p ∈ pronounced theManSawItRaised ↔
-        p = position theManSawItRaised [0, 0] ∨ p = position theManSawItRaised [1, 0]) ∧
-      Precedes (bareCCommand (HeadDaughterAt theManSawItRaised))
-        (position theManSawItRaised [0, 0]) (position theManSawItRaised [1, 0]) := by
+/-! ### The copy theory of movement, (14) and (15) -/
+
+/-- (14) violates the LCA: its two terminals are sisters. -/
+theorem not_linearizes_sawIt :
+    ¬ Linearizes (bareCCommand (HeadDaughterAt sawIt)) (sawIt.pronounced CCommands) := by
+  decide
+
+/-- In (15) the raised term occurs twice, and the two occurrences have different sisters. -/
+theorem chain_sawItRaised :
+    sawItRaised.chain (position sawItRaised [0]) (position sawItRaised [1, 1]) ∧
+      sawItRaised.termAt (position sawItRaised [1]) ≠
+        sawItRaised.termAt (position sawItRaised [1, 0]) := by
+  decide
+
+-- (15): the phrase projects, and the occurrence in the complement position is the lower copy
+theorem isLowerCopy_sawItRaised :
+    HeadDaughter.raising sawItRaised ⊥ = some 1 ∧
+      sawItRaised.IsLowerCopy CCommands (position sawItRaised [1, 1]) ∧
+      ¬ sawItRaised.IsLowerCopy CCommands (position sawItRaised [0]) := by
+  decide
+
+/-- With its complement raised the phrase satisfies the LCA: the lower copy is silent, and the
+raised term precedes the head. -/
+theorem linearizes_sawItRaised :
+    Linearizes (bareCCommand (HeadDaughterAt sawItRaised)) (sawItRaised.pronounced CCommands) ∧
+      (∀ p, p ∈ sawItRaised.pronounced CCommands ↔
+        p = position sawItRaised [0] ∨ p = position sawItRaised [1, 0]) ∧
+      Precedes (bareCCommand (HeadDaughterAt sawItRaised))
+        (position sawItRaised [0]) (position sawItRaised [1, 0]) := by
+  decide
+
+/-! ### Raising the subject of (11) -/
+
+/-- An inflectional head selecting a verb phrase, the book's I. -/
+def infl : LexicalItem.Token := ⟨.of .T [.V], 0⟩
+
+/-- I merged with (11). -/
+def inflP : PlanarSyntacticObject Minimalist.TokenLeaf := {↑infl, theManSawIt}
+
+/-- The inflectional phrase derived from (11): the subject raised to the root, merged again with
+the phrase of I. -/
+def subjectRaised : PlanarSyntacticObject Minimalist.TokenLeaf :=
+  {({↑the, ↑man} : PlanarSyntacticObject Minimalist.TokenLeaf), inflP}
+
+/-- The target of the raising projects, and selection does not decide it: the raised subject is a
+term of the target. -/
+theorem raisingProjects_subjectRaised :
+    SyntacticObject.RaisingProjects inflP.toSyntacticObject
+        (PlanarSyntacticObject.toSyntacticObject {↑the, ↑man}) ∧
+      ¬ (SyntacticObject.raisingState inflP.toSyntacticObject).Projects
+        (SyntacticObject.raisingState (PlanarSyntacticObject.toSyntacticObject {↑the, ↑man})) := by
+  decide
+
+/-- The phrase is headed by I, and the raised subject is a maximal projection beside the
+projection of I, its specifier. -/
+theorem isMaximalProjection_subjectRaised :
+    subjectRaised.toSyntacticObject.raisingHead = some infl ∧
+      HeadDaughter.raising subjectRaised ⊥ = some 1 ∧
+      IsMaximalProjection (HeadDaughterAt subjectRaised) (position subjectRaised [0]) := by
+  decide
+
+-- the subject occurs twice, and its occurrence inside the verb phrase is the lower copy
+theorem isLowerCopy_subjectRaised :
+    subjectRaised.chain (position subjectRaised [0]) (position subjectRaised [1, 1, 0]) ∧
+      subjectRaised.IsLowerCopy CCommands (position subjectRaised [1, 1, 0]) ∧
+      ¬ subjectRaised.IsLowerCopy CCommands (position subjectRaised [0]) := by
+  decide
+
+/-- The raised subject is pronounced and its lower copy is silent: the pronounced terminals are
+*the*, *man*, I, *saw* and *it*. -/
+theorem pronounced_subjectRaised (p : subjectRaised.toRoseTree.Positions) :
+    p ∈ subjectRaised.pronounced CCommands ↔
+      p = position subjectRaised [0, 0] ∨ p = position subjectRaised [0, 1] ∨
+        p = position subjectRaised [1, 0] ∨ p = position subjectRaised [1, 1, 1, 0] ∨
+        p = position subjectRaised [1, 1, 1, 1] := by
+  revert p
   decide
 
 end Chomsky1995

@@ -3,10 +3,10 @@ module
 public import Linglib.Data.Examples.FarkasBruce2010
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Discourse.Response
-public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.German.Particles
-public import Linglib.Fragments.Romance.French.Particles
-public import Linglib.Fragments.Romanian.Particles
+public import Linglib.Languages.English.Particles
+public import Linglib.Languages.German.Particles
+public import Linglib.Languages.Romance.French.Particles
+public import Linglib.Languages.Romanian.Particles
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -39,7 +39,7 @@ it settles the question (`isStable_settle_polarQuestion`).
 the move types (26) and (29) on sentences; the same [reverse] response is a denial after an
 assertion and a reverse answer after a question (`inCrisis_reversing_assert`,
 `not_inCrisis_reversing_polarQuestion`). On a shared radical a sentence confirms or reverses another
-iff the `Discourse.Response` of their polarities is [same] or [reverse], as (31) defines the
+iff the `Response` of their polarities is [same] or [reverse], as (31) defines the
 features (`Confirming.iff_relative_eq_positive`, `Reversing.iff_relative_eq_negative`).
 
 §5.2 says what the polarity particles mark, as sets of responses bearing features
@@ -49,7 +49,7 @@ the marked [reverse] and [−], their double duty (`bearing`, `mem_bearing_iff`)
 and German *doch* the marked combination [reverse, +] (`reversePositive`). Both English particles
 can confirm a negative question, while in Romanian only *nu* does
 (`english_confirmsNegativeQuestion`, `romanian_confirmsNegativeQuestion_iff`). `rows` are the
-responding assertions of (4), (5) and (35)–(50), whose particles are the fragments' polarity
+responding assertions of (4), (5) and (35)–(50), whose particles are the language files' polarity
 particles; every acceptable response is one each of its particles marks (`mem_marks`), *si* and
 *doch* occur in [reverse, +] responses only (`si_doch_mem_reversePositive`), and *ba* is possible
 in every denial (`ba_denial`) and required to be absent from a [reverse, −] answer
@@ -58,16 +58,17 @@ in every denial (`ba_denial`) and required to be absent from a [reverse, −] an
 ## Implementation notes
 
 * The Table records the issue a sentence raises, not its syntactic object, so a negative polar
-  question raises the same issue as its positive counterpart (15), `Question.polar_compl`, and
-  the relative polarity of a response is computed from the sentences of the exchange rather
-  than read off the Table.
+  question raises the same issue as its positive counterpart (15),
+  `Inquisitive.Proposition.polar_compl`, and the relative polarity of a response is computed from
+  the sentences of the exchange rather than read off the Table.
 * `M'` is `Table.settle`, which strips the shared proposition from the individual
   commitment lists as (17) prescribes; the projected set is derived from the Table rather than
   stored, as the paper notes it can be.
 * Rows record the polarities of the initiating and responding sentences as a
-  `Discourse.Response`; since a responding assertion shares its radical with the initiating
+  `Response`; since a responding assertion shares its radical with the initiating
   sentence, [same] is agreement of polarity and [reverse] its reversal.
-* `PolarityParticle` indexes the particles the paper discusses, each with its fragment entry: all
+* `PolarityParticle` indexes the particles the paper discusses, each with its language file entry:
+  all
   of English and Romanian, and of the French and German particles only *si* and *doch*.
 
 ## TODO
@@ -82,6 +83,8 @@ in every denial (`ba_denial`) and required to be absent from a [reverse, −] an
 -/
 
 @[expose] public section
+
+open Inquisitive
 
 namespace FarkasBruce2010
 
@@ -164,10 +167,10 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) {q : Set W}
   rw [Table.projectedSet_assert, Table.projectedSet_polarQuestion,
     Table.projectedSet_of_isStable hK]
   ext f
-  simp only [Table.mem_project, Question.alt_ofSet, Set.mem_singleton_iff, exists_eq_left]
+  simp only [Table.mem_project, Proposition.alt_ofSet, Set.mem_singleton_iff, exists_eq_left]
   constructor
   · rintro ⟨⟨_, ⟨⟨r, hr, rfl⟩, -⟩, rfl⟩, hf⟩
-    rcases (Question.alt_polar_iff p r).1 hr with ⟨-, rfl⟩ | ⟨-, -, rfl | rfl⟩
+    rcases (Inquisitive.Proposition.alt_polar_iff p r).1 hr with ⟨-, rfl⟩ | ⟨-, -, rfl | rfl⟩
     · rw [principal_univ, inf_top_eq]
     · rcases hq with rfl | rfl
       · rw [inf_assoc, inf_idem]
@@ -179,12 +182,12 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) {q : Set W}
     refine ⟨⟨K.commonGround ⊓ 𝓟 q, ⟨⟨q, ?_, rfl⟩, hc⟩, by rw [inf_assoc, inf_idem]⟩, hc⟩
     rcases hq with rfl | rfl
     · by_cases hu : q = Set.univ
-      · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inr hu, hu⟩)
-      · exact (Question.alt_polar_iff _ _).2
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2 (Or.inl ⟨Or.inr hu, hu⟩)
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2
           (Or.inr ⟨fun e ↦ hc (by simp [e]), hu, Or.inl rfl⟩)
     · by_cases he : p = ∅
-      · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inl he, by simp [he]⟩)
-      · exact (Question.alt_polar_iff _ _).2
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2 (Or.inl ⟨Or.inl he, by simp [he]⟩)
+      · exact (Inquisitive.Proposition.alt_polar_iff _ _).2
           (Or.inr ⟨he, fun e ↦ hc (by simp [e]), Or.inr rfl⟩)
 
 /-- A reverse answer (27) is no crisis, since the question projected both resolutions. -/
@@ -202,7 +205,6 @@ theorem isStable_settle_polarQuestion (hK : K.IsStable) :
 
 /-! ### Responding assertions and polarity features -/
 
-open Discourse
 
 /-- A sentence radical with its polarity, `S` or `¬S`. -/
 structure Sentence (W : Type*) where
@@ -250,8 +252,8 @@ inductive PolarityParticle
   | yes | no | da | nu | ba | si | doch
   deriving DecidableEq, Repr, Fintype
 
-/-- The fragment entry of a particle. -/
-def PolarityParticle.entry : PolarityParticle → Particle
+/-- The language file entry of a particle. -/
+def PolarityParticle.entry : PolarityParticle → Morphology.Morph
   | .yes => English.PolarityParticles.yes
   | .no => English.PolarityParticles.no
   | .da => Romanian.PolarityParticles.da

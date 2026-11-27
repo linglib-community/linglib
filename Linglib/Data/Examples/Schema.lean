@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Data.Nat.Notation
 public import Mathlib.Tactic.TypeStar
 public import Linglib.Data.Examples.Judgment
 
@@ -12,17 +13,17 @@ public import Linglib.Data.Examples.Judgment
 # Data from examples
 
 This file defines the data a study reads off a paper's examples; the lookups a study makes on
-them are in `Data/Examples/Readers.lean`. An example is what the paper prints under a number; a `Datum` is one piece of data the paper
-reports with it in the sense of Tonhauser and Matthewson: an expression (the example, or one
-alternant of it), the context it is judged in, and the judgment, less the information about the
-speakers that papers seldom give. A datum is a row of the Examples component of the
-Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the
+them are in `Data/Examples/Readers.lean`. An example is what the paper prints under a number; a
+`Datum` is one piece of data the paper reports with it in the sense of Tonhauser and Matthewson: an
+expression (the example, or one alternant of it), the context it is judged in, and the judgment,
+less the information about the speakers that papers seldom give. A datum is a row of the
+Examples component of the Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the
 sentence-level counterpart of `Data/Wordlist/`.
 
 ## Main definitions
 
 * `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
-  `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
+  `alsoJudged`, `contrasts`, `readings`) and the paper's own columns (`paperFeatures`).
 * `SourceRef`: a reference to a paper, a bibkey with a locator.
 * `GlossedWord`, `GlossedMorpheme`, `LGRConformance`: a word of the gloss line with its
   morphemes and their glosses, as `pyigt` models them, and the conformance of an example with the
@@ -114,8 +115,10 @@ structure GlossedMorpheme where
   morpheme : List Char
   /-- The gloss of the morpheme. -/
   gloss : List Char
-  /-- The separator before the morpheme: `-` for an affix, `=` for a clitic and `~` for a
-  reduplicant; `none` for the first morpheme of the word. -/
+  /-- The separator before the morpheme, as the source prints it: in the Leipzig rules `-` for
+  an affix, `=` for a clitic and `~` for a reduplicant; `none` for the first morpheme of the
+  word. A source with its own notation may use these differently, as a grammar that writes `=`
+  between the parts of a compound, and its study reads them by that notation. -/
   sep : Option Char := none
   deriving DecidableEq, Repr
 
@@ -130,6 +133,21 @@ structure GlossedWord where
   /-- Its morphemes with their glosses; empty when the word and the gloss are segmented
   differently. -/
   glossedMorphemes : List GlossedMorpheme := []
+  deriving DecidableEq, Repr
+
+/-- A span of an example is a run of its glossed words under a label the data file declares, with
+the lexeme it is a form of where the row names one. A span of length zero is an element the
+source's analysis posits without a word, before the word at its start. The identifiers are the
+data file's own; a study maps a lexeme to its entry in a language's fragment. -/
+structure Datum.Span where
+  /-- The position of the span's first word in the gloss line, counted from zero. -/
+  start : ℕ
+  /-- The number of words the span covers. -/
+  length : ℕ := 1
+  /-- The label of the span, as the data file names it. -/
+  label : String
+  /-- The lexeme the span is a form of, as the data file names it. -/
+  lexeme : Option String := none
   deriving DecidableEq, Repr
 
 /-- A `Datum` is a piece of data a paper reports with one of its examples
@@ -150,8 +168,9 @@ structure Datum where
   language : Glottocode
   /-- The `Primary_Text` column holds the expression without judgment marks. -/
   primaryText : String
-  /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss; empty when the
-  source gives no gloss. -/
+  /-- The `Analyzed_Word` and `Gloss` columns paired, each word with its gloss, the gloss empty
+  for a word the source segments without glossing it; empty when the source gives no word
+  line. -/
   glossedTokens : List (String × String)
   /-- The words of `glossedTokens` with their morphemes, which the generator derives. -/
   glossedWords : List GlossedWord := []
@@ -162,6 +181,8 @@ structure Datum where
   context : String
   /-- The judgment the source reports for the expression in the context. -/
   judgment : Judgment
+  /-- The further marks of a split mark such as `??/*`, in printed order. -/
+  alsoJudged : List Judgment := []
   /-- The truth-value judgment the source reports, where the task is truth in the context rather
   than the acceptability that `judgment` records; `none` where the source reports none. -/
   verdict : Option Bool := none
@@ -170,6 +191,8 @@ structure Datum where
   contrasts : List (String × Judgment) := []
   /-- The readings the source distinguishes for the expression, each with its judgment. -/
   readings : List (String × Judgment) := []
+  /-- The spans of the gloss line the row marks, each with its label and its lexeme. -/
+  spans : List Datum.Span := []
   /-- The paper's own columns, as key-value pairs. -/
   paperFeatures : List (String × String) := []
   deriving DecidableEq, Repr

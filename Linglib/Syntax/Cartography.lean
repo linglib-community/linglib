@@ -1,7 +1,11 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Syntax.Minimalist.Category
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Mathlib.Tactic.DeriveFintype
 
@@ -21,16 +25,13 @@ A clause that projects up to a head contains every head below it, so the heads o
 form the interval `Set.Ioc a b` (`Set.Iic_sdiff_Iic`). A later proposal that adds heads to
 Cinque's refines the order: its hierarchy receives an order embedding of `Cartography.Head`, and a
 head it places immediately above or below one of Cinque's covers it or is covered by it.
-`Cartography.Head.cat` sends each head to its category in `Minimalist.Cat`, and the list
-`Cartography.Head.hierarchy` of the heads bottom-up is one of the structures the extension order
-of `Minimalist.Cat` is read from. Cinque's own kinds of head are not intervals of the hierarchy:
-moods, modalities, tenses and aspects interleave.
+Cinque's own kinds of head are not intervals of the hierarchy: moods, modalities, tenses and
+aspects interleave.
 
 ## Main definitions
 
 * `Cartography.Head`: the heads of the universal hierarchy, with its linear order.
 * `Cartography.Head.family`: the kind of head, `Cartography.Family`.
-* `Cartography.Head.cat`: the category of a head in `Minimalist.Cat`.
 * `Cartography.Head.hierarchy`: the heads bottom-up, as a list.
 
 ## Main statements
@@ -48,15 +49,10 @@ moods, modalities, tenses and aspects interleave.
   not heads here.
 * Cinque marks the pairing of *characteristically* with generic or progressive aspect, and the
   head of *always*, as uncertain.
-* `Head.cat` sends Cinque's four aspect heads below Voice to inner aspect, the aspect of the v
-  shell, the other aspect heads to outer aspect, the speech-act mood to the speech-act head, as
-  Speas and Tenny project their speech-act phrase from Cinque's speech-act mood head, and the
-  other moods but the evidential to `Cat.Mood`.
 
 ## References
 
 * [cinque-1999]
-* [speas-tenny-2003]
 -/
 
 @[expose] public section
@@ -149,20 +145,6 @@ def family : Head → Family
   | modVolitional | modPossibility | modNecessity | modEpistemic => .modality
   | moodIrrealis | moodEvidential | moodEvaluative | moodSpeechAct => .mood
   | _ => .aspect
-
-/-- The category of a head among the categorial features. -/
-def cat : Head → Minimalist.Cat
-  | voice => .Voice
-  | aspSgCompletiveII | aspFrequentativeII | aspRepetitiveII | aspCelerativeII => .InnerAsp
-  | tAnterior | tFuture | tPast => .T
-  | modVolitional | modPossibility | modNecessity | modEpistemic => .Mod
-  | moodEvidential => .Evid
-  | moodSpeechAct => .SA
-  | moodIrrealis | moodEvaluative => .Mood
-  | _ => .Asp
-
-theorem family_cat (h : Head) : h.cat.family = .verbal := by
-  cases h <;> rfl
 
 /-- The heads, bottom-up. -/
 def hierarchy : List Head := (List.range 30).map Head.ofNat

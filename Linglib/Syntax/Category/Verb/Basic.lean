@@ -1,14 +1,18 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Category.Verb.Defs
-public import Linglib.Syntax.Category.Adposition.Spatial
 
 /-! # Verb entry readers
 
 The readers of a verb entry beyond its fields: the entailment profile of the participant in a
 slot, lookup by citation form and sense, and the predicate a verb forms with a path phrase. The
 semantic classifications of an entry live with their theories: factivity and trigger status on
-`Clause.Embedding` and unaccusativity in `Semantics/ArgumentStructure/Unaccusativity.lean`.
+`Clause.Embedding`, and unaccusativity in the study of each account that assigns it.
 
 ## Main definitions
 
@@ -45,22 +49,23 @@ verb selects as a complement gives the theme's path its direction, the directed 
 verb of manner of motion ([levin-hovav-1995] p. 185). A locative phrase, and a phrase the verb
 does not select, an adjunct, leave the verb as it is: *correre* 'run' has a directed motion use
 in Italian but *nuotare* 'swim' has none ([sorace-2000] §4.3). -/
-def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
-  if p.direction = .place ∨ ¬ v.TakesSpatial then v else
-    { v with direction := some p.direction }
+def withPath (v : Verb) (p : Locative) : Verb :=
+  if p.mode.direction = .place ∨ ¬ v.TakesSpatial then v else
+    { v with direction := some p.mode.direction }
 
 section withPath
 
-variable {v : Verb} {p : Adposition.SpatialReading}
+variable {v : Verb} {p : Locative}
 
-@[simp] theorem withPath_of_direction_eq_place (h : p.direction = .place) : v.withPath p = v := by
+@[simp] theorem withPath_of_direction_eq_place (h : p.mode.direction = .place) :
+    v.withPath p = v := by
   simp [withPath, h]
 
 @[simp] theorem withPath_of_not_takesSpatial (h : ¬ v.TakesSpatial) : v.withPath p = v := by
   simp [withPath, h]
 
-@[simp] theorem direction_withPath (hv : v.TakesSpatial) (h : p.direction ≠ .place) :
-    (v.withPath p).direction = some p.direction := by
+@[simp] theorem direction_withPath (hv : v.TakesSpatial) (h : p.mode.direction ≠ .place) :
+    (v.withPath p).direction = some p.mode.direction := by
   simp [withPath, hv, h]
 
 end withPath

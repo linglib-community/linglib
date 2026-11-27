@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.SpeechAct.Basic
-public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Polar
 public import Linglib.Data.Examples.Theiler2021
 
 /-!
@@ -64,7 +64,7 @@ The examples are the rows of `Data.Examples.Theiler2021`.
 
 namespace Theiler2021
 
-open ModalLogic Question
+open ModalLogic Inquisitive Inquisitive.Proposition
 
 /-! ### Highlighted content (section 3.1) -/
 

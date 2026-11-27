@@ -46,6 +46,12 @@ theorem exists_measure_singleton_ne_zero [Countable α] (μ : Measure α) [NeZer
     ∃ a, μ {a} ≠ 0 := by
   simpa [ext_iff_singleton] using NeZero.ne μ
 
+/-- A Dirac measure is absolutely continuous with respect to a measure that charges its point. -/
+theorem dirac_absolutelyContinuous {μ : Measure α} {a : α} (h : μ {a} ≠ 0) : dirac a ≪ μ :=
+  .mk fun s hs hμ ↦ by
+    rw [dirac_apply' _ hs, Set.indicator_of_notMem fun ha ↦
+      h (measure_mono_null (Set.singleton_subset_iff.2 ha) hμ)]
+
 variable [MeasurableSingletonClass α] {μ : Measure α} {a : α}
 
 /-- A measure is concentrated at a point iff it is a multiple of the Dirac measure there. -/
@@ -80,14 +86,14 @@ variable [MeasurableSingletonClass β]
 /-- A finite sum of scaled Dirac measures gives a set the total weight of its points. -/
 theorem finsetSum_smul_dirac_apply (w : β → ℝ≥0∞) (s : Set β) :
     (∑ b, w b • dirac b) s = ∑ b, s.indicator w b := by
-  rw [finsetSum_apply]
+  rw [_root_.sum_apply]
   exact Finset.sum_congr rfl fun b _ ↦ by by_cases hb : b ∈ s <;> simp [hb]
 
 /-- A finite sum of scaled Dirac measures gives a point its weight. -/
 theorem finsetSum_smul_dirac_singleton {w : β → ℝ≥0∞} {a : β} :
     (∑ b, w b • dirac b) {a} = w a := by
   classical
-  simp [finsetSum_smul_dirac_apply, Set.indicator_apply]
+  simp [Set.indicator_apply]
 
 theorem finsetSum_smul_dirac_apply_finset (w : β → ℝ≥0∞) (s : Finset β) :
     (∑ b, w b • dirac b) ↑s = ∑ b ∈ s, w b := by

@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Examples.Schwarz2009
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Reference.Determiner
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.Fering.Determiners
-public import Linglib.Fragments.German.Determiners
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.Fering.Determiners
+public import Linglib.Languages.German.Determiners
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -59,12 +59,12 @@ variable {E W : Type}
 
 section Forms
 
-variable (R : (ℕ → E) → W → Set E) (d : ℕ)
+variable [PartialOrder E] (R : (ℕ → E) → W → Set E) (d : ℕ)
 
 /-- The German contracted article denotes the weak article and the non-contracted one the strong
 article (Table 2.1). -/
 theorem german_denotations :
-    German.Determiners.contracted.denotations R d = {Definite.unique R} ∧
+    German.Determiners.contracted.denotations R d = {Definite.maximal R} ∧
       German.Determiners.nonContracted.denotations R d = {Definite.anaphoric R d} := by
   have h₁ : German.Determiners.contracted.strengths = {.uniqueness} := by decide
   have h₂ : German.Determiners.nonContracted.strengths = {.familiarity} := by decide
@@ -72,7 +72,7 @@ theorem german_denotations :
 
 /-- Fering's A-form denotes the weak article and its D-form the strong article (9). -/
 theorem fering_denotations :
-    Fering.Determiners.aForm.denotations R d = {Definite.unique R} ∧
+    Fering.Determiners.aForm.denotations R d = {Definite.maximal R} ∧
       Fering.Determiners.dForm.denotations R d = {Definite.anaphoric R d} := by
   have h₁ : Fering.Determiners.aForm.strengths = {.uniqueness} := by decide
   have h₂ : Fering.Determiners.dForm.strengths = {.familiarity} := by decide
@@ -81,7 +81,7 @@ theorem fering_denotations :
 /-- English *the* denotes both articles, having every use of Hawkins's classification
 (Table 2.3). -/
 theorem english_denotations :
-    English.Determiners.the.denotations R d = {Definite.unique R, Definite.anaphoric R d} := by
+    English.Determiners.the.denotations R d = {Definite.maximal R, Definite.anaphoric R d} := by
   have h : English.Determiners.the.strengths = {.uniqueness, .familiarity} := by decide
   simp [Article.denotations, h]
 
@@ -166,13 +166,13 @@ section Shift
 
 open Mereology
 
-variable {S : Type} [PartialOrder S]
+variable {S : Type} [PartialOrder S] [OrderBot S]
 
 /-- The type-shifter Π of (260) makes a property of a relational noun `R`. An individual `x` has it
 at `s` when `x` stands in `R` to a whole `y`, evaluated at `y` itself, that overlaps `s`;
 individuals are situations, so the whole is one. -/
 def shift (R : S → S → S → Prop) : (ℕ → S) → S → Set S :=
-  fun _ s ↦ {x | ∃ y, R y x y ∧ Overlap s y}
+  fun _ s ↦ {x | ∃ y, R y x y ∧ ¬ Disjoint s y}
 
 /-- A relational noun is local when it holds at a situation only of parts of the situation, as
 *Bürgermeister* evaluated at a town holds of a mayor who is part of the town. -/
@@ -182,12 +182,12 @@ variable {R : S → S → S → Prop} {g : ℕ → S} {s x y : S}
 
 /-- Π of a local relational noun picks out only parts of a whole that overlaps the situation. -/
 theorem exists_le_of_shift (hR : IsLocal R) (h : x ∈ shift R g s) :
-    ∃ y, x ≤ y ∧ R y x y ∧ Overlap s y :=
+    ∃ y, x ≤ y ∧ R y x y ∧ ¬ Disjoint s y :=
   let ⟨y, hy, ho⟩ := h
   ⟨y, hR y x y hy, hy, ho⟩
 
-theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : x ∈ shift R g s :=
-  ⟨y, hy, (Overlap.of_le hb hys).symm⟩
+theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : y ≠ ⊥) : x ∈ shift R g s :=
+  ⟨y, hy, fun h ↦ not_disjoint_of_le hb hys h.symm⟩
 
 /-- The weak article over Π of a local relational noun whose referents are not part of their
 relata, as authors are not part of their books, is undefined. -/
@@ -252,7 +252,7 @@ theorem larger_situation (g : ℕ → Sit) :
     {.mayor} ∈ Definite.unique (shift mayorOf) g {.station} ∧
       ¬ ({.mayor} : Sit) ≤ {.station} :=
   ⟨Definite.mem_unique.2
-    ⟨⟨town, ⟨rfl, rfl, by decide⟩, Mereology.Overlap.of_le (by simp) (by decide)⟩,
+    ⟨⟨town, ⟨rfl, rfl, by decide⟩, Mereology.not_disjoint_of_le (by simp) (by decide)⟩,
       fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩, by decide⟩
 
 -- (62), (275)

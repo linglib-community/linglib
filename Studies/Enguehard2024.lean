@@ -2,10 +2,10 @@ module
 
 public import Linglib.Data.Examples.Enguehard2024
 public import Studies.TieuEtAl2020
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Syntax.Number.Resolve
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Semantics.Plurality.Cardinality
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Presupposition.Strengthening
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
@@ -77,64 +77,28 @@ namespace Enguehard2024
 
 open MeasureTheory ProbabilityTheory Exhaustification
 open scoped ENNReal NNReal
-open TieuEtAl2020 (weak strong singular)
+open TieuEtAl2020 (weak strong singular mem_weak mem_strong singular_eq strong_eq
+  exclusive_singular exclusive_plural exclusive_subset_weak)
 open English.Nouns (numberSystem)
 
 /-! ### The number inference -/
 
-/-- The number inference of a positive indefinite, (1), holds of the witness cardinalities in the
-cell English gives the number. -/
-def inference (n : Number) : Set ℕ := (↑) '' (Number.ofCard numberSystem ⁻¹' {n})
-
-@[simp] theorem inference_singular : inference .singular = singular := by
-  ext k
-  simp [inference, Number.ofCard_eq_iff (v := .singular) (by decide), Number.exactCard,
-    numberSystem, singular, eq_comm]
-
-@[simp] theorem inference_plural : inference .plural = strong := by
-  ext k
-  simp only [inference, Set.mem_image, Set.mem_preimage, Set.mem_singleton_iff,
-    Number.ofCard_eq_plural_iff_forall, numberSystem]
-  simp only [Finset.mem_insert, Finset.mem_singleton,
-    forall_eq_or_imp, forall_eq, Number.exactCard, ne_eq, Option.some.injEq, reduceCtorEq,
-    not_false_eq_true, and_true, strong, Set.mem_ofPred_eq]
-  refine ⟨fun ⟨p, hp, hk⟩ ↦ hk ▸ ?_, fun hk ↦ ⟨⟨k, by omega⟩, fun h ↦ ?_, rfl⟩⟩
-  · exact lt_of_le_of_ne p.pos fun h ↦ hp (PNat.coe_eq_one_iff.1 h.symm).symm
-  · have := congrArg PNat.val h
-    simp only [PNat.val_ofNat, PNat.mk_coe] at this
-    omega
-
-theorem inference_subset_weak (n : Number) : inference n ⊆ weak := fun _ ⟨p, _, hk⟩ ↦
-  hk ▸ p.pos
-
 theorem compl_weak : weakᶜ = {0} := by
-  ext k; simp [weak]
-
--- (4)
-theorem exhIE_weak_inference_plural :
-    exhIE {weak, inference .plural} weak = inference .singular := by
-  rw [inference_plural, inference_singular,
-    exhIE_pair_sdiff (φ := weak) (d := strong) ⟨1, by simp [weak, strong]⟩]
   ext k
-  simp only [weak, strong, singular, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  simp only [Set.mem_compl_iff, mem_weak, Set.mem_singleton_iff]
   omega
 
-theorem exhIE_weak_inference_singular :
-    exhIE {weak, inference .singular} weak = inference .plural := by
-  simpa using TieuEtAl2020.exhIE_weak
+-- (4)
+theorem exhIE_weak_strong : exhIE {weak, strong} weak = singular := by
+  rw [exhIE_pair_sdiff (φ := weak) (d := strong) ⟨1, by simp⟩]
+  ext k
+  simp only [mem_weak, mem_strong, singular_eq, Set.mem_sdiff, Set.mem_singleton_iff]
+  omega
 
 -- (2), (3)
-theorem exhIE_compl (m : Number) : exhIE {weakᶜ, (inference m)ᶜ} weakᶜ = {0} := by
-  rw [← compl_weak]
-  ext k
-  rw [mem_exhIE_iff]
-  refine ⟨And.left, fun h ↦ ⟨h, fun a ha ↦ ?_⟩⟩
-  have hsub : weakᶜ ⊆ a := by
-    rcases Set.mem_insert_iff.1 ha.1 with rfl | h
-    · exact subset_rfl
-    · exact (Set.mem_singleton_iff.1 h) ▸ Set.compl_subset_compl.2 (inference_subset_weak m)
-  exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (Set.toFinite _)
-    ⟨0, by simp [weak]⟩ hsub)
+theorem exhIE_compl (m : Number) :
+    exhIE {weakᶜ, (Number.exclusive numberSystem m)ᶜ} weakᶜ = {0} := by
+  rw [TieuEtAl2020.exhIE_of_antitone compl_anti (exclusive_subset_weak m), compl_weak]
 
 /-! ### The rows of (1)–(3) -/
 
@@ -171,9 +135,10 @@ private theorem indefiniteRows_eq :
 
 -- (1), (3)
 theorem indefiniteRows_inference : ∀ r ∈ indefiniteRows,
-    r.inference = if r.polarity = .positive then inference r.number else {0} := by
+    r.inference =
+      if r.polarity = .positive then Number.exclusive numberSystem r.number else {0} := by
   rw [indefiniteRows_eq]
-  simp [singular, strong]
+  simp [strong_eq]
 
 /-! ### The conceivability presupposition -/
 
@@ -182,10 +147,10 @@ open Classical in
 asserts that there is no witness and presupposes that a cardinality its number fits is
 conceivable, (7). -/
 noncomputable def negated (K : Set ℕ) (n : Number) : ℕ → Trivalent :=
-  Trivalent.condEvent (fun _ ↦ (K ∩ inference n).Nonempty) (· ∈ weakᶜ)
+  Trivalent.condEvent (fun _ ↦ (K ∩ Number.exclusive numberSystem n).Nonempty) (· ∈ weakᶜ)
 
 theorem negated_ne_undefined_iff {K : Set ℕ} {n : Number} {k : ℕ} :
-    negated K n k ≠ .undefined ↔ (K ∩ inference n).Nonempty := by
+    negated K n k ≠ .undefined ↔ (K ∩ Number.exclusive numberSystem n).Nonempty := by
   simp [negated]
 
 theorem negated_eq_negated {K : Set ℕ} {n n' : Number} {k : ℕ} (h : negated K n k ≠ .undefined)
@@ -209,19 +174,19 @@ def chapters : Set ℕ := {1}ᶜ
 theorem negated_tableOfContents :
     negated tableOfContents .singular 0 ≠ .undefined ∧
       negated tableOfContents .plural 0 = .undefined := by
-  refine ⟨negated_ne_undefined_iff.2 ⟨1, Set.mem_Iic.2 le_rfl, by simp [singular]⟩,
+  refine ⟨negated_ne_undefined_iff.2 ⟨1, Set.mem_Iic.2 le_rfl, by simp⟩,
     not_not.1 fun h ↦ ?_⟩
   obtain ⟨k, hk, h⟩ := negated_ne_undefined_iff.1 h
-  simp only [tableOfContents, inference_plural, strong, Set.mem_Iic, Set.mem_ofPred_eq] at hk h
+  simp only [tableOfContents, exclusive_plural, mem_strong, Set.mem_Iic] at hk h
   omega
 
 -- (6)
 theorem negated_chapters :
     negated chapters .plural 0 ≠ .undefined ∧ negated chapters .singular 0 = .undefined := by
-  refine ⟨negated_ne_undefined_iff.2 ⟨2, by simp [chapters], by simp [strong]⟩,
+  refine ⟨negated_ne_undefined_iff.2 ⟨2, by simp [chapters], by simp⟩,
     not_not.1 fun h ↦ ?_⟩
   obtain ⟨_, hk, h⟩ := negated_ne_undefined_iff.1 h
-  exact hk (by simpa [singular] using h)
+  exact hk (by simpa using h)
 
 /-- The rows name the nouns, each standing for its conceivable cardinalities. -/
 def nounTable : List (String × Set ℕ) :=
@@ -284,18 +249,18 @@ theorem continuationRows_match :
 /-- The referent of an indefinite of number `n` can be resumed when the witness set has `k`
 members, that is, when a third person pronoun bears `n` and, read maximally, its number fits `k`. -/
 def Usable (n : Number) (k : ℕ) : Prop :=
-  ∃ p ∈ personal, p.person = some .third ∧ p.number = some n ∧ k ∈ inference n
+  ∃ p ∈ personal, p.person = some .third ∧ p.number = some n ∧ k ∈ Number.exclusive numberSystem n
 
 theorem usable_iff {n : Number} (hn : n ∈ numberSystem) {k : ℕ} :
-    Usable n k ↔ k ∈ inference n := by
+    Usable n k ↔ k ∈ Number.exclusive numberSystem n := by
   refine ⟨fun ⟨_, _, _, _, hk⟩ ↦ hk, fun hk ↦ ?_⟩
   rcases (by simpa [numberSystem] using hn : n = .singular ∨ n = .plural) with rfl | rfl
   exacts [⟨it, by decide, rfl, rfl, hk⟩, ⟨they, by decide, rfl, rfl, hk⟩]
 
 -- (22)
 theorem not_usable_singular_of_two_le {k : ℕ} (hk : 2 ≤ k) : ¬ Usable .singular k := by
-  rw [usable_iff (by decide)]
-  grind [inference_singular, singular]
+  rw [usable_iff (by decide), exclusive_singular, singular_eq, Set.mem_singleton_iff]
+  omega
 
 /-- A referent of number `n` is useful when some conceivable witness set lets a continuation
 resume it, (23). -/
@@ -307,17 +272,19 @@ theorem useful_iff_negated_ne_undefined {n : Number} (hn : n ∈ numberSystem) (
   simp only [negated_ne_undefined_iff, Useful, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
 
 -- (23)
-theorem exists_not_usable {K : Set ℕ} (hsg : (K ∩ inference .singular).Nonempty)
-    (hpl : (K ∩ inference .plural).Nonempty) {n : Number} (hn : n ∈ numberSystem) :
+theorem exists_not_usable {K : Set ℕ} (hsg : (K ∩ Number.exclusive numberSystem .singular).Nonempty)
+    (hpl : (K ∩ Number.exclusive numberSystem .plural).Nonempty) {n : Number}
+    (hn : n ∈ numberSystem) :
     ∃ k ∈ K, 1 ≤ k ∧ ¬ Usable n k := by
-  rw [inference_singular] at hsg
-  rw [inference_plural] at hpl
+  rw [exclusive_singular] at hsg
+  rw [exclusive_plural] at hpl
   rcases (by simpa [numberSystem] using hn : n = .singular ∨ n = .plural) with rfl | rfl
   · obtain ⟨k, hk, h⟩ := hpl
+    rw [mem_strong] at h
     exact ⟨k, hk, le_trans one_le_two h, not_usable_singular_of_two_le h⟩
   · obtain ⟨k, hk, h⟩ := hsg
-    obtain rfl : k = 1 := h
-    exact ⟨1, hk, le_rfl, by rw [usable_iff hn]; simp [strong]⟩
+    obtain rfl : k = 1 := by simpa using h
+    exact ⟨1, hk, le_rfl, by rw [usable_iff hn]; simp⟩
 
 /-! ### The production experiment -/
 
@@ -464,20 +431,21 @@ theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
 /-- The chance of ineffability of number `n` under the witness distribution `μ` is the probability,
 given a witness, that its cardinality does not fit `n`, so that the referent of a negated
 indefinite of number `n` cannot be resumed. -/
-noncomputable def ineffability (μ : Measure ℕ) (n : Number) : ℝ≥0∞ := μ[(inference n)ᶜ | weak]
+noncomputable def ineffability (μ : Measure ℕ) (n : Number) : ℝ≥0∞ :=
+  μ[(Number.exclusive numberSystem n)ᶜ | weak]
 
 theorem ineffability_singular (μ : Measure ℕ) : ineffability μ .singular = μ[strong | weak] := by
   rw [ineffability, cond_apply .of_discrete, cond_apply .of_discrete]
   congr 2
   ext k
-  simp only [weak, strong, singular, inference_singular, Set.mem_inter_iff, Set.mem_ofPred_eq,
+  simp only [mem_weak, mem_strong, singular_eq, exclusive_singular, Set.mem_inter_iff,
     Set.mem_compl_iff, Set.mem_singleton_iff]
   omega
 
 theorem ineffability_singular_add_plural (μ : Measure ℕ) [IsFiniteMeasure μ] (hμ : μ weak ≠ 0) :
     ineffability μ .singular + ineffability μ .plural = 1 := by
   have := cond_isProbabilityMeasure hμ
-  rw [ineffability_singular, ineffability, inference_plural,
+  rw [ineffability_singular, ineffability, exclusive_plural,
     prob_compl_eq_one_sub .of_discrete, add_tsub_cancel_of_le prob_le_one]
 
 /-- A number's conceivability presupposition holds iff its chance of ineffability is not one (§6).
@@ -488,9 +456,10 @@ theorem negated_ne_undefined_iff_ineffability_ne_one (μ : Measure ℕ) [IsFinit
   have := cond_isProbabilityMeasure hμ
   rw [ineffability, ← (prob_le_one (μ := μ[|weak])).lt_iff_ne, prob_compl_eq_one_sub .of_discrete,
     ENNReal.sub_lt_self_iff ENNReal.one_ne_top, cond_apply .of_discrete,
-    Set.inter_eq_right.2 (inference_subset_weak n)]
+    Set.inter_eq_right.2 (exclusive_subset_weak n)]
   simp only [pos_iff_ne_zero, ne_eq, mul_eq_zero, ENNReal.inv_eq_zero, measure_ne_top, false_or]
-  rw [← Set.biUnion_of_singleton (inference n), measure_biUnion_null_iff (Set.to_countable _)]
+  rw [← Set.biUnion_of_singleton (Number.exclusive numberSystem n),
+    measure_biUnion_null_iff (Set.to_countable _)]
   simp [negated_ne_undefined_iff, Set.Nonempty, and_comm]
 
 /-- A best guess under the witness distribution `μ` is an English number minimizing the chance of

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Logic.Modal.Defs
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Trivalent.Proposition
 
 /-!
 # Repetitive *again*
@@ -57,5 +57,9 @@ theorem again_ne_undefined_iff :
 
 @[simp] theorem again_eq_true_iff :
     again R P i = .true ↔ ◇[R] P i ∧ P i := by simp [again, Trivalent.condEvent_eq_true_iff]
+
+open Classical Bilattice in
+/-- *Again* has at most the information of its prejacent, to which it adds no assertion. -/
+theorem again_kLE : again R P i ≤ₖ Trivalent.ofProp (P i) := Trivalent.condEvent_kLE
 
 end Presupposition

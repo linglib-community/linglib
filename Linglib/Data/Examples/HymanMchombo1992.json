@@ -1047,7 +1047,7 @@
     "glossedTokens": [],
     "translation": "tie each other for [s.o.] with [sth.]",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1055,7 +1055,7 @@
       ["scope", "RAA"],
       ["suffixes", "RA(R)A(R)"]
     ],
-    "comment": "Marked ?* in the source, recorded as questionable.",
+    "comment": "Marked ?* in the source.",
     "verified": "page-image"
   },
   {

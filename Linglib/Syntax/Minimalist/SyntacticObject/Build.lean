@@ -6,34 +6,26 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Tree
-public import Linglib.Core.Computability.Edge
 public import Linglib.Core.Data.UnorderedTree.Leaves
 
 /-!
 # Building and reading syntactic objects
 
-Merge on the carrier is written `*`: External Merge of two objects, and the re-merge of a mover
-with the remainder in Internal Merge. The objects form a commutative magma and the ordered
-objects a noncommutative one. Concrete objects are built ordered, as `PlanarSyntacticObject L ι`s,
+Merge on the carrier is written `*`: External Merge of two objects, and the Merge of a term of an
+object with that object in Internal Merge. The objects form a commutative magma and the ordered
+objects a noncommutative one. Concrete objects are built ordered, as `PlanarSyntacticObject α`s,
 and forgotten to the carrier by `toSyntacticObject`, a homomorphism of magmas with none going
-back. The accessors read the root token, the leaf and node counts, and the trace predicate,
-which recognizes the trace leaves, bare or indexed.
+back. The accessors read the items in order and the item of a leaf.
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.toSyntacticObjectHom`: forgetting the order.
-* `Minimalist.SyntacticObject.yield`: the pronounced tokens.
-* `Minimalist.PlanarSyntacticObject.attach`, `yield`: Merge on a given edge, and the pronounced
-  tokens in order.
-* `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
-* `Minimalist.SyntacticObject.token?`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
+* `Minimalist.PlanarSyntacticObject.yield`: the items of a planar object, in order.
+* `Minimalist.SyntacticObject.token?`: the item of a leaf.
 
 ## Main results
 
 * `Minimalist.PlanarSyntacticObject.isEmpty_mulHom`: no homomorphism of magmas forgets in the
   other direction.
-* `Minimalist.PlanarSyntacticObject.coe_yield`: a planar object pronounces the tokens of its
-  object.
 
 ## References
 
@@ -44,126 +36,54 @@ which recognizes the trace leaves, bare or indexed.
 
 namespace Minimalist
 
-variable {L ι : Type}
+variable {α β : Type}
 
 open RoseTree UnorderedTree SyntacticObject
 
 namespace SyntacticObject
 
-/-- The default syntactic object is the bare trace. -/
-instance : Inhabited (SyntacticObject L ι) := ⟨trace⟩
+/-- An item is a leaf. -/
+instance : Coe α (SyntacticObject α) := ⟨leaf⟩
 
-/-! ### Merge as multiplication -/
-
-@[simp] theorem mul_def (l r : SyntacticObject L ι) : l * r = merge l r := rfl
-
-/-- A lexical item is a leaf. -/
-instance : Coe L (SyntacticObject L) := ⟨leaf⟩
-
-/-- Merge in braces, as [marcolli-chomsky-berwick-2025] writes it: `{l, r} = merge l r`, with
+/-- Merge in braces, as [marcolli-chomsky-berwick-2025] writes it: `{l, r} = l * r`, with
     `{s} = s`. -/
-instance : Insert (SyntacticObject L ι) (SyntacticObject L ι) := ⟨merge⟩
+instance : Insert (SyntacticObject α) (SyntacticObject α) := ⟨merge⟩
 
-instance : Singleton (SyntacticObject L ι) (SyntacticObject L ι) := ⟨id⟩
+instance : Singleton (SyntacticObject α) (SyntacticObject α) := ⟨id⟩
 
-@[simp] theorem insert_def (l r : SyntacticObject L ι) :
-    ({l, r} : SyntacticObject L ι) = merge l r := rfl
-
-/-- The pronounced tokens of a syntactic object, its lexical leaves; traces are unpronounced. -/
-def yield (s : SyntacticObject L ι) : Multiset L :=
-  s.toUnorderedTree.leaves.filterMap (Sum.elim id fun _ ↦ none)
-
-@[simp] theorem yield_leaf (tok : L) : (leaf tok : SyntacticObject L ι).yield = {tok} := rfl
-
-@[simp] theorem yield_trace : (trace : SyntacticObject L ι).yield = 0 := rfl
-
-@[simp] theorem yield_labelledTrace (i : ι) :
-    (labelledTrace i : SyntacticObject L ι).yield = 0 := rfl
-
-@[simp] theorem yield_merge (l r : SyntacticObject L ι) :
-    (merge l r).yield = l.yield + r.yield := by
-  rw [yield, toUnorderedTree_merge, show ({l.toUnorderedTree, r.toUnorderedTree} : Multiset _) =
-      l.toUnorderedTree ::ₘ {r.toUnorderedTree} from rfl,
-    UnorderedTree.leaves_node_cons]
-  simp [yield, Multiset.filterMap_add]
+@[simp] theorem insert_def (l r : SyntacticObject α) : ({l, r} : SyntacticObject α) = l * r := rfl
 
 end SyntacticObject
 
 namespace PlanarSyntacticObject
 
-@[simp] theorem mul_def (l r : PlanarSyntacticObject L ι) : l * r = merge l r := rfl
+/-- An item is a leaf. -/
+instance : Coe α (PlanarSyntacticObject α) := ⟨leaf⟩
 
-/-- A lexical item is a leaf. -/
-instance : Coe L (PlanarSyntacticObject L) := ⟨leaf⟩
+instance : Coe (PlanarSyntacticObject α) (SyntacticObject α) := ⟨toSyntacticObject⟩
 
-/-- An ordered object is an object. -/
-instance : Coe (PlanarSyntacticObject L ι) (SyntacticObject L ι) := ⟨toSyntacticObject⟩
-
-theorem merge_inj {l r l' r' : PlanarSyntacticObject L ι} :
-    merge l r = merge l' r' ↔ l = l' ∧ r = r' :=
+theorem mul_inj {l r l' r' : PlanarSyntacticObject α} : l * r = l' * r' ↔ l = l' ∧ r = r' :=
   ⟨fun h ↦ by injection h with h₁ h₂; exact ⟨h₁, h₂⟩, fun ⟨hl, hr⟩ ↦ hl ▸ hr ▸ rfl⟩
 
-theorem merge_ne_left (l r : PlanarSyntacticObject L ι) : merge l r ≠ l := fun h ↦ by
+theorem mul_ne_left (l r : PlanarSyntacticObject α) : l * r ≠ l := fun h ↦ by
   have := congrArg (·.toRoseTree.numNodes) h
-  simp only [toRoseTree_merge, RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
+  simp only [toRoseTree_mul, RoseTree.numNodes_node, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil] at this
   omega
 
 /-- No magma homomorphism maps syntactic objects to planar ones ([marcolli-chomsky-berwick-2025]
 Lemma 1.13.1). -/
-theorem isEmpty_mulHom : IsEmpty (SyntacticObject L ι →ₙ* PlanarSyntacticObject L ι) := by
+theorem isEmpty_mulHom [Nonempty α] : IsEmpty (SyntacticObject α →ₙ* PlanarSyntacticObject α) := by
+  obtain ⟨a⟩ := ‹Nonempty α›
   refine ⟨fun φ ↦ ?_⟩
-  have h := congrArg φ (mul_comm (default : SyntacticObject L ι) (default * default))
-  simp only [map_mul, mul_def, merge_inj] at h
-  exact merge_ne_left _ _ h.1.symm
+  have h := congrArg φ (mul_comm (leaf a : SyntacticObject α) (leaf a * leaf a))
+  simp only [map_mul, mul_inj] at h
+  exact mul_ne_left _ _ h.1.symm
 
-/-- `p.attach e d` merges `d` into `p` as the daughter on edge `e`. -/
-def attach (p : PlanarSyntacticObject L ι) (e : Edge) (d : PlanarSyntacticObject L ι) :
-    PlanarSyntacticObject L ι :=
-  match e with
-  | .left => merge d p
-  | .right => merge p d
+/-- The items of a planar object, left to right. -/
+def yield (p : PlanarSyntacticObject α) : List α := p.toRoseTree.leafList.filterMap id
 
-@[simp] theorem attach_left (p d : PlanarSyntacticObject L ι) :
-    p.attach .left d = merge d p := rfl
-
-@[simp] theorem attach_right (p d : PlanarSyntacticObject L ι) : p.attach .right d = merge p d :=
-  rfl
-
-
-@[simp] theorem toSyntacticObject_attach (p d : PlanarSyntacticObject L ι) (e : Edge) :
-    (p.attach e d).toSyntacticObject = SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject
-    := by
-  cases e
-  · exact toSyntacticObject_merge d p
-  · exact (toSyntacticObject_merge p d).trans (SyntacticObject.merge_comm _ _)
-
-@[simp] theorem attach_map {L' : Type} (f : L → L') (p d : PlanarSyntacticObject L) (e : Edge) :
-    (p.attach e d).map f = (p.map f).attach e (d.map f) := by
-  cases e <;> simp
-
-/-- The pronounced tokens of a planar object, left to right; traces are unpronounced. -/
-def yield (p : PlanarSyntacticObject L ι) : List L :=
-  p.toRoseTree.leafList.filterMap (Sum.elim id fun _ ↦ none)
-
-theorem yield_toSyntacticObject (p : PlanarSyntacticObject L ι) :
-    p.toSyntacticObject.yield = p.toRoseTree.leaves.filterMap (Sum.elim id fun _ ↦ none) := by
-  rw [SyntacticObject.yield, toUnorderedTree_toSyntacticObject]
-  rfl
-
-/-- The pronounced tokens of a planar object are those of its object, in order. -/
-theorem coe_yield (p : PlanarSyntacticObject L ι) :
-    (p.yield : Multiset L) = p.toSyntacticObject.yield := by
-  rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList, yield_toSyntacticObject]
-
-theorem yield_attach (p : PlanarSyntacticObject L ι) (e : Edge)
-    (d : PlanarSyntacticObject L ι) :
-    (p.attach e d).toSyntacticObject.yield =
-      d.toSyntacticObject.yield + p.toSyntacticObject.yield := by
-  cases e <;>
-    simp only [yield_toSyntacticObject, attach, toRoseTree_merge, RoseTree.leaves_node_cons,
-      List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, Multiset.filterMap_add]
-  exact add_comm _ _
+@[simp] theorem yield_of (a : α) : yield (FreeMagma.of a : PlanarSyntacticObject α) = [a] := rfl
 
 /-! ### Merge in braces
 
@@ -171,84 +91,47 @@ theorem yield_attach (p : PlanarSyntacticObject L ι) (e : Edge)
 `insert a {b}`, so with `{p} = p` the object `{T, {V, PossP}}` is `T * (V * PossP)`, in the given
 order; its elements are objects, a head entering as its leaf. -/
 
-instance : Singleton (PlanarSyntacticObject L ι) (PlanarSyntacticObject L ι) := ⟨id⟩
+instance : Singleton (PlanarSyntacticObject α) (PlanarSyntacticObject α) := ⟨id⟩
 
-instance : Insert (PlanarSyntacticObject L ι) (PlanarSyntacticObject L ι) := ⟨merge⟩
+instance : Insert (PlanarSyntacticObject α) (PlanarSyntacticObject α) := ⟨merge⟩
 
-@[simp] theorem singleton_def (p : PlanarSyntacticObject L ι) :
-    ({p} : PlanarSyntacticObject L ι) = p := rfl
+@[simp] theorem singleton_def (p : PlanarSyntacticObject α) :
+    ({p} : PlanarSyntacticObject α) = p := rfl
 
-@[simp] theorem insert_def (l r : PlanarSyntacticObject L ι) :
-    (insert l r : PlanarSyntacticObject L ι) = merge l r := rfl
+@[simp] theorem insert_def (l r : PlanarSyntacticObject α) :
+    (insert l r : PlanarSyntacticObject α) = l * r := rfl
 
 end PlanarSyntacticObject
 
 namespace SyntacticObject
 
-/-! ### Lexical leaves from features -/
-
-/-- A lexical leaf with a phonological form. -/
-def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : SyntacticObject :=
-  SyntacticObject.leaf ⟨.of cat sel (phonForm := phon), id⟩
-
 /-! ### Accessors -/
 
-/-- The lexical token at the root, if the root is a lexical leaf. -/
-def token? (s : SyntacticObject L ι) : Option L :=
-  match UnorderedTree.value s.toUnorderedTree with
-  | .inl o => o
-  | .inr _ => none
+/-- The item of a leaf, `none` of a Merge. -/
+def token? : SyntacticObject α → Option α :=
+  FreeCommMagma.elim some (fun _ _ _ _ ↦ none) fun _ _ _ _ ↦ rfl
 
-@[simp] theorem token?_leaf (tok : L) :
-    (SyntacticObject.leaf tok : SyntacticObject L ι).token? = some tok := rfl
+@[simp] theorem token?_of (a : α) : token? (FreeCommMagma.of a) = some a := rfl
 
-@[simp] theorem token?_trace : (trace : SyntacticObject L ι).token? = none := rfl
+@[simp] theorem token?_mul (l r : SyntacticObject α) : (l * r).token? = none :=
+  FreeCommMagma.elim_mul ..
 
-@[simp] theorem token?_labelledTrace (i : ι) :
-    (labelledTrace i : SyntacticObject L ι).token? = none := rfl
+theorem token?_eq_some_iff {s : SyntacticObject α} {a : α} :
+    s.token? = some a ↔ s = FreeCommMagma.of a := by
+  induction s using FreeCommMagma.inductionOn with
+  | of b => simp [FreeCommMagma.of_injective.eq_iff]
+  | mul l r _ _ => simp [(FreeCommMagma.of_ne_mul a l r).symm]
 
-/-- `s` is a lexical leaf whose item's category is `c`. -/
-def isLeafOf (c : Cat) (s : SyntacticObject) : Prop :=
-  s.token?.map (·.item.cat) = some c
-
-instance (c : Cat) : DecidablePred (isLeafOf c) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-
-@[simp] theorem isLeafOf_leaf (c : Cat) (tok : LexicalItem.Token) :
-    isLeafOf c (SyntacticObject.leaf tok) ↔ tok.item.cat = c := by
-  simp [isLeafOf]
-
-@[simp] theorem not_isLeafOf_trace (c : Cat) : ¬ isLeafOf c trace := by simp [isLeafOf]
-
-theorem traceOf_ne_trace (tok : L) : traceOf tok ≠ trace := by
-  intro h
-  have h' : (Sum.inr (some tok) : Vertex L) = Sum.inr none :=
-    congrArg (fun s : SyntacticObject L ↦ UnorderedTree.value s.toUnorderedTree) h
-  simp at h'
-
-@[simp] theorem token?_merge (l r : SyntacticObject L ι) : (merge l r).token? = none := by
-  rw [token?, toUnorderedTree_merge, UnorderedTree.value_node]
-
-theorem token?_eq_some_iff {s : SyntacticObject L ι} {tok : L} :
-    s.token? = some tok ↔ s = leaf tok := by
-  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ token?_leaf tok⟩
-  rcases s.exists_form with ⟨tok', rfl⟩ | rfl | ⟨tok', rfl⟩ | ⟨l, r, rfl⟩ <;> simp_all
-
-theorem token?_map {L' : Type} (f : L → L') (s : SyntacticObject L) :
-    (s.map f).token? = s.token?.map f := by
-  rcases s.exists_form with ⟨a, rfl⟩ | rfl | ⟨a, rfl⟩ | ⟨l, r, rfl⟩ <;> simp
-
-theorem isLeafOf_map {f : LexicalItem.Token → LexicalItem.Token}
-    (hcat : ∀ t, (f t).item.cat = t.item.cat) (c : Cat) (s : SyntacticObject) :
-    isLeafOf c (s.map f) ↔ isLeafOf c s := by
-  simp [isLeafOf, token?_map, Option.map_map, Function.comp_def, hcat]
+theorem token?_map (f : α → β) (s : SyntacticObject α) : (s.map f).token? = s.token?.map f := by
+  induction s using FreeCommMagma.inductionOn with
+  | of a => rfl
+  | mul l r _ _ => simp
 
 /-- A shape summary; the full tree is a quotient with no faithful readout. -/
-instance [Repr L] : Repr (SyntacticObject L ι) where
+instance [Repr α] : Repr (SyntacticObject α) where
   reprPrec s _ := match s.token? with
-    | some tok => f!"SyntacticObject.leaf {repr tok}"
-    | none =>
-      let n := UnorderedTree.numLeaves s.toUnorderedTree
-      if n = 1 then f!"SyntacticObject.trace" else f!"⟨SyntacticObject merge, {n} leaves⟩"
+    | some a => f!"SyntacticObject.leaf {repr a}"
+    | none => f!"⟨SyntacticObject merge, {UnorderedTree.numLeaves s.toUnorderedTree} leaves⟩"
 
 end SyntacticObject
 

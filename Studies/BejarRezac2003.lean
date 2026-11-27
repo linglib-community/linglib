@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Minimalist.Probe.Minimal
 public import Linglib.Syntax.Minimalist.Probe.Phi
 public import Linglib.Syntax.Minimalist.Feature.Valuation
 
@@ -22,6 +23,7 @@ risen above the dative, as in French and Spanish but not in Icelandic.
   licensed.
 * `BejarRezac2003.Head`: a φ/Case head, with the Case it assigns, its EPP, and whether its
   nominative's φ-features rise as a head.
+* `BejarRezac2003.Head.reproject`: the order in which the projection of a head meets its domain.
 * `BejarRezac2003.Head.derive`: the derivation of a head's domain.
 * `BejarRezac2003.PLC`: the Person Licensing Condition.
 
@@ -37,10 +39,12 @@ swaps the two constructions of (11); the diagram, which agrees with the low prep
 
 ## TODO
 
-The general form of the conclusion, that a nominal with unvalued Case is licensed iff it is the
-closest match of the head's first or reprojected person probe, is stated only configuration by
-configuration. Causatives and restructuring (2), nominalizations, and focused pronouns (§4) are not
-modelled.
+The general form of the conclusion is proved cycle by cycle: a domain obeys the condition iff
+the head's last person probe Agrees with every nominal still unlicensed in the order it searches.
+The form on the positions of the base order, that the probe agrees with each such position under
+the base closeness or under the closeness after movement, is not proved; it needs an EPP that
+does not read licensing. Causatives and restructuring (2), nominalizations, and focused pronouns
+(§4) are not modelled.
 
 ## References
 
@@ -80,6 +84,21 @@ def dat (c : Bundle) : Nominal := ⟨.nominal c (.valued .dat), true⟩
 def valueCase (c : Case) (n : Nominal) : Nominal :=
   { n with features := (FeatureBundle.valueAt n.features .case c).untopD n.features }
 
+/-- A bundle bears a 1st/2nd person feature. -/
+def HasFirstOrSecond (b : Bundle) : Prop := ∃ p : Person, b.person = ↑p ∧ p ≠ .third
+
+instance : DecidablePred HasFirstOrSecond := fun b ↦
+  inferInstanceAs (Decidable (∃ p : Person, b.person = ↑p ∧ p ≠ .third))
+
+@[simp] theorem hasFirstOrSecond_update_case {c : Bundle} {x : Flat Case} :
+    HasFirstOrSecond (Function.update c .case x) ↔ HasFirstOrSecond c := by
+  simp [HasFirstOrSecond, Agreement.Bundle.person]
+
+/-- A nominal needs licensing when it bears an unlicensed 1st/2nd person feature (§3). -/
+def Needs (n : Nominal) : Prop := HasFirstOrSecond n.features.agreement ∧ n.licensed = false
+
+instance : DecidablePred Needs := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
 @[simp] theorem features_caseless (c : Bundle) : (caseless c).features = .nominal c .unvalued :=
   rfl
 @[simp] theorem features_dat (c : Bundle) : (dat c).features = .nominal c (.valued .dat) := rfl
@@ -88,7 +107,9 @@ def valueCase (c : Case) (n : Nominal) : Nominal :=
 
 @[simp] theorem valueCase_nominal (k : Case) (c : Bundle) (l : Bool) :
     valueCase k ⟨.nominal c .unvalued, l⟩ = ⟨.nominal c (.valued k), l⟩ := by
-  simp [valueCase, FeatureBundle.valueAt, FeatureBundle.update_case_nominal]
+  rw [valueCase, FeatureBundle.valueAt,
+    FeatureBundle.unifyAt_of_eq_coe_bot (FeatureBundle.nominal_case ..), WithTop.untopD_coe]
+  exact congrArg (Nominal.mk · l) (FeatureBundle.update_case_nominal (c := c) (.valued k))
 
 @[simp] theorem valueCase_caseless (k : Case) (c : Bundle) :
     valueCase k (caseless c) = ⟨.nominal c (.valued k), false⟩ :=
@@ -170,23 +191,84 @@ structure Head where
   epp : Option (Nominal → Bool) := none
   agrX0 : Bool := false
 
+/-- The order in which the projection of a head meets its domain: the nominal satisfying the EPP
+has raised, and a rising nominative φ-head has raised above it ((16), (25)). -/
+def Head.reproject (F : Head) (can : Nominal → Bool) (ns : List Nominal) : List Nominal :=
+  (if F.agrX0 then raise (decide ·.features.IsActive) else id) (raise can ns)
+
 /-- The derivation of a head's domain. The person probe searches the base order; if the head has
-an EPP feature, the nominal satisfying it raises, a rising nominative φ-head raises above it, and
-the projection of the head probes again for person; the number probe values the head's Case last
-((8)–(10), (16)–(17), (25)). -/
+an EPP feature, the projection of the head probes again for person in the order `Head.reproject`
+gives; the number probe values the head's Case last ((8)–(10), (16)–(17), (25)). -/
 def Head.derive (F : Head) (ns : List Nominal) : List Nominal :=
   numAgree F.case <| match F.epp with
     | none => piAgree ns
-    | some can =>
-      piAgree <| (if F.agrX0 then raise (decide ·.features.IsActive) else id)
-        (raise can (piAgree ns))
+    | some can => piAgree (F.reproject can (piAgree ns))
 
 /-- The Person Licensing Condition holds of a domain when every nominal with an interpretable
 1st/2nd person feature has had it licensed (§3). -/
-def PLC (ns : List Nominal) : Prop := ∀ n ∈ ns, n.features.agreement.IsSAP → n.licensed = true
+def PLC (ns : List Nominal) : Prop :=
+  ∀ n ∈ ns, HasFirstOrSecond n.features.agreement → n.licensed = true
 
 instance : DecidablePred PLC := fun ns ↦
-  inferInstanceAs (Decidable (∀ n ∈ ns, n.features.agreement.IsSAP → n.licensed = true))
+  inferInstanceAs (Decidable (∀ n ∈ ns, HasFirstOrSecond n.features.agreement → n.licensed = true))
+
+private theorem hasFirstOrSecond_valueCase (k : Case) (n : Nominal) :
+    HasFirstOrSecond (valueCase k n).features.agreement ↔
+      HasFirstOrSecond n.features.agreement := by
+  rw [valueCase, FeatureBundle.valueAt, FeatureBundle.unifyAt]
+  cases (n.features FeatureType.case).unifyWith _ _ <;> simp [FeatureBundle.agreement_update_agr]
+
+private theorem plc_cons {n : Nominal} {ns : List Nominal} :
+    PLC (n :: ns) ↔ (HasFirstOrSecond n.features.agreement → n.licensed = true) ∧ PLC ns :=
+  List.forall_mem_cons
+
+private theorem plc_agreeWith_valueCase (k : Case) (ns : List Nominal) :
+    PLC (agreeWith (valueCase k) ns) ↔ PLC ns := by
+  cases ns with
+  | nil => rfl
+  | cons n ns =>
+    rw [agreeWith_cons, plc_cons, plc_cons]
+    split_ifs
+    · exact and_congr_left' (imp_congr_left (hasFirstOrSecond_valueCase k n))
+    · rfl
+
+private theorem plc_numAgree (k : Case) (ns : List Nominal) :
+    PLC (numAgree k ns) ↔ PLC ns := by
+  cases ns with
+  | nil => rfl
+  | cons n ns =>
+    rw [numAgree]
+    split_ifs
+    · exact plc_agreeWith_valueCase k _
+    · rw [plc_cons, plc_cons, plc_agreeWith_valueCase]
+
+private theorem allLicensed_phiProbe_cons {needs : Nominal → Prop} {n : Nominal}
+    {ns : List Nominal} :
+    phiProbe.AllLicensed needs (n :: ns) ↔
+      (needs n → n.features.IsActive) ∧ ∀ m ∈ ns, ¬ needs m := by
+  rw [Probe.allLicensed_cons]
+  simp only [phiProbe, Probe.ofInt_int, Probe.ofInt_sat, not_true_eq_false, imp_false]
+  exact and_congr_right' ⟨And.left, fun h ↦ ⟨h, Probe.allLicensed_of_forall_not h⟩⟩
+
+private theorem plc_piAgree (ns : List Nominal) :
+    PLC (piAgree ns) ↔ phiProbe.AllLicensed Needs ns := by
+  cases ns with
+  | nil => simp [piAgree, PLC]
+  | cons n ns =>
+    rw [piAgree, agreeWith_cons, plc_cons, allLicensed_phiProbe_cons]
+    by_cases h : n.features.IsActive <;> simp [h, PLC, Needs]
+
+-- A head without an EPP feature has one person probe, which searches the base order.
+theorem plc_derive_iff (F : Head) (hF : F.epp = none) (ns : List Nominal) :
+    PLC (F.derive ns) ↔ phiProbe.AllLicensed Needs ns := by
+  rw [Head.derive, hF, plc_numAgree, plc_piAgree]
+
+/-- A head with an EPP feature derives a domain that obeys the condition exactly when the person
+probe of its projection Agrees with every nominal the first cycle left unlicensed. -/
+theorem plc_derive_iff_of_epp (F : Head) {can : Nominal → Bool} (hF : F.epp = some can)
+    (ns : List Nominal) :
+    PLC (F.derive ns) ↔ phiProbe.AllLicensed Needs (F.reproject can (piAgree ns)) := by
+  rw [Head.derive, hF, plc_numAgree, plc_piAgree]
 
 /-- The applicative preposition assigns dative to its complement (§4). -/
 def applicative : Head := { case := .dat }
@@ -222,7 +304,7 @@ theorem v_derive_doc (cd ca : Bundle) :
 /-- The double object construction obeys the condition iff its theme is 3rd person, whatever the
 dative ((1), (7)). -/
 theorem doc_plc_iff (cd ca : Bundle) :
-    PLC (v.derive [dat cd, caseless ca]) ↔ ¬ ca.IsSAP := by
+    PLC (v.derive [dat cd, caseless ca]) ↔ ¬ HasFirstOrSecond ca := by
   rw [v_derive_doc]
   simp [PLC]
 
@@ -254,19 +336,19 @@ example : ¬ PLC (v.derive [caseless (.personNumber .first .singular),
 -- (12), (25c)
 theorem icelandicT_derive (cd cn : Bundle) :
     icelandicT.derive [dat cd, caseless cn] = [dat cd, ⟨.nominal cn (.valued .nom), false⟩] :=
-  by simp [Head.derive, numAgree, piAgree, raise, Probe.search, Probe.relativized,
+  by simp [Head.derive, Head.reproject, numAgree, piAgree, raise, Probe.search, Probe.relativized,
       icelandicT, caseless, dat]
 
 -- (16), (17), (25b)
 theorem frenchT_derive (cd cn : Bundle) :
     frenchT.derive [dat cd, caseless cn] = [⟨.nominal cn (.valued .nom), true⟩, dat cd] :=
-  by simp [Head.derive, numAgree, piAgree, raise, Probe.search, Probe.relativized,
+  by simp [Head.derive, Head.reproject, numAgree, piAgree, raise, Probe.search, Probe.relativized,
       frenchT, caseless, dat]
 
 -- (25a)
 theorem spanishT_derive (cd cn : Bundle) :
     spanishT.derive [dat cd, caseless cn] = [⟨.nominal cn (.valued .nom), true⟩, dat cd] :=
-  by simp [Head.derive, numAgree, piAgree, raise, Probe.search, Probe.relativized,
+  by simp [Head.derive, Head.reproject, numAgree, piAgree, raise, Probe.search, Probe.relativized,
       spanishT, caseless, dat]
 
 /-- A dative–nominative construction obeys the condition iff its nominative is 3rd person or its
@@ -274,9 +356,9 @@ theorem spanishT_derive (cd cn : Bundle) :
 theorem dnc_plc_iff (can : Nominal → Bool) (hcan : ∀ c, can (caseless c) = true) (x0 : Bool)
     (cd cn : Bundle) :
     PLC (({ case := .nom, epp := some can, agrX0 := x0 } : Head).derive [dat cd, caseless cn]) ↔
-      (can (dat cd) = true ∧ x0 = false → ¬ cn.IsSAP) := by
+      (can (dat cd) = true ∧ x0 = false → ¬ HasFirstOrSecond cn) := by
   cases h : can (dat cd) <;> cases x0 <;>
-    simp [Head.derive, raise, piAgree, numAgree, Probe.search, Probe.relativized, h,
+    simp [Head.derive, Head.reproject, raise, piAgree, numAgree, Probe.search, Probe.relativized, h,
       hcan, PLC]
 
 -- (12) Icelandic *þið* excluded; (13) French *je lui fus présenté* and (18) Spanish

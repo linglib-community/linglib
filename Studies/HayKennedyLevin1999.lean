@@ -7,8 +7,8 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Degree.Measurement
 public import Linglib.Semantics.Degree.ScalarDimension
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.HayKennedyLevin1999
 
 /-!
@@ -23,7 +23,7 @@ positive lower bound on the change. A bound can come from a measure phrase or *c
 from a conventional value supplied by context. A bound that is only implicated can be cancelled and
 one supplied by overt material cannot, which is why an unmodified degree achievement takes both
 adverbials and one modified by *completely* only the in-adverbial. The paper's closed-range and
-open-range adjectives are checked against the scales of the English fragment.
+open-range adjectives are checked against the scales of the English language file.
 
 ## Implementation notes
 
@@ -147,7 +147,7 @@ theorem isGLB_inter_someAmount [DenselyOrdered δ] {D : Set δ} (hD : IsLowerSet
 
 theorem not_isBounded_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
     ¬ IsBounded (slightly s) :=
-  not_isBounded_of_isGLB <| isGLB_inter_someAmount (isLowerSet_Iic s) self_mem_Iic hs
+  not_isBounded_of_isGLB <| isGLB_inter_someAmount (IsLowerSet.Iic s) self_mem_Iic hs
 
 theorem not_isBounded_someAmount [DenselyOrdered δ] : ¬ IsBounded (someAmount (δ := δ)) :=
   not_isBounded_of_isGLB isGLB_Ioi

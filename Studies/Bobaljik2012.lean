@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Morphology.Exponence.Containment.SupersetRule
-public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Morphology.Exponence.SupersetRule
+public import Linglib.Generalizations.ComparativeSuperlativeGeneralization
 public import Linglib.Morphology.DistributedMorphology.PhrasalLocality
 public import Mathlib.Logic.Relation
-public import Linglib.Fragments.English.Adjectives
-public import Linglib.Fragments.Latin.Adjectives
-public import Linglib.Fragments.Slavic.Russian.Adjectives
+public import Linglib.Languages.English.Adjectives
+public import Linglib.Languages.Latin.Adjectives
+public import Linglib.Languages.Slavic.Russian.Adjectives
 public import Linglib.Data.Wordlist.Bobaljik2012
 public import Linglib.Data.StructureDataset.Bobaljik2012
 
@@ -379,11 +379,6 @@ end Merger
 
 /-! ### CSG1 -/
 
--- (1)
-theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p 0) :
-    p 2 ≠ p 0 :=
-  fun h2 ↦ h (hc (i := 0) (j := 1) (k := 2) (by decide) (by decide) h2.symm).symm
-
 /-! ### CSG1 under any ranking
 
 Selecting the applicable rule of greatest score realizes a contiguous pattern whatever the score,
@@ -393,10 +388,9 @@ decides which contiguous pattern a vocabulary yields, not that the pattern is co
 /-- CSG1 holds of an antihomophonous vocabulary over the containment structure however its rules
 are ranked. -/
 theorem csg1_of_any_ranking {F α : Type*} [LinearOrder α] (f : SpanRule 3 F → α)
-    {v : RuleSet (SpanRule 3 F)} (hv : v.Antihomophonous) (h : v.realize f 1 ≠ v.realize f 0) :
-    v.realize f 2 ≠ v.realize f 0 :=
-  csg1 (p := v.realize f)
-    (RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hg hs ↦ le_trans hs hg) h
+    {v : RuleSet (SpanRule 3 F)} (hv : v.Antihomophonous) : CSG.Part1 (v.realize f) :=
+  CSG.part1_iff_isContiguous.2
+    (RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hg hs ↦ le_trans hs hg)
 
 /-! ### The suppletive triples (Tables 4.1 and 4.2)
 
@@ -450,8 +444,13 @@ theorem abc_iff : ∀ r ∈ Wordlist.rootClasses,
 /-- CSG1 holds of every adjectival triple but the Basque doublet. -/
 theorem csg1_of_ne_basque {r : CLDF.Wordlist.RootClasses Wordlist.Cell}
     (hr : r ∈ Wordlist.rootClasses) (hq : ¬ Quantifier r)
-    (h : r.id ≠ Wordlist.eus_good_on.roots.id) : rootPattern r 2 ≠ rootPattern r 0 :=
-  csg1 ((isContiguous_iff_ne_basque r hr hq).2 h) (suppletive_comparative r hr)
+    (h : r.id ≠ Wordlist.eus_good_on.roots.id) : CSG.Part1 (rootPattern r) :=
+  CSG.part1_iff_isContiguous.2 ((isContiguous_iff_ne_basque r hr hq).2 h)
+
+-- (2)
+theorem csg2 {r : CLDF.Wordlist.RootClasses Wordlist.Cell} (hr : r ∈ Wordlist.rootClasses) :
+    CSG.Part2 (rootPattern r) :=
+  CSG.part2_iff_ker_ne_ker_aab.2 (ne_aab r hr)
 
 /-- No antihomophonous vocabulary realizes the Basque triple *on – hobe – on-en* (143b), whose
 homophony Antihomophony (44) excludes, as section 4.1.2 leaves open. -/
@@ -493,7 +492,7 @@ theorem exists_rootClasses_of_bearsOnCSG : ∀ r ∈ StructureDataset.broadSampl
       ¬ Quantifier t ∧ some t.lexeme.languageId = r.language.glottocode := by
   decide +kernel
 
-/-! ### The English Fragment -/
+/-! ### The English language file -/
 
 /-- A grade form of one word is synthetic, as *taller* is. -/
 def Synthetic (f : List Morph) : Prop := (Morph.wordsAt .clitic f).length = 1
@@ -505,13 +504,13 @@ instance (f : List Morph) : Decidable (Synthetic f) := inferInstanceAs (Decidabl
 
 instance (f : List Morph) : Decidable (Periphrastic f) := inferInstanceAs (Decidable (_ < _))
 
-/-- On the English Fragment a synthetic superlative comes with a synthetic comparative. This is
+/-- On the English language file a synthetic superlative comes with a synthetic comparative. This is
 the SSG (3), which `Synthesis.syntheticAt_of_le` derives structurally. -/
 theorem english_ssg :
     ∀ e ∈ allEntries, Synthetic e.comparison.superlative → Synthetic e.comparison.comparative := by
   decide
 
-/-- On the English Fragment a comparative not on the positive's root is synthetic (*better*,
+/-- On the English language file a comparative not on the positive's root is synthetic (*better*,
 *worse*, never *more bett*). This is the RSG (4). -/
 theorem english_rsg :
     ∀ e ∈ allEntries, e.comparison.comparative ≠ [] → .root e.form ∉ e.comparison.comparative →
@@ -582,7 +581,7 @@ theorem koryak_morph : ∃ r ∈ StructureDataset.focusedSurvey, r.language.name
 /-! ### The book's vocabularies (ch. 2, ch. 5)
 
 Each vocabulary is run through the Elsewhere engine of
-`Morphology/Exponence/Containment/SpanRule.lean`; the syncretism of the
+`Morphology/Exponence/SpanRule.lean`; the syncretism of the
 realized cells is the root pattern. -/
 
 /-- Czech BAD (39), with *hor-* under CMPR and *špatn-* elsewhere. -/
@@ -788,7 +787,7 @@ theorem russian_bad_comparative_embedding :
 theorem russian_bad_synthetic_abb : Setoid.ker (realize russianBad) = Setoid.ker Paradigm.abb := by
   decide
 
-/-- In the English, Latin and Russian Fragments a superlative on the positive's root after a
+/-- In the English, Latin and Russian language files a superlative on the positive's root after a
 comparative on another is periphrastic, embedding the positive, so every morphological superlative
 satisfies CSG1. -/
 theorem periphrastic_of_aba :

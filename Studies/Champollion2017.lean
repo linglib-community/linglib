@@ -2,9 +2,9 @@ module
 
 public import Linglib.Semantics.Mereology.Basic
 public import Linglib.Semantics.Events.Basic
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 public import Studies.Krifka1998
 
 /-!
@@ -19,7 +19,7 @@ the book assumes throughout, entails Krifka's cumulativity, and atelicity along 
 a Schwarzschild cover into parts with properly smaller run times. Against Krifka's subregion
 account of *for*-adverbials, the book's back-and-forth scenario has stratified reference and
 violates the subregion presupposition. The per-verb distributivity facts are meaning postulates,
-stated over the Fragment verbs' denotations.
+stated over the language file verbs' denotations.
 
 ## Main definitions
 
@@ -70,7 +70,7 @@ dimension `d` stand in the granularity relation `γ` to the image of `x`, the st
 of [champollion-2017] eq. (16) with the granularity of eq. (17) made binary. -/
 def StratifiedReference {α β : Type*} [SemilatticeSup α]
     (d : α → β) (γ : β → β → Prop) (P : α → Prop) (x : α) : Prop :=
-  AlgClosure (fun y ↦ P y ∧ γ (d y) (d x)) x
+  x ∈ supClosure {y | P y ∧ γ (d y) (d x)}
 
 /-! ### Universal stratified reference -/
 
@@ -84,8 +84,8 @@ def StratifiedReferenceUniv {α β : Type*} [SemilatticeSup α]
 
 /-- Atomic granularity holds when the inner image is an atom of the dimension, the granularity of
 distributive reference along a thematic role. -/
-def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
-  fun inner _outer ↦ Atom inner
+def AtomicGranularity {β : Type*} [PartialOrder β] [OrderBot β] : β → β → Prop :=
+  fun inner _outer ↦ IsAtom inner
 
 /-! ### Stratified Distributive StratifiedReference ([champollion-2017] eq. 24) -/
 
@@ -93,12 +93,12 @@ def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
     role θ and whose granularity is `Atom` on the inner image, the outer being unused since
     atomicity is an absolute property ([champollion-2017] eq. (24)). It captures
     distributivity, as "The boys each saw a movie" distributes over atomic agents. -/
-def DistributiveReference {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+def DistributiveReference {α β : Type*} [SemilatticeSup α] [PartialOrder β] [OrderBot β]
     (θ : α → β) (P : α → Prop) (x : α) : Prop :=
   StratifiedReference θ AtomicGranularity P x
 
 /-- `P` has universal distributive reference when every `P`-entity distributes along θ. -/
-def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder β] [OrderBot β]
     (θ : α → β) (P : α → Prop) : Prop :=
   ∀ x, P x → DistributiveReference θ P x
 
@@ -116,26 +116,26 @@ coincides with the functional form on a role's graph
 
 /-- Relational distributive reference takes the role to be a neo-Davidsonian relation `R` and
 counts a part when it has an atomic `R`-filler. -/
-def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity]
+def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity] [OrderBot Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=
-  AlgClosure (fun y ↦ P y ∧ ∃ a, R a y ∧ Atom a) x
+  x ∈ supClosure {y | P y ∧ ∃ a, R a y ∧ IsAtom a}
 
 /-- `P` has universal relational distributive reference when every `P`-element distributes
     along `R`. -/
-def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity]
+def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity] [OrderBot Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) : Prop :=
   ∀ x, P x → RelationalDistributiveReference R P x
 
 theorem relationalDistributiveReference_mono {Entity α : Type*}
-    [PartialOrder Entity] [SemilatticeSup α]
+    [PartialOrder Entity] [OrderBot Entity] [SemilatticeSup α]
     {R : Entity → α → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, RelationalDistributiveReference R P x →
       RelationalDistributiveReference R Q x := by
   intro x hx
-  exact algClosure_mono (fun y ⟨hp, ha⟩ ↦ ⟨h y hp, ha⟩) x hx
+  exact supClosure_mono (by exact fun y ⟨hp, ha⟩ ↦ ⟨h y hp, ha⟩) hx
 
 theorem relationalDistributiveReference_graph {Entity α : Type*}
-    [PartialOrder Entity] [SemilatticeSup α]
+    [PartialOrder Entity] [OrderBot Entity] [SemilatticeSup α]
     {θ : α → Entity} {P : α → Prop} {x : α} :
     RelationalDistributiveReference (fun a y ↦ θ y = a) P x ↔
       DistributiveReference θ P x := by
@@ -211,7 +211,7 @@ abbrev DistributivityConstraint {α β : Type*} [SemilatticeSup α]
 /-! ### Construction Instances -/
 
 /-- Adverbial *each* requires distributive reference along a thematic role. -/
-abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β] [OrderBot β]
     (θ : α → β) (Share : α → Prop) (x : α) : Prop :=
   DistributiveReference θ Share x
 
@@ -232,25 +232,25 @@ theorem stratifiedReference_trivial_granularity {α β : Type*} [SemilatticeSup 
     {d : α → β} {P : α → Prop} :
     StratifiedReferenceUniv d (fun _ _ ↦ True) P := by
   intro x hx
-  exact AlgClosure.base ⟨hx, trivial⟩
+  exact subset_supClosure ⟨hx, trivial⟩
 
 theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
-    [PartialOrder β]
+    [PartialOrder β] [OrderBot β]
     {θ : α → β} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, DistributiveReference θ P x → DistributiveReference θ Q x := by
   intro x hx
-  exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
+  exact supClosure_mono (by exact fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) hx
 
 theorem stratifiedReference_mono {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, StratifiedReference d γ P x → StratifiedReference d γ Q x := by
   intro x hx
-  exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
+  exact supClosure_mono (by exact fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) hx
 
 theorem stratifiedReference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} (hRefl : ∀ b, γ b b)
     {P : α → Prop} {x : α} (hx : P x) : StratifiedReference d γ P x :=
-  AlgClosure.base ⟨hx, hRefl (d x)⟩
+  subset_supClosure ⟨hx, hRefl (d x)⟩
 
 theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (d : SupHom α β)
@@ -260,17 +260,17 @@ theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [Semilattic
     (hx : StratifiedReference d γ P x) (hy : StratifiedReference d γ P y) :
     StratifiedReference d γ P (x ⊔ y) := by
   unfold StratifiedReference at hx hy ⊢
-  -- The closure structure already gives closure under sum (algClosure_cum);
+  -- The closure structure already gives closure under sum (`supClosed_supClosure`);
   -- we just weaken the granularity witness via monotonicity to compare
   -- against the joined outer dimension.
-  have hxy : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) (x ⊔ y) := by
-    have hx' : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) x := by
-      exact algClosure_mono
-        (fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_left⟩) x hx
-    have hy' : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) y := by
-      exact algClosure_mono
-        (fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_right⟩) y hy
-    exact AlgClosure.sum hx' hy'
+  have hxy : x ⊔ y ∈ supClosure {z | P z ∧ γ (d z) (d x ⊔ d y)} := by
+    have hx' : x ∈ supClosure {z | P z ∧ γ (d z) (d x ⊔ d y)} := by
+      exact supClosure_mono
+        (by exact fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_left⟩) hx
+    have hy' : y ∈ supClosure {z | P z ∧ γ (d z) (d x ⊔ d y)} := by
+      exact supClosure_mono
+        (by exact fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_right⟩) hy
+    exact supClosed_supClosure hx' hy'
   rw [map_sup]
   exact hxy
 
@@ -288,10 +288,10 @@ theorem qua_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     {P : E → Prop}
-    (hQua : QUA P)
+    (hQua : QUA {e | P e})
     {e : E} (he : P e) (hSub : SubintervalReference P e) :
     False := by
-  obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSub
+  obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := exists_le_of_mem_supClosure hSub
   have hne : a ≠ e := by
     intro heq; rw [heq] at hGran
     exact lt_irrefl _ hGran
@@ -310,7 +310,7 @@ theorem in_adverbial_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [TemporalTrace E T]
     [SemilatticeSup E]
     {P : E → Prop}
-    (hQua : QUA P)
+    (hQua : QUA {e | P e})
     {e₁ e₂ : E} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
     ¬ SubintervalReferenceUniv P := by
   intro hSub
@@ -327,7 +327,7 @@ open _root_.Aspect Champollion2017
 Whether a verb distributes over the atomic fillers of a thematic role is a property of its event
 denotation, not a feature it carries. -/
 
-variable {Entity E : Type*} [PartialOrder Entity] [SemilatticeSup E]
+variable {Entity E : Type*} [PartialOrder Entity] [OrderBot Entity] [SemilatticeSup E]
 
 /-- A verb stratifies over the atomic fillers of role `R` when the event predicate that the
 interpretation `V` assigns it has relational stratified distributive reference along `R`. -/
@@ -351,26 +351,27 @@ section ThematicRolesAndCumulativity
 /-- A predicate is lexically cumulative when it is a fixed point of the algebraic closure
 operator. -/
 def LexicallyCumulative {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
-  ∀ x, AlgClosure P x ↔ P x
+  ∀ x, x ∈ supClosure {y | P y} ↔ P x
 
 /-- Lexical cumulativity entails Krifka's `CUM` (closure under binary join). -/
 theorem lexicallyCumulative_imp_cum {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} (h : LexicallyCumulative P) : CUM P := by
+    {P : α → Prop} (h : LexicallyCumulative P) : CUM {x | P x} := by
   intro x hPx y hPy
-  exact (h _).mp (AlgClosure.sum (AlgClosure.base hPx) (AlgClosure.base hPy))
+  exact (h _).mp (supClosed_supClosure (subset_supClosure hPx) (subset_supClosure hPy))
 
 end ThematicRolesAndCumulativity
 
 /-! ### Distributivity as meaning postulates
 
 The book's per-verb distributivity facts are lexical meaning postulates in Hoeksema's sense, not
-theorems; they are stated here over the Fragment verbs' denotations. -/
+theorems; they are stated here over the language file verbs' denotations. -/
 
 section Distributivity
-variable {Entity E : Type*} [PartialOrder Entity] [SemilatticeSup E]
+variable {Entity E : Type*} [PartialOrder Entity] [OrderBot Entity] [SemilatticeSup E]
 
 /-- `ChampollionPostulates` records the book's postulates on the distributivity of verbs, over an
-interpretation `V` of the fragment's verbs as event predicates and the agent and theme roles. *See*
+interpretation `V` of the language file's verbs as event predicates and the agent and theme roles.
+*See*
 distributes on both roles and *kill* on its theme only, since a member of the posse need not have
 killed anyone, and *meet* does not distribute on its agent. -/
 structure ChampollionPostulates (V : Verb → E → Prop)
@@ -394,7 +395,7 @@ theorem subintervalReference_iff_cover {T E : Type*} [LinearOrder T] [TemporalTr
       ∃ (parts : Finset E) (hne : parts.Nonempty),
         (∀ p ∈ parts, P p ∧ Event.τ p < Event.τ e) ∧ parts.sup' hne id = e := by
   unfold SubintervalReference StratifiedReference SubintervalGranularity
-  exact algClosure_iff_exists_sup' _ _
+  exact Iff.rfl
 
 /-! ### Aspect and space: the subregion and strata approaches (§6.3–6.4) -/
 
@@ -402,7 +403,7 @@ section Subregion
 
 open Krifka1998
 
-variable {α T : Type*} [SemilatticeSup α] [PartialOrder T] (τ : α → T) (P : α → Prop)
+variable {α T : Type*} [SemilatticeSup α] [PartialOrder T] [OrderBot T] (τ : α → T) (P : α → Prop)
 
 /-- The subregion presupposition (28), which the chapter attributes to [krifka-1998]'s
 *for*-adverbial, holds when the event has a temporal part and every temporal part of it falls
@@ -417,13 +418,16 @@ divisiveness clause of the subregion presupposition yields stratified reference 
 runtime: the two parts are each other's temporal siblings, so both fall under the predicate,
 and each has a properly smaller runtime. -/
 theorem stratifiedReference_of_divisiveness (hτ : Monotone τ) {a b : α}
-    (hov : ¬ Overlap (τ a) (τ b)) (ha : ¬ IsBot (τ a)) (hb : ¬ IsBot (τ b))
+    (hov : Disjoint (τ a) (τ b)) (ha : (τ a) ≠ ⊥) (hb : (τ b) ≠ ⊥)
     (hdiv : ∀ e', IsTemporalPart τ e' (a ⊔ b) → P e') :
     StratifiedReference τ (· < ·) P (a ⊔ b) :=
-  .sum (.base ⟨hdiv a ⟨le_sup_left, b, le_sup_right, hov⟩, lt_of_le_of_ne (hτ le_sup_left)
-      fun h ↦ hov ⟨τ b, hb, h ▸ hτ le_sup_right, le_rfl⟩⟩)
-    (.base ⟨hdiv b ⟨le_sup_right, a, le_sup_left, fun o ↦ hov o.symm⟩,
-      lt_of_le_of_ne (hτ le_sup_right) fun h ↦ hov ⟨τ a, ha, le_rfl, h ▸ hτ le_sup_left⟩⟩)
+  supClosed_supClosure
+    (subset_supClosure (by exact ⟨hdiv a ⟨le_sup_left, b, le_sup_right, hov⟩,
+      lt_of_le_of_ne (hτ le_sup_left) fun h ↦
+        not_disjoint_iff_exists.2 ⟨τ b, hb, h ▸ hτ le_sup_right, le_rfl⟩ hov⟩))
+    (subset_supClosure (by exact ⟨hdiv b ⟨le_sup_right, a, le_sup_left, hov.symm⟩,
+      lt_of_le_of_ne (hτ le_sup_right) fun h ↦
+        not_disjoint_iff_exists.2 ⟨τ a, ha, le_rfl, h ▸ hτ le_sup_left⟩ hov⟩))
 
 /-- The back-and-forth scenario has four trips of two legs each, a leg at each instant, the even
 legs from the lot halfway to the store and the odd legs on to the store. An event is a set of
@@ -440,15 +444,16 @@ instance : DecidablePred PushCartsToStore := fun _ ↦ by unfold PushCartsToStor
 strata-based account admits the *for*-adverbial (Figure 6.2a). -/
 theorem pushCarts_stratified :
     StratifiedReference id (· < ·) PushCartsToStore (Finset.univ : Finset Leg) :=
-  (algClosure_iff_exists_sup' _ _).2
-    ⟨{{0, 1}, {2, 3}, {4, 5}, {6, 7}}, by decide, by decide +kernel, by decide +kernel⟩
+  have h : ∀ p ∈ ({{0, 1}, {2, 3}, {4, 5}, {6, 7}} : Finset (Finset Leg)),
+      PushCartsToStore p ∧ p < Finset.univ := by decide +kernel
+  ⟨{{0, 1}, {2, 3}, {4, 5}, {6, 7}}, by decide, fun p hp ↦ h p hp, by decide +kernel⟩
 
 /-- The halfway legs of §6.4.1 do not reach the store, so the subregion presupposition fails (Figure
 6.2b). -/
 theorem pushCarts_not_subregion :
     ¬ SubregionPresup id PushCartsToStore (Finset.univ : Finset Leg) := fun ⟨_, hdiv⟩ ↦
   absurd (hdiv {0, 2, 4, 6} ⟨by decide, {1, 3, 5, 7}, by decide,
-    fun h ↦ overlap_iff_not_disjoint.1 h (by decide)⟩) (by decide)
+    by decide⟩) (by decide)
 
 end Subregion
 

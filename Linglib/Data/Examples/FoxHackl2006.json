@@ -897,13 +897,13 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
+    "alsoJudged": ["ungrammatical"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
       ["operator", "question"],
       ["modal", "existential"],
-      ["property", "upward"],
-      ["alsoJudged", "ungrammatical"]
+      ["property", "upward"]
     ],
     "comment": "Marked ??/* in the paper. The paper labels this line a second (62b).",
     "verified": "page-image"

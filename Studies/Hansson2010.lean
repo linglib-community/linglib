@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Phonology.Segmental.PHOIBLE
-public import Linglib.Phonology.Subregular.Agree
-public import Linglib.Phonology.Subregular.Multitier
+public import Linglib.Phonology.Subregular.Stringset.Agree
+public import Linglib.Phonology.Subregular.Stringset.Multitier
 public import Linglib.Phonology.Harmony.System
 public import Linglib.Data.Examples.Hansson2010
 public import Linglib.Data.Examples.Readers
@@ -22,7 +22,7 @@ every sibilant, and its fixed points are exactly the words of that language,
 and neutralizes the contrast in the sibilants it targets, the three characteristics the book
 draws from (4). It is the search-and-copy run, from the right, of the substrate's harmony
 `System` over segments with [anterior] as its feature, the decomposition Rose and Walker share
-with the vowel harmonies of the fragments, `anticipatory_eq_apply`. The book's own
+with the vowel harmonies of the language files, `anticipatory_eq_apply`. The book's own
 qualification (section 3.1.2) is the perseveratory assimilation of the first-person subject
 prefix after the s-perfective and s-destruct prefixes (12), (14), which the anticipatory map
 mispredicts, `perseveratory_rows`, while harmony from the root still overrides it (15).
@@ -37,7 +37,7 @@ affricates are not compared. The Navajo sibilants are the chart's without [distr
 the chart's alveolar and postalveolar series also differ, so that anteriority is the whole of
 the contrast the harmony changes. The book's correspondence-theoretic analysis (chapters 4 and 5),
 its typological survey (chapter 2), and its speech-error account (chapter 6) are not formalized;
-Rose and Walker's Agreement by Correspondence is in `Studies/RoseWalker2004.lean`.
+Agreement by Correspondence is [rose-walker-2004]'s.
 
 ## References
 

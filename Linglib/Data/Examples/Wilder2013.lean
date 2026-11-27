@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Wilder2013` — typed example data
@@ -640,5 +642,49 @@ def ex137c : Datum :=
     paperFeatures := [("environment", "root")] }
 
 def all : List Datum := [ex10b, ex11b, ex12b, ex51, ex52, ex53, ex74b, ex27a, ex27b, ex27c, ex27d, ex27e, ex27f, ex28a, ex28b, ex28c, ex28d, ex28e, ex29a, ex29b, ex29c, ex30a, ex30b, ex30c, ex30d, ex31a, ex31b, ex31c, ex31d, ex32a, ex32b, ex33a, ex33b, ex40b, ex41b, ex44b, ex45b, ex113b, ex114b, ex126a, ex126b, ex127a, ex127b, ex127c, ex127d, ex127e, ex127f, ex137c]
+
+/-- The clause type under which the paper gives a row: its headings for (27)–(33) and its descriptions of the others. -/
+inductive Heading where
+  /-- root: root -/
+  | root
+  /-- believeComplement: believeComplement -/
+  | believeComplement
+  /-- interrogativeComplement: interrogativeComplement -/
+  | interrogativeComplement
+  /-- factiveComplement: factiveComplement -/
+  | factiveComplement
+  /-- itCleft: itCleft -/
+  | itCleft
+  /-- restrictiveRelative: restrictiveRelative -/
+  | restrictiveRelative
+  /-- adverbialClause: adverbialClause -/
+  | adverbialClause
+  /-- whSubjectQuestion: whSubjectQuestion -/
+  | whSubjectQuestion
+  /-- objectPreposing: objectPreposing -/
+  | objectPreposing
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `environment`. -/
+def heading (e : Datum) : Option Heading :=
+  e.parse? "environment" [("root", .root), ("believeComplement", .believeComplement),
+    ("interrogativeComplement", .interrogativeComplement),
+    ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
+    ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
+    ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
+
+/-- The constituent bearing the contrastive-topic accent. -/
+inductive Constituent where
+  /-- subject: subject -/
+  | subject
+  /-- vp: vp -/
+  | vp
+  /-- object: object -/
+  | object
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `ctConstituent`. -/
+def ctConstituent (e : Datum) : Option Constituent :=
+  e.parse? "ctConstituent" [("subject", .subject), ("vp", .vp), ("object", .object)]
 
 end Wilder2013.Examples

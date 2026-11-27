@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Minimalist.Feature.Basic
@@ -164,37 +169,16 @@ def join (v w : Head) (f : FeatureBundle) : Head :=
   { v with hasD := v.hasD ⊔ w.hasD, implicit := v.implicit ⊔ w.implicit,
            checksCase := v.checksCase ⊔ w.checksCase, features := f }
 
-/-- Unification merges the privative features of two heads that share their multivalued ones. -/
-instance : PartialUnify Head where
-  unify v w :=
-    if v.value = w.value ∧ v.thematic = w.thematic then
-      (PartialUnify.unify v.features w.features).map (join v w)
-    else ⊤
-  isLUB_of_unify_eq_coe {v w c} h := by
-    split_ifs at h with hm
-    · cases hf : PartialUnify.unify v.features w.features with
-      | top => simp [hf] at h
-      | coe f =>
-        obtain rfl : join v w f = c := WithTop.coe_inj.1 (by simpa [hf] using h)
-        have hl := PartialUnify.isLUB_of_unify_eq_coe hf
-        refine ⟨?_, fun u hu ↦ ?_⟩
-        · rintro _ (rfl | rfl)
-          · exact ⟨rfl, rfl, le_sup_left, le_sup_left, le_sup_left, hl.1 (Set.mem_insert _ _)⟩
-          · exact ⟨hm.1.symm, hm.2.symm, le_sup_right, le_sup_right, le_sup_right,
-              hl.1 (Set.mem_insert_of_mem _ rfl)⟩
-        · obtain ⟨hv, hw⟩ := mem_upperBounds_pair.1 hu
-          exact ⟨hv.1, hv.2.1, sup_le hv.2.2.1 hw.2.2.1, sup_le hv.2.2.2.1 hw.2.2.2.1,
-            sup_le hv.2.2.2.2.1 hw.2.2.2.2.1,
-            hl.2 (mem_upperBounds_pair.2 ⟨hv.2.2.2.2.2, hw.2.2.2.2.2⟩)⟩
-    · exact absurd h WithTop.top_ne_coe
-  unify_ne_top_of_bddAbove {v w} := by
-    rintro ⟨u, hu⟩
-    obtain ⟨hv, hw⟩ := mem_upperBounds_pair.1 hu
-    have hf := PartialUnify.unify_ne_top_of_bddAbove (a := v.features) (b := w.features)
-      ⟨u.features, mem_upperBounds_pair.2 ⟨hv.2.2.2.2.2, hw.2.2.2.2.2⟩⟩
-    split_ifs with hm
-    · simpa [WithTop.map_eq_top_iff] using hf
-    · exact absurd ⟨hv.1.trans hw.1.symm, hv.2.1.trans hw.2.1.symm⟩ hm
+/-- Heads that share their multivalued features unify to the head with the privative features
+of both and the unification of their Agree features. -/
+theorem isLUB_join {v w : Head} {f : FeatureBundle} (hv : v.value = w.value)
+    (ht : v.thematic = w.thematic) (hf : IsLUB {v.features, w.features} f) :
+    IsLUB {v, w} (join v w f) := by
+  obtain ⟨hvf, hwf, hf'⟩ := isLUB_pair_iff_forall_le.1 hf
+  exact isLUB_pair_iff_forall_le.2 ⟨⟨rfl, rfl, le_sup_left, le_sup_left, le_sup_left, hvf⟩,
+    ⟨hv.symm, ht.symm, le_sup_right, le_sup_right, le_sup_right, hwf⟩, fun u hvu hwu ↦
+    ⟨hvu.1, hvu.2.1, sup_le hvu.2.2.1 hwu.2.2.1, sup_le hvu.2.2.2.1 hwu.2.2.2.1,
+      sup_le hvu.2.2.2.2.1 hwu.2.2.2.2.1, hf' _ hvu.2.2.2.2.2 hwu.2.2.2.2.2⟩⟩
 
 /-- Two heads clash exactly when they differ in a multivalued feature or their Agree features
 clash: a head that only lacks D, an implicit variable or Case checking clashes with nothing. -/
@@ -206,6 +190,8 @@ theorem compat_iff {v w : Head} : Compat v w ↔ v.value = w.value ∧ v.themati
   · obtain ⟨hvb, hwb⟩ := mem_upperBounds_pair.1 hb
     exact .of_le (u := join v w b) ⟨rfl, rfl, le_sup_left, le_sup_left, le_sup_left, hvb⟩
       ⟨h₁.symm, h₂.symm, le_sup_right, le_sup_right, le_sup_right, hwb⟩
+
+instance (v w : Head) : Decidable (Compat v w) := decidable_of_iff _ compat_iff.symm
 
 end Head
 
@@ -225,10 +211,6 @@ def Head.params (v : Head) : Params := (v.hasD, v.thematic.isSome)
 
 /-- Thematic active Voice introducing an agent, the transitive and unergative head v*. -/
 def agentive : Head := { thematic := some .agent, hasD := true }
-
-/-- Thematic active Voice introducing a holder, the experiencer subject of a psych
-causative. -/
-def experiencer : Head := { thematic := some .holder, hasD := true }
 
 /-- Expletive active Voice, with no variable and a specifier for a marker such as Romance *se*,
 the marked anticausative ([munoz-perez-2026]). -/

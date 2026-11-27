@@ -12,48 +12,34 @@ public import Linglib.Phonology.SearchCopy
 /-!
 # Harmony systems
 
-A harmony system is Rose and Walker's descriptive object: a `Phonology.Harmony.Pattern`,
-whose participation classes are the triggers, blockers and transparent segments, together
-with the targets and a write of the harmonic value into them. It commits to no mechanism.
-Its search-and-copy reading (`System.searchCopy`) is Nevins's procedure with the
-pattern's tier as the visible segments, the targets on it as the needy segments, its
-participating segments as the sources and its direction as the direction of search; the
-rival accounts, Goldsmith's autosegmental spreading, Rose and Walker's Agreement by
-Correspondence and OT alignment, are not derived here. Under that reading a harmonic word is a
-fixed point of the run in the pattern's direction (`System.apply_eq_self_of_harmonic`), and on a
-saturated system the fixed points are exactly the harmonic words
-(`System.harmonic_iff_apply_eq_self`), the TSL₂ language of `Pattern.harmonic_iff_mem_tsl`.
+A harmony system is the descriptive object of [rose-walker-2011]: a `Phonology.Harmony.Pattern`,
+whose participation classes are the triggers, blockers and transparent segments, together with
+the targets and a write of the harmonic value into them. `System.mk'` compiles these roles over
+`Phonology.Segment` from the harmonic feature.
 
-## Main definitions
-
-* `System`: a pattern, its targets and its write; `System.mk'` compiles the
-  Rose and Walker roles over `Phonology.Segment`.
-* `System.searchCopy`: the search-and-copy reading of a system.
-* `System.Saturated`: every visible segment is a participating target with a value.
-
-## Main results
-
-* `System.apply_eq_self_of_harmonic`, `System.harmonic_iff_apply_eq_self`,
-  `System.harmonic_apply`: the run's fixed points and image against the pattern's surface
-  harmonicity.
-* `System.apply_eq_map`: on a saturated system the run writes the value of the first visible
-  segment in the direction of spreading into every visible segment.
+`System.searchCopy` reads a system as a search-and-copy rule after [nevins-2010]: the pattern's
+tier gives the visible segments, the targets on it search, its participating segments are the
+sources, and its direction is the direction of search. Under that reading a harmonic word is a
+fixed point of the run (`System.apply_eq_self_of_harmonic`). A system is `System.Saturated` when
+every visible segment is a participating target with a value. On such a system the fixed points
+are exactly the harmonic words (`System.harmonic_iff_apply_eq_self`), the run's output is
+harmonic (`System.harmonic_apply`), and the run writes the value of the first visible segment
+into every visible segment (`System.apply_eq_map`).
 
 ## Implementation notes
 
-Under the search-and-copy reading a blocker is a visible non-source: the search stops at it
-and the target takes the default, as in Nevins's defective intervention and
-Belth's Khalkha rule. Ritter and van der Hulst's reading, on which a blocker
-imposes its own value, is the case where the blocker's pattern value is the default;
-`Pattern.Harmonic` follows that reading, so the fixed-point results assume no default and
-blockers that are not targets. Every participating segment donates whether or not it is a
-target, as Nevins requires, and a transparent target does not undergo, since Rose and Walker's
-transparent segments neither undergo nor block. An icy target is a target that is not a
-source, which the reading expresses because participation is stored on the segment; on bare
-segments Burness, McMullin and Nevins show that search and copy cannot. A leftward pattern is
-run and read right to left, a bidirectional one left to right; the outward-from-root pass is
-not modelled. A single tier is not always
-enough: Uyghur backness harmony is not TSL, as Mayer and Major show.
+A system commits to no mechanism. The rival accounts, the autosegmental spreading of
+[goldsmith-1976], the Agreement by Correspondence of [rose-walker-2004] and alignment, are not
+derived here. Under the search-and-copy reading a blocker is a visible non-source: the search
+stops at it and the target takes the default, as in the Khalkha rule of [belth-2026]. On the
+reading of [ritter-vanderhulst-2024-themes] a blocker imposes its own value, which is the case
+where the blocker's pattern value is the default. `Pattern.Harmonic` follows that reading, so
+the fixed-point results assume no default and blockers that are not targets. A transparent
+target does not undergo. An icy target is a target that is not a source,
+which the reading expresses because participation is stored on the segment; on bare segments
+[burness-mcmullin-nevins-2024] show that search and copy cannot. A leftward pattern is run and
+read right to left, and a bidirectional one left to right. A single tier is not always enough:
+Uyghur backness harmony is not tier-based strictly local, as [mayer-major-2018] show.
 
 ## References
 
@@ -151,6 +137,21 @@ theorem emit_of_not_onTier {s : α} (h : ¬ sys.pattern.OnTier s) (w : Option α
     sys.searchCopy.emit w s = s :=
   sys.searchCopy.emit_of_not_isTarget (fun ht ↦ h ht.2) w
 
+/-- Without a default, a target takes the value that a participating segment in the window
+has, and stands as it is where the window is empty or its segment has no value. -/
+theorem emit_eq_of_participating (hd : sys.default = none) {c? : Option α}
+    (hc : ∀ c ∈ c?, sys.pattern.participation c = .participating) (x : α) :
+    sys.searchCopy.emit c? x =
+      if sys.IsTarget x ∧ sys.pattern.OnTier x then
+        (c?.bind sys.pattern.value).elim x (sys.write · x) else x := by
+  have hf : sys.searchCopy.found x c? = c?.bind sys.pattern.value := by
+    cases c? with
+    | none => rfl
+    | some c => exact sys.found_some_of_participating (hc c rfl) x
+  unfold SearchCopy.emit SearchCopy.copied
+  rw [hf, searchCopy_default, hd]
+  simp [show SearchCopy.Relation.agree.act = id from funext fun _ ↦ rfl]
+
 /-- Compiles the [rose-walker-2011] roles over `Phonology.Segment` from the harmonic feature,
 the targets, the transparent segments, the direction, the blockers, and the default; every
 other segment is a trigger. -/
@@ -171,6 +172,16 @@ def mk' (feature : Feature) (IsTarget IsTransparent : Segment → Prop) [Decidab
   write_value v s _ h := Segment.ext <| by
     rw [Segment.setFeature, ← show s.val feature = some v from h]; exact Function.update_eq_self ..
   default := default
+
+theorem _root_.Phonology.SearchCopy.emit_apply_of_ne {r : SearchCopy Segment} {f : Feature}
+    (hr : ∀ v s, r.write v s = s.setFeature f v) {g : Feature} (h : f ≠ g) (q : Option Segment)
+    (s : Segment) : (r.emit q s) g = s g := by
+  unfold SearchCopy.emit
+  split_ifs
+  · cases r.copied s q with
+    | none => rfl
+    | some v => simp [hr, Segment.setFeature_apply_of_ne h]
+  · rfl
 
 /-! ### Fixed points and image -/
 

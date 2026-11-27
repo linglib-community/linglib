@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.Indonesian.Aspect
-public import Linglib.Fragments.Indonesian.Complementation
+public import Linglib.Languages.Indonesian.Aspect
+public import Linglib.Languages.Indonesian.Complementation
 public import Linglib.Semantics.Tense.Reichenbach
 public import Linglib.Data.Examples.Arka2013
 public import Linglib.Data.Examples.Readers
@@ -28,7 +28,7 @@ any time](##readings_iff_admits), and it enters an equational structure, which [
 ## Implementation notes
 
 * An annotation such as `E-R<S` is read as the temporal group of each primitive. The auxiliaries
-  of a sentence are those of the aspect fragment whose gloss is in its gloss line, and its
+  of a sentence are those of the aspect language file whose gloss is in its gloss line, and its
   temporal adjunct is found by its gloss.
 * The paper's fifth auxiliary, the volitive *mau* 'want', is not an aspect marker and is left
   out. In (15) the particle tested is the modal *bisa* 'able'.
@@ -79,7 +79,8 @@ def Annotation.parse? (str : String) : Option Annotation :=
 /-- The frame an annotation describes, with the perspective at speech time. -/
 def Annotation.frame (a : Annotation) : ReichenbachFrame ℤ := .root a.s a.r a.e
 
-/-- The TAM auxiliaries among the fragment's aspect markers, *sudah* and *telah* 'PERF', *sedang*
+/-- The TAM auxiliaries among the language file's aspect markers, *sudah* and *telah* 'PERF',
+*sedang*
 'PROG' and *akan* 'FUT', which occupy I (16). -/
 def auxiliaries : List Aspect.Marker := [sudah, telah, sedang, akan]
 
@@ -168,8 +169,8 @@ namespace Site
 
 /-- The subject of the clause is not expressed and is controlled from outside it. -/
 def IsControlled : Site → Prop
-  | complement v => ∃ fr ∈ v.valency.frames, ∃ pos ∈ fr.complements, pos.subject? = some .null
-  | subordinate c => c.subject = some .null
+  | complement v => ∃ fr ∈ v.valency.frames, ∃ pos ∈ fr.complements, pos.selection.subject = {.null}
+  | subordinate c => c.subject = {.null}
   | _ => False
 
 instance : DecidablePred IsControlled := fun s ↦ by

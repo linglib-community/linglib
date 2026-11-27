@@ -1,12 +1,15 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Core.Order.PartialUnify
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Syntax.Obligatoriness
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.Basic
-public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -15,21 +18,22 @@ public import Mathlib.Tactic.DeriveFintype
 A sentence type is the grammatical kind of a clause, such as the declarative or the polar
 interrogative, and an embedding context is where a clause token occurs, as a root or under
 subordination. A distribution records, for each sentence type in each embedding context, whether
-some element or process is obligatory, optional or excluded there. A selection is the set of
-sentence types a complementizer types or a clausal argument position selects. The other properties
-of a complement clause are in `Syntax/Clause/Complementation.lean`.
+some element or process is obligatory, optional or excluded there. What a predicate selects of a
+complement clause, its sentence types among other properties, is in
+`Syntax/Clause/Complementation.lean`.
 
 ## Main definitions
 
 * `Clause.SentenceType`, `Clause.SentenceType.IsInterrogative`: the sentence types.
-* `Clause.EmbeddingContext`, `Clause.root`, `Clause.embedded`: the embedding contexts and the
-  cells of root and subordinated clauses.
+* `Clause.EmbeddingContext`, `Clause.Cell`, `Clause.root`, `Clause.embedded`: the embedding
+  contexts, and the cells of root and subordinated clauses.
 * `Clause.Distribution`: the `Obligatoriness` recorded in each cell.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
+* `Clause.Distribution.types`, `contexts`: the sentence types and the embedding contexts in which
+  the element may occur.
 * `Clause.LeftEdge`, `Clause.LeftEdge.Table`: whether a complementizer introduces a clause and
   whether its finite verb is fronted, and the left edges a language admits in each cell.
-* `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects.
 
 ## References
 
@@ -75,6 +79,16 @@ def SentenceType.IsInterrogative (t : SentenceType) : Prop :=
 instance : DecidablePred SentenceType.IsInterrogative :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
+instance : Repr (Finset SentenceType) :=
+  ⟨fun s _ ↦ repr (SentenceType.enumList.filter (· ∈ s))⟩
+
+/-- The three interrogative sentence types. -/
+def SentenceType.interrogatives : Finset SentenceType := {.polar, .alternative, .constituent}
+
+@[simp] theorem SentenceType.mem_interrogatives {t : SentenceType} :
+    t ∈ interrogatives ↔ t.IsInterrogative := by
+  simp [interrogatives, IsInterrogative]
+
 /-! ### Embedding contexts and cells
 
 The embedding contexts are Bhatt and Dayal's four contexts of interrogative embedding together with
@@ -96,11 +110,14 @@ inductive EmbeddingContext where
   | insubordinated
   deriving DecidableEq, Repr, Fintype
 
+/-- A cell is a sentence type in an embedding context. -/
+abbrev Cell := SentenceType × EmbeddingContext
+
 /-- The cell of a root clause of sentence type `t`. -/
-abbrev root (t : SentenceType) : SentenceType × EmbeddingContext := (t, .matrix)
+abbrev root (t : SentenceType) : Cell := (t, .matrix)
 
 /-- The cell of a subordinated clause of sentence type `t`. -/
-abbrev embedded (t : SentenceType) : SentenceType × EmbeddingContext := (t, .subordinated)
+abbrev embedded (t : SentenceType) : Cell := (t, .subordinated)
 
 /-! ### Distributions
 
@@ -112,43 +129,49 @@ required. -/
 that the source records nothing for the cell, not that it is excluded. It is a `def`, as `Set` is,
 so that it does not inherit the instances of functions into `Option`, whose `⊔` would keep a cell
 only one of two distributions records. -/
-def Distribution := SentenceType → EmbeddingContext → Option Obligatoriness
+def Distribution := Cell → Option Obligatoriness
 
 namespace Distribution
 
 instance : DecidableEq Distribution :=
-  inferInstanceAs (DecidableEq (SentenceType → EmbeddingContext → Option Obligatoriness))
+  inferInstanceAs (DecidableEq (Cell → Option Obligatoriness))
+
+/-- A distribution is shown as its recorded cells. -/
+instance : Repr Distribution :=
+  ⟨fun d _ ↦ repr <|
+    (SentenceType.enumList.flatMap fun t ↦ EmbeddingContext.enumList.map (t, ·)).filterMap
+      fun c ↦ (d c).map (c, ·)⟩
 
 variable (d : Distribution)
 
 /-- The distribution recording no cell. -/
-def empty : Distribution := fun _ _ ↦ none
+def empty : Distribution := fun _ ↦ none
 
 /-- The cells the source records. -/
-def recorded : SetRel SentenceType EmbeddingContext := {c | (d c.1 c.2).isSome}
+def recorded : SetRel SentenceType EmbeddingContext := {c | (d c).isSome}
 
 /-- The cells where the element or process is required, the zone `Obligatoriness.required` of
 `d` with an unrecorded cell read as excluded, which puts it in neither zone. -/
 def required : SetRel SentenceType EmbeddingContext :=
-  Obligatoriness.required fun c ↦ (d c.1 c.2).getD ⊥
+  Obligatoriness.required fun c ↦ (d c).getD ⊥
 
 /-- The cells where the element or process may occur, the zone `Obligatoriness.possible`. -/
 def possible : SetRel SentenceType EmbeddingContext :=
-  Obligatoriness.possible fun c ↦ (d c.1 c.2).getD ⊥
+  Obligatoriness.possible fun c ↦ (d c).getD ⊥
 
-variable {d} {c : SentenceType × EmbeddingContext}
+variable {d} {c : Cell}
 
 @[simp]
-theorem mem_recorded : c ∈ d.recorded ↔ d c.1 c.2 ≠ none := by
+theorem mem_recorded : c ∈ d.recorded ↔ d c ≠ none := by
   simp [recorded, Option.isSome_iff_ne_none]
 
 @[simp]
-theorem mem_required : c ∈ d.required ↔ d c.1 c.2 = some .obligatory := by
-  simp only [required, Obligatoriness.mem_required]; cases d c.1 c.2 <;> simp
+theorem mem_required : c ∈ d.required ↔ d c = some .obligatory := by
+  simp only [required, Obligatoriness.mem_required]; cases d c <;> simp
 
 @[simp]
-theorem mem_possible : c ∈ d.possible ↔ ∃ o ∈ d c.1 c.2, o ≠ .excluded := by
-  simp only [possible, Obligatoriness.mem_possible]; cases d c.1 c.2 <;> simp
+theorem mem_possible : c ∈ d.possible ↔ ∃ o ∈ d c, o ≠ .excluded := by
+  simp only [possible, Obligatoriness.mem_possible]; cases d c <;> simp
 
 instance : DecidablePred (· ∈ d.recorded) := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
@@ -157,6 +180,25 @@ instance : DecidablePred (· ∈ d.required) :=
 
 instance : DecidablePred (· ∈ d.possible) :=
   inferInstanceAs (DecidablePred (· ∈ Obligatoriness.possible _))
+
+/-- The sentence types in which the element may occur in some embedding context. -/
+def types (d : Distribution) : Finset SentenceType := {t | t ∈ d.possible.dom}
+
+/-- The embedding contexts in which the element may occur with some sentence type. -/
+def contexts (d : Distribution) : Finset EmbeddingContext := {e | e ∈ d.possible.cod}
+
+@[simp] theorem mem_types {t : SentenceType} : t ∈ d.types ↔ ∃ e, (t, e) ∈ d.possible := by
+  simp [types, SetRel.mem_dom]
+
+@[simp] theorem mem_contexts {e : EmbeddingContext} :
+    e ∈ d.contexts ↔ ∃ t, (t, e) ∈ d.possible := by
+  simp [contexts, SetRel.mem_cod]
+
+@[simp, norm_cast] theorem coe_types : (d.types : Set SentenceType) = d.possible.dom := by
+  ext; simp [types]
+
+@[simp, norm_cast] theorem coe_contexts : (d.contexts : Set EmbeddingContext) = d.possible.cod := by
+  ext; simp [contexts]
 
 end Distribution
 
@@ -179,7 +221,7 @@ structure LeftEdge where
 
 /-- The left edges a language admits in each cell; `none` means that the source records nothing
 for the cell. -/
-def LeftEdge.Table := SentenceType → EmbeddingContext → Option (Finset LeftEdge)
+def LeftEdge.Table := Cell → Option (Finset LeftEdge)
 
 namespace LeftEdge.Table
 
@@ -188,7 +230,7 @@ variable (T : LeftEdge.Table)
 /-- The distribution of a property of left edges: in a recorded cell, the obligatoriness allowing
 the values the property takes on the edges admitted there. -/
 def distribution (p : LeftEdge → Bool) : Distribution :=
-  fun t e ↦ (T t e).map (Obligatoriness.of · p)
+  fun c ↦ (T c).map (Obligatoriness.of · p)
 
 /-- The distribution of verb second. -/
 def verbSecond : Distribution := T.distribution LeftEdge.verbSecond
@@ -198,64 +240,10 @@ def complementizer : Distribution := T.distribution LeftEdge.complementizer
 
 /-- The left edges with a complementizer, for `b = true`, or without one; a cell admitting none of
 them is unrecorded. -/
-def restrict (b : Bool) : LeftEdge.Table := fun t e ↦
-  (T t e).bind fun s ↦ if (s.filter (·.complementizer = b)).Nonempty then
+def restrict (b : Bool) : LeftEdge.Table := fun c ↦
+  (T c).bind fun s ↦ if (s.filter (·.complementizer = b)).Nonempty then
     some (s.filter (·.complementizer = b)) else none
 
 end LeftEdge.Table
-
-/-! ### Selections
-
-*Whether* selects polar and alternative questions and *wonder* any question. Selections are
-ordered by information, the smaller set of types the more specific, and two selections unify to
-their intersection when it is nonempty, by the instances of `Core/Order/PartialUnify.lean`. -/
-
-/-- A nonempty set of sentence types, the more specific selection being the smaller set. -/
-abbrev Selection.Types := {s : Finset SentenceType // s.Nonempty}ᵒᵈ
-
-/-- The sentence types a clause-typer types or a clausal position selects, `⊥` where nothing is
-recorded. -/
-abbrev Selection := WithBot Selection.Types
-
-namespace Selection
-
-/-- The selection of a nonempty set of types. -/
-def of (s : Finset SentenceType) (h : s.Nonempty := by decide) : Selection :=
-  ((OrderDual.toDual ⟨s, h⟩ : Types) : Selection)
-
-/-- The selection of one type. -/
-def only (t : SentenceType) : Selection := of {t} (Finset.singleton_nonempty t)
-
-/-- The selection of the three interrogative types. -/
-def interrogatives : Selection := of {.polar, .alternative, .constituent}
-
-/-- The types a selection records; none when nothing is recorded. -/
-def types : Selection → Finset SentenceType
-  | ⊥ => ∅
-  | (s : Types) => (OrderDual.ofDual s).1
-
-instance : Membership SentenceType Selection := ⟨fun sel t ↦ t ∈ sel.types⟩
-
-instance : Repr Selection :=
-  ⟨fun sel _ ↦ repr (SentenceType.enumList.filter fun t ↦ decide (t ∈ sel.types))⟩
-
-theorem mem_iff {sel : Selection} {t : SentenceType} : t ∈ sel ↔ t ∈ sel.types := Iff.rfl
-
-instance (sel : Selection) (t : SentenceType) : Decidable (t ∈ sel) :=
-  inferInstanceAs (Decidable (t ∈ sel.types))
-
-@[simp] theorem types_bot : (⊥ : Selection).types = ∅ := rfl
-
-@[simp] theorem types_of (s : Finset SentenceType) (h : s.Nonempty) : (of s h).types = s := rfl
-
-@[simp] theorem types_only (t : SentenceType) : (only t).types = {t} := rfl
-
-/-- A selection records some interrogative type. -/
-def IsInterrogative (sel : Selection) : Prop := ∃ t ∈ sel, t.IsInterrogative
-
-instance (sel : Selection) : Decidable sel.IsInterrogative :=
-  inferInstanceAs (Decidable (∃ t ∈ sel.types, _))
-
-end Selection
 
 end Clause

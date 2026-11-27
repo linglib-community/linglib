@@ -1,0 +1,1178 @@
+{
+  "features": [
+    {
+      "key": "fronting",
+      "lean": "fronting",
+      "type": "Fronting",
+      "doc": "The arguments of a transitive clause in its left periphery, in order.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "none",
+          "label": "none",
+          "doc": "neither argument is fronted"
+        },
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the subject alone is fronted"
+        },
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "the object alone is fronted"
+        },
+        {
+          "name": "subjectObject",
+          "label": "subjectObject",
+          "doc": "both are fronted, the subject first"
+        },
+        {
+          "name": "objectSubject",
+          "label": "objectSubject",
+          "doc": "both are fronted, the object first"
+        },
+        {
+          "name": "both",
+          "label": "both",
+          "doc": "both are fronted, and the readings of the row say which is first"
+        }
+      ]
+    },
+    {
+      "key": "object",
+      "lean": "object",
+      "type": "ObjectCategory",
+      "doc": "The category of the object of a transitive clause.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "dp",
+          "label": "dp",
+          "doc": "a noun phrase with a determiner, or a pronoun"
+        },
+        {
+          "name": "np",
+          "label": "np",
+          "doc": "a noun phrase without a determiner"
+        }
+      ]
+    },
+    {
+      "key": "order",
+      "lean": "order",
+      "type": "Order",
+      "doc": "The order of the two objects of a ditransitive.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "directFirst",
+          "label": "directFirst",
+          "doc": "the direct object precedes the indirect object"
+        },
+        {
+          "name": "indirectFirst",
+          "label": "indirectFirst",
+          "doc": "the indirect object precedes the direct object"
+        }
+      ]
+    },
+    {
+      "key": "binder",
+      "lean": "binder",
+      "type": "Binder",
+      "doc": "The object of a ditransitive that binds an anaphor in the other.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "direct",
+          "label": "direct",
+          "doc": "the direct object binds into the indirect object"
+        },
+        {
+          "name": "indirect",
+          "label": "indirect",
+          "doc": "the indirect object binds into the direct object"
+        }
+      ]
+    },
+    {
+      "key": "subject",
+      "lean": "subject",
+      "type": "Subject",
+      "doc": "The argument of a ditransitive that is the subject of the clause.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "agent",
+          "label": "agent",
+          "doc": "the agent, in an active clause"
+        },
+        {
+          "name": "indirect",
+          "label": "indirect",
+          "doc": "the indirect object, in a passive"
+        },
+        {
+          "name": "direct",
+          "label": "direct",
+          "doc": "the direct object, in a passive"
+        }
+      ]
+    },
+    {
+      "key": "wh",
+      "lean": "wh",
+      "type": "Moved",
+      "doc": "The object of a ditransitive that is questioned or relativized.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "indirect",
+          "label": "indirect",
+          "doc": "the indirect object"
+        },
+        {
+          "name": "direct",
+          "label": "direct",
+          "doc": "the direct object"
+        }
+      ]
+    },
+    {
+      "key": "objectMarked",
+      "lean": "objectMarked",
+      "type": "Marked",
+      "doc": "The object of a ditransitive that the object marker on the verb cross-references.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "indirect",
+          "label": "indirect",
+          "doc": "the indirect object"
+        },
+        {
+          "name": "direct",
+          "label": "direct",
+          "doc": "the direct object"
+        }
+      ]
+    }
+  ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The readings of a clause with two fronted arguments.",
+    "levels": [
+      {
+        "name": "subjectFirst",
+        "label": "subject first",
+        "doc": "the first fronted phrase is the subject"
+      },
+      {
+        "name": "objectFirst",
+        "label": "object first",
+        "doc": "the first fronted phrase is the object"
+      }
+    ]
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the book that the study's predictions are fitted to."
+  },
+  "examples": [
+    {
+      "id": "newman2024_50",
+      "source": {"bibkey": "coon-mateo-pedro-preminger-2014", "paperLabel": "(12a)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(50)"},
+      "language": "qanj1241",
+      "primaryText": "Max-ach y-il-a'.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Max-ach", "PFV-B2SG"], ["y-il-a'", "A3SG-see-TV"]
+      ],
+      "translation": "She saw you.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "none"],
+        ["object", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_51",
+      "source": {"bibkey": "coon-mateo-pedro-preminger-2014", "paperLabel": "(21b)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(51)"},
+      "language": "qanj1241",
+      "primaryText": "Maktxel max y-il[-a'] naq winaq?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Maktxel", "who"], ["max", "PFV"], ["y-il[-a']", "A3SG-see-TV"], ["naq", "CLF"],
+        ["winaq", "man"]
+      ],
+      "translation": "Who did the man see?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "object"],
+        ["object", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_52",
+      "source": {"bibkey": "coon-mateo-pedro-preminger-2014", "paperLabel": "(1)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(52)"},
+      "language": "qanj1241",
+      "primaryText": "Maktxel max-ach il-on-i?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Maktxel", "who"], ["max-ach", "PFV-B2SG"], ["il-on-i", "see-AF-ITV"]
+      ],
+      "translation": "Who saw you?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "subject"],
+        ["object", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_53",
+      "source": {"bibkey": "coon-mateo-pedro-preminger-2014", "paperLabel": "(21c)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(53)"},
+      "language": "qanj1241",
+      "primaryText": "Maktxel max y-il[-a'] ix ix?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Maktxel", "who"], ["max", "PFV"], ["y-il[-a']", "A3SG-see-TV"], ["ix", "CLF"],
+        ["ix", "woman"]
+      ],
+      "translation": "Who saw the woman?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "subject"],
+        ["object", "dp"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_92",
+      "source": {"bibkey": "aissen-2011", "paperLabel": "(25a)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(92)"},
+      "language": "kich1262",
+      "primaryText": "Jachiin x-u-loq' uuq?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jachiin", "WH"], ["x-u-loq'", "PFV-A3SG-buy"], ["uuq", "cloth"]
+      ],
+      "translation": "Who bought the cloth?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "subject"],
+        ["object", "np"]
+      ],
+      "comment": "The source prints one line with the determiner starred in parentheses, `(*rii)`.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_92_det",
+      "source": {"bibkey": "aissen-2011", "paperLabel": "(25a)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(92)"},
+      "language": "kich1262",
+      "primaryText": "Jachiin x-u-loq' rii uuq?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jachiin", "WH"], ["x-u-loq'", "PFV-A3SG-buy"], ["rii", "DET"], ["uuq", "cloth"]
+      ],
+      "translation": "Who bought the cloth?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "subject"],
+        ["object", "dp"]
+      ],
+      "comment": "The source prints one line with the determiner starred in parentheses, `(*rii)`.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_107a",
+      "source": {"bibkey": "garcia-matzar-rodriguez-guajan-1997", "paperLabel": "(468d,f)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(107a)"},
+      "language": "kaqc1270",
+      "primaryText": "Ja ri utiw-a', ja ri aq x-e-ki-tïj.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ja", "FOC"], ["ri", "DET"], ["utiw-a',", "coyote-PL"], ["ja", "FOC"], ["ri", "DET"],
+        ["aq", "pig"], ["x-e-ki-tïj.", "PFV-B3PL-A3PL-eat"]
+      ],
+      "translation": "(In contrast to) the coyotes, it's the pigs they eat.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "subjectObject"],
+        ["object", "dp"]
+      ],
+      "comment": "The source brackets the two fronted phrases as subject and object, and cites examples 468d and 468f of García Matzar and Rodríguez Guaján for (107a) and (107b) together.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_107b",
+      "source": {"bibkey": "garcia-matzar-rodriguez-guajan-1997", "paperLabel": "(468d,f)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(107b)"},
+      "language": "kaqc1270",
+      "primaryText": "Ja ri aq, ja ri utiw-a' x-e-tij-o.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ja", "FOC"], ["ri", "DET"], ["aq,", "pigs"], ["ja", "FOC"], ["ri", "DET"],
+        ["utiw-a'", "coyote-PL"], ["x-e-tij-o.", "PFV-B3PL-eat-AF"]
+      ],
+      "translation": "(In contrast to) the pigs, it's the coyotes that eat them.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [
+        {"form": "Ja ri aq, ja ri utiw-a' x-e-tij-o kichin.", "judgment": "acceptable"}
+      ],
+      "readings": [],
+      "paperFeatures": [
+        ["fronting", "objectSubject"],
+        ["object", "dp"]
+      ],
+      "comment": "The source brackets the two fronted phrases as subject and object, and cites examples 468d and 468f of García Matzar and Rodríguez Guaján for (107a) and (107b) together. The relational noun kichin, glossed A3PL.RN, is printed in parentheses after the verb.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_108a",
+      "source": {"bibkey": "erlewine-2016", "paperLabel": "(29b)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(108a)"},
+      "language": "kaqc1270",
+      "primaryText": "Achike k'o x-∅-u-tz'ët?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Achike", "who"], ["k'o", "∃"], ["x-∅-u-tz'ët", "COM-BSG-A3SG-see"]
+      ],
+      "translation": "Who saw someone?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "subject first", "judgment": "acceptable"},
+        {"name": "object first", "judgment": "ungrammatical"}
+      ],
+      "paperFeatures": [
+        ["fronting", "both"],
+        ["object", "dp"]
+      ],
+      "comment": "The source cites example 29 and stars the translation 'Who did someone see?'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_108b",
+      "source": {"bibkey": "erlewine-2016", "paperLabel": "(29a)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(108b)"},
+      "language": "kaqc1270",
+      "primaryText": "Achike k'o x-∅-tz'ët-ö?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Achike", "who"], ["k'o", "∃"], ["x-∅-tz'ët-ö", "COM-BSG-see-AF"]
+      ],
+      "translation": "Who did someone see?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "subject first", "judgment": "ungrammatical"},
+        {"name": "object first", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["fronting", "both"],
+        ["object", "dp"]
+      ],
+      "comment": "The source cites example 29 and stars the translation 'Who saw someone?'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_109a",
+      "source": {"bibkey": "erlewine-2016", "paperLabel": "(33)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(109a)"},
+      "language": "kaqc1270",
+      "primaryText": "K'o k'o x-∅-u-tz'ët",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["K'o", "∃"], ["k'o", "∃"], ["x-∅-u-tz'ët", "COM-B3SG-A3SG-see"]
+      ],
+      "translation": "Someone saw something.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "subject first", "judgment": "acceptable"},
+        {"name": "object first", "judgment": "ungrammatical"}
+      ],
+      "paperFeatures": [
+        ["fronting", "both"],
+        ["object", "dp"]
+      ],
+      "comment": "The source stars the translation 'There's something that someone saw'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_109b",
+      "source": {"bibkey": "erlewine-2016", "paperLabel": "(33)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(109b)"},
+      "language": "kaqc1270",
+      "primaryText": "K'o k'o x-∅-tz'et-ö",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["K'o", "∃"], ["k'o", "∃"], ["x-∅-tz'et-ö", "COM-B3SG-see-AF"]
+      ],
+      "translation": "There's something that someone saw.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "subject first", "judgment": "ungrammatical"},
+        {"name": "object first", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["fronting", "both"],
+        ["object", "dp"]
+      ],
+      "comment": "The source stars the translation 'Someone saw something'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_110a",
+      "source": {"bibkey": "erlewine-2016", "paperLabel": "(34)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(110a)"},
+      "language": "kaqc1270",
+      "primaryText": "ri achin ri ja ri xta Maria x-∅-u-tz'ët",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ri", "DET"], ["achin", "man"], ["ri", "REL"], ["ja", "FOC"], ["ri xta Maria", "Maria"],
+        ["x-∅-u-tz'ët", "COM-B3SG-A3SG-see"]
+      ],
+      "translation": "the man who saw MARIA (but not others)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "subject first", "judgment": "acceptable"},
+        {"name": "object first", "judgment": "ungrammatical"}
+      ],
+      "paperFeatures": [
+        ["fronting", "both"],
+        ["object", "dp"]
+      ],
+      "comment": "The first fronted phrase is the relative operator. The source brackets the relative clause and stars the translation 'the man who MARIA (but not others) saw'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_110b",
+      "source": {"bibkey": "erlewine-2016", "paperLabel": "(34)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(110b)"},
+      "language": "kaqc1270",
+      "primaryText": "ri achin ri ja ri xta Maria x-∅-tz'et-ö",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ri", "DET"], ["achin", "man"], ["ri", "REL"], ["ja", "FOC"], ["ri xta Maria", "Maria"],
+        ["x-∅-tz'et-ö", "COM-B3SG-see-AF"]
+      ],
+      "translation": "the man who MARIA (but not others) saw",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [
+        {"name": "subject first", "judgment": "ungrammatical"},
+        {"name": "object first", "judgment": "acceptable"}
+      ],
+      "paperFeatures": [
+        ["fronting", "both"],
+        ["object", "dp"]
+      ],
+      "comment": "The first fronted phrase is the relative operator. The source brackets the relative clause and stars the translation 'the man who saw MARIA (but not others)'.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_149a",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(149a)"},
+      "language": "stan1293",
+      "primaryText": "Jo showed Lauri and Amy to each other's parents in the mirror.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "directFirst"],
+        ["binder", "direct"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_149b",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(149b)"},
+      "language": "stan1293",
+      "primaryText": "Jo showed pictures of each other to Lauri and Amy.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "directFirst"],
+        ["binder", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_149c",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(149c)"},
+      "language": "stan1293",
+      "primaryText": "Jo showed Lauri and Amy each other's parents in the mirror.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "indirectFirst"],
+        ["binder", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_149d",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(149d)"},
+      "language": "stan1293",
+      "primaryText": "Jo showed each other's parents Lauri and Amy in the mirror.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "indirectFirst"],
+        ["binder", "direct"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_150a",
+      "source": {"bibkey": "miyagawa-tsujioka-2004", "paperLabel": "(61b)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(150a)"},
+      "language": "nucl1643",
+      "primaryText": "John-ga Hanako-to Mary-o otagai-ni syookaisita.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ga", "John-NOM"], ["Hanako-to", "Hanako-and"], ["Mary-o", "Mary-ACC"],
+        ["otagai-ni", "each.other-DAT"], ["syookaisita", "introduced"]
+      ],
+      "translation": "John introduced Hanako and Mary to each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "alsoJudged": ["marginal"],
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "directFirst"],
+        ["binder", "direct"]
+      ],
+      "comment": "The source brackets the conjoined phrase and coindexes it with the reciprocal. It prints the mark `(?)` and, in parentheses, the adverbial paatii-de 'at the party' after the accusative phrase.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_150b",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(150b)"},
+      "language": "nucl1643",
+      "primaryText": "John-ga otagai-no sensei-o Hanako-to Mary-ni syookaisita.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ga", "John-NOM"], ["otagai-no", "each.other-GEN"], ["sensei-o", "teacher-ACC"],
+        ["Hanako-to", "Hanako-and"], ["Mary-ni", "Mary-DAT"], ["syookaisita", "introduced"]
+      ],
+      "translation": "John introduced each other's teachers to Hanako and Mary.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "directFirst"],
+        ["binder", "indirect"]
+      ],
+      "comment": "The source brackets the conjoined phrase and coindexes it with the reciprocal. It prints, in parentheses, the adverbial paati-de 'at the party' after the accusative phrase. Shigeru Miyagawa, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_151a",
+      "source": {"bibkey": "miyagawa-tsujioka-2004", "paperLabel": "(61a)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(151a)"},
+      "language": "nucl1643",
+      "primaryText": "John-ga Hanako-to Mary-ni otagai-o syookaisita.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ga", "John-NOM"], ["Hanako-to", "Hanako-and"], ["Mary-ni", "Mary-DAT"],
+        ["otagai-o", "each.other-ACC"], ["syookaisita", "introduced"]
+      ],
+      "translation": "John introduced Hanako and Mary to each other.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "indirectFirst"],
+        ["binder", "indirect"]
+      ],
+      "comment": "The source brackets the conjoined phrase and coindexes it with the reciprocal.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_151b",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(151b)"},
+      "language": "nucl1643",
+      "primaryText": "John-ga otagai-no sensei-ni Hanako-to Mary-o syookaisita.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["John-ga", "John-NOM"], ["otagai-no", "each.other-GEN"], ["sensei-ni", "teacher-DAT"],
+        ["Hanako-to", "Hanako-and"], ["Mary-o", "Mary-ACC"], ["syookaisita", "introduced"]
+      ],
+      "translation": "John introduced Hanako and Mary to each other's teachers.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "indirectFirst"],
+        ["binder", "direct"]
+      ],
+      "comment": "The source brackets the conjoined phrase and coindexes it with the reciprocal. Shigeru Miyagawa, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_153a",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(153a)"},
+      "language": "mode1248",
+      "primaryText": "O Gianis edhikse ton Maria s-ton eafton tis s-ton kathrefti.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["O", "the"], ["Gianis", "Gianis.NOM"], ["edhikse", "showed"], ["ton", "the"],
+        ["Maria", "Maria.ACC"], ["s-ton", "to-the"], ["eafton", "REFL.ACC"], ["tis", "GEN"],
+        ["s-ton", "in-the"], ["kathrefti", "mirror.ACC"]
+      ],
+      "translation": "John showed Mary to herself in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "directFirst"],
+        ["binder", "direct"]
+      ],
+      "comment": "The source brackets the two objects as DP and XP. Sabine Iatridou, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_153b",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(153b)"},
+      "language": "mode1248",
+      "primaryText": "O Gianis edhikse ton eafton tis s-tin Maria s-ton kathrefti.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["O", "the"], ["Gianis", "Gianis.NOM"], ["edhikse", "showed"], ["ton", "the"],
+        ["eafton", "REFL.ACC"], ["tis", "GEN"], ["s-tin", "to-the"], ["Maria", "Maria.ACC"],
+        ["s-ton", "in-the"], ["kathrefti", "mirror.ACC"]
+      ],
+      "translation": "John showed herself to Mary in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "directFirst"],
+        ["binder", "indirect"]
+      ],
+      "comment": "The source brackets the two objects as DP and XP. Sabine Iatridou, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_153c",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(153c)"},
+      "language": "mode1248",
+      "primaryText": "O Gianis edhikse tis Marias ton eafton tis s-ton kathrefti.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["O", "the"], ["Gianis", "Gianis.NOM"], ["edhikse", "showed"], ["tis", "the"],
+        ["Marias", "Maria.GEN"], ["ton", "the"], ["eafton", "REFL.ACC"], ["tis", "GEN"],
+        ["s-ton", "in-the"], ["kathrefti", "mirror.ACC"]
+      ],
+      "translation": "John showed Mary.GEN herself in the mirror.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "indirectFirst"],
+        ["binder", "indirect"]
+      ],
+      "comment": "The source brackets the two objects as DP and XP. Sabine Iatridou, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_153d",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(153d)"},
+      "language": "mode1248",
+      "primaryText": "O Gianis edhikse tu eaftu tis tin Maria s-ton kathrefti.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["O", "the"], ["Gianis", "Gianis.NOM"], ["edhikse", "showed"], ["tu", "the"],
+        ["eaftu", "REFL.GEN"], ["tis", "GEN"], ["tin", "the"], ["Maria", "Maria.ACC"],
+        ["s-ton", "in-the"], ["kathrefti", "mirror.ACC"]
+      ],
+      "translation": "John showed herself.GEN Mary in the mirror.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["order", "indirectFirst"],
+        ["binder", "direct"]
+      ],
+      "comment": "The source brackets the two objects as DP and XP. Sabine Iatridou, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_187a",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(1)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(187a)"},
+      "language": "norw1258",
+      "primaryText": "Boka ble gitt Jon.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Boka", "the.book"], ["ble", "was"], ["gitt", "given"], ["Jon", "Jon"]
+      ],
+      "translation": "The book was given to Jon.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_187b",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(1)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(187b)"},
+      "language": "norw1258",
+      "primaryText": "Jon ble gitt boka.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Jon", "Jon"], ["ble", "was"], ["gitt", "given"], ["boka", "the.book"]
+      ],
+      "translation": "Jon was given the book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_200a",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(200a)"},
+      "language": "norw1258",
+      "primaryText": "Hvem ble boka gitt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hvem", "who"], ["ble", "was"], ["boka", "the.book"], ["gitt", "given"]
+      ],
+      "translation": "To whom was the book given?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"],
+        ["wh", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_200b",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(200b)"},
+      "language": "norw1258",
+      "primaryText": "Hvem ble gitt boka?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hvem", "who"], ["ble", "was"], ["gitt", "given"], ["boka", "the.book"]
+      ],
+      "translation": "Who was given the book?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "indirect"],
+        ["wh", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_201a",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(201a)"},
+      "language": "norw1258",
+      "primaryText": "Hvilken bok ble Jon gitt?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hvilken", "which"], ["bok", "book"], ["ble", "was"], ["Jon", "Jon"], ["gitt", "given"]
+      ],
+      "translation": "Which book was John given?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "indirect"],
+        ["wh", "direct"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_201b",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(201b)"},
+      "language": "norw1258",
+      "primaryText": "Hvilken bok ble gitt Jon?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hvilken", "which"], ["bok", "book"], ["ble", "was"], ["gitt", "given"], ["Jon", "Jon"]
+      ],
+      "translation": "Which book was given to Jon?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"],
+        ["wh", "direct"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_202a",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(14)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(202a)"},
+      "language": "zulu1248",
+      "primaryText": "I-nyama u-mama a-yi-phek-el-w-a-yo i-mnandi.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I-nyama", "9-meat"], ["u-mama", "1AUG-mother"],
+        ["a-yi-phek-el-w-a-yo", "REL.1SM-9OM-cook-APPL-PASS-FV-RS"], ["i-mnandi", "9SM-tasty"]
+      ],
+      "translation": "The meat that Mother is being cooked is tasty.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "indirect"],
+        ["wh", "direct"],
+        ["objectMarked", "direct"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_202b",
+      "source": {"bibkey": "holmberg-sheehan-van-der-wal-2019", "paperLabel": "(14)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(202b)"},
+      "language": "zulu1248",
+      "primaryText": "U-mama i-nyama e-m-phek-el-w-a-yo u-kathele.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["U-mama", "1AUG-mother"], ["i-nyama", "9-meat"],
+        ["e-m-phek-el-w-a-yo", "REL.9SM-1OM-cook-APPL-PASS-FV-RS"], ["u-kathele", "1SM-tired"]
+      ],
+      "translation": "Mother, for whom the meat is being cooked is tired.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"],
+        ["wh", "indirect"],
+        ["objectMarked", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_204a",
+      "source": {"bibkey": "visser-1986", "paperLabel": "(16)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(204a)"},
+      "language": "xhos1239",
+      "primaryText": "Umfundi u-ya-yi-nik-w-a incwadi.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Umfundi", "student"], ["u-ya-yi-nik-w-a", "AGR-PRES-OM-give-PASS-PRES"],
+        ["incwadi", "book"]
+      ],
+      "translation": "The student was given a book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "indirect"],
+        ["objectMarked", "direct"]
+      ],
+      "comment": "The source prints the verb and the object as one word, `u-ya-yi-nik-w-a-incwadi`, over two glosses.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_204b",
+      "source": {"bibkey": "visser-1986", "paperLabel": "(16)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(204b)"},
+      "language": "xhos1239",
+      "primaryText": "Incwadi i-ya-m-nik-w-a umfundi.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Incwadi", "book"], ["i-ya-m-nik-w-a", "AGR-PRES-OM-give-PASS-PRES"],
+        ["umfundi", "student"]
+      ],
+      "translation": "A book was given to the student.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"],
+        ["objectMarked", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_207a",
+      "source": {"bibkey": "anagnostopoulou-2003", "paperLabel": "(33)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(207a)"},
+      "language": "mode1248",
+      "primaryText": "To vivlio tis charistike tis Maria-s.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["To", "the"], ["vivlio", "book.NOM"], ["tis", "CL.GEN"], ["charistike", "award.NACT.3SG"],
+        ["tis", "the"], ["Maria-s", "Maria-GEN"]
+      ],
+      "translation": "The book was awarded to Mary.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"]
+      ],
+      "comment": "The source prints one line with the clitic starred if absent, `*(tis)`, and the genitive phrase in parentheses.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_207a_bare",
+      "source": {"bibkey": "anagnostopoulou-2003", "paperLabel": "(33)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(207a)"},
+      "language": "mode1248",
+      "primaryText": "To vivlio charistike tis Maria-s.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["To", "the"], ["vivlio", "book.NOM"], ["charistike", "award.NACT.3SG"], ["tis", "the"],
+        ["Maria-s", "Maria-GEN"]
+      ],
+      "translation": "The book was awarded to Mary.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"]
+      ],
+      "comment": "The source prints one line with the clitic starred if absent, `*(tis)`, and the genitive phrase in parentheses.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_207b",
+      "source": {"bibkey": "anagnostopoulou-2003", "paperLabel": "(10a)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(207b)"},
+      "language": "mode1248",
+      "primaryText": "I Maria stalthike to grama.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["I", "the"], ["Maria", "Maria.NOM"], ["stalthike", "sent.NACT.3SG"], ["to", "the"],
+        ["grama", "letter.ACC"]
+      ],
+      "translation": "Mary was sent the letter.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_212a",
+      "source": {"bibkey": "anagnostopoulou-2003", "paperLabel": "(308)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(212a)"},
+      "language": "mode1248",
+      "primaryText": "Tinos dhothike to vivlio?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tinos", "who.GEN"], ["dhothike", "gave.NACT.3SG"], ["to", "the"], ["vivlio", "book.NOM"]
+      ],
+      "translation": "Who was the book given to?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"],
+        ["wh", "indirect"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_216a",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(216a)"},
+      "language": "mode1248",
+      "primaryText": "Pianu tu estile i Maria to gramma.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Pianu", "who.GEN.M"], ["tu", "CL.GEN"], ["estile", "sent"], ["i", "the"],
+        ["Maria", "Maria.NOM"], ["to", "the"], ["gramma", "letter.ACC"]
+      ],
+      "translation": "Who did Maria send the letter to?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "agent"],
+        ["wh", "indirect"]
+      ],
+      "comment": "Sabine Iatridou, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_216b",
+      "source": {"bibkey": "newman-2024", "paperLabel": "(216b)"},
+      "language": "mode1248",
+      "primaryText": "Pianu tu dhothike to vivlio?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Pianu", "who.GEN"], ["tu", "CL.GEN"], ["dhothike", "gave.NACT.3SG"], ["to", "the"],
+        ["vivlio", "book.NOM"]
+      ],
+      "translation": "Who was the book given to?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "direct"],
+        ["wh", "indirect"]
+      ],
+      "comment": "Sabine Iatridou, p.c.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_219",
+      "source": {"bibkey": "anagnostopoulou-2003", "paperLabel": "(18)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(219)"},
+      "language": "mode1248",
+      "primaryText": "Tu edhosa tu Giani to vivlio.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tu", "CL.GEN"], ["edhosa", "gave.1SG"], ["tu", "the"], ["Giani", "Gianis.GEN"],
+        ["to", "the"], ["vivlio", "book.ACC"]
+      ],
+      "translation": "I gave John the book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "agent"]
+      ],
+      "comment": "The source prints one line with the clitic in parentheses, `(Tu)`.",
+      "verified": "page-image"
+    },
+    {
+      "id": "newman2024_219_bare",
+      "source": {"bibkey": "anagnostopoulou-2003", "paperLabel": "(18)"},
+      "reportedIn": {"bibkey": "newman-2024", "paperLabel": "(219)"},
+      "language": "mode1248",
+      "primaryText": "Edhosa tu Giani to vivlio.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Edhosa", "gave.1SG"], ["tu", "the"], ["Giani", "Gianis.GEN"], ["to", "the"],
+        ["vivlio", "book.ACC"]
+      ],
+      "translation": "I gave John the book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["subject", "agent"]
+      ],
+      "comment": "The source prints one line with the clitic in parentheses, `(Tu)`.",
+      "verified": "page-image"
+    }
+  ]
+}

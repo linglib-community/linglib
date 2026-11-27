@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Conservative
 public import Linglib.Data.Examples.GeurtsPouscoulous2009
 public import Linglib.Data.Examples.Readers
 

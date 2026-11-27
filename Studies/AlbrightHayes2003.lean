@@ -3,7 +3,7 @@ module
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.Positivity
 public import Linglib.Data.Examples.AlbrightHayes2003
-public import Linglib.Fragments.English.Phonology
+public import Linglib.Languages.English.Phonology
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Data.Examples.Readers
 
@@ -32,7 +32,7 @@ depends on the final segment alone.
 Minimal generalization is `mg` on the substrate's rewrite contexts, in which a leading word
 boundary is the anchored word-specific rule and its absence the free variable. The paper's own
 steps (6) and footnote 4, the island (8), and the regular allomorphy of (7b) are computed on
-the English fragment's segments, whose meet is the featural term and whose natural classes
+the English language file's segments, whose meet is the featural term and whose natural classes
 among the phonemes a stem can end in, `finals`, are what a featural term covers. Reliability is
 `Stats`; the statistics reported in Tables 1 and 4 and the ratings and production probabilities
 of Appendix A are rows. Vowel changes, which generalize on both sides of the change, the
@@ -208,7 +208,7 @@ def IsIsland (s : Stats) : Prop := LessReliable general s
 
 instance (s : Stats) : Decidable (IsIsland s) := inferInstanceAs (Decidable (LessReliable _ _))
 
-/-! ### The paper's steps on the English fragment -/
+/-! ### The paper's steps on the English language file -/
 
 def vote : List Segment := [v, o, t]
 def need : List Segment := [n, i, d]

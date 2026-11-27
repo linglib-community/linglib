@@ -1,11 +1,11 @@
 module
 
 public import Linglib.Data.Examples.Cohen2013
-public import Linglib.Fragments.English.Coordination
+public import Linglib.Languages.English.Coordination
 public import Linglib.Semantics.Composition.Coordination
 public import Linglib.Semantics.Composition.Readings
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Quantification.Continuation
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Continuation
 public import Studies.Cohen1999
 public import Linglib.Data.Examples.Readers
 

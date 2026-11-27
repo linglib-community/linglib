@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Gutzmann2015
-public import Linglib.Fragments.German.Particles
-public import Linglib.Fragments.German.WordOrder
+public import Linglib.Languages.German.Particles
+public import Linglib.Languages.German.WordOrder
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -492,7 +492,7 @@ theorem wohl_rows :
 theorem excluded_rows :
     ∀ row ∈ Examples.all, ∀ p ∈ German.Particles.modalParticles,
       row.feature? "particle" = some p.form → ∀ c ∈ cellOf row,
-        p.distribution c.1 c.2 = some .excluded → row.judgment ≠ .acceptable := by
+        p.distribution c = some .excluded → row.judgment ≠ .acceptable := by
   decide
 
 end Gutzmann2015

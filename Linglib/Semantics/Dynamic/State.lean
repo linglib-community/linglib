@@ -1,8 +1,10 @@
 module
 
 public import Linglib.Semantics.Dynamic.Possibility
+public import Linglib.Core.Data.Set.Sups
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+public import Mathlib.Basic.Rel
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Order.UpperLower.CompleteLattice
@@ -44,8 +46,8 @@ has cards; a consumer that needs a familiarity failure at a state must assume it
 
 ## References
 
-- [kamp-vangenabith-reyle-2011], Defs. 0.23 (information states),
-  0.25 (informativeness), 0.26 (consistent merge)
+- [kamp-vangenabith-reyle-2011], Defs. 23 (information states),
+  25 (informativeness), 26 (consistent merge)
 - [elliott-sudo-2025], Def. 3.3 (subsistence);
   [groenendijk-stokhof-veltman-1996]
 - [visser-vermeulen-1996] (monoidal processing); [heim-1982]
@@ -54,6 +56,8 @@ has cards; a consumer that needs a familiarity failure at a state must assume it
 @[expose] public section
 
 namespace DynamicSemantics
+
+open scoped SetRel
 
 variable {W V M : Type*}
 
@@ -74,9 +78,11 @@ instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p 
 @[reducible] instance : EmptyCollection (State W V M) :=
   inferInstanceAs (EmptyCollection (Set _))
 
-@[reducible] instance : Union (State W V M) := inferInstanceAs (Union (Set _))
+@[reducible] instance : Union (State W V M) :=
+  ⟨fun s s' ↦ (s ∪ s' : Set (Possibility W V (Part M)))⟩
 
-@[reducible] instance : Inter (State W V M) := inferInstanceAs (Inter (Set _))
+@[reducible] instance : Inter (State W V M) :=
+  ⟨fun s s' ↦ (s ∩ s' : Set (Possibility W V (Part M)))⟩
 
 @[reducible] instance : SDiff (State W V M) := inferInstanceAs (SDiff (Set _))
 
@@ -126,47 +132,31 @@ bottom of both. -/
 
 /-! ### Consistent merge as multiplication -/
 
-open PartialUnify (unify unify_comm unify_assoc sup_coe_eq_coe_iff coe_sup_eq_coe_iff
-  unify_eq_left unify_eq_right unify_le_coe_iff unify_ne_top_iff_bddAbove)
-
 /-- `s * s'` is consistent merge, the unifications of pairs of points, one from each state. -/
-instance : Mul (State W V M) := ⟨fun s s' ↦ {r | ∃ p ∈ s, ∃ q ∈ s', unify p q = ↑r}⟩
+instance : Mul (State W V M) := ⟨Set.lubs⟩
 
 /-- The unit of merge is the initial state. -/
 instance : One (State W V M) := ⟨⊤⟩
 
 theorem one_eq_top : (1 : State W V M) = ⊤ := rfl
 
-theorem mem_mul_iff_unify : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', unify p q = ↑r := Iff.rfl
-
-theorem mem_mul : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', IsLUB {p, q} r := by
-  simp only [mem_mul_iff_unify, PartialUnify.unify_eq_coe_iff_isLUB]
+theorem mem_mul : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', IsLUB {p, q} r := Iff.rfl
 
 instance : CommMonoid (State W V M) where
-  mul_assoc s t u := Set.ext fun r ↦
-    ⟨fun ⟨v, ⟨p, hp, q, hq, hv⟩, w, hw, hr⟩ ↦
-      let ⟨v', hv', hr'⟩ :=
-        coe_sup_eq_coe_iff.mp (unify_assoc p q w ▸ sup_coe_eq_coe_iff.mpr ⟨v, hv, hr⟩)
-      ⟨p, hp, v', ⟨q, hq, w, hw, hv'⟩, hr'⟩,
-     fun ⟨p, hp, v, ⟨q, hq, w, hw, hv⟩, hr⟩ ↦
-      let ⟨v', hv', hr'⟩ :=
-        sup_coe_eq_coe_iff.mp ((unify_assoc p q w).symm ▸ coe_sup_eq_coe_iff.mpr ⟨v, hv, hr⟩)
-      ⟨v', ⟨p, hp, q, hq, hv'⟩, w, hw, hr'⟩⟩
+  mul_assoc := Set.lubs_assoc
   one_mul s := Set.ext fun r ↦
     ⟨fun ⟨_, ⟨w, rfl⟩, p, hp, h⟩ ↦
-      have hw : Possibility.bot w ≤ p := Possibility.bot_le_of_compat
-        (Compat.symm (unify_ne_top_iff_bddAbove.mp (h ▸ WithTop.coe_ne_top)))
-      WithTop.coe_inj.mp ((unify_eq_right.mpr hw).symm.trans h) ▸ hp,
-     fun hr ↦ ⟨_, ⟨r.world, rfl⟩, r, hr, unify_eq_right.mpr Possibility.bot_le⟩⟩
+      have hw : Possibility.bot w ≤ p := Possibility.bot_le_of_compat (Compat.symm ⟨r, h.1⟩)
+      h.unique (isLUB_pair_iff_forall_le.2 ⟨hw, le_rfl, fun _ _ hu ↦ hu⟩) ▸ hp,
+     fun hr ↦ ⟨_, ⟨r.world, rfl⟩, r, hr,
+      isLUB_pair_iff_forall_le.2 ⟨Possibility.bot_le, le_rfl, fun _ _ hu ↦ hu⟩⟩⟩
   mul_one s := Set.ext fun r ↦
     ⟨fun ⟨p, hp, _, ⟨w, rfl⟩, h⟩ ↦
-      have hw : Possibility.bot w ≤ p :=
-        Possibility.bot_le_of_compat (unify_ne_top_iff_bddAbove.mp (h ▸ WithTop.coe_ne_top))
-      WithTop.coe_inj.mp ((unify_eq_left.mpr hw).symm.trans h) ▸ hp,
-     fun hr ↦ ⟨r, hr, _, ⟨r.world, rfl⟩, unify_eq_left.mpr Possibility.bot_le⟩⟩
-  mul_comm s s' := Set.ext fun _ ↦
-    ⟨fun ⟨p, hp, q, hq, h⟩ ↦ ⟨q, hq, p, hp, (unify_comm q p).trans h⟩,
-     fun ⟨q, hq, p, hp, h⟩ ↦ ⟨p, hp, q, hq, (unify_comm p q).trans h⟩⟩
+      have hw : Possibility.bot w ≤ p := Possibility.bot_le_of_compat ⟨r, h.1⟩
+      h.unique (isLUB_pair_iff_forall_le.2 ⟨le_rfl, hw, fun _ hu _ ↦ hu⟩) ▸ hp,
+     fun hr ↦ ⟨r, hr, _, ⟨r.world, rfl⟩,
+      isLUB_pair_iff_forall_le.2 ⟨le_rfl, Possibility.bot_le, fun _ hu _ ↦ hu⟩⟩⟩
+  mul_comm := Set.lubs_comm
 
 @[simp] theorem empty_mul : (∅ : State W V M) * s = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hr ↦ let ⟨_, hp, _⟩ := mem_mul.mp hr; Set.notMem_empty _ hp
@@ -174,15 +164,8 @@ instance : CommMonoid (State W V M) where
 @[simp] theorem mul_empty : s * (∅ : State W V M) = ∅ := by rw [mul_comm, empty_mul]
 
 theorem upperClosure_mul :
-    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' := by
-  ext x
-  simp only [SetLike.mem_coe, UpperSet.mem_sup_iff, mem_upperClosure]
-  exact ⟨fun ⟨r, ⟨p, hp, q, hq, h⟩, hrx⟩ ↦
-      have := unify_le_coe_iff.mp (h ▸ WithTop.coe_le_coe.mpr hrx)
-      ⟨⟨p, hp, this.1⟩, q, hq, this.2⟩,
-    fun ⟨⟨p, hp, hpx⟩, q, hq, hqx⟩ ↦
-      let ⟨r, hr, hrx⟩ := WithTop.le_coe_iff.mp (unify_le_coe_iff.mpr ⟨hpx, hqx⟩)
-      ⟨r, ⟨p, hp, q, hq, hr⟩, hrx⟩⟩
+    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' :=
+  Set.upperClosure_lubs s s'
 
 theorem mul_le_left : s * s' ≤ s :=
   le_sup_left.trans_eq upperClosure_mul.symm
@@ -333,6 +316,16 @@ theorem mem_mul_stratum :
     show (r.restrict X).domain = X
     rw [Possibility.domain_restrict, hdom, Set.inter_eq_left.mpr Set.subset_union_right]
 
+/-- Extension along `X` relates a point to the points that extend it and define exactly its
+referents and those in `X`. Merging with the stratum at `X` is its image (`image_extend`). -/
+def extend (X : Set V) : SetRel (Possibility W V (Part M)) (Possibility W V (Part M)) :=
+  {(a, b) | (a ≤ b) ∧ b.domain = a.domain ∪ X}
+
+theorem mem_extend : p ~[extend X] q ↔ p ≤ q ∧ q.domain = p.domain ∪ X := Iff.rfl
+
+theorem image_extend (s : State W V M) : (extend X).image s = s * stratum X :=
+  Set.ext fun _ ↦ mem_mul_stratum.symm
+
 theorem stratum_union : (stratum (X ∪ Y) : State W V M) = stratum X * stratum Y := by
   ext r
   rw [mem_mul_stratum, mem_stratum]
@@ -373,26 +366,6 @@ theorem mul_eq_sep_of_uniformAt (hs' : UniformAt X s') :
   · rintro ⟨hr, hq⟩
     obtain ⟨p, hp, hpr, hdom⟩ := mem_mul_stratum.mp hr
     exact ⟨p, hp, _, hq, Possibility.isLUB_restrict hpr hdom⟩
-
-/-- The proposition state of an atomic predicate at card `x`: the points of
-the stratum `{x}` whose value at `x` satisfies the predicate at their world. -/
-def atomAt (x : V) (pred : W → M → Prop) : State W V M :=
-  {q ∈ (stratum {x} : State W V M) | ∃ m ∈ q.assignment x, pred q.world m}
-
-theorem uniformAt_atomAt {x : V} {pred : W → M → Prop} :
-    UniformAt {x} (atomAt x pred : State W V M) := fun _ h ↦ h.1
-
-theorem mul_atomAt {x : V} {pred : W → M → Prop} :
-    s * atomAt x pred = {r ∈ s * stratum {x} | ∃ m ∈ r.assignment x, pred r.world m} := by
-  rw [mul_eq_sep_of_uniformAt uniformAt_atomAt]
-  ext r
-  refine and_congr_right fun hr ↦ ?_
-  have hx : x ∈ r.domain := familiar_mul_stratum (Set.mem_singleton x) r hr
-  show ((r.restrict {x}).domain = {x} ∧
-    ∃ m ∈ (r.restrict {x}).assignment x, pred (r.restrict {x}).world m) ↔ _
-  rw [Possibility.restrict_assignment_of_mem (Set.mem_singleton x), Possibility.domain_restrict,
-    Set.inter_eq_left.mpr (Set.singleton_subset_iff.mpr hx)]
-  exact and_iff_right rfl
 
 theorem UniformAt.isAntichain (hs : UniformAt X s) :
     IsAntichain (· ≤ ·) (s : Set (Possibility W V (Part M))) :=

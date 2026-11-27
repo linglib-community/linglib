@@ -3,9 +3,9 @@ module
 public import Linglib.Logic.Assignment
 public import Linglib.Syntax.Category.Verb.Tense
 public import Linglib.Semantics.Tense.Pronoun
-public import Linglib.Semantics.Aspect.Viewpoint
-public import Linglib.Fragments.English.Tense
-public import Linglib.Fragments.German.Tense
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
+public import Linglib.Languages.English.Tense
+public import Linglib.Languages.German.Tense
 public import Linglib.Data.Examples.Kratzer1998
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -27,10 +27,11 @@ English simple past and the German *Perfekt* do, not the *Präteritum*](##rows_o
 An out-of-the-blue context is the temporal assignment sending every variable to the utterance time,
 so a tense is defined there iff its cell admits coincidence, by the presupposition of
 `Tense.pronoun`. The aspect operators take a reference interval; a tense supplies a point, embedded
-as `NonemptyInterval.pure`. The aspects are instances of the library's `Aspect.ofRel`. The
-imperfective and the perfective are the library's `Aspect.UNBOUNDED` and `Aspect.PRFV`, and the
-perfect, with strict precedence, is stronger than the perfect viewpoint of `Aspect.ViewpointType`,
-which admits an event abutting the reference time (`perfect_viewpointType`). The zero-pronoun
+as `NonemptyInterval.pure`. The aspects are possibility along their cells over the run times, as
+`Aspect.ViewpointType.denote` is. The imperfective and the perfective are the library's
+`Aspect.unbounded` and `Aspect.perfective`, and the perfect, with strict precedence, is stronger
+than the perfect viewpoint of `Aspect.ViewpointType`, which admits an event abutting the
+reference time (`perfect_viewpointType`). The zero-pronoun
 typology of §2–§3 and the locality argument from switch reference are prose. The French table is not
 entered, since the library has no French tense forms.
 
@@ -62,8 +63,8 @@ open scoped Assignment
 
 open scoped Denotes
 
-open Tense PointAlgebra
-open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
+open Tense PointAlgebra ModalLogic
+open Aspect (unbounded ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
 
@@ -121,31 +122,31 @@ variable {T W E : Type*} [LinearOrder T] [TemporalTrace E T]
 /-- The operator of (38) turns a property of times into the property of eventualities that
 holds of `e`, at any world, iff the property of times holds of the running time of `e` at every
 world. -/
-def star (P : W → Set (NonemptyInterval T)) (_ : W) (e : E) : Prop :=
-  ∀ w', τ e ∈ P w'
+def star (P : W → NonemptyInterval T → Prop) (_ : W) (e : E) : Prop :=
+  ∀ w', P w' (τ e)
 
-theorem star_congr (P : W → Set (NonemptyInterval T)) (e : E) (w w' : W) :
+theorem star_congr (P : W → NonemptyInterval T → Prop) (e : E) (w w' : W) :
     star P w e ↔ star P w' e := Iff.rfl
 
-/-- `a.rel r s` is the relation of the aspect `a` between the reference time `r` and the event
-time `s`. The
+/-- The cell of an aspect says how the event time stands to the reference time. The
 imperfective includes the reference time in the event time, the perfective includes the event
 time in the reference time, and the perfect has the event over by the reference time. -/
-def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T → Prop
-  | .imperfective, r, s => r ≤ s
-  | .perfective, r, s => s ≤ r
-  | .perfect, r, s => s.Precedes r
-
-/-- The cell of an aspect's relation, the reference time first: the reference time within the
-event time, the event time within the reference time, and the event time wholly before it. -/
 def AspectHead.cell : AspectHead → IntervalAlgebra
-  | .imperfective => IntervalAlgebra.le
-  | .perfective => IntervalAlgebra.le⁻¹
-  | .perfect => IntervalAlgebra.precedes⁻¹
+  | .imperfective => IntervalAlgebra.le⁻¹
+  | .perfective => IntervalAlgebra.le
+  | .perfect => IntervalAlgebra.precedes
 
-theorem AspectHead.rel_iff (a : AspectHead) (r s : NonemptyInterval T) :
-    a.rel r s ↔ (s, r) ∈ IntervalAlgebra.toSetRel a.cell := by
-  cases a <;> simp [AspectHead.rel, AspectHead.cell]
+@[simp] theorem AspectHead.relation_mem_cell_imperfective {r s : NonemptyInterval T} :
+    Allen.relation s r ∈ AspectHead.imperfective.cell ↔ r ≤ s := by
+  simp [cell]
+
+@[simp] theorem AspectHead.relation_mem_cell_perfective {r s : NonemptyInterval T} :
+    Allen.relation s r ∈ AspectHead.perfective.cell ↔ s ≤ r := by
+  simp [cell]
+
+@[simp] theorem AspectHead.relation_mem_cell_perfect {r s : NonemptyInterval T} :
+    Allen.relation s r ∈ AspectHead.perfect.cell ↔ s.Precedes r := by
+  simp [cell]
 
 /-- Against the library's viewpoints, the perfect is strictly stronger, excluding an event that
 ends exactly when the reference time begins; the imperfective is strictly weaker, admitting a
@@ -156,70 +157,78 @@ theorem cell_viewpointType :
       AspectHead.perfective.cell = ViewpointType.perfective.cell := by
   decide +kernel
 
-/-- An aspect maps a property of events to the property of times that stand in the aspect's
-relation to the time of some such event. -/
-def AspectHead.denote (a : AspectHead) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  ofRel a.rel P
+/-- An aspect maps a property of events to the property of times to which the time of some such
+event stands in the aspect's cell. -/
+def AspectHead.denote (a : AspectHead) (P : E → Prop) : NonemptyInterval T → Prop :=
+  ◇[IntervalAlgebra.toSetRel a.cell] (Event.runTimes P)
 
-theorem denote_imperfective (P : W → E → Prop) :
-    AspectHead.imperfective.denote P = UNBOUNDED P := rfl
+theorem AspectHead.denote_iff {a : AspectHead} {P : E → Prop} {r : NonemptyInterval T} :
+    a.denote P r ↔ ∃ e, Allen.relation (τ e) r ∈ a.cell ∧ P e := by
+  simp [denote, Event.diamond_runTimes_iff]
 
-theorem denote_perfective (P : W → E → Prop) : AspectHead.perfective.denote P = PRFV P := rfl
+theorem denote_imperfective (P : E → Prop) :
+    AspectHead.imperfective.denote (T := T) P = unbounded P := by
+  rw [AspectHead.denote, AspectHead.cell]
+  exact Aspect.unbounded_eq_diamond_toSetRel.symm
 
-theorem perfect_viewpointType {P : W → E → Prop} {w : W} {r : NonemptyInterval T} :
-    r ∈ AspectHead.perfect.denote P w → r ∈ ViewpointType.perfect.denote P w :=
-  fun h ↦ ofRel_mono (fun r s h ↦ (ViewpointType.perfect.ttTSitRelation_iff r s).2 <|
-    IntervalAlgebra.toSetRel_mono cell_viewpointType.1.le
-      ((AspectHead.perfect.rel_iff r s).1 h)) P w h
+theorem denote_perfective (P : E → Prop) :
+    AspectHead.perfective.denote (T := T) P = Aspect.perfective P := by
+  rw [AspectHead.denote, AspectHead.cell, IntervalAlgebra.toSetRel_le]
+  rfl
+
+theorem perfect_viewpointType {P : E → Prop} {r : NonemptyInterval T} :
+    AspectHead.perfect.denote P r → ViewpointType.perfect.denote P r :=
+  diamond_le_diamond_iff.2 (IntervalAlgebra.toSetRel_mono cell_viewpointType.1.le) _ r
 
 variable (T) in
 /-- An anterior aspect places the event time before the reference time. -/
 def AspectHead.IsAnterior (a : AspectHead) : Prop :=
-  ∀ r s : NonemptyInterval T, a.rel r s → s.Precedes r
+  ∀ r s : NonemptyInterval T, Allen.relation s r ∈ a.cell → s.Precedes r
 
 /-- Only the perfect is anterior, since the imperfective and the perfective relate a time to
 itself. -/
 theorem AspectHead.isAnterior_iff [Nonempty T] (a : AspectHead) :
     a.IsAnterior T ↔ a = .perfect := by
   obtain ⟨t⟩ := ‹Nonempty T›
-  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ fun _ _ h ↦ h⟩
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ fun _ _ h ↦ relation_mem_cell_perfect.1 h⟩
   cases a
-  · exact absurd (h (.pure t) (.pure t) le_rfl) (NonemptyInterval.precedes_irrefl _)
-  · exact absurd (h (.pure t) (.pure t) le_rfl) (NonemptyInterval.precedes_irrefl _)
+  · exact absurd (h (.pure t) (.pure t) (relation_mem_cell_imperfective.2 le_rfl))
+      (NonemptyInterval.precedes_irrefl _)
+  · exact absurd (h (.pure t) (.pure t) (relation_mem_cell_perfective.2 le_rfl))
+      (NonemptyInterval.precedes_irrefl _)
   · rfl
 
 theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
-    {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : r ∈ a.denote P w) :
+    {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : a.denote (P w) r) :
     ∃ e : E, (τ e).Precedes r ∧ P w e :=
-  let ⟨e, he, hP⟩ := h
+  let ⟨e, he, hP⟩ := AspectHead.denote_iff.1 h
   ⟨e, ha _ _ he, hP⟩
 
 /-- Tense `C` on the variable `n` with aspect `a` is true of an event property when the tense is
 defined and the aspect holds of the property at the tense's reference. -/
 def denote (C : PointAlgebra) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
     (g : ℕ → T) (w : W) : Prop :=
-  (tense C n g w).Dom ∧ .pure (g n) ∈ a.denote P w
+  (tense C n g w).Dom ∧ a.denote (P w) (.pure (g n))
 
 theorem denote_iff_holdsAlong (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (g : ℕ → T) (w : W) :
     denote C a n P g w ↔ ∃ e : E, P w e ∧
-      IntervalAlgebra.HoldsAlong [IntervalAlgebra.pure C, a.cell⁻¹] (.pure (g 0)) [.pure (g n),
+      IntervalAlgebra.HoldsAlong [IntervalAlgebra.pure C, a.cell] (.pure (g 0)) [.pure (g n),
         τ e] := by
-  simp only [IntervalAlgebra.HoldsAlong, IntervalAlgebra.toSetRel_inv, SetRel.mem_inv, and_true,
-    ← a.rel_iff,
-    IntervalAlgebra.mem_toSetRel, IntervalAlgebra.relation_mem_pure]
-  simp [denote, AspectHead.denote, ofRel, NonemptyInterval.IsPoint]
+  simp only [IntervalAlgebra.HoldsAlong, and_true, IntervalAlgebra.mem_toSetRel,
+    IntervalAlgebra.relation_mem_pure]
+  simp [denote, AspectHead.denote_iff, NonemptyInterval.IsPoint]
   exact ⟨fun ⟨hC, e, he, hP⟩ ↦ ⟨e, hP, hC, he⟩, fun ⟨e, hP, hC, he⟩ ↦ ⟨hC, e, he, hP⟩⟩
 
 theorem denote_outOfTheBlue_iff (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (t₀ : T) (w : W) :
-    denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ .pure t₀ ∈ a.denote P w := by
+    denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ a.denote (P w) (.pure t₀) := by
   rw [denote, tense_outOfTheBlue_iff]; rfl
 
 theorem denote_present_perfect_outOfTheBlue_iff (n : ℕ) (P : W → E → Prop) (t₀ : T)
     (w : W) :
     denote ⟦present⟧ .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : E, (τ e).snd < t₀ ∧ P w e := by
-  simp [denote_outOfTheBlue_iff, AspectHead.denote, AspectHead.rel, NonemptyInterval.Precedes,
+  simp [denote_outOfTheBlue_iff, AspectHead.denote_iff, NonemptyInterval.Precedes,
     denote_present]
 
 end Aspects

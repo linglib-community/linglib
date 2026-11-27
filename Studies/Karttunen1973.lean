@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Core.Control.Monad.Writer
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.Filter.Basic
 
@@ -18,9 +18,9 @@ second clause through unless the first clause filters it: `if A then B` (13) and
 presuppose what `A` presupposes and each presupposition of `B` that `A` does not entail, and
 `A or B` (24) each presupposition of `B` that `¬A` does not entail.
 
-A sentence is a computation of the Writer monad whose value is its assertion and whose log lists
-its presuppositions, each filtered on its own (`Presupposing`), the side-effect carrier of
-Giorgolo and Asudeh. The monad's own composition concatenates the logs, and is the cumulative
+A sentence is a computation of the Writer monad whose value is its assertion and whose log is the
+set of its presuppositions, each filtered on its own (`Presupposing`), the side-effect carrier of
+Giorgolo and Asudeh. The monad's own composition unites the logs, and is the cumulative
 hypothesis (`conj_false`); a hole maps the value and keeps the log, internal negation among them;
 a plug keeps the value and drops the log; and a filter drops from the second clause's log what the
 first clause filters. The connectives take the filtering relation as a parameter: entailment in
@@ -42,8 +42,8 @@ plugs.
 
 ## Implementation notes
 
-* A sentence's presuppositions are a list, the finite list of basic presuppositions of (5) in
-  Karttunen's 1974 paper; only membership matters.
+* A sentence's presuppositions are a set, the basic presuppositions of (5) in Karttunen's 1974
+  paper, logged in `Writer.SetLog`.
 * The entailment a filter uses is from the truth of the first clause, which requires its
   presuppositions as well as its assertion (`Presupposing.truth`), so a presupposition that both
   clauses share is filtered as the second clause's and kept as the first's, as fn. 10 says. A
@@ -90,7 +90,7 @@ variable {W : Type u}
 /-- The Writer monad of presuppositions, in which a computation yields a value and logs the
 propositions over `W` it presupposes. A sentence, as the projection rules see it, is a computation
 whose value is its assertion. -/
-abbrev Presupposing (W : Type u) := Writer (List (Set W))
+abbrev Presupposing (W : Type u) := Writer (Writer.SetLog (Set W))
 
 namespace Presupposing
 
@@ -98,19 +98,19 @@ variable (A : Presupposing W (Set W)) {C : Set W}
 
 /-- The worlds where the sentence is true, those where its presuppositions and its assertion
 hold. -/
-def truth : Set W := A.val ∩ {w | ∀ C ∈ A.log, w ∈ C}
+def truth : Set W := A.val ∩ ⋂₀ A.logSet
 
 theorem compl_map_compl : (·ᶜ) <$> (·ᶜ) <$> A = A :=
   Writer.ext (compl_compl A.val) rfl
 
 -- fn. 10
-theorem truth_subset_of_mem (h : C ∈ A.log) : A.truth ⊆ C :=
+theorem truth_subset_of_mem (h : C ∈ A.logSet) : A.truth ⊆ C :=
   fun _ hw ↦ hw.2 C h
 
 /-- The sentence of a trivalent proposition asserts its positive extension and presupposes where
 it is defined. -/
 def ofTrivalent (p : W → Trivalent) : Presupposing W (Set W) :=
-  Writer.mk (Trivalent.posExt p) [(Trivalent.gapExt p)ᶜ]
+  .ofSet (Trivalent.posExt p) {(Trivalent.gapExt p)ᶜ}
 
 end Presupposing
 
@@ -120,42 +120,41 @@ section Filters
 
 variable (φ : Set W → Set W → Prop) (A B : Presupposing W (Set W)) {C : Set W}
 
-open Classical in
 /-- Under rule (13), `if A then B` presupposes what `A` presupposes and each presupposition of `B`
 that `A` does not filter, by the relation `φ` from the truth of `A`. -/
-noncomputable def cond : Presupposing W (Set W) :=
-  Writer.mk (A.valᶜ ∪ B.val) (A.log ++ B.log.filter fun C ↦ ¬ φ A.truth C)
+def cond : Presupposing W (Set W) :=
+  .ofSet (A.valᶜ ∪ B.val) (A.logSet ∪ {C ∈ B.logSet | ¬ φ A.truth C})
 
-open Classical in
 /-- Under rule (17), `A and B` presupposes what `A` presupposes and each presupposition of `B`
 that `A` does not filter. -/
-noncomputable def conj : Presupposing W (Set W) :=
-  Writer.mk (A.val ∩ B.val) (A.log ++ B.log.filter fun C ↦ ¬ φ A.truth C)
+def conj : Presupposing W (Set W) :=
+  .ofSet (A.val ∩ B.val) (A.logSet ∪ {C ∈ B.logSet | ¬ φ A.truth C})
 
-open Classical in
 /-- Under rule (24), `A or B` presupposes what `A` presupposes and each presupposition of `B` that
 the negation of `A` does not filter. -/
-noncomputable def disj : Presupposing W (Set W) :=
-  Writer.mk (A.val ∪ B.val) (A.log ++ B.log.filter fun C ↦ ¬ φ ((·ᶜ) <$> A).truth C)
+def disj : Presupposing W (Set W) :=
+  .ofSet (A.val ∪ B.val) (A.logSet ∪ {C ∈ B.logSet | ¬ φ ((·ᶜ) <$> A).truth C})
 
-@[simp] theorem mem_log_cond : C ∈ (cond φ A B).log ↔ C ∈ A.log ∨ C ∈ B.log ∧ ¬ φ A.truth C := by
+@[simp] theorem mem_logSet_cond :
+    C ∈ (cond φ A B).logSet ↔ C ∈ A.logSet ∨ C ∈ B.logSet ∧ ¬ φ A.truth C := by
   simp [cond]
 
-@[simp] theorem mem_log_conj : C ∈ (conj φ A B).log ↔ C ∈ A.log ∨ C ∈ B.log ∧ ¬ φ A.truth C := by
+@[simp] theorem mem_logSet_conj :
+    C ∈ (conj φ A B).logSet ↔ C ∈ A.logSet ∨ C ∈ B.logSet ∧ ¬ φ A.truth C := by
   simp [conj]
 
-@[simp] theorem mem_log_disj :
-    C ∈ (disj φ A B).log ↔ C ∈ A.log ∨ C ∈ B.log ∧ ¬ φ ((·ᶜ) <$> A).truth C := by
+@[simp] theorem mem_logSet_disj :
+    C ∈ (disj φ A B).logSet ↔ C ∈ A.logSet ∨ C ∈ B.logSet ∧ ¬ φ ((·ᶜ) <$> A).truth C := by
   simp [disj]
 
 /-- The cumulative hypothesis of Langendoen and Savin (§1) is conjunction filtering nothing, the
 Writer monad's own conjunction. -/
 theorem conj_false : conj (fun _ _ ↦ False) A B = (· ∩ ·) <$> A <*> B := by
-  ext <;> simp [conj, seq_eq_bind_map]
+  refine Writer.ext_logSet ?_ ?_ <;> simp [conj]
 
 theorem truth_conj : (conj (· ⊆ ·) A B).truth = A.truth ∩ B.truth := by
   ext w
-  simp only [Presupposing.truth, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_log_conj]
+  simp only [Presupposing.truth, Set.mem_inter_iff, Set.mem_sInter, mem_logSet_conj]
   constructor
   · rintro ⟨hv, h⟩
     have hA : w ∈ A.truth := ⟨hv.1, fun C hC ↦ h C (.inl hC)⟩
@@ -168,16 +167,16 @@ theorem truth_conj : (conj (· ⊆ ·) A B).truth = A.truth ∩ B.truth := by
 
 /-! ### Harman's derivation (§8) -/
 
-theorem log_cond : (cond φ A B).log = (disj φ ((·ᶜ) <$> A) B).log := by
-  simp only [cond, disj, Writer.log_mk, Writer.log_map]
+theorem logSet_cond : (cond φ A B).logSet = (disj φ ((·ᶜ) <$> A) B).logSet := by
+  simp only [cond, disj, Writer.logSet_ofSet, Writer.logSet_map]
   rw [Presupposing.compl_map_compl]
 
-theorem log_conj :
-    (conj φ A B).log = ((·ᶜ) <$> disj φ ((·ᶜ) <$> A) ((·ᶜ) <$> B)).log := by
-  simp only [conj, disj, Writer.log_mk, Writer.log_map]
+theorem logSet_conj :
+    (conj φ A B).logSet = ((·ᶜ) <$> disj φ ((·ᶜ) <$> A) ((·ᶜ) <$> B)).logSet := by
+  simp only [conj, disj, Writer.logSet_ofSet, Writer.logSet_map]
   rw [Presupposing.compl_map_compl]
 
-theorem log_disj : (disj φ A B).log = (cond φ ((·ᶜ) <$> A) B).log := rfl
+theorem logSet_disj : (disj φ A B).logSet = (cond φ ((·ᶜ) <$> A) B).logSet := rfl
 
 end Filters
 
@@ -208,16 +207,16 @@ end Harman
 /-! ### Jack's children (§5–§7) -/
 
 /-- `Jack has children`, over whether he does and whether baldness is hereditary. -/
-def hasChildren : Presupposing (Bool × Bool) (Set (Bool × Bool)) := Writer.mk {w | w.1} []
+def hasChildren : Presupposing (Bool × Bool) (Set (Bool × Bool)) := Writer.ofSet {w | w.1} ∅
 
 /-- `All of Jack's children are bald`, which presupposes that Jack has children; the assertion is
 idealized. -/
-def allBald : Presupposing (Bool × Bool) (Set (Bool × Bool)) := Writer.mk Set.univ [{w | w.1}]
+def allBald : Presupposing (Bool × Bool) (Set (Bool × Bool)) := Writer.ofSet Set.univ {{w | w.1}}
 
 /-- `Jack's children regret that baldness is hereditary`, which presupposes that Jack has
 children, as (1a) does, and that baldness is hereditary, as (1b) does. -/
 def regretHereditary : Presupposing (Bool × Bool) (Set (Bool × Bool)) :=
-  Writer.mk Set.univ [{w | w.1}, {w | w.2}]
+  Writer.ofSet Set.univ {{w | w.1}, {w | w.2}}
 
 private theorem truth_hasChildren : hasChildren.truth = {w | w.1} := by
   simp [Presupposing.truth, hasChildren]
@@ -226,46 +225,46 @@ private theorem truth_compl_hasChildren : ((·ᶜ) <$> hasChildren).truth = {w |
   ext w; simp [Presupposing.truth, hasChildren]
 
 -- (16a), (16b)
-theorem log_conj_16 :
-    (conj (· ⊆ ·) hasChildren allBald).log = [] ∧
-      (conj (· ⊆ ·) allBald hasChildren).log = [{w | w.1}] := by
-  refine ⟨List.eq_nil_iff_forall_not_mem.2 fun C hC ↦ ?_, by simp [conj, allBald, hasChildren]⟩
-  rcases (mem_log_conj _ _ _).1 hC with h | ⟨hC, h⟩
+theorem logSet_conj_16 :
+    (conj (· ⊆ ·) hasChildren allBald).logSet = ∅ ∧
+      (conj (· ⊆ ·) allBald hasChildren).logSet = {{w | w.1}} := by
+  refine ⟨Set.eq_empty_iff_forall_notMem.2 fun C hC ↦ ?_, by simp [conj, allBald, hasChildren]⟩
+  rcases (mem_logSet_conj _ _ _).1 hC with h | ⟨hC, h⟩
   · simp [hasChildren] at h
   · have hC : C = {w | w.1} := by simpa [allBald] using hC
     exact h (by rw [truth_hasChildren, hC])
 
 -- (22a), (24a), (22b), fn. 11
-theorem log_disj_22 :
-    (disj (· ⊆ ·) ((·ᶜ) <$> hasChildren) allBald).log = [] ∧
-      (disj (· ⊆ ·) allBald ((·ᶜ) <$> hasChildren)).log = [{w | w.1}] := by
-  refine ⟨List.eq_nil_iff_forall_not_mem.2 fun C hC ↦ ?_, by simp [disj, allBald, hasChildren]⟩
-  rcases (mem_log_disj _ _ _).1 hC with h | ⟨hC, h⟩
+theorem logSet_disj_22 :
+    (disj (· ⊆ ·) ((·ᶜ) <$> hasChildren) allBald).logSet = ∅ ∧
+      (disj (· ⊆ ·) allBald ((·ᶜ) <$> hasChildren)).logSet = {{w | w.1}} := by
+  refine ⟨Set.eq_empty_iff_forall_notMem.2 fun C hC ↦ ?_, by simp [disj, allBald, hasChildren]⟩
+  rcases (mem_logSet_disj _ _ _).1 hC with h | ⟨hC, h⟩
   · simp [hasChildren] at h
   · have hC : C = {w | w.1} := by simpa [allBald] using hC
     exact h (by rw [Presupposing.compl_map_compl, truth_hasChildren, hC])
 
 -- (11a), §8
-theorem log_cond_11a_disj :
-    (cond (· ⊆ ·) hasChildren allBald).log = [] ∧
-      {w | w.1} ∈ (disj (· ⊆ ·) hasChildren allBald).log := by
-  refine ⟨List.eq_nil_iff_forall_not_mem.2 fun C hC ↦ ?_, ?_⟩
-  · rcases (mem_log_cond _ _ _).1 hC with h | ⟨hC, h⟩
+theorem logSet_cond_11a_disj :
+    (cond (· ⊆ ·) hasChildren allBald).logSet = ∅ ∧
+      {w | w.1} ∈ (disj (· ⊆ ·) hasChildren allBald).logSet := by
+  refine ⟨Set.eq_empty_iff_forall_notMem.2 fun C hC ↦ ?_, ?_⟩
+  · rcases (mem_logSet_cond _ _ _).1 hC with h | ⟨hC, h⟩
     · simp [hasChildren] at h
     · have hC : C = {w | w.1} := by simpa [allBald] using hC
       exact h (by rw [truth_hasChildren, hC])
-  · refine (mem_log_disj _ _ _).2 (.inr ⟨by simp [allBald], fun h ↦ ?_⟩)
+  · refine (mem_logSet_disj _ _ _).2 (.inr ⟨by simp [allBald], fun h ↦ ?_⟩)
     rw [truth_compl_hasChildren] at h
     exact absurd (h (show (false, false) ∈ {w : Bool × Bool | w.1 = false} from rfl)) (by simp)
 
 -- (17)
-theorem mem_log_conj_regret :
-    {w | w.2} ∈ (conj (· ⊆ ·) hasChildren regretHereditary).log ∧
-      {w | w.1} ∉ (conj (· ⊆ ·) hasChildren regretHereditary).log := by
-  refine ⟨(mem_log_conj _ _ _).2 (.inr ⟨by simp [regretHereditary], fun h ↦ ?_⟩), fun h ↦ ?_⟩
+theorem mem_logSet_conj_regret :
+    {w | w.2} ∈ (conj (· ⊆ ·) hasChildren regretHereditary).logSet ∧
+      {w | w.1} ∉ (conj (· ⊆ ·) hasChildren regretHereditary).logSet := by
+  refine ⟨(mem_logSet_conj _ _ _).2 (.inr ⟨by simp [regretHereditary], fun h ↦ ?_⟩), fun h ↦ ?_⟩
   · rw [truth_hasChildren] at h
     exact absurd (h (show (true, false) ∈ {w : Bool × Bool | w.1} from rfl)) (by simp)
-  · rcases (mem_log_conj _ _ _).1 h with h | ⟨-, h⟩
+  · rcases (mem_logSet_conj _ _ _).1 h with h | ⟨-, h⟩
     · simp [hasChildren] at h
     · exact h truth_hasChildren.le
 
@@ -310,25 +309,25 @@ abbrev worn : Set Geraldine := {.mormonWorn, .gentileWorn}
 
 /-- (25) `Either Geraldine is not a Mormon or she has given up wearing her holy underwear`,
 whose second disjunct presupposes (27); its assertion is idealized. -/
-noncomputable def geraldine (φ : Set Geraldine → Set Geraldine → Prop) :
+def geraldine (φ : Set Geraldine → Set Geraldine → Prop) :
     Presupposing Geraldine (Set Geraldine) :=
-  disj φ (Writer.mk mormonᶜ []) (Writer.mk Set.univ [worn])
+  disj φ (Writer.ofSet mormonᶜ ∅) (Writer.ofSet Set.univ {worn})
 
-private theorem mem_log_geraldine {φ : Set Geraldine → Set Geraldine → Prop} :
-    worn ∈ (geraldine φ).log ↔ ¬ φ mormon worn := by
-  have : Presupposing.truth ((·ᶜ) <$> (Writer.mk mormonᶜ [] : Presupposing Geraldine _)) =
+private theorem mem_logSet_geraldine {φ : Set Geraldine → Set Geraldine → Prop} :
+    worn ∈ (geraldine φ).logSet ↔ ¬ φ mormon worn := by
+  have : Presupposing.truth ((·ᶜ) <$> (Writer.ofSet mormonᶜ ∅ : Presupposing Geraldine _)) =
       mormon := by
     simp [Presupposing.truth]
   simp [geraldine, this]
 
 -- (25), (27), (26)
-theorem worn_mem_log_geraldine : worn ∈ (geraldine (· ⊆ ·)).log :=
-  mem_log_geraldine.2 fun h ↦ absurd (h (show Geraldine.mormonUnworn ∈ mormon by simp)) (by simp)
+theorem worn_mem_log_geraldine : worn ∈ (geraldine (· ⊆ ·)).logSet :=
+  mem_logSet_geraldine.2 fun h ↦ absurd (h (show Geraldine.mormonUnworn ∈ mormon by simp)) (by simp)
 
 -- (28), (25), (27), (26)
 theorem worn_not_mem_log_geraldine_28 :
-    worn ∉ (geraldine (Filters {{Geraldine.mormonUnworn}ᶜ})).log := by
-  rw [mem_log_geraldine, not_not]
+    worn ∉ (geraldine (Filters {{Geraldine.mormonUnworn}ᶜ})).logSet := by
+  rw [mem_logSet_geraldine, not_not]
   refine ⟨{{Geraldine.mormonUnworn}ᶜ}, le_rfl, ?_, ?_, ?_⟩ <;> simp only [Set.sInter_singleton]
   · rintro (_ | _ | _ | _) ⟨h1, h2⟩ <;> simp_all
   · intro h'
@@ -340,8 +339,8 @@ theorem worn_not_mem_log_geraldine_28 :
 
 -- (25), (27)
 theorem worn_mem_log_geraldine_contrary :
-    worn ∈ (geraldine (Filters {{Geraldine.mormonWorn}ᶜ})).log := by
-  rw [mem_log_geraldine]
+    worn ∈ (geraldine (Filters {{Geraldine.mormonWorn}ᶜ})).logSet := by
+  rw [mem_logSet_geraldine]
   rintro ⟨X, hX, h, -, -⟩
   rcases Set.subset_singleton_iff_eq.1 hX with rfl | rfl
   · simp only [Set.sInter_empty, Set.univ_inter] at h
@@ -351,8 +350,8 @@ theorem worn_mem_log_geraldine_contrary :
       simp)) (by simp)
 
 -- (25), (27)
-theorem worn_mem_log_geraldine_notMormon : worn ∈ (geraldine (Filters {mormonᶜ})).log := by
-  rw [mem_log_geraldine]
+theorem worn_mem_log_geraldine_notMormon : worn ∈ (geraldine (Filters {mormonᶜ})).logSet := by
+  rw [mem_logSet_geraldine]
   rintro ⟨X, hX, h, hc, -⟩
   rcases Set.subset_singleton_iff_eq.1 hX with rfl | rfl
   · simp only [Set.sInter_empty, Set.univ_inter] at h
@@ -361,10 +360,11 @@ theorem worn_mem_log_geraldine_notMormon : worn ∈ (geraldine (Filters {mormon�
 
 /-- `Nixon will appoint J. Edgar Hoover to the Cabinet`, over whether he will and whether Hoover is
 a homosexual (32). -/
-def appoint : Presupposing (Bool × Bool) (Set (Bool × Bool)) := Writer.mk {w | w.1} []
+def appoint : Presupposing (Bool × Bool) (Set (Bool × Bool)) := Writer.ofSet {w | w.1} ∅
 
 /-- `He will regret having appointed a homosexual`, which presupposes (31). -/
-def regret : Presupposing (Bool × Bool) (Set (Bool × Bool)) := Writer.mk Set.univ [{w | w.1 ∧ w.2}]
+def regret : Presupposing (Bool × Bool) (Set (Bool × Bool)) :=
+  Writer.ofSet Set.univ {{w | w.1 ∧ w.2}}
 
 private theorem truth_appoint : appoint.truth = {w | w.1} := by
   simp [Presupposing.truth, appoint]
@@ -379,41 +379,43 @@ private theorem filters_32 : Filters {{w : Bool × Bool | w.2}} {w | w.1} {w | w
   · exact absurd (h (show (false, true) ∈ {w : Bool × Bool | w.2} from rfl)) (by simp)
 
 -- (30a–c), (31), (33)
-theorem mem_log_30 :
-    {w | w.1 ∧ w.2} ∈ (cond (Filters ∅) appoint regret).log ∧
-      {w | w.1 ∧ w.2} ∈ (conj (Filters ∅) appoint regret).log ∧
-      {w | w.1 ∧ w.2} ∈ (disj (Filters ∅) ((·ᶜ) <$> appoint) regret).log := by
+theorem mem_logSet_30 :
+    {w | w.1 ∧ w.2} ∈ (cond (Filters ∅) appoint regret).logSet ∧
+      {w | w.1 ∧ w.2} ∈ (conj (Filters ∅) appoint regret).logSet ∧
+      {w | w.1 ∧ w.2} ∈ (disj (Filters ∅) ((·ᶜ) <$> appoint) regret).logSet := by
   have h : ¬ Filters ∅ {w : Bool × Bool | w.1} {w | w.1 ∧ w.2} := fun h ↦ by
     simpa using filters_empty_iff.1 h |>.1 (show (true, false) ∈ {w : Bool × Bool | w.1} from rfl)
-  simp only [mem_log_cond, mem_log_conj, mem_log_disj, truth_appoint, truth_compl_compl_appoint]
+  simp only [mem_logSet_cond, mem_logSet_conj, mem_logSet_disj, truth_appoint,
+    truth_compl_compl_appoint]
   exact ⟨.inr ⟨by simp [regret], h⟩, .inr ⟨by simp [regret], h⟩, .inr ⟨by simp [regret], h⟩⟩
 
 -- (32), (30a–c), (31), (33)
 theorem not_mem_log_30 :
-    {w | w.1 ∧ w.2} ∉ (cond (Filters {{w | w.2}}) appoint regret).log ∧
-      {w | w.1 ∧ w.2} ∉ (conj (Filters {{w | w.2}}) appoint regret).log ∧
-      {w | w.1 ∧ w.2} ∉ (disj (Filters {{w | w.2}}) ((·ᶜ) <$> appoint) regret).log := by
-  simp only [mem_log_cond, mem_log_conj, mem_log_disj, truth_appoint, truth_compl_compl_appoint]
+    {w | w.1 ∧ w.2} ∉ (cond (Filters {{w | w.2}}) appoint regret).logSet ∧
+      {w | w.1 ∧ w.2} ∉ (conj (Filters {{w | w.2}}) appoint regret).logSet ∧
+      {w | w.1 ∧ w.2} ∉ (disj (Filters {{w | w.2}}) ((·ᶜ) <$> appoint) regret).logSet := by
+  simp only [mem_logSet_cond, mem_logSet_conj, mem_logSet_disj, truth_appoint,
+    truth_compl_compl_appoint]
   simp [appoint, filters_32]
 
 /-- `John is dumb`, over whether he is. -/
-def johnDumb : Presupposing Bool (Set Bool) := Writer.mk {true} []
+def johnDumb : Presupposing Bool (Set Bool) := Writer.ofSet {true} ∅
 
 /-- `He knows that if it rains, it rains`, which presupposes a tautology (fn. 13). -/
-def knowsTautology : Presupposing Bool (Set Bool) := Writer.mk Set.univ [Set.univ]
+def knowsTautology : Presupposing Bool (Set Bool) := Writer.ofSet Set.univ {Set.univ}
 
 -- (24b), fn. 13
-theorem univ_not_mem_log_disj : Set.univ ∉ (disj (· ⊆ ·) johnDumb knowsTautology).log := by
+theorem univ_not_mem_log_disj : Set.univ ∉ (disj (· ⊆ ·) johnDumb knowsTautology).logSet := by
   intro h
-  rcases (mem_log_disj _ _ _).1 h with h | ⟨-, h⟩
+  rcases (mem_logSet_disj _ _ _).1 h with h | ⟨-, h⟩
   · simp [johnDumb] at h
   · exact h (Set.subset_univ _)
 
 /-- The revised condition (24b′) keeps fn. 13's tautology, since with Murphy's restrictions no
 set of assumed facts filters it. -/
 theorem univ_mem_log_disj_filters (F : Set (Set Bool)) :
-    Set.univ ∈ (disj (Filters F) johnDumb knowsTautology).log :=
-  (mem_log_disj _ _ _).2 (.inr ⟨by simp [knowsTautology], not_filters_univ F _⟩)
+    Set.univ ∈ (disj (Filters F) johnDumb knowsTautology).logSet :=
+  (mem_logSet_disj _ _ _).2 (.inr ⟨by simp [knowsTautology], not_filters_univ F _⟩)
 
 /-! ### Truth-functional conjunction (§10) -/
 
@@ -466,13 +468,13 @@ theorem inf_kingBald_35 :
 -- (17), (35)
 theorem hasKing_mem_log_conj_35 :
     hasKing ∈ (conj (· ⊆ ·) (.ofTrivalent fun w ↦ ofProp (w ∈ capitalParis))
-        (.ofTrivalent kingBald)).log ∧
+        (.ofTrivalent kingBald)).logSet ∧
       hasKing ∈ (conj (· ⊆ ·) (.ofTrivalent fun w ↦ ofProp (w ∉ capitalParis))
-        (.ofTrivalent kingBald)).log := by
-  have hk : hasKing ∈ (Presupposing.ofTrivalent kingBald).log := by
+        (.ofTrivalent kingBald)).logSet := by
+  have hk : hasKing ∈ (Presupposing.ofTrivalent kingBald).logSet := by
     simp [Presupposing.ofTrivalent, compl_gapExt_kingBald]
-  refine ⟨(mem_log_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩),
-    (mem_log_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩)⟩
+  refine ⟨(mem_logSet_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩),
+    (mem_logSet_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩)⟩
   · exact absurd (h (show France.parisNoKing ∈ _ by
       simp [Presupposing.truth, Presupposing.ofTrivalent])) (by simp)
   · exact absurd (h (show France.marseilleNoKing ∈ _ by
@@ -493,13 +495,16 @@ section Attitudes
 variable (φ : Set W → Set W → Prop) (att att₁ att₂ : Set W → Set W) (a c : Set W)
 
 -- (37), (42)
-theorem mem_log_conj_hole :
-    a ∈ (conj φ (att₁ <$> Writer.mk a []) (att₂ <$> Writer.mk c [a])).log ↔ ¬ φ (att₁ a) a := by
+theorem mem_logSet_conj_hole :
+    a ∈ (conj φ (att₁ <$> Writer.ofSet a ∅) (att₂ <$> Writer.ofSet c {a})).logSet ↔
+      ¬ φ (att₁ a) a := by
   simp [Presupposing.truth]
 
 -- (39)
-theorem log_map_conj : (att <$> conj (· ⊆ ·) (Writer.mk a []) (Writer.mk c [a])).log = [] := by
-  simp [conj, Presupposing.truth]
+theorem logSet_map_conj :
+    (att <$> conj (· ⊆ ·) (Writer.ofSet a ∅) (Writer.ofSet c {a})).logSet = ∅ := by
+  ext C
+  simp +contextual [conj, Presupposing.truth]
 
 -- (37), (39), (38) [hintikka-1962]
 theorem val_map_box_conj (R : SetRel W W) (A B : Presupposing W (Set W)) :
@@ -507,8 +512,8 @@ theorem val_map_box_conj (R : SetRel W W) (A B : Presupposing W (Set W)) :
   SetRel.core_inter R _ _
 
 -- (42), (43)
-theorem log_conj_pure (A B : Presupposing W (Set W)) :
-    (conj φ (pure (att₁ A.val)) (pure (att₂ B.val))).log = [] := by
+theorem logSet_conj_pure (A B : Presupposing W (Set W)) :
+    (conj φ (pure (att₁ A.val)) (pure (att₂ B.val))).logSet = ∅ := by
   simp [conj]
 
 end Attitudes

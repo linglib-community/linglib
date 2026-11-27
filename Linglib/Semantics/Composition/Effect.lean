@@ -194,7 +194,7 @@ def pure : (f : Eff B) → f.IsApplicative → α → Obj D f α
   | .S, _, a => {a}
   | .R _, _, a => fun _ ↦ a
   | .W o, h, a =>
-    letI := Ty.Dom.completeBooleanAlgebra D o h.out; (Pure.pure a : Writer (Ty.Dom D o) _)
+    letI := Ty.Dom.completeBooleanAlgebra D o h.out; Writer.mk a ⊤
   | .C _, _, a => fun c ↦ c a
   | .M, _, a => Part.some a
   | .F, _, a => .unfeatured a
@@ -206,7 +206,7 @@ def seq : (f : Eff B) → f.IsApplicative → Obj D f (α → β) → Obj D f α
   | .S, _, g, x => Set.seq g x
   | .R _, _, g, x => fun i ↦ g i (x i)
   | .W o, h, g, x =>
-    letI := Ty.Dom.completeBooleanAlgebra D o h.out; (g <*> x : Writer (Ty.Dom D o) _)
+    letI := Ty.Dom.completeBooleanAlgebra D o h.out; Writer.mk (g.val x.val) (g.log ⊓ x.log)
   | .C _, _, g, x => fun c ↦ g fun k ↦ x fun a ↦ c (k a)
   | .M, _, g, x => g.bind fun k ↦ x.map k
   | .F, _, g, x => Seq.seq (f := WithAlternatives) g fun _ ↦ x
@@ -216,7 +216,7 @@ def join : (f : Eff B) → f.IsApplicative → Obj D f (Obj D f α) → Obj D f 
   | .S, _, x => ⋃₀ x
   | .R _, _, x => fun i ↦ x i i
   | .W o, h, x =>
-    letI := Ty.Dom.completeBooleanAlgebra D o h.out; (x >>= id : Writer (Ty.Dom D o) _)
+    letI := Ty.Dom.completeBooleanAlgebra D o h.out; Writer.mk x.val.val (x.log ⊓ x.val.log)
   | .C _, _, x => fun c ↦ x fun m ↦ m c
   | .M, _, x => x.bind id
   | .F, _, x => Bind.bind (m := WithAlternatives) x id

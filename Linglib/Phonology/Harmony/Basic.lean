@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.Chain
-public import Linglib.Phonology.Subregular.ForbiddenPairs
+public import Linglib.Phonology.Subregular.Stringset.ForbiddenPairs
 
 /-!
 # Vowel harmony: pattern-level vocabulary

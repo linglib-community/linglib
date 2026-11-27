@@ -5,6 +5,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Questions.Bias
+public import Studies.BuringGunlogson2000
 public import Linglib.Data.Examples.GartnerGyuris2017
 public import Linglib.Data.Examples.Readers
 
@@ -53,6 +54,8 @@ studies.
 
 namespace GartnerGyuris2017
 
+open Examples (Construction Dimension)
+
 open Question
 
 /-- A bias choice: one of the seven nonempty sets of states of evidence or expectation, for p
@@ -84,12 +87,6 @@ theorem Choice.toFinset_sudo :
   decide
 
 theorem card_choice : Fintype.card Choice = 7 := by decide
-
-/-- The dimension a bias is drawn from. -/
-inductive Dimension where
-  | evidential
-  | epistemic
-  deriving DecidableEq, Fintype
 
 /-- The six cells of a profile: a reading of a polar question in a bias dimension. -/
 inductive Cell where
@@ -142,6 +139,10 @@ def byDim (p : Profile) (d : Dimension) : Option Polarity → Choice := λ q => 
 /-- A reading's evidential and epistemic choices. -/
 def pair (p : Profile) (q : Option Polarity) : Choice × Choice :=
   (p (.of q .evidential), p (.of q .epistemic))
+
+/-- The bias profile of a reading: its evidential and its epistemic choice as bias values. -/
+def biasProfile (p : Profile) (q : Option Polarity) : BiasProfile :=
+  ⟨(p (.of q .evidential)).toFinset, (p (.of q .epistemic)).toFinset⟩
 
 /-- A principle relating the positive question's value to each negative question's value factors
 through the positive question's value. -/
@@ -362,6 +363,11 @@ def sample : List Profile :=
 
 theorem hungarianFallRise_eq_englishV1 : hungarianFallRise = englishV1 := rfl
 
+-- the evidential cells of the English profile are the conditions of [buring-gunlogson-2000]
+theorem evidential_biasProfile_englishV1 (q : Option Polarity) :
+    (biasProfile englishV1 q).evidential = BuringGunlogson2000.evidential q := by
+  rcases q with _ | _ | _ <;> decide
+
 private theorem mem_sample {p : Profile} (h : p ∈ sample) :
     p = englishV1 ∨ p = japaneseNull ∨ p = japaneseNo ∨ p = japaneseDesho ∨
       p = hungarianFallRise := by
@@ -396,14 +402,8 @@ theorem sample_staticComplementarity :
 
 /-! ### Examples (1), (2), (8), (9): infelicity from the profiles -/
 
-/-- The clause types whose examples the paper judges. -/
-inductive Construction where
-  | englishV1
-  | hungarianE
-  deriving DecidableEq
-
 /-- A clause type's choice for a cell. -/
-def Construction.cell : Construction → Cell → Option Choice
+def Examples.Construction.cell : Construction → Cell → Option Choice
   | .englishV1, c => some (GartnerGyuris2017.englishV1 c)
   | .hungarianE, c => GartnerGyuris2017.hungarianE c
 
@@ -418,11 +418,10 @@ structure Row where
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let construction ← ex.parse? "construction"
-    [("English V1", .englishV1), ("Hungarian e", .hungarianE)]
+  let construction ← (Examples.construction ex)
   let reading ← ex.parse? "form"
     [("PPQ", none), ("IN-NPQ", (some .negative)), ("ON-NPQ", (some .positive))]
-  let dimension ← ex.parse? "dimension" [("evidential", .evidential), ("epistemic", .epistemic)]
+  let dimension ← (Examples.dimension ex)
   let value ← ex.parse? "value" [("+", (1 : SignType)), ("-", -1), ("%", 0)]
   pure ⟨construction, reading, dimension, value, ex.judgment⟩
 

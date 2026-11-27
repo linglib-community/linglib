@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Fragments.Akan.Phonology
-public import Linglib.Fragments.Yoruba.Phonology
+public import Linglib.Languages.Akan.Phonology
+public import Linglib.Languages.Yoruba.Phonology
 public import Linglib.Phonology.OptimalityTheory.Typology
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Mathlib.Tactic.DeriveFintype
@@ -33,7 +33,7 @@ generated. A ban on [+ATR] low vowels above MAX([ATR]) gives
 
 * The [ATR] value is `Phonology.Feature.atr` read as `Bool`, `true` for [+ATR]. A contrast at a
   height is a [+ATR] vowel of that height whose [−ATR] twin is also in the inventory. The low
-  vowel of the schematic inventories is the fragments' /a/.
+  vowel of the schematic inventories is the language files' /a/.
 * An underspecified representation is rendered by constraints that see only the specified value
   `s`: inputs and candidates are fully valued root–affix pairs, and a value is specified when it
   equals `s`. Every input has all four candidates.
@@ -83,7 +83,7 @@ instance (P : Segment → Prop) [DecidablePred P] : Decidable (HasContrastAmong 
 /-- The high vowels. -/
 def IsHigh (v : Segment) : Prop := v .high = true
 
-instance : DecidablePred IsHigh := fun v ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred IsHigh := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The mid vowels. -/
 def IsMid (v : Segment) : Prop := v .high = false ∧ v .low = false
@@ -98,7 +98,7 @@ def inventoryType? : Option InventoryType :=
   else if HasContrastAmong I IsMid then some .fourHeightMid else none
 
 /-- A vowel of a schematic inventory is the segment of its chart entry's tongue-root
-reading, as in the fragments. -/
+reading, as in the language files. -/
 def vowel (m : Data.PHOIBLE.FeatureMatrix) : Segment := .ofChart m.tenseAsATR
 
 /-- The nine-vowel 5Ht system /i ɪ e ɛ a ɔ o ʊ u/ of (1a), Akan's. -/

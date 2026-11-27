@@ -1,0 +1,528 @@
+{
+  "features": [
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "Clause",
+      "doc": "The surface type of the embedded clause.",
+      "multiple": false,
+      "levels": [
+        {
+          "name": "finite",
+          "label": "finite",
+          "doc": "a finite clause"
+        },
+        {
+          "name": "infinitive",
+          "label": "infinitive",
+          "doc": "an infinitival clause without a subject, a temporal adverb or a negation of its own"
+        },
+        {
+          "name": "modifiedInfinitive",
+          "label": "modifiedInfinitive",
+          "doc": "an infinitival clause that contains a temporal adverb or a negation of its own"
+        },
+        {
+          "name": "gerund",
+          "label": "gerund",
+          "doc": "a nonfinite clause with a genitive subject"
+        }
+      ]
+    },
+    {
+      "key": "dependency",
+      "lean": "dependencies",
+      "type": "Dependency",
+      "doc": "The dependencies a sentence shows between the matrix clause and the embedded clause.",
+      "multiple": true,
+      "levels": [
+        {
+          "name": "binding",
+          "label": "binding",
+          "doc": "a phrase moved out of the embedded clause binds a pronoun or a reciprocal from its landing site"
+        },
+        {
+          "name": "movement",
+          "label": "movement",
+          "doc": "a phrase is moved out of the embedded clause and binds nothing from its landing site"
+        },
+        {
+          "name": "lda",
+          "label": "lda",
+          "doc": "the matrix verb agrees with an argument of the embedded clause"
+        },
+        {
+          "name": "defaultAgreement",
+          "label": "defaultAgreement",
+          "doc": "the matrix verb shows default agreement, its own arguments being case-marked and an argument of the embedded clause unmarked"
+        },
+        {
+          "name": "whScope",
+          "label": "whScope",
+          "doc": "a wh-phrase inside the embedded clause takes matrix scope"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "keine2020_56",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(56)"},
+      "language": "hind1269",
+      "primaryText": "laṛkõ-ne roṭii khaa-nii caah-ii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["laṛkõ-ne", "boys-ERG"], ["roṭii", "bread.F"], ["khaa-nii", "eat-INF.F.SG"],
+        ["caah-ii", "want-PFV.F.SG"]
+      ],
+      "translation": "The boys wanted to eat bread.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "lda"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_57",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(57)"},
+      "language": "hind1269",
+      "primaryText": "laṛkõ-ne roṭii khaa-naa caah-aa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["laṛkõ-ne", "boys-ERG"], ["roṭii", "bread.F"], ["khaa-naa", "eat-INF.M.SG"],
+        ["caah-aa", "want-PFV.M.SG"]
+      ],
+      "translation": "The boys wanted to eat bread.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "defaultAgreement"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_71_default",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(71)"},
+      "language": "hind1269",
+      "primaryText": "laṛkõ-ne soc-aa ki monaa-ne kitaab paṛh-ii thii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["laṛkõ-ne", "boys-ERG"], ["soc-aa", "think-PFV.M.SG"], ["ki", "that"],
+        ["monaa-ne", "Mona-ERG"], ["kitaab", "book.F"], ["paṛh-ii", "read-PFV.F.SG"],
+        ["thii", "be.PST.F.SG"]
+      ],
+      "translation": "The boys thought that Mona had read a book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "finite"],
+        ["dependency", "defaultAgreement"]
+      ],
+      "comment": "The source prints both agreement variants in one line with a slash; this row is one of them.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_71_lda",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(71)"},
+      "language": "hind1269",
+      "primaryText": "laṛkõ-ne soc-ii ki monaa-ne kitaab paṛh-ii thii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["laṛkõ-ne", "boys-ERG"], ["soc-ii", "think-PFV.F.SG"], ["ki", "that"],
+        ["monaa-ne", "Mona-ERG"], ["kitaab", "book.F"], ["paṛh-ii", "read-PFV.F.SG"],
+        ["thii", "be.PST.F.SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "finite"],
+        ["dependency", "lda"]
+      ],
+      "comment": "The source prints both agreement variants in one line with a slash; this row is one of them.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_73b",
+      "source": {"bibkey": "bhatt-2005", "paperLabel": "p. 784"},
+      "reportedIn": {"bibkey": "keine-2020", "paperLabel": "(73b)"},
+      "language": "hind1269",
+      "primaryText": "firoz-ne shabnam-kaa roṭii khaa-nii caah-ii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["firoz-ne", "Firoz-ERG"], ["shabnam-kaa", "Shabnam-GEN"], ["roṭii", "bread.F"],
+        ["khaa-nii", "eat-INF.F.SG"], ["caah-ii", "want-PFV.F.SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "gerund"],
+        ["dependency", "lda"]
+      ],
+      "comment": "The source prints no translation; (73a), with default agreement, is 'Firoz wanted Shabnam's eating bread.'",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_46",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(46)"},
+      "language": "hind1269",
+      "primaryText": "har laṛke-ko us-kii bahin soc-tii hai ki raam-ne dekh-aa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["har", "every"], ["laṛke-ko", "boy-ACC"], ["us-kii", "s/he-GEN"], ["bahin", "sister"],
+        ["soc-tii", "think-IPFV.F.SG"], ["hai", "be.PRES.3SG"], ["ki", "that"],
+        ["raam-ne", "Ram-ERG"], ["dekh-aa", "see-PFV.M.SG"]
+      ],
+      "translation": "His/her sister thinks that Ram saw every boy.",
+      "context": "us-kii is not bound by the moved phrase",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "finite"],
+        ["dependency", "movement"]
+      ],
+      "comment": "The source marks the bound reading of us-kii impossible.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_47",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(47)"},
+      "language": "hind1269",
+      "primaryText": "raam aur prataap-ko ek duusre-kii bahinõ-ne soc-aa ki sangiitaa-ne maar-aa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam", "Ram"], ["aur", "and"], ["prataap-ko", "Pratap-ACC"], ["ek", "each"],
+        ["duusre-kii", "other-GEN"], ["bahinõ-ne", "sisters-ERG"], ["soc-aa", "think-PFV.M.SG"],
+        ["ki", "that"], ["sangiitaa-ne", "Sangita-ERG"], ["maar-aa", "hit-PFV.M.SG"]
+      ],
+      "translation": "Ram and Pratap, each other's sisters thought that Sangita had hit.",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "finite"],
+        ["dependency", "binding"]
+      ],
+      "comment": "The translation is the source's intended reading. The source brackets the coordination before the case marker.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_49b",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(49b)"},
+      "language": "hind1269",
+      "primaryText": "raam aur prataap-ko ek duusre-kii bahinõ-ne maar-naa caah-aa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam", "Ram"], ["aur", "and"], ["prataap-ko", "Pratap-ACC"], ["ek", "each"],
+        ["duusre-kii", "other-GEN"], ["bahinõ-ne", "sisters-ERG"], ["maar-naa", "hit-INF.M.SG"],
+        ["caah-aa", "want-PFV.M.SG"]
+      ],
+      "translation": "Ram and Pratap, each other's sisters wanted to hit.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "binding"]
+      ],
+      "comment": "The source brackets the coordination before the case marker.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_50b",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(50b)"},
+      "language": "hind1269",
+      "primaryText": "kutte-ko raam-ne siitaa-kaa ghuuma-naa caah-aa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kutte-ko", "dog-ACC"], ["raam-ne", "Ram-ERG"], ["siitaa-kaa", "Sita-GEN"],
+        ["ghuuma-naa", "walk-INF.M.SG"], ["caah-aa", "want-PFV.M.SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "gerund"],
+        ["dependency", "movement"]
+      ],
+      "comment": "The source prints no translation; (50a), without movement, is 'Ram wanted Sita's walking the dog.'",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_91a",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(91a)"},
+      "language": "hind1269",
+      "primaryText": "pichle hafte raam-ne yah kitaab kal paṛh-naa caah-aa thaa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pichle", "last"], ["hafte", "week"], ["raam-ne", "Ram-ERG"], ["yah", "this"],
+        ["kitaab", "book.F"], ["kal", "yesterday/tomorrow"], ["paṛh-naa", "read-INF.M.SG"],
+        ["caah-aa", "want-PFV.M.SG"], ["thaa", "be.PST.M.SG"]
+      ],
+      "translation": "Last week, Ram had wanted to read the book yesterday/tomorrow.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "modifiedInfinitive"],
+        ["dependency", "defaultAgreement"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_93a",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(93a)"},
+      "language": "hind1269",
+      "primaryText": "raam-ne khiṛkii nahĩĩ band kar-naa shuruu kar di-yaa hai",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam-ne", "Ram-ERG"], ["khiṛkii", "window.F"], ["nahĩĩ", "not"], ["band", "close"],
+        ["kar-naa", "do-INF.M.SG"], ["shuruu", "begin"], ["kar", "do"], ["di-yaa", "give-PFV.M.SG"],
+        ["hai", "be.PRES.3SG"]
+      ],
+      "translation": "Ram has begun not closing the window.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "modifiedInfinitive"],
+        ["dependency", "defaultAgreement"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "keine2020_93b",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(93b)"},
+      "language": "hind1269",
+      "primaryText": "raam-ne khiṛkii nahĩĩ band kar-nii shuruu kar d-ii hai",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam-ne", "Ram-ERG"], ["khiṛkii", "window.F"], ["nahĩĩ", "not"], ["band", "close"],
+        ["kar-nii", "do-INF.F.SG"], ["shuruu", "begin"], ["kar", "do"], ["d-ii", "give-PFV.F.SG"],
+        ["hai", "be.PRES.3SG"]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "nearlyUngrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "modifiedInfinitive"],
+        ["dependency", "lda"]
+      ],
+      "comment": "The source's mark is ?*.",
+      "verified": "page-image"
+    },
+    {
+      "id": "keine2020_96b_default",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(96b)"},
+      "language": "hind1269",
+      "primaryText": "har laṛke-se us-kii mãã-ne baat kar-naa caah-aa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["har", "every"], ["laṛke-se", "boy-INSTR"], ["us-kii", "s/he-GEN"],
+        ["mãã-ne", "mother-ERG"], ["baat", "talk.F"], ["kar-naa", "do-INF.M.SG"],
+        ["caah-aa", "want-PFV.M.SG"]
+      ],
+      "translation": "His/her mother wanted to talk to every boy",
+      "context": "us-kii is not bound by the moved phrase",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "movement"],
+        ["dependency", "defaultAgreement"]
+      ],
+      "comment": "The source prints both agreement variants in one line with a slash; this row is one of them.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_96c_lda",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(96c)"},
+      "language": "hind1269",
+      "primaryText": "har laṛke-se us-kii mãã-ne baat kar-nii caah-ii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["har", "every"], ["laṛke-se", "boy-INSTR"], ["us-kii", "s/he-GEN"],
+        ["mãã-ne", "mother-ERG"], ["baat", "talk.F"], ["kar-nii", "do-INF.F.SG"],
+        ["caah-ii", "want-PFV.F.SG"]
+      ],
+      "translation": "For every boy x, x's mother wanted to talk to x.",
+      "context": "us-kii is bound by the moved phrase",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "binding"],
+        ["dependency", "lda"]
+      ],
+      "comment": "The source prints both agreement variants in one line with a slash; this row is one of them.",
+      "verified": "page-image"
+    },
+    {
+      "id": "keine2020_96c_default",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(96c)"},
+      "language": "hind1269",
+      "primaryText": "har laṛke-se us-kii mãã-ne baat kar-naa caah-aa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["har", "every"], ["laṛke-se", "boy-INSTR"], ["us-kii", "s/he-GEN"],
+        ["mãã-ne", "mother-ERG"], ["baat", "talk.F"], ["kar-naa", "do-INF.M.SG"],
+        ["caah-aa", "want-PFV.M.SG"]
+      ],
+      "translation": "For every boy x, x's mother wanted to talk to x.",
+      "context": "us-kii is bound by the moved phrase",
+      "judgment": "nearlyUngrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "binding"],
+        ["dependency", "defaultAgreement"]
+      ],
+      "comment": "The source prints both agreement variants in one line with a slash; this row is one of them. The source's mark is ?*.",
+      "verified": "page-image"
+    },
+    {
+      "id": "keine2020_121",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(121)"},
+      "language": "hind1269",
+      "primaryText": "siitaa-ne soc-aa kis-ko ravii-ne dekh-aa?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["siitaa-ne", "Sita-ERG"], ["soc-aa", "think-PFV.M.SG"], ["kis-ko", "who-ACC"],
+        ["ravii-ne", "Ravi-ERG"], ["dekh-aa", "see-PFV.M.SG"]
+      ],
+      "translation": "Who did Sita think that Ravi saw?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "finite"],
+        ["dependency", "whScope"]
+      ],
+      "comment": "The translation is the source's intended reading.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_123a",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(123a)"},
+      "language": "hind1269",
+      "primaryText": "raam-ne siitaa-ko kaunsii maalaa de-nii caah-ii?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam-ne", "Ram-ERG"], ["siitaa-ko", "Sita-DAT"], ["kaunsii", "which"],
+        ["maalaa", "necklace.F"], ["de-nii", "give-INF.F.SG"], ["caah-ii", "want-PFV.F.SG"]
+      ],
+      "translation": "Which necklace did Ram want to give to Sita?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "whScope"],
+        ["dependency", "lda"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_123b",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(123b)"},
+      "language": "hind1269",
+      "primaryText": "raam-ne siitaa-ko kaunsii maalaa de-naa caah-aa?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam-ne", "Ram-ERG"], ["siitaa-ko", "Sita-DAT"], ["kaunsii", "which"],
+        ["maalaa", "necklace.F"], ["de-naa", "give-INF.M.SG"], ["caah-aa", "want-PFV.M.SG"]
+      ],
+      "translation": "Which necklace did Ram want to give to Sita?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "infinitive"],
+        ["dependency", "whScope"],
+        ["dependency", "defaultAgreement"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_125",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(125)"},
+      "language": "hind1269",
+      "primaryText": "pichle hafte raam-ne kal kyaa khaa-naa caah-aa thaa?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pichle", "last"], ["hafte", "week"], ["raam-ne", "Ram-ERG"], ["kal", "yesterday/tomorrow"],
+        ["kyaa", "what"], ["khaa-naa", "eat-INF.M.SG"], ["caah-aa", "want-PFV.M.SG"],
+        ["thaa", "be.PST.M.SG"]
+      ],
+      "translation": "What did Ram last week want to eat yesterday/tomorrow?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "modifiedInfinitive"],
+        ["dependency", "whScope"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "keine2020_127",
+      "source": {"bibkey": "keine-2020", "paperLabel": "(127)"},
+      "language": "hind1269",
+      "primaryText": "siitaa-kaa kyaa khaa-naa ravii-ko buraa lag-taa hai?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["siitaa-kaa", "Sita-GEN"], ["kyaa", "what"], ["khaa-naa", "eat-INF.M.SG"],
+        ["ravii-ko", "Ravi-DAT"], ["buraa", "bad.M.SG"], ["lag-taa", "seem-IPFV.M.SG"],
+        ["hai", "be.PRES.3SG"]
+      ],
+      "translation": "What did it seem bad to Ravi that Sita ate?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["clause", "gerund"],
+        ["dependency", "whScope"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    }
+  ]
+}

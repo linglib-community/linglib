@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Kripke
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Atoms
@@ -223,7 +223,7 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
   | bot => exact Team.supClosed_singleton_empty
   | incl xys =>
     intro s hs t ht
-    simp only [Set.mem_ofPred_eq, support, eval, Finset.sup_eq_union, Finset.coe_union]
+    simp only [Set.mem_ofPred_eq, support, eval, Finset.coe_union]
     exact Team.supClosed_incl _ _ hs ht
   | neg ψ _ => exact Team.supClosed_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.inter ih₂

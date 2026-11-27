@@ -3,14 +3,14 @@ module
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Studies.Karttunen1974
-public import Linglib.Fragments.English.TemporalConnectives
-public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Fragments.Greek.StandardModern.PolarityItems
-public import Linglib.Fragments.Icelandic.PolarityItems
-public import Linglib.Fragments.Dutch.PolarityItems
-public import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
-public import Linglib.Fragments.Icelandic.TemporalConnectives
-public import Linglib.Fragments.Dutch.TemporalConnectives
+public import Linglib.Languages.English.TemporalConnectives
+public import Linglib.Languages.English.PolarityItems
+public import Linglib.Languages.Greek.StandardModern.PolarityItems
+public import Linglib.Languages.Icelandic.PolarityItems
+public import Linglib.Languages.Dutch.PolarityItems
+public import Linglib.Languages.Greek.StandardModern.TemporalConnectives
+public import Linglib.Languages.Icelandic.TemporalConnectives
+public import Linglib.Languages.Dutch.TemporalConnectives
 public import Linglib.Data.Examples.Giannakidou2002
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.Readers
@@ -28,7 +28,8 @@ imperfectives and not with a perfective achievement, negated or not, where the p
 nothing P-like ever happens](##wideScope_of_forall_not), whereas [eventive UNTIL is Karttunen's
 *not until* with the actualization his presupposition supplies](##eventiveUntil_iff). The
 paper's Greek, English, Icelandic and Dutch judgments [follow from the aspect of the main clause
-and the fragment entries of the connectives and their polarity items](##rows_predicted), and its
+and the language file entries of the connectives and their polarity items](##rows_predicted), and
+its
 stativity diagnostics [from homogeneity](##diagnostics_predicted), [which negation does not
 supply](##stativizer_refuted).
 
@@ -40,19 +41,19 @@ supply](##stativizer_refuted).
   the run time within the reference interval, and the perfect is the perfect of the perfective. A
   stative predicate has the subinterval property, and an eventive one holds of a single event, as
   the paper's achievements and accomplishments with a definite subject do.
-* Durative UNTIL is the durative reading `Aspect.durative` at a nondegenerate span ending at the
+* Durative UNTIL is the durative reading `Temporal.durative` at a nondegenerate span ending at the
   until time, which keeps a single event from filling it at both endpoints. A clause is
   homogeneous when durative UNTIL holds of its description in some model (`AdmitsDurative`), and a
   form is stative when its clauses are homogeneous whatever their predicate (`StativeForm`). Each
   is decided through its characterization.
 * The connective of a glossed row is read off its gloss line (`Data/Examples/Gloss.lean`): a
-  wordform, or two adjacent ones, spelling the declared form of a fragment entry. The
+  wordform, or two adjacent ones, spelling the declared form of a language file entry. The
   `connective` column remains only on the unglossed rows.
-* The relation of each connective is read off its fragment entry. Which words are punctual
+* The relation of each connective is read off its language file entry. Which words are punctual
   *until*s, Greek *para monon*, Icelandic *fyrr en* and Dutch *pas*, is the paper's
   classification (`Connective.Punctual`). A row names the context the connective sits under, and
   whether that context admits the connective's polarity item is the library's licensing theory
-  applied to the item's fragment entry (`PolarityItem.Licenser.Admits`).
+  applied to the item's language file entry (`PolarityItem.Licenser.Admits`).
 * Giannakidou licenses *para monon* by antiveridical triggers only. The library licenses by
   Zwarts's strengths of negation, and *para monon*'s anti-additive licensor draws her line through
   the paper's contexts: negation and *xoris* 'without' carry anti-additivity, *amfivalo* 'I doubt'
@@ -87,9 +88,9 @@ supply](##stativizer_refuted).
 
 namespace Giannakidou2002
 
-open Event (τ)
+open Event (τ runTimes runTimes_iff runTimes_τ)
 
-open Aspect Tense Karttunen1974
+open Aspect Tense Karttunen1974 Temporal
 open PolarityItem (LicensingContext)
 
 variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
@@ -98,59 +99,77 @@ variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
 
 /-- Durative UNTIL holds when the description holds throughout a nondegenerate interval ending at
 the until time, at every one of its subintervals. -/
-def durativeUntil (p : W → Set (NonemptyInterval T)) (w : W) (t' : T) : Prop :=
-  ∃ i ∈ durative p w, i.fst < i.snd ∧ i.snd = t'
+def durativeUntil (p : NonemptyInterval T → Prop) (t' : T) : Prop :=
+  ∃ i, durative p i ∧ i.fst < i.snd ∧ i.snd = t'
 
-theorem durativeUntil_iff_of_isLowerSet {p : W → Set (NonemptyInterval T)} {w : W}
-    (hp : IsLowerSet (p w)) (t' : T) :
-    durativeUntil p w t' ↔ ∃ i ∈ p w, i.fst < i.snd ∧ i.snd = t' := by
-  simp only [durativeUntil, durative_eq_of_isLowerSet hp]
+theorem durativeUntil_iff_of_antitone {p : NonemptyInterval T → Prop} (hp : Antitone p) (t' : T) :
+    durativeUntil p t' ↔ ∃ i, p i ∧ i.fst < i.snd ∧ i.snd = t' := by
+  simp only [durativeUntil, durative_eq_of_antitone hp]
 
-theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
-    (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
+-- Of a description with the subinterval property, durative UNTIL is Karttunen's durative *until*.
+theorem durativeUntil_iff_until {p : NonemptyInterval T → Prop} (hp : Antitone p) (t' : T) :
+    durativeUntil p t' ↔ until_ p (· = NonemptyInterval.pure t') := by
+  rw [durativeUntil_iff_of_antitone hp]
+  constructor
+  · rintro ⟨i, hi, hlt, rfl⟩
+    exact ⟨i, hi, i.snd, mem_timeTrace_eq_pure.2 rfl, hlt, le_rfl⟩
+  · rintro ⟨J, hJ, s, hs, hlt, hle⟩
+    obtain rfl := mem_timeTrace_eq_pure.1 hs
+    exact ⟨⟨(J.fst, s), hlt.le⟩, hp (b := J) (NonemptyInterval.le_def.2 ⟨le_rfl, hle⟩) hJ, hlt, rfl⟩
+
+theorem not_durativeUntil_perfective {P : W → E → Prop} {w : W}
+    (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (perfective (P w)) t' := by
   rintro ⟨i, h, hi, -⟩
-  obtain ⟨e₁, h₁, he₁⟩ := h (show NonemptyInterval.pure i.fst ∈ Set.Iic i from
-    NonemptyInterval.le_def.2 ⟨le_rfl, i.fst_le_snd⟩)
-  obtain ⟨e₂, h₂, he₂⟩ := h (show NonemptyInterval.pure i.snd ∈ Set.Iic i from
-    NonemptyInterval.le_def.2 ⟨i.fst_le_snd, le_rfl⟩)
+  obtain ⟨e₁, h₁, he₁⟩ := perfective_iff.1 (durative_iff.1 h (.pure i.fst)
+    (NonemptyInterval.le_def.2 ⟨le_rfl, i.fst_le_snd⟩))
+  obtain ⟨e₂, h₂, he₂⟩ := perfective_iff.1 (durative_iff.1 h (.pure i.snd)
+    (NonemptyInterval.le_def.2 ⟨i.fst_le_snd, le_rfl⟩))
   obtain rfl := hP e₁ e₂ he₁ he₂
   exact absurd ((NonemptyInterval.le_def.mp h₂).1.trans
     ((τ e₁).fst_le_snd.trans (NonemptyInterval.le_def.mp h₁).2)) (not_le.mpr hi)
 
 theorem durativeUntil_unbounded {P : W → E → Prop} {w : W} {e : E} (hP : P w e)
-    (he : (τ e).fst < (τ e).snd) : durativeUntil (UNBOUNDED P) w (τ e).snd :=
-  ⟨τ e, fun _ hj ↦ mem_unbounded.2 ⟨e, hj, hP⟩, he, rfl⟩
+    (he : (τ e).fst < (τ e).snd) : durativeUntil (unbounded (P w)) (τ e).snd :=
+  ⟨τ e, durative_iff.2 fun _ hj ↦ unbounded_iff.2 ⟨e, hj, hP⟩, he, rfl⟩
 
 -- The homogeneous part of a perfective stative fills the until interval (p. 96).
-theorem durativeUntil_prfv_of_unbounded {P : W → E → Prop} (hP : HasSubintervalProperty P)
-    {w : W} {t : T} (h : durativeUntil (UNBOUNDED P) w t) : durativeUntil (PRFV P) w t :=
-  let ⟨i, hi, h⟩ := h; ⟨i, hi.trans (hP.unbounded_subset_prfv w), h⟩
+theorem durativeUntil_perfective_of_unbounded {P : W → E → Prop} {w : W}
+    (hP : HasSubintervalProperty (P w)) {t : T} (h : durativeUntil (unbounded (P w)) t) :
+    durativeUntil (perfective (P w)) t :=
+  let ⟨i, hi, h⟩ := h; ⟨i, durative_mono hP.unbounded_le_perfective i hi, h⟩
 
-theorem durativeUntil_perfect_prfv {P : W → E → Prop} {w : W} {e : E} (hP : P w e) {t : T}
-    (ht : (τ e).snd < t) : durativeUntil (perfect (PRFV P)) w t := by
-  refine ⟨⟨((τ e).snd, t), ht.le⟩, fun j hj ↦ ?_, ht, rfl⟩
-  have h₁ : (τ e).snd ≤ j.fst := (NonemptyInterval.le_def.1 hj).1
-  exact ⟨⟨((τ e).fst, j.snd), (τ e).fst_le_snd.trans (h₁.trans j.fst_le_snd)⟩,
-    mem_prfv.2 ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, h₁.trans j.fst_le_snd⟩, hP⟩,
-    (τ e).fst_le_snd.trans h₁, rfl⟩
+theorem durativeUntil_perfect_perfective {P : W → E → Prop} {w : W} {e : E} (hP : P w e) {t : T}
+    (ht : (τ e).snd < t) : durativeUntil (perfect (perfective (P w))) t := by
+  refine ⟨⟨((τ e).snd, t), ht.le⟩, durative_iff.2 fun j hj ↦ ?_, ht, rfl⟩
+  exact perfect_perfective_iff.2 ⟨e, (NonemptyInterval.le_def.1 hj).1.trans j.fst_le_snd, hP⟩
 
 /-! ### Negation: wide scope, narrow scope and the eventive UNTIL -/
 
 /-- The state of not-P-ing, which a stativizing negation would deliver, holds when no P-event
 overlaps the interval. -/
-def notState (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  fun w ↦ {i | ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i}
+def notState (P : W → E → Prop) (w : W) : NonemptyInterval T → Prop :=
+  fun i ↦ ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i
 
-theorem isLowerSet_notState (P : W → E → Prop) (w : W) :
-    IsLowerSet (notState P w : Set (NonemptyInterval T)) :=
+theorem antitone_notState (P : W → E → Prop) (w : W) :
+    Antitone (notState P w : NonemptyInterval T → Prop) :=
   fun _ _ hji h e he a ha haj ↦ h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
 
 /-- Mittwoch's wide-scope reading is durative UNTIL of the state of not-P-ing. -/
-def wideScope (P : W → E → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P) w t'
+def wideScope (P : W → E → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P w) t'
+
+-- The wide-scope reading is the structure (3a) of Karttunen, durative *until* of the negated
+-- clause.
+theorem wideScope_iff (P : W → E → Prop) (w : W) (t' : T) :
+    wideScope P w t' ↔ until_ (negated (runTimes (P w))) (· = NonemptyInterval.pure t') := by
+  have h : notState P w = negated (runTimes (P w)) := funext fun i ↦ propext
+    ⟨fun h ↦ Set.disjoint_left.2 fun a ha ⟨_, hi, hae⟩ ↦
+        let ⟨e, he, hP⟩ := runTimes_iff.1 hi; h e hP a (he ▸ hae) ha,
+      fun h e he a hae ha ↦ Set.disjoint_left.1 h ha ⟨τ e, runTimes_τ he, hae⟩⟩
+  rw [wideScope, durativeUntil_iff_until (antitone_notState P w), h]
 
 /-- External negation denies the durative UNTIL claim. -/
-def narrowScope (p : W → Set (NonemptyInterval T)) (w : W) (t' : T) : Prop :=
-  ¬ durativeUntil p w t'
+def narrowScope (p : NonemptyInterval T → Prop) (t' : T) : Prop :=
+  ¬ durativeUntil p t'
 
 /-- Karttunen's scalar eventive UNTIL holds when a P-event occurs at the until time and none
 starts earlier. -/
@@ -165,37 +184,41 @@ theorem eventiveUntil_actualization {P : W → E → Prop} {w : W} {t : T}
 actualization. -/
 theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
     (h : t < t') : wideScope P w t' :=
-  ⟨⟨(t, t'), h.le⟩, fun _ _ e he ↦ absurd he (hP e), h, rfl⟩
+  ⟨⟨(t, t'), h.le⟩, durative_iff.2 fun _ _ e he ↦ absurd he (hP e), h, rfl⟩
 
-/-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
-supplies. -/
+/-- Eventive UNTIL holds exactly where Karttunen's *not until* is true, with the actualization his
+presupposition supplies. -/
 theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
-    eventiveUntil P w t ↔ notUntil (τ '' {e | P w e}) {NonemptyInterval.pure t} ∧
-      when_ (τ '' {e | P w e}) {NonemptyInterval.pure t} := by
+    eventiveUntil P w t ↔
+      notUntil (fun w ↦ runTimes (P w)) (fun _ ↦ (· = NonemptyInterval.pure t)) w = .true := by
+  rw [notUntil_eq_true_iff]
   constructor
   · rintro ⟨⟨e, he, ht⟩, hall⟩
-    refine ⟨(notUntil_iff _ _).mpr fun s ⟨_, ⟨e', he', rfl⟩, hs⟩ ↦
-      ⟨t, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩,
-        (hall e' he').trans (NonemptyInterval.mem_def.mp hs).1⟩,
-      t, ⟨τ e, ⟨e, he, rfl⟩, ht⟩, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩⟩
-  · rintro ⟨hnu, s, ⟨_, ⟨e, he, rfl⟩, hs⟩, j, hj, hsj⟩
-    obtain rfl := Set.mem_singleton_iff.mp hj
+    refine ⟨beforeEver_iff_not_subset_upperClosure.not_left.2 ?_,
+      t, ⟨τ e, runTimes_τ he, ht⟩, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩⟩
+    rintro s ⟨_, hi, hs⟩
+    obtain ⟨e', rfl, he'⟩ := runTimes_iff.1 hi
+    exact ⟨t, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩,
+      (hall e' he').trans (NonemptyInterval.mem_def.mp hs).1⟩
+  · rintro ⟨hnu, s, ⟨_, hi, hs⟩, j, rfl, hsj⟩
+    obtain ⟨e, rfl, he⟩ := runTimes_iff.1 hi
     rw [NonemptyInterval.mem_pure] at hsj
     subst hsj
     refine ⟨⟨e, he, hs⟩, fun e' he' ↦ ?_⟩
-    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := mem_upperClosure.1 ((notUntil_iff _ _).mp hnu
-      ⟨τ e', ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, (τ e').fst_le_snd⟩⟩)
-    obtain rfl := Set.mem_singleton_iff.mp hj
+    obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ :=
+      mem_upperClosure.1 (beforeEver_iff_not_subset_upperClosure.not_left.1 hnu
+      ⟨τ e', runTimes_τ he', NonemptyInterval.mem_def.mpr ⟨le_rfl, (τ e').fst_le_snd⟩⟩)
+    obtain rfl := hj
     rw [NonemptyInterval.mem_pure] at ht'
     exact ht' ▸ hle
 
 theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
-    (h : eventiveUntil P w t) : ¬ beforeEver (τ '' {e | P w e}) {NonemptyInterval.pure t} :=
-  ((eventiveUntil_iff P w t).1 h).1
+    (h : eventiveUntil P w t) : ¬ beforeEver (runTimes (P w)) (· = NonemptyInterval.pure t) :=
+  (notUntil_eq_true_iff.1 ((eventiveUntil_iff P w t).1 h)).1
 
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
-    ¬ beforeEver (τ '' {e | P w e}) {NonemptyInterval.pure t} :=
-  fun ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ ↦ hP e he
+    ¬ beforeEver (runTimes (P w)) (· = NonemptyInterval.pure t) :=
+  fun ⟨_, ⟨_, hi, _⟩, _⟩ ↦ let ⟨e, _, he⟩ := runTimes_iff.1 hi; hP e he
 
 /-! ### The paper's sentences -/
 
@@ -215,7 +238,7 @@ pas om 9 uur aan* 'Marie only arrived at nine'. -/
 def pasEntry : Tense.Connective :=
   { form := Dutch.PolarityItems.pas.form, relation := .until_ }
 
-/-- `c.entry` is the connective entry of `c`, the fragment's, or the paper's own for *para
+/-- `c.entry` is the connective entry of `c`, the language file's, or the paper's own for *para
 monon* and *pas*. -/
 def Connective.entry : Connective → Tense.Connective
   | .until => English.TemporalConnectives.until_
@@ -269,15 +292,15 @@ inductive Eventuality
 imperfective and the progressive put the reference interval within the run time of an event, the
 perfective and the English simple past put the run time within the reference interval, and the
 perfect is the perfect of the perfective. -/
-def AspectForm.view : AspectForm → (W → E → Prop) → W → Set (NonemptyInterval T)
-  | .imperfective | .progressive => UNBOUNDED
-  | .perfective | .simplePast => PRFV
-  | .perfect => fun P ↦ Aspect.perfect (PRFV P)
+def AspectForm.view : AspectForm → (E → Prop) → NonemptyInterval T → Prop
+  | .imperfective | .progressive => unbounded
+  | .perfective | .simplePast => Aspect.perfective
+  | .perfect => fun P ↦ Aspect.perfect (Aspect.perfective P)
 
 /-- The predicates of an eventuality class: a stative one has the subinterval property, and an
 eventive one holds of a single event in a world. -/
 def Eventuality.predicates : Eventuality → Set (W → E → Prop)
-  | .stative => {P | HasSubintervalProperty P}
+  | .stative => {P | ∀ w, HasSubintervalProperty (P w)}
   | .eventive => {P | ∀ w e e', P w e → P w e' → e = e'}
 
 /-- A model of the paper's sentences: worlds, a time line, and events with run times on it. -/
@@ -299,7 +322,7 @@ attribute [instance] Model.ord Model.trace
 sense, admitting durative UNTIL, when durative UNTIL holds of its description in some model. -/
 def AdmitsDurative (a : AspectForm) (c : Eventuality) : Prop :=
   ∃ (M : Model) (P : M.W → M.E → Prop) (w : M.W) (t : M.T),
-    P ∈ c.predicates ∧ durativeUntil (a.view P) w t
+    P ∈ c.predicates ∧ durativeUntil (a.view (P w)) t
 
 private def unitSpan : NonemptyInterval ℤ := ⟨⟨0, 1⟩, by decide⟩
 
@@ -310,14 +333,14 @@ private def aState : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e ≤
 private def anEvent : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e = unitSpan
 
 private theorem aState_mem : aState ∈ Eventuality.stative.predicates :=
-  hasSubintervalProperty_iff_witnesses.2 fun _ _ he t ht ↦ ⟨t, rfl, ht.trans he⟩
+  fun _ ↦ hasSubintervalProperty_iff_witnesses.2 fun _ he t ht ↦ ⟨t, rfl, ht.trans he⟩
 
 private theorem anEvent_mem : anEvent ∈ Eventuality.eventive.predicates :=
   fun _ _ _ h h' ↦ h.trans h'.symm
 
 private theorem admitsDurative_of {a : AspectForm} {c : Eventuality}
     {P : Unit → NonemptyInterval ℤ → Prop} (hP : P ∈ c.predicates) {t : ℤ}
-    (h : durativeUntil (a.view P) () t) : AdmitsDurative a c :=
+    (h : durativeUntil (a.view (P ())) t) : AdmitsDurative a c :=
   ⟨⟨Unit, ℤ, NonemptyInterval ℤ⟩, P, (), t, hP, h⟩
 
 /-- A main clause is homogeneous exactly when its form is imperfective, progressive or perfect, or
@@ -327,13 +350,13 @@ theorem admitsDurative_iff {a : AspectForm} {c : Eventuality} :
     AdmitsDurative a c ↔ a = .imperfective ∨ a = .progressive ∨ a = .perfect ∨ c = .stative := by
   constructor
   · rintro ⟨M, P, w, t, hP, h⟩
-    cases a <;> cases c <;> first | decide | exact absurd h (not_durativeUntil_prfv (hP w) t)
+    cases a <;> cases c <;> first | decide | exact absurd h (not_durativeUntil_perfective (hP w) t)
   · intro h
     have hs := durativeUntil_unbounded (P := aState) (w := ()) le_rfl (by decide)
     have he := durativeUntil_unbounded (P := anEvent) (w := ()) rfl (by decide)
-    have hs' := durativeUntil_prfv_of_unbounded aState_mem hs
-    have ps := durativeUntil_perfect_prfv (P := aState) (w := ()) le_rfl (t := 2) (by decide)
-    have pe := durativeUntil_perfect_prfv (P := anEvent) (w := ()) rfl (t := 2) (by decide)
+    have hs' := durativeUntil_perfective_of_unbounded (aState_mem ()) hs
+    have ps := durativeUntil_perfect_perfective (P := aState) (w := ()) le_rfl (t := 2) (by decide)
+    have pe := durativeUntil_perfect_perfective (P := anEvent) (w := ()) rfl (t := 2) (by decide)
     cases c <;> cases a <;> simp at h <;>
       first
       | exact admitsDurative_of aState_mem hs
@@ -399,7 +422,7 @@ def connectives : List Connective :=
   [.until, .mexri, .paraMonon, .prin, .til, .fyrrEn, .tot, .pas]
 
 /-- The connective a row's gloss line shows: the earliest span of the gloss stream spelling the
-declared form of a connective's fragment entry, multiword forms included. -/
+declared form of a connective's language file entry, multiword forms included. -/
 def connectiveOfForm? (ex : Datum) : Option Connective :=
   Gloss.lookup? (connectives.map fun c ↦ (c.entry.form, c)) ex.glossStream
 
@@ -430,7 +453,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     ("noEventContinuation", .noEventContinuation)]
   pure ⟨connective, aspect, eventuality, licenser, test⟩
 
-/-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
+/-- Every judgment on the UNTIL sentences follows from the connective's language file entry, the
 homogeneity of the main clause and the licensing of the polarity item. -/
 theorem rows_predicted :
     Datum.Checks Row.ofDatum (fun r ↦ .ofProp (Predicted r)) Examples.all 37 := by decide
@@ -484,7 +507,7 @@ theorem admitsDurativeNegated (c : Eventuality) : AdmitsDurativeNegated c := by
   refine ⟨⟨Unit, ℤ, NonemptyInterval ℤ⟩, fun _ _ ↦ False, (), (1 : ℤ), ?_,
     wideScope_of_forall_not (t := (0 : ℤ)) (fun _ h ↦ h) (by decide)⟩
   cases c
-  · exact hasSubintervalProperty_iff_witnesses.2 fun _ _ h ↦ h.elim
+  · exact fun _ ↦ hasSubintervalProperty_iff_witnesses.2 fun _ h ↦ h.elim
   · exact fun _ _ _ h ↦ h.elim
 
 instance (c : Eventuality) : Decidable (AdmitsDurativeNegated c) :=

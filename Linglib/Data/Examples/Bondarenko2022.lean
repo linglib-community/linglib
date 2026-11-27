@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Bondarenko2022` — typed example data
@@ -34,6 +36,7 @@ def ch2_106 : Datum :=
   { id := "bondarenko2022_ch2_106"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (106)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-i kecis-i-ta."
     glossedTokens := [("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-ess-ta-nun", "solve-PST-DECL-ADN"), ("cwucang-i", "claim-NOM"), ("kecis-i-ta", "falsehood-COP-DECL")]
@@ -43,12 +46,14 @@ def ch2_106 : Datum :=
     judgment := .acceptable
     contrasts := [("Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-i cham-i-ta.", .acceptable)]
     readings := []
+    spans := [⟨2, 1, "typer", some "ta"⟩, ⟨2, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")] }
 
 def ch2_107 : Datum :=
   { id := "bondarenko2022_ch2_107"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (107)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Swuna-ka mwuncey-lul phwul-un sanghwang-i kecis-i-ta."
     glossedTokens := [("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-un", "solve-ADN"), ("sanghwang-i", "situation-NOM"), ("kecis-i-ta", "falsehood-COP-DECL")]
@@ -58,6 +63,7 @@ def ch2_107 : Datum :=
     judgment := .ungrammatical
     contrasts := [("Swuna-ka mwuncey-lul phwul-un sanghwang-i cham-i-ta.", .ungrammatical)]
     readings := []
+    spans := [⟨2, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "situation")] }
 
 def ch2_108 : Datum :=
@@ -79,6 +85,7 @@ def ch2_109 : Datum :=
   { id := "bondarenko2022_ch2_109"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (109)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-i ilena-ss-ta"
     glossedTokens := [("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-ess-ta-nun", "solve-PST-DECL-ADN"), ("cwucang-i", "claim-NOM"), ("ilena-ss-ta", "occur-PST-DECL")]
@@ -88,12 +95,14 @@ def ch2_109 : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
+    spans := [⟨2, 1, "typer", some "ta"⟩, ⟨2, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "content")] }
 
 def ch2_110 : Datum :=
   { id := "bondarenko2022_ch2_110"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (110)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Swuna-ka mwuncey-lul phwul-un sanghwang-i ilena-ss-ta"
     glossedTokens := [("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-un", "solve-ADN"), ("sanghwang-i", "situation-NOM"), ("ilena-ss-ta", "occur-PST-DECL")]
@@ -103,6 +112,7 @@ def ch2_110 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨2, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")] }
 
 def ch2_111 : Datum :=
@@ -119,12 +129,14 @@ def ch2_111 : Datum :=
     judgment := .ungrammatical
     contrasts := []
     readings := []
+    spans := [⟨3, 1, "typer", some "ta"⟩, ⟨3, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "situation-only-predicate-notice"), ("nounSort", "content")] }
 
 def ch2_112 : Datum :=
   { id := "bondarenko2022_ch2_112"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (112)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Mina-ka Swuna-ka mwuncey-lul phwul-un sanghwang-ul alachay-ss-ta"
     glossedTokens := [("Mina-ka", "Mina-NOM"), ("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-un", "solve-ADN"), ("sanghwang-ul", "situation-ACC"), ("alachay-ss-ta", "notice-PST-DECL")]
@@ -134,6 +146,7 @@ def ch2_112 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨3, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "situation-only-predicate-notice"), ("nounSort", "situation")] }
 
 def ch2_120a : Datum :=
@@ -185,6 +198,7 @@ def ch2_121a : Datum :=
   { id := "bondarenko2022_ch2_121a"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (121a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Mina-ka Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-ul kiekhay-ss-ta."
     glossedTokens := [("Mina-ka", "Mina-NOM"), ("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-ess-ta-nun", "solve-PST-DECL-ADN"), ("cwucang-ul", "claim-ACC"), ("kiekhay-ss-ta", "remember-PST-DECL")]
@@ -194,12 +208,14 @@ def ch2_121a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨3, 1, "typer", some "ta"⟩, ⟨3, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "content"), ("role", "premise-a")] }
 
 def ch2_121b : Datum :=
   { id := "bondarenko2022_ch2_121b"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (121b)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Swuna-ka pan-eyse kacang khi-ga khu-ta."
     glossedTokens := [("Swuna-ka", "Swuna-NOM"), ("pan-eyse", "class-LOC"), ("kacang", "most"), ("khi-ga", "height-NOM"), ("khu-ta", "large-DECL")]
@@ -215,6 +231,7 @@ def ch2_121c : Datum :=
   { id := "bondarenko2022_ch2_121c"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (121c)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Mina-ka pan-eyse kacang khi-ga khun sonye-ka mwuncey-lul phwul-ess-ta-nun cwucang-ul kiekhay-ss-ta."
     glossedTokens := [("Mina-ka", "Mina-NOM"), ("pan-eyse", "class-LOC"), ("kacang", "most"), ("khi-ga", "height-NOM"), ("khun", "large"), ("sonye-ka", "girl-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-ess-ta-nun", "solve-PST-DECL-ADN"), ("cwucang-ul", "claim-ACC"), ("kiekhay-ss-ta", "remember-PST-DECL")]
@@ -224,12 +241,14 @@ def ch2_121c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨7, 1, "typer", some "ta"⟩, ⟨7, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "content"), ("role", "conclusion"), ("inference", "invalid")] }
 
 def ch2_122a : Datum :=
   { id := "bondarenko2022_ch2_122a"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (122a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Mina-ka Swuna-ka mwuncey-lul phwul-un sanghwang-ul kiekhay-ss-ta."
     glossedTokens := [("Mina-ka", "Mina-NOM"), ("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-un", "solve-ADN"), ("sanghwang-ul", "situation-ACC"), ("kiekhay-ss-ta", "remember-PST-DECL")]
@@ -239,12 +258,14 @@ def ch2_122a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨3, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "situation"), ("role", "premise-a")] }
 
 def ch2_122b : Datum :=
   { id := "bondarenko2022_ch2_122b"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (122b)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Swuna-ka pan-eyse kacang khi-ga khu-ta."
     glossedTokens := [("Swuna-ka", "Swuna-NOM"), ("pan-eyse", "class-LOC"), ("kacang", "most"), ("khi-ga", "height-NOM"), ("khu-ta", "large-DECL")]
@@ -260,6 +281,7 @@ def ch2_122c : Datum :=
   { id := "bondarenko2022_ch2_122c"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (122c)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Mina-ka pan-eyse kacang khi-ga khun sonye-ka mwuncey-lul phwul-un sanghwang-ul kiekhay-ss-ta."
     glossedTokens := [("Mina-ka", "Mina-NOM"), ("pan-eyse", "class-LOC"), ("kacang", "most"), ("khi-ga", "height-NOM"), ("khun", "large"), ("sonye-ka", "girl-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-un", "solve-ADN"), ("sanghwang-ul", "situation-ACC"), ("kiekhay-ss-ta", "remember-PST-DECL")]
@@ -269,6 +291,7 @@ def ch2_122c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
+    spans := [⟨7, 1, "typer", some "nun"⟩]
     paperFeatures := [("diagnostic", "substitution"), ("nounSort", "situation"), ("role", "conclusion"), ("inference", "valid")] }
 
 def ch4_30 : Datum :=
@@ -284,7 +307,8 @@ def ch4_30 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("clauseType", "Cont-CP"), ("shape", "bare gɘ-žɘ clause")] }
+    spans := [⟨4, 1, "typer", some "ge"⟩, ⟨4, 1, "typer", some "zha"⟩]
+    paperFeatures := [("clauseType", "Cont-CP")] }
 
 def ch4_31 : Datum :=
   { id := "bondarenko2022_ch4_31"
@@ -299,7 +323,8 @@ def ch4_31 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("clauseType", "Sit-CP"), ("shape", "nominalized participial clause")] }
+    spans := [⟨3, 1, "typer", some "aasha"⟩]
+    paperFeatures := [("clauseType", "Sit-CP")] }
 
 def ch4_32 : Datum :=
   { id := "bondarenko2022_ch4_32"
@@ -314,8 +339,104 @@ def ch4_32 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("clauseType", "Cont-CP"), ("shape", "nominalized gɘ-participial clause")] }
+    spans := [⟨4, 1, "typer", some "ge"⟩, ⟨4, 1, "typer", some "aasha"⟩]
+    paperFeatures := [("clauseType", "Cont-CP")] }
 
 def all : List Datum := [ch2_105, ch2_106, ch2_107, ch2_108, ch2_109, ch2_110, ch2_111, ch2_112, ch2_120a, ch2_120b, ch2_120c, ch2_121a, ch2_121b, ch2_121c, ch2_122a, ch2_122b, ch2_122c, ch4_30, ch4_31, ch4_32]
+
+/-- The diagnostic the example applies. -/
+inductive Diagnostic where
+  /-- truth-predicates: predicates of truth and falsity, *true*, *false*, *mistaken* -/
+  | truthPredicates
+  /-- occurrence-predicates: predicates of occurrence, *occur*, *happen* -/
+  | occurrencePredicates
+  /-- situation-only-predicate-notice: *notice*, which takes situation nouns only -/
+  | notice
+  /-- substitution: substitution of a clause true at the same situations -/
+  | substitution
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `diagnostic`. -/
+def diagnostic (e : Datum) : Option Diagnostic :=
+  e.parse? "diagnostic" [("truth-predicates", .truthPredicates), ("occurrence-predicates", .occurrencePredicates),
+    ("situation-only-predicate-notice", .notice), ("substitution", .substitution)]
+
+/-- The sort of the noun the clause combines with. -/
+inductive NounSort where
+  /-- content: a content noun, *idea*, *claim*, *rumor* -/
+  | content
+  /-- situation: a situation noun, *situation*, *event*, *case* -/
+  | situation
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `nounSort`. -/
+def nounSort (e : Datum) : Option NounSort :=
+  e.parse? "nounSort" [("content", .content), ("situation", .situation)]
+
+/-- The place of the sentence in a substitution triple. -/
+inductive Role where
+  /-- premise-a: the first premise -/
+  | premiseA
+  /-- premise-b: the second premise -/
+  | premiseB
+  /-- conclusion: the conclusion -/
+  | conclusion
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `role`. -/
+def role (e : Datum) : Option Role :=
+  e.parse? "role" [("premise-a", .premiseA), ("premise-b", .premiseB), ("conclusion", .conclusion)]
+
+/-- Whether the conclusion follows from the premises. -/
+inductive Inference where
+  /-- valid: the conclusion follows -/
+  | valid
+  /-- invalid: the conclusion does not follow -/
+  | invalid
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `inference`. -/
+def inference (e : Datum) : Option Inference :=
+  e.parse? "inference" [("valid", .valid), ("invalid", .invalid)]
+
+/-- The meaning of the embedded clause. -/
+inductive ClauseType where
+  /-- Cont-CP: a clause that describes propositional content -/
+  | contCP
+  /-- Sit-CP: a clause that describes a situation -/
+  | sitCP
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `clauseType`. -/
+def clauseType (e : Datum) : Option ClauseType :=
+  e.parse? "clauseType" [("Cont-CP", .contCP), ("Sit-CP", .sitCP)]
+
+/-- The labels of the spans the rows mark. -/
+inductive SpanLabel where
+  /-- typer: a clause-typing morpheme of the embedded clause, on the word that bears it -/
+  | typer
+  deriving DecidableEq, Repr, Fintype
+
+/-- The label of a span, where it is a declared one. -/
+def label? (p : Datum.Span) : Option SpanLabel :=
+  List.lookup p.label [("typer", .typer)]
+
+/-- The clause-typing morphemes of the embedded clauses. -/
+inductive Lexeme where
+  /-- ge: Buryat *gɘ* 'say' -/
+  | ge
+  /-- aasha: the Buryat participle *-A:šA* -/
+  | aasha
+  /-- zha: the Buryat converb *-žA* -/
+  | zha
+  /-- ta: the Korean declarative ending *-ta* -/
+  | ta
+  /-- nun: the Korean adnominal ending *-nun*, *-(u)n* -/
+  | nun
+  deriving DecidableEq, Repr, Fintype
+
+/-- The lexeme a span is a form of, where it names a declared one. -/
+def lexeme? (p : Datum.Span) : Option Lexeme :=
+  p.lexeme.bind (List.lookup · [("ge", .ge), ("aasha", .aasha), ("zha", .zha), ("ta", .ta), ("nun", .nun)])
 
 end Bondarenko2022.Examples

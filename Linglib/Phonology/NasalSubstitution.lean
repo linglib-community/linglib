@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Phonology.Segmental.FeatureClass
-public import Linglib.Phonology.Segmental.Sonority
-public import Linglib.Phonology.Subregular.LocalRewrite
+public import Linglib.Phonology.Segmental.Sonority.Basic
+public import Linglib.Phonology.Subregular.Function.LocalRewrite
 
 /-!
 # Nasal place assimilation and nasal substitution

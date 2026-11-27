@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Syntax.Tree.Basic
-public import Linglib.Syntax.Command
-public import Linglib.Fragments.German.WordOrder
+public import Linglib.Syntax.Command.RoseTree
+public import Linglib.Languages.German.WordOrder
 
 /-!
 # Höhle (1992): Über Verum-Fokus im Deutschen
@@ -52,7 +52,8 @@ pronouns without a particle, and verb-final verbs.
 namespace Hohle1992
 
 open PhraseStructure
-open RoseTree (cCommand)
+open RoseTree (branching)
+open scoped SetRel
 
 /-! ### The peripheral structure of (76) -/
 
@@ -114,7 +115,7 @@ def finalClause : Tree Node String :=
 /-- Φ holds a C-word or a fronted finite verb, never both, (76ii) and (76iii): no left edge of a
 German clause has a complementizer and a fronted verb. -/
 theorem not_complementizer_and_verbSecond :
-    ∀ t e, ∀ s ∈ German.leftEdges t e, ∀ x ∈ s, ¬ (x.complementizer ∧ x.verbSecond) := by
+    ∀ c, ∀ s ∈ German.leftEdges c, ∀ x ∈ s, ¬ (x.complementizer ∧ x.verbSecond) := by
   decide
 
 /-! ### The scope rule (60) -/
@@ -123,7 +124,7 @@ theorem not_complementizer_and_verbSecond :
 in SR to `k₂` in `t` when `k₂` c-commands `k₁` or a trace that `k₁` binds. -/
 def SR (t : Tree Node String) (binds : List (GornAddress × GornAddress)) (k₁ k₂ : GornAddress) :
     Prop :=
-  (k₂, k₁) ∈ cCommand t ∨ ∃ b ∈ binds, b.1 = k₁ ∧ (k₂, b.2) ∈ cCommand t
+  k₂ ~[C[branching t]] k₁ ∨ ∃ b ∈ binds, b.1 = k₁ ∧ k₂ ~[C[branching t]] b.2
 
 instance (t : Tree Node String) (binds : List (GornAddress × GornAddress)) (k₁ k₂ : GornAddress) :
     Decidable (SR t binds k₁ k₂) := by

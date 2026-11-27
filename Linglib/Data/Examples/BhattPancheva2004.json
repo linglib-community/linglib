@@ -779,6 +779,7 @@
     "translation": "",
     "context": "",
     "judgment": "questionable",
+    "alsoJudged": ["ungrammatical"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -789,10 +790,6 @@
       [
         "claim",
         "crossing degree abstractions, excluded by the Heim-Kennedy Constraint"
-      ],
-      [
-        "alsoJudged",
-        "ungrammatical"
       ]
     ],
     "comment": "The paper prints the mark ???/*; ??? is recorded as questionable.",

@@ -87,8 +87,8 @@ noncomputable def toTrivalent (m : Outlook W O) : W → Trivalent :=
 
 /-- The expressive projection at an outlook pairs the prejacent with the stance as its
 use-conditional dimension. -/
-def toTwoDim (m : Outlook W O) (o : O) : TwoDim (W → Prop) (W → Prop) :=
-  .mk (atIssue := m.prejacent) (notAtIssue := m.evaluation o)
+def toTwoDim (m : Outlook W O) (o : O) : TwoDim W (W → Prop) :=
+  .mk m.prejacent (m.evaluation o)
 
 @[simp] theorem toTwoDim_atIssue (m : Outlook W O) (o : O) :
     (m.toTwoDim o).atIssue = m.prejacent := rfl
@@ -113,14 +113,14 @@ def IsRigid (m : Outlook W O) : Prop := Function.IsConst m.evaluation
 shift is non-rigidity ((42)). -/
 theorem isRigid_iff (m : Outlook W O) :
     m.IsRigid ↔ ∀ o o', m.toTwoDim o = m.toTwoDim o' := by
-  simp only [IsRigid, Function.isConst_iff, toTwoDim, Writer.mk_inj, true_and]
+  simp only [IsRigid, Function.isConst_iff, toTwoDim, TwoDim.mk_inj, true_and]
 
 /-- The outlook-marked meaning of a pure expressive, whose conventional implicature is the same
 at every outlook and which presupposes nothing. -/
-def ofTwoDim (t : TwoDim (W → Prop) (W → Prop)) : Outlook W O :=
+def ofTwoDim (t : TwoDim W (W → Prop)) : Outlook W O :=
   ⟨t.atIssue, fun _ ↦ True, fun _ ↦ t.notAtIssue⟩
 
-theorem ofTwoDim_isRigid (t : TwoDim (W → Prop) (W → Prop)) : (ofTwoDim (O := O) t).IsRigid :=
+theorem ofTwoDim_isRigid (t : TwoDim W (W → Prop)) : (ofTwoDim (O := O) t).IsRigid :=
   Function.IsConst.const t.notAtIssue
 
 end Outlook

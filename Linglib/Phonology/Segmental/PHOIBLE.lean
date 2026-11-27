@@ -6,7 +6,7 @@ public import Linglib.Phonology.Segmental.Basic
 /-!
 # Segments from PHOIBLE feature matrices
 
-This file turns a PHOIBLE feature matrix into a `Segment`, so that a fragment can take the
+This file turns a PHOIBLE feature matrix into a `Segment`, so that a language file can take the
 feature values of its phonemes from the PHOIBLE chart instead of listing them. PHOIBLE's
 features extend those of Hayes, which `Phonology.Feature` follows, with length, tone, stress,
 clicks and further laryngeal features. Each feature of `Phonology.Feature` is a PHOIBLE column,
@@ -22,10 +22,10 @@ against /ɪ ɛ ɔ ʊ/, and gives every plain vowel [−ATR]; only glyphs with th
 [+ATR]. A language whose vowels contrast in [ATR] reads a chart entry through its tongue-root
 reading, which carries the [tense] value as the [ATR] value.
 
-A fragment gives each phoneme by `Segment.ofChart`. It reads a chart entry, merges over it
+A language file gives each phoneme by `Segment.ofChart`. It reads a chart entry, merges over it
 the values on which a grammar departs from the chart, and keeps the result on the features
 the grammar treats as contrastive. A phoneme is then a segment, named by its symbol, and an
-inventory is a finite set of segments, which a fragment shows to lie among the segments of a
+inventory is a finite set of segments, which a language file shows to lie among the segments of a
 PHOIBLE inventory.
 
 ## Main definitions
@@ -48,7 +48,7 @@ PHOIBLE inventory.
 ## Implementation notes
 
 Dropping PHOIBLE's further features can identify two phonemes of an inventory, a long and a
-short vowel or a plain and a fortis stop, which then have one segment. A fragment guards
+short vowel or a plain and a fortis stop, which then have one segment. A language file guards
 against this by giving its inventory as a list of segments with a proof that it has no
 duplicates. PHOIBLE also leaves [round] unspecified on its less-rounded segments, written
 with ◌̜, which therefore come out [−round]. Velar consonants are [−front, −back] in PHOIBLE,

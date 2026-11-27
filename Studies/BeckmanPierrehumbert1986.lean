@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.Prosody.Intonation
 public import Linglib.Phonology.Tone.Register
-public import Linglib.Fragments.Japanese.Prosody
+public import Linglib.Languages.Japanese.Prosody
 public import Linglib.Data.Examples.BeckmanPierrehumbert1986
 
 /-!

@@ -12,18 +12,20 @@ public import Linglib.Core.Order.SupClosed
 # Algebraic mereology
 
 Algebraic semantics models parthood as a partial order and mereological sum as join. The
-reference properties of predicates are then mathlib set predicates: cumulativity is
-`SupClosed`, divisiveness `IsLowerSet` and quantization `IsAntichain (· ≤ ·)`, and Link's
-closure `*P` is `supClosure`, so a predicate is quantized and cumulative
-[only if it holds of at most one element](##Mereology.qua_and_cum_iff_subsingleton). A carrier
-may have a null individual, as a Boolean algebra does, or none, as a classical mereology does.
-Atoms and overlap are stated relative to mathlib's `IsBot`, so on an `OrderBot` carrier they
-are [`IsAtom`](##Mereology.atom_iff_isAtom) and
-[`¬ Disjoint`](##Mereology.overlap_iff_not_disjoint).
+reference properties of a region, a set of individuals, are then mathlib predicates: cumulativity
+is `SupClosed`, divisiveness `IsLowerSet` and quantization `IsAntichain (· ≤ ·)`, and Link's
+closure `*P` is `supClosure`, so a region is quantized and cumulative only if it has at most one
+member (`Mereology.qua_and_cum_iff_subsingleton`).
+
+Atoms and counting are stated here on a carrier with a least element `⊥`, as the sets of atoms
+of a model are: an atom is `IsAtom`, two individuals overlap when they are not `Disjoint`
+(`Mereology.not_disjoint_iff_exists`), and `⊥` is no individual. On a part structure without a
+null element an atom is `IsMin` and overlap is `Mereology.Overlap`; `WithBot.isAtom_coe` and
+`Mereology.overlap_iff_not_disjoint_coe` translate between the two.
 
 ## Implementation notes
 
-`AlgClosure` closes under binary sums, which agrees with closure under sums of arbitrary
+`supClosure` closes under binary sums, which agrees with closure under sums of arbitrary
 nonempty subsets only for finite sums.
 
 ## References
@@ -40,120 +42,88 @@ variable {α β : Type*}
 
 /-! ### Reference properties
 
-Cumulative, divisive and quantized reference are the mathlib set predicates
-`SupClosed`, `IsLowerSet` and `IsAntichain (· ≤ ·)` on the extension of a predicate,
-so hypotheses of these forms are applied directly: `hC hx hy : P (x ⊔ y)`,
-`hD hle hx : P y`, `hQ hx hy hne : ¬ x ≤ y`. -/
+A region is a set of individuals. Cumulative, divisive and quantized reference are the mathlib
+predicates `SupClosed`, `IsLowerSet` and `IsAntichain (· ≤ ·)` of a region, so hypotheses of
+these forms are applied directly: `hC hx hy : x ⊔ y ∈ s`, `hD hle hx : y ∈ s`,
+`hQ hx hy hne : ¬ x ≤ y`. -/
 
-/-- A predicate has divisive reference if every part of a `P`-element is `P`. -/
-abbrev DIV [Preorder α] (P : α → Prop) : Prop := IsLowerSet {x | P x}
+/-- A region has divisive reference if every part of a member is a member. -/
+abbrev DIV [Preorder α] (s : Set α) : Prop := IsLowerSet s
 
 section PartialOrder
 
-variable [PartialOrder α] {P : α → Prop}
+variable [PartialOrder α] {s : Set α}
 
-/-- A predicate has quantized reference ([krifka-1989]) if no proper part of a `P`-element is
-`P`. -/
-abbrev QUA (P : α → Prop) : Prop := IsAntichain (· ≤ ·) {x | P x}
+/-- A region has quantized reference ([krifka-1989]) if no proper part of a member is a
+member. -/
+abbrev QUA (s : Set α) : Prop := IsAntichain (· ≤ ·) s
 
-theorem qua_of_forall (h : ∀ x y, P x → y < x → ¬ P y) : QUA P :=
+theorem qua_of_forall (h : ∀ x y, x ∈ s → y < x → y ∉ s) : QUA s :=
   fun _ ha _ hb hne hle ↦ h _ _ hb (lt_of_le_of_ne hle hne) ha
 
-theorem singleton_qua (n : α) : QUA (· = n) :=
-  Set.Subsingleton.isAntichain (s := {x | x = n}) (fun _ ha _ hb ↦ ha.trans hb.symm) _
-
-theorem qua_pullback [PartialOrder β] {d : α → β} (hd : StrictMono d) {P : β → Prop}
-    (hP : QUA P) : QUA (P ∘ d) :=
-  fun _ ha _ hb hab hle ↦ hP ha hb (hd (hle.lt_of_ne hab)).ne (hd (hle.lt_of_ne hab)).le
+theorem QUA.preimage [PartialOrder β] {d : α → β} (hd : StrictMono d) {t : Set β}
+    (ht : QUA t) : QUA (d ⁻¹' t) :=
+  fun _ ha _ hb hab hle ↦ ht ha hb (hd (hle.lt_of_ne hab)).ne (hd (hle.lt_of_ne hab)).le
 
 /-- The `P`-atoms ([krifka-1989]) are the minimal `P`-elements. -/
-abbrev atomize (P : α → Prop) : α → Prop := Minimal P
+def atomize (s : Set α) : Set α := {x | Minimal (· ∈ s) x}
 
-theorem atomize_qua : QUA (atomize P) := setOfPred_minimal_antichain P
+@[simp] theorem mem_atomize {s : Set α} {x : α} : x ∈ atomize s ↔ Minimal (· ∈ s) x := Iff.rfl
+
+theorem atomize_subset (s : Set α) : atomize s ⊆ s := fun _ h ↦ h.prop
+
+theorem atomize_qua {s : Set α} : QUA (atomize s) := setOfPred_minimal_antichain (· ∈ s)
+
+@[simp] theorem atomize_Ici (a : α) : atomize (Set.Ici a) = {a} :=
+  Set.ext fun _ ↦ minimal_ge_iff
 
 end PartialOrder
 
 section SemilatticeSup
 
-variable [SemilatticeSup α] {P : α → Prop}
+variable [SemilatticeSup α] {s : Set α}
 
-/-- A predicate has cumulative reference ([link-1983], [krifka-1989]) if it is closed under
-sum. [krifka-1998] also requires two distinct members, and [champollion-krifka-2016] give a form
+/-- A region has cumulative reference ([link-1983], [krifka-1989]) if it is closed under sum.
+[krifka-1998] also requires two distinct members, and [champollion-krifka-2016] give a form
 closed under sums of arbitrary nonempty subsets. -/
-abbrev CUM (P : α → Prop) : Prop := SupClosed {x | P x}
+abbrev CUM (s : Set α) : Prop := SupClosed s
 
-instance [Fintype α] [DecidablePred P] : Decidable (CUM P) :=
-  decidable_of_iff (∀ x, P x → ∀ y, P y → P (x ⊔ y)) Iff.rfl
+instance [Fintype α] [DecidablePred (· ∈ s)] : Decidable (CUM s) :=
+  decidable_of_iff (∀ x, x ∈ s → ∀ y, y ∈ s → x ⊔ y ∈ s) Iff.rfl
 
-/-- A predicate is both quantized and cumulative iff it holds of at most one element: the two
-parts of a sum that the predicate holds of are the sum itself. So a quantized predicate with two
-members is not cumulative ([krifka-1989] (T 3)). -/
-theorem qua_and_cum_iff_subsingleton : QUA P ∧ CUM P ↔ {x | P x}.Subsingleton :=
+/-- A region is both quantized and cumulative iff it has at most one member: the two parts of a
+sum in the region are the sum itself. So a quantized region with two members is not cumulative
+([krifka-1989] (T 3)). -/
+theorem qua_and_cum_iff_subsingleton : QUA s ∧ CUM s ↔ s.Subsingleton :=
   ⟨fun ⟨hQ, hC⟩ _ hx _ hy ↦
       (hQ.eq hx (hC hx hy) le_sup_left).trans (hQ.eq hy (hC hx hy) le_sup_right).symm,
     fun h ↦ ⟨h.isAntichain _, fun x hx y hy ↦ by rw [h hx hy, sup_idem]; exact hy⟩⟩
 
-theorem cum_maximal_iff_isGreatest (hCum : CUM P) {x : α} :
-    Maximal P x ↔ IsGreatest {y | P y} x :=
+theorem cum_maximal_iff_isGreatest (hCum : CUM s) {x : α} :
+    Maximal (· ∈ s) x ↔ IsGreatest s x :=
   ⟨fun hx ↦ ⟨hx.1, fun _ hy ↦ le_sup_right.trans (hx.2 (hCum hx.1 hy) le_sup_left)⟩,
     fun hx ↦ ⟨hx.1, fun _ hy _ ↦ hx.2 hy⟩⟩
 
-theorem cum_maximal_unique (hCum : CUM P) {x y : α} (hx : Maximal P x) (hy : Maximal P y) :
-    x = y :=
+theorem cum_maximal_unique (hCum : CUM s) {x y : α} (hx : Maximal (· ∈ s) x)
+    (hy : Maximal (· ∈ s) y) : x = y :=
   ((cum_maximal_iff_isGreatest hCum).1 hx).unique ((cum_maximal_iff_isGreatest hCum).1 hy)
 
-/-! ### Algebraic closure -/
+/-! ### Algebraic closure
 
-/-- The algebraic closure `*P` of `P` ([link-1983]) is the least predicate containing `P` and
-closed under binary sum, the predicate of mathlib's `supClosure`. -/
-abbrev AlgClosure (P : α → Prop) : α → Prop := (· ∈ supClosure {x | P x})
+Link's `*P` ([link-1983]), the least region containing `P` and closed under binary sum, is
+mathlib's `supClosure`. -/
 
-/-- Every `P`-element is in `*P`. -/
-theorem AlgClosure.base {x : α} (h : P x) : AlgClosure P x := subset_supClosure h
+theorem map_mem_supClosure {β : Type*} [SemilatticeSup β] {t : Set β} {f : α → β}
+    (hf : ∀ x y, f (x ⊔ y) = f x ⊔ f y) (h : ∀ x ∈ s, f x ∈ t) {x : α}
+    (hx : x ∈ supClosure s) : f x ∈ supClosure t := by
+  induction hx using supClosure_induction with
+  | mem a ha => exact subset_supClosure (h a ha)
+  | sup a b _ _ iha ihb => exact hf a b ▸ supClosed_supClosure iha ihb
 
-/-- `*P` is closed under sum. -/
-theorem AlgClosure.sum {x y : α} (hx : AlgClosure P x) (hy : AlgClosure P y) :
-    AlgClosure P (x ⊔ y) :=
-  supClosed_supClosure hx hy
-
-/-- Induction on sums: a property of the `P`-elements that sums preserve holds throughout
-`*P`. -/
-@[elab_as_elim]
-theorem AlgClosure.induction {motive : (x : α) → AlgClosure P x → Prop}
-    (base : ∀ {x} (h : P x), motive x (.base h))
-    (sum : ∀ {x y} (hx : AlgClosure P x) (hy : AlgClosure P y), motive x hx → motive y hy →
-      motive (x ⊔ y) (hx.sum hy))
-    {x : α} (h : AlgClosure P x) : motive x h :=
-  supClosure_induction (fun _ ha ↦ base ha) (fun _ _ ha hb ↦ sum ha hb) h
-
-theorem algClosure_cum : CUM (AlgClosure P) := supClosed_supClosure
-
-theorem algClosure_mono {Q : α → Prop} (h : ∀ x, P x → Q x) :
-    ∀ x, AlgClosure P x → AlgClosure Q x :=
-  fun _ hx ↦ supClosure_mono (fun x hx ↦ h x hx) hx
-
-theorem algClosure_finsetSup' {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {f : ι → α}
-    (hf : ∀ i ∈ s, AlgClosure P (f i)) : AlgClosure P (s.sup' hs f) :=
-  SupClosed.finsetSup'_mem algClosure_cum hs hf
-
-theorem AlgClosure.map {β : Type*} [SemilatticeSup β] {Q : β → Prop} {f : α → β}
-    (hf : ∀ x y, f (x ⊔ y) = f x ⊔ f y) (h : ∀ x, P x → Q (f x)) {x : α}
-    (hx : AlgClosure P x) : AlgClosure Q (f x) := by
-  induction hx using AlgClosure.induction with
-  | base hx => exact .base (h _ hx)
-  | sum _ _ ih ih' => exact hf _ _ ▸ ih.sum ih'
-
-theorem algClosure_has_base {x : α} (h : AlgClosure P x) : ∃ a, P a ∧ a ≤ x := by
-  induction h using AlgClosure.induction with
-  | base hp => exact ⟨_, hp, le_rfl⟩
-  | sum _ _ ih₁ _ => obtain ⟨a, ha, hle⟩ := ih₁; exact ⟨a, ha, hle.trans le_sup_left⟩
-
-theorem algClosure_of_cum (hCum : CUM P) {x : α} : AlgClosure P x ↔ P x :=
-  Set.ext_iff.1 hCum.supClosure_eq x
-
-theorem algClosure_iff_exists_sup' (P : α → Prop) (x : α) :
-    AlgClosure P x ↔ ∃ (t : Finset α) (ht : t.Nonempty), (∀ y ∈ t, P y) ∧ t.sup' ht id = x :=
-  Iff.rfl
+theorem exists_le_of_mem_supClosure {x : α} (h : x ∈ supClosure s) : ∃ a ∈ s, a ≤ x := by
+  induction h using supClosure_induction with
+  | mem a ha => exact ⟨a, ha, le_rfl⟩
+  | sup a b _ _ iha _ => obtain ⟨c, hc, hle⟩ := iha; exact ⟨c, hc, hle.trans le_sup_left⟩
 
 section OrderBot
 
@@ -161,24 +131,19 @@ variable [OrderBot α]
 
 /-- The full algebraic closure `×P` adds the empty sum `⊥` to `*P`, closing `P` under the sums of
 all finite families, the empty one included ([bylinina-nouwen-2018]'s (30)). -/
-def FullAlgClosure (P : α → Prop) (x : α) : Prop :=
-  AlgClosure P x ∨ x = ⊥
+def fullSupClosure (s : Set α) : Set α := insert ⊥ (supClosure s)
 
-theorem fullAlgClosure_bot (P : α → Prop) : FullAlgClosure P ⊥ := .inr rfl
-
-theorem AlgClosure.fullAlgClosure {x : α} (h : AlgClosure P x) : FullAlgClosure P x := .inl h
-
-theorem fullAlgClosure_iff_exists_sup (P : α → Prop) (x : α) :
-    FullAlgClosure P x ↔ ∃ t : Finset α, (∀ y ∈ t, P y) ∧ t.sup id = x := by
-  rw [FullAlgClosure, algClosure_iff_exists_sup']
+theorem mem_fullSupClosure_iff_exists_sup (s : Set α) (x : α) :
+    x ∈ fullSupClosure s ↔ ∃ t : Finset α, ↑t ⊆ s ∧ t.sup id = x := by
+  rw [fullSupClosure, Set.mem_insert_iff]
   constructor
-  · rintro (⟨t, ht, hP, rfl⟩ | rfl)
-    · exact ⟨t, hP, (Finset.sup'_eq_sup ht id).symm⟩
+  · rintro (rfl | ⟨t, ht, hP, rfl⟩)
     · exact ⟨∅, by simp, Finset.sup_empty⟩
+    · exact ⟨t, hP, (Finset.sup'_eq_sup ht id).symm⟩
   · rintro ⟨t, hP, rfl⟩
     rcases t.eq_empty_or_nonempty with rfl | ht
-    · exact .inr Finset.sup_empty
-    · exact .inl ⟨t, ht, hP, Finset.sup'_eq_sup ht id⟩
+    · exact .inl Finset.sup_empty
+    · exact .inr ⟨t, ht, hP, Finset.sup'_eq_sup ht id⟩
 
 end OrderBot
 
@@ -186,44 +151,38 @@ end SemilatticeSup
 
 /-! ### Atoms and overlap
 
-The null individual of a carrier, if it has one, is its `IsBot` element: `⊥` on an
-`OrderBot` carrier, and nothing on a `NoBotOrder` carrier or a classical mereology. -/
+The carrier has a null individual `⊥`, as a Boolean algebra does, and the individuals of the
+sources are its elements other than `⊥`. An atom is then mathlib's `IsAtom`, and two individuals
+overlap when they are not `Disjoint`. -/
 
 section Atoms
 
-variable [PartialOrder α] {x y : α}
+variable [PartialOrder α] [OrderBot α] {x y : α}
 
-instance [OrderBot α] [DecidableEq α] (x : α) : Decidable (IsBot x) :=
-  decidable_of_iff (x = ⊥) isBot_iff_eq_bot.symm
+/-- Two individuals are not disjoint iff they share a part that is not null. -/
+theorem not_disjoint_iff_exists : ¬ Disjoint x y ↔ ∃ z, z ≠ ⊥ ∧ z ≤ x ∧ z ≤ y :=
+  ⟨fun h ↦ by
+      by_contra hz
+      exact h fun z hx hy ↦ le_bot_iff.2 (by_contra fun h0 ↦ hz ⟨z, h0, hx, hy⟩),
+    fun ⟨_, hz, hx, hy⟩ h ↦ hz (le_bot_iff.1 (h hx hy))⟩
 
-instance [Fintype α] [DecidableLE α] (x : α) : Decidable (IsBot x) :=
-  inferInstanceAs (Decidable (∀ y, x ≤ y))
+instance (priority := low) [Fintype α] [DecidableEq α] [DecidableLT α] (x : α) :
+    Decidable (IsAtom x) :=
+  inferInstanceAs (Decidable (x ≠ ⊥ ∧ ∀ b < x, b = ⊥))
 
-/-- An atom ([link-1983]) is a non-null element with no non-null proper part, that is, a minimal
-non-null element. The `P`-relative notion is `atomize`. -/
-abbrev Atom (x : α) : Prop := Minimal (¬ IsBot ·) x
+theorem not_disjoint_of_le (hx : x ≠ ⊥) (h : x ≤ y) : ¬ Disjoint x y :=
+  fun hd ↦ hx (hd.eq_bot_of_le h)
 
-theorem Atom.not_isBot (h : Atom x) : ¬ IsBot x := h.1
-
-/-- An atom's only non-null part is itself. -/
-theorem Atom.eq (h : Atom x) (hle : y ≤ x) (hy : ¬ IsBot y) : y = x :=
-  le_antisymm hle (h.2 hy hle)
-
-theorem qua_of_atom {P : α → Prop} (h : ∀ ⦃x⦄, P x → Atom x) : QUA P :=
-  (atomize_qua (P := (¬ IsBot ·))).subset h
-
-theorem exists_atom_le [WellFoundedLT α] (hy : ¬ IsBot y) : ∃ a, Atom a ∧ a ≤ y := by
-  obtain ⟨a, ⟨ha, hay⟩, hmin⟩ :=
-    WellFounded.has_min wellFounded_lt {z | ¬ IsBot z ∧ z ≤ y} ⟨y, hy, le_rfl⟩
-  exact ⟨a, ⟨ha, fun z hz hza ↦ (eq_of_le_of_not_lt hza (hmin z ⟨hz, hza.trans hay⟩)).ge⟩, hay⟩
+theorem qua_of_isAtom {s : Set α} (h : ∀ ⦃x⦄, x ∈ s → IsAtom x) : QUA s :=
+  fun _ ha _ hb hne hle ↦ hne (((h hb).le_iff_eq (h ha).1).1 hle)
 
 /-- The atoms below `x`, its atomic parts. -/
-def atomsBelow (x : α) : Set α := {a | Atom a ∧ a ≤ x}
+def atomsBelow (x : α) : Set α := {a | IsAtom a ∧ a ≤ x}
 
-@[simp] theorem mem_atomsBelow : y ∈ atomsBelow x ↔ Atom y ∧ y ≤ x := Iff.rfl
+@[simp] theorem mem_atomsBelow : y ∈ atomsBelow x ↔ IsAtom y ∧ y ≤ x := Iff.rfl
 
-theorem atomsBelow_of_atom (h : Atom x) : atomsBelow x = {x} :=
-  Set.ext fun _ ↦ ⟨fun hy ↦ h.eq hy.2 hy.1.not_isBot, by rintro rfl; exact ⟨h, le_rfl⟩⟩
+theorem atomsBelow_of_isAtom (h : IsAtom x) : atomsBelow x = {x} :=
+  Set.ext fun _ ↦ ⟨fun hy ↦ (h.le_iff_eq hy.1.1).1 hy.2, by rintro rfl; exact ⟨h, le_rfl⟩⟩
 
 /-- `count Z x` is the number of parts of `x` in `Z`, the cardinality of `x` relative to `Z`
 ([landman-2020]). -/
@@ -231,75 +190,63 @@ noncomputable def count (Z : Set α) (x : α) : ℕ := (Set.Iic x ∩ Z).ncard
 
 variable (α) in
 /-- `atomCount α x` is the number of atoms below `x` ([champollion-krifka-2016]). -/
-noncomputable def atomCount (x : α) : ℕ := count {a | Atom a} x
+noncomputable def atomCount (x : α) : ℕ := count {a | IsAtom a} x
 
 theorem atomCount_eq_ncard (x : α) : atomCount α x = (atomsBelow x).ncard :=
   congrArg Set.ncard (Set.ext fun _ ↦ and_comm)
 
-/-- Two elements overlap ([krifka-1998]) if they share a non-null part. -/
-def Overlap (x y : α) : Prop := ∃ z, ¬ IsBot z ∧ z ≤ x ∧ z ≤ y
-
-theorem Overlap.refl (h : ¬ IsBot x) : Overlap x x := ⟨x, h, le_rfl, le_rfl⟩
-
-theorem Overlap.symm (h : Overlap x y) : Overlap y x :=
-  let ⟨z, hz, hzx, hzy⟩ := h; ⟨z, hz, hzy, hzx⟩
-
-theorem Overlap.not_isBot_left (h : Overlap x y) : ¬ IsBot x :=
-  let ⟨_, hz, hzx, _⟩ := h; fun hx ↦ hz (hx.mono hzx)
-
-theorem Overlap.not_isBot_right (h : Overlap x y) : ¬ IsBot y := h.symm.not_isBot_left
-
-theorem Overlap.of_le (hx : ¬ IsBot x) (h : x ≤ y) : Overlap x y := ⟨x, hx, le_rfl, h⟩
-
-theorem Overlap.mono {x' y' : α} (hx : x ≤ x') (hy : y ≤ y') (h : Overlap x y) : Overlap x' y' :=
-  let ⟨z, hz, hzx, hzy⟩ := h; ⟨z, hz, hzx.trans hx, hzy.trans hy⟩
+theorem atomize_ne_bot : atomize {x : α | x ≠ ⊥} = {x | IsAtom x} :=
+  Set.ext fun _ ↦ isAtom_iff_le_of_ge.symm
 
 end Atoms
 
-theorem not_atom_sup_of_ne [SemilatticeSup α] {x y : α} (hx : Atom x) (hy : Atom y) (hne : x ≠ y) :
-    ¬ Atom (x ⊔ y) :=
-  fun h ↦ hne ((h.eq le_sup_left hx.not_isBot).trans (h.eq le_sup_right hy.not_isBot).symm)
+theorem not_isAtom_sup_of_ne [SemilatticeSup α] [OrderBot α] {x y : α} (hx : IsAtom x)
+    (hy : IsAtom y) (hne : x ≠ y) : ¬ IsAtom (x ⊔ y) :=
+  fun h ↦ hne (((h.le_iff_eq hx.1).1 le_sup_left).trans ((h.le_iff_eq hy.1).1 le_sup_right).symm)
 
 /-! ### Pluralities -/
 
 section Plural
 
-variable [SemilatticeSup α] {P : α → Prop} {x : α}
+variable [SemilatticeSup α] {s : Set α} {x : α}
 
-/-- A proper plurality of `P`s ([link-1983]) is a sum of `P`-elements with two distinct proper
-`P`-parts. -/
-def IsPlural (P : α → Prop) (x : α) : Prop :=
-  AlgClosure P x ∧ ∃ a < x, ∃ b < x, P a ∧ P b ∧ a ≠ b
+/-- A proper plurality of a region ([link-1983]) is a sum of its members with two distinct proper
+parts in it. -/
+def IsPlural (s : Set α) (x : α) : Prop :=
+  x ∈ supClosure s ∧ ∃ a < x, ∃ b < x, a ∈ s ∧ b ∈ s ∧ a ≠ b
 
-theorem not_isPlural_of_subsingleton (h : ∀ a b, P a → P b → a = b) (x : α) : ¬ IsPlural P x :=
-  fun ⟨_, _, _, _, _, ha, hb, hne⟩ ↦ hne (h _ _ ha hb)
+theorem not_isPlural_of_subsingleton (h : s.Subsingleton) (x : α) : ¬ IsPlural s x :=
+  fun ⟨_, _, _, _, _, ha, hb, hne⟩ ↦ hne (h ha hb)
 
-theorem of_algClosure_of_atom (hx : AlgClosure P x) (h : Atom x) : P x := by
-  induction hx using AlgClosure.induction with
-  | base hp => exact hp
-  | @sum a b _ _ iha ihb =>
-    by_cases ha : IsBot a
-    · rw [sup_eq_right.mpr (ha _)] at h ⊢
+variable [OrderBot α]
+
+theorem mem_of_mem_supClosure_of_isAtom (hx : x ∈ supClosure s) (h : IsAtom x) : x ∈ s := by
+  induction hx using supClosure_induction with
+  | mem a ha => exact ha
+  | sup a b _ _ iha ihb =>
+    by_cases ha : a = ⊥
+    · rw [ha, bot_sup_eq] at h ⊢
       exact ihb h
-    · have heq := h.eq le_sup_left ha
+    · have heq := (h.le_iff_eq ha).1 le_sup_left
       rw [← heq] at h ⊢
       exact iha h
 
-theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
-    IsPlural P x ↔ AlgClosure P x ∧ ¬ Atom x := by
+theorem isPlural_iff_of_isAtom (hs : ∀ ⦃a⦄, a ∈ s → IsAtom a) :
+    IsPlural s x ↔ x ∈ supClosure s ∧ ¬ IsAtom x := by
   constructor
   · rintro ⟨hx, a, ha, -, -, hPa, -, -⟩
-    exact ⟨hx, fun h ↦ ha.ne (h.eq ha.le (hP hPa).not_isBot)⟩
+    exact ⟨hx, fun h ↦ ha.ne ((h.le_iff_eq (hs hPa).1).1 ha.le)⟩
   · rintro ⟨hx, hne⟩
     refine ⟨hx, ?_⟩
-    induction hx using AlgClosure.induction with
-    | base h => exact absurd (hP h) hne
-    | @sum y z hy hz ihy ihz =>
-      by_cases hay : Atom y
-      · by_cases haz : Atom z
+    induction hx using supClosure_induction with
+    | mem a h => exact absurd (hs h) hne
+    | sup y z hy hz ihy ihz =>
+      by_cases hay : IsAtom y
+      · by_cases haz : IsAtom z
         · refine ⟨y, lt_of_le_of_ne le_sup_left fun h ↦ hne (by rw [← h]; exact hay),
             z, lt_of_le_of_ne le_sup_right fun h ↦ hne (by rw [← h]; exact haz),
-            of_algClosure_of_atom hy hay, of_algClosure_of_atom hz haz, fun h ↦ hne ?_⟩
+            mem_of_mem_supClosure_of_isAtom hy hay, mem_of_mem_supClosure_of_isAtom hz haz,
+            fun h ↦ hne ?_⟩
           subst h
           rwa [sup_idem]
         · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihz haz
@@ -307,54 +254,31 @@ theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
       · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihy hay
         exact ⟨a, ha.trans_le le_sup_left, b, hb.trans_le le_sup_left, hPa, hPb, hab⟩
 
-theorem atomize_algClosure (hP : ∀ ⦃a⦄, P a → Atom a) : atomize (AlgClosure P) = P := by
-  funext x
-  refine propext ⟨fun hx ↦ ?_, fun hx ↦ ⟨.base hx, fun y hy hyx ↦ ?_⟩⟩
-  · obtain ⟨a, ha, hax⟩ := algClosure_has_base hx.prop
-    exact hx.eq_of_le (.base ha) hax ▸ ha
-  · obtain ⟨b, hb, hby⟩ := algClosure_has_base hy
-    rw [← (hP hx).eq (hby.trans hyx) (hP hb).not_isBot]
+theorem atomize_mem_supClosure (hs : ∀ ⦃a⦄, a ∈ s → IsAtom a) :
+    atomize (supClosure s) = s := by
+  ext x
+  refine ⟨fun hx ↦ ?_, fun hx ↦ ⟨subset_supClosure hx, fun y hy hyx ↦ ?_⟩⟩
+  · obtain ⟨a, ha, hax⟩ := exists_le_of_mem_supClosure hx.prop
+    exact hx.eq_of_le (subset_supClosure ha) hax ▸ ha
+  · obtain ⟨b, hb, hby⟩ := exists_le_of_mem_supClosure hy
+    rw [← ((hs hx).le_iff_eq (hs hb).1).1 (hby.trans hyx)]
     exact hby
 
 end Plural
 
-/-! ### Bounded and bottomless carriers -/
+/-! ### Finite sets -/
 
-section OrderBot
+instance {β : Type*} (s : Finset β) : Decidable (IsAtom s) :=
+  decidable_of_iff (s.card = 1) (Finset.isAtom_iff.trans Finset.card_eq_one.symm).symm
 
-variable [PartialOrder α] [OrderBot α] {x y : α}
-
-theorem atom_iff_isAtom : Atom x ↔ IsAtom x := by
-  simp only [Atom, Minimal, isBot_iff_eq_bot, isAtom_iff_le_of_ge, ne_eq]
-
-theorem overlap_iff_not_disjoint : Overlap x y ↔ ¬ Disjoint x y := by
-  constructor
-  · rintro ⟨z, hz, hzx, hzy⟩ hd
-    exact hz (isBot_iff_eq_bot.2 (le_bot_iff.mp (hd hzx hzy)))
-  · intro hd
-    by_contra h
-    exact hd fun z hzx hzy ↦ le_bot_iff.mpr
-      (by_contra fun hz ↦ h ⟨z, mt isBot_iff_eq_bot.1 hz, hzx, hzy⟩)
-
-theorem atomize_ne_bot : atomize (· ≠ (⊥ : α)) = IsAtom := by
-  funext x; exact propext isAtom_iff_le_of_ge.symm
-
-end OrderBot
-
-theorem atom_singleton {β : Type*} (b : β) : Atom ({b} : Finset β) :=
-  atom_iff_isAtom.2 (Finset.isAtom_singleton b)
-
-theorem atom_finset_iff {β : Type*} {s : Finset β} : Atom s ↔ ∃ b, s = {b} := by
-  rw [atom_iff_isAtom, Finset.isAtom_iff]
-
-theorem atom_finset_iff_card_eq_one {β : Type*} {s : Finset β} : Atom s ↔ s.card = 1 :=
-  atom_finset_iff.trans Finset.card_eq_one.symm
+theorem isAtom_finset_iff_card_eq_one {β : Type*} {s : Finset β} : IsAtom s ↔ s.card = 1 :=
+  Finset.isAtom_iff.trans Finset.card_eq_one.symm
 
 /-- The atomic parts of a finite set are its singletons. -/
 theorem atomsBelow_finset {β : Type*} (s : Finset β) :
     atomsBelow s = (fun b ↦ ({b} : Finset β)) '' ↑s := by
   ext a
-  simp only [mem_atomsBelow, atom_iff_isAtom, Finset.isAtom_iff, Set.mem_image, Finset.mem_coe]
+  simp only [mem_atomsBelow, Finset.isAtom_iff, Set.mem_image, Finset.mem_coe]
   constructor
   · rintro ⟨⟨b, rfl⟩, h⟩
     exact ⟨b, Finset.singleton_subset_iff.1 h, rfl⟩
@@ -365,8 +289,5 @@ theorem atomsBelow_finset {β : Type*} (s : Finset β) :
 theorem atomCount_finset {β : Type*} (s : Finset β) : atomCount (Finset β) s = s.card := by
   rw [atomCount_eq_ncard, atomsBelow_finset,
     Set.ncard_image_of_injective _ Finset.singleton_injective, Set.ncard_coe_finset]
-
-theorem atom_iff_isMin [PartialOrder α] [NoBotOrder α] {x : α} : Atom x ↔ IsMin x :=
-  ⟨fun h _ hy ↦ h.2 (not_isBot _) hy, fun h ↦ ⟨not_isBot x, fun _ _ hy ↦ h hy⟩⟩
 
 end Mereology

@@ -192,8 +192,8 @@ private lemma buildKernel_apply (M : 𝓧 → 𝓧' → ℝ) (x : 𝓧) (y : �
     buildKernel M x {y} = ENNReal.ofReal (M x y) := by
   classical
   show (∑ x' : 𝓧', ENNReal.ofReal (M x x') • Measure.dirac x') {y} = ENNReal.ofReal (M x y)
-  rw [Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply, smul_eq_mul, Set.indicator_apply,
+  rw [sum_apply]
+  simp only [smul_apply, Measure.dirac_apply, smul_eq_mul, Set.indicator_apply,
     Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq' Finset.univ y fun x' => ENNReal.ofReal (M x x')]
   simp
@@ -209,8 +209,8 @@ private theorem isMarkovKernel_buildKernel {M : 𝓧 → 𝓧' → ℝ}
   refine ⟨fun x => ⟨?_⟩⟩
   have hx := stochasticMatrices_row hM x
   show (∑ x' : 𝓧', ENNReal.ofReal (M x x') • Measure.dirac x') Set.univ = 1
-  rw [Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  rw [sum_apply]
+  simp only [smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg fun x' _ => hx.1 x', hx.2, ENNReal.ofReal_one]
 
 private theorem encodeMatrix_buildKernel {M : 𝓧 → 𝓧' → ℝ}
@@ -274,7 +274,7 @@ private theorem avgRisk_id_uniform_eq [Fintype Θ] [Nonempty Θ] [MeasurableSing
     simp only [encode]; exact (ENNReal.ofReal_toReal (measure_ne_top _ _)).symm
   have hπ : ∀ θ : Θ, ((Fintype.card Θ : ℝ≥0∞)⁻¹ • (Measure.count : Measure Θ)) {θ}
       = ENNReal.ofReal (Fintype.card Θ : ℝ)⁻¹ := fun θ => by
-    simp only [Measure.smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
+    simp only [smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
     rw [ENNReal.ofReal_inv_of_pos hcard, ENNReal.ofReal_natCast]
   have ht : ∀ θ x', 0 ≤ (a θ x' + C) * encode Q θ x' :=
     fun θ x' => mul_nonneg (hC θ x') (encode_nonneg Q θ x')

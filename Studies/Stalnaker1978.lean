@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Stalnaker1978
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Semantics.Reference.Monster
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.Readers
 
 /-!

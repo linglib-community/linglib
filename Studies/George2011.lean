@@ -3,7 +3,10 @@ module
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Setoid.Partition
 public import Mathlib.Order.Closure
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Data.Examples.George2011
 public import Linglib.Data.Examples.Readers
 
@@ -44,7 +47,9 @@ and Rupert's state is Maggie's: the scenarios differ in their questions.
 
 namespace George2011
 
-open Question
+open Examples (Sentence)
+
+open Question Inquisitive Inquisitive.Proposition
 
 variable {W τ E : Type*}
 
@@ -83,10 +88,10 @@ theorem strongAnswer_mentionSome_mem : strongAnswer (mentionSome α) w ∈ stron
   ⟨α w, (strongAnswer_mentionSome α w).symm⟩
 
 -- p. 41
-theorem trueAnswers_stronglyExhaustive :
-    trueAnswers (stronglyExhaustive α) w = {strongAnswer (mentionSome α) w} := by
+theorem karttunen_stronglyExhaustive :
+    karttunen (stronglyExhaustive α) w = {strongAnswer (mentionSome α) w} := by
   ext p
-  simp only [mem_trueAnswers, mem_stronglyExhaustive, Set.mem_singleton_iff,
+  simp only [mem_karttunen, mem_stronglyExhaustive, Set.mem_singleton_iff,
     strongAnswer_mentionSome]
   constructor
   · rintro ⟨⟨S, rfl⟩, hw⟩
@@ -95,17 +100,17 @@ theorem trueAnswers_stronglyExhaustive :
     exact ⟨⟨α w, rfl⟩, rfl⟩
 
 -- (129), p. 70
-theorem partition_mentionSome : partition (mentionSome α) = Setoid.ker α := by
+theorem ofProps_mentionSome : Setoid.ofProps (mentionSome α) = Setoid.ker α := by
   ext v w
   rw [← Setoid.mem_cell, ← strongAnswer_eq_cell, strongAnswer_mentionSome]
   rfl
 
-/-- The cells of the partition (129) are the strongly exhaustive answers other than the
+/-- The cells of the Setoid.ofProps (129) are the strongly exhaustive answers other than the
 contradiction (footnote 24). -/
-theorem classes_partition_mentionSome :
-    (partition (mentionSome α)).classes = stronglyExhaustive α \ {∅} := by
+theorem classes_ofProps_mentionSome :
+    (Setoid.ofProps (mentionSome α)).classes = stronglyExhaustive α \ {∅} := by
   ext C
-  simp only [classes_partition, Set.mem_range, strongAnswer_mentionSome, Set.mem_sdiff,
+  simp only [classes_ofProps, Set.mem_range, strongAnswer_mentionSome, Set.mem_sdiff,
     mem_stronglyExhaustive, Set.mem_singleton_iff]
   constructor
   · rintro ⟨w, rfl⟩
@@ -140,8 +145,8 @@ theorem isStrongestTrueAnswer_weaklyExhaustive :
     exact Set.preimage_mono (Set.Ici_subset_Ici.2 hv)⟩
 
 -- p. 76
-theorem weakAnswer_mem_trueAnswers_weaklyExhaustive_iff (v : W) :
-    weakAnswer (mentionSome α) v ∈ trueAnswers (weaklyExhaustive α) w ↔ α v ⊆ α w := by
+theorem weakAnswer_mem_karttunen_weaklyExhaustive_iff (v : W) :
+    weakAnswer (mentionSome α) v ∈ karttunen (weaklyExhaustive α) w ↔ α v ⊆ α w := by
   simp [weaklyExhaustive, weakAnswer_mentionSome]
 
 /-! ### Negation: (9) -/
@@ -656,12 +661,6 @@ end Forgot
 
 /-! ### The dissertation's judgments -/
 
-/-- The sentences whose truth in their scenarios the file settles. -/
-inductive Sentence
-  | admittedKnown | notAdmittedKnown | admittedButNot | fourStudents | jannaNewspaper
-  | redNewspaper
-  deriving DecidableEq, Repr
-
 open Admissions Newspaper in
 /-- What each sentence claims in its scenario, on the readings the dissertation assigns. -/
 def Verdict : Sentence → Prop
@@ -682,10 +681,7 @@ structure Row where
 
 /-- The sentence and truth judgment recorded in a datum. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let sentence ← ex.parse? "sentence" [("admittedKnown", Sentence.admittedKnown),
-    ("notAdmittedKnown", .notAdmittedKnown), ("admittedButNot", .admittedButNot),
-    ("fourStudents", .fourStudents), ("jannaNewspaper", .jannaNewspaper),
-    ("redNewspaper", .redNewspaper)]
+  let sentence ← (Examples.sentence ex)
   let holds ← ex.parse? "holds" [("yes", true), ("no", false)]
   pure ⟨sentence, holds⟩
 

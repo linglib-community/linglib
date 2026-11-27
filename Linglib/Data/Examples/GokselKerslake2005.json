@@ -1,0 +1,1665 @@
+{
+  "features": [
+    {
+      "key": "suffix",
+      "lean": "suffixes",
+      "type": "Suffix",
+      "multiple": true,
+      "doc": "The suffixes of the word under test, in order.",
+      "levels": [
+        {
+          "name": "poss1sg",
+          "label": "1SG.POSS",
+          "doc": "the first-person singular possessive -(I)m"
+        },
+        {
+          "name": "poss2sg",
+          "label": "2SG.POSS",
+          "doc": "the second-person singular possessive -(I)n"
+        },
+        {
+          "name": "poss3sg",
+          "label": "3SG.POSS",
+          "doc": "the third-person singular possessive -(s)I"
+        },
+        {
+          "name": "pl",
+          "label": "PL",
+          "doc": "the plural -lAr"
+        },
+        {
+          "name": "pass",
+          "label": "PASS",
+          "doc": "the passive -Il"
+        },
+        {
+          "name": "pf",
+          "label": "PF",
+          "doc": "the perfective -DI"
+        },
+        {
+          "name": "evPf",
+          "label": "EV/PF",
+          "doc": "the evidential and perfective -mIş"
+        },
+        {
+          "name": "impf",
+          "label": "IMPF",
+          "doc": "the imperfective -(I)yor"
+        },
+        {
+          "name": "cv",
+          "label": "CV",
+          "doc": "the converbial marker -(y)ken"
+        },
+        {
+          "name": "p1sg",
+          "label": "1SG",
+          "doc": "a first-person singular person marker"
+        },
+        {
+          "name": "p2pl",
+          "label": "2PL",
+          "doc": "a second-person plural person marker"
+        },
+        {
+          "name": "poss1pl",
+          "label": "1PL.POSS",
+          "doc": "the first-person plural possessive -(I)mIz"
+        },
+        {
+          "name": "poss2pl",
+          "label": "2PL.POSS",
+          "doc": "the second-person plural possessive -(I)nIz"
+        },
+        {
+          "name": "poss3pl",
+          "label": "3PL.POSS",
+          "doc": "the third-person plural possessive -lArI"
+        },
+        {
+          "name": "gen",
+          "label": "GEN",
+          "doc": "the genitive -(n)In"
+        },
+        {
+          "name": "dat",
+          "label": "DAT",
+          "doc": "the dative -(y)A"
+        },
+        {
+          "name": "loc",
+          "label": "LOC",
+          "doc": "the locative -DA"
+        },
+        {
+          "name": "aor",
+          "label": "AOR",
+          "doc": "the aorist -(A/I)r"
+        },
+        {
+          "name": "fut",
+          "label": "FUT",
+          "doc": "the future -(y)AcAK"
+        },
+        {
+          "name": "cond",
+          "label": "COND",
+          "doc": "the conditional -sA"
+        },
+        {
+          "name": "neg",
+          "label": "NEG",
+          "doc": "the negative -mA"
+        },
+        {
+          "name": "caus",
+          "label": "CAUS",
+          "doc": "the causative -DIr"
+        },
+        {
+          "name": "pCop",
+          "label": "P.COP",
+          "doc": "the past copula -(y)DI"
+        },
+        {
+          "name": "evCop",
+          "label": "EV.COP",
+          "doc": "the evidential copula -(y)mIş"
+        },
+        {
+          "name": "condCop",
+          "label": "COND.COP",
+          "doc": "the conditional copula -(y)sA"
+        },
+        {
+          "name": "p1pl",
+          "label": "1PL",
+          "doc": "a first-person plural person marker"
+        },
+        {
+          "name": "p3pl",
+          "label": "3PL",
+          "doc": "a third-person plural person marker"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "stem",
+          "label": "stem",
+          "doc": "the word under test, a form of the lexeme that is its stem"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The stems of the words under test.",
+      "levels": [
+        {
+          "name": "kiz",
+          "label": "kiz",
+          "doc": "kız 'girl, daughter'"
+        },
+        {
+          "name": "el",
+          "label": "el",
+          "doc": "el 'hand'"
+        },
+        {
+          "name": "kol",
+          "label": "kol",
+          "doc": "kol 'arm'"
+        },
+        {
+          "name": "goz",
+          "label": "goz",
+          "doc": "göz 'eye'"
+        },
+        {
+          "name": "otobus",
+          "label": "otobus",
+          "doc": "otobüs 'bus', a loan"
+        },
+        {
+          "name": "uz",
+          "label": "uz",
+          "doc": "üz- 'sadden'"
+        },
+        {
+          "name": "gor",
+          "label": "gor",
+          "doc": "gör- 'see'"
+        },
+        {
+          "name": "bak",
+          "label": "bak",
+          "doc": "bak- 'look'"
+        },
+        {
+          "name": "gol",
+          "label": "gol",
+          "doc": "gol 'goal', a loan ending in a palatal l"
+        },
+        {
+          "name": "hal",
+          "label": "hal",
+          "doc": "hal 'condition', a loan ending in a palatal l"
+        },
+        {
+          "name": "kal",
+          "label": "kal",
+          "doc": "kal- 'remain'"
+        },
+        {
+          "name": "dus",
+          "label": "dus",
+          "doc": "düş- 'fall'"
+        },
+        {
+          "name": "pul",
+          "label": "pul",
+          "doc": "pul 'stamp'"
+        },
+        {
+          "name": "ev",
+          "label": "ev",
+          "doc": "ev 'house, home'"
+        },
+        {
+          "name": "araba",
+          "label": "araba",
+          "doc": "araba 'car'"
+        },
+        {
+          "name": "ara",
+          "label": "ara",
+          "doc": "ara- 'search'"
+        },
+        {
+          "name": "sor",
+          "label": "sor",
+          "doc": "sor- 'ask'"
+        },
+        {
+          "name": "atla",
+          "label": "atla",
+          "doc": "atla- 'jump'"
+        },
+        {
+          "name": "suna",
+          "label": "suna",
+          "doc": "the name Suna"
+        },
+        {
+          "name": "betul",
+          "label": "betul",
+          "doc": "the name Betül"
+        },
+        {
+          "name": "emine",
+          "label": "emine",
+          "doc": "the name Emine"
+        },
+        {
+          "name": "elbise",
+          "label": "elbise",
+          "doc": "elbise 'dress'"
+        },
+        {
+          "name": "tepe",
+          "label": "tepe",
+          "doc": "tepe 'summit, top'"
+        },
+        {
+          "name": "yuz",
+          "label": "yuz",
+          "doc": "yüz 'face'"
+        },
+        {
+          "name": "oda",
+          "label": "oda",
+          "doc": "oda 'room'"
+        },
+        {
+          "name": "masa",
+          "label": "masa",
+          "doc": "masa 'table'"
+        },
+        {
+          "name": "okul",
+          "label": "okul",
+          "doc": "okul 'school'"
+        },
+        {
+          "name": "hasta",
+          "label": "hasta",
+          "doc": "hasta 'ill'"
+        },
+        {
+          "name": "kat",
+          "label": "kat",
+          "doc": "kat- 'add'"
+        },
+        {
+          "name": "anla",
+          "label": "anla",
+          "doc": "anla- 'understand'"
+        },
+        {
+          "name": "oksa",
+          "label": "oksa",
+          "doc": "okşa- 'caress'"
+        },
+        {
+          "name": "bekle",
+          "label": "bekle",
+          "doc": "bekle- 'wait'"
+        },
+        {
+          "name": "ozle",
+          "label": "ozle",
+          "doc": "özle- 'miss'"
+        },
+        {
+          "name": "eri",
+          "label": "eri",
+          "doc": "eri- 'melt'"
+        },
+        {
+          "name": "kuru",
+          "label": "kuru",
+          "doc": "kuru- 'dry'"
+        },
+        {
+          "name": "sakla",
+          "label": "sakla",
+          "doc": "sakla- 'hide'"
+        },
+        {
+          "name": "soyle",
+          "label": "soyle",
+          "doc": "söyle- 'tell'"
+        },
+        {
+          "name": "yap",
+          "label": "yap",
+          "doc": "yap- 'do, make'"
+        },
+        {
+          "name": "koy",
+          "label": "koy",
+          "doc": "koy- 'put'"
+        },
+        {
+          "name": "ol",
+          "label": "ol",
+          "doc": "öl- 'die'"
+        },
+        {
+          "name": "dol",
+          "label": "dol",
+          "doc": "dol- 'fill'"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The grammar's example words."
+  },
+  "examples": [
+    {
+      "id": "gokselkerslake2005_kizin",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "kızın",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kız-ın", ""]
+      ],
+      "translation": "your daughter",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "kiz"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_elin",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "elin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["el-in", ""]
+      ],
+      "translation": "your hand",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "el"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_kolun",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "kolun",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kol-un", ""]
+      ],
+      "translation": "your arm",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "kol"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_gozun",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.2.1"},
+      "language": "nucl1301",
+      "primaryText": "gözün",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["göz-ün", ""]
+      ],
+      "translation": "your eye",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "goz"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_otobusler",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3"},
+      "language": "nucl1301",
+      "primaryText": "otobüsler",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["otobüs-ler", ""]
+      ],
+      "translation": "buses",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "otobus"}
+      ],
+      "paperFeatures": [
+        ["suffix", "PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_uzuldunuz",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.1"},
+      "language": "nucl1301",
+      "primaryText": "üzüldünüz",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["üz-ül-dü-nüz", ""]
+      ],
+      "translation": "you became sad",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "uz"}
+      ],
+      "paperFeatures": [
+        ["suffix", "PASS"],
+        ["suffix", "PF"],
+        ["suffix", "2PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_goruyorum",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (vi)"},
+      "language": "nucl1301",
+      "primaryText": "görüyorum",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["görüyorum", ""]
+      ],
+      "translation": "I see",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "gor"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"],
+        ["suffix", "1SG"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_bakmisken",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (vi)"},
+      "language": "nucl1301",
+      "primaryText": "bakmışken",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["bakmışken", ""]
+      ],
+      "translation": "having looked",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "bak"}
+      ],
+      "paperFeatures": [
+        ["suffix", "EV/PF"],
+        ["suffix", "CV"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_golu",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (iv)"},
+      "language": "nucl1301",
+      "primaryText": "golü",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["gol-ü", "goal-3SG.POSS"]
+      ],
+      "translation": "his/her goal",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "gol"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_halim",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "3.4 (iv)"},
+      "language": "nucl1301",
+      "primaryText": "halim",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["hal-im", "condition-1SG.POSS"]
+      ],
+      "translation": "my condition",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "hal"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_kaldi",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1"},
+      "language": "nucl1301",
+      "primaryText": "kaldı",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kal-dı", ""]
+      ],
+      "translation": "remained",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "kal"}
+      ],
+      "paperFeatures": [
+        ["suffix", "PF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_dustu",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1"},
+      "language": "nucl1301",
+      "primaryText": "düştü",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["düş-tü", ""]
+      ],
+      "translation": "fell",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "dus"}
+      ],
+      "paperFeatures": [
+        ["suffix", "PF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_pulum",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "pulum",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["pul-um", ""]
+      ],
+      "translation": "my stamp",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "pul"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_gorur",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "görür",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["gör-ür", ""]
+      ],
+      "translation": "s/he sees",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "gor"}
+      ],
+      "paperFeatures": [
+        ["suffix", "AOR"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_arar",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "arar",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ara-r", ""]
+      ],
+      "translation": "s/he searches",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ara"}
+      ],
+      "paperFeatures": [
+        ["suffix", "AOR"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_soracak",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "soracak",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["sor-acak", ""]
+      ],
+      "translation": "s/he will ask",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "sor"}
+      ],
+      "paperFeatures": [
+        ["suffix", "FUT"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_atlayacak",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "atlayacak",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["atla-yacak", ""]
+      ],
+      "translation": "s/he will jump",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "atla"}
+      ],
+      "paperFeatures": [
+        ["suffix", "FUT"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_sunanin",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "Sunanın",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Suna-nın", ""]
+      ],
+      "translation": "Suna's",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "suna"}
+      ],
+      "paperFeatures": [
+        ["suffix", "GEN"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_betulun",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "Betülün",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Betül-ün", ""]
+      ],
+      "translation": "Betül's",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "betul"}
+      ],
+      "paperFeatures": [
+        ["suffix", "GEN"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_eminenin",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "Eminenin",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Emine-nin", ""]
+      ],
+      "translation": "Emine's",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "emine"}
+      ],
+      "paperFeatures": [
+        ["suffix", "GEN"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_emineye",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "Emineye",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Emine-ye", ""]
+      ],
+      "translation": "to Emine",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "emine"}
+      ],
+      "paperFeatures": [
+        ["suffix", "DAT"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_evi",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "evi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ev-i", ""]
+      ],
+      "translation": "his/her house",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ev"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_elbisesi",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "6.1.3"},
+      "language": "nucl1301",
+      "primaryText": "elbisesi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["elbise-si", ""]
+      ],
+      "translation": "her/his dress",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "elbise"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_evim",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "evim",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ev-im", ""]
+      ],
+      "translation": "my house",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ev"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_arabam",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "arabam",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["araba-m", ""]
+      ],
+      "translation": "my car",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "araba"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_eviniz",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "eviniz",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ev-iniz", ""]
+      ],
+      "translation": "your house",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ev"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2PL.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_arabaniz",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "arabanız",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["araba-nız", ""]
+      ],
+      "translation": "your car",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "araba"}
+      ],
+      "paperFeatures": [
+        ["suffix", "2PL.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_evimiz",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "evimiz",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["ev-imiz", ""]
+      ],
+      "translation": "our house",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ev"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1PL.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_arabamiz",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "arabamız",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["araba-mız", ""]
+      ],
+      "translation": "our car",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "araba"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1PL.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_arabasi",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "arabası",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["araba-sı", ""]
+      ],
+      "translation": "his/her/their car",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "araba"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_tepesinde",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "tepesinde",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["tepesinde", ""]
+      ],
+      "translation": "at its summit/top",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "tepe"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"],
+        ["suffix", "LOC"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_yuzune",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "yüzüne",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["yüzüne", ""]
+      ],
+      "translation": "to his/her face",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "yuz"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"],
+        ["suffix", "DAT"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_elbiselerine",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "elbiselerine",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["elbiselerine", ""]
+      ],
+      "translation": "to their dress(es)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "elbise"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3PL.POSS"],
+        ["suffix", "DAT"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_tepesi",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "tepesi",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["tepesi", ""]
+      ],
+      "translation": "its top",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "tepe"}
+      ],
+      "paperFeatures": [
+        ["suffix", "3SG.POSS"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_odamda",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.2"},
+      "language": "nucl1301",
+      "primaryText": "odamda",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["odamda", ""]
+      ],
+      "translation": "in my room",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "oda"}
+      ],
+      "paperFeatures": [
+        ["suffix", "1SG.POSS"],
+        ["suffix", "LOC"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_masaya",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1.3"},
+      "language": "nucl1301",
+      "primaryText": "masaya",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["masaya", ""]
+      ],
+      "translation": "on (to) the table",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "masa"}
+      ],
+      "paperFeatures": [
+        ["suffix", "DAT"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_okuldayim",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.4"},
+      "language": "nucl1301",
+      "primaryText": "okuldayım",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["okuldayım", ""]
+      ],
+      "translation": "I'm at school",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "okul"}
+      ],
+      "paperFeatures": [
+        ["suffix", "LOC"],
+        ["suffix", "1SG"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_evdeydik",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.4"},
+      "language": "nucl1301",
+      "primaryText": "evdeydik",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["evdeydik", ""]
+      ],
+      "translation": "we were at home",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ev"}
+      ],
+      "paperFeatures": [
+        ["suffix", "LOC"],
+        ["suffix", "P.COP"],
+        ["suffix", "1PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_hastaysalar",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.4"},
+      "language": "nucl1301",
+      "primaryText": "hastaysalar",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["hastaysalar", ""]
+      ],
+      "translation": "if they are ill",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "hasta"}
+      ],
+      "paperFeatures": [
+        ["suffix", "COND.COP"],
+        ["suffix", "3PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_katsaydilar",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.4"},
+      "language": "nucl1301",
+      "primaryText": "katsaydılar",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kat-sa-ydı-lar", ""]
+      ],
+      "translation": "if they had added [it]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "kat"}
+      ],
+      "paperFeatures": [
+        ["suffix", "COND"],
+        ["suffix", "P.COP"],
+        ["suffix", "3PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_anliyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "anlıyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["anlıyor", ""]
+      ],
+      "translation": "s/he understands",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "anla"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_oksuyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "okşuyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["okşuyor", ""]
+      ],
+      "translation": "s/he caresses/is caressing",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "oksa"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_bekliyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "bekliyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["bekliyor", ""]
+      ],
+      "translation": "s/he waits/is waiting",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "bekle"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_ozluyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "özlüyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["özlüyor", ""]
+      ],
+      "translation": "s/he misses",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ozle"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_eriyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "eriyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["eriyor", ""]
+      ],
+      "translation": "it melts/is melting",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "eri"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_kuruyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "kuruyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["kuruyor", ""]
+      ],
+      "translation": "it dries/is drying",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "kuru"}
+      ],
+      "paperFeatures": [
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_saklamiyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "saklamıyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["saklamıyor", ""]
+      ],
+      "translation": "s/he doesn't hide/ is not hiding",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "sakla"}
+      ],
+      "paperFeatures": [
+        ["suffix", "NEG"],
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_soylemiyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.3.3"},
+      "language": "nucl1301",
+      "primaryText": "söylemiyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["söylemiyor", ""]
+      ],
+      "translation": "s/he doesn't tell/ isn't telling",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "soyle"}
+      ],
+      "paperFeatures": [
+        ["suffix", "NEG"],
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_anlamiyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.2"},
+      "language": "nucl1301",
+      "primaryText": "anlamıyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["anlamıyor", ""]
+      ],
+      "translation": "s/he does not understand",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "anla"}
+      ],
+      "paperFeatures": [
+        ["suffix", "NEG"],
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_gormuyor",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.2"},
+      "language": "nucl1301",
+      "primaryText": "görmüyor",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["görmüyor", ""]
+      ],
+      "translation": "s/he does not see",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "gor"}
+      ],
+      "paperFeatures": [
+        ["suffix", "NEG"],
+        ["suffix", "IMPF"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_evlerimizdeymisler",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.1 (2)"},
+      "language": "nucl1301",
+      "primaryText": "Evlerimizdeymişler.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ev-ler-imiz-de-ymiş-ler.", "home-PL-1PL.POSS-LOC-EV.COP-3PL"]
+      ],
+      "translation": "Apparently they are/were at our homes.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ev"}
+      ],
+      "paperFeatures": [
+        ["suffix", "PL"],
+        ["suffix", "1PL.POSS"],
+        ["suffix", "LOC"],
+        ["suffix", "EV.COP"],
+        ["suffix", "3PL"]
+      ],
+      "comment": "",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_yaptir",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.1.1"},
+      "language": "nucl1301",
+      "primaryText": "yaptır",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["yaptır", ""]
+      ],
+      "translation": "make/let [s.o.] do/make/build [s.t.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "yap"}
+      ],
+      "paperFeatures": [
+        ["suffix", "CAUS"]
+      ],
+      "comment": "The grammar prints the stem, yaptır-.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_koydur",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.1.1"},
+      "language": "nucl1301",
+      "primaryText": "koydur",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["koydur", ""]
+      ],
+      "translation": "have/make [s.o.] put [s.t.] [s.w.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "koy"}
+      ],
+      "paperFeatures": [
+        ["suffix", "CAUS"]
+      ],
+      "comment": "The grammar prints the stem, koydur-.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_oldur",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.1.1"},
+      "language": "nucl1301",
+      "primaryText": "öldür",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["öldür", ""]
+      ],
+      "translation": "kill",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "ol"}
+      ],
+      "paperFeatures": [
+        ["suffix", "CAUS"]
+      ],
+      "comment": "The grammar prints the stem, öldür-.",
+      "verified": "text-layer"
+    },
+    {
+      "id": "gokselkerslake2005_doldur",
+      "source": {"bibkey": "goksel-kerslake-2005", "paperLabel": "8.2.1.1"},
+      "language": "nucl1301",
+      "primaryText": "doldur",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["doldur", ""]
+      ],
+      "translation": "fill [s.t.]",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "stem", "lexeme": "dol"}
+      ],
+      "paperFeatures": [
+        ["suffix", "CAUS"]
+      ],
+      "comment": "The grammar prints the stem, doldur-.",
+      "verified": "text-layer"
+    }
+  ]
+}

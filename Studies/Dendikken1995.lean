@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.Norwegian.Verbs
+public import Linglib.Languages.Norwegian.Verbs
 public import Linglib.Data.Examples.Dendikken1995
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -53,9 +53,9 @@ complex as by the reanalysed one, a point the chapter has no data on. Danish has
 which the chapter records without deriving, so the Danish rows enter only `rows_prefixed`. The
 Norwegian prefixed forms, *utsparka* after *vart* and not after *har*, are the compound
 participles of the reference grammar, which admits them after *være* and *bli* and not after *ha*
-whatever the voice, so the voices Norwegian incorporates in are read off the fragment through
+whatever the voice, so the voices Norwegian incorporates in are read off the language file through
 the auxiliary each voice has in the rows, and every form judged in the *sparke ut* rows is checked
-against the participles the fragment conjugates. The Bokmål rows were constructed and judged by
+against the participles the language file conjugates. The Bokmål rows were constructed and judged by
 Arnfinn Vonen and Alma Næss for den Dikken; the Nynorsk rows are Åfarli's. The arguments from
 small-clause constituency, from verb-particle idioms and from the ergativity of the particle,
 and Herslund's observation that Danish incorporation is lexically conditioned, are recorded in
@@ -77,6 +77,8 @@ the rows and not formalized.
 @[expose] public section
 
 namespace Dendikken1995
+
+open Examples (Placement)
 
 open Minimalist
 
@@ -110,19 +112,6 @@ inductive Strategy
   | raising
   | reanalysis
   | incorporation
-  deriving DecidableEq
-
-/-- The surface position of the particle relative to the noun phrase and to the predicate of
-the inner small clause. -/
-inductive Placement
-  /-- V-Prt-NP(-Pred), the "inner particle" order. -/
-  | inner
-  /-- V-NP-Prt(-Pred), the "outer particle" order. -/
-  | outer
-  /-- V-NP-Pred-Prt. -/
-  | final
-  /-- Prt-V, the particle a prefix on the verb. -/
-  | prefixed
   deriving DecidableEq
 
 /-- A raised noun phrase precedes the particle, an in-situ one follows it, and an overtly
@@ -324,11 +313,6 @@ def complementOf (r : Datum) : Option Complement :=
   | some "complex", some "infinitival" => some (.sc .adpositional)
   | _, _ => none
 
-/-- The particle's placement as a row's `placement` feature records it. -/
-def placementOf (r : Datum) : Option Placement :=
-  r.parse? "placement"
-    [("inner", .inner), ("outer", .outer), ("final", .final), ("prefixed", .prefixed)]
-
 /-- The voice of a row's clause, active unless its `voice` feature says passive. -/
 def voiceOf (r : Datum) : Voice :=
   if r.feature? "voice" = some "passive" then Voice.passive else Voice.active
@@ -346,7 +330,7 @@ instance (r : Datum) : Decidable (Modified r) := inferInstanceAs (Decidable (_ =
 when its placement is derivable, Danish (137b) aside. -/
 theorem rows_derivable :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = none → r.language ≠ .danish →
-      ∀ k ∈ complementOf r, ∀ p ∈ placementOf r, ∀ L ∈ languageOf r,
+      ∀ k ∈ complementOf r, ∀ p ∈ Examples.placement r, ∀ L ∈ languageOf r,
         (r.judgment = .acceptable ↔
           Derivable k (voiceOf r ∈ L.incorporates) (Weak r) (Modified r) p) := by
   decide +kernel
@@ -355,7 +339,7 @@ theorem rows_derivable :
 when the predicate is extractable from its placement. -/
 theorem rows_predicateExtraction :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = some "predicateExtraction" →
-      ∀ k ∈ complementOf r, ∀ p ∈ placementOf r, ∀ L ∈ languageOf r,
+      ∀ k ∈ complementOf r, ∀ p ∈ Examples.placement r, ∀ L ∈ languageOf r,
         (r.judgment = .acceptable ↔
           PredicateExtractableFrom k (voiceOf r ∈ L.incorporates) (Weak r) (Modified r)
             p) := by
@@ -365,18 +349,18 @@ theorem rows_predicateExtraction :
 acceptable whatever the particle's position, unlike (13). -/
 theorem rows_subextraction :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = some "subextraction" →
-      (placementOf r).isSome → r.judgment = .acceptable := by
+      (Examples.placement r).isSome → r.judgment = .acceptable := by
   decide +kernel
 
 /-- Every row with a prefixed particle, (134), (135), (136) and (138), is acceptable exactly when
 its language incorporates overtly in its voice. -/
 theorem rows_prefixed :
-    ∀ r ∈ Examples.all, placementOf r = some .prefixed →
+    ∀ r ∈ Examples.all, Examples.placement r = some .prefixed →
       ∀ L ∈ languageOf r,
         (r.judgment = .acceptable ↔ voiceOf r ∈ L.incorporates) := by
   decide +kernel
 
-/-- The fragment's verb of a row of Åfarli's (134a) and (135a), Nynorsk *sparke ut*. The rows
+/-- The language file's verb of a row of Åfarli's (134a) and (135a), Nynorsk *sparke ut*. The rows
 of (134b) and (134c) have none: the grammar's lists do not place *klippe*, and the book spells
 Åfarli's *køyrt* as Bokmål *kjørt*. -/
 def verbOf (r : Datum) : Option Norwegian.Verb :=
@@ -388,7 +372,7 @@ def verbOf (r : Datum) : Option Norwegian.Verb :=
 is judged acceptable exactly when it shows a participle its auxiliary admits, *sparka ut* after
 *har* and both *utsparka* and *sparka ut* after *vart*. -/
 theorem rows_participle :
-    ∀ r ∈ Examples.all, ∀ v ∈ verbOf r, placementOf r ≠ some .outer →
+    ∀ r ∈ Examples.all, ∀ v ∈ verbOf r, Examples.placement r ≠ some .outer →
       ∀ s ∈ (r.primaryText, r.judgment) :: r.contrasts,
         (s.2 = .acceptable ↔ ∃ f, (participleContext (voiceOf r)).Admits f ∧
           (v.participle f).toList <:+: s.1.toList) := by

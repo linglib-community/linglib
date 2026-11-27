@@ -21,7 +21,7 @@ the most specific structure subsumed by both inputs, is total, the meet.
 ## Implementation notes
 
 * The order, the partial join and the meet are the pointwise instances of
-  `Core/Order/Flat.lean` and `Core/Order/PartialUnify.lean`, so each
+  `Core/Order/Flat.lean` and `Core/Order/BoundedComplete.lean`, so each
   law is the generic lemma at `Features`. The subsumption lattice is not distributive: a
   feature with three values is the diamond, modular but not distributive, as [carpenter-1992]
   notes of feature-structure orders in general. Phrasal combination and reentrant structures
@@ -37,8 +37,7 @@ public section
 
 namespace Shieber1986
 
-open Morphology PartialUnify
-open scoped PartialUnify
+open Morphology
 
 variable {f g h u : Features}
 
@@ -46,35 +45,51 @@ theorem le_iff : f ≤ g ↔ ∀ t, f t ≤ g t := Pi.le_def
 
 theorem bot_le (f : Features) : ⊥ ≤ f := _root_.bot_le
 
-theorem unify_ne_top_iff : unify f g ≠ ⊤ ↔ Compat f g := unify_ne_top_iff_bddAbove
+/-- Feature structures are compatible when they are at every feature. -/
+theorem compat_iff : Compat f g ↔ ∀ t, Compat (f t) (g t) := compat_pi_iff
 
-theorem unify_eq_coe_iff_isLUB : unify f g = ↑u ↔ IsLUB {f, g} u :=
-  PartialUnify.unify_eq_coe_iff_isLUB
+/-- Compatible feature structures have a unification. -/
+theorem exists_isLUB (hc : Compat f g) : ∃ u, IsLUB {f, g} u :=
+  ⟨fun t ↦ (f t).or (g t), isLUB_pair_pi_iff.2 fun t ↦ (hc.apply t).isLUB_or⟩
 
-theorem le_of_unify_eq_coe (hu : unify f g = ↑u) : f ≤ u ∧ g ≤ u :=
-  unify_le_coe_iff.1 hu.le
+instance : IsBoundedComplete Features := ⟨fun _ _ ↦ exists_isLUB⟩
 
-theorem unify_self (f : Features) : unify f f = ↑f := PartialUnify.unify_self f
+theorem compat_of_isLUB (hu : IsLUB {f, g} u) : Compat f g := ⟨u, hu.1⟩
 
-theorem bot_unify (f : Features) : unify ⊥ f = ↑f := PartialUnify.bot_unify f
+theorem le_of_isLUB (hu : IsLUB {f, g} u) : f ≤ u ∧ g ≤ u := mem_upperBounds_pair.1 hu.1
 
-theorem unify_bot (f : Features) : unify f ⊥ = ↑f := PartialUnify.unify_bot f
+theorem isLUB_self (f : Features) : IsLUB {f, f} f := by
+  rw [Set.pair_eq_singleton]
+  exact isLUB_singleton
 
-theorem unify_comm (f g : Features) : unify f g = unify g f := PartialUnify.unify_comm f g
+theorem isLUB_bot_left (f : Features) : IsLUB {⊥, f} f :=
+  isLUB_pair_iff_forall_le.2 ⟨_root_.bot_le, le_rfl, fun _ _ hf ↦ hf⟩
 
-theorem unify_assoc (f g h : Features) : unify f g ⊔ ↑h = ↑f ⊔ unify g h :=
-  PartialUnify.unify_assoc f g h
+theorem isLUB_bot_right (f : Features) : IsLUB {f, ⊥} f :=
+  isLUB_pair_iff_forall_le.2 ⟨le_rfl, _root_.bot_le, fun _ hf _ ↦ hf⟩
 
-theorem unify_mono {f' g' : Features} (hf : f ≤ f') (hg : g ≤ g') (hu : unify f' g' = ↑u) :
-    ∃ v : Features, unify f g = ↑v ∧ v ≤ u :=
-  PartialUnify.unify_mono hf hg hu
+theorem isLUB_comm : IsLUB {f, g} u ↔ IsLUB {g, f} u := by rw [Set.pair_comm]
+
+/-- Unification is associative, with failure propagating. -/
+theorem isLUB_assoc {v w : Features} (hv : IsLUB {f, g} v) (hw : IsLUB {v, h} w) :
+    ∃ u, IsLUB {g, h} u ∧ IsLUB {f, u} w :=
+  hv.pair_assoc hw
+
+/-- Unification is monotone where defined: weakening both inputs preserves success and weakens
+the result. -/
+theorem isLUB_mono {f' g' : Features} (hf : f ≤ f') (hg : g ≤ g') (hu : IsLUB {f', g'} u) :
+    ∃ v, IsLUB {f, g} v ∧ v ≤ u :=
+  have hfu := hf.trans (le_of_isLUB hu).1
+  have hgu := hg.trans (le_of_isLUB hu).2
+  let ⟨v, hv⟩ := exists_isLUB (.of_le hfu hgu)
+  ⟨v, hv, (isLUB_le_iff hv).2 (mem_upperBounds_pair.2 ⟨hfu, hgu⟩)⟩
 
 theorem le_inf_iff : h ≤ f ⊓ g ↔ h ≤ f ∧ h ≤ g := _root_.le_inf_iff
 
 theorem unify_examples :
-    unify (Features.of (person := some .third)) (Features.of (number := some .singular)) =
-        ↑(Features.of (person := some .third) (number := some .singular)) ∧
-      unify (Features.of (tense := some .Past)) (Features.of (tense := some .Pres)) = ⊤ := by
+    IsLUB {Features.of (person := some .third), Features.of (number := some .singular)}
+        (Features.of (person := some .third) (number := some .singular)) ∧
+      ¬ Compat (Features.of (tense := some .Past)) (Features.of (tense := some .Pres)) := by
   decide
 
 end Shieber1986

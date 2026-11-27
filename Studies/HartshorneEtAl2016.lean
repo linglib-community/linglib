@@ -3,7 +3,6 @@ module
 public import Mathlib.Data.List.MinMax
 public import Linglib.Data.VerbClasses.Levin1993.Class
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Studies.Pesetsky1995
 
 /-!
 # Hartshorne et al. (2016): Psych verbs, the linking problem, and the acquisition of language
@@ -23,9 +22,8 @@ over the semantic structures of Fig. 11, prominence preservation: `Sem.subject` 
 least embedded argument of such a structure, and since the causer of CAUSE and the holder of BE
 are highest whatever they embed (`subject_cause`), the experiencer heads the attitude and the
 stimulus the episode (`attitude_subject`, `episode_subject`), while the causation judgments
-answer to whether the structure contains CAUSE at all. The linking agrees with Belletti and
-Rizzi's Class I and Class II as recorded in `Pesetsky1995` and with Levin's admire and amuse
-classes (`agrees_with_levin`).
+answer to whether the structure contains CAUSE at all. The linking agrees with Levin's admire
+and amuse classes (`agrees_with_levin`).
 
 ## Implementation notes
 
@@ -47,7 +45,6 @@ five). The paper's examples are the rows of `Data/Examples/HartshorneEtAl2016.js
 ## References
 
 * [hartshorne-etal-2016]
-* [belletti-rizzi-1988]
 * [levin-1993]
 * [levin-rappaport-hovav-2005]
 -/
@@ -158,20 +155,7 @@ def episodeWithTarget : Sem Participant :=
 
 theorem episodeWithTarget_subject : episodeWithTarget.subject = some stimulus := subject_cause _ _
 
-/-! ### Agreement with the classifications the paper builds on -/
-
-/-- The subject role of [belletti-rizzi-1988]'s classes, as `Pesetsky1995` records it. -/
-def Participant.toSubjectRole : Participant → Option Pesetsky1995.SubjectRole
-  | experiencer => some .experiencer
-  | stimulus => some .stimulus
-  | target => none
-
-theorem agrees_with_belletti_rizzi :
-    attitude.subject.bind Participant.toSubjectRole =
-        Pesetsky1995.PsychVerbClass.expectedSubjectRole .classI ∧
-      episode.subject.bind Participant.toSubjectRole =
-        Pesetsky1995.PsychVerbClass.expectedSubjectRole .classII := by
-  decide
+/-! ### Agreement with the classification the paper builds on -/
 
 /-- The argument positions as the shared role labels. -/
 def Participant.thetaRole : Participant → ThetaRole

@@ -1,396 +1,328 @@
 module
 
-public import Mathlib.Data.Set.Subsingleton
-public import Linglib.Semantics.ArgumentStructure.Affectedness
-public import Linglib.Semantics.ArgumentStructure.ThematicRole
-public import Linglib.Semantics.Events.Basic
+public import Mathlib.Data.Set.Card
+public import Linglib.Data.Examples.Bhadra2024
+public import Linglib.Semantics.Presupposition.Again
+public import Studies.Beavers2011
 
 /-!
 # Bhadra (2024): Verb roots encode outcomes
 
-This file formalizes Bhadra's account of the reversative prefix *un-* and the restitutive prefix
-*re-*. Every dynamic transitive root lexically carries a set of outcomes, the states its object can
-be in at the right boundary of the event, while a contextual set of thresholds collects the states
-an object can be in at the left boundary. Potential-for-change roots such as *fold*, *wrap* and
-*coil* have several outcomes, change-of-state and impingement-effecting roots such as *break*,
-*shatter* and *hit* have a single lexically specified outcome, and roots unspecified for change have
-none. *Un-* presupposes a prior base event whose result the object is still in and several
-outcomes, and asserts that the object returns to the base event's initial state. *Re-* presupposes
-a prior base event with the same result and requires that the base action not leave the object
-where that result cannot be restored. Cardinality thus governs *un-* alone and threshold structure
-governs *re-*, so the two prefixes overlap exactly on the potential-for-change class.
+This file formalizes Bhadra's entries for the reversative prefix *un-* and the restitutive prefix
+*re-*. An object `x` is in a state `k x t` at each time `t`, so an event `e` finds it in the state
+`pre k x e` at its left boundary and leaves it in the state `res k x e` at its right boundary. A
+dynamic transitive root denotes a predicate `P` of objects and events and carries a set `O` of
+outcomes, the states its action may leave its object in. An event `e` reverses an event `e'` when
+each ends in the state the other starts from, `res k x e' = pre k x e` and
+`res k x e = pre k x e'`.
 
-The hierarchy of outcome sets cross-classifies Beavers's affectedness hierarchy. Beavers places the
-impingement-effecting verbs with the potential-for-change verbs, while their single outcome puts
-them with the change-of-state verbs, whose single outcome may be a quantized or a non-quantized
-change.
+For a root `P` with outcomes `O`, *un-* is the partial proposition `un k P O x` of events. It is
+defined of `e` when `1 < O.encard` and some earlier `P`-event left `x` in the state `e` starts
+from, and it is true when `e` reverses such an event. *Re-* is `re k P T x`, for a contextual set
+`T` of thresholds, the states the object may be in when the action begins. It is defined of `e`
+when some earlier `P`-event `e'` has the result of `e`, `res k x e = res k x e'`, and that result
+is a threshold, and it is true when moreover `P x e`.
+
+*Un-* is undefined of a root with at most one outcome. *Re-* makes no demand on the number of
+outcomes, and is undefined of a root none of whose outcomes is a threshold. *Re-* is repetitive
+*again* along a smaller relation of an event to the earlier ones, so *again* is defined wherever
+*re-* is and has its value there.
+
+A root that effects a quantized change in Beavers's sense has one result, so *un-* is undefined of
+it. Where the states are ordered and the object's state never decreases, an event reverses only
+an event that left the object as it found it, so no event reverses an event of a root whose events
+each raise the object on one of Beavers's scales.
+
+The outcomes of *coil* and of *build* are read from the paper's lexical causation test, as the
+states whose row of the test is judged acceptable. *Coil* has seven and *build* one, so *un-* is
+undefined of *build*, whose *un-* form the paper judges ungrammatical.
 
 ## Implementation notes
 
-* Each `VerbOutcomes` fixes its outcome and threshold sets once per root and object, so the
-  object-dependence the paper locates at the minimal verb phrase is modelled by distinct records
-  for distinct objects.
-* The degrees of affectedness are those the paper reports for its classes of verbs, and it reports
-  none for the transformation, movement and creation classes. Its critique of Beavers's definition
-  of potential for change (§6.1) is not formalized.
+* The entries are conditional events (`Trivalent.condEvent`), with the conditions the paper writes
+  before the dot as the presupposition. The earlier event is bound across the presupposition and
+  the assertion of *un-*: the assertion here is that `e` reverses some earlier event of the root.
+  The assertion's conjunct that some predicate holds of `e` and `x` is true of every event and is
+  omitted.
+* The last presupposition of *re-* is formalized as the paper's statement of the prefix's
+  distribution, that the base event leave the object in a state from which its result can be
+  restored: the result of the base event is a threshold of the *re-* event. The base predicate is
+  total.
+* The paper's states are functions from times to lifespan points, and those of an outcome set or a
+  threshold set are defined at one boundary of one event. An outcome or a threshold is here the
+  lifespan point such a state takes there.
+* The outcome set is a parameter, given for a root and an object. Its relation to the results of
+  the root's events is a hypothesis of the theorems that need it, in the direction each needs.
+
+## TODO
+
+* The paper judges *unbreak a page* acceptable, and *un-* is undefined of every object of *break*
+  with its one outcome.
+* The judgments on *re-* with the impingement verbs and with *break a sewer* depend on threshold
+  sets the paper does not give.
+* The paper judges that *repaint the barn blue* does not entail that the barn was blue before.
+  Here a property of the result of a *re-* event is a property of the base event's result, so the
+  judgment holds only of a property the object's state does not record.
+* The verbs of the rows are not yet tied to entries of the English language file, which has none
+  for *coil*, and the paper's other judgments on the prefixes are not yet rows.
 
 ## References
 
 * [D. Bhadra, *Verb roots encode outcomes: argument structure and lexical semantics of reversal
   and restitution* (2024)][bhadra-2024]
 * [J. Beavers, *On Affectedness* (2011)][beavers-2011]
+* [A. von Stechow, *The Different Readings of Wieder ‘Again’: A Structural Account*
+  (1996)][von-stechow-1996]
 -/
 
 @[expose] public section
 
 namespace Bhadra2024
 
-open Event (τ)
+open Event (τ Precedes)
 
-open ArgumentStructure
+open ArgumentStructure ModalLogic Presupposition
 
-/-! ### Outcome cardinality -/
+open scoped SetRel
 
-/-- An outcome cardinality is the tier of an outcome set, ordered `empty < singleton < multi`
-(62). -/
-inductive OutcomeCardinality where
-  | empty
-  | singleton
-  | multi
-  deriving Repr, DecidableEq
+variable {Entity State I E : Type*} [LinearOrder I] [TemporalTrace E I]
 
-namespace OutcomeCardinality
+/-! ### States at the boundaries of an event -/
 
-/-- `c.rank` is the rank of the tier `c` as a natural number. -/
-def toNat : OutcomeCardinality → ℕ
-  | .empty => 0
-  | .singleton => 1
-  | .multi => 2
+/-- (64): `res k x e` is the state of `x` at the right boundary of `e`. -/
+def res (k : Entity → I → State) (x : Entity) (e : E) : State := k x (τ e).snd
 
-theorem toNat_injective : Function.Injective toNat := by
-  intro a b h; cases a <;> cases b <;> simp_all [toNat]
+/-- (65): `pre k x e` is the state of `x` at the left boundary of `e`. -/
+def pre (k : Entity → I → State) (x : Entity) (e : E) : State := k x (τ e).fst
 
-instance : LinearOrder OutcomeCardinality := LinearOrder.lift' toNat toNat_injective
+/-- (82a): `e` reverses `e'` when `e'` leaves `x` in the state `e` starts from and `e` leaves `x`
+in the state `e'` started from. -/
+def reversal (k : Entity → I → State) (x : Entity) : SetRel E E :=
+  {(e, e') | res k x e' = pre k x e ∧ res k x e = pre k x e'}
 
-theorem empty_lt_singleton : empty < singleton := by decide
-theorem singleton_lt_multi : singleton < multi := by decide
+variable {k : Entity → I → State} {P : Entity → E → Prop} {O T : Set State} {x : Entity}
+  {e e' : E}
 
-/-- The tier of an outcome set is `multi` when it is nontrivial, `empty` when it is empty, and
-`singleton` otherwise. -/
-noncomputable def ofSet {State : Type*} (O : Set State) : OutcomeCardinality :=
-  open Classical in
-  if O.Nontrivial then .multi else if O.Nonempty then .singleton else .empty
+theorem reversal_comm : e ~[reversal k x] e' ↔ e' ~[reversal k x] e := and_comm
 
-variable {State : Type*} {O : Set State}
+theorem pre_eq_res_of_reversal [PartialOrder State] (hk : Monotone (k x))
+    (h : e ~[reversal k x] e') : pre k x e' = res k x e' :=
+  (hk (τ e').fst_le_snd).antisymm <| h.1.trans_le <| (hk (τ e).fst_le_snd).trans h.2.le
 
-theorem ofSet_eq_multi (h : O.Nontrivial) : ofSet O = .multi := by
-  rw [ofSet, ite_eq_left h]
+/-! ### Reversative *un-* -/
 
-theorem ofSet_eq_singleton (hne : O.Nonempty) (hnt : ¬ O.Nontrivial) :
-    ofSet O = .singleton := by
-  rw [ofSet, ite_eq_right hnt, ite_eq_left hne]
+open Classical in
+/-- (66): *un-* of a root `P` with outcomes `O` is defined of `e` when `O` has several members and
+an earlier `P`-event left `x` in the state `e` starts from, and is true when `e` reverses such an
+event. -/
+noncomputable def un (k : Entity → I → State) (P : Entity → E → Prop) (O : Set State)
+    (x : Entity) : E → Trivalent :=
+  Trivalent.condEvent
+    (fun e ↦ 1 < O.encard ∧ ∃ e', P x e' ∧ Precedes e' e ∧ res k x e' = pre k x e)
+    (fun e ↦ ∃ e', P x e' ∧ Precedes e' e ∧ e ~[reversal k x] e')
 
-theorem ofSet_eq_empty (h : ¬ O.Nonempty) : ofSet O = .empty := by
-  rw [ofSet, ite_eq_right (fun hnt ↦ h hnt.nonempty), ite_eq_right h]
+theorem un_ne_undefined_iff : un k P O x e ≠ .undefined ↔
+    1 < O.encard ∧ ∃ e', P x e' ∧ Precedes e' e ∧ res k x e' = pre k x e := by
+  simp [un]
 
-@[simp] theorem ofSet_singleton (s : State) : ofSet ({s} : Set State) = .singleton :=
-  ofSet_eq_singleton ⟨s, rfl⟩ (by rw [Set.not_nontrivial_iff]; exact Set.subsingleton_singleton)
+@[simp] theorem un_eq_true_iff : un k P O x e = .true ↔
+    1 < O.encard ∧ ∃ e', P x e' ∧ Precedes e' e ∧ e ~[reversal k x] e' := by
+  simp only [un, Trivalent.condEvent_eq_true_iff, and_assoc]
+  exact and_congr_right fun _ ↦ and_iff_right_of_imp fun ⟨e', h₁, h₂, h₃⟩ ↦ ⟨e', h₁, h₂, h₃.1⟩
 
-@[simp] theorem ofSet_empty : ofSet (∅ : Set State) = .empty :=
-  ofSet_eq_empty (by simp)
+/-- (67): *un-* is undefined of a root with at most one outcome. -/
+theorem un_eq_undefined_of_subsingleton (hO : O.Subsingleton) : un k P O x e = .undefined :=
+  of_not_not fun h ↦
+    not_lt.2 (Set.encard_le_one_iff_subsingleton.2 hO) (un_ne_undefined_iff.1 h).1
 
-end OutcomeCardinality
+-- (61a)–(61g): a lexically specified result
+@[simp] theorem un_singleton (s : State) : un k P {s} x e = .undefined :=
+  un_eq_undefined_of_subsingleton Set.subsingleton_singleton
 
-/-- An outcome class classifies dynamic transitive roots by what their outcome sets encode, the
-potential-for-change class (60) and the classes with a lexically specified result or none
-(61a–h). -/
-inductive OutcomeClass where
-  | potentialForChange
-  | physicalProperty
-  | transformation
-  | movement
-  | consumption
-  | creation
-  | degreeAchievement
-  | impingement
-  | noChange
-  deriving DecidableEq, Repr
+-- (61h): no change specified
+@[simp] theorem un_empty : un k P ∅ x e = .undefined :=
+  un_eq_undefined_of_subsingleton Set.subsingleton_empty
 
-/-- The outcome tier of a class is multi-membered for potential-for-change roots, singleton for
-every root with a lexically specified result, and empty for roots unspecified for change (62). -/
-def OutcomeClass.tier : OutcomeClass → OutcomeCardinality
-  | .potentialForChange => .multi
-  | .noChange => .empty
-  | _ => .singleton
+/-! ### Restitutive *re-* -/
 
-theorem tier_eq_multi_iff (c : OutcomeClass) :
-    c.tier = .multi ↔ c = .potentialForChange := by
-  cases c <;> decide
+/-- (68): *re-* of a root `P` is *again* along the relation of an event to the earlier events that
+have its result, that result being among the thresholds `T`. -/
+noncomputable def re (k : Entity → I → State) (P : Entity → E → Prop) (T : Set State)
+    (x : Entity) : E → Trivalent :=
+  again {(e, e') | Precedes e' e ∧ res k x e = res k x e' ∧ res k x e' ∈ T} (P x)
 
-/-! ### States, boundaries, and roots -/
+theorem re_ne_undefined_iff : re k P T x e ≠ .undefined ↔
+    ∃ e', P x e' ∧ Precedes e' e ∧ res k x e = res k x e' ∧ res k x e' ∈ T := by
+  rw [re, again_ne_undefined_iff, diamond_iff]
+  exact exists_congr fun _ ↦ and_comm
 
-/-- A state function gives an object's state at each time, a lifespan point (53). -/
-abbrev StateFunction (Entity State T : Type*) := T → Entity → State
+@[simp] theorem re_eq_true_iff : re k P T x e = .true ↔
+    (∃ e', P x e' ∧ Precedes e' e ∧ res k x e = res k x e' ∧ res k x e' ∈ T) ∧ P x e := by
+  rw [← re_ne_undefined_iff, re, again_eq_true_iff, again_ne_undefined_iff]
 
-variable {Entity State T E : Type*} [LinearOrder T] [TemporalTrace E T]
+/-- (72): *re-* is undefined of a root none of whose outcomes is a threshold. -/
+theorem re_eq_undefined_of_disjoint (hO : res k x '' {e | P x e} ⊆ O) (h : Disjoint O T) :
+    re k P T x e = .undefined :=
+  of_not_not fun hne ↦
+    let ⟨e', hP, _, _, hT⟩ := re_ne_undefined_iff.1 hne
+    Set.disjoint_left.1 h (hO ⟨e', hP, rfl⟩) hT
 
-/-- `res(e)(x)` is the object's state at the right boundary of `e` (64). -/
-def resState (k : StateFunction Entity State T) (e : E) (x : Entity) : State :=
-  k (τ e).snd x
+/-- Where *re-* is defined, repetitive *again* is defined of the same predicate along precedence
+and has the value of *re-*. -/
+theorem re_eq_again_of_ne_undefined (h : re k P T x e ≠ .undefined) :
+    re k P T x e = again ({(e, e') | Precedes e' e} : SetRel E E) (P x) e := by
+  have h' : ◇[({(e, e') | Precedes e' e} : SetRel E E)] (P x) e :=
+    let ⟨e', hP, he', _⟩ := re_ne_undefined_iff.1 h
+    ⟨e', he', hP⟩
+  rw [re, again_ne_undefined_iff] at h
+  simp [re, again, Trivalent.condEvent_apply, h, h']
 
-/-- `pre(e)(x)` is the object's state at the left boundary of `e` (65). -/
-def preState (k : StateFunction Entity State T) (e : E) (x : Entity) : State :=
-  k (τ e).fst x
+-- (80): a property of the result of a *re-* event is a property of the base event's result
+theorem exists_res_mem_of_re_ne_undefined {Q : Set State} (h : re k P T x e ≠ .undefined)
+    (hQ : res k x e ∈ Q) : ∃ e', P x e' ∧ Precedes e' e ∧ res k x e' ∈ Q :=
+  let ⟨e', hP, hp, hr, _⟩ := re_ne_undefined_iff.1 h
+  ⟨e', hP, hp, hr ▸ hQ⟩
 
-/-- A verb root, as the prefixes see it, is its base predicate together with the lexical outcome
-set of states at the right boundary and the contextual threshold set of states at the left boundary
-((56), (60)). -/
-structure VerbOutcomes (E Entity State : Type*) where
-  /-- The base predicate `P(e)(x)`. -/
-  verb : E → Entity → Prop
-  /-- The outcome set `O`. -/
-  outcomes : Set State
-  /-- The threshold set `T`. -/
-  thresholds : Set State
+/-! ### Scalar change -/
 
-/-- The cardinality of a root is the tier of its outcome set. -/
-noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes E Entity State) :
-    OutcomeCardinality :=
-  OutcomeCardinality.ofSet vro.outcomes
+section ScalarChange
 
-/-! ### The prefixes as result-state modifiers -/
+variable {S : Type*} {θ : Entity → S → E → Prop} {R : Entity → S → State → E → Prop} {g : State}
 
-/-- Reversative *un-* (66) requires a prior base event `e'` whose result is the state the *un-*
-event starts from and a multi-membered outcome set, and returns the object to the base event's
-initial state. The vacuous `∃ Q. Q(e)(x)` of the assertion is dropped. -/
-def unSem (k : StateFunction Entity State T) (vro : VerbOutcomes E Entity State)
-    (e : E) (x : Entity) : Prop :=
-  ∃ e' : E,
-    vro.verb e' x ∧
-    (τ e').Precedes (τ e) ∧
-    resState k e' x = preState k e x ∧
-    vro.outcomes.Nontrivial ∧
-    resState k e x = preState k e' x
+theorem subsingleton_res_image_of_quantizedChange
+    (hR : ∀ x s e, θ x s e → R x s g e → res k x e = g) (h : QuantizedChange θ R P g) :
+    (res k x '' {e | P x e}).Subsingleton := by
+  rintro _ ⟨e₁, h₁, rfl⟩ _ ⟨e₂, h₂, rfl⟩
+  rw [h.eq_of_result hR h₁, h.eq_of_result hR h₂]
 
-/-- Restitutive *re-* ((68), (72)) requires a prior base event `e'` with the same result, whose
-result state is an admissible start state, so that the base action does not leave the object where
-its result cannot be restored, and requires the base predicate to hold of the *re-* event. It
-places no demand on the cardinality of the outcome set. -/
-def reSem (k : StateFunction Entity State T) (vro : VerbOutcomes E Entity State)
-    (e : E) (x : Entity) : Prop :=
-  (∃ e' : E,
-    vro.verb e' x ∧
-    (τ e').Precedes (τ e) ∧
-    resState k e x = resState k e' x ∧
-    resState k e' x ∈ vro.thresholds) ∧
-  vro.verb e x
+-- a root that effects a quantized change has one result
+theorem un_eq_undefined_of_quantizedChange
+    (hR : ∀ x s e, θ x s e → R x s g e → res k x e = g) (h : QuantizedChange θ R P g)
+    (hO : O ⊆ res k x '' {e | P x e}) : un k P O x e = .undefined :=
+  un_eq_undefined_of_subsingleton ((subsingleton_res_image_of_quantizedChange hR h).anti hO)
 
--- (67)
-theorem subsingleton_blocks_un (k : StateFunction Entity State T)
-    (vro : VerbOutcomes E Entity State) (h : ¬ vro.outcomes.Nontrivial)
-    (e : E) (x : Entity) : ¬ unSem k vro e x :=
-  fun ⟨_, _, _, _, hnt, _⟩ ↦ h hnt
+-- [beavers-2011] (48)
+theorem un_eq_undefined_of_quantizedChange_result [LinearOrder State] {b : State}
+    (h : QuantizedChange θ (Beavers2011.Result (fun _ ↦ k) b) P g)
+    (hO : O ⊆ res k x '' {e | P x e}) : un k P O x e = .undefined :=
+  un_eq_undefined_of_quantizedChange (fun _ _ _ _ h ↦ h.2.2) h hO
 
-theorem singleton_blocks_un (k : StateFunction Entity State T)
-    (vro : VerbOutcomes E Entity State) (s : State) (hs : vro.outcomes = {s})
-    (e : E) (x : Entity) : ¬ unSem k vro e x :=
-  subsingleton_blocks_un k vro
-    (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_singleton) e x
+/-- (81a): along a trajectory that never decreases, no event reverses an event of a root whose
+events each raise the object on one of Beavers's scales. -/
+theorem not_diamond_reversal_of_nonQuantizedChange [LinearOrder State] {b : State}
+    (hk : Monotone (k x)) (h : NonQuantizedChange θ (Beavers2011.Result (fun _ ↦ k) b) P) :
+    ¬ ◇[reversal k x] (P x) e :=
+  fun ⟨_, hr, hP⟩ ↦
+    let ⟨_, _, hlt⟩ := Beavers2011.exists_lt_of_nonQuantizedChange h hP
+    hlt.ne (pre_eq_res_of_reversal hk hr)
 
-theorem empty_blocks_un (k : StateFunction Entity State T)
-    (vro : VerbOutcomes E Entity State) (hs : vro.outcomes = ∅)
-    (e : E) (x : Entity) : ¬ unSem k vro e x :=
-  subsingleton_blocks_un k vro
-    (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_empty) e x
+-- [beavers-2011] (59)
+theorem un_ne_true_of_nonQuantizedChange [LinearOrder State] {b : State} (hk : Monotone (k x))
+    (h : NonQuantizedChange θ (Beavers2011.Result (fun _ ↦ k) b) P) : un k P O x e ≠ .true :=
+  fun hu ↦
+    let ⟨_, e', hP, _, hr⟩ := un_eq_true_iff.1 hu
+    not_diamond_reversal_of_nonQuantizedChange hk h ⟨e', hr, hP⟩
 
-theorem un_requires_multi (k : StateFunction Entity State T)
-    (vro : VerbOutcomes E Entity State) (e : E) (x : Entity)
-    (h : unSem k vro e x) : vro.cardinality = .multi :=
-  let ⟨_, _, _, _, hnt, _⟩ := h
-  OutcomeCardinality.ofSet_eq_multi hnt
+end ScalarChange
 
--- (72)
-theorem not_reSem_of_outcome_not_threshold (k : StateFunction Entity State T)
-    (vro : VerbOutcomes E Entity State) (x : Entity)
-    (h : ∀ e', vro.verb e' x → resState k e' x ∉ vro.thresholds) (e : E) :
-    ¬ reSem k vro e x :=
-  fun ⟨⟨e', hv, _, _, hT⟩, _⟩ ↦ h e' hv hT
+/-! ### A base event and a prefixed event -/
 
-/-! ### Worked roots -/
+section Scenario
 
-section Examples
+variable {a b : State}
 
-/-- `ev₁` is the base event of the scenario, over `[0, 5]`. -/
+/-- The base event of the scenario, over `[0, 5]`. -/
 def ev₁ : NonemptyInterval ℤ := ⟨⟨0, 5⟩, by omega⟩
 
-/-- `ev₂` is the prefixed event of the scenario, over `[10, 15]`. -/
+/-- The prefixed event of the scenario, over `[10, 15]`. -/
 def ev₂ : NonemptyInterval ℤ := ⟨⟨10, 15⟩, by omega⟩
 
-private theorem ev₁_precedes_ev₂ : (τ ev₁).Precedes (τ ev₂) := by
+private theorem precedes_ev₁_ev₂ : Precedes ev₁ ev₂ := by
   show (5 : ℤ) < 10; omega
 
-/-- The base predicate of every worked root holds of the scenario's two events. -/
-def acts : NonemptyInterval ℤ → Unit → Prop := fun e _ ↦ e = ev₁ ∨ e = ev₂
+private theorem not_precedes_ev₂ : ¬ Precedes ev₂ ev₂ := by
+  show ¬ (15 : ℤ) < 10; omega
 
-private theorem acts_ev₁ : acts ev₁ () := Or.inl rfl
-private theorem acts_ev₂ : acts ev₂ () := Or.inr rfl
+/-- A root whose action occurs at the base event alone. -/
+def once : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e = ev₁
 
-/-- A root whose action carries the object from `start` to `result` at the base event and
-again at the prefixed event, both acting on the same object. -/
-def twice {State : Type*} (start result : State) : StateFunction Unit State ℤ :=
-  fun t _ ↦ if t ≤ 0 then start else result
+/-- A root whose action occurs at the base event and at the prefixed event. -/
+def twice : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e = ev₁ ∨ e = ev₂
 
-/-- A root whose action carries the object from `start` to `result` at the base event and
-back to `start` at the prefixed event. -/
-def andBack {State : Type*} (start result : State) : StateFunction Unit State ℤ :=
-  fun t _ ↦ if t ≤ 0 then start else if t ≤ 10 then result else start
+/-- The object goes from `a` to `b` at the base event and back to `a` at the prefixed event. -/
+def andBack (a b : State) : Unit → ℤ → State :=
+  fun _ t ↦ if t ≤ 0 then a else if t ≤ 10 then b else a
 
-/-- A parchment under folding is flat, slightly creased, folded or tightly folded (54). -/
-inductive ParchmentState where
-  | flat | slightlyCreased | folded | tightlyFolded
-  deriving DecidableEq, Repr
+/-- The object goes from `a` to `b` at the base event and is in `b` after the prefixed event. -/
+def andStays (a b : State) : Unit → ℤ → State := fun _ t ↦ if t ≤ 0 then a else b
 
-/-- *Fold* is a potential-for-change root (60), with a multi-membered outcome set, and a folded
-parchment can be folded again. -/
-def foldVRO : VerbOutcomes (NonemptyInterval ℤ) Unit ParchmentState where
-  verb := acts
-  outcomes := {.slightlyCreased, .folded, .tightlyFolded}
-  thresholds := {.flat, .slightlyCreased, .folded}
+-- (67): where the prefixed event reverses the base event, the number of outcomes decides
+theorem un_andBack_eq_true_iff :
+    un (andBack a b) once O () ev₂ = .true ↔ 1 < O.encard :=
+  un_eq_true_iff.trans <| and_iff_left ⟨ev₁, rfl, precedes_ev₁_ev₂, rfl, rfl⟩
 
-theorem fold_outcomes_multi : foldVRO.outcomes.Nontrivial :=
-  ⟨.slightlyCreased, by simp [foldVRO], .folded, by simp [foldVRO], by decide⟩
+-- *un-* is defined of some event in some course of events exactly for a root with several outcomes
+theorem exists_un_ne_undefined_iff :
+    (∃ (k : Unit → ℤ → State) (P : Unit → NonemptyInterval ℤ → Prop) (e : NonemptyInterval ℤ),
+      un k P O () e ≠ .undefined) ↔ 1 < O.encard := by
+  refine ⟨fun ⟨_, _, _, h⟩ ↦ (un_ne_undefined_iff.1 h).1, fun h ↦ ?_⟩
+  obtain ⟨s, -⟩ := Set.encard_pos.1 (zero_lt_one.trans h)
+  exact ⟨andBack s s, once, ev₂, by simp [un_andBack_eq_true_iff.2 h]⟩
 
--- (66)
-theorem fold_un : unSem (andBack .flat .folded) foldVRO ev₂ () :=
-  ⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl, fold_outcomes_multi, rfl⟩
+-- (69): *reload the truck* and *reshatter the mirror*
+theorem re_andStays_eq_true_iff : re (andStays a b) twice T () ev₂ = .true ↔ b ∈ T := by
+  rw [re_eq_true_iff, and_iff_left (.inr rfl)]
+  refine ⟨?_, fun h ↦ ⟨ev₁, .inl rfl, precedes_ev₁_ev₂, rfl, h⟩⟩
+  rintro ⟨e', rfl | rfl, hp, -, hT⟩
+  exacts [hT, absurd hp not_precedes_ev₂]
 
-theorem fold_re : reSem (twice .flat .folded) foldVRO ev₂ () :=
-  ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
-      by simp [foldVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
+end Scenario
 
-inductive LimbState where
-  | intact | broken
-  deriving DecidableEq, Repr
+/-! ### The outcomes of *coil* and *build* -/
 
-/-- *Break* applied to a limb (61a) has a single result, and a broken limb admits another breaking
-(73a). -/
-def breakLimbVRO : VerbOutcomes (NonemptyInterval ℤ) Unit LimbState where
-  verb := acts
-  outcomes := {.broken}
-  thresholds := {.intact, .broken}
+section Data
 
-/-- *Break* applied to a sewer has the same single result, which a sewer cannot informatively reach
-again (73a). -/
-def breakSewerVRO : VerbOutcomes (NonemptyInterval ℤ) Unit LimbState where
-  verb := acts
-  outcomes := {.broken}
-  thresholds := {.intact}
+/-- The verb a row tests, the lexeme of its span. -/
+def verb? (d : Datum) : Option Examples.Lexeme := d.spans.head?.bind Examples.lexeme?
 
--- (67)
-theorem breakLimb_not_un (k : StateFunction Unit LimbState ℤ) (e : NonemptyInterval ℤ) :
-    ¬ unSem k breakLimbVRO e () :=
-  singleton_blocks_un k breakLimbVRO .broken rfl e ()
+/-- (23), (63): the outcomes of a verb are the states that its rows of the lexical causation test
+admit. -/
+def outcomes (v : Examples.Lexeme) : Finset Examples.Outcome :=
+  ((Examples.all.filter fun d ↦ verb? d = some v ∧ d.judgment = .acceptable).filterMap
+    Examples.outcome).toFinset
 
--- (73a)
-theorem breakLimb_re : reSem (twice .intact .broken) breakLimbVRO ev₂ () :=
-  ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
-      by simp [breakLimbVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
+-- (23)
+theorem card_outcomes_coil : (outcomes .coil).card = 7 := by decide
 
--- (73a)
-theorem breakSewer_not_re (e : NonemptyInterval ℤ) :
-    ¬ reSem (twice .intact .broken) breakSewerVRO e () :=
-  not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
-    rcases he' with rfl | rfl <;> simp [breakSewerVRO, resState, twice, ev₁, ev₂]) e
+-- (63)
+theorem outcomes_build : outcomes .build = {.comeIntoBeing} := by decide
 
-inductive SurfaceState where
-  | unaltered | surfaceAltered
-  deriving DecidableEq, Repr
+/-- (12e), (63): the *un-* form of a verb is judged acceptable exactly when its rows of the
+lexical causation test admit several outcomes. -/
+theorem un_rows : ∀ d ∈ Examples.all, Examples.affix d = some .un → ∀ v ∈ verb? d,
+    (d.judgment = .acceptable ↔ 1 < (outcomes v).card) := by
+  decide
 
-/-- *Hit* is an impingement-effecting root (61g), with a single, irreversible surface alteration.
--/
-def hitVRO : VerbOutcomes (NonemptyInterval ℤ) Unit SurfaceState where
-  verb := acts
-  outcomes := {.surfaceAltered}
-  thresholds := {.unaltered}
+-- every row names its verb, and two of the rows judge a prefixed form
+theorem readCount_rows :
+    Datum.ReadCount verb? Examples.all 14 ∧ Datum.ReadCount Examples.affix Examples.all 2 := by
+  decide
 
--- (25)
-theorem hit_not_un (k : StateFunction Unit SurfaceState ℤ) (e : NonemptyInterval ℤ) :
-    ¬ unSem k hitVRO e () :=
-  singleton_blocks_un k hitVRO .surfaceAltered rfl e ()
+theorem one_lt_encard_outcomes_coil : 1 < (outcomes .coil : Set Examples.Outcome).encard := by
+  rw [Set.encard_coe_eq_coe_finsetCard, card_outcomes_coil]
+  exact_mod_cast (by decide : 1 < 7)
 
--- (48)
-theorem hit_not_re (e : NonemptyInterval ℤ) :
-    ¬ reSem (twice .unaltered .surfaceAltered) hitVRO e () :=
-  not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
-    rcases he' with rfl | rfl <;> simp [hitVRO, resState, twice, ev₁, ev₂]) e
+-- *uncoil*: the rope is knotted up by the coiling and undamaged again after the uncoiling
+theorem un_coil :
+    un (andBack Examples.Outcome.undamaged .knottedUp) once (outcomes .coil) () ev₂ = .true :=
+  un_andBack_eq_true_iff.2 one_lt_encard_outcomes_coil
 
-inductive TruckState where
-  | empty | full
-  deriving DecidableEq, Repr
+-- (12e)
+theorem un_build (k : Entity → I → Examples.Outcome) (P : Entity → E → Prop) (x : Entity)
+    (e : E) : un k P (outcomes .build) x e = .undefined := by
+  rw [outcomes_build, Finset.coe_singleton]
+  exact un_singleton _
 
-/-- *Load* is a degree achievement (70), with a single contextually salient result that does not
-prevent loading again. -/
-def loadVRO : VerbOutcomes (NonemptyInterval ℤ) Unit TruckState where
-  verb := acts
-  outcomes := {.full}
-  thresholds := {.empty, .full}
-
--- (69a)
-theorem load_re : reSem (twice .empty .full) loadVRO ev₂ () :=
-  ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
-      by simp [loadVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
-
-inductive MirrorState where
-  | intact | shattered
-  deriving DecidableEq, Repr
-
-/-- *Shatter* (71) has a single result that leaves the object outside every threshold. -/
-def shatterVRO : VerbOutcomes (NonemptyInterval ℤ) Unit MirrorState where
-  verb := acts
-  outcomes := {.shattered}
-  thresholds := {.intact}
-
--- (69b)
-theorem shatter_not_re (e : NonemptyInterval ℤ) :
-    ¬ reSem (twice .intact .shattered) shatterVRO e () :=
-  not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
-    rcases he' with rfl | rfl <;> simp [shatterVRO, resState, twice, ev₁, ev₂]) e
-
-theorem re_on_singleton :
-    loadVRO.cardinality = .singleton ∧ reSem (twice .empty .full) loadVRO ev₂ () :=
-  ⟨by simp [VerbOutcomes.cardinality, loadVRO], load_re⟩
-
-end Examples
-
-/-! ### The affectedness hierarchy (§2.4, (20), (62)) -/
-
-/-- `BeaversDegree c d` holds when the paper places verbs of the class `c` at the degree `d` of
-Beavers's affectedness hierarchy ((20), §2.4.2). -/
-inductive BeaversDegree : OutcomeClass → AffectednessDegree → Prop
-  /-- *Break* undergoes a quantized change ((20a)). -/
-  | physicalProperty : BeaversDegree .physicalProperty .quantized
-  /-- *Destroy* and *devour* effect a quantized change ((20a)). -/
-  | consumption : BeaversDegree .consumption .quantized
-  /-- Degree achievements effect a non-quantized change ((20b)). -/
-  | degreeAchievement : BeaversDegree .degreeAchievement .nonquantized
-  /-- *Wrap* and *furl* give their object potential for change ((20d)). -/
-  | potentialForChange : BeaversDegree .potentialForChange .potential
-  /-- Beavers places surface-contact verbs such as *hit* and *wipe* under potential for change, a
-  placement the paper rejects in separating them as impingement-effecting (§2.4.2). -/
-  | impingement : BeaversDegree .impingement .potential
-  /-- *See* and *laugh at* are unspecified for change ((20c)). -/
-  | noChange : BeaversDegree .noChange .unspecified
-
--- §2.4.2, (62)
-theorem potentialForChange_impingement :
-    (∃ d, BeaversDegree .potentialForChange d ∧ BeaversDegree .impingement d) ∧
-      OutcomeClass.potentialForChange.tier ≠ OutcomeClass.impingement.tier :=
-  ⟨⟨.potential, .potentialForChange, .impingement⟩, by decide⟩
-
--- (62)
-theorem consumption_degreeAchievement :
-    OutcomeClass.consumption.tier = OutcomeClass.degreeAchievement.tier ∧
-      ∃ d d', d ≠ d' ∧ BeaversDegree .consumption d ∧ BeaversDegree .degreeAchievement d' :=
-  ⟨rfl, .quantized, .nonquantized, by decide, .consumption, .degreeAchievement⟩
+end Data
 
 end Bhadra2024

@@ -42,7 +42,7 @@ not change while the word is processed.
 
 namespace Levy2008
 
-open InformationTheory MeasureTheory ProbabilityTheory Surprisal AutoregressiveSequenceModel
+open InformationTheory MeasureTheory ProbabilityTheory AutoregressiveSequenceModel
 open scoped ENNReal ProbabilityTheory
 
 variable {T W : Type*} [MeasurableSpace T]

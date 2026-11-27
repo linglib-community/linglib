@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `HoleFraser2026` — typed example data
@@ -640,5 +642,43 @@ def ex_60b : Datum :=
     paperFeatures := [("alternant", "nonBase"), ("projection", "prospective aspect")] }
 
 def all : List Datum := [ex_17, ex_18, ex_19, ex_30b, ex_31b, ex_32b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_40b, ex_45B_mirativity, ex_45Bprime_mirativity, ex_45B_scalarity, ex_45Bprime_scalarity, ex_46B_mirativity, ex_46Bprime_mirativity, ex_46B_scalarity, ex_46Bprime_scalarity, ex_47B_mirativity, ex_47Bprime_mirativity, ex_47B_scalarity, ex_47Bprime_scalarity, ex_49a, ex_49b, ex_50a, ex_50b, ex_51a, ex_51b, ex_52a, ex_52b, ex_53a, ex_53b, ex_54a, ex_54b, ex_55a, ex_55b, ex_56a, ex_56b, ex_57a, ex_57b, ex_58a, ex_58b, ex_59a, ex_59b, ex_60a, ex_60b]
+
+/-- The two alternants. -/
+inductive Alternant where
+  /-- base: base -/
+  | base
+  /-- nonBase: nonBase -/
+  | nonBase
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `alternant`. -/
+def alternant (e : Datum) : Option Alternant :=
+  e.parse? "alternant" [("base", .base), ("nonBase", .nonBase)]
+
+/-- The contents of the non-base alternant that the diagnostics target. -/
+inductive Content where
+  /-- abundance: abundance -/
+  | abundance
+  /-- scalarity: scalarity -/
+  | scalarity
+  /-- mirativity: mirativity -/
+  | mirativity
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `content`. -/
+def content (e : Datum) : Option Content :=
+  e.parse? "content" [("abundance", .abundance), ("scalarity", .scalarity), ("mirativity", .mirativity)]
+
+/-- A reply to the alternant, a plain denial or *Hey, wait a minute*. -/
+inductive Response where
+  /-- denial: denial -/
+  | denial
+  /-- wait a minute: wait a minute -/
+  | waitAMinute
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `response`. -/
+def response (e : Datum) : Option Response :=
+  e.parse? "response" [("denial", .denial), ("wait a minute", .waitAMinute)]
 
 end HoleFraser2026.Examples

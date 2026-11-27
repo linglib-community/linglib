@@ -1,49 +1,73 @@
 module
 
+public import Linglib.Data.Examples.Languages
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Data.Examples.Nordlinger2023
+public import Linglib.Data.WALS.Features.F106A
 public import Linglib.Syntax.Reciprocal
 public import Studies.Siloni2012
 public import Linglib.Semantics.Plurality.Reciprocal
-public import Linglib.Fragments.English.Reciprocals
-public import Linglib.Fragments.Chichewa.Reciprocals
-public import Linglib.Fragments.Romance.French.Reciprocals
-public import Linglib.Fragments.Greek.StandardModern.Reciprocals
-public import Linglib.Fragments.Hungarian.Reciprocals
-public import Linglib.Fragments.Icelandic.Reciprocals
-public import Linglib.Fragments.Mandarin.Reciprocals
-public import Linglib.Fragments.Slavic.Czech.Reciprocals
-public import Linglib.Fragments.Slavic.Russian.Reciprocals
-public import Linglib.Fragments.Swahili.Reciprocals
-public import Linglib.Fragments.Wambaya.Reciprocals
+public import Linglib.Languages.English.Reciprocals
+public import Linglib.Languages.Chichewa.Reciprocals
+public import Linglib.Languages.Romance.French.Reciprocals
+public import Linglib.Languages.Greek.StandardModern.Reciprocals
+public import Linglib.Languages.Hungarian.Reciprocals
+public import Linglib.Languages.Icelandic.Reciprocals
+public import Linglib.Languages.Mandarin.Reciprocals
+public import Linglib.Languages.Slavic.Czech.Reciprocals
+public import Linglib.Languages.Slavic.Russian.Reciprocals
+public import Linglib.Languages.Swahili.Reciprocals
+public import Linglib.Languages.Wambaya.Reciprocals
 
 /-!
 # Nordlinger (2023): The Typology of Reciprocal Constructions
 
 Nordlinger's review of reciprocal constructions organizes the classificatory work of Nedjalkov,
-Maslova, Evans and Siloni around two correlations. Nominal and argument strategies tend to
-preserve the valency of the base verb while verb-marking strategies tend to reduce it: wherever
-the review's valency indicators agree, they agree with the strategy's default, derived in the
-substrate from the coding-frame effect of reciprocalization (`valency_follows_default`). The
-tendency is not absolute: Tonga's verb-marked reciprocal keeps both argument NPs
-(`tonga_counterexample`), and in the Australian cases of Evans and colleagues the indicators
-disagree (`kuukThaayorre_mixed`, `dalabon_mixed`). Discontinuous reciprocals are licensed exactly
-for lexically formed reciprocal verbs on Siloni's typology, which the review's judgments confirm
-(`siloni_discontinuity_prediction`). The review's semantic typology, six configurations of a
-mutual event from strong reciprocity to the ring, is stated as conditions on the relation
-(`ReciprocityType.Realizes`): only the strong and pairwise configurations are symmetric, and all
-but the melee involve every participant.
+Maslova, Evans, Siloni and Hurst.
+
+* Strategies. König and Kokutani, Nedjalkov and Evans sort the same strategies differently, and
+  the review's examples (9)–(13) show where: the Wambaya clitic is nominal for the first,
+  a class of its own for the second and argument-marking for the third, and the Mandarin compound
+  is morphological for Nedjalkov and a multiple-predicate strategy for Evans
+  (`typologies_on_examples`).
+* Valency. Nominal and argument strategies tend to preserve the valency of the base verb and
+  verb-marking strategies to reduce it: wherever the valency indicators of a unary construction
+  agree, they agree with the strategy's default (`valency_follows_default`). Tonga's verb-marked
+  reciprocal keeps both argument NPs and is binary in Maslova's sense (`tonga_counterexample`),
+  and in the Australian cases of Evans and colleagues the indicators disagree
+  (`kuukThaayorre_mixed`, `dalabon_mixed`).
+* Discontinuous reciprocals are licensed exactly for lexically formed reciprocal verbs on
+  Siloni's typology, which the review's examples confirm (`discontinuous_iff_lexical`).
+* Levels. Hurst's four reciprocation strategies are all the ways of having one or two arguments
+  at argument, functional and constituent structure without gaining one from a level to the next
+  (`exists_arguments_eq_iff`), and a reciprocal verb is lexically formed exactly when it has one
+  argument at argument structure (`lexical_iff_one_argument`).
+* Semantics. The six configurations of a mutual event, from strong reciprocity to the ring, are
+  stated as conditions on the relation (`ReciprocityType.Realizes`): only the strong and pairwise
+  configurations are symmetric, and all but the melee involve every participant. The review's
+  five children who each see and are seen by another, though not by every other, are weakly and
+  not strongly reciprocal (`weakReciprocity_sees`). Reflexive and reciprocal marking coincide in
+  60 of the 175 languages of Maslova and Nedjalkov's sample (`reflexive_polysemy_count`).
 
 ## Implementation notes
 
-Each language's construction takes its marker from the language's fragment, or from the
-review's example where no fragment exists (Warlpiri, Kuuk Thaayorre, Dalabon, Tonga), and
-records the valency indicators the review reports. The formation locus is Siloni's own
-classification where it covers the language and the review's extension otherwise. Malagasy,
-bivalent at f-structure and monovalent at c-structure on Hurst's analysis, splits
-levels rather than indicators and is not represented. A marker records only whether it is also
-reflexive, the polysemy carried by the markers glossed RR (French *se*, Wambaya *-ngg-*, Warlpiri
-*-nyanu*, Dalabon *-rr*); the review's further polysemy types, Yakut *-üs* with collective and
-sociative readings (ex. 49) and East Futunan *fe-...-ʼaki* with iterative ones (ex. 50, both
-after Nedjalkov), are not.
+Each language's construction takes its marker from the language's language file, or from the
+review's
+example where no language file exists (Warlpiri, Kuuk Thaayorre, Dalabon, Tonga), and records the
+valency indicators the review reports; the ergative and accusative glosses of its examples are
+checked against them (`ergative_iff_subjectCase_bivalent`, `objectSlot_bivalent_of_accusative`).
+The Wambaya clitic is classed as the review classes it, with the pronominal strategies; the
+language file's entry follows Evans and colleagues, who argue that it marks the predicate. The
+review
+gives no discontinuous example for Czech. The formation locus is Siloni's own classification where
+it covers the language and the review's extension otherwise. Malagasy, bivalent at f-structure and
+monovalent at c-structure on Hurst's analysis, is one of the four strategies of `Reciprocation` and
+has no construction in the sample. A marker records only whether it is also reflexive, the polysemy
+carried by the markers glossed RR (French *se*, Wambaya *-ngg-*, Warlpiri *-nyanu*, Dalabon *-rr*);
+the review's further polysemy types, Yakut *-üs* with collective and sociative readings (ex. 49)
+and East Futunan *fe-...-ʼaki* with iterative ones (ex. 50, both after Nedjalkov), are not. The six
+configurations are given conditions of the formalization's own, the review naming them by example
+only; the melee is taken as some interaction that leaves a participant out.
 
 ## References
 
@@ -59,6 +83,8 @@ after Nedjalkov), are not.
 * [evans-et-al-2007]
 * [dimitriadis-2008]
 * [hurst-2012]
+* [konig-kokutani-2006]
+* [maslova-nedjalkov-2013]
 * [majid-et-al-2011]
 -/
 
@@ -72,9 +98,16 @@ open Reciprocal
 
 /-- The languages whose reciprocal constructions the review describes. -/
 inductive Language where
-  | english | russian | swahili | hungarian | french | greek | mandarin
+  | english | russian | hausa | swahili | hungarian | french | greek | mandarin
   | wambaya | icelandic | chichewa | czech | warlpiri | kuukThaayorre | dalabon | tonga
   deriving DecidableEq, Fintype
+
+/-- Hausa *jūnan-* is a reciprocal pronoun with a person suffix ([nordlinger-2023] ex. 10). -/
+def hausaJuna : Marker := { morphs := [.free "jūnan"], strategy := .recipPronoun }
+
+/-- The Wambaya clitic as the review classes it, a pronominal element in the object position of
+the auxiliary ([nordlinger-2023] ex. 11, §3.1). -/
+def wambayaRr : Marker := { Wambaya.Reciprocals.rr with strategy := .boundPronoun }
 
 /-- Warlpiri *-nyanu* is the reflexive–reciprocal bound pronoun in the object slot of the
 pronominal complex ([nordlinger-2023] ex. 18b, 48). -/
@@ -106,9 +139,9 @@ reflexive-identical postfix *-sja* (ex. 31) is the inventory's second marker. Sw
 *-an-* with a single subject NP (ex. 12). Hungarian: verbal affix *-óz-* (ex. 19, 30). French: the
 clitic *se* is not a reciprocal object (ex. 28, 35), so the slot is empty; bipartite *l'un l'autre*
 is the second marker. Greek: nonactive morphology (ex. 27a). Mandarin: compound *dǎ-lái-dǎ-qù* with
-a single subject NP (ex. 13). Wambaya: the RR clitic in the object position of the auxiliary
-(ex. 11), which the review groups with the argument strategies (§3.1), though its subject is glossed
-nominative, and [evans-et-al-2007] show the clitic valency-reducing rather than an object pronoun.
+a single subject NP (ex. 13). Hausa: the reciprocal pronoun *jūnan-mù* (ex. 10), of whose valency
+the review says nothing. Wambaya: the RR clitic in the object position of the auxiliary (ex. 11),
+which the review groups with the argument strategies (§3.1) and of whose valency it says nothing.
 Icelandic: bipartite *hvort annað*, the accusative on *annað* showing the clause transitive
 (ex. 17a). Chicheŵa: verbal affix *-an-* (ex. 20). Czech: the clitic *se* (ex. 29), as in French.
 Warlpiri: the object bound pronoun and the ergative subject both keep the clause transitive
@@ -119,6 +152,7 @@ of the verb-marked reciprocal (ex. 21). -/
 def Language.construction : Language → Construction
   | .english => { marker := English.Reciprocals.eachOther, valency := objectSlot .bivalent }
   | .russian => { marker := Russian.Reciprocals.drugDruga, valency := objectSlot .bivalent }
+  | .hausa => { marker := hausaJuna }
   | .swahili => { marker := Swahili.Reciprocals.anSuffix, valency := objectSlot .monovalent }
   | .hungarian =>
       { marker := Hungarian.Reciprocals.ozSuffix, valency := objectSlot .monovalent }
@@ -127,9 +161,7 @@ def Language.construction : Language → Construction
       { marker := Greek.StandardModern.Reciprocals.nonactive
       , valency := objectSlot .monovalent }
   | .mandarin => { marker := Mandarin.Reciprocals.compound, valency := objectSlot .monovalent }
-  | .wambaya =>
-      { marker := Wambaya.Reciprocals.rr
-      , valency := fun | .subjectCase => some .monovalent | _ => none }
+  | .wambaya => { marker := wambayaRr }
   | .icelandic => { marker := Icelandic.Reciprocals.hvorAnnad, valency := objectSlot .bivalent }
   | .chichewa => { marker := Chichewa.Reciprocals.anSuffix, valency := objectSlot .monovalent }
   | .czech => { marker := Czech.Reciprocals.se, valency := objectSlot .monovalent }
@@ -159,31 +191,59 @@ def Language.formation : Language → Option Formation
   | .swahili | .greek => some .lexical
   | _ => none
 
-/-- Whether the review attests the discontinuous reciprocal construction (§3.3), as it does for
-Greek, Swahili and Hungarian with a comitative (ex. 36–38), while in French and Czech it is
-ungrammatical (ex. 39, p. 86). -/
-def Language.discontinuous : Language → Option Bool
-  | .swahili | .hungarian | .greek => some true
-  | .french | .czech => some false
-  | _ => none
+/-- The Glottocode of a language, under which the review's examples are filed. -/
+def Language.glottocode : Language → Glottocode
+  | .english => .english
+  | .russian => .russian
+  | .hausa => .hausa
+  | .swahili => .swahili
+  | .hungarian => .hungarian
+  | .french => .french
+  | .greek => .modernGreek
+  | .mandarin => .mandarinChinese
+  | .wambaya => .wambayan
+  | .icelandic => .icelandic
+  | .chichewa => .nyanja
+  | .czech => .czech
+  | .warlpiri => .warlpiri
+  | .kuukThaayorre => .thayore
+  | .dalabon => .ngalkbun
+  | .tonga => .tongaZambia
+
+/-- A word of the row is glossed with the label. -/
+def Glossed (e : Datum) (label : String) : Prop :=
+  ∃ w ∈ e.glossedWords, label.toList <:+: w.gloss
+
+instance (e : Datum) (label : String) : Decidable (Glossed e label) :=
+  inferInstanceAs (Decidable (∃ w ∈ e.glossedWords, _))
 
 /-! ### Strategy and valency -/
 
+/-- The reciprocal examples of the language are unary in Maslova's sense: one slot is open to the
+free expression of the reciprocants. -/
+def Language.Unary (l : Language) : Prop :=
+  ∀ e ∈ Examples.all, e.language = l.glottocode →
+    Examples.construction e = some .reciprocal → Examples.slots e = some .unary
+
+instance : DecidablePred Language.Unary := fun _ ↦ List.decidableBAll _ _
+
+/-- Where the indicators of a language's unary reciprocal construction agree, they read the
+default valency of its strategy. -/
 theorem valency_follows_default :
-    ∀ l : Language, ¬ l.construction.Mixed → l ≠ .tonga →
+    ∀ l : Language, ¬ l.construction.Mixed → l.Unary →
       l.construction.Unanimous l.construction.strategy.defaultValency := by
   decide
 
 variable {l : Language}
 
-theorem nominal_strategy_bivalent (hm : ¬ l.construction.Mixed) (ht : l ≠ .tonga)
+theorem nominal_strategy_bivalent (hm : ¬ l.construction.Mixed) (hu : l.Unary)
     (h : l.construction.strategy.IsNominal) : ¬ l.construction.Reads .monovalent := fun hr ↦
   (Strategy.defaultValency_eq_monovalent_iff _).1
-    (valency_follows_default l hm ht _ hr).symm h
+    (valency_follows_default l hm hu _ hr).symm h
 
-theorem monovalent_implies_verbal (hm : ¬ l.construction.Mixed) (ht : l ≠ .tonga)
+theorem monovalent_implies_verbal (hm : ¬ l.construction.Mixed) (hu : l.Unary)
     (h : l.construction.Reads .monovalent) : ¬ l.construction.strategy.IsNominal :=
-  (Strategy.defaultValency_eq_monovalent_iff _).1 (valency_follows_default l hm ht _ h).symm
+  (Strategy.defaultValency_eq_monovalent_iff _).1 (valency_follows_default l hm hu _ h).symm
 
 /-! ### Mixed transitivity effects
 
@@ -197,15 +257,206 @@ theorem dalabon_mixed : Language.dalabon.construction.Mixed := by decide
 
 theorem tonga_counterexample :
     ¬ Language.tonga.construction.strategy.IsNominal ∧
-      Language.tonga.construction.Reads .bivalent := by
+      Language.tonga.construction.Reads .bivalent ∧ ¬ Language.tonga.Unary := by
   decide
 
 /-! ### Discontinuous reciprocals -/
 
-theorem siloni_discontinuity_prediction :
-    ∀ l : Language, ∀ f ∈ l.formation, ∀ d ∈ l.discontinuous,
-      (Siloni2012.Property.discontinuous.Holds f ↔ d = true) := by
+/-- A discontinuous reciprocal of the review's examples is acceptable exactly when the
+language's reciprocal verbs are formed in the lexicon: (36), (37), (38) against (39). -/
+theorem discontinuous_iff_lexical :
+    ∀ e ∈ Examples.all, Examples.construction e = some .discontinuous →
+      ∀ l : Language, l.glottocode = e.language → ∀ f ∈ l.formation,
+        (Siloni2012.Property.discontinuous.Holds f ↔ e.judgment = .acceptable) := by
   decide
+
+/-! ### The indicators in the examples -/
+
+-- (18b), (25)
+theorem ergative_iff_subjectCase_bivalent :
+    ∀ e ∈ Examples.all, Examples.construction e = some .reciprocal →
+      ∀ l : Language, l.glottocode = e.language →
+        (Glossed e "ERG" ↔ l.construction.valency .subjectCase = some .bivalent) := by
+  decide
+
+-- (9), (17a)
+theorem objectSlot_bivalent_of_accusative :
+    ∀ e ∈ Examples.all, Examples.construction e = some .reciprocal → Glossed e "ACC" →
+      ∀ l : Language, l.glottocode = e.language →
+        l.construction.valency .objectSlot = some .bivalent := by
+  decide
+
+/-! ### Three typologies of strategy (§3.1)
+
+König and Kokutani divide strategies into nominal and verbal, the nominal ones quantificational
+or pronominal and the verbal ones synthetic or compound. Nedjalkov divides the grammatical
+reciprocals by the means that express the marker, syntactic, morphological or clitic. Evans
+divides single-clause strategies into argument-marking and predicate-marking and sets
+multiple-predicate strategies apart, `Reciprocal.Strategy.codingSite`. -/
+
+/-- König and Kokutani's four kinds of strategy. -/
+inductive KonigKokutani where
+  | quantificational
+  | pronominal
+  | synthetic
+  | compound
+  deriving DecidableEq, Repr, Fintype
+
+/-- The nominal kinds, against the verbal ones. -/
+def KonigKokutani.IsNominal (k : KonigKokutani) : Prop := k = .quantificational ∨ k = .pronominal
+
+instance : DecidablePred KonigKokutani.IsNominal :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Nedjalkov's three means of expressing a grammatical reciprocal marker. -/
+inductive Nedjalkov where
+  | syntactic
+  | morphological
+  | clitic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The kind of a strategy for König and Kokutani, where the review places it. -/
+def konigKokutani : Strategy → Option KonigKokutani
+  | .bipartiteNP => some .quantificational
+  | .recipPronoun | .boundPronoun => some .pronominal
+  | .verbalAffix => some .synthetic
+  | .compoundVerb => some .compound
+  | _ => none
+
+/-- The means of a strategy for Nedjalkov, where the review places it. -/
+def nedjalkov : Strategy → Option Nedjalkov
+  | .bipartiteNP | .recipPronoun => some .syntactic
+  | .verbalAffix | .compoundVerb => some .morphological
+  | .boundPronoun | .recipClitic => some .clitic
+  | _ => none
+
+/-- The five languages of the review's examples (9)–(13). -/
+def surveyed : List Language := [.russian, .hausa, .wambaya, .swahili, .mandarin]
+
+/-- The review's sorting of examples (9)–(13): nominal in (9)–(11) and verbal in (12)–(13) for
+König and Kokutani; syntactic in (9)–(10), a clitic in (11) and morphological in (12)–(13) for
+Nedjalkov; argument-marking in (9)–(11), predicate-marking in (12) and multiple predicates in
+(13) for Evans. -/
+theorem typologies_on_examples :
+    (surveyed.filter fun l ↦ ∃ k ∈ konigKokutani l.construction.strategy, k.IsNominal) =
+        [.russian, .hausa, .wambaya] ∧
+      (surveyed.filter fun l ↦ nedjalkov l.construction.strategy = some .syntactic) =
+        [.russian, .hausa] ∧
+      (surveyed.filter fun l ↦ nedjalkov l.construction.strategy = some .clitic) = [.wambaya] ∧
+      (surveyed.filter fun l ↦ l.construction.strategy.codingSite = .argument) =
+        [.russian, .hausa, .wambaya] ∧
+      (surveyed.filter fun l ↦ l.construction.strategy.codingSite = .predicate) = [.swahili] ∧
+      (surveyed.filter fun l ↦ l.construction.strategy.codingSite = .multiclausal) =
+        [.mandarin] := by
+  decide
+
+theorem konigKokutani_isNominal_iff {s : Strategy} {k : KonigKokutani}
+    (h : konigKokutani s = some k) : k.IsNominal ↔ s.codingSite = .argument := by
+  cases s <;> cases k <;> revert h <;> decide
+
+theorem nedjalkov_crosses_codingSite :
+    (∃ s t, nedjalkov s = nedjalkov t ∧ nedjalkov s ≠ none ∧ s.codingSite ≠ t.codingSite) ∧
+      ∃ s t, s.codingSite = t.codingSite ∧ nedjalkov s ≠ none ∧ nedjalkov t ≠ none ∧
+        nedjalkov s ≠ nedjalkov t :=
+  ⟨⟨.verbalAffix, .compoundVerb, by decide⟩, ⟨.bipartiteNP, .boundPronoun, by decide⟩⟩
+
+/-! ### Levels of structure (§3.3)
+
+Hurst sorts reciprocation strategies by the number of arguments at argument structure, at
+functional structure and at constituent structure. -/
+
+/-- The three levels of syntactic structure, from the most abstract. -/
+inductive Level where
+  | argument
+  | functional
+  | constituent
+  deriving DecidableEq, Repr, Fintype
+
+/-- The levels in order, argument structure first. -/
+instance : LinearOrder Level := .lift' Level.ctorIdx (by decide)
+
+/-- Hurst's four reciprocation strategies. -/
+inductive Reciprocation where
+  /-- A reciprocal anaphor, two arguments at every level, as in English and Icelandic. -/
+  | anaphor
+  /-- A verb-marked reciprocal whose second argument is unexpressed in the constituent structure
+  only, as in Malagasy. -/
+  | unexpressed
+  /-- A monovalent reciprocal verb formed in the syntax, as in French. -/
+  | syntacticVerb
+  /-- A monovalent reciprocal verb formed in the lexicon, as in Swahili. -/
+  | lexicalVerb
+  deriving DecidableEq, Repr, Fintype
+
+/-- The number of arguments of a strategy at a level. -/
+def Reciprocation.arguments : Reciprocation → Level → ℕ
+  | .anaphor, _ => 2
+  | .unexpressed, .constituent => 1
+  | .unexpressed, _ => 2
+  | .syntacticVerb, .argument => 2
+  | .syntacticVerb, _ => 1
+  | .lexicalVerb, _ => 1
+
+theorem Reciprocation.arguments_antitone (r : Reciprocation) : Antitone r.arguments := by
+  intro a b h
+  cases r <;> cases a <;> cases b <;> first | exact absurd h (by decide) | decide
+
+theorem Reciprocation.arguments_injective : Function.Injective Reciprocation.arguments := by
+  intro r r' h
+  have h₁ := congrFun h .argument
+  have h₂ := congrFun h .functional
+  have h₃ := congrFun h .constituent
+  cases r <;> cases r' <;>
+    first
+    | rfl
+    | exact absurd h₁ (by decide)
+    | exact absurd h₂ (by decide)
+    | exact absurd h₃ (by decide)
+
+/-- Hurst's four strategies are all the ways of having one or two arguments at each level without
+gaining an argument from one level to the next. -/
+theorem exists_arguments_eq_iff (f : Level → ℕ) :
+    (∃ r : Reciprocation, r.arguments = f) ↔ Antitone f ∧ ∀ l, f l = 1 ∨ f l = 2 := by
+  constructor
+  · rintro ⟨r, rfl⟩
+    exact ⟨r.arguments_antitone, fun l ↦ by cases r <;> cases l <;> decide⟩
+  · rintro ⟨hf, hv⟩
+    have hab : f .functional ≤ f .argument := hf (by decide)
+    have hbc : f .constituent ≤ f .functional := hf (by decide)
+    have key : ∀ r : Reciprocation, r.arguments .argument = f .argument →
+        r.arguments .functional = f .functional → r.arguments .constituent = f .constituent →
+        r.arguments = f := fun r h₁ h₂ h₃ ↦ funext fun l ↦ by cases l <;> assumption
+    rcases hv .argument with ha | ha <;> rcases hv .functional with hb | hb <;>
+      rcases hv .constituent with hc | hc
+    · exact ⟨.lexicalVerb, key _ ha.symm hb.symm hc.symm⟩
+    · omega
+    · omega
+    · omega
+    · exact ⟨.syntacticVerb, key _ ha.symm hb.symm hc.symm⟩
+    · omega
+    · exact ⟨.unexpressed, key _ ha.symm hb.symm hc.symm⟩
+    · exact ⟨.anaphor, key _ ha.symm hb.symm hc.symm⟩
+
+/-- The strategy the review assigns a language of the sample. -/
+def Language.reciprocation : Language → Option Reciprocation
+  | .english | .icelandic => some .anaphor
+  | .swahili => some .lexicalVerb
+  | .french => some .syntacticVerb
+  | _ => none
+
+theorem lexical_iff_one_argument :
+    ∀ l : Language, ∀ r ∈ l.reciprocation, ∀ f ∈ l.formation,
+      (f = .lexical ↔ r.arguments .argument = 1) := by
+  decide
+
+/-! ### Reflexive and reciprocal polysemy (§4) -/
+
+open Data.WALS.F106A in
+-- 60 of the 175 languages of Maslova and Nedjalkov's sample
+theorem reflexive_polysemy_count :
+    allData.length = 175 ∧
+      (allData.filter fun d ↦ d.2 = .identicalToReflexive ∨ d.2 = .mixed).length = 60 := by
+  decide +kernel
 
 /-! ### Semantic reciprocity types (§4)
 
@@ -381,26 +632,12 @@ theorem RingConfig.oneWayWeak (h : RingConfig R X) : OneWayWeakReciprocity R X :
 
 end Configurations
 
-/-- Semantic type of reciprocal relation.
-
-    [nordlinger-2023] §4 presents the semantic typology of
-    [evans-et-al-2011b], who take as their starting point the symmetric
-    relations identified by [dalrymple-et-al-1998] and distinguish six
-    types of mutual relation ([nordlinger-2023] ex. 44,
-    [evans-et-al-2011b] p. 8):
-
-    - `strong`: every participant reciprocates with every other
-      ("The members of this family love one another.")
-    - `pairwise`: participants are paired off
-      ("The people at the dinner party were married to one another.")
-    - `chain`: sequential, each with the next
-      ("The graduating students followed one another up onto the stage.")
-    - `radial`: one central participant acts on all others
-      ("The teacher and her pupils intimidated one another.")
-    - `melee`: widespread but not exhaustive reciprocation
-      ("The drunks in the pub were punching one another.")
-    - `ring`: circular chain, last links back to first
-      ("The children chased each other round in a ring.") -/
+/-- The six configurations of a mutual event among more than two participants, each with the
+review's example: strong (*The members of this family love one another*), pairwise (*The people
+at the dinner party were married to one another*), chain (*The graduating students followed one
+another up onto the stage*), radial (*The teacher and her pupils intimidated one another*), melee
+(*The drunks in the pub were punching one another*) and ring (*The children chased each other
+round in a ring*). -/
 inductive ReciprocityType where
   | strong
   | pairwise
@@ -448,5 +685,24 @@ theorem ReciprocityType.Realizes.inclusiveAlternativeOrdering (h : t.Realizes R 
   | melee => exact absurd rfl ht
 
 end Realizes
+
+/-! ### Weak reciprocity among five children -/
+
+/-- The seeing of the review's five children: the first sees the second and third, the second
+the third, fourth and fifth, the third the first and second, the fourth the fifth, and the fifth
+the third. -/
+def Sees (a b : Fin 5) : Prop :=
+  (a, b) ∈ ([(0, 1), (0, 2), (1, 2), (1, 3), (1, 4), (2, 0), (2, 1), (3, 4), (4, 2)] :
+    List (Fin 5 × Fin 5))
+
+instance : DecidableRel Sees := fun _ _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+/-- Each of the five children sees another and is seen by another, though not every child sees
+every other: weak reciprocity without strong reciprocity. -/
+theorem weakReciprocity_sees :
+    WeakReciprocity Sees Finset.univ ∧ ¬ StrongReciprocity Sees Finset.univ := by
+  refine ⟨by decide, fun h ↦ ?_⟩
+  exact absurd ((strongReciprocity_iff.1 h).2 (Finset.mem_coe.2 (Finset.mem_univ 0))
+    (Finset.mem_coe.2 (Finset.mem_univ 3)) (by decide)) (by decide)
 
 end Nordlinger2023

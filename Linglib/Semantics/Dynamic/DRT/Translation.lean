@@ -1,31 +1,24 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRT.Verification.Partial
+public import Linglib.Semantics.Dynamic.DRT.Assignment
 public import Mathlib.ModelTheory.Semantics
 
 /-!
 # From DRT to predicate logic
 
-This file translates each DRS into a `FirstOrder.Language.Formula` and proves that the
-translation is realized exactly when the DRS is verified. The universe of a sub-DRS is
-existentially closed (`closeExists`, via `Formula.iExs`), and the antecedent of a `⇒` universally
-(`closeForall`, via `Formula.iAlls`). The translation is correct for verification by total
-assignments, and so for [truth in Kamp and Reyle's sense](##DRT.DRS.isTrue_iff_realize_toFormula)
-on proper DRSs that declare no referent twice.
+The translation of a DRS `[U | γ₁, …, γₙ]` is the first-order formula `∃U (γ₁° ∧ ⋯ ∧ γₙ°)`,
+where `(¬K)° = ¬K°`, `(K ∨ K')° = K° ∨ K'°` and `([U | γ⃗] ⇒ K')° = ∀U (γ₁° ∧ ⋯ ∧ γₙ° → K'°)`.
+We define the translation as `DRS.toFormula` and `Condition.toFormula`.
 
-## Main declarations
-
-* `DRS.toFormula`, `Condition.toFormula`: the translation into `L.Formula V`.
-* `DRS.realize_toFormula`: truth of a DRS matches its first-order
-  translation's `Realize`.
-* `DRS.realize_toFormula_of_isProper`: the translation of a proper DRS is realized
-  iff some embedding verifies the DRS.
+An assignment realizes the translation of a condition exactly when it verifies the condition
+(`Condition.realize_toFormula`), and that of a DRS exactly when it has an extension verifying the
+DRS (`DRS.realize_toFormula`).
 
 ## TODO
 
-The translation of a proper DRS is closed (p. 138), so it is an `L.Sentence` and
-Def. 1.4.6's logical consequence is mathlib's `⊨ᵇ`; this needs `freeVarFinset`
-lemmas for `relabel`, `iExs` and `iAlls`, which mathlib lacks.
+The translation of a proper DRS has no free variables, so it is an `L.Sentence` and logical
+consequence between proper DRSs is mathlib's `⊨ᵇ`. This needs `freeVarFinset` lemmas for
+`relabel`, `iExs` and `iAlls`, which mathlib lacks.
 
 ## References
 
@@ -36,6 +29,7 @@ lemmas for `relabel`, `iExs` and `iAlls`, which mathlib lacks.
 @[expose] public section
 
 open FirstOrder FirstOrder.Language
+open SetRel
 
 namespace DRT
 
@@ -129,67 +123,60 @@ theorem realize_closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v
 
 private theorem Condition.realize_toFormulaAll_of_forall [DecidableEq V]
     {cs : List (Condition L V)} {v : V → M}
-    (ih : ∀ c ∈ cs, (Condition.toFormula c).Realize v ↔ VerifiesConditionTotal v c) :
-    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, VerifiesConditionTotal v c := by
+    (ih : ∀ c ∈ cs, (Condition.toFormula c).Realize v ↔ v ⊨[.assignment M] c) :
+    (Condition.toFormulaAll cs).Realize v ↔ v ∈ Condition.verifiersAll (.assignment M) cs := by
   induction cs with
   | nil => simp [Condition.toFormulaAll_nil, Formula.realize_top]
   | cons c cs ihl =>
-    rw [Condition.toFormulaAll_cons, Formula.realize_inf, List.forall_mem_cons]
+    rw [Condition.toFormulaAll_cons, Formula.realize_inf, Condition.mem_verifiersAll_cons]
     exact and_congr (ih c (by simp)) (ihl fun d hd => ih d (List.mem_cons_of_mem c hd))
+
+private theorem DRS.realize_toFormulaAll_of_forall [DecidableEq V] {K : DRS L V} {v : V → M}
+    (ih : ∀ c ∈ K.conditions, ∀ w : V → M,
+      (Condition.toFormula c).Realize w ↔ w ⊨[.assignment M] c) :
+    (Condition.toFormulaAll K.conditions).Realize v ↔ v ⊨[.assignment M] K :=
+  Condition.realize_toFormulaAll_of_forall fun c hc => ih c hc v
 
 private theorem DRS.realize_toFormula_of_forall [DecidableEq V] {K : DRS L V}
     {v : V → M}
     (ih : ∀ c ∈ K.conditions, ∀ w : V → M,
-      (Condition.toFormula c).Realize w ↔ VerifiesConditionTotal w c) :
-    (DRS.toFormula K).Realize v ↔ ∃ v', K.Extends v v' ∧ VerifiesTotal v' K := by
-  simp only [DRS.toFormula_eq, realize_closeExists, DRS.Extends, verifiesTotal_iff]
-  exact exists_congr fun v' => and_congr_right fun _ =>
-    Condition.realize_toFormulaAll_of_forall fun c hc => ih c hc v'
+      (Condition.toFormula c).Realize w ↔ w ⊨[.assignment M] c) :
+    (DRS.toFormula K).Realize v ↔ v ∈ (K.eval (.assignment M)).dom := by
+  rw [DRS.toFormula_eq, realize_closeExists, DRS.mem_dom_eval_assignment]
+  exact exists_congr fun v' => and_congr_right fun _ => DRS.realize_toFormulaAll_of_forall ih
 
-/-- A single condition's translation realizes as `VerifiesConditionTotal`. -/
+/-- An assignment realizes the translation of a condition iff it verifies the condition. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
-    (Condition.toFormula c).Realize v ↔ VerifiesConditionTotal v c := by
+    (Condition.toFormula c).Realize v ↔ v ⊨[.assignment M] c := by
   induction c generalizing v with
   | atom a => simp [Condition.toFormula]
   | eq a b => simp [Condition.toFormula, Formula.realize_equal]
   | neg K ih =>
     rw [Condition.toFormula_neg, Formula.realize_not, DRS.realize_toFormula_of_forall ih,
-      verifiesTotal_neg]
+      Condition.verifiers_neg, Set.mem_compl_iff]
   | imp a c iha ihc =>
-    rw [Condition.toFormula_imp, verifiesTotal_imp, realize_closeForall]
+    rw [Condition.toFormula_imp, Condition.mem_verifiers_assignment_imp, realize_closeForall]
     refine forall_congr' fun v' => imp_congr_right fun _ => ?_
-    rw [Formula.realize_imp, Condition.realize_toFormulaAll_of_forall fun d hd => iha d hd v',
-      DRS.realize_toFormula_of_forall ihc, verifiesTotal_iff]
+    rw [Formula.realize_imp, DRS.realize_toFormulaAll_of_forall iha,
+      DRS.realize_toFormula_of_forall ihc]
   | dis l r ihl ihr =>
-    rw [Condition.toFormula_dis, Formula.realize_sup, verifiesTotal_dis,
+    rw [Condition.toFormula_dis, Formula.realize_sup, Condition.verifiers_dis, Set.mem_union,
       DRS.realize_toFormula_of_forall ihl, DRS.realize_toFormula_of_forall ihr]
 
 theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V))
     (v : V → M) :
-    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, VerifiesConditionTotal v c :=
+    (Condition.toFormulaAll cs).Realize v ↔ v ∈ Condition.verifiersAll (.assignment M) cs :=
   Condition.realize_toFormulaAll_of_forall fun c _ => Condition.realize_toFormula c v
 
-/-- The translation's `Realize` coincides with verification (§1.5). As `toFormula`
-existentially closes the universe, the correspondence is with an embedding `v'`
-extending `v` over `K.referents`. -/
+/-- An assignment realizes the translation of a DRS iff it has an extension verifying the DRS
+(§1.5). -/
 theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
-    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ VerifiesTotal v' K :=
+    (K.toFormula).Realize v ↔ v ∈ (K.eval (.assignment M)).dom :=
   DRS.realize_toFormula_of_forall fun c _ w => Condition.realize_toFormula c w
 
-/-- The translation of a proper DRS is realized under any assignment iff some total assignment
-verifies the DRS in the total-assignment semantics `VerifiesTotal`. This is Kamp and Reyle's
-truth (Def. 1.4.5, `DRS.IsTrue`) only on a reuse-free DRS
-(`DRS.exists_extends_verifiesTotal_iff_exists_verifies`), since a referent declared twice takes
-a new value here and is inert there. -/
+/-- The translation of a proper DRS is realized iff some assignment verifies the DRS. -/
 theorem DRS.realize_toFormula_of_isProper [DecidableEq V] {K : DRS L V} (hK : K.IsProper)
-    (v : V → M) : K.toFormula.Realize v ↔ ∃ f : V → M, VerifiesTotal f K := by
-  rw [DRS.realize_toFormula, exists_extends_verifiesTotal_iff_of_isProper hK]
-
-/-- The truth of a proper, reuse-free DRS is the truth of its first-order translation (§1.5). -/
-theorem DRS.isTrue_iff_realize_toFormula [DecidableEq V] {K : DRS L V} (hrf : K.ReuseFreeAt ∅)
-    (hK : K.IsProper) (f' : V → M) : K.IsTrue M ↔ (K.toFormula).Realize f' :=
-  (DRS.exists_extends_verifiesTotal_iff_exists_verifies hrf (hK ▸ Finset.Subset.refl _) (f := ⊥)
-    (by simp) fun x hx ↦ absurd hx (Finset.notMem_empty x)).symm.trans
-    (DRS.realize_toFormula K f').symm
+    (v : V → M) : K.toFormula.Realize v ↔ ∃ f : V → M, f ⊨[.assignment M] K := by
+  rw [DRS.realize_toFormula, DRS.mem_dom_eval_assignment_iff_of_isProper hK]
 
 end DRT

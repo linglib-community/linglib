@@ -130,8 +130,8 @@ theorem range_support_ssubset_supClosed [Nonempty Atom] :
       SupClosed (PointedTeam.mk W M ⁻¹' Q) := by
     rintro s (hs | hs) t (ht | ht)
     · exact .inl (supClosed_support M ψ hs ht)
-    · rw [(support_falsum M t).1 ht, Finset.sup_eq_union, Finset.union_empty]; exact .inl hs
-    · rw [(support_falsum M s).1 hs, Finset.sup_eq_union, Finset.empty_union]; exact .inl ht
+    · rw [(support_falsum M t).1 ht, Finset.union_empty]; exact .inl hs
+    · rw [(support_falsum M s).1 hs, Finset.empty_union]; exact .inl ht
     · rw [(support_falsum M s).1 hs, (support_falsum M t).1 ht]
       exact .inr ((support_falsum M _).2 (Finset.union_empty _))
   have hinv : BoundedBisimInvariant Q := ⟨0, by

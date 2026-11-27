@@ -6,7 +6,7 @@ public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Data.Examples.Ochs1992
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.StructureDataset.Ochs1992
-public import Linglib.Fragments.Japanese.Particles
+public import Linglib.Languages.Japanese.Particles
 public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 
 /-!
@@ -59,6 +59,8 @@ later *maaloo* changes what a past activity has been](##credited_exchange).
 @[expose] public section
 
 namespace Ochs1992
+
+open Examples (Stance Gender)
 
 open MeasureTheory ProbabilityTheory
 open CLDF.StructureDataset (Language Coded)
@@ -200,48 +202,28 @@ end Model
 
 section Japanese
 
-/-- The stances that the particles of Figure 14.1 directly index. -/
-inductive Stance where
-  | coarseIntensity
-  | delicateIntensity
-  deriving DecidableEq, Fintype
-
-/-- The genders of the figure's indirect indexes, a male and a female "voice". -/
-inductive Gender where
-  | male
-  | female
-  deriving DecidableEq, Fintype
-
 instance : MeasurableSpace Stance := ⊤
 instance : DiscreteMeasurableSpace Stance := ⟨fun _ ↦ trivial⟩
 instance : MeasurableSpace Gender := ⊤
 instance : DiscreteMeasurableSpace Gender := ⟨fun _ ↦ trivial⟩
-instance : MeasurableSpace Particle := ⊤
-instance : DiscreteMeasurableSpace Particle := ⟨fun _ ↦ trivial⟩
+instance : MeasurableSpace Clause.Marker := ⊤
+instance : DiscreteMeasurableSpace Clause.Marker := ⟨fun _ ↦ trivial⟩
 
 /-- The rows of Figure 14.1 with their particles. -/
-def figure141 : List (Datum × Particle) := [(Examples.ze, ze), (Examples.wa, wa)]
-
-/-- The direct index a row of Figure 14.1 prints. -/
-def direct (d : Datum) : Option Stance :=
-  d.parse? "directIndex"
-    [("coarse intensity", .coarseIntensity), ("delicate intensity", .delicateIntensity)]
-
-/-- The indirect index a row of Figure 14.1 prints. -/
-def voice (d : Datum) : Option Gender :=
-  d.parse? "indirectIndex" [("male voice", .male), ("female voice", .female)]
+def figure141 : List (Datum × Clause.Marker) := [(Examples.ze, ze), (Examples.wa, wa)]
 
 example : ∀ x ∈ figure141, x.1.primaryText = x.2.form := by decide
 
-variable {η : Kernel Stance Particle} [IsFiniteKernel η]
+variable {η : Kernel Stance Clause.Marker} [IsFiniteKernel η]
   {κ : Kernel Gender Stance} [IsMarkovKernel κ]
 
 /-- Given the direct indexes of Figure 14.1 and one difference between men and women, in coarse
 intensity, each particle is used more by the gender of its indirect index (pp. 341-342). -/
 theorem rows_figure_14_1
-    (hη : ∀ x ∈ figure141, ∀ s, direct x.1 = some s → ExclusivelyIndexes η x.2 s)
+    (hη : ∀ x ∈ figure141, ∀ s, Examples.directIndex x.1 = some s → ExclusivelyIndexes η x.2 s)
     (h : κ .female {.coarseIntensity} < κ .male {.coarseIntensity}) :
-    ∀ x ∈ figure141, ∀ g, voice x.1 = some g → ∀ g' ≠ g, (η ∘ₖ κ) g' {x.2} < (η ∘ₖ κ) g {x.2} := by
+    ∀ x ∈ figure141, ∀ g, Examples.indirectIndex x.1 = some g →
+      ∀ g' ≠ g, (η ∘ₖ κ) g' {x.2} < (η ∘ₖ κ) g {x.2} := by
   have hze : ExclusivelyIndexes η ze .coarseIntensity :=
     hη (Examples.ze, ze) (by simp [figure141]) _ (by decide)
   have hwa : ExclusivelyIndexes η wa .delicateIntensity :=
@@ -420,7 +402,7 @@ private theorem stanceRates_lt : stanceRates .female {.coarseIntensity} <
   exact ENNReal.div_lt_div_right (by simp) (by simp) (by norm_num)
 
 /-- Each stance realized by its particle. -/
-private noncomputable def particleOf : Kernel Stance Particle :=
+private noncomputable def particleOf : Kernel Stance Clause.Marker :=
   Kernel.deterministic (fun s ↦ match s with | .coarseIntensity => ze | .delicateIntensity => wa)
     .of_discrete
 

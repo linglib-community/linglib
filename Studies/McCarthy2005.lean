@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Indices
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenFactors
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Data.Wordlist.McCarthy2005
 public import Studies.Benua1997
@@ -42,7 +43,7 @@ under the paper's ranking.
 
 namespace McCarthy2005
 
-open OptimalityTheory
+open OptimalityTheory Subregular
 
 variable {α ι : Type*}
 
@@ -453,11 +454,18 @@ Benua puts the Tiberian Hebrew gutturals. -/
 def schwaOpen (w : List Seg) : ℕ :=
   ((syllabify w).filter fun σ ↦ σ.nucleus = .schwa ∧ σ.coda = []).length
 
+/-- The factors of three consonants in a row. -/
+def cccFactors : Set (Augmented Seg) :=
+  {f | ∃ c₁ c₂ c₃, ¬ IsVowel c₁ ∧ ¬ IsVowel c₂ ∧ ¬ IsVowel c₃ ∧ f = [some c₁, some c₂, some c₃]}
+
+instance : DecidablePred (· ∈ cccFactors) := fun f ↦ match f with
+  | [some c₁, some c₂, some c₃] =>
+    decidable_of_iff (¬ IsVowel c₁ ∧ ¬ IsVowel c₂ ∧ ¬ IsVowel c₃) (by simp [cccFactors])
+  | [] | [_] | [_, _] | [none, _, _] | [some _, none, _] | [some _, some _, none]
+  | _ :: _ :: _ :: _ :: _ => isFalse (by simp [cccFactors])
+
 /-- \*CCC. -/
-def ccc : List Seg → ℕ
-  | c₁ :: c₂ :: c₃ :: rest =>
-    (if ¬IsVowel c₁ ∧ ¬IsVowel c₂ ∧ ¬IsVowel c₃ then 1 else 0) + ccc (c₂ :: c₃ :: rest)
-  | _ => 0
+def ccc : Constraint (List Seg) := Constraint.ofForbiddenFactors 3 cccFactors
 
 /-- The class of a segment on the sonority scale of [benua-1997]. -/
 def Seg.toBenua : Seg → Benua1997.Hebrew.Seg
@@ -475,7 +483,7 @@ def sonority (c : Seg) : ℕ := Benua1997.Hebrew.sonority c.toBenua
 /-- Whether SONCON (30) wants a schwa before `c₂ c₃`: `c₂` is more sonorous than `c₃`, or the
 two are a geminate. -/
 def SchwaFirst (c₂ c₃ : Seg) : Prop :=
-  c₂ = c₃ ∨ Phonology.Sonority.profile sonority c₂ c₃ = .gt
+  c₂ = c₃ ∨ sonority c₃ < sonority c₂
 
 instance (c₂ c₃ : Seg) : Decidable (SchwaFirst c₂ c₃) := inferInstanceAs (Decidable (_ ∨ _))
 

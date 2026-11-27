@@ -1,4 +1,43 @@
-[
+{
+  "features": [
+    {
+      "key": "construction",
+      "lean": "construction",
+      "type": "Construction",
+      "doc": "The clause types whose examples the paper judges.",
+      "levels": [
+        {
+          "name": "englishV1",
+          "label": "English V1",
+          "doc": "English V1"
+        },
+        {
+          "name": "hungarianE",
+          "label": "Hungarian e",
+          "doc": "Hungarian e"
+        }
+      ]
+    },
+    {
+      "key": "dimension",
+      "lean": "dimension",
+      "type": "Dimension",
+      "doc": "The dimension a bias is drawn from.",
+      "levels": [
+        {
+          "name": "evidential",
+          "label": "evidential",
+          "doc": "evidential"
+        },
+        {
+          "name": "epistemic",
+          "label": "epistemic",
+          "doc": "epistemic"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "gg2017_1",
     "source": {
@@ -299,3 +338,4 @@
     "verified": "page-image"
   }
 ]
+}

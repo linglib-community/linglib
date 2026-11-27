@@ -266,7 +266,7 @@ def ex_14a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Dia datang [(sambil) sedang menangis].", .ungrammatical)]
+    contrasts := [("Dia datang [(sambil) sedang menangis].", .nearlyUngrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -281,7 +281,7 @@ def ex_15a : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("Saya belajar bisa [menembak].", .ungrammatical)]
+    contrasts := [("Saya belajar bisa [menembak].", .nearlyUngrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -757,7 +757,7 @@ def ex_52a : Datum :=
     lgrConformance := some .morphemeAligned
     context := ""
     judgment := .acceptable
-    contrasts := [("[Kamu pembohong] adalah katanya.", .ungrammatical)]
+    contrasts := [("[Kamu pembohong] adalah katanya.", .nearlyUngrammatical)]
     readings := []
     paperFeatures := [] }
 
@@ -770,7 +770,7 @@ def ex_52b : Datum :=
     glossedTokens := []
     context := ""
     judgment := .acceptable
-    contrasts := [("katanya adalah [kamu pembohong].", .ungrammatical)]
+    contrasts := [("katanya adalah [kamu pembohong].", .nearlyUngrammatical)]
     readings := []
     paperFeatures := [] }
 

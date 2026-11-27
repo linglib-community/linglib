@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Set.Sups
 public import Linglib.Logic.Team.Inquisitive
-public import Linglib.Logic.Truthmaker.Bilateral
+public import Linglib.Logic.Truthmaker.Formula
 public import Mathlib.Data.Fintype.Order
 
 /-!
@@ -11,7 +11,7 @@ public import Mathlib.Data.Fintype.Order
 Bilateral state-based logic (BSL) evaluates a formula at a team, a set of classical valuations, by
 support and antisupport. Modal information logic (MIL) is a classical modal logic of
 join-semilattices, whose binary modality $\langle\mathrm{sup}\rangle$ is true at the joins of a
-point satisfying each argument; truthmaker conjunction [is this modality](##TSFormula.den_tr) and
+point satisfying each argument; truthmaker conjunction [is this modality](##denote_tr) and
 so is BSL's disjunction. An entailment [holds in BSL exactly when its translation
 holds](##consequence_iff) in MIL over distributive semilattices, under a theory $\Gamma$ fixing the
 behaviour of the letters, and [likewise for inquisitive logic](##inquisitive_consequence_iff). The
@@ -731,52 +731,37 @@ theorem M3.not_faithful :
 
 /-! ### The truthmaker translation -/
 
-/-- The formulas of propositional truthmaker logic. -/
-inductive TSFormula (Atom : Type*) where
-  | atom (p : Atom)
-  | neg (φ : TSFormula Atom)
-  | conj (φ ψ : TSFormula Atom)
-  | disj (φ ψ : TSFormula Atom)
-
-namespace TSFormula
-
-variable {S : Type*} [SemilatticeSup S]
-
-/-- The bilateral proposition a truthmaker formula expresses at a valuation `V = (V⁺, V⁻)`. -/
-def den (V : Atom × Bool → Set S) : TSFormula Atom → Set S ⊙ Set S
-  | atom p => .mk (V (p, true)) (V (p, false))
-  | neg φ => (φ.den V)ᶜ
-  | conj φ ψ => Truthmaker.conj (φ.den V) (ψ.den V)
-  | disj φ ψ => Truthmaker.disj (φ.den V) (ψ.den V)
+/-- The valuation of bilateral propositions that `V = (V⁺, V⁻)` gives the letters. -/
+def bilateral {S : Type*} (V : Atom × Bool → Set S) (p : Atom) : Set S ⊙ Set S :=
+  .mk (V (p, true)) (V (p, false))
 
 mutual
 
 /-- The translation of truthmaking into modal information logic. -/
-def trPos : TSFormula Atom → MIL (Atom × Bool)
-  | atom p => .atom (p, true)
-  | neg φ => φ.trNeg
-  | conj φ ψ => .sup φ.trPos ψ.trPos
-  | disj φ ψ => .or φ.trPos ψ.trPos
+def trPos : Truthmaker.Formula Atom → MIL (Atom × Bool)
+  | .atom p => .atom (p, true)
+  | .neg φ => trNeg φ
+  | .conj φ ψ => .sup (trPos φ) (trPos ψ)
+  | .disj φ ψ => .or (trPos φ) (trPos ψ)
 
 /-- The translation of falsemaking into modal information logic. -/
-def trNeg : TSFormula Atom → MIL (Atom × Bool)
-  | atom p => .atom (p, false)
-  | neg φ => φ.trPos
-  | conj φ ψ => .or φ.trNeg ψ.trNeg
-  | disj φ ψ => .sup φ.trNeg ψ.trNeg
+def trNeg : Truthmaker.Formula Atom → MIL (Atom × Bool)
+  | .atom p => .atom (p, false)
+  | .neg φ => trPos φ
+  | .conj φ ψ => .or (trNeg φ) (trNeg ψ)
+  | .disj φ ψ => .sup (trNeg φ) (trNeg ψ)
 
 end
 
-end TSFormula
-
 -- Theorem 2.1: the translation of a truthmaker formula is true at its verifiers
-theorem TSFormula.den_tr {S : Type*} [SemilatticeSup S] (V : Atom × Bool → Set S)
-    (φ : TSFormula Atom) :
-    MIL.den V φ.trPos = (φ.den V).pro ∧ MIL.den V φ.trNeg = (φ.den V).con := by
+theorem denote_tr {S : Type*} [SemilatticeSup S] (V : Atom × Bool → Set S)
+    (φ : Truthmaker.Formula Atom) :
+    MIL.den V (trPos φ) = (φ.denote (bilateral V)).pro ∧
+      MIL.den V (trNeg φ) = (φ.denote (bilateral V)).con := by
   induction φ with
   | atom p => exact ⟨rfl, rfl⟩
   | neg φ ih => exact ⟨ih.2, ih.1⟩
   | conj φ ψ ih₁ ih₂ | disj φ ψ ih₁ ih₂ =>
-    simp [TSFormula.trPos, TSFormula.trNeg, TSFormula.den, ih₁.1, ih₁.2, ih₂.1, ih₂.2]
+    simp [trPos, trNeg, ih₁.1, ih₁.2, ih₂.1, ih₂.2]
 
 end AloniEtAl2026

@@ -12,21 +12,18 @@ public import Linglib.Core.Probability.CDF
 # The logistic distribution
 
 The standard logistic distribution is the probability measure on `ℝ` whose distribution function is
-the sigmoid `σ x = 1 / (1 + exp (-x))`. It is the Stieltjes measure of `Real.sigmoid`, so its cdf is
-the sigmoid (`cdf_logisticMeasure`) and the log-odds `Real.logit` invert the distribution function
-on `(0, 1)`. Since the sigmoid is continuous, strictly monotone and satisfies `σ (-x) = 1 - σ x`,
-the distribution has no atoms, charges every nonempty open set and is symmetric about `0`, so the
-regularity results of `Linglib/Core/Probability/CDF.lean` apply to it. `[UPSTREAM]` candidate for
-`Mathlib/Probability/Distributions/Logistic.lean`.
+the sigmoid `σ x = 1 / (1 + exp (-x))`. It is the Stieltjes measure of `Real.sigmoid`, so [its cdf
+is the sigmoid](##ProbabilityTheory.cdf_logisticMeasure_eq). Since the sigmoid is continuous,
+strictly monotone and satisfies `σ (-x) = 1 - σ x`, the distribution has no atoms, charges every
+nonempty open set and is symmetric about `0`, and [its quantile function is the
+log-odds](##ProbabilityTheory.quantile_logisticMeasure) `Real.logit`.
 
-## Main definitions
+## Implementation notes
 
-* `ProbabilityTheory.logisticMeasure`: the standard logistic distribution.
-
-## Main results
-
-* `ProbabilityTheory.cdf_logisticMeasure`: the cdf of the standard logistic distribution is the
-  sigmoid.
+Mathlib's distributions on `ℝ` are families defined by a density with respect to the Lebesgue
+measure. This file has the standard member of the logistic family only, defined from its
+distribution function; [its density is
+`σ x * (1 - σ x)`](##ProbabilityTheory.logisticMeasure_eq_withDensity).
 -/
 
 @[expose] public section
@@ -35,34 +32,48 @@ open MeasureTheory
 
 namespace ProbabilityTheory
 
-/-- The sigmoid as a Stieltjes function. -/
-noncomputable def sigmoidStieltjes : StieltjesFunction ℝ where
-  toFun := Real.sigmoid
-  mono' := Real.sigmoid_monotone
-  right_continuous' _ := continuous_sigmoid.continuousWithinAt
-
-@[simp]
-theorem sigmoidStieltjes_apply (x : ℝ) : sigmoidStieltjes x = Real.sigmoid x := rfl
-
 /-- The standard logistic distribution, the probability measure whose distribution function is the
 sigmoid. -/
-noncomputable def logisticMeasure : Measure ℝ := sigmoidStieltjes.measure
+noncomputable def logisticMeasure : Measure ℝ :=
+  StieltjesFunction.measure
+    ⟨Real.sigmoid, Real.sigmoid_monotone, fun _ ↦ continuous_sigmoid.continuousWithinAt⟩
 
 instance : IsProbabilityMeasure logisticMeasure :=
-  sigmoidStieltjes.isProbabilityMeasure Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop
+  StieltjesFunction.isProbabilityMeasure _ Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop
 
-theorem cdf_logisticMeasure (x : ℝ) : cdf logisticMeasure x = Real.sigmoid x := by
-  rw [logisticMeasure,
-    cdf_measure_stieltjesFunction _ Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop,
-    sigmoidStieltjes_apply]
+theorem coe_cdf_logisticMeasure : ⇑(cdf logisticMeasure) = Real.sigmoid :=
+  congrArg (⇑) <|
+    cdf_measure_stieltjesFunction _ Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop
+
+theorem cdf_logisticMeasure_eq (x : ℝ) : cdf logisticMeasure x = Real.sigmoid x :=
+  congrFun coe_cdf_logisticMeasure x
 
 instance : NullSingletonClass logisticMeasure :=
-  sigmoidStieltjes.continuous_iff_nullSingletonClass.1 continuous_sigmoid
+  (continuous_cdf_iff _).1 <| coe_cdf_logisticMeasure ▸ continuous_sigmoid
 
 instance : logisticMeasure.IsOpenPosMeasure :=
-  sigmoidStieltjes.strictMono_iff_isOpenPosMeasure.1 Real.sigmoid_strictMono
+  (strictMono_cdf_iff _).1 <| coe_cdf_logisticMeasure ▸ Real.sigmoid_strictMono
 
 instance : logisticMeasure.IsNegInvariant :=
-  (isNegInvariant_iff_cdf_neg _).2 fun x ↦ by simp only [cdf_logisticMeasure, Real.sigmoid_neg]
+  (isNegInvariant_iff_cdf_neg _).2 fun x ↦ by
+    simp only [cdf_logisticMeasure_eq, Real.sigmoid_neg]
+
+/-- The standard logistic distribution has density `σ x * (1 - σ x)`. -/
+theorem logisticMeasure_eq_withDensity :
+    logisticMeasure =
+      volume.withDensity fun x ↦ ENNReal.ofReal (Real.sigmoid x * (1 - Real.sigmoid x)) := by
+  have hf : (0 : ℝ → ℝ) ≤ fun x ↦ Real.sigmoid x * (1 - Real.sigmoid x) := fun x ↦
+    mul_nonneg (Real.sigmoid_nonneg x) (sub_nonneg.2 (Real.sigmoid_le_one x))
+  have := isProbabilityMeasure_withDensity_of_hasDerivAt Real.hasDerivAt_sigmoid hf
+    Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop
+  refine Measure.eq_of_cdf _ _ (StieltjesFunction.ext fun x ↦ ?_)
+  rw [cdf_logisticMeasure_eq, cdf_withDensity_of_hasDerivAt Real.hasDerivAt_sigmoid hf
+    Real.tendsto_sigmoid_atBot Real.tendsto_sigmoid_atTop]
+
+/-- The quantile function of the standard logistic distribution is the log-odds. -/
+theorem quantile_logisticMeasure {p : ℝ} (hp : p ∈ Set.Ioo 0 1) :
+    quantile logisticMeasure p = Real.logit p := by
+  obtain ⟨x, rfl⟩ : p ∈ Set.range Real.sigmoid := Real.range_sigmoid ▸ hp
+  rw [← cdf_logisticMeasure_eq, quantile_cdf, cdf_logisticMeasure_eq, Real.logit_sigmoid]
 
 end ProbabilityTheory

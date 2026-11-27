@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Restriction
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Restriction
 public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Studies.Spector2007
 
@@ -8,27 +9,43 @@ public import Studies.Spector2007
 # Fagen (2026): Order selection: the logical foundations of exhaustivity
 
 Fagen derives the exhaustive interpretation of an answer from its meaning and the question, with
-no alternative sentences: an answer holds in the best worlds where it is true, and what varies is
-the order that ranks them. The default order minimizes the question-property, as [the
-minimal-worlds exhaustifier](##Fagen2026.exh_ltDefault) does; the hybrid order minimizes it within
-an answer's positive restriction and maximizes it within the negative one, [concluding nothing
-outside](##Fagen2026.mem_exh_ltHybrid_iff_of_inter), so that *some of the linguists but not all
-of the computer scientists* [says that exactly one linguist and all but one computer scientist
-attended](##Fagen2026.exh_selectedOrder_someButNotAll). Fagen selects the default order by
-positive skew, [Spector's quasi-positivity](##Fagen2026.quasiPositive_iff_positivelySkewed), and
-derives the choice from Preserve Restriction; yet when something lies outside an answer's
-restriction, the default order preserves it [exactly when the answer's minimal sets cover
-it](##Fagen2026.preservesRestriction_ltDefault_iff), which positive skew does not ensure.
+no alternative sentences. An answer is a quantifier `T` over individuals and a question a property
+`P` of individuals that varies with the world. The answer is interpreted as holding in the worlds
+where `T (P w)` is true and no world where it is true is better; what varies is the order that
+ranks the worlds.
+
+The default order prefers a smaller extension of the question-property. Under it, exhaustive
+interpretation is the minimal-worlds exhaustifier over the propositions that each individual has
+the property. The hybrid order prefers a smaller extension within the answer's positive
+restriction and a larger one within its negative restriction, and it treats alike two worlds that
+agree within the answer's restriction. So *some of the linguists but not all of the computer
+scientists* says that exactly one linguist and all but one computer scientist have the property.
+The dual order prefers a larger extension; interpreting an answer under it is interpreting the
+inner negation of the answer under the default order for the complement of the question-property.
+The hybrid order contains the strict part of the ordering whose premises are that the individuals
+of the positive restriction lack the property and those of the negative restriction have it, so
+it excludes at least the worlds that ordering excludes, and for some answers it excludes more.
+The premises of that ordering are unchanged when the answer and the question-property are flipped
+together within a set of individuals, exchanging having the property and lacking it there, so
+its minimal worlds are unchanged as well. Exhaustive interpretation under the hybrid order is not
+unchanged by such a flip.
+
+An answer takes the default order when it is positively skewed, its restriction being its positive
+restriction, which is Spector's quasi-positivity, and the hybrid order otherwise. The two
+negations of a quantifier exchange positive and negative skew. When something lies outside an
+answer's restriction, the default order preserves the restriction if and only if the answer's
+minimal sets cover it.
 
 ## Implementation notes
 
-* An answer is a quantifier `T` over individuals and the question a property `P : W → Set E` of
-  worlds; exhaustive interpretation `exh P T r` takes the order `r` as a parameter, as (29) does.
+* Exhaustive interpretation `exh P T r` takes the order `r` as a parameter, as (29) does.
 * The worked examples take the worlds to be all extensions of the question-property, as Fagen's
   diagrams do. There the restriction operators over property intensions that Preserve Restriction
   applies to an exhaustified answer (25) are those of `exh id T r` as a quantifier.
 * A proposition of Spector's question-relative language, a set of valuations of the atoms, is a
   quantifier over the atoms, `quantifierOf`.
+* The hybrid relation (31d) is asymmetric. It is not transitive, as `not_transitive_ltHybrid`
+  shows with three linguists and three computer scientists.
 
 ## TODO
 
@@ -36,13 +53,19 @@ it](##Fagen2026.preservesRestriction_ltDefault_iff), which positive skew does no
   participants might assume (§3.2.1), are not formalized; nor are answers to second-order
   questions (§2.4) or the conditions under which the dual order is chosen (§3.3).
 * The answers of Table 3.1 are not recorded as data.
+* Whether the hybrid order can leave an answer that holds somewhere with no exhaustive world. The
+  relation (31d), with arbitrary sets of five individuals in place of the two restrictions, can have
+  cycles, so the finiteness argument that gives minimal worlds for a premise ordering does not
+  apply to it.
+* That the minimal worlds of the ordering by the two restrictions depend on exactly the individuals
+  the answer depends on. This holds by enumeration for every answer on up to four individuals and
+  is not proved.
 
 ## References
 
-* [L. Fagen, *Order selection: the logical foundations of exhaustivity* (2026)][fagen-2026]
-* [B. Spector, *Scalar implicatures: exhaustivity and Gricean reasoning* (2007)][spector-2007]
-* [J. Groenendijk and M. Stokhof, *Studies on the semantics of questions and the pragmatics of
-  answers* (1984)][groenendijk-stokhof-1984]
+* [fagen-2026]
+* [spector-2007]
+* [groenendijk-stokhof-1984]
 -/
 
 @[expose] public section
@@ -92,6 +115,13 @@ theorem positivelySkewed_of_monotone (hT : Monotone T) : PositivelySkewed T :=
 theorem negativelySkewed_of_antitone (hT : Antitone T) : NegativelySkewed T :=
   negativelySkewed_iff.2 (positiveRestriction_eq_empty_of_antitone hT ▸ empty_subset _)
 
+-- the two negations exchange positive and negative skew
+theorem positivelySkewed_compl_iff : PositivelySkewed Tᶜ ↔ NegativelySkewed T := by
+  rw [PositivelySkewed, NegativelySkewed, restriction_compl, positiveRestriction_compl]
+
+theorem negativelySkewed_compl_iff : NegativelySkewed Tᶜ ↔ PositivelySkewed T := by
+  rw [PositivelySkewed, NegativelySkewed, restriction_compl, negativeRestriction_compl]
+
 end Restriction
 
 /-! ### Orders over worlds (§2.1, §2.3, §3.3) -/
@@ -135,13 +165,23 @@ open Exhaustification in
 propositions that the question-property holds of each individual ((83)). -/
 theorem exh_ltDefault :
     exh P T (ltDefault P) = exhMW (range fun x ↦ {w | x ∈ P w}) {w | T (P w)} := by
-  have h : ∀ v w, Preorder.satisfied (· ∈ ·) (range fun x ↦ {w | x ∈ P w}) v ⊆
-      Preorder.satisfied (· ∈ ·) (range fun x ↦ {w | x ∈ P w}) w ↔ P v ⊆ P w := fun v w ↦ by
-    simp only [subset_def, Preorder.mem_satisfied, mem_range, forall_exists_index, and_imp,
+  have h : ∀ v w, {a ∈ (range fun x ↦ {w | x ∈ P w}) | v ∈ a} ⊆
+      {a ∈ (range fun x ↦ {w | x ∈ P w}) | w ∈ a} ↔ P v ⊆ P w := fun v w ↦ by
+    simp only [subset_def, Set.mem_ofPred_eq, mem_range, forall_exists_index, and_imp,
       forall_apply_eq_imp_iff, exists_apply_eq_apply, true_and, mem_ofPred_eq]
   ext w
   simp only [exh, mem_exhMW, MinimalFor, mem_ofPred_eq, h, ltDefault, ssubset_def, not_exists,
     not_and, not_not]
+
+-- §3.3: the dual order is the default order for the inner negation of the answer and the
+-- complement of the question-property
+theorem exh_ltDual :
+    exh P T (ltDual P) =
+      exh (fun w ↦ (P w)ᶜ) T.innerNeg (ltDefault fun w ↦ (P w)ᶜ) := by
+  ext w
+  simp only [exh, mem_ofPred_eq, ltDual, ltDefault, innerNeg_apply, compl_compl]
+  exact and_congr_right fun _ ↦ not_congr <| exists_congr fun v ↦ and_congr_right fun _ ↦
+    compl_lt_compl_iff_lt.symm
 
 -- p. 70: the hybrid order is antisymmetric
 theorem ltHybrid_asymm {v w : W} (h : ltHybrid P T v w) : ¬ ltHybrid P T w v :=
@@ -167,6 +207,28 @@ theorem mem_exh_ltHybrid_iff_of_inter [Finite E] {w w' : W}
     rw [livesOn_restriction T (P w), livesOn_restriction T (P w'), inter_comm, h,
       inter_comm]
   simp only [exh, mem_ofPred_eq, hT, ltHybrid_iff_of_inter_eq rfl h]
+
+open Exhaustification in
+open scoped PremiseOrdering in
+-- the hybrid order contains the strict part of the ordering by the answer's two restrictions
+theorem ltHybrid_of_lt {v w : W}
+    (h : v <[(fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
+      (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction] w) : ltHybrid P T v w := by
+  rw [Preorder.ofLowerSets_lt_iff, ofLowerSets_image_union_le_iff,
+    ofLowerSets_image_union_le_iff] at h
+  obtain ⟨⟨hp, hn⟩, hne⟩ := h
+  refine ⟨(not_and_or.1 hne).elim (fun h ↦ .inl ⟨hp, h⟩) fun h ↦ .inr ⟨hn, h⟩, ?_⟩
+  rintro (h | h)
+  exacts [h.2 hp, h.2 hn]
+
+open scoped PremiseOrdering in
+-- so exhaustive interpretation under the hybrid order keeps only worlds minimal in that ordering
+theorem exh_ltHybrid_subset :
+    exh P T (ltHybrid P T) ⊆
+      (≤[(fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
+        (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction]).minimals {w | T (P w)} :=
+  fun _ ⟨hw, hmin⟩ ↦ ⟨hw, fun v hv hvw ↦ by_contra fun hwv ↦
+    hmin ⟨v, hv, ltHybrid_of_lt ⟨hvw, hwv⟩⟩⟩
 
 theorem not_ltHybrid_of_eq (h : T.positiveRestriction = T.negativeRestriction) (v w : W) :
     ¬ ltHybrid P T v w := fun ⟨hvw, hwv⟩ ↦ hwv <| by
@@ -280,20 +342,23 @@ theorem exh_ltDual_not (b : E) : exh id (fun S ↦ b ∉ S) (ltDual id) = {{b}�
 variable {L C : Set E}
 
 /-- *Some of the `L` but not all of the `C`*. -/
-def someButNotAll (L C : Set E) : Quantifier E := fun S ↦ (S ∩ L).Nonempty ∧ ¬ C ⊆ S
+def someButNotAll (L C : Set E) : Quantifier E := Det.some L ⊓ (Det.every C)ᶜ
+
+theorem someButNotAll_apply {S : Set E} : someButNotAll L C S ↔ (L ∩ S).Nonempty ∧ ¬ C ⊆ S :=
+  Iff.rfl
 
 theorem positiveRestriction_someButNotAll (hLC : Disjoint L C) (hC : C.Nonempty) :
     positiveRestriction (someButNotAll L C) = L := by
   ext x
   constructor
-  · rintro ⟨S, hS, ⟨y, hyS, hyL⟩, hCS⟩
+  · rintro ⟨S, hS, ⟨y, hyL, hyS⟩, hCS⟩
     by_contra hx
-    refine hS ⟨⟨y, ?_, hyL⟩, fun h ↦ hCS (h.trans (subset_insert x S))⟩
+    refine hS ⟨⟨y, hyL, ?_⟩, fun h ↦ hCS (h.trans (subset_insert x S))⟩
     rcases hyS with rfl | hyS
     · exact absurd hyL hx
     · exact hyS
   · intro hx
-    refine ⟨∅, fun h ↦ (h.1.ne_empty (by simp)), ⟨x, by simp, hx⟩, fun h ↦ ?_⟩
+    refine ⟨∅, fun h ↦ (h.1.ne_empty (by simp)), ⟨x, hx, by simp⟩, fun h ↦ ?_⟩
     obtain ⟨c, hc⟩ := hC
     have hcx : c = x := by simpa using h hc
     exact hLC.ne_of_mem hx (hcx ▸ hc) rfl
@@ -302,12 +367,12 @@ theorem negativeRestriction_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
     negativeRestriction (someButNotAll L C) = C := by
   ext x
   constructor
-  · rintro ⟨S, hS, ⟨y, hyS, hyL⟩, hCS⟩
+  · rintro ⟨S, hS, ⟨y, hyL, hyS⟩, hCS⟩
     by_contra hx
-    exact hS ⟨⟨y, hyS.1, hyL⟩, fun h ↦ hCS fun c hc ↦ ⟨h hc, fun hcx ↦ hx (hcx ▸ hc)⟩⟩
+    exact hS ⟨⟨y, hyL, hyS.1⟩, fun h ↦ hCS fun c hc ↦ ⟨h hc, fun hcx ↦ hx (hcx ▸ hc)⟩⟩
   · intro hx
     obtain ⟨l, hl⟩ := hL
-    refine ⟨L ∪ C, fun h ↦ h.2 subset_union_right, ⟨l, ⟨.inl hl, ?_⟩, hl⟩, fun h ↦ ?_⟩
+    refine ⟨L ∪ C, fun h ↦ h.2 subset_union_right, ⟨l, hl, .inl hl, ?_⟩, fun h ↦ ?_⟩
     · rintro rfl
       exact hLC.ne_of_mem hl hx rfl
     · exact (h hx).2 rfl
@@ -332,9 +397,9 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
     simp only [ltHybrid, leHybrid, ltPos, ltNeg, positiveRestriction_someButNotAll hLC hC,
       negativeRestriction_someButNotAll hLC hL, id]
   ext S
-  simp only [exh, mem_ofPred_eq, id, hlt, someButNotAll]
+  simp only [exh, mem_ofPred_eq, id, hlt, someButNotAll_apply]
   constructor
-  · rintro ⟨⟨⟨y, hyS, hyL⟩, hCS⟩, hmin⟩
+  · rintro ⟨⟨⟨y, hyL, hyS⟩, hCS⟩, hmin⟩
     obtain ⟨c, hcC, hcS⟩ := not_subset.1 hCS
     refine ⟨⟨y, eq_singleton_iff_unique_mem.2 ⟨⟨hyS, hyL⟩, fun l ⟨hlS, hlL⟩ ↦ ?_⟩⟩,
       ⟨c, eq_singleton_iff_unique_mem.2 ⟨⟨hcC, hcS⟩, fun d ⟨hdC, hdS⟩ ↦ ?_⟩⟩⟩
@@ -345,7 +410,7 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
       have hvC : ∀ z ∈ C, z ∈ (S \ L) ∪ {y} ↔ z ∈ S := fun z hzC ↦
         ⟨fun h ↦ h.elim And.left fun h ↦ absurd (h ▸ hyL) (fun h' ↦ hd z h' hzC),
           fun h ↦ .inl ⟨h, fun h' ↦ hd z h' hzC⟩⟩
-      refine hmin ⟨(S \ L) ∪ {y}, ⟨⟨y, .inr rfl, hyL⟩, fun h ↦ hcS ((hvC c hcC).1 (h hcC))⟩,
+      refine hmin ⟨(S \ L) ∪ {y}, ⟨⟨y, hyL, .inr rfl⟩, fun h ↦ hcS ((hvC c hcC).1 (h hcC))⟩,
         .inl (ssubset_iff_of_subset (fun z (hz : z ∈ ((S \ L) ∪ {y}) ∩ L) ↦
           hvL z hz.1 hz.2 ▸ ⟨hyS, hyL⟩) |>.2
           ⟨l, ⟨hlS, hlL⟩, fun ⟨hl, _⟩ ↦ hly (hvL l hl hlL)⟩), ?_⟩
@@ -355,7 +420,7 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
         exact hz ⟨(hvC z hzC).2 hzS, hzC⟩
     · -- a second missing computer scientist: add `d`
       by_contra hdc
-      refine hmin ⟨insert d S, ⟨⟨y, .inr hyS, hyL⟩, fun h ↦ (h hcC).elim
+      refine hmin ⟨insert d S, ⟨⟨y, hyL, .inr hyS⟩, fun h ↦ (h hcC).elim
           (fun h ↦ hdc h.symm) hcS⟩,
         .inr (ssubset_iff_of_subset (fun z (hz : z ∈ S ∩ C) ↦ (⟨.inr hz.1, hz.2⟩ :
           z ∈ insert d S ∩ C)) |>.2
@@ -366,11 +431,11 @@ theorem exh_selectedOrder_someButNotAll (hLC : Disjoint L C) (hL : L.Nonempty)
       · exact hdS (h.subset ⟨.inl rfl, hdC⟩).1
   · rintro ⟨⟨l, hl⟩, c, hc⟩
     have hcm : c ∈ C \ S := hc.symm ▸ mem_singleton c
-    refine ⟨⟨⟨l, hl.symm ▸ mem_singleton l⟩, fun h ↦ hcm.2 (h hcm.1)⟩,
+    refine ⟨⟨⟨l, And.symm (hl.symm ▸ mem_singleton l : l ∈ S ∩ L)⟩, fun h ↦ hcm.2 (h hcm.1)⟩,
       fun ⟨v, ⟨hvL, hCv⟩, h, _⟩ ↦ ?_⟩
     rcases h with h | h
     · rw [hl, ssubset_singleton_iff] at h
-      exact hvL.ne_empty h
+      exact hvL.ne_empty (by rwa [inter_comm])
     · refine hCv fun z hzC ↦ ?_
       by_cases hzS : z ∈ S
       · exact (h.subset ⟨hzS, hzC⟩).1
@@ -398,10 +463,13 @@ theorem exh_ltDefault_some :
     exact singleton_subset_iff.2 hzy
 
 /-- *All or none of the `L`*. -/
-def allOrNone (L : Set E) : Quantifier E := fun S ↦ L ⊆ S ∨ Disjoint S L
+def allOrNone (L : Set E) : Quantifier E := Det.every L ⊔ Det.no L
+
+theorem allOrNone_apply {S : Set E} : allOrNone L S ↔ L ⊆ S ∨ Disjoint S L :=
+  or_congr_right subset_compl_iff_disjoint_left
 
 theorem allOrNone_livesOn : (allOrNone L).LivesOn L := fun B ↦ by
-  simp only [allOrNone, subset_inter_iff, subset_rfl, true_and]
+  simp only [allOrNone_apply, subset_inter_iff, subset_rfl, true_and]
   exact or_congr_right ⟨fun h ↦ h.mono_left inter_subset_right,
     fun h ↦ disjoint_left.2 fun z hzB hzL ↦ disjoint_left.1 h ⟨hzL, hzB⟩ hzL⟩
 
@@ -410,8 +478,8 @@ theorem positiveRestriction_allOrNone (hL : L.Nontrivial) :
   refine (positiveRestriction_subset_restriction.trans
     allOrNone_livesOn.restriction_subset).antisymm fun x hx ↦ ?_
   obtain ⟨z, hzL, hzx⟩ := hL.exists_ne x
-  refine ⟨L \ {x}, fun h ↦ h.elim (fun h ↦ (h hx).2 (mem_singleton x))
-    fun h ↦ disjoint_left.1 h ⟨hzL, hzx⟩ hzL, .inl ?_⟩
+  refine ⟨L \ {x}, fun h ↦ (allOrNone_apply.1 h).elim (fun h ↦ (h hx).2 (mem_singleton x))
+    fun h ↦ disjoint_left.1 h ⟨hzL, hzx⟩ hzL, allOrNone_apply.2 (.inl ?_)⟩
   rw [insert_sdiff_singleton]
   exact subset_insert x L
 
@@ -420,8 +488,8 @@ theorem negativeRestriction_allOrNone (hL : L.Nontrivial) :
   refine (negativeRestriction_subset_restriction.trans
     allOrNone_livesOn.restriction_subset).antisymm fun x hx ↦ ?_
   obtain ⟨z, hzL, hzx⟩ := hL.exists_ne x
-  refine ⟨{x}, fun h ↦ h.elim (fun h ↦ hzx (h hzL)) fun h ↦ disjoint_left.1 h (mem_singleton x) hx,
-    .inr ?_⟩
+  refine ⟨{x}, fun h ↦ (allOrNone_apply.1 h).elim (fun h ↦ hzx (h hzL))
+    fun h ↦ disjoint_left.1 h (mem_singleton x) hx, allOrNone_apply.2 (.inr ?_)⟩
   rw [sdiff_self]
   exact empty_disjoint L
 
@@ -430,8 +498,9 @@ theorem positivelySkewed_allOrNone (hL : L.Nontrivial) : PositivelySkewed (allOr
     ((negativeRestriction_allOrNone hL).trans (positiveRestriction_allOrNone hL).symm).subset
 
 theorem minimal_allOrNone_iff {S : Set E} : Minimal (allOrNone L) S ↔ S = ∅ :=
-  ⟨fun h ↦ subset_empty_iff.1 (h.2 (.inr (empty_disjoint L)) (empty_subset S)),
-    by rintro rfl; exact ⟨.inr (empty_disjoint L), fun _ _ _ ↦ empty_subset _⟩⟩
+  have h0 : allOrNone L ∅ := allOrNone_apply.2 (.inr (empty_disjoint L))
+  ⟨fun h ↦ subset_empty_iff.1 (h.2 h0 (empty_subset S)),
+    by rintro rfl; exact ⟨h0, fun _ _ _ ↦ empty_subset _⟩⟩
 
 -- (12): *all or none of the `L`* takes the default order and says that nothing has the property
 theorem exh_selectedOrder_allOrNone (hL : L.Nontrivial) :
@@ -488,6 +557,101 @@ theorem not_transitive_ltHybrid :
   simp only [ltHybrid, leHybrid, ltPos, ltNeg, positiveRestriction_someButNotAll hLC hC,
     negativeRestriction_someButNotAll hLC hL, ← Finset.coe_inter, Finset.coe_ssubset]
   decide
+
+/-- The answer over three individuals that holds of nobody, of exactly `0` and `1`, and of exactly
+`2`. -/
+def nonePairThird : Quantifier (Fin 3) := fun S ↦ S = ∅ ∨ S = {0, 1} ∨ S = {2}
+
+theorem nonePairThird_coe (s : Finset (Fin 3)) :
+    nonePairThird s ↔ s = ∅ ∨ s = {0, 1} ∨ s = {2} := by
+  simp only [nonePairThird, ← Finset.coe_empty, ← Finset.coe_singleton, ← Finset.coe_insert,
+    Finset.coe_inj]
+
+theorem positiveRestriction_nonePairThird :
+    nonePairThird.positiveRestriction = ↑({0, 1} : Finset (Fin 3)) := by
+  ext x
+  refine ⟨fun ⟨S, hS, hxS⟩ ↦ by_contra fun hx ↦ hS ?_, fun hx ↦ ?_⟩
+  · obtain ⟨rfl⟩ : x = 2 := by revert hx; fin_cases x <;> simp
+    rcases hxS with h | h | h
+    · exact absurd h (Set.insert_nonempty 2 S).ne_empty
+    · exact absurd (h ▸ Set.mem_insert 2 S) (by simp)
+    · rcases Set.subset_singleton_iff_eq.1 (h ▸ Set.subset_insert 2 S) with h' | h'
+      exacts [.inl h', .inr (.inr h')]
+  · obtain rfl | rfl : x = 0 ∨ x = 1 := by simpa using hx
+    · exact ⟨↑({1} : Finset (Fin 3)), by rw [nonePairThird_coe]; decide,
+        by rw [← Finset.coe_insert, nonePairThird_coe]; decide⟩
+    · exact ⟨↑({0} : Finset (Fin 3)), by rw [nonePairThird_coe]; decide,
+        by rw [← Finset.coe_insert, nonePairThird_coe]; decide⟩
+
+theorem negativeRestriction_nonePairThird : nonePairThird.negativeRestriction = Set.univ := by
+  have h (x : Fin 3) (s : Finset (Fin 3)) (hs : ¬ nonePairThird s)
+      (hsx : nonePairThird ↑(s \ {x})) : x ∈ nonePairThird.negativeRestriction :=
+    ⟨s, hs, by rwa [← Finset.coe_singleton, ← Finset.coe_sdiff]⟩
+  refine Set.eq_univ_of_forall fun x ↦ ?_
+  fin_cases x
+  · exact h 0 {0, 2} (by rw [nonePairThird_coe]; decide) (by rw [nonePairThird_coe]; decide)
+  · exact h 1 {1, 2} (by rw [nonePairThird_coe]; decide) (by rw [nonePairThird_coe]; decide)
+  · exact h 2 {0, 1, 2} (by rw [nonePairThird_coe]; decide) (by rw [nonePairThird_coe]; decide)
+
+-- the hybrid order puts the world where `2` has the property below the one where `0` and `1` do
+theorem ltHybrid_nonePairThird :
+    ltHybrid (fun w : Finset (Fin 3) ↦ (w : Set (Fin 3))) nonePairThird {2} {0, 1} := by
+  simp only [ltHybrid, leHybrid, ltPos, ltNeg, positiveRestriction_nonePairThird,
+    negativeRestriction_nonePairThird, Set.inter_univ, ← Finset.coe_inter, Finset.coe_ssubset]
+  decide
+
+open scoped PremiseOrdering in
+-- the inclusion `exh_ltHybrid_subset` is strict: for `nonePairThird` the world where `0` and `1`
+-- have the property is minimal in the ordering by the two restrictions
+theorem exh_ltHybrid_ssubset :
+    let P : Finset (Fin 3) → Set (Fin 3) := (↑)
+    exh P nonePairThird (ltHybrid P nonePairThird) ⊂
+      (≤[(fun x ↦ {u | x ∉ P u}) '' nonePairThird.positiveRestriction ∪
+        (fun x ↦ {u | x ∈ P u}) '' nonePairThird.negativeRestriction]).minimals
+        {w | nonePairThird (P w)} := by
+  intro P
+  refine (Set.ssubset_iff_of_subset exh_ltHybrid_subset).2
+    ⟨{0, 1}, ⟨(nonePairThird_coe _).2 (by decide), fun v hv hvw ↦ ?_⟩,
+      fun h ↦ h.2 ⟨{2}, (nonePairThird_coe _).2 (by decide), ltHybrid_nonePairThird⟩⟩
+  rw [Exhaustification.ofLowerSets_image_union_le_iff, positiveRestriction_nonePairThird,
+    negativeRestriction_nonePairThird] at hvw ⊢
+  simp only [P, Set.inter_univ, ← Finset.coe_inter, Finset.coe_subset] at hvw ⊢
+  rcases (nonePairThird_coe v).1 hv with rfl | rfl | rfl <;> revert hvw <;> decide
+
+/-! ### Flipping the answer and the question together -/
+
+open symmDiff in
+-- the premises given by an answer's two restrictions are unchanged when the answer and the
+-- question-property are flipped within a set of individuals, so the ordering and its minimal
+-- worlds are unchanged too
+theorem image_restriction_symmDiff {W E : Type*} (P : W → Set E) (T : Quantifier E) (N : Set E) :
+    (fun x ↦ {u | x ∉ N ∆ P u}) '' positiveRestriction (fun B ↦ T (N ∆ B)) ∪
+        (fun x ↦ {u | x ∈ N ∆ P u}) '' negativeRestriction (fun B ↦ T (N ∆ B)) =
+      (fun x ↦ {u | x ∉ P u}) '' T.positiveRestriction ∪
+        (fun x ↦ {u | x ∈ P u}) '' T.negativeRestriction := by
+  rw [positiveRestriction_symmDiff, negativeRestriction_symmDiff,
+    Exhaustification.image_notMem_union_image_mem_symmDiff]
+
+open symmDiff in
+-- exhaustive interpretation under the hybrid order is not unchanged: flipping individual `2` in
+-- `nonePairThird` and in the question-property keeps the world where `0` and `1` have the property
+theorem exh_ltHybrid_symmDiff_ne :
+    let P : Finset (Fin 3) → Set (Fin 3) := (↑)
+    let P' : Finset (Fin 3) → Set (Fin 3) := fun w ↦ {2} ∆ (w : Set (Fin 3))
+    let T' : Quantifier (Fin 3) := fun B ↦ nonePairThird ({2} ∆ B)
+    exh P' T' (ltHybrid P' T') ≠ exh P nonePairThird (ltHybrid P nonePairThird) := by
+  intro P P' T' h
+  have hmem : ({0, 1} : Finset (Fin 3)) ∈ exh P' T' (ltHybrid P' T') := by
+    refine ⟨?_, ?_⟩
+    · simp only [T', P', symmDiff_symmDiff_cancel_left]
+      exact (nonePairThird_coe _).2 (by decide)
+    · simp only [T', P', symmDiff_symmDiff_cancel_left, nonePairThird_coe, ltHybrid, leHybrid,
+        ltPos, ltNeg, positiveRestriction_symmDiff, negativeRestriction_symmDiff,
+        positiveRestriction_nonePairThird, negativeRestriction_nonePairThird,
+        ← Finset.coe_singleton, ← Finset.coe_univ, ← Finset.coe_sdiff, ← Finset.coe_inter,
+        ← Finset.coe_union, ← Finset.coe_symmDiff, Finset.coe_ssubset]
+      decide
+  exact (h ▸ hmem).2 ⟨{2}, (nonePairThird_coe _).2 (by decide), ltHybrid_nonePairThird⟩
 
 end Examples
 

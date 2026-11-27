@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.WordOrder
@@ -6,27 +11,22 @@ public import Linglib.Syntax.WordOrder
 # Agreement with conjoined noun phrases
 
 A target whose controller consists of conjoined noun phrases agrees with one of them or with all
-of them. Agreement with one conjunct is normally with the nearest, which is the first or the last
-according to the side of the conjuncts the target stands on, and occasionally with the first when
-it is the more distant; agreement with the last when it is the more distant is excluded. Agreement
-with all conjuncts requires access to the features of every conjunct, from which resolution rules
-compute the target's values (`Agreement.ResolutionRule`). A head that checks its selectional
+of them. This file defines the options, `Agreement.ConjunctAgreement`: agreement with the conjunct
+at an edge `e` of the coordination, `single e`, and agreement with all conjuncts, `all`. For the
+conjuncts `cs` in linear order, `a.conjuncts cs` lists the conjuncts whose features the option `a`
+gives the target access to, `e.takeAt 1 cs` for `single e` and `cs` for `all`. Agreement with the
+first conjunct is `single .left`, agreement with the last is `single .right`, and agreement with
+the conjunct nearest a target on side `d` of the conjuncts is `single d.headEdge`, which is
+agreement with the first when the target precedes them. A head that checks its selectional
 features against coordinated arguments has the same options.
 
-This file defines the three options by the conjuncts whose features each gives the target access
-to, given the conjuncts in linear order and the side of them the target is on.
-
-## Main definitions
-
-* `Agreement.ConjunctAgreement`: agreement with the nearest conjunct, with the first, or with all.
-* `Agreement.ConjunctAgreement.conjuncts`: the conjuncts an option gives the target access to.
-
-## Main results
-
-* `Agreement.ConjunctAgreement.conjuncts_nearest_eq_first_iff`: the nearest conjunct is the first
-  for every coordination exactly when the target precedes the conjuncts.
-* `Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`: a target agrees with the last
-  of several conjuncts alone only by agreeing with the nearest, and only when it follows them.
+The conjuncts an option selects stand together in the coordination
+(`Agreement.ConjunctAgreement.conjuncts_infix`) and are selected by their position alone, so
+selection commutes with any reading of the conjuncts
+(`Agreement.ConjunctAgreement.conjuncts_map`), and distinct options select different conjuncts of
+some coordination (`Agreement.ConjunctAgreement.conjuncts_injective`). The mirror image of an
+option, `Agreement.ConjunctAgreement.swap`, selects from the reversed coordination what the option
+selects (`Agreement.ConjunctAgreement.revConj_conjuncts`).
 
 ## Implementation notes
 
@@ -34,85 +34,122 @@ to, given the conjuncts in linear order and the side of them the target is on.
   head, so a verb before its conjoined subject is head-initial.
 * An option says which conjuncts the target accesses, not how its values are computed from
   theirs: agreement with one conjunct takes that conjunct's values, agreement with all resolves
-  them.
+  them (`Agreement.ResolutionRule`).
 * The first conjunct is first in linear order; whether an analysis picks it for its position or
   as the structurally highest conjunct is left to the analysis.
+* Agreement with the last conjunct is an option whether or not the target follows the conjuncts,
+  so that the options are closed under mirror image. A target that precedes the conjuncts is not
+  reported to agree with the last, to it the more distant; a study states that restriction on
+  the options it admits.
 
 ## References
 
-* [corbett-2000] — §6.5.1, the options, pp. 195–198
-* [corbett-1991] — resolution rules
-* [bruening-alkhalaf-2020] — the options for a selector checking coordinated arguments
+* [corbett-2000]
+* [corbett-1991]
+* [bruening-alkhalaf-2020]
 -/
 
 @[expose] public section
 
 namespace Agreement
 
-/-- A target agrees with conjoined noun phrases by agreeing with one conjunct, the nearest or the
-first, or with all of them. -/
+/-- A target agrees with conjoined noun phrases by agreeing with one conjunct, the first or the
+last, or with all of them. -/
 inductive ConjunctAgreement where
-  /-- Agreement with the nearest conjunct. -/
-  | nearest
-  /-- Agreement with the first conjunct, the more distant one when the target follows them. -/
-  | first
+  /-- Agreement with the conjunct at the edge `e` of the coordination. -/
+  | single (e : Edge)
   /-- Agreement with all conjuncts, by resolution. -/
   | all
   deriving DecidableEq, Fintype, Repr
 
 namespace ConjunctAgreement
 
-variable {α : Type*} {a : ConjunctAgreement} {d : HeadDirection} {cs l : List α} {x : α}
+variable {α β : Type*} {a : ConjunctAgreement} {d : HeadDirection} {e : Edge} {cs l : List α}
+  {x : α}
 
-/-- `a.conjuncts d cs` lists the conjuncts, of the conjuncts `cs` in linear order, whose features
-a target on side `d` of them accesses when it agrees by the option `a`. -/
-def conjuncts : ConjunctAgreement → HeadDirection → List α → List α
-  | nearest, d, cs => (d.nearest cs).toList
-  | first, _, cs => cs.take 1
-  | all, _, cs => cs
+/-- Agreement with the first conjunct. -/
+def first : ConjunctAgreement := single .left
 
-@[simp] theorem conjuncts_nearest : nearest.conjuncts d cs = (d.nearest cs).toList := rfl
+/-- Agreement with the last conjunct. -/
+def last : ConjunctAgreement := single .right
 
-@[simp] theorem conjuncts_first : first.conjuncts d cs = cs.take 1 := rfl
+/-- Agreement with the conjunct nearest a target on side `d` of the conjuncts. -/
+def nearest (d : HeadDirection) : ConjunctAgreement := single d.headEdge
 
-@[simp] theorem conjuncts_all : all.conjuncts d cs = cs := rfl
+@[simp] theorem nearest_headInitial : nearest .headInitial = first := rfl
 
-theorem conjuncts_sublist (a : ConjunctAgreement) (d : HeadDirection) (cs : List α) :
-    (a.conjuncts d cs).Sublist cs := by
+@[simp] theorem nearest_headFinal : nearest .headFinal = last := rfl
+
+/-- The mirror image of an option exchanges the first conjunct and the last. -/
+def swap : ConjunctAgreement → ConjunctAgreement
+  | single e => single e.swap
+  | all => all
+
+@[simp] theorem swap_single : (single e).swap = single e.swap := rfl
+
+@[simp] theorem swap_all : all.swap = all := rfl
+
+@[simp] theorem swap_first : first.swap = last := rfl
+
+@[simp] theorem swap_last : last.swap = first := rfl
+
+@[simp] theorem swap_nearest (d : HeadDirection) : (nearest d).swap = nearest d.swap := by
+  simp [nearest]
+
+@[simp] theorem swap_swap : ∀ a : ConjunctAgreement, a.swap.swap = a := by decide
+
+theorem swap_involutive : Function.Involutive swap := swap_swap
+
+/-! ### The conjuncts an option selects -/
+
+/-- `a.conjuncts cs` lists the conjuncts, of the conjuncts `cs` in linear order, whose features a
+target accesses when it agrees by the option `a`. -/
+def conjuncts : ConjunctAgreement → List α → List α
+  | single e, cs => e.takeAt 1 cs
+  | all, cs => cs
+
+@[simp] theorem conjuncts_single : (single e).conjuncts cs = e.takeAt 1 cs := rfl
+
+@[simp] theorem conjuncts_all : all.conjuncts cs = cs := rfl
+
+@[simp] theorem conjuncts_first : first.conjuncts cs = cs.take 1 := rfl
+
+@[simp] theorem conjuncts_last : last.conjuncts cs = cs.rtake 1 := rfl
+
+@[simp] theorem conjuncts_nearest : (nearest d).conjuncts cs = d.headEdge.takeAt 1 cs := rfl
+
+/-- The conjuncts an option selects stand together in the coordination. -/
+theorem conjuncts_infix (a : ConjunctAgreement) (cs : List α) : a.conjuncts cs <:+: cs := by
   cases a
-  · cases d
-    · simpa [← List.take_one] using List.take_sublist 1 cs
-    · rcases List.eq_nil_or_concat cs with rfl | ⟨l, x, rfl⟩ <;> simp
-  · exact List.take_sublist 1 cs
-  · exact List.Sublist.refl cs
+  exacts [Edge.takeAt_infix .., List.infix_rfl]
 
-theorem conjuncts_nearest_headInitial (d : HeadDirection) (cs : List α) :
-    nearest.conjuncts .headInitial cs = first.conjuncts d cs := by
-  simp [List.take_one]
+/-- An option selects conjuncts by their position, so selecting commutes with reading each
+conjunct through `f`. -/
+theorem conjuncts_map (f : α → β) (a : ConjunctAgreement) (cs : List α) :
+    a.conjuncts (cs.map f) = (a.conjuncts cs).map f := by
+  cases a
+  exacts [Edge.takeAt_map .., rfl]
 
-/-- The nearest conjunct is the first for every coordination exactly when the target precedes the
-conjuncts, so only a target that follows them tells agreement with the nearest from agreement
-with the first. -/
-theorem conjuncts_nearest_eq_first_iff [Nontrivial α] :
-    (∀ cs : List α, nearest.conjuncts d cs = first.conjuncts d cs) ↔ d = .headInitial := by
-  refine ⟨fun h ↦ ?_, fun h cs ↦ h ▸ conjuncts_nearest_headInitial d cs⟩
-  cases d with
-  | headInitial => rfl
-  | headFinal =>
-    obtain ⟨x, y, hxy⟩ := exists_pair_ne α
-    simpa [hxy.symm] using h [x, y]
+/-- Distinct options select different conjuncts of some coordination. -/
+theorem conjuncts_injective [Nontrivial α] :
+    Function.Injective (conjuncts (α := α)) := fun a b h ↦ by
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne α
+  have := congrFun h [x, y]
+  rcases a with (_ | _) | _ <;> rcases b with (_ | _) | _ <;> simp_all [List.rtake]
 
-theorem conjuncts_nearest_swap_reverse (d : HeadDirection) (cs : List α) :
-    nearest.conjuncts d.swap cs.reverse = nearest.conjuncts d cs := by
-  simp [HeadDirection.nearest_swap_reverse]
+/-- The mirror image of an option selects from the reversed coordination what the option
+selects. -/
+theorem revConj_conjuncts (a : ConjunctAgreement) :
+    List.revConj a.conjuncts = a.swap.conjuncts (α := α) := by
+  funext cs
+  cases a <;> simp [List.revConj, Edge.takeAt_reverse]
 
-/-- Agreement with the last conjunct alone is agreement with the nearest by a target that follows
-the conjuncts: agreement with the last when it is the more distant is excluded
-([corbett-2000], p. 197). -/
-theorem eq_nearest_of_conjuncts_eq_singleton (hl : l ≠ []) (hx : x ∉ l)
-    (h : a.conjuncts d (l ++ [x]) = [x]) : a = nearest ∧ d = .headFinal := by
+/-- Only agreement with the last conjunct selects the last of several conjuncts alone. -/
+theorem conjuncts_concat_eq_singleton_iff (hl : l ≠ []) (hx : x ∉ l) :
+    a.conjuncts (l ++ [x]) = [x] ↔ a = last := by
   obtain ⟨y, l, rfl⟩ := List.exists_cons_of_ne_nil hl
-  cases a <;> cases d <;> simp_all
+  have hy : y ≠ x := fun h ↦ hx (h ▸ List.mem_cons_self)
+  rcases a with (_ | _) | _ <;> simp [hy, last, List.rtake_eq_reverse_take_reverse]
 
 end ConjunctAgreement
 

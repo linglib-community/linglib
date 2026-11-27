@@ -1,4 +1,83 @@
-[
+{
+  "features": [
+    {
+      "key": "noun",
+      "lean": "noun",
+      "type": "Noun",
+      "doc": "A noun falls into one of these classes, which numerals and operations select.",
+      "levels": [
+        {
+          "name": "ordinary",
+          "label": "ordinary",
+          "doc": "ordinary"
+        },
+        {
+          "name": "animate",
+          "label": "animate",
+          "doc": "animate"
+        },
+        {
+          "name": "derivedAggregate",
+          "label": "derivedAggregate",
+          "doc": "the noun is derived by *-í*"
+        },
+        {
+          "name": "pluraleTantum",
+          "label": "pluraleTantum",
+          "doc": "pluraleTantum"
+        },
+        {
+          "name": "multiple",
+          "label": "multiple",
+          "doc": "the noun is countable, and its referents typically come in multiples, *klíče* 'keys'"
+        },
+        {
+          "name": "substance",
+          "label": "substance",
+          "doc": "substance"
+        },
+        {
+          "name": "abstract",
+          "label": "abstract",
+          "doc": "abstract"
+        },
+        {
+          "name": "unique",
+          "label": "unique",
+          "doc": "the phrase refers uniquely, *noha tohoto stolu* 'this table's leg'"
+        },
+        {
+          "name": "proper",
+          "label": "proper",
+          "doc": "proper"
+        }
+      ]
+    },
+    {
+      "key": "context",
+      "lean": "context",
+      "type": "Context",
+      "doc": "A reading is judged in one of these contexts.",
+      "levels": [
+        {
+          "name": "episodic",
+          "label": "episodic",
+          "doc": "episodic"
+        },
+        {
+          "name": "generic",
+          "label": "generic",
+          "doc": "generic"
+        },
+        {
+          "name": "portion",
+          "label": "portion",
+          "doc": "the context is a fast-food order, section 2.2.2"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "grimmdocekal2021_9b",
     "source": {"bibkey": "grimm-docekal-2021", "paperLabel": "(9b)"},
@@ -1199,3 +1278,4 @@
     "verified": "page-image"
   }
 ]
+}

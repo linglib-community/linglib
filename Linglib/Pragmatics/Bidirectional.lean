@@ -345,25 +345,26 @@ variable [LE α] (f : F × M → α)
 def stageStep (X : Set (F × M)) : Set (F × M) :=
   X ∪ {p | MinimalFor (· ∈ remaining pairs X) f p}
 
-variable {J : Type*} [LinearOrder J] [SuccOrder J] [WellFoundedLT J]
+variable {J : Type*} [LinearOrder J] [WellFoundedLT J]
 
 /-- The stages of the construction, indexed by any well-order: empty at the bottom (`stage_bot`),
 one step further at a successor (`stage_succ`), the union of the earlier stages at a limit
 (`stage_of_isSuccLimit`). -/
-noncomputable def stage (j : J) : Set (F × M) := transfiniteIterate (stageStep pairs f) j ∅
+noncomputable def stage (j : J) : Set (F × M) := supTransfiniteIterate (stageStep pairs f) j ∅
 
-@[simp] theorem stage_bot [OrderBot J] : stage pairs f (⊥ : J) = ∅ := transfiniteIterate_bot _ _
+@[simp] theorem stage_bot [OrderBot J] : stage pairs f (⊥ : J) = ∅ :=
+  supTransfiniteIterate_bot _ _
 
-theorem stage_succ [NoMaxOrder J] (j : J) :
+theorem stage_succ [SuccOrder J] [NoMaxOrder J] (j : J) :
     stage pairs f (Order.succ j) = stageStep pairs f (stage pairs f j) :=
-  transfiniteIterate_succ _ _ j (not_isMax j)
+  supTransfiniteIterate_succ _ _ j
 
 theorem stage_mono [OrderBot J] : Monotone (stage pairs f : J → _) :=
-  monotone_transfiniteIterate _ _ fun _ ↦ Set.subset_union_left
+  supTransfiniteIterate_monotone _ fun _ ↦ Set.subset_union_left
 
 theorem stage_of_isSuccLimit {a : J} (ha : Order.IsSuccLimit a) :
     stage pairs f a = ⋃ b < a, stage pairs f b := by
-  rw [stage, transfiniteIterate_limit _ _ _ ha]
+  rw [stage, supTransfiniteIterate_limit _ _ ha]
   ext x
   simp [stage]
 

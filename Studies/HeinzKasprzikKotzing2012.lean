@@ -8,8 +8,8 @@ module
 public import Linglib.Core.Computability.InductiveInference
 public import Linglib.Core.Computability.LocallyTestable
 public import Linglib.Core.Computability.PiecewiseTestable
-public import Linglib.Phonology.Subregular.StrictlyLocal
-public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Linglib.Phonology.Subregular.Stringset.StrictlyLocal
+public import Linglib.Phonology.Subregular.Stringset.StrictlyPiecewise
 public import Mathlib.Data.List.ReduceOption
 public import Mathlib.Data.Multiset.Lattice
 
@@ -56,7 +56,7 @@ of §6 and the VC-dimension characterization of §7 are not formalized.
 
 namespace HeinzKasprzikKotzing2012
 
-open InductiveInference Set Filter
+open InductiveInference Set Filter Subregular
 
 universe u
 

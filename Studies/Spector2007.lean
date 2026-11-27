@@ -5,6 +5,7 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Insert
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Pragmatics.Implicature.OptimalAssertion.Prior
+public import Linglib.Semantics.Questions.Partition.Answer
 
 /-!
 # Spector (2007): Scalar Implicatures: Exhaustivity and Gricean Reasoning
@@ -214,8 +215,8 @@ theorem IsPositive.empty_notMem {P : Proposition Atom} (hP : IsPositive P) : ∅
 
 -- A valuation makes at most the positive propositions of another true when it is included in it.
 theorem satisfied_positives_subset_iff {V V' : Valuation Atom} :
-    Preorder.satisfied (· ∈ ·) (positives (Atom := Atom)) V ⊆
-      Preorder.satisfied (· ∈ ·) positives V' ↔ V ⊆ V' := by
+    {a ∈ positives (Atom := Atom) | V ∈ a} ⊆
+      {a ∈ positives | V' ∈ a} ↔ V ⊆ V' := by
   refine ⟨fun h ↦ ?_, fun h P hP ↦ ⟨hP.1, IsPositive.mem_of_subset hP.1 hP.2 h⟩⟩
   rcases V.eq_empty_or_nonempty with rfl | ⟨a, ha⟩
   · exact Finset.empty_subset _

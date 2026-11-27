@@ -2,26 +2,26 @@ module
 
 public import Studies.GroenendijkStokhof1984
 public import Linglib.Semantics.Attitudes.Distributivity
-public import Linglib.Semantics.Questions.Polar
-public import Linglib.Semantics.Questions.Constituent
-public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+public import Linglib.Semantics.Questions.Inquisitive.Constituent
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.TheilerRoelofsenAloni2018
 
 /-!
 # Theiler, Roelofsen and Aloni (2018): A Uniform Semantics for Declarative and Interrogative Complements
 
 This file formalizes Theiler, Roelofsen and Aloni's uniform semantics for the complements of
-responsive verbs such as *know*, verbs that embed declaratives and interrogatives alike. Both
-kinds of nucleus denote an inquisitive sentence meaning, a `Question`, and the embedding
+responsive verbs such as *know*, verbs that embed declaratives and interrogatives alike. Both kinds
+of nucleus denote an inquisitive sentence meaning, a `Inquisitive.Proposition`, and the embedding
 operator turns a nucleus into the function from worlds to its truthful resolutions there: the
-consistent resolutions that entail no answer or partial answer false at the world, Definitions
-3 and 4, with the complete variant also entailing every true alternative, Definitions 5 and 6.
-A verb then relates the subject's information state to the truthful resolutions: *know* requires the
-state to be one of them at the world of evaluation, (33); its internal interpretation adds
-resolution introspection, that the state is a truthful resolution at every world it contains,
-(35); *be certain* keeps only the introspective conjunct, (50), and *be right*, *be wrong*,
-*be surprised* and *care* are built from the same parts, (59), (64), (68) and (72).
+consistent resolutions that entail no answer or partial answer false at the world, Definitions 3 and
+4, with the complete variant also entailing every true alternative, Definitions 5 and 6. A verb then
+relates the subject's information state to the truthful resolutions: *know* requires the state to be
+one of them at the world of evaluation, (33); its internal interpretation adds resolution
+introspection, that the state is a truthful resolution at every world it contains, (35); *be
+certain* keeps only the introspective conjunct, (50), and *be right*, *be wrong*, *be surprised* and
+*care* are built from the same parts, (59), (64), (68) and (72).
 
 The false-answer sensitivity of *know* is the no-false-alternatives condition,
 `not_know_of_subset`, and its absence for *be certain* is that in the subject's own worlds
@@ -41,14 +41,14 @@ is veridical for declaratives, `DeclVeridical.of_choice`; *know* is c-distributi
 
 ## Implementation notes
 
-Verb meanings are predicates on worlds; the paper's sentence meanings are their principal
-ideals, the non-inquisitive contents `Question.ofSet`. Presuppositional entries are trivalent
-propositions `W → Trivalent`. Worlds are finite where the paper assumes so, footnote 7, which
-gives every resolution an alternative above it. The wh-nucleus of Fact 2 is a family of
-answers, one per individual, with the non-exhaustive reading resolved by an answer or by there
-being none and the exhaustive reading the partition by the set of true answers; the answers are
-assumed nonempty and mutually non-entailing, the independence of the paper's diagrams.
-The examples are the rows of `Data.Examples.TheilerRoelofsenAloni2018`.
+Verb meanings are predicates on worlds; the paper's sentence meanings are their principal ideals,
+the non-inquisitive contents `Inquisitive.Proposition.ofSet`. Presuppositional entries are trivalent
+propositions `W → Trivalent`. Worlds are finite where the paper assumes so, footnote 7, which gives
+every resolution an alternative above it. The wh-nucleus of Fact 2 is a family of answers, one per
+individual, with the non-exhaustive reading resolved by an answer or by there being none and the
+exhaustive reading the partition by the set of true answers; the answers are assumed nonempty and
+mutually non-entailing, the independence of the paper's diagrams. The examples are the rows of
+`Data.Examples.TheilerRoelofsenAloni2018`.
 
 ## References
 
@@ -67,7 +67,7 @@ The examples are the rows of `Data.Examples.TheilerRoelofsenAloni2018`.
 
 namespace TheilerRoelofsenAloni2018
 
-open Question
+open Question Inquisitive Inquisitive.Proposition
 
 variable {W X : Type*}
 
@@ -77,9 +77,9 @@ section Resolutions
 
 /-- The unions of alternatives of a nucleus meaning, its answers and partial answers
 (Definition 3). -/
-def altUnion (P : Question W) : Set (Set W) := Set.sUnion '' 𝒫 alt P
+def altUnion (P : Proposition (Set W)) : Set (Set W) := Set.sUnion '' 𝒫 alt P
 
-variable {P : Question W} {w v : W} {p q : Set W}
+variable {P : Proposition (Set W)} {w v : W} {p q : Set W}
 
 theorem mem_altUnion : q ∈ altUnion P ↔ ∃ S ⊆ alt P, ⋃₀ S = q := by
   simp [altUnion]
@@ -89,26 +89,26 @@ theorem mem_altUnion_of_mem_alt (h : q ∈ alt P) : q ∈ altUnion P :=
 
 /-- A resolution provides false information at a world if it entails an answer or partial
 answer false there. -/
-def ProvidesFalse (P : Question W) (w : W) (p : Set W) : Prop :=
+def ProvidesFalse (P : Proposition (Set W)) (w : W) (p : Set W) : Prop :=
   ∃ q ∈ altUnion P, w ∉ q ∧ p ⊆ q
 
 /-- A truthful resolution is a consistent resolution providing no false information, the
 no-false-alternatives condition (Definition 4). -/
-structure IsTruthful (P : Question W) (w : W) (p : Set W) : Prop where
+structure IsTruthful (P : Proposition (Set W)) (w : W) (p : Set W) : Prop where
   mem : p ∈ P
   nonempty : p.Nonempty
   nfa : ¬ ProvidesFalse P w p
 
 /-- A complete truthful resolution also entails every true alternative (Definition 5). -/
-structure IsCompleteTruthful (P : Question W) (w : W) (p : Set W) : Prop
+structure IsCompleteTruthful (P : Proposition (Set W)) (w : W) (p : Set W) : Prop
     extends IsTruthful P w p where
   complete : ∀ q ∈ alt P, w ∈ q → p ⊆ q
 
 /-- The non-complete embedding operator (Definition 6). -/
-def E (P : Question W) (w : W) : Set (Set W) := {p | IsTruthful P w p}
+def E (P : Proposition (Set W)) (w : W) : Set (Set W) := {p | IsTruthful P w p}
 
 /-- The complete embedding operator (Definition 6). -/
-def Ecmp (P : Question W) (w : W) : Set (Set W) := {p | IsCompleteTruthful P w p}
+def Ecmp (P : Proposition (Set W)) (w : W) : Set (Set W) := {p | IsCompleteTruthful P w p}
 
 theorem mem_E : p ∈ E P w ↔ IsTruthful P w p := Iff.rfl
 
@@ -153,7 +153,7 @@ theorem isTruthful_ofSet_of_subset (h : IsTruthful (ofSet q) w p) {r : Set W} (h
 variable [Finite W]
 
 theorem IsTruthful.exists_alt (h : IsTruthful P w p) : ∃ c ∈ alt P, w ∈ c ∧ p ⊆ c :=
-  let ⟨c, hc, hpc⟩ := exists_alt_above P (Set.toFinite _) h.mem
+  let ⟨c, hc, hpc⟩ := isNormal_of_finite (Set.toFinite _) h.mem
   ⟨c, hc, h.mem_of_subset hc hpc, hpc⟩
 
 theorem E_nonempty_iff : (E P w).Nonempty ↔ w ∈ info P := by
@@ -162,7 +162,7 @@ theorem E_nonempty_iff : (E P w).Nonempty ↔ w ∈ info P := by
     obtain ⟨c, hc, hwc, -⟩ := hp.exists_alt
     exact ⟨c, mem_of_mem_alt hc, hwc⟩
   · rintro ⟨p, hp, hwp⟩
-    refine ⟨{w}, P.downward_closed p hp _ (Set.singleton_subset_iff.2 hwp),
+    refine ⟨{w}, P.isLowerSet (Set.singleton_subset_iff.2 hwp) hp,
       Set.singleton_nonempty w, ?_⟩
     rintro ⟨_, _, hwq, hq⟩
     exact hwq (hq rfl)
@@ -224,7 +224,7 @@ noncomputable def care (bou : X → W → Set W) : W → Trivalent :=
   Trivalent.condEvent (fun w ↦ (f w).Nonempty ∧ ∀ v ∈ dox x w, (f v).Nonempty)
     (fun w ↦ ∃ v q, Maximal (· ∈ f v) q ∧ (bou x w ⊆ q ∨ Disjoint (bou x w) q))
 
-variable {dox f x} {P : Question W} {q : Set W} {w : W}
+variable {dox f x} {P : Proposition (Set W)} {q : Set W} {w : W}
 
 theorem knowInt_iff : knowInt dox f x w ↔ certain dox f x w ∧ know dox f x w := and_comm
 
@@ -295,11 +295,11 @@ def nobody : Set W := ⋂ d, (a d)ᶜ
 
 /-- The non-exhaustive reading of a wh-nucleus, resolved by establishing of some individual
 that it has the property, or that none has (Figure 5(b)). -/
-def nonExh : Question W := which Set.univ (Option.elim · (nobody a) a)
+def nonExh : Proposition (Set W) := which Set.univ (Option.elim · (nobody a) a)
 
 /-- The exhaustive reading, resolved by establishing exactly which individuals have the
 property (Figure 5(a)). -/
-def exh : Question W := fromSetoid (Setoid.ker (GroenendijkStokhof1984.extension a))
+def exh : Proposition (Set W) := fromSetoid (Setoid.ker (GroenendijkStokhof1984.extension a))
 
 /-- The cell of the exhaustive reading containing a world. -/
 def cell (w : W) : Set W :=
@@ -440,7 +440,8 @@ def DeclVeridical : Prop := ∀ (q : Set W) x w, V (E (ofSet q)) x w → w ∈ q
 /-- Veridicality with respect to interrogative complements, on exhaustivity-neutral nuclei,
 the partitions, and the declaratives expressing their cells (Definition 11). -/
 def IntVeridical : Prop :=
-  ∀ Q : Question W, Q.IsPartition → ∀ c ∈ alt Q, ∀ x w, V (E Q) x w → w ∈ c → V (E (ofSet c)) x w
+  ∀ Q : Proposition (Set W), Q.IsPartition → ∀ c ∈ alt Q, ∀ x w, V (E Q) x w → w ∈ c → V (E (ofSet
+    c)) x w
 
 /-- The choice property, that the verb does not hold of two inconsistent declaratives at once
 (Definition 9). -/
@@ -451,7 +452,7 @@ variable {V}
 
 /-- On a normal nucleus without overlapping alternatives, a c-distributive verb holds of the
 complement exactly when it holds of the declarative of one of its alternatives. -/
-theorem CDistributive.iff (hd : CDistributive V) {Q : Question W} (hN : Q.IsNormal)
+theorem CDistributive.iff (hd : CDistributive V) {Q : Proposition (Set W)} (hN : Q.IsNormal)
     (hQ : (alt Q).PairwiseDisjoint id) (x : X) (w : W) :
     V (E Q) x w ↔ ∃ c ∈ alt Q, V (E (ofSet c)) x w := by
   simpa only [generate_singleton, hN.generate_alt] using hd (alt Q) hQ x w

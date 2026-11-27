@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Dendikken1995` — typed example data
@@ -205,7 +207,7 @@ def ex_49b : Datum :=
     primaryText := "They made out John a liar."
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "inner")] }
@@ -244,7 +246,7 @@ def ex_50b : Datum :=
     primaryText := "They painted up the barn red."
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival"), ("placement", "inner")] }
@@ -452,7 +454,7 @@ def ex_62b : Datum :=
     primaryText := "On which shelf did they put the books down?"
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
@@ -504,7 +506,7 @@ def ex_64b : Datum :=
     primaryText := "To whom did they send a schedule out?"
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .nearlyUngrammatical
     contrasts := []
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
@@ -1374,7 +1376,7 @@ def ex_153a : Datum :=
     glossedWords := [⟨['A', 'v'], ['o', 'f'], [⟨['A', 'v'], ['o', 'f'], none⟩]⟩, ⟨['h', 'u', 's', 'e', 't'], ['t', 'h', 'e', '-', 'h', 'o', 'u', 's', 'e'], []⟩, ⟨['s', 'p', 'a', 'r', 'k', 'e', 't'], ['k', 'i', 'c', 'k', 'e', 'd'], [⟨['s', 'p', 'a', 'r', 'k', 'e', 't'], ['k', 'i', 'c', 'k', 'e', 'd'], none⟩]⟩, ⟨['h', 'a', 'n'], ['h', 'e'], [⟨['h', 'a', 'n'], ['h', 'e'], none⟩]⟩, ⟨['(', 'u', 't', ')'], ['(', 'o', 'u', 't', ')'], [⟨['u', 't'], ['(', 'o', 'u', 't', ')'], none⟩]⟩, ⟨['h', 'u', 'n', 'd', 'e', 'n'], ['d', 'o', 'g', '-', 't', 'h', 'e'], []⟩, ⟨['(', 'u', 't', ')'], ['(', 'o', 'u', 't', ')'], [⟨['u', 't'], ['(', 'o', 'u', 't', ')'], none⟩]⟩]
     lgrConformance := some .wordAligned
     context := ""
-    judgment := .unacceptable
+    judgment := .nearlyUngrammatical
     contrasts := [("Av hvilket hus sparket han (ut) hunden (ut)?", .questionable)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "ergativity")] }
@@ -1390,10 +1392,26 @@ def ex_153b : Datum :=
     lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
-    contrasts := [("Hvilken dør sparket han hunden ut?", .unacceptable)]
+    contrasts := [("Hvilken dør sparket han hunden ut?", .nearlyUngrammatical)]
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "ergativity")] }
 
 def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_13a, ex_13b, ex_13c, ex_14a, ex_14b, ex_14c, ex_44, ex_45, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c, ex_51a, ex_51b, ex_51c, ex_52a, ex_52b, ex_52c, ex_53a, ex_53b, ex_53c, ex_60a, ex_60b, ex_61a, ex_61b, ex_62a, ex_62b, ex_63a, ex_63b, ex_64a, ex_64b, ex_65a, ex_65b, ex_68a, ex_68b, ex_69a, ex_69b, ex_143a, ex_143b, ex_143c, ex_144a, ex_144b, ex_155a, ex_155b, ex_156a, ex_156b, ex_156c, ex_161a, ex_161b, ex_162a, ex_162b, ex_167a, ex_167b, ex_70a, ex_70b, ex_70c, ex_71a, ex_71b, ex_72a, ex_72b, ex_73a, ex_73b, ex_73c, ex_74a, ex_74b, ex_75a, ex_75b, ex_76a, ex_76b, ex_134a_prefixed, ex_134a_inner, ex_134a_outer, ex_134b_prefixed, ex_134b_inner, ex_134b_outer, ex_134c_prefixed, ex_134c_inner, ex_134c_outer, ex_135a, ex_135b, ex_135c, ex_136a, ex_136b, ex_137a, ex_137b, ex_138a, ex_138b, ex_138c, ex_149_inner, ex_149_outer, ex_150_inner, ex_150_outer, ex_153a, ex_153b]
+
+/-- The surface position of the particle relative to the noun phrase and to the predicate of the inner small clause. -/
+inductive Placement where
+  /-- inner: V-Prt-NP(-Pred), the "inner particle" order -/
+  | inner
+  /-- outer: V-NP-Prt(-Pred), the "outer particle" order -/
+  | outer
+  /-- final: V-NP-Pred-Prt -/
+  | final
+  /-- prefixed: prt-V, the particle a prefix on the verb -/
+  | prefixed
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `placement`. -/
+def placement (e : Datum) : Option Placement :=
+  e.parse? "placement" [("inner", .inner), ("outer", .outer), ("final", .final), ("prefixed", .prefixed)]
 
 end Dendikken1995.Examples

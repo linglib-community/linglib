@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Schema
 
 /-!
@@ -13,7 +15,7 @@ public import Linglib.Data.Examples.Schema
 This file defines the lookups a study makes on the rows of `Data/Examples/`, the `Datum`s of
 `Data/Examples/Schema.lean`, and the statements it makes by fitting a prediction to them. A
 reader `Datum → Option α` reads a value off a row; a fit compares a prediction about that value
-with the row's judgment, through the three bands of the severity order of judgments, or with its
+with the row's judgment, through the three bands of `Judgment.band`, or with its
 truth-value verdict, and a check bundles the fit over a cluster of rows with the number of rows
 the reader reads, so that the fit cannot go silently vacuous.
 
@@ -28,10 +30,11 @@ the reader reads, so that the fit cannot go silently vacuous.
 * `Datum.wordsOf`: the words of a text, the target of a link from a row to the lexical entries it
   prints.
 * `Datum.bool?`: a truth value written `true` or `false`.
+* `Datum.Span.words`, `Datum.spansIn`: the glossed words a span of a row covers, and the spans
+  that lie within a span.
 * `Datum.judgments`, `Datum.JudgedFelicitous`: every printed mark, and felicity as the mark and
   the prose give it.
-* `Judgment.Band`, `Judgment.band`: the three bands of the severity order that a prediction
-  targets.
+* `Judgment.Band`, `Judgment.band`: the three bands of marks that a prediction targets.
 * `Datum.Fits`, `Datum.ReadCount`: a prediction's fit with the judgment band of what a reader
   reads off a row, and the count of rows a reader reads, the coverage witness beside a fit.
 * `Datum.FitsVerdict`: a prediction's fit with the truth-value judgment of a row whose task is
@@ -72,11 +75,15 @@ the reader reads, so that the fit cannot go silently vacuous.
 
 @[expose] public section
 
+instance : Fintype Judgment :=
+  ⟨⟨↑[Judgment.acceptable, .marginal, .questionable, .unacceptable, .nearlyUngrammatical,
+    .ungrammatical, .variable], by decide⟩, fun j ↦ by cases j <;> decide⟩
+
 namespace Judgment
 
-/-- The three bands of the severity order that a prediction targets: the unmarked judgment, the
-middle marks `?` and `%`, on which speakers or grammars divide, and the rejected marks `??`, `#`
-and `*`. Which mark a paper prints within a band is its editorial choice, not a prediction. -/
+/-- The three bands of marks that a prediction targets: the unmarked judgment, the middle marks
+`?` and `%`, on which speakers or grammars divide, and the rejected marks `??`, `#`, `?*` and
+`*`. Which mark a paper prints within a band is its editorial choice, not a prediction. -/
 inductive Band where
   | accepted
   | divided
@@ -87,7 +94,7 @@ inductive Band where
 def band : Judgment → Band
   | .acceptable => .accepted
   | .marginal | .variable => .divided
-  | .questionable | .unacceptable | .ungrammatical => .rejected
+  | .questionable | .unacceptable | .nearlyUngrammatical | .ungrammatical => .rejected
 
 /-- The band of a two-way prediction: accepted where `p` holds and rejected where it fails. -/
 def Band.ofProp (p : Prop) [Decidable p] : Band :=
@@ -164,12 +171,21 @@ def decimal? : Option Rat :=
     | (i, []) => (digits? i).map fun n ↦ (n : Rat)
     | (i, _ :: f) => do pure ((← digits? i) + (← digits? f) / 10 ^ f.length)
 
+/-- `s.words e` is the glossed words of `e` that the span `s` covers, none for a span of length
+zero. -/
+def Span.words (s : Span) (e : Datum) : List GlossedWord :=
+  (e.glossedWords.drop s.start).take s.length
+
+/-- `e.spansIn s` is the spans of `e` other than `s` that lie within `s`. -/
+def spansIn (s : Span) : List Span :=
+  e.spans.filter fun t ↦ t ≠ s ∧ s.start ≤ t.start ∧ t.start + t.length ≤ s.start + s.length
+
 /-- `e.bool? key` is the first value of `key` in `e` read as `true` or `false`. -/
 def bool? : Option Bool := e.parse? key [("true", true), ("false", false)]
 
 /-- `e.judgments` is every mark the paper prints on `e`: its judgment, then the further marks
 of a split mark such as `??/*`, recorded as `alsoJudged`. -/
-def judgments : List Judgment := e.judgment :: (e.features "alsoJudged").filterMap Judgment.ofName?
+def judgments : List Judgment := e.judgment :: e.alsoJudged
 
 /-- The paper judges `e` felicitous: it prints no mark on `e`, and its prose does not call `e`
 infelicitous, which the row records as `felicity: infelicitous`. -/

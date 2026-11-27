@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Fragments.Turkish.Morphotactics
-public import Linglib.Morphology.Inflection
-public import Linglib.Morphology.Paradigm.Function
+public import Linglib.Languages.Turkish.Morphotactics
+public import Linglib.Morphology.Inflection.Basic
+public import Linglib.Morphology.ParadigmFunctionMorphology.Function
 public import Studies.Stump2006
 public import Mathlib.Tactic.DeriveFintype
 

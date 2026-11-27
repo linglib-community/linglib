@@ -1,27 +1,28 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRT.Verification.Partial
+public import Linglib.Semantics.Dynamic.DRT.Embedding
 public import Linglib.Semantics.Dynamic.State
-public import Linglib.Semantics.Dynamic.Update
 
 /-!
 # Context change potentials of DRSs
 
-Over an intensional model — a family `interp : W → L.Structure M` of structures on a constant
-domain — a DRS updates possibilities: `DRS.update` relates two points of the same world whose
-assignments are related by the verification of Kamp, van Genabith and Reyle's Def. 19, and the
-*context change potential* `DRS.ccp` (Def. 24) is its image on information states. The state a
-DRS expresses relative to an assignment is `DRS.relState` (Def. 29), with the state it expresses
-outright (Def. 22) its value at the empty assignment.
+An *intensional model* is a family `interp : W → L.Structure M` of structures on a constant
+domain, and its embeddings are possibilities `⟨w, f⟩`, a world with a partial embedding. A
+possibility `⟨w, g⟩` extends `⟨w, f⟩` when `g` extends `f`, and it verifies an atom when `g` does
+in `interp w`. This is the interpretation `Interpretation.intensional interp`, an instance of the
+interpretation `Interpretation.lift` that a family of interpretations determines world by world.
 
-## Main statements
+The *context change potential* of a DRS `K` is the image of its relation on information states,
+`K.ccp interp I = {⟨w, g⟩ | ∃ f, ⟨w, f⟩ ∈ I ∧ f[K]g ∧ g ⊨ K}`. It merges its input with the
+stratum at the universe of `K` and keeps the possibilities that verify `K` (`DRS.ccp_eq`), so it
+only adds information (`DRS.ccp_le`). The information state `K` expresses relative to an
+embedding `g` is `DRS.relState`, the possibilities `⟨w, f⟩` with `g[K]f` and `f ⊨ K` at `w`, and
+`DRS.state` is its value at the empty embedding.
 
-* `DRS.ccp_le`: a context change potential only adds information (Def. 27(ii)).
-* `DRS.ccp_eq_mul_ccp_stratum`: on a state uniform at a base, context change is merge with the
-  potential's value on the stratum — Heim's assertive update.
-* `DRS.state_merge`: updating the state of a context DRS gives the state of the merge.
-* `DRS.image_world_state`: the proposition a state determines (Def. 23(v)) is the set of worlds
-  where the DRS is true (Def. 20).
+## Implementation notes
+
+`DRS.ccp` is a total function on information states. On a state that leaves a free referent of
+the DRS undefined, a condition on that referent fails and the value is the absurd state.
 
 ## References
 
@@ -38,200 +39,239 @@ namespace DRT
 
 universe u v w x y
 
-variable {L : Language.{u, v}} {V : Type w} {M : Type x} {W : Type y}
+variable {L : Language.{u, v}} {V : Type w} [DecidableEq V] {M : Type x} {W : Type y}
+
+/-! ### Interpretations world by world -/
+
+section Lift
+
+variable {A : Type*} (I : W → Interpretation L V (V → A))
+
+/-- The interpretation in possibilities that a family of interpretations in assignments
+determines: a possibility is extended, and verifies an atom, as its assignment does at its
+world. -/
+def Interpretation.lift : Interpretation L V (Possibility W V A) where
+  extend U := Possibility.liftRel fun w ↦ (I w).extend U
+  atom a := {p | p.assignment ∈ (I p.world).atom a}
+  eq x y := {p | p.assignment ∈ (I p.world).eq x y}
+  extend_empty := by simp only [Interpretation.extend_empty, Possibility.liftRel_id]
+  extend_union U U' := by simp only [Interpretation.extend_union, Possibility.liftRel_comp]
+
+variable {I} {K : DRS L V} {p q : Possibility W V A}
+
+private theorem DRS.eval_lift_of_forall
+    (ih : ∀ c ∈ K.conditions,
+      c.verifiers (.lift I) = {p | p.assignment ∈ c.verifiers (I p.world)}) :
+    K.eval (.lift I) = Possibility.liftRel fun w ↦ K.eval (I w) := by
+  have h (q : Possibility W V A) : q ⊨[.lift I] K ↔ q.assignment ⊨[I q.world] K :=
+    DRS.mem_verifiers_iff.trans ((forall₂_congr fun c hc ↦ Set.ext_iff.mp (ih c hc) q).trans
+      DRS.mem_verifiers_iff.symm)
+  ext ⟨p, q⟩
+  rw [Possibility.mem_liftRel, DRS.mem_eval_iff, DRS.mem_eval_iff, h]
+  constructor
+  · rintro ⟨⟨hw, he⟩, hv⟩
+    exact ⟨hw, he, by rw [hw]; exact hv⟩
+  · rintro ⟨hw, he, hv⟩
+    exact ⟨⟨hw, he⟩, by rw [← hw]; exact hv⟩
+
+/-- A possibility verifies a condition iff its assignment does at its world. -/
+theorem Condition.verifiers_lift (c : Condition L V) :
+    c.verifiers (.lift I) = {p | p.assignment ∈ c.verifiers (I p.world)} := by
+  induction c with
+  | atom a =>
+    rw [Condition.verifiers_atom]
+    rfl
+  | eq x y =>
+    rw [Condition.verifiers_eq]
+    rfl
+  | neg K ih =>
+    ext p
+    rw [Condition.mem_verifiers_neg]
+    show _ ↔ p.assignment ⊨[I p.world] Condition.neg K
+    rw [Condition.mem_verifiers_neg, DRS.eval_lift_of_forall ih]
+    exact not_congr Possibility.mem_dom_liftRel
+  | imp a c iha ihc =>
+    ext p
+    rw [Condition.mem_verifiers_imp]
+    show _ ↔ p.assignment ⊨[I p.world] Condition.imp a c
+    rw [Condition.mem_verifiers_imp, DRS.eval_lift_of_forall iha, DRS.eval_lift_of_forall ihc]
+    constructor
+    · intro h g hg
+      obtain ⟨u, -, hu⟩ := h ⟨p.world, g⟩ ⟨rfl, hg⟩
+      exact ⟨u.assignment, hu⟩
+    · rintro h q ⟨hw, hq⟩
+      obtain ⟨u, hu⟩ := h _ hq
+      exact ⟨⟨q.world, u⟩, rfl, by rw [← hw]; exact hu⟩
+  | dis l r ihl ihr =>
+    ext p
+    rw [Condition.mem_verifiers_dis]
+    show _ ↔ p.assignment ⊨[I p.world] Condition.dis l r
+    rw [Condition.mem_verifiers_dis, DRS.eval_lift_of_forall ihl, DRS.eval_lift_of_forall ihr]
+    exact or_congr Possibility.mem_dom_liftRel Possibility.mem_dom_liftRel
+
+/-- The relation a DRS denotes on possibilities is its relation on assignments, world by
+world. -/
+theorem DRS.eval_lift (K : DRS L V) :
+    K.eval (.lift I) = Possibility.liftRel fun w ↦ K.eval (I w) :=
+  DRS.eval_lift_of_forall fun c _ ↦ c.verifiers_lift
+
+theorem DRS.mem_eval_lift :
+    p ~[K.eval (.lift I)] q ↔
+      p.world = q.world ∧ p.assignment ~[K.eval (I p.world)] q.assignment := by
+  rw [DRS.eval_lift, Possibility.mem_liftRel]
+
+theorem DRS.mem_verifiers_lift : p ⊨[.lift I] K ↔ p.assignment ⊨[I p.world] K :=
+  DRS.mem_verifiers_iff.trans ((forall₂_congr fun c _ ↦ Set.ext_iff.mp c.verifiers_lift p).trans
+    DRS.mem_verifiers_iff.symm)
+
+end Lift
+
+/-! ### Intensional models -/
+
 variable (interp : W → L.Structure M)
 
-/-- `⟨f, g⟩` verifies `K` in the model at the world `w` (Def. 19). -/
-def DRS.VerifiesAt (w : W) (K : DRS L V) (f g : V → Part M) : Prop :=
-  letI := interp w
-  K.Verifies f g
+/-- The interpretation of DRSs in the possibilities of an intensional model (Def. 19). -/
+def Interpretation.intensional : Interpretation L V (Possibility W V (Part M)) :=
+  .lift fun w ↦ letI := interp w; .embedding M
 
 variable {K K₁ K₂ : DRS L V} {p q : Possibility W V (Part M)} {I : State W V M}
 
-theorem DRS.verifiesAt_iff {w : W} {f g : V → Part M} :
-    K.VerifiesAt interp w f g ↔
-      f ≤ g ∧ PFun.Dom g = PFun.Dom f ∪ ↑K.referents ∧
-        (letI := interp w; Condition.HoldsAll K.conditions g) :=
-  letI := interp w
-  DRS.verifies_iff
+theorem Interpretation.intensional_extend (U : Finset V) :
+    (Interpretation.intensional (V := V) interp).extend U = State.extend ↑U := by
+  ext ⟨p, q⟩
+  exact and_assoc.symm
 
-theorem DRS.VerifiesAt.le {w : W} {f g : V → Part M}
-    (h : K.VerifiesAt interp w f g) : f ≤ g :=
-  ((DRS.verifiesAt_iff interp).mp h).1
+/-- `⟨p, q⟩` verifies `K`: `q` extends `p` on the universe of `K` and verifies `K`. -/
+theorem DRS.mem_eval_intensional :
+    p ~[K.eval (.intensional interp)] q ↔
+      p ≤ q ∧ q.domain = p.domain ∪ ↑K.referents ∧ q ⊨[.intensional interp] K := by
+  rw [DRS.mem_eval_iff, Interpretation.intensional_extend]
+  exact and_assoc
 
-theorem DRS.VerifiesAt.domain_eq {w : W} {f g : V → Part M}
-    (h : K.VerifiesAt interp w f g) : PFun.Dom g = PFun.Dom f ∪ ↑K.referents :=
-  ((DRS.verifiesAt_iff interp).mp h).2.1
+theorem DRS.eval_intensional_eq (K : DRS L V) :
+    K.eval (.intensional interp) =
+      State.extend ↑K.referents ○ Update.test (K.verifiers (.intensional interp)) := by
+  rw [DRS.eval_eq, Interpretation.intensional_extend]
+  rfl
 
-theorem DRS.VerifiesAt.holdsAll {w : W} {f g : V → Part M}
-    (h : K.VerifiesAt interp w f g) :
-    letI := interp w; Condition.HoldsAll K.conditions g :=
-  ((DRS.verifiesAt_iff interp).mp h).2.2
+/-- The Merging Lemma in an intensional model. -/
+theorem DRS.eval_intensional_merge (K₁ K₂ : DRS L V)
+    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents)) :
+    (K₁.merge K₂).eval (.intensional interp) =
+      K₁.eval (.intensional interp) ○ K₂.eval (.intensional interp) := by
+  rw [Interpretation.intensional, DRS.eval_lift, DRS.eval_lift, DRS.eval_lift,
+    ← Possibility.liftRel_comp]
+  exact congrArg _ (funext fun w ↦ letI := interp w; DRS.eval_embedding_merge K₁ K₂ hfresh)
 
-/-- The dynamic value of a DRS on possibilities: worlds are preserved and assignments related by
-Def. 19. -/
-def DRS.update (K : DRS L V) : Update (Possibility W V (Part M)) :=
-  {p | p.1.world = p.2.world ∧ K.VerifiesAt interp p.1.world p.1.assignment p.2.assignment}
+/-! ### The context change potential -/
 
-theorem DRS.mem_update :
-    p ~[K.update interp] q ↔
-      p.world = q.world ∧ K.VerifiesAt interp p.world p.assignment q.assignment := Iff.rfl
+/-- The context change potential of a DRS (Def. 24): the image of its relation on information
+states. -/
+def DRS.ccp (K : DRS L V) (I : State W V M) : State W V M :=
+  (K.eval (.intensional interp)).image I
 
-/-- The context change potential of a DRS (Def. 24): the image of its dynamic value on
-information states. -/
-def DRS.ccp (K : DRS L V) (I : State W V M) : State W V M := (K.update interp).image I
-
-theorem DRS.mem_ccp :
-    q ∈ K.ccp interp I ↔
-      ∃ p ∈ I, p.world = q.world ∧ K.VerifiesAt interp p.world p.assignment q.assignment :=
+theorem DRS.mem_ccp : q ∈ K.ccp interp I ↔ ∃ p ∈ I, p ~[K.eval (.intensional interp)] q :=
   mem_image
 
-/-- The information state a DRS expresses relative to an assignment of its free referents
+/-- A context change potential merges its input with the stratum at the universe and keeps the
+possibilities that verify the DRS. -/
+theorem DRS.ccp_eq (I : State W V M) :
+    K.ccp interp I = {q ∈ I * State.stratum ↑K.referents | q ⊨[.intensional interp] K} := by
+  rw [DRS.ccp, DRS.eval_intensional_eq, image_comp, Update.image_test, State.image_extend]
+  rfl
+
+/-- A context change potential only adds information (Def. 27(ii)). -/
+theorem DRS.ccp_le (I : State W V M) : K.ccp interp I ≤ I := by
+  rw [DRS.ccp_eq]
+  exact le_trans (State.le_of_subset fun _ h ↦ h.1) State.mul_le_left
+
+/-- A context change potential grows the base of a state by the universe. -/
+theorem DRS.uniformAt_ccp {X : Set V} (hI : State.UniformAt X I) :
+    State.UniformAt (X ∪ ↑K.referents) (K.ccp interp I) := by
+  rw [DRS.ccp_eq]
+  exact fun q hq ↦ hI.mul State.uniformAt_stratum q hq.1
+
+theorem DRS.ccp_stratum (X : Set V) :
+    K.ccp interp (State.stratum X) =
+      {q ∈ (State.stratum (X ∪ ↑K.referents) : State W V M) | q ⊨[.intensional interp] K} := by
+  rw [DRS.ccp_eq, State.stratum_union]
+
+/-- On a state with base `X`, context change is merge with the potential's value on the stratum
+at `X`. -/
+theorem DRS.ccp_eq_mul_ccp_stratum {X : Set V} (hI : State.UniformAt X I) :
+    K.ccp interp I = I * K.ccp interp (State.stratum X) := by
+  have hmul : I * State.stratum (X ∪ ↑K.referents) = I * State.stratum ↑K.referents := by
+    rw [State.stratum_union, ← mul_assoc,
+      State.mul_stratum_eq_self fun p hp ↦ (hI p hp).symm.subset]
+  rw [State.mul_eq_sep_of_uniformAt (DRS.uniformAt_ccp interp State.uniformAt_stratum), hmul,
+    DRS.ccp_eq interp I]
+  ext r
+  refine and_congr_right fun hr ↦ ?_
+  have hd : r.domain = X ∪ ↑K.referents := hI.mul State.uniformAt_stratum r hr
+  rw [Possibility.restrict_eq_self hd, DRS.ccp_stratum]
+  exact (and_iff_right hd).symm
+
+theorem DRS.ccp_merge (K₁ K₂ : DRS L V)
+    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents))
+    (I : State W V M) :
+    (K₁.merge K₂).ccp interp I = K₂.ccp interp (K₁.ccp interp I) := by
+  rw [DRS.ccp, DRS.eval_intensional_merge interp K₁ K₂ hfresh, image_comp]
+  rfl
+
+/-! ### The state a DRS expresses -/
+
+/-- The information state a DRS expresses relative to an embedding of its free referents
 (Def. 29(ii)). -/
 def DRS.relState (K : DRS L V) (g : V → Part M) : State W V M :=
-  {q | K.VerifiesAt interp q.world g q.assignment}
+  {q | (⟨q.world, g⟩ : Possibility W V (Part M)) ~[K.eval (.intensional interp)] q}
 
 theorem DRS.mem_relState {g : V → Part M} :
-    q ∈ K.relState interp g ↔ K.VerifiesAt interp q.world g q.assignment := Iff.rfl
-
-/-- The information state a proper DRS expresses (Def. 22), the state relative to the empty
-assignment. -/
-def DRS.state (K : DRS L V) : State W V M := K.relState interp ⊥
-
-theorem DRS.mem_state : q ∈ K.state interp ↔ K.VerifiesAt interp q.world ⊥ q.assignment :=
+    q ∈ K.relState interp g ↔
+      (⟨q.world, g⟩ : Possibility W V (Part M)) ~[K.eval (.intensional interp)] q :=
   Iff.rfl
 
-theorem DRS.uniformAt_state : State.UniformAt ↑K.referents (K.state interp) := by
-  intro q hq
-  have h := DRS.VerifiesAt.domain_eq interp hq
-  rwa [PFun.dom_bot, Set.empty_union] at h
+/-- The information state a proper DRS expresses (Def. 22), the state relative to the empty
+embedding. -/
+def DRS.state (K : DRS L V) : State W V M := K.relState interp ⊥
 
-/-- Def. 22 is the context change potential's value on the initial state. -/
+theorem DRS.mem_state :
+    q ∈ K.state interp ↔ Possibility.bot q.world ~[K.eval (.intensional interp)] q :=
+  Iff.rfl
+
+/-- A possibility is in the state of a DRS iff its embedding verifies the DRS from the empty
+embedding in the structure at its world. -/
+theorem DRS.mem_state_iff :
+    q ∈ K.state interp ↔ letI := interp q.world; ⊥ ~[K.eval (.embedding M)] q.assignment :=
+  DRS.mem_eval_lift.trans (and_iff_right rfl)
+
+/-- The state a DRS expresses is the context change potential's value on the initial state. -/
 theorem DRS.ccp_top : K.ccp interp (⊤ : State W V M) = K.state interp := by
   ext q
   rw [DRS.mem_ccp, DRS.mem_state]
   constructor
-  · rintro ⟨p, hp, hw, hv⟩
-    have hbot : p.assignment = ⊥ := funext fun v => State.mem_top.mp hp v
-    rwa [hw, hbot] at hv
-  · intro hv
-    exact ⟨⟨q.world, fun _ => ⊥⟩, State.mem_top.mpr fun _ => rfl, rfl, hv⟩
+  · rintro ⟨_, ⟨w, rfl⟩, h⟩
+    obtain rfl : w = q.world := ((DRS.mem_eval_intensional interp).mp h).1.1
+    exact h
+  · exact fun h ↦ ⟨_, ⟨q.world, rfl⟩, h⟩
 
-/-- A context change potential only adds information (Def. 27(ii)). -/
-theorem DRS.ccp_le (I : State W V M) : K.ccp interp I ≤ I :=
-  State.le_def.mpr fun q hq => by
-    obtain ⟨p, hp, hw, hv⟩ := (DRS.mem_ccp interp).mp hq
-    exact ⟨p, hp, hw, Pi.le_def.mp (DRS.VerifiesAt.le interp hv)⟩
+theorem DRS.uniformAt_state : State.UniformAt ↑K.referents (K.state interp) := by
+  simpa [DRS.ccp_top] using DRS.uniformAt_ccp interp (K := K) State.uniformAt_top
 
-/-- The value of a context change potential on a stratum: the points of the grown stratum whose
-conditions hold. -/
-theorem DRS.mem_ccp_stratum {X : Set V} :
-    q ∈ K.ccp interp (State.stratum X) ↔
-      q.domain = X ∪ ↑K.referents ∧
-        (letI := interp q.world; Condition.HoldsAll K.conditions q.assignment) := by
-  rw [DRS.mem_ccp]
-  constructor
-  · rintro ⟨p, hp, hw, hv⟩
-    have hdom := DRS.VerifiesAt.domain_eq interp hv
-    have hh := DRS.VerifiesAt.holdsAll interp hv
-    rw [hw] at hh
-    have hpd : PFun.Dom p.assignment = X := State.mem_stratum.mp hp
-    rw [hpd] at hdom
-    exact ⟨hdom, hh⟩
-  · rintro ⟨hdom, hh⟩
-    classical
-    have hr : (q.restrict X).domain = X := by
-      rw [Possibility.domain_restrict, hdom]
-      exact Set.inter_eq_left.mpr Set.subset_union_left
-    refine ⟨q.restrict X, hr, Possibility.restrict_world, ?_⟩
-    rw [Possibility.restrict_world, DRS.verifiesAt_iff]
-    refine ⟨fun x => (Possibility.restrict_le (X := X) (p := q)).2 x, ?_, hh⟩
-    show q.domain = (q.restrict X).domain ∪ ↑K.referents
-    rw [hr, hdom]
-
-/-- On a state uniform at a base, context change is merge with the potential's value on the
-stratum: the context change potential of Def. 24 is Heim's assertive update. -/
-theorem DRS.ccp_eq_mul_ccp_stratum {X : Set V} (hI : State.UniformAt X I) :
-    K.ccp interp I = I * K.ccp interp (State.stratum X) := by
-  have huni : State.UniformAt (X ∪ ↑K.referents) (K.ccp interp (State.stratum X)) :=
-    fun r hr => ((DRS.mem_ccp_stratum interp).mp hr).1
-  rw [State.mul_eq_sep_of_uniformAt huni]
-  ext q
-  rw [DRS.mem_ccp]
-  constructor
-  · rintro ⟨p, hp, hw, hv⟩
-    have hle := DRS.VerifiesAt.le interp hv
-    have hdom := DRS.VerifiesAt.domain_eq interp hv
-    have hh := DRS.VerifiesAt.holdsAll interp hv
-    have hpd : p.domain = X := hI p hp
-    have hqd : q.domain = X ∪ ↑K.referents := by
-      rw [← hpd]
-      exact hdom
-    have hrest : q.restrict (X ∪ ↑K.referents) = q := Possibility.restrict_eq_self hqd
-    refine ⟨State.mem_mul_stratum.mpr ⟨p, hp, ⟨hw, Pi.le_def.mp hle⟩, ?_⟩, ?_⟩
-    · rw [hqd, hpd, ← Set.union_assoc, Set.union_self]
-    · rw [hrest, DRS.mem_ccp_stratum]
-      rw [hw] at hh
-      exact ⟨hqd, hh⟩
-  · rintro ⟨hmul, hrest⟩
-    obtain ⟨p, hp, hpq, hdom⟩ := State.mem_mul_stratum.mp hmul
-    have hpd : p.domain = X := hI p hp
-    have hqd : q.domain = X ∪ ↑K.referents := by
-      rw [hdom, hpd, ← Set.union_assoc, Set.union_self]
-    rw [Possibility.restrict_eq_self hqd, DRS.mem_ccp_stratum] at hrest
-    refine ⟨p, hp, hpq.1, (DRS.verifiesAt_iff interp).mpr ⟨hpq.2, ?_, ?_⟩⟩
-    · show q.domain = p.domain ∪ ↑K.referents
-      rw [hqd, show p.domain = X from hI p hp]
-    · rw [hpq.1]
-      exact hrest.2
-
-set_option linter.style.haveILetI false in
-/-- Sequencing the dynamic values of two DRSs is the dynamic value of their merge, when the
-second universe captures no referent the first DRS's conditions use outside its own. -/
-theorem DRS.update_merge [DecidableEq V] (K₁ K₂ : DRS L V)
-    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents)) :
-    (K₁.merge K₂).update interp = K₁.update interp ○ K₂.update interp := by
-  ext ⟨p, q⟩
-  rw [mem_comp]
-  constructor
-  · rintro ⟨hw, hv⟩
-    letI := interp p.world
-    obtain ⟨h, h₁, h₂⟩ := (DRS.verifies_merge K₁ K₂ hfresh).mp hv
-    exact ⟨⟨p.world, h⟩, ⟨rfl, h₁⟩, hw, h₂⟩
-  · rintro ⟨r, ⟨hw₁, hv₁⟩, hw₂, hv₂⟩
-    rw [← hw₁] at hv₂
-    refine ⟨hw₁.trans hw₂, ?_⟩
-    letI := interp p.world
-    exact (DRS.verifies_merge K₁ K₂ hfresh).mpr ⟨r.assignment, hv₁, hv₂⟩
-
-theorem DRS.ccp_merge [DecidableEq V] (K₁ K₂ : DRS L V)
-    (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents))
-    (I : State W V M) :
-    (K₁.merge K₂).ccp interp I = K₂.ccp interp (K₁.ccp interp I) := by
-  ext q
-  rw [DRS.ccp, DRS.update_merge interp K₁ K₂ hfresh]
-  constructor
-  · rintro ⟨p, hp, r, h₁, h₂⟩
-    exact ⟨r, ⟨p, hp, h₁⟩, h₂⟩
-  · rintro ⟨r, ⟨p, hp, h₁⟩, h₂⟩
-    exact ⟨p, hp, r, h₁, h₂⟩
-
-/-- Updating the state of a context DRS gives the state of the merge, as Kamp, van Genabith and
-Reyle observe of their (43) after Def. 24. -/
-theorem DRS.state_merge [DecidableEq V] (K₁ K₂ : DRS L V)
+/-- Updating the state of a context DRS gives the state of the merge. -/
+theorem DRS.state_merge (K₁ K₂ : DRS L V)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents)) :
     K₂.ccp interp (K₁.state interp) = (K₁.merge K₂).state interp := by
   rw [← DRS.ccp_top, ← DRS.ccp_top, DRS.ccp_merge interp K₁ K₂ hfresh]
 
 /-- The proposition the state of a DRS determines (Def. 23(v)) is the set of worlds where the
-DRS is true, for a proper DRS the proposition it expresses (Def. 20). -/
+DRS is true (Def. 20). -/
 theorem DRS.image_world_state :
     Possibility.world '' K.state interp = {w | letI := interp w; K.IsTrue M} := by
   ext w
   constructor
   · rintro ⟨q, hq, rfl⟩
-    exact ⟨q.assignment, hq⟩
+    exact ⟨q.assignment, (DRS.mem_state_iff interp).mp hq⟩
   · rintro ⟨g, hg⟩
-    exact ⟨⟨w, g⟩, hg, rfl⟩
+    exact ⟨⟨w, g⟩, (DRS.mem_state_iff interp).mpr hg, rfl⟩
 
 end DRT

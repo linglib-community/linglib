@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Logic.Trivalent.Supervaluation
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Logic.Trivalent.Powerset
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantifier.NumberTree
 public import Linglib.Core.Logic.Function.DependsOn
 
 /-!

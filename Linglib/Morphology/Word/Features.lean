@@ -6,11 +6,11 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.Flat
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Core.Order.BoundedComplete
 public import Linglib.Data.UD.Features
-public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Feature.Case.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 
 /-!
 # Token features
@@ -20,8 +20,8 @@ analytical inventories `Person`, `Number` and `Case`, and gender, animacy, defin
 pronoun type, numeral type, possessivity, reflexivity, verb form, tense, aspect, mood, voice,
 evidentiality, polarity and politeness, valued in the Universal Dependencies tags. Gender has no
 analytical inventory, a language's genders being its own; the other tag-valued features keep the
-tags until an analytical inventory exists. Clusivity is no feature of its own, the person value
-carrying it, and the foreign-word, abbreviation and typo flags describe the written token rather
+tags until an analytical inventory exists. Clusivity is a feature beside person, valued in
+`Clusivity`, and the foreign-word, abbreviation and typo flags describe the written token rather
 than its morphosyntax and stay in the annotation record. A token's features give each feature a
 value or `⊥`, a slot of the flat order, so subsumption, unification and generalization are the
 pointwise order, partial join and meet; the Universal Dependencies annotation of a token is the
@@ -46,7 +46,8 @@ namespace Morphology
 
 /-- The morphosyntactic features of a token. -/
 inductive Feature where
-  | person | number | gender | animacy | case | definiteness | degree | pronType | numType
+  | person | clusivity | number | gender | animacy | case | definiteness | degree | pronType
+  | numType
   | poss | reflex | verbForm | tense | aspect | mood | voice | evident | polarity | polite
   deriving DecidableEq, Repr, Fintype
 
@@ -54,6 +55,7 @@ inductive Feature where
 the Universal Dependencies tags otherwise, possessivity and reflexivity being privative. -/
 abbrev Feature.Value : Feature → Type
   | .person => Person
+  | .clusivity => Clusivity
   | .number => Number
   | .gender => UD.Gender
   | .animacy => UD.Animacy
@@ -94,8 +96,9 @@ def of (person : Option Person := none) (number : Option Number := none)
     (tense : Option UD.Tense := none) (aspect : Option UD.Aspect := none)
     (mood : Option UD.Mood := none) (voice : Option UD.Voice := none)
     (evident : Option UD.Evident := none) (polarity : Option UD.Polarity := none)
-    (polite : Option UD.Polite := none) : Features
+    (polite : Option UD.Polite := none) (clusivity : Option Clusivity := none) : Features
   | .person => person
+  | .clusivity => clusivity
   | .number => number
   | .gender => gender
   | .animacy => animacy
@@ -117,8 +120,8 @@ def of (person : Option Person := none) (number : Option Number := none)
 
 instance : Repr Features where
   reprPrec f _ :=
-    repr (f .person, f .number, f .gender, f .animacy, f .case, f .definiteness, f .degree,
-      f .pronType, f .numType, f .poss, f .reflex, f .verbForm, f .tense, f .aspect, f .mood,
+    repr (f .person, f .clusivity, f .number, f .gender, f .animacy, f .case, f .definiteness,
+      f .degree, f .pronType, f .numType, f .poss, f .reflex, f .verbForm, f .tense, f .aspect, f .mood,
       f .voice, f .evident, f .polarity, f .polite)
 
 /-- The token is an interrogative or relative pro-form. -/

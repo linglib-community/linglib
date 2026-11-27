@@ -1,2290 +1,1323 @@
-[
-  {
-    "id": "karlsson2017_neg1",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (1)"
-    },
-    "language": "finn1318",
-    "primaryText": "En lähetä tekstiviestiä.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I don't/won't send a/the text message.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
-      ],
-      [
-        "negated",
-        "yes"
-      ],
-      [
-        "aspect",
-        "resultative"
-      ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "teksti=viesti-ä"
+{
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "the noun or pronoun heading the object, which the grammar prints in italics"
+        }
       ]
-    ],
-    "comment": "The book prints \"I don't-won't send\".",
-    "verified": "page-image"
+    }
   },
-  {
-    "id": "karlsson2017_neg2",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (1)"
-    },
-    "language": "finn1318",
-    "primaryText": "Pekka ei nähnyt Leenaa.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Pekka did not see Leena.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
-      ],
-      [
-        "negated",
-        "yes"
-      ],
-      [
-        "aspect",
-        "resultative"
-      ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "Leena-a"
-      ]
+  "boundaries": {
+    "type": "Boundary",
+    "doc": "The boundaries the grammar's notation marks within a word.",
+    "levels": [
+      {
+        "name": "inflection",
+        "symbol": "-",
+        "leipzig": "-",
+        "doc": "between a stem and an inflectional ending or a clitic, or between two of these"
+      },
+      {
+        "name": "compound",
+        "symbol": "=",
+        "leipzig": "-",
+        "doc": "between the words of a compound"
+      },
+      {
+        "name": "derivation",
+        "symbol": ">",
+        "leipzig": "-",
+        "doc": "before a derivational suffix"
+      }
     ],
-    "comment": "",
-    "verified": "page-image"
+    "marks": [
+      {
+        "symbol": "+",
+        "doc": "the weak grade of consonant gradation, written before the word"
+      }
+    ]
   },
-  {
-    "id": "karlsson2017_neg3",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (1)"
+  "examples": [
+    {
+      "id": "karlsson2017_neg1",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "En lähetä tekstiviestiä.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["E-n", ""], ["+lähetä", ""], ["teksti=viesti-ä.", ""]
+      ],
+      "translation": "I don't/won't send a/the text message.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
+      ],
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "yes"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
+      ],
+      "comment": "The book prints \"I don't-won't send\".",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "En tunne noita miehiä.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I don't know those men.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_neg2",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "Pekka ei nähnyt Leenaa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Pekka", ""], ["ei", ""], ["näh-nyt", ""], ["Leena-a.", ""]
       ],
-      [
-        "negated",
-        "yes"
+      "translation": "Pekka did not see Leena.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "yes"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "mieh-i-ä"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_neg4",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (1)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "En ole tavannut häntä.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I have never met him/her.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_neg3",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "En tunne noita miehiä.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["E-n", ""], ["+tunne", ""], ["no-i-ta", ""], ["mieh-i-ä.", ""]
       ],
-      [
-        "negated",
-        "yes"
+      "translation": "I don't know those men.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "yes"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "personalPronoun"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "hän-tä"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2a_read_part",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Tyttö luki kirjaa.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The girl was reading a/the book.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_neg4",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "En ole tavannut häntä.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["E-n", ""], ["ole", ""], ["+tavan-nut", ""], ["hän-tä.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I have never met him/her.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "object"}
       ],
-      [
-        "aspect",
-        "irresultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "yes"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "personalPronoun"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "kirja-a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2a_read_tot",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Tyttö luki kirjan.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The girl read (= completed reading) a/the book.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2a_read_part",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2a)"},
+      "language": "finn1318",
+      "primaryText": "Tyttö luki kirjaa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tyttö", ""], ["luk-i", ""], ["kirja-a.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "The girl was reading a/the book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "irresultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "kirja-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2a_drive_part",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Hän ajaa autoa.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "He/she is driving a/the car.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2a_read_tot",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2a)"},
+      "language": "finn1318",
+      "primaryText": "Tyttö luki kirjan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tyttö", ""], ["luki", ""], ["kirja-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "The girl read (= completed reading) a/the book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "irresultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "auto-a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2a_drive_tot",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Hän ajaa auton talliin.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "He/she drives the car into the garage.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2a_drive_part",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2a)"},
+      "language": "finn1318",
+      "primaryText": "Hän ajaa autoa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hän", ""], ["aja-a", ""], ["auto-a.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "He/she is driving a/the car.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "irresultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "auto-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2a_shoot_part",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Metsästäjä ampui lintua.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The hunter shot at (or: shot and wounded) a/the bird.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2a_drive_tot",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2a)"},
+      "language": "finn1318",
+      "primaryText": "Hän ajaa auton talliin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Hän", ""], ["aja-a", ""], ["auto-n", ""], ["talliin.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "He/she drives the car into the garage.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "irresultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "lintu-a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2a_shoot_tot",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2a)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Metsästäjä ampui linnun.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The hunter shot (and probably killed) a/the bird.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2a_shoot_part",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2a)"},
+      "language": "finn1318",
+      "primaryText": "Metsästäjä ampui lintua.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Metsä>stä>jä", ""], ["ampu-i", ""], ["lintu-a.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "The hunter shot at (or: shot and wounded) a/the bird.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "irresultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "linnu-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2b_love",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Rakastan tuota miestä.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I love that man.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2a_shoot_tot",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2a)"},
+      "language": "finn1318",
+      "primaryText": "Metsästäjä ampui linnun.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Metsä>stä>jä", ""], ["ampu-i", ""], ["linnu-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "The hunter shot (and probably killed) a/the bird.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "irresultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "mies-tä"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2b_interest",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Suomi kiinnostaa minua.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Finland interests me.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2b_love",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2b)"},
+      "language": "finn1318",
+      "primaryText": "Rakastan tuota miestä.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Rakas>ta-n", ""], ["tuo-ta", ""], ["mies-tä.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I love that man.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "irresultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "irresultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "personalPronoun"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "minu-a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_2b_fear",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (2b)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Pelkäätkö koiria?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Are you afraid of dogs?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2b_interest",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2b)"},
+      "language": "finn1318",
+      "primaryText": "Suomi kiinnostaa minua.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Suomi", ""], ["kiinnosta-a", ""], ["minu-a.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Finland interests me.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "irresultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "irresultative"],
+        ["quantity", "definite"],
+        ["nominal", "personalPronoun"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "indefinite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "koir-i-a"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_icecream_part",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Ostan jäätelöä.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I('ll) buy some ice-cream.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_2b_fear",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (2b)"},
+      "language": "finn1318",
+      "primaryText": "Pelkäätkö koiria?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Pelkää-t-kö", ""], ["koir-i-a?", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Are you afraid of dogs?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "irresultative"],
+        ["quantity", "indefinite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "indefinite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "jäätelö-ä"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_icecream_tot",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Ostan jäätelön.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I('ll) buy an/the ice-cream.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_icecream_part",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Ostan jäätelöä.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Osta-n", ""], ["jäätelö-ä.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I('ll) buy some ice-cream.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "indefinite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "jäätelö-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_beer_part",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Simo juo olutta.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Simo drinks beer/is drinking (some) beer.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_icecream_tot",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Ostan jäätelön.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Osta-n", ""], ["jäätelö-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I('ll) buy an/the ice-cream.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "indefinite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "olut-ta"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_beer_tot",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Simo juo oluen.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Simo drinks/(will) drink a/the beer.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_beer_part",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Simo juo olutta.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Simo", ""], ["juo", ""], ["olut-ta.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Simo drinks beer/is drinking (some) beer.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "indefinite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "olue-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_people_part",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Näen ihmisiä.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I see (some) people.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_beer_tot",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Simo juo oluen.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Simo", ""], ["juo", ""], ["olue-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Simo drinks/(will) drink a/the beer.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "indefinite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "ihmis-i-ä"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_people_tot",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Näen ihmiset.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I see the people.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_people_part",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Näen ihmisiä.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["+Näe-n", ""], ["ihmis-i-ä.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I see (some) people.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "indefinite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "ihmise-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_guests_part",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Tuula tapaa vieraita.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Tuula meets/is meeting some guests.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_people_tot",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Näen ihmiset.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Näen", ""], ["ihmise-t.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I see the people.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "indefinite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "viera-i-ta"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_3_guests_tot",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Tuula tapaa vieraat.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Tuula meets/will meet the guests.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_guests_part",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Tuula tapaa vieraita.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tuula", ""], ["tapaa", ""], ["viera-i-ta.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Tuula meets/is meeting some guests.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "indefinite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "vieraa-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_tot_message",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "(Minä) lähetän tekstiviestin.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I('ll) send a/the text message.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_3_guests_tot",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Tuula tapaa vieraat.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tuula", ""], ["tapaa", ""], ["vieraa-t.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Tuula meets/will meet the guests.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "teksti=viesti-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_tot_milk",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Silja joi maidon.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Silja drank (up) the milk.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_tot_message",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2"},
+      "language": "finn1318",
+      "primaryText": "(Minä) lähetän tekstiviestin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["(Minä)", ""], ["+lähetä-n", ""], ["teksti=viesti-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I('ll) send a/the text message.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "+maido-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_tot_car_imp",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Osta auto.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Buy a/the car.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_tot_milk",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2"},
+      "language": "finn1318",
+      "primaryText": "Silja joi maidon.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Silja", ""], ["jo-i", ""], ["+maido-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Silja drank (up) the milk.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "imperative"
-      ],
-      [
-        "object",
-        "auto"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_tot_computers",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Tietokoneet hankittiin halvalla.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The computers were obtained cheaply.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_tot_car_imp",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2"},
+      "language": "finn1318",
+      "primaryText": "Osta auto.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Osta", ""], ["auto.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Buy a/the car.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "imperative"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "passive"
-      ],
-      [
-        "object",
-        "Tiet>o=konee-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_tot_cars",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "12.2.2"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Ostamme autot.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "We('ll) buy the cars.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "12.2.2"
+    {
+      "id": "karlsson2017_tot_computers",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2"},
+      "language": "finn1318",
+      "primaryText": "Tietokoneet hankittiin halvalla.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Tiet>o=konee-t", ""], ["hankittiin", ""], ["+halva-lla.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "The computers were obtained cheaply.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "passive"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "auto-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_acc_took",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (1)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Risto vei minut elokuviin.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Risto took me to the cinema.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_tot_cars",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "12.2.2"},
+      "language": "finn1318",
+      "primaryText": "Ostamme autot.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Osta-mme", ""], ["auto-t.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "We('ll) buy the cars.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "12.2.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "personalPronoun"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "minu-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_acc_take_imp",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (1)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Vie minut elokuviin!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Take me to the cinema!",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_acc_took",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "Risto vei minut elokuviin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Risto", ""], ["ve-i", ""], ["minu-t", ""], ["elo=kuv-i-in.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Risto took me to the cinema.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "personalPronoun"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "personalPronoun"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "imperative"
-      ],
-      [
-        "object",
-        "minu-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_acc_taken",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (1)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Minut vietiin elokuviin.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I was taken to the cinema.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_acc_take_imp",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "Vie minut elokuviin!",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Vie", ""], ["minu-t", ""], ["elo=kuv-i-in!", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Take me to the cinema!",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "personalPronoun"],
+        ["number", "singular"],
+        ["clause", "imperative"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "personalPronoun"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "passive"
-      ],
-      [
-        "object",
-        "Minu-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_acc_whom",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (1)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Kenet näit?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Whom did you see?",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_acc_taken",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "Minut vietiin elokuviin.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Minu-t", ""], ["vie-t-i-in", ""], ["elo=kuv-i-in.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I was taken to the cinema.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "personalPronoun"],
+        ["number", "singular"],
+        ["clause", "passive"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "personalPronoun"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "Kene-t"
-      ]
-    ],
-    "comment": "The interrogative kuka takes the accusative like the personal pronouns.",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_pl_articles",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (2)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Luen artikkelit.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I'll read the articles.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_acc_whom",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (1)"},
+      "language": "finn1318",
+      "primaryText": "Kenet näit?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kene-t", ""], ["+nä-i-t?", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Whom did you see?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "personalPronoun"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "artikkeli-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_pl_children_imp",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (2)"
+      "comment": "The interrogative kuka takes the accusative like the personal pronouns.",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Vie lapset tarhaan.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Take the children to kindergarten.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_pl_articles",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (2)"},
+      "language": "finn1318",
+      "primaryText": "Luen artikkelit.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["+Lue-n", ""], ["artikkeli-t.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I'll read the articles.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "imperative"
-      ],
-      [
-        "object",
-        "lapse-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_pl_children_pass",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (2)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Lapset vietiin tarhaan.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The children were taken to kindergarten.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_pl_children_imp",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (2)"},
+      "language": "finn1318",
+      "primaryText": "Vie lapset tarhaan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Vie", ""], ["lapse-t", ""], ["tarha-an.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Take the children to kindergarten.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "imperative"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "plural"
-      ],
-      [
-        "clause",
-        "passive"
-      ],
-      [
-        "object",
-        "Lapse-t"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_num_articles",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Luen kaksi artikkelia.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I'll read two articles.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_pl_children_pass",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (2)"},
+      "language": "finn1318",
+      "primaryText": "Lapset vietiin tarhaan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Lapse-t", ""], ["vie-t-i-in", ""], ["tarha-an.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "The children were taken to kindergarten.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "plural"],
+        ["clause", "passive"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "numeral"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "kaksi"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_num_children_imp",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Vie nuo kolme lasta ulos.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Take those three children out.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_num_articles",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Luen kaksi artikkelia.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["+Lue-n", ""], ["kaksi", ""], ["artikkeli-a.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I'll read two articles.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "numeral"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "numeral"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "imperative"
-      ],
-      [
-        "object",
-        "kolme"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_num_children_pass",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (3)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Kolme lasta vietiin tarhaan.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Three children were taken to kindergarten.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_num_children_imp",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Vie nuo kolme lasta ulos.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Vie", ""], ["nuo", ""], ["kolme", ""], ["las-ta", ""], ["ulos.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Take those three children out.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "numeral"],
+        ["number", "singular"],
+        ["clause", "imperative"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "numeral"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "passive"
-      ],
-      [
-        "object",
-        "Kolme"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_camera",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "(Minä) ostan digikameran.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I buy/will buy a/the digital camera.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_num_children_pass",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (3)"},
+      "language": "finn1318",
+      "primaryText": "Kolme lasta vietiin tarhaan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kolme", ""], ["las-ta", ""], ["vie-t-i-in", ""], ["tarha-an.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Three children were taken to kindergarten.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "numeral"],
+        ["number", "singular"],
+        ["clause", "passive"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "digi=kamera-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_child",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Isä vie lapsen tarhaan.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Father takes/will take the child to kindergarten.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_sg_camera",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "(Minä) ostan digikameran.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["(Minä)", ""], ["osta-n", ""], ["digi=kamera-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I buy/will buy a/the digital camera.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "lapse-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_window",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Sylvi avaa ikkunan.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Sylvi opens/will open the window.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_sg_child",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "Isä vie lapsen tarhaan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Isä", ""], ["vie", ""], ["lapse-n", ""], ["tarha-an.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Father takes/will take the child to kindergarten.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "finite"
-      ],
-      [
-        "object",
-        "ikkuna-n"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_paper_imp",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Osta lehti!",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Buy (sg.) a newspaper!",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_sg_window",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "Sylvi avaa ikkunan.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Sylvi", ""], ["avaa", ""], ["ikkuna-n.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Sylvi opens/will open the window.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 2, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "finite"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "imperative"
-      ],
-      [
-        "object",
-        "lehti"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_book_pass",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Ostettiin kirja.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "A book was bought. ('One bought a book'.)",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_sg_paper_imp",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "Osta lehti!",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Osta", ""], ["lehti!", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "Buy (sg.) a newspaper!",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "imperative"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "passive"
-      ],
-      [
-        "object",
-        "kirja"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_dog_pass",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Koira vietiin pois.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The dog was taken away.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_sg_book_pass",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "Ostettiin kirja.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Oste-tt-i-in", ""], ["kirja.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "A book was bought. ('One bought a book'.)",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "passive"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "passive"
-      ],
-      [
-        "object",
-        "Koira"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_book_must",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "Minun täytyy ostaa kirja.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "I must buy a/the book.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_sg_dog_pass",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "Koira vietiin pois.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Koira", ""], ["vie-t-i-in", ""], ["pois.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "The dog was taken away.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "passive"]
       ],
-      [
-        "quantity",
-        "definite"
-      ],
-      [
-        "nominal",
-        "other"
-      ],
-      [
-        "number",
-        "singular"
-      ],
-      [
-        "clause",
-        "obligation"
-      ],
-      [
-        "object",
-        "kirja"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "karlsson2017_sg_house_inf",
-    "source": {
-      "bibkey": "karlsson-2017",
-      "paperLabel": "13.3.2 (4)"
+      "comment": "",
+      "verified": "page-image"
     },
-    "language": "finn1318",
-    "primaryText": "On vaikea ostaa talo.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It's difficult to buy a house.",
-    "context": "",
-    "judgment": "acceptable",
-    "contrasts": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "13.3.2"
+    {
+      "id": "karlsson2017_sg_book_must",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "Minun täytyy ostaa kirja.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Minu-n", ""], ["täyty-y", ""], ["osta-a", ""], ["kirja.", ""]
       ],
-      [
-        "negated",
-        "no"
+      "translation": "I must buy a/the book.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "object"}
       ],
-      [
-        "aspect",
-        "resultative"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "obligation"]
       ],
-      [
-        "quantity",
-        "definite"
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "karlsson2017_sg_house_inf",
+      "source": {"bibkey": "karlsson-2017", "paperLabel": "13.3.2 (4)"},
+      "language": "finn1318",
+      "primaryText": "On vaikea ostaa talo.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["On", ""], ["vaikea", ""], ["osta-a", ""], ["talo.", ""]
       ],
-      [
-        "nominal",
-        "other"
+      "translation": "It's difficult to buy a house.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 3, "label": "object"}
       ],
-      [
-        "number",
-        "singular"
+      "paperFeatures": [
+        ["section", "13.3.2"],
+        ["negated", "no"],
+        ["aspect", "resultative"],
+        ["quantity", "definite"],
+        ["nominal", "other"],
+        ["number", "singular"],
+        ["clause", "infinitival"]
       ],
-      [
-        "clause",
-        "infinitival"
-      ],
-      [
-        "object",
-        "talo"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  }
-]
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

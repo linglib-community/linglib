@@ -10,18 +10,18 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Gluing basic DRSs
 
-This file shows that basic DRSs form a sheaf. A presieve on a context is jointly surjective on
-literals when every literal of the context renames a literal of some member. Sets of literals
-amalgamate along any presieve and consistency is local, so basic DRSs are
-[separated](##DRT.Context.DRS.isSeparatedFor_iff), and [a sheaf](##DRT.Context.DRS.isSheafFor_iff),
-for a presieve exactly when it is jointly surjective on literals; these presieves form a coverage
-for which basic DRSs are [a sheaf](##DRT.Context.DRS.isSheaf_literalCoverage). Abramsky and
-Sadrzadeh glue along covers jointly surjective on referents and on the vocabulary: a family glues
-[exactly when it is compatible](##DRT.Context.Cover.exists_isGluing_iff_compatible), and the
-renamings of its local literals are then [the least
-gluing](##DRT.Context.Cover.exists_isGluing_iff). Under pairwise disjoint vocabularies and injective
-cover maps every family glues, to [the merge of the renamed local
-DRSs](##DRT.Context.Cover.coe_conditions_toDRS_glue).
+A presieve on a context is *jointly surjective on literals* when every literal of the context is
+the renaming of a literal of one of its members. Basic DRSs are separated for a presieve, and a
+sheaf for it, exactly when it is jointly surjective on literals
+(`Context.DRS.isSeparatedFor_iff`, `Context.DRS.isSheafFor_iff`). These presieves form a coverage
+for which basic DRSs are a sheaf (`Context.DRS.isSheaf_literalCoverage`).
+
+For a cover that is jointly surjective on referents and on the vocabulary, a family of local
+DRSs has a gluing exactly when it is compatible (`Context.Cover.exists_isGluing_iff_compatible`),
+and the renamings of its local literals are then the least gluing
+(`Context.Cover.exists_isGluing_iff`). When the vocabularies are pairwise disjoint and the cover
+maps injective, every family glues, to the merge of the renamed local DRSs
+(`Context.Cover.coe_conditions_toDRS_glue`).
 
 ## Implementation notes
 

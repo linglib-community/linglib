@@ -256,7 +256,7 @@ theorem isProbabilityMeasure_mixture {W : Type*} [MeasurableSpace W] (ν₁ ν�
     [IsProbabilityMeasure ν₁] [IsProbabilityMeasure ν₀] {φ : ℝ} (h0 : 0 ≤ φ) (h1 : φ ≤ 1) :
     IsProbabilityMeasure (φ.toNNReal • ν₁ + (1 - φ).toNNReal • ν₀) :=
   ⟨by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply, measure_univ, measure_univ,
+    rw [add_apply, smul_apply, smul_apply, measure_univ, measure_univ,
       ENNReal.smul_def, ENNReal.smul_def, smul_eq_mul, smul_eq_mul, mul_one, mul_one,
       ← ENNReal.coe_add, ← Real.toNNReal_add h0 (by linarith), add_sub_cancel,
       Real.toNNReal_one, ENNReal.coe_one]⟩
@@ -327,7 +327,7 @@ theorem endorse_of_mixture (ν₁ : Measure W) [IsProbabilityMeasure ν₁] (σ 
   have hE := expectedPrevalence_bimodal prev ν₁ σ hσ hν w₀ hw₀ h0.le
   refine endorse_of_expectation_lt prev _ hlam hp ?_ (by rw [hE]; positivity)
     (by rw [hE, hhalf]; linarith)
-  rw [Measure.add_apply, Measure.smul_apply, ENNReal.smul_def, smul_eq_mul]
+  rw [add_apply, smul_apply, ENNReal.smul_def, smul_eq_mul]
   refine ne_of_gt (lt_of_lt_of_le (ENNReal.mul_pos ?_ hw) le_self_add)
   exact_mod_cast (Real.toNNReal_pos.2 h0).ne'
 

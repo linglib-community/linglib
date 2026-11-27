@@ -125,7 +125,7 @@ a partial function on information states that is defined for `∂φ` only at the
 `φ`. -/
 noncomputable def eval : Formula P → CCP.Partial W
   | atom p => fun σ ↦ Part.some {w ∈ σ | w ∈ F p}
-  | not φ => CCP.Partial.neg (eval φ)
+  | not φ => PartialUpdate.neg (eval φ)
   | and φ ψ => PartialUpdate.seq (eval φ) (eval ψ)
   | might φ => fun σ ↦ (eval φ σ).map fun υ ↦ if υ.Nonempty then σ else ∅
   | must φ => fun σ ↦ (eval φ σ).map fun υ ↦ if υ = σ then σ else ∅
@@ -199,8 +199,8 @@ theorem presupposes_iff_forall :
 theorem entails_iff_forall : Entails F φ ψ ↔ ∀ σ τ, τ ∈ φ.eval F σ → Satisfies F τ ψ :=
   PartialUpdate.entails_bind_iff
 
-theorem eval_implies : (implies φ ψ).eval F = CCP.Partial.cond (φ.eval F) (ψ.eval F) :=
-  (CCP.Partial.cond_eq_neg_seq_neg _ _).symm
+theorem eval_implies : (implies φ ψ).eval F = PartialUpdate.cond (φ.eval F) (ψ.eval F) :=
+  (PartialUpdate.cond_eq_neg_seq_neg _ _).symm
 
 -- Fact 6.1
 theorem eval_must (φ : Formula P) : (must φ).eval F = (not (might (not φ))).eval F := by

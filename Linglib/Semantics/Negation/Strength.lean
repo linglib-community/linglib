@@ -129,6 +129,14 @@ theorem toProjectivitySignature_le_toProjectivitySignature {s t : Strength} :
 theorem toProjectivitySignature_antitone : Antitone toProjectivitySignature :=
   fun _ _ h ↦ toProjectivitySignature_le_toProjectivitySignature.2 h
 
+/-- The strengths as a chain among the signatures in reverse. -/
+def toProjectivitySignatureEmbedding : Strengthᵒᵈ ↪o ProjectivitySignature :=
+  .ofMapLEIff (fun s ↦ s.ofDual.toProjectivitySignature)
+    fun _ _ ↦ toProjectivitySignature_le_toProjectivitySignature
+
+@[simp] theorem toProjectivitySignatureEmbedding_apply (s : Strengthᵒᵈ) :
+    toProjectivitySignatureEmbedding s = s.ofDual.toProjectivitySignature := rfl
+
 /-! ### The strength of a negation composite
 
 A map composed with negation has the strengths dual to the positive classes of the map, since

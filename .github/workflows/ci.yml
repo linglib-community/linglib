@@ -14,12 +14,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ledger:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check the pull request's changes to the human-check ledger
+        env:
+          BASE: origin/${{ github.base_ref }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+        run: python3 scripts/checks.py verify-ledger --base "$BASE" --author "$AUTHOR" --author-type "$AUTHOR_TYPE"
+
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Check generated statistics data
         run: python3 scripts/gen_statistics.py --check
@@ -92,7 +109,7 @@ jobs:
           lake --version
 
       - name: Cache .lake
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake
           key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Linglib.lean') }}
@@ -104,6 +121,9 @@ jobs:
 
       - name: Build
         run: lake build
+
+      - name: Check the human checks (broken items and stale sign-offs are warnings)
+        run: python3 scripts/checks.py status --ci
 
       - name: Check for sorries (informational)
         run: |

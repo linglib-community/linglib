@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Rett2015a
-public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Languages.English.NumeralModifiers
 public import Linglib.Semantics.Degree.Quantifier
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Basic
@@ -30,7 +30,7 @@ plural subgroup is that of its tallest member, so `R` holds those members, and a
 
 The evaluative branch of the M-implicature, (80), needs a contextual standard for each of (16),
 (20) and (21). The extension to modals in §4 and the implicatures of the remaining Class B
-modifiers are open, and *n or more* is not in the fragment.
+modifiers are open, and *n or more* is not in the language file.
 
 ## References
 

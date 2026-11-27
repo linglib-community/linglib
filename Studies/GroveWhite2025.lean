@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.Probability.Distributions.Bernoulli
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.GroveWhite2025
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Independence.Basic
@@ -207,7 +207,7 @@ theorem unresolvedFactivity_eq : unresolvedFactivity τ ν = ν.map fun d ↦ σ
     funext (disjunction_eq τ)]
 
 instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (resolvedFactivity τ ν) :=
-  ⟨by simp [resolvedFactivity_eq]⟩
+  ⟨by simp [resolvedFactivity_eq, ← ENNReal.coe_add]⟩
 
 instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (unresolvedFactivity τ ν) :=
   (isProbabilityMeasure_map_iff (measurable_disjunction τ).aemeasurable).mpr ‹_›

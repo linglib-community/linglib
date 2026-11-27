@@ -5,7 +5,7 @@ public import Studies.Sassoon2013
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Aggregation.Arrow
 public import Linglib.Semantics.Aggregation.Rules
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!

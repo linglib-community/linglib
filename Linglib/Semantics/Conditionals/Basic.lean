@@ -1,8 +1,9 @@
 module
 
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.WellFoundedSet
 public import Linglib.Logic.Nonmonotonic.Preferential
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Definability
 
 /-!
 # Conditional operators
@@ -69,6 +70,8 @@ where the Limit Assumption holds.
 
 namespace Conditional
 
+open scoped Filter
+
 variable {I W : Type*} {access : I → Set W} {p p' q q' : Set W} {i : I} {w : W}
 
 /-! ### Material conditional -/
@@ -110,8 +113,8 @@ def ofDomain (D : I → Set W → Set W) (p q : Set W) : Set I := {i | D i p ⊆
 theorem mem_ofDomain : i ∈ ofDomain D p q ↔ D i p ⊆ q := Iff.rfl
 
 /-- The conditional over a domain is necessity along the relation sending `i` to the worlds of
-its domain, `SetRel.core` of `SetRel.ofSuccessors`. -/
-theorem ofDomain_eq_core : ofDomain D p q = (SetRel.ofSuccessors (D · p)).core q := rfl
+its domain, `SetRel.core` of `SetRel.cgraph`. -/
+theorem ofDomain_eq_core : ofDomain D p q = (SetRel.cgraph (D · p)).core q := rfl
 
 theorem ofDomain_mono_right (hq : q ⊆ q') : ofDomain D p q ⊆ ofDomain D p q' :=
   fun _ h ↦ h.trans hq
@@ -147,7 +150,7 @@ theorem not_mem_ofDomain_and_compl {v v' : W} (hv : v ∈ D i p) (hv' : v' ∈ D
 
 theorem forall_mem_ofDomain_or_compl_iff :
     (∀ r : Set W, i ∈ ofDomain D p r ∨ i ∈ ofDomain D p rᶜ) ↔ (D i p).Subsingleton :=
-  have key := ModalLogic.box_or_box_not_at_iff (R := SetRel.ofSuccessors (D · p)) (w := i)
+  have key := ModalLogic.box_or_box_not_at_iff (R := SetRel.cgraph (D · p)) (w := i)
   ⟨fun h ↦ key.1 fun q ↦ h {v | q v}, fun h r ↦ key.2 h (· ∈ r)⟩
 
 theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :
@@ -332,11 +335,11 @@ variable {ord : I → Preorder W}
 /-- The variably strict conditional, true at `i` when the consequent holds toward the bottom of
 the preorder `ord i` on the accessible antecedent-worlds. -/
 def variablyStrictImp (access : I → Set W) (ord : I → Preorder W) (p q : Set W) : Set I :=
-  {i | q ∈ @Filter.atBotOn W W (ord i) id (access i ∩ p)}
+  {i | q ∈ atBotOn[ord i] (access i ∩ p)}
 
 @[simp]
 theorem mem_variablyStrictImp :
-    i ∈ variablyStrictImp access ord p q ↔ q ∈ @Filter.atBotOn W W (ord i) id (access i ∩ p) :=
+    i ∈ variablyStrictImp access ord p q ↔ q ∈ atBotOn[ord i] (access i ∩ p) :=
   Iff.rfl
 
 /-- On a total preorder the variably strict conditional holds when no antecedent-world is
@@ -370,7 +373,7 @@ theorem closestImp_eq_orderingImp {ord : W → Preorder W} :
 
 theorem variablyStrictImp_subset_orderingImp :
     variablyStrictImp access ord p q ⊆ orderingImp access ord p q :=
-  fun i hi ↦ letI := ord i; Filter.setOf_minimalFor_subset_of_mem_atBotOn hi
+  fun i hi ↦ Filter.setOf_minimalFor_subset_of_mem_atBotOn hi
 
 /-- Under the Limit Assumption at `i`, the variably strict conditional is truth at the best
 accessible antecedent-worlds ([lewis-1973b] §1.4). -/
@@ -382,6 +385,17 @@ theorem mem_variablyStrictImp_iff_mem_orderingImp
   refine Filter.mem_atBotOn_of_setOf_minimalFor_subset (fun h hh ↦ ?_) hi
   obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ p | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
   exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
+
+/-- Where each preorder is well founded on the accessible worlds, the variably strict conditional
+is the conditional over the best accessible antecedent-worlds. -/
+theorem orderingImp_eq_variablyStrictImp (hlim : ∀ i, (access i).WellFoundedOn (ord i).lt) :
+    orderingImp access ord p q = variablyStrictImp access ord p q :=
+  Set.ext fun i ↦ (mem_variablyStrictImp_iff_mem_orderingImp fun _ hB ↦
+    letI := ord i; ((hlim i).subset Set.inter_subset_left).exists_minimal hB).symm
+
+theorem orderingImp_eq_variablyStrictImp_of_finite (hfin : ∀ i, (access i).Finite) :
+    orderingImp access ord p q = variablyStrictImp access ord p q :=
+  orderingImp_eq_variablyStrictImp fun i ↦ (hfin i).wellFoundedOn
 
 theorem variablyStrictImp_subset_materialImp {ord : W → Preorder W} {access : W → Set W}
     (hR : ∀ w, w ∈ access w) (hc : IsCentered ord) :
@@ -453,9 +467,9 @@ section Logic
 
 theorem isPreferential_variablyStrictImp {ord : I → Preorder W} :
     Nonmonotonic.IsPreferential fun p q ↦ i ∈ variablyStrictImp access ord p q where
-  refl _ := letI := ord i; Filter.mem_of_superset Filter.self_mem_atBotOn Set.inter_subset_right
-  rightWeakening h hψχ := Filter.mem_of_superset (f := @Filter.atBotOn W W (ord i) id _) h hψχ
-  and h h' := Filter.inter_mem (f := @Filter.atBotOn W W (ord i) id _) h h'
+  refl _ := Filter.mem_of_superset Filter.self_mem_atBotOn Set.inter_subset_right
+  rightWeakening h hψχ := Filter.mem_of_superset (f := atBotOn[ord i] _) h hψχ
+  and h h' := Filter.inter_mem (f := atBotOn[ord i] _) h h'
   or h h' := by
     let := ord i
     rw [mem_variablyStrictImp, Set.inter_union_distrib_left]

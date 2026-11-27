@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.DeMorganAlgebra.Kalman
-public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Inquisitive.Declarative
 public import Mathlib.Order.Comparable
 
 /-!
@@ -17,17 +17,17 @@ relevant world to itself](##exists_isMinCover_iff), the Independence inference, 
 [orthodox necessity together with possibility](##truth_necessity_eq_inter). A minimal cover of a
 nonempty set is [a super cover](##IsMinCover.isSuperCover).
 
-The unilateral modals `box` and `diamond` act on inquisitive propositions (`Question W`), whose
-alternatives let a modal see the disjuncts of its prejacent. The bilateral semantics assigns each
-sentence a pair of inquisitive propositions, the states verifying and the states falsifying it,
-overlapping only in the inconsistent state `∅`. These pairs are Kalman's construction over the
-inquisitive algebra, `Kalman (Question W)`, so negation swaps the pair and conjunction and
-disjunction are the Kleene-lattice operations, with the De Morgan laws and double negation for
-free. The bilateral modals are pairs of unilateral ones, `necessity = (box, diamond)` and
-`possibility = (diamond, box)` on the two coordinates, so the duality of `□` and `◇` holds by
-definition. Truth and falsity are the informative contents of the two coordinates: no sentence is
-[both true and false](##disjoint_truth_falsity), but a modal sentence can be neither. A sentence
-entails another in a model, `φ ⊨[V, R] ψ`, when the second is true wherever the first is.
+The unilateral modals `box` and `diamond` act on inquisitive propositions (`Inquisitive.Proposition
+(Set W)`), whose alternatives let a modal see the disjuncts of its prejacent. The bilateral
+semantics assigns each sentence a pair of inquisitive propositions, the states verifying and the
+states falsifying it, overlapping only in the inconsistent state `∅`. These pairs are Kalman's
+construction over the inquisitive algebra, `Kalman (Inquisitive.Proposition (Set W))`, so negation
+swaps the pair and conjunction and disjunction are the Kleene-lattice operations, with the De Morgan
+laws and double negation for free. The bilateral modals are pairs of unilateral ones, `necessity =
+(box, diamond)` and `possibility = (diamond, box)` on the two coordinates, so the duality of `□` and
+`◇` holds by definition. Truth and falsity are the informative contents of the two coordinates: no
+sentence is [both true and false](##disjoint_truth_falsity), but a modal sentence can be neither. A
+sentence entails another in a model, `φ ⊨[V, R] ψ`, when the second is true wherever the first is.
 
 ## Implementation notes
 
@@ -45,7 +45,7 @@ upward, so `Set.minimal_iff_forall_sdiff_singleton` is the characterization by n
 
 @[expose] public section
 
-open Question
+open Inquisitive Inquisitive.Proposition
 
 namespace MinimalCovering
 
@@ -155,25 +155,25 @@ theorem IsMinCover.isSuperCover (h : IsMinCover C S) (hS : S.Nonempty) : IsSuper
 
 /-- The unilateral necessity modal: `□P` holds at `w` when the alternatives of `P` minimally
 cover the relevant worlds `R w`. -/
-def box (R : W → Set W) (P : Question W) : Question W :=
+def box (R : W → Set W) (P : Proposition (Set W)) : Proposition (Set W) :=
   ofSet {w | IsMinCover (alt P) (R w)}
 
 /-- The unilateral possibility modal: `◇P` holds at `w` when the alternatives of `P` minimally
 cover a nonempty set of relevant worlds. -/
-def diamond (R : W → Set W) (P : Question W) : Question W :=
+def diamond (R : W → Set W) (P : Proposition (Set W)) : Proposition (Set W) :=
   ofSet {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt P) R'}
 
-@[simp] theorem info_box (R : W → Set W) (P : Question W) :
+@[simp] theorem info_box (R : W → Set W) (P : Proposition (Set W)) :
     (box R P).info = {w | IsMinCover (alt P) (R w)} :=
   info_ofSet _
 
-@[simp] theorem info_diamond (R : W → Set W) (P : Question W) :
+@[simp] theorem info_diamond (R : W → Set W) (P : Proposition (Set W)) :
     (diamond R P).info = {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt P) R'} :=
   info_ofSet _
 
 /-- Necessity is orthodox necessity of what the alternatives cover together with possibility:
 the alternatives cover the relevant worlds, and each has a relevant world to itself. -/
-theorem box_eq_inf_diamond (R : W → Set W) {P : Question W} (hP : (alt P).Nonempty) :
+theorem box_eq_inf_diamond (R : W → Set W) {P : Proposition (Set W)} (hP : (alt P).Nonempty) :
     box R P = ofSet {w | R w ⊆ ⋃₀ alt P} ⊓ diamond R P := by
   rw [box, diamond, ofSet_inf]
   congr 1
@@ -182,7 +182,8 @@ theorem box_eq_inf_diamond (R : W → Set W) {P : Question W} (hP : (alt P).None
     exists_isMinCover_iff, isMinCover_iff_inter_sdiff]
   exact ⟨fun h ↦ ⟨h.1, hP, h.2⟩, fun h ↦ ⟨h.1, h.2.2⟩⟩
 
-theorem disjoint_box_diamond (R : W → Set W) {P Q : Question W} (h : Disjoint P.info Q.info) :
+theorem disjoint_box_diamond (R : W → Set W) {P Q : Proposition (Set W)}
+    (h : Disjoint P.info Q.info) :
     Disjoint (box R P) (diamond R Q) := by
   rw [box, diamond, disjoint_ofSet_iff]
   exact Set.disjoint_left.2 fun w hP ⟨R', hR', ⟨v, hv⟩, hQ⟩ ↦
@@ -191,20 +192,21 @@ theorem disjoint_box_diamond (R : W → Set W) {P Q : Question W} (h : Disjoint 
 
 /-! ### Bilateral inquisitive propositions
 
-A bilateral inquisitive proposition is a pair of inquisitive propositions, the states verifying
-and the states falsifying a sentence, overlapping only in `∅`: disjoint in `Question W`, whose
-bottom is `{∅}`. These are the elements of `Kalman (Question W)`; `Kalman.pro` and `Kalman.con` are
-Booth's `⟦φ⟧⁺` and `⟦φ⟧⁻`, and negation, conjunction and disjunction are `ᶜ`, `⊓` and `⊔`. -/
+A bilateral inquisitive proposition is a pair of inquisitive propositions, the states verifying and
+the states falsifying a sentence, overlapping only in `∅`: disjoint in `Proposition (Set W)`, whose
+bottom is `{∅}`. These are the elements of `Kalman (Proposition (Set W))`; `Kalman.pro` and
+`Kalman.con` are Booth's `⟦φ⟧⁺` and `⟦φ⟧⁻`, and negation, conjunction and disjunction are `ᶜ`, `⊓`
+and `⊔`. -/
 
 /-- The worlds at which `φ` is true, `info ⟦φ⟧⁺`. -/
-abbrev truth (φ : Kalman (Question W)) : Set W := φ.pro.info
+abbrev truth (φ : Kalman (Proposition (Set W))) : Set W := φ.pro.info
 
 /-- The worlds at which `φ` is false, `info ⟦φ⟧⁻`. -/
-abbrev falsity (φ : Kalman (Question W)) : Set W := φ.con.info
+abbrev falsity (φ : Kalman (Proposition (Set W))) : Set W := φ.con.info
 
 section Connectives
 
-variable (φ ψ : Kalman (Question W))
+variable (φ ψ : Kalman (Proposition (Set W)))
 
 theorem mem_truth_iff {w : W} : w ∈ truth φ ↔ {w} ∈ φ.pro :=
   mem_info_iff_singleton_mem _ _
@@ -224,7 +226,7 @@ theorem disjoint_truth_falsity : Disjoint (truth φ) (falsity φ) :=
 @[simp] theorem falsity_inf : falsity (φ ⊓ ψ) = falsity φ ∪ falsity ψ := info_sup _ _
 
 /-- An atomic sentence true at `V`: `(↓{V}, ↓{Vᶜ})`. -/
-def atom (V : Set W) : Kalman (Question W) :=
+def atom (V : Set W) : Kalman (Proposition (Set W)) :=
   Kalman.mk (ofSet V) (ofSet Vᶜ) (disjoint_ofSet_iff.2 disjoint_compl_right)
 
 @[simp] theorem pro_atom (V : Set W) : (atom V).pro = ofSet V := rfl
@@ -250,7 +252,7 @@ theorem alt_inf_compl_atom (Vp Vq : Set W) : alt (atom Vp ⊓ (atom Vq)ᶜ).pro 
 
 /-- The inquisitive `!`, erasing the distinctions between alternatives on both sides:
 `!φ = (↓{info ⟦φ⟧⁺}, ↓{info ⟦φ⟧⁻})`. -/
-def bang : Kalman (Question W) :=
+def bang : Kalman (Proposition (Set W)) :=
   Kalman.mk (ofSet (truth φ)) (ofSet (falsity φ))
     (disjoint_ofSet_iff.2 (disjoint_truth_falsity φ))
 
@@ -265,19 +267,19 @@ end Connectives
 
 /-- **Necessity**: true where the positive alternatives of the prejacent minimally cover the
 relevant worlds, false where its negative alternatives minimally cover a nonempty part of them. -/
-def necessity (R : W → Set W) (φ : Kalman (Question W)) : Kalman (Question W) :=
+def necessity (R : W → Set W) (φ : Kalman (Proposition (Set W))) : Kalman (Proposition (Set W)) :=
   Kalman.mk (box R φ.pro) (diamond R φ.con) (disjoint_box_diamond R (disjoint_truth_falsity φ))
 
 /-- **Possibility**: true where the positive alternatives of the prejacent minimally cover a
 nonempty part of the relevant worlds, false where its negative alternatives minimally cover
 them. -/
-def possibility (R : W → Set W) (φ : Kalman (Question W)) : Kalman (Question W) :=
+def possibility (R : W → Set W) (φ : Kalman (Proposition (Set W))) : Kalman (Proposition (Set W)) :=
   Kalman.mk (diamond R φ.pro) (box R φ.con)
     (disjoint_box_diamond R (disjoint_truth_falsity φ).symm).symm
 
 section Modals
 
-variable (R : W → Set W) (φ : Kalman (Question W))
+variable (R : W → Set W) (φ : Kalman (Proposition (Set W)))
 
 /-- The duality of the modals: `◇φ = ¬□¬φ`. -/
 theorem possibility_eq_compl_necessity_compl : possibility R φ = (necessity R φᶜ)ᶜ := rfl
@@ -337,7 +339,7 @@ end Modals
 /-! ### Conditionals and the language -/
 
 /-- The accessibility update by `φ`: the relevant worlds at which `φ` is true. -/
-def updateAccess (R : W → Set W) (φ : Kalman (Question W)) (w : W) : Set W :=
+def updateAccess (R : W → Set W) (φ : Kalman (Proposition (Set W))) (w : W) : Set W :=
   R w ∩ truth φ
 
 /-- The language: atoms, negation, conjunction, disjunction, the inquisitive `!`, the restrictor
@@ -365,7 +367,7 @@ variable {At : Type*}
 
 /-- The interpretation of a sentence in the model `⟨W, R, V⟩`. The restrictor conditional
 evaluates its consequent under the accessibility updated by its antecedent. -/
-def eval (V : At → Set W) : (W → Set W) → Formula At → Kalman (Question W)
+def eval (V : At → Set W) : (W → Set W) → Formula At → Kalman (Proposition (Set W))
   | _, atom p => MinimalCovering.atom (V p)
   | R, neg φ => (eval V R φ)ᶜ
   | R, conj φ ψ => eval V R φ ⊓ eval V R ψ

@@ -1,9 +1,10 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Basic
-public import Mathlib.Order.Filter.Basic
+public import Linglib.Semantics.Modality.Necessity
+public import Linglib.Semantics.Modality.QuantificationalForce
 public import Linglib.Semantics.Negation.Polarity
-public import Linglib.Fragments.NezPerce.Modals
+public import Linglib.Languages.NezPerce.Modals
 public import Linglib.Data.Examples.Deal2011
 public import Linglib.Data.Examples.Readers
 
@@ -24,7 +25,7 @@ flexible](##flexible_iff) in upward-entailing contexts only, as [*o'qa* is](##oq
 
 * The necessities at a world are a filter of propositions, as in
   `Semantics/Modality/Necessity.lean`, consistent when it is `NeBot`: [kratzer-1981]'s simple
-  necessity over a consistent modal base and her human necessity over an ordering source are
+  necessity over a consistent modal base and her necessity over an ordering source are
   both instances. Negation acts on a claim by complement, the negative `Polarity`.
 * The scalar implicature is [chierchia-2006]'s exhaustification, the grammatical view of the two
   the paper leaves open. The alternatives to a modal's use are the claims of its scalemates in
@@ -48,36 +49,13 @@ flexible](##flexible_iff) in upward-entailing contexts only, as [*o'qa* is](##oq
 
 namespace Deal2011
 
-open Modality Exhaustification Filter
+open Modality QuantificationalForce Exhaustification Filter
 
 /-! ### Claims -/
 
 section Claims
 
 variable {W : Type*} (N : W → Filter W) (p : Set W)
-
-/-- The claim a modal of quantificational force `q` makes about `p` over the necessities `N`:
-that `p` is a necessity, or that its negation is not. -/
-def claim : QuantificationalForce → Set W
-  | .universal => {w | p ∈ N w}
-  | .existential => {w | ∃ᶠ v in N w, v ∈ p}
-
-variable {N p}
-
--- Over consistent necessities the universal claim entails the existential one.
-theorem antitone_claim (hN : ∀ w, (N w).NeBot) : Antitone (claim N p) := by
-  intro q r hqr w hw
-  have := hN w
-  cases q <;> cases r
-  exacts [hw, Eventually.frequently hw, absurd hqr (by decide), hw]
-
-variable (N p)
-
--- The negation of a claim is the dual claim about the negated prejacent.
-theorem compl_claim (q : QuantificationalForce) : (claim N p q)ᶜ = claim N pᶜ q.dual := by
-  ext w
-  cases q
-  exacts [not_frequently, not_eventually]
 
 theorem smul_claim (π : Polarity) (q : QuantificationalForce) :
     π • claim N p q = claim N (π • p) (π • q) := by

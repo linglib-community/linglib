@@ -3,33 +3,33 @@ module
 public import Mathlib.Data.Finset.Option
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Core.Order.UpperLower.Finset
-public import Linglib.Fragments.Arabic.ModernStandard.Case
-public import Linglib.Fragments.Dargwa.Tanti.Case
-public import Linglib.Fragments.Finnish.Case
-public import Linglib.Fragments.Georgian.Case
-public import Linglib.Fragments.German.Basel.Case
-public import Linglib.Fragments.German.Case
-public import Linglib.Fragments.Greek.Ancient.Case
-public import Linglib.Fragments.Greek.StandardModern.Case
-public import Linglib.Fragments.HindiUrdu.Case
-public import Linglib.Fragments.Hungarian.Case
-public import Linglib.Fragments.Icelandic.Case
-public import Linglib.Fragments.Latin.Case
-public import Linglib.Fragments.Mongolian.Case
-public import Linglib.Fragments.Slavic.Belarusian.Case
-public import Linglib.Fragments.Slavic.Cassubian.Case
-public import Linglib.Fragments.Slavic.Czech.Case
-public import Linglib.Fragments.Slavic.Polish.Case
-public import Linglib.Fragments.Slavic.Russian.Case
-public import Linglib.Fragments.Slavic.Serbian.Case
-public import Linglib.Fragments.Slavic.Slovak.Case
-public import Linglib.Fragments.Slavic.Slovenian.Case
-public import Linglib.Fragments.Slavic.Sorbian.Case
-public import Linglib.Fragments.Slavic.Ukrainian.Case
-public import Linglib.Fragments.Tamil.Case
-public import Linglib.Fragments.Telugu.Case
-public import Linglib.Fragments.Turkish.Case
-public import Linglib.Fragments.Yakut.Case
+public import Linglib.Languages.Arabic.ModernStandard.Case
+public import Linglib.Languages.Dargwa.Tanti.Case
+public import Linglib.Languages.Finnish.Case
+public import Linglib.Languages.Georgian.Case
+public import Linglib.Languages.German.Basel.Case
+public import Linglib.Languages.German.Case
+public import Linglib.Languages.Greek.Ancient.Case
+public import Linglib.Languages.Greek.StandardModern.Case
+public import Linglib.Languages.HindiUrdu.Case
+public import Linglib.Languages.Hungarian.Case
+public import Linglib.Languages.Icelandic.Case
+public import Linglib.Languages.Latin.Case
+public import Linglib.Languages.Mongolian.Case
+public import Linglib.Languages.Slavic.Belarusian.Case
+public import Linglib.Languages.Slavic.Cassubian.Case
+public import Linglib.Languages.Slavic.Czech.Case
+public import Linglib.Languages.Slavic.Polish.Case
+public import Linglib.Languages.Slavic.Russian.Case
+public import Linglib.Languages.Slavic.Serbian.Case
+public import Linglib.Languages.Slavic.Slovak.Case
+public import Linglib.Languages.Slavic.Slovenian.Case
+public import Linglib.Languages.Slavic.Sorbian.Case
+public import Linglib.Languages.Slavic.Ukrainian.Case
+public import Linglib.Languages.Tamil.Case
+public import Linglib.Languages.Telugu.Case
+public import Linglib.Languages.Turkish.Case
+public import Linglib.Languages.Yakut.Case
 
 /-!
 # Blake (1994): Case
@@ -64,7 +64,7 @@ and the cases of source with the ablative. The text was checked in the second ed
 ## TODO
 
 Blake observes that no language has both a case for A and a case for P unless it has a fourth
-case. This is not stated: the one fragment with both an ergative and an accusative,
+case. This is not stated: the one language file with both an ergative and an accusative,
 `NezPerce.Case`, records the three cases of the relative pronoun only.
 
 ## References
@@ -342,7 +342,7 @@ theorem ancient_greek_dat_functions :
       .argument .R ∈ Greek.Ancient.Case.dat.functions ∧
       .argument .R ∈ Latin.Case.dat.functions := by decide
 
-/-! ### The other case inventories of the fragments
+/-! ### The other case inventories of the language files
 
 The inventories that do not conform each miss a position Blake's two sources of gaps account for.
 Finnish has no dative, and its allative *-lle* has dative functions. Hungarian and Basel German

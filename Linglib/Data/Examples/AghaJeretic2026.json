@@ -1,4 +1,29 @@
 {
+  "features": [
+    {
+      "key": "environment",
+      "lean": "environment",
+      "type": "Environment",
+      "doc": "The environments the typology distinguishes.",
+      "levels": [
+        {
+          "name": "unembedded",
+          "label": "unembedded",
+          "doc": "an unembedded clause"
+        },
+        {
+          "name": "clausemateNegation",
+          "label": "clausemate negation",
+          "doc": "under a clausemate negation"
+        },
+        {
+          "name": "otherDE",
+          "label": "other DE",
+          "doc": "another downward-entailing context"
+        }
+      ]
+    }
+  ],
   "readings": {
     "lean": "reading",
     "type": "Reading",

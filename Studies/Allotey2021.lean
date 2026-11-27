@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Fragments.Ga.Pronouns
-public import Linglib.Fragments.Ga.Verbs
+public import Linglib.Languages.Ga.Pronouns
+public import Linglib.Languages.Ga.Verbs
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Data.WALS.Features.F101A
-public import Linglib.Syntax.Binding.MinimalPronoun
+public import Linglib.Morphology.DistributedMorphology.MinimalPronoun
 public import Studies.Landau2004
 public import Linglib.Syntax.Binding.Valuation
 public import Studies.Landau2013
@@ -31,7 +31,7 @@ Everything is read off the paper's example rows and the Fragment. The control
 profile of a clause type is the clauses of Landau's signature its rows refute:
 no row attests a criterial configuration of the `ni`-clause, so it is obligatory
 control, while the finite `akɛ`-clause attests free reference, refuting
-co-dependence. Complementizer selection is `Verb.Takes` over the Fragment's
+co-dependence. Complementizer selection is `Verb.Takes` over the language file's
 frames; every finiteness diagnostic is a row theorem conditioned on the
 complementizer's finiteness alone, the paper's convergence argument; Table 4 is
 the exponents the rows show in each irrealis context, and the tone-hosting
@@ -40,7 +40,7 @@ requirement then derives the overt pronoun from the minimal-pronoun inventory.
 ## Implementation notes
 
 The paper's pro-drop status is its own reading of its 101A cell, obligatory
-subject pronouns (§4.2), and is stated here rather than in the Fragment because
+subject pronouns (§4.2), and is stated here rather than in the language file because
 WALS codes the same markers as affixes; `wals_codes_affixes` records
 the discrepancy and `no_agreement_rows` the paper's evidence against it. The
 bound-variable row of Table 2 rests on the *de se* example (53); the paper
@@ -77,7 +77,7 @@ tense and no agreement (`Studies/Fujii2012.lean`).
 
 namespace Allotey2021
 
-open Binding.MinimalPronoun Binding Ga Ga.Pronouns Morphology
+open DistributedMorphology.MinimalPronoun Binding Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 
@@ -158,7 +158,7 @@ def gaInventory : Vocabulary Form where
   items := []
   elsewhere := .pronoun
 
-/-- The Fragment entry for a row's matrix verb. -/
+/-- The language file entry for a row's matrix verb. -/
 def verbOf (row : Datum) : Option Verb :=
   (row.feature? "verb").bind (Verb.find? verbs ·)
 
@@ -397,7 +397,8 @@ def occupant : ArgumentFrame.Site → Occupant
   | .subjectOf _ => .pronoun
   | .slot _ => .lexicalDP
 
--- §3.6.2, (64): the Fragment's *kai* 'remember' makes the subject of its `ni`-clause depend on its
+-- §3.6.2, (64): the language file's *kai* 'remember' makes the subject of its `ni`-clause depend
+-- on its
 -- own subject, but that subject is a pronoun, never a copy of a lexical controller, so the
 -- dependency shares no occupants, as a chain of copies would
 theorem kai_not_movement :

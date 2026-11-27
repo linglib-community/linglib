@@ -5,7 +5,7 @@ A page shows the module docstring and the declarations by section, its headline 
 open cards and every other declaration as a row that opens in place, whose "Built from" line opens
 the file's definitions its statement names. On a study page, which also shows the paper's title and
 citation, the headlines are the theorems with a docstring. The right column places the study in the
-library: the theory and fragments its statements use, with the names they use, the imports they
+library: the theory and languages its statements use, with the names they use, the imports they
 never name, the studies on the same theory, the papers it cites and those citing it, and the papers
 it cites that no study formalizes. It also has the theorems whose statements name another paper's
 definitions, with their sentences: this page's about other papers, and other pages' about this one.
@@ -16,11 +16,13 @@ definitions, leaving out proofs that only evaluate and sentences that need the p
 
 On a theory page the headlines are the declarations the module docstring links to, as a mathlib
 header names a file's main definitions and results, or the theorems with a docstring if it links to
-none. The right column has the theory it builds on, then the theory, studies and fragments whose
+none. The right column has the theory it builds on, then the theory, studies and languages whose
 statements use it, with the names they use, and the other files of its directory.
 
 Everything comes from doc-gen4's output, read by `docgen_index`, and from the bibliography;
-signatures and equations are doc-gen4's own, with their links.
+signatures and equations are doc-gen4's own, with their links. With `--checks`, the output of
+`checks.py status --json`, a declaration stating an item of a source says whether a person has
+checked it against the source (`checks/README.md`).
 
 The pages replace doc-gen4's own at the same addresses, and the landing page its `index.html`, so
 links to them keep landing. `--root` is the site's root relative to the docs directory.
@@ -32,9 +34,11 @@ Usage, from the repository root, after doc-gen4 has written `.lake/build/doc` an
     python3 scripts/gen_docs_pages.py --out DIR --only KehlerRohde2013 Linglib.Phonology   # some only
     python3 scripts/gen_docs_pages.py --out DIR --check   # also confirm anchors survive, links land
     python3 scripts/gen_docs_pages.py --out DIR --redirect OLD   # OLD/Studies/X.html forwards here
+    python3 scripts/gen_docs_pages.py --out DIR --checks checks.json   # with the human checks
 """
 
 import argparse
+import datetime
 import html
 import json
 import math
@@ -59,6 +63,9 @@ THEORY = ("Semantics", "Syntax", "Pragmatics", "Morphology", "Phonology", "Proce
 KW = {"def": "def", "theorem": "theorem", "inductive": "inductive", "instance": "instance",
       "structure": "structure", "abbrev": "abbrev", "class": "class", "axiom": "axiom",
       "opaque": "opaque"}
+# How a declaration stands to an item it is checked against, when it does not state it exactly.
+RELATION = {"generalizes": "a generalization", "specializes": "a special case",
+            "variant": "a variant"}
 # A definition's docstring that opens with a paper locator ("(9):", "Eq. (12):", "Table 1:") shows
 # it apart. A bare number is a numbered example; any other display carries its kind.
 KIND = (r"Tables?|Tableau|Figures?|Fig\.|Eqs?\.|Equations?|Ex\.|Examples?|Def\.|Definitions?"
@@ -68,8 +75,10 @@ LOC = re.compile(rf"^<p>((?:(?:{KIND})\s*|(?=\()){NUM}(?:\s*(?:,|and|to|–)\s*{
 CITE_LINK = re.compile(r'<a href="([^"]*references\.html#ref_([^"]+))" title="[^"]*" id="[^"]*">'
                        r'(\[[^\]]+\])</a>', re.S)
 HEADING = re.compile(r'<h\d id="([^"]+)"[^>]*>(.*?)(?: <a class="hover-link"|</h\d>)', re.S)
-DECL_NAME = re.compile(r'<span class="decl_kind">\w+</span>\s*<span class="decl_name">.*?</a></span>',
-                       re.S)
+# doc-gen4 puts spaces around the link inside the name span, and a `title` on the span of a
+# declaration that uses `sorry`; the match ends at the link's own `</a>`, before any parent.
+DECL_NAME = re.compile(r'<span class="decl_kind">[^<]*</span>\s*<span class="decl_name"[^>]*>\s*'
+                       r'<a\b[^>]*>.*?</a>\s*</span>', re.S)
 REFS = re.compile(r'(<h2 [^>]*id="References"[^>]*>.*?</h2>)\s*<ul>(.*?)</ul>', re.S)
 BARE = '<span class="decl_args"> :</span>'
 # A proof that only evaluates, which a sentence read alone can make sound like a discovery.
@@ -128,13 +137,13 @@ def and_more(items, n=SHOWN):
 
 
 def node_of(page):
-    """The node of the graph a page belongs to: a study, a theory framework, a fragment, data."""
+    """The node of the graph a page belongs to: a study, a theory framework, a language, data."""
     p = page.split("#")[0].removesuffix(".html").split("/")
     if p[0] == "Studies" and len(p) >= 2:
         return "s", p[1]
     if p[0] != "Linglib" or len(p) < 3:
         return None
-    if p[1] == "Fragments":
+    if p[1] == "Languages":
         return "f", p[2]
     if p[1] in THEORY:
         return "t", f"{p[1]}.{p[2]}"
@@ -217,10 +226,16 @@ def year_of(study):
 
 class Library:
     """What every page needs from the rest of the library: the bibliography, who cites whom, the
-    declarations' references, and which studies use which theory and fragments."""
+    declarations' references, and which studies use which theory and languages."""
 
-    def __init__(self, doc):
+    def __init__(self, doc, checks=None):
         self.doc = doc
+        # The items of the sources, by `source/id`, and those each declaration states.
+        self.items, self.items_of = {}, defaultdict(list)
+        for c in checks["items"] if checks else ():
+            self.items[f'{c["source"]}/{c["id"]}'] = c
+            for name in c["decls"]:
+                self.items_of[name].append(c)
         self.modules, self.decls, self.used_by = dx.build(doc)
         data = json.loads((doc / "declarations" / "declaration-data.bmp").read_text(encoding="utf-8"))
         self.decl_data, self.instances_for = data["declarations"], data.get("instancesFor", {})
@@ -243,7 +258,7 @@ class Library:
                 self.study_key[s], e["study"] = key, s
             self.bib[key] = e
         self.cited_in = gb.citations(set(self.bib))
-        # The theory and fragments each study's statements use, and the reverse.
+        # The theory and languages each study's statements use, and the reverse.
         self.uses, self.users, self.node_pages = defaultdict(set), defaultdict(set), defaultdict(set)
         for page, mod in self.modules.items():
             node = node_of(page)
@@ -545,9 +560,50 @@ class ModulePage:
         return (f'<button type="button" class="tg" data-open="{esc(u)}" aria-expanded="false">'
                 f'{esc(self.by_id[u]["name"])}{self.loc(self.by_id[u])}</button>')
 
-    def extras(self, d):
-        """Below a declaration: what `deriving` made of it, its instances, and who uses it."""
+    def item_name(self, c, source=None):
+        """An item by its label, after its source's unless that is `source`."""
+        if c["source"] == source:
+            return esc(c["label"])
+        b = self.lib.bib.get(c["source"])
+        label = b["label"] if b else c["source"]
+        paper = link(f'{self.root}bibliography/#{c["source"]}', esc(label))
+        return f'{paper}, {esc(c["label"])}'
+
+    def checks(self, d):
+        """For each item the declaration states, whether a person has checked it."""
         out = ""
+        for c in self.lib.items_of.get(d["id"], ()):
+            ck = c["check"]
+            if c["status"] not in ("checked", "relies", "stale") or not ck:
+                continue
+            against = self.item_name(c)
+            verb = "Checked against"
+            if c["relation"] in RELATION:
+                against += (f' (<span class="rel" title="{esc(c["notes"])}">'
+                            f'{RELATION[c["relation"]]}</span>)')
+            elif c["relation"] == "counterexample":
+                verb = f'Checked as <span class="rel" title="{esc(c["notes"])}">a counterexample to</span>'
+            day = datetime.date.fromisoformat(ck["date"])
+            who = (esc(ck["by"]) if ck["via"]
+                   else link("https://github.com/" + ck["by"], esc(ck["by"])))
+            by = f'by {who} on {day.day} {day:%B} {day.year}'
+            if c["status"] == "stale":
+                line = (f'{verb} {against} {by}; its statement has changed since '
+                        '(<code>checks.py diff</code> shows how).')
+            elif c["status"] == "relies":
+                rest = [self.lib.items[r] for r in c["blocking"] if r in self.lib.items]
+                names = ", ".join(self.item_name(r, c["source"]) for r in rest)
+                line = (f'{verb} {against} {by}, relying on {names}, which '
+                        f'{"is" if len(rest) == 1 else "are"} not.')
+            else:
+                line = f'{verb} {against} {by}.'
+            out += f'<p class="checked">{line}</p>'
+        return out
+
+    def extras(self, d):
+        """Below a declaration: whether it is checked against its source, what `deriving` made of
+        it, its instances, and who uses it."""
+        out = self.checks(d)
         folded = "".join(f'<span id="{esc(x["id"])}"></span>' for x in self.decls
                          if x["folded"] and x.get("into") == d["id"])
         if d["derives"] or folded:
@@ -693,7 +749,7 @@ class ModulePage:
                 f'{link(self.to_study(s), esc(nodes[s]["l"]), "nd")}{note}</li>')
 
     def framework(self, nodes, node, page, desc=None):
-        """A theory or fragment node of the graph, whose page is `page`."""
+        """A theory or language node of the graph, whose page is `page`."""
         if not desc:
             m, s = len(self.lib.node_pages[node]), len(self.lib.users[node])
             desc = f"{m} module{'' if m == 1 else 's'} · {s} {'study' if s == 1 else 'studies'}"
@@ -946,7 +1002,7 @@ class TheoryPage(ModulePage):
         edges, pages_of = [], {me: {self.page}}
         parts = ['<h2>Connections</h2>\n<div class="graph" id="graph"><svg id="g" viewBox="0 0 300 206" '
                  'role="img" aria-label="This file below the theory it builds on, above the theory '
-                 'built on it, the studies using it by year and the fragments using it"></svg>'
+                 'built on it, the studies using it by year and the languages using it"></svg>'
                  '<div class="tip" id="tip" role="tooltip"></div></div>']
 
         def file_item(node, page, note, in_graph, label=None):
@@ -1039,7 +1095,7 @@ class TheoryPage(ModulePage):
                 pages_of[node_id(node)] = pages
                 edges.append([node_id(node), me, "use"])
             rows.append(file_item(node, first, self.own_names(anchors, 2), node in order[:FILES_SHOWN]))
-        parts.append(self.listing("Fragments using it", rows))
+        parts.append(self.listing("Languages using it", rows))
 
         # Among its neighbors, who names whom, which hovering a neighbor shows.
         users = [n for n in pages_of if n != me and nodes[n].get("b") != "up"]
@@ -1119,7 +1175,7 @@ def landing(lib, template, site_root, sha):
                        ("references.html", "References")))
     studies = study_tree(lib, [p for p in lib.modules if p.startswith("Studies/")])
     sections = [("theory", "t", "Theory", areas), ("studies", "s", "Studies", studies),
-                ("fragments", "f", "Fragments", tree("Linglib/Fragments")),
+                ("fragments", "f", "Languages", tree("Linglib/Languages")),
                 ("data", "d", "Data", tree("Linglib/Data")), ("core", "d", "Core", tree("Linglib/Core")),
                 ("other", "d", "Other", f'<ul>{general}</ul>')]
     tree = "\n".join(f'<section id="{sid}"><h2 class="{cls}">{esc(title)}</h2>{body}</section>'
@@ -1171,13 +1227,15 @@ def main():
     ap.add_argument("--only", nargs="*", help="rebuild these studies, modules and modules below these")
     ap.add_argument("--check", action="store_true", help="confirm declarations keep anchors, links land")
     ap.add_argument("--redirect", type=Path, help="also leave pages here that forward to the study pages")
+    ap.add_argument("--checks", type=Path, help="`checks.py status --json`, the human checks")
     args = ap.parse_args()
 
     # The pages are read from `--doc`, whose study pages must still be doc-gen4's: a rebuilt page is
     # no module page, so reading a tree of them would quietly lose the studies.
     if args.doc.resolve() == args.out.resolve():
         sys.exit("--out must not be --doc: the pages are read from the one and written to the other")
-    lib = Library(args.doc)
+    checks = json.loads(args.checks.read_text(encoding="utf-8")) if args.checks else None
+    lib = Library(args.doc, checks)
     sha = site_shell.git_commit()
     studies = sorted(p for p in lib.modules if p.startswith("Studies/"))
     theory = sorted(filter(is_theory, lib.modules))

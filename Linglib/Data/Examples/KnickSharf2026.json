@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "reading",
+      "lean": "reading",
+      "type": "Reading",
+      "doc": "The universal and the experiential reading of the perfect.",
+      "levels": [
+        {
+          "name": "universal",
+          "label": "universal",
+          "doc": "universal"
+        },
+        {
+          "name": "experiential",
+          "label": "experiential",
+          "doc": "experiential"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "knicksharf2026_5",
     "source": {"bibkey": "knick-sharf-2026", "paperLabel": "(5)"},
@@ -129,3 +150,4 @@
     "verified": "page-image"
   }
 ]
+}

@@ -5,35 +5,24 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Order.Fin.Basic
-public import Mathlib.Tactic.DeriveFintype
-
 /-!
 # Judgments
 
-This file defines `Judgment`, the mark a paper puts before an example, the CLDF 1.3
-`grammaticalityJudgement` of [forkel-etal-2024]: unmarked, `?`, `??`, `#`, `*`, or `%` for an
-example on which speakers differ.
-
-## Main definitions
-
-* `Judgment`: the six marks.
-* `Judgment.toPair`: the order embedding that orders the marks, and the `Lattice` on them.
-* `Judgment.ofName?`: the judgment a data file names.
+A paper marks an example to report how speakers judge it, and the CLDF 1.3 column
+`grammaticalityJudgement` of [forkel-etal-2024] holds the symbols it prints. This file defines
+`Judgment`, the seven marks the library records there: no mark, `?`, `??`, `#`, `?*`, `*`, and `%`
+for an example on which speakers differ.
 
 ## Implementation notes
 
-* The marks other than `%` are ordered by severity, so `≤` reads "at most as acceptable as" and a
-  study writes `.marginal ≤ e.judgment` for an example the paper accepts with at most one question
-  mark. The order is a modelling convention rather than a scale from the literature. It ranks `#`
-  above `*` because an example marked `#` is well formed but infelicitous; the two constructors
-  keep the difference in kind. The mark `%` says that some speakers accept the example and others
-  reject it, so it lies above `*` and below the unmarked judgment but is comparable with no mark
-  between them; the marks form a lattice, and `⊓` gives the most severe of several.
-* A split mark a paper prints, such as `*/??` for speakers who differ, is several marks for one
-  sentence. An example records the first as its `judgment` and each further mark as an
-  `alsoJudged` paper feature, and a study reading them all reads `Datum.judgments`. Gradient
-  ratings are results, recorded in `Data/Statistics/`.
+* CLDF leaves the value of the column free. The seven marks are the library's inventory.
+* The type carries no order and no grouping of its marks. Which marks a paper counts as accepted,
+  and whether it reads them as a scale, is that paper's link between its account and its data, so
+  a study states it; `Datum.Fits` reads a mark through `Judgment.band`.
+* A split mark a paper prints, such as `*/??`, is several marks for one sentence. A row records
+  the first as `Datum.judgment` and the rest as `Datum.alsoJudged`. Gradient ratings are results,
+  recorded in `Data/Statistics/`.
+* The file imports nothing, since every module of example data imports it.
 
 ## References
 
@@ -52,59 +41,11 @@ inductive Judgment where
   | questionable
   /-- The mark `#` calls the example well formed but infelicitous or semantically anomalous. -/
   | unacceptable
+  /-- The mark `?*`, also printed `*?`, calls the example nearly ungrammatical. -/
+  | nearlyUngrammatical
   /-- The mark `*` calls the example ungrammatical. -/
   | ungrammatical
   /-- The mark `%` says that speakers differ, some accepting the example and others rejecting
   it. -/
   | variable
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-namespace Judgment
-
-/-- A mark's position on the severity scale, `ungrammatical` lowest, paired with whether some
-speakers accept it; `%` shares the lowest position with `*` and the acceptance of the unmarked
-judgment, which places it between the two and beside the marks in between. -/
-def toPair : Judgment → Fin 5 × Bool
-  | .ungrammatical => (0, false)
-  | .unacceptable => (1, false)
-  | .questionable => (2, false)
-  | .marginal => (3, false)
-  | .acceptable => (4, true)
-  | .variable => (0, true)
-
-theorem toPair_injective : Function.Injective toPair := by decide
-
-instance : PartialOrder Judgment := PartialOrder.lift toPair toPair_injective
-
-theorem le_iff_toPair_le {j k : Judgment} : j ≤ k ↔ j.toPair ≤ k.toPair := Iff.rfl
-
-instance : DecidableLE Judgment := fun _ _ ↦ decidable_of_iff _ le_iff_toPair_le.symm
-
-instance : DecidableLT Judgment := decidableLTOfDecidableLE
-
-instance : Lattice Judgment where
-  sup j k := if j ≤ k then k else if k ≤ j then j else .acceptable
-  inf j k := if j ≤ k then j else if k ≤ j then k else .ungrammatical
-  le_sup_left := by decide
-  le_sup_right := by decide
-  sup_le := by decide
-  inf_le_left := by decide
-  inf_le_right := by decide
-  le_inf := by decide
-
-/-- Speakers differ on an example marked `%`, so it is comparable with no mark strictly between
-`*` and the unmarked judgment. -/
-theorem variable_le_iff {j : Judgment} : .variable ≤ j ↔ j = .variable ∨ j = .acceptable := by
-  cases j <;> decide
-
-end Judgment
-
-/-- `Judgment.ofName? s` is the judgment the data files write as `s`. -/
-def Judgment.ofName? : String → Option Judgment
-  | "acceptable" => some .acceptable
-  | "marginal" => some .marginal
-  | "questionable" => some .questionable
-  | "unacceptable" => some .unacceptable
-  | "ungrammatical" => some .ungrammatical
-  | "variable" => some .variable
-  | _ => none
+  deriving DecidableEq, Repr, Inhabited

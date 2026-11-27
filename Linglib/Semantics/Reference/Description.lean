@@ -12,14 +12,19 @@ public import Linglib.Semantics.Possession.Quantifier
 A definite description denotes `iota` of a restrictor at a context and a situation: the only
 member of the restrictor there, and nothing when there is none or several. The
 [uniqueness definite](##Definite.unique) is the weak article of Schwarz and the covert iota of a
-bare noun. The [anaphoric definite](##Definite.anaphoric), his strong article, narrows the
+bare noun over a restrictor of atoms. The [anaphoric definite](##Definite.anaphoric), his strong
+article, narrows the
 restrictor to the value of an index, so that [the index selects the referent and the situation
 only decides definedness](##Definite.mem_anaphoric), whereas the uniqueness definite's referent
 covaries with the situation. The [possessive](##Definite.possessive) is the iota over the
 restrictor relationalized by the possession relation, Barker's `Possession.π`, at the possessor,
 and [anaphora is the possessive over identity to the
 antecedent](##Definite.anaphoric_eq_possessive). An article strength [realizes one of the
-two](##Definite.ofStrength).
+two](##Definite.ofStrength). On individuals ordered by part-of, the maximal definite
+`Definite.maximal` denotes the largest member of the restrictor, the uniqueness definite of the
+set of largest members. It is the uniqueness definite on a restrictor of atoms
+(`Definite.maximal_eq_unique_of_forall_isMin`), and it is what an article of uniqueness strength
+denotes, so that a plural definite denotes the sum of its restrictor.
 
 ## Implementation notes
 
@@ -70,6 +75,37 @@ theorem unique_eq_none_of_ne {y : E} (hx : x ∈ R c s) (hy : y ∈ R c s) (hne 
     unique R c s = Part.none :=
   iota_eq_none_of_ne hx hy hne
 
+/-! ### The maximal definite -/
+
+section Maximal
+
+variable [PartialOrder E]
+
+/-- The maximal definite over a restrictor denotes the largest member of the restrictor at the
+context and the situation, the article of [sharvy-1980]: *the dogs* is the sum of the dogs. -/
+noncomputable def maximal (R : Ctx → W → Set E) : Definite Ctx W E :=
+  fun c s ↦ iota {x | IsGreatest (R c s) x}
+
+@[simp] theorem mem_maximal : x ∈ maximal R c s ↔ IsGreatest (R c s) x :=
+  mem_iota_isGreatest
+
+theorem maximal_dom : (maximal R c s).Dom ↔ ∃ d, IsGreatest (R c s) d :=
+  iota_isGreatest_dom
+
+/-- Where no member of the restrictor is part of another, the maximal definite is the
+uniqueness definite. -/
+theorem maximal_eq_unique_of_isAntichain (h : IsAntichain (· ≤ ·) (R c s)) :
+    maximal R c s = unique R c s :=
+  h.iota_isGreatest
+
+/-- On a restrictor of atoms the maximal definite is the uniqueness definite: *the dog* is the
+only dog. -/
+theorem maximal_eq_unique_of_forall_isMin (h : ∀ x ∈ R c s, IsMin x) :
+    maximal R c s = unique R c s :=
+  maximal_eq_unique_of_isAntichain fun _ _ _ hb hne hab ↦ hne (hab.antisymm (h _ hb hab))
+
+end Maximal
+
 /-! ### The anaphoric definite -/
 
 section Anaphoric
@@ -105,17 +141,19 @@ theorem anaphoric_eq_unique_of_forall_eq (h : ∀ y ∈ R g s, y = g d) :
     anaphoric R d g s = unique R g s :=
   congrArg iota <| Set.inter_eq_left.2 h
 
-/-- An article strength realizes the uniqueness definite over a restrictor for uniqueness and the
-anaphoric definite for familiarity, `idx` being the anaphoric index. -/
-noncomputable def ofStrength (p : Strength) (R : (ι → E) → W → Set E) (idx : ι) :
-    Definite (ι → E) W E :=
+/-- An article strength realizes the maximal definite over a restrictor for uniqueness, which on
+a restrictor of atoms is the uniqueness definite, and the anaphoric definite for familiarity,
+`idx` being the anaphoric index. -/
+noncomputable def ofStrength [PartialOrder E] (p : Strength) (R : (ι → E) → W → Set E)
+    (idx : ι) : Definite (ι → E) W E :=
   match p with
-  | .uniqueness => unique R
+  | .uniqueness => maximal R
   | .familiarity => anaphoric R idx
 
-@[simp] theorem ofStrength_uniqueness (idx : ι) : ofStrength .uniqueness R idx = unique R := rfl
+@[simp] theorem ofStrength_uniqueness [PartialOrder E] (idx : ι) :
+    ofStrength .uniqueness R idx = maximal R := rfl
 
-@[simp] theorem ofStrength_familiarity (idx : ι) :
+@[simp] theorem ofStrength_familiarity [PartialOrder E] (idx : ι) :
     ofStrength .familiarity R idx = anaphoric R idx := rfl
 
 end Anaphoric
@@ -158,5 +196,18 @@ theorem anaphoric_eq_possessive (R : (ι → E) → W → Set E) (d : ι) :
     anaphoric R d = possessive R (fun g _ ↦ g d) fun _ _ y x ↦ x = y := rfl
 
 end Possessive
+
+/-! ### The quantifier of a definite -/
+
+/-- The quantifier of a definite holds of the sets its referent belongs to, and of none where it
+has no referent: the individual of the referent. -/
+def quantifier (nd : Definite Ctx W E) (c : Ctx) (s : W) : Quantifier E :=
+  fun V ↦ ∃ x ∈ nd c s, x ∈ V
+
+theorem quantifier_injective :
+    Function.Injective (quantifier : Definite Ctx W E → Ctx → W → Quantifier E) :=
+  fun nd nd' h ↦ funext fun c ↦ funext fun s ↦ Part.ext fun x ↦ by
+    have := congrFun (congrFun (congrFun h c) s) {x}
+    simpa [quantifier] using this
 
 end Definite

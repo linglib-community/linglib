@@ -4,7 +4,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.FieldSimp
-public import Linglib.Phonology.HarmonicGrammar.MaxEnt
+public import Linglib.Phonology.HarmonicGrammar.MaxEnt.Basic
 public import Linglib.Phonology.HarmonicGrammar.Noise
 public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Data.Examples.Flemming2021

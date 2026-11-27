@@ -21,7 +21,8 @@ accuracy](##accuracy_comap). The second-inclusive system is the exchange of a fi
 so the unbiased model [values the two exactly alike](##objective_secondInclusive) unless the need
 distribution tells the speaker from the addressee: the separation needs the egocentric weights or an
 asymmetric need. Harbour's two person features, by contrast, [generate the partition of the first
-system's groups and never that of the second's](##groupGraph_mem_image_setting_graph), Zwicky's
+system's groups and never that of the
+second's](##groupPartition_mem_image_setting_partition), Zwicky's
 tripartition: a hard constraint where the paper finds a soft bias.
 
 ## Implementation notes
@@ -335,28 +336,28 @@ open SpeechAct
 def Referent.participants (r : Referent) : Finset Role :=
   (if r.speaker then {.speaker} else ∅) ∪ if r.addressee then {.addressee} else ∅
 
-/-- The partition a pronoun system induces on the participant sets of groups: two are related
-when groups with those participants share a form. -/
-def groupGraph (form : Referent → Fin 6) : Finset (Finset Role × Finset Role) :=
-  Finset.univ.filter fun P ↦ ∃ r r' : Referent, r.number ≠ 0 ∧ r'.number ≠ 0 ∧
-    r.participants = P.1 ∧ r'.participants = P.2 ∧ form r = form r'
+/-- The partition a pronoun system induces on the participant sets of groups: two share a part
+when the groups with those participants have the same forms. -/
+def groupPartition (form : Referent → Fin 6) : Person.Partition :=
+  .ofFun fun P ↦ (Finset.univ.filter fun r : Referent ↦
+    r.number ≠ 0 ∧ r.participants = P).image form
 
-theorem groupGraph_firstInclusive :
-    groupGraph firstInclusive = Harbour2016.graph {.participant, .speaker} := by
+theorem groupPartition_firstInclusive :
+    groupPartition firstInclusive = .ofFeatures {.participant, .speaker} := by
   decide
 
-theorem groupGraph_secondInclusive :
-    groupGraph secondInclusive = Harbour2016.graph {.addressee, .participant} := by
+theorem groupPartition_secondInclusive :
+    groupPartition secondInclusive = .ofFeatures {.addressee, .participant} := by
   decide
 
 /-- The two systems the unbiased model values alike are told apart by Harbour's parameters,
 which generate the partition of the first-inclusive system's groups and never that of the
 second-inclusive system's, Zwicky's tripartition. -/
-theorem groupGraph_mem_image_setting_graph :
-    groupGraph firstInclusive ∈ Finset.univ.image Harbour2016.Setting.graph ∧
-      groupGraph secondInclusive ∉ Finset.univ.image Harbour2016.Setting.graph := by
-  rw [groupGraph_firstInclusive, groupGraph_secondInclusive, Harbour2016.graph_mem_image_iff,
-    Harbour2016.graph_mem_image_iff]
+theorem groupPartition_mem_image_setting_partition :
+    groupPartition firstInclusive ∈ Finset.univ.image Harbour2016.Setting.partition ∧
+      groupPartition secondInclusive ∉ Finset.univ.image Harbour2016.Setting.partition := by
+  rw [groupPartition_firstInclusive, groupPartition_secondInclusive,
+    Harbour2016.ofFeatures_mem_image_iff, Harbour2016.ofFeatures_mem_image_iff]
   decide
 
 end ZaslavskyMaldonadoCulbertson2021

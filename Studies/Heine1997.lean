@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Heine1997
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.SymmDiff
 public import Mathlib.Tactic.DeriveFintype
@@ -20,8 +20,8 @@ and how the other participant enters, and the contrastive properties the chapter
 follow from the formulas: only the Action Schema has a lexical nucleus, only Action and
 Location are basic rather than extended by an adjunct or modifier, and only Action and
 Companion encode the possessor as the subject, the others marking it by an oblique case
-(`Schema.possessorCase`). Grammaticalization follows the Overlap Model: a construction carries
-the source meaning alone, then both meanings, then the target meaning alone, and
+(`Examples.Schema.possessorCase`). Grammaticalization follows the Overlap Model: a construction
+carries the source meaning alone, then both meanings, then the target meaning alone, and
 `overlap_of_gradual` derives the middle stage for any development that changes one meaning at
 a time and is never meaningless. The rows carry the chapter's examples, the Russian locative
 construction at each of the three stages (`russian_stages`), the Telugu division of labour
@@ -53,19 +53,9 @@ possession.
 
 namespace Heine1997
 
-/-! ### The event schemas -/
+open Examples (Schema Notion)
 
-/-- The eight event schemas from which predicative possession derives. -/
-inductive Schema where
-  | action
-  | location
-  | companion
-  | genitive
-  | goal
-  | source
-  | topic
-  | equation
-  deriving DecidableEq, Repr, Fintype
+/-! ### The event schemas -/
 
 /-- The predicate nucleus of a schema's formula is the lexical verb *take*, the locative copula *be
 at*, the existential *exist*, or the equative copula *be*. -/
@@ -133,7 +123,7 @@ structure Formula where
   deriving DecidableEq, Repr
 
 /-- The formulas of the eight schemas. -/
-def Schema.formula : Schema → Formula
+def Examples.Schema.formula : Schema → Formula
   | .action => ⟨.take, .possessor, .object⟩
   | .location => ⟨.beAt, .possessee, .locative⟩
   | .companion => ⟨.be, .possessor, .comitative⟩
@@ -145,13 +135,13 @@ def Schema.formula : Schema → Formula
 
 /-- A schema is basic when its second participant is an argument of the nucleus, extended when
 it is grafted onto a simpler structure. -/
-def Schema.IsBasic (s : Schema) : Prop := s.formula.entry.IsCore
+def Examples.Schema.IsBasic (s : Schema) : Prop := s.formula.entry.IsCore
 
 instance : DecidablePred Schema.IsBasic := fun s ↦
   inferInstanceAs (Decidable s.formula.entry.IsCore)
 
 /-- The case marking the possessor when it is not the subject. -/
-def Schema.possessorCase (s : Schema) : Option Case :=
+def Examples.Schema.possessorCase (s : Schema) : Option Case :=
   if s.formula.subject = .possessee then s.formula.entry.case else none
 
 /-! The contrastive properties of the schemas follow from their formulas. -/
@@ -212,12 +202,6 @@ theorem overlap_of_gradual (f : ℕ → Finset Meaning) (hf : Gradual f) (h0 : f
 
 /-! ### The rows -/
 
-/-- The schema a row instantiates. -/
-def schema (r : Datum) : Option Schema :=
-  r.parse? "schema" [("action", .action), ("location", .location), ("companion", .companion),
-    ("genitive", .genitive), ("goal", .goal), ("source", .source), ("topic", .topic),
-    ("equation", .equation)]
-
 /-- The meanings a row's construction carries, read from whether the source and the target
 readings are available. -/
 def meanings (r : Datum) : Finset Meaning :=
@@ -233,34 +217,10 @@ def russianData : List (Finset Meaning) :=
 ambiguous (73c) at the overlap stage. -/
 theorem russian_stages : ∀ i, stage i ∈ russianData := by decide +kernel
 
-/-- The possessive notions of §1.3 (pp. 34–35). -/
-inductive Notion where
-  /-- Possessor and possessee are physically associated at reference time (29). -/
-  | physical
-  /-- The possessor disposes of the possessee for a limited time without owning it (30). -/
-  | temporary
-  /-- The possessee is the possessor's property (31). -/
-  | permanent
-  /-- The possessee is inseparable from the possessor, as a body part or a relative (32). -/
-  | inalienable
-  /-- The possessee is not tangible, as a disease or a feeling (33). -/
-  | abstract
-  /-- An inanimate possessor with an inseparable possessee (34). -/
-  | inanimateInalienable
-  /-- An inanimate possessor with a separable possessee (35). -/
-  | inanimateAlienable
-  deriving DecidableEq, Repr
-
-/-- The possessive notion a row expresses. -/
-def notion (r : Datum) : Option Notion :=
-  r.parse? "notion" [("physical", .physical), ("temporary", .temporary),
-    ("permanent", .permanent), ("inalienable", .inalienable), ("abstract", .abstract),
-    ("inanimateInalienable", .inanimateInalienable), ("inanimateAlienable", .inanimateAlienable)]
-
 /-- The schema and notion of each Telugu row (85). -/
 def teluguData : List (Schema × Notion) :=
   (Examples.all.filter fun r ↦ r.language = .telugu).filterMap fun r ↦ do
-    pure (← schema r, ← notion r)
+    pure (← Examples.schema r, ← Examples.notion r)
 
 theorem telugu_notions : ∀ d ∈ teluguData, d.1 = .location ↔ d.2 = .physical := by
   decide +kernel

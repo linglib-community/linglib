@@ -1,10 +1,10 @@
 module
 
 public import Studies.Bobaljik2012
-public import Linglib.Morphology.Exponence.Containment.SupersetRule
-public import Linglib.Morphology.Paradigm.Contiguity
-public import Linglib.Syntax.Person.Features
-public import Linglib.Syntax.Person.CaseConstraint
+public import Linglib.Morphology.Exponence.SupersetRule
+public import Linglib.Morphology.Inflection.Paradigm.Contiguity
+public import Linglib.Syntax.Feature.Person.Decomposition
+public import Linglib.Generalizations.PersonCaseConstraint
 public import Mathlib.Tactic.TFAE
 
 /-!
@@ -25,9 +25,9 @@ constraint. A Person Case Constraint is a monotone map from the reduced dual per
 
 ## Implementation notes
 
-The person hierarchy is `Person.prominence`, Zwicky's order 1 > 2 > 3, which on the three persons
-is the inclusion order of Nevins's privative bundles, as the paper observes
-(`Person.prominence_le_iff_subset`). Table 2's paradigms index the persons ascending from the
+The person hierarchy is the order on `Person`, Zwicky's order 1 > 2 > 3, which on the three
+persons is the inclusion order of Nevins's privative bundles, as the paper observes
+(`Person.toFeatures_subset_toFeatures_iff`). Table 2's paradigms index the persons ascending from the
 first, the dual order, equivalent for feasible monotonicity by the paper's footnote 1. A
 combination of indirect and direct object is a scenario (`Clause.Scenario`), the diagonal
 excluded as the paper does, so the reduced dual hierarchy (27) is the order on scenarios read on
@@ -170,10 +170,10 @@ hierarchy, the product of the hierarchy with its dual, so a combination is below
 indirect object is at most as prominent and its direct object at least as prominent, `1, 3` being
 the top and `3, 1` the bottom. -/
 instance : PartialOrder Combination :=
-  PartialOrder.lift (fun p ↦ p.1.map Person.prominence) (by decide)
+  PartialOrder.lift (fun p ↦ p.1) (by decide)
 
 instance : DecidableLE Combination := fun p q ↦
-  inferInstanceAs (Decidable (p.1.map Person.prominence ≤ q.1.map Person.prominence))
+  inferInstanceAs (Decidable (p.1 ≤ q.1))
 
 /-- The combinations under the naive reduced hierarchy (23), which the paper rejects. -/
 def NaiveCombination : Type := Combination
@@ -182,11 +182,11 @@ instance : Fintype NaiveCombination := inferInstanceAs (Fintype Combination)
 
 /-- The naive hierarchy is the product of the person hierarchy with itself. -/
 instance : PartialOrder NaiveCombination :=
-  PartialOrder.lift (fun p : Combination ↦ (p.1.high.prominence, p.1.low.prominence)) (by decide)
+  PartialOrder.lift (fun p : Combination ↦ (p.1.high, p.1.low)) (by decide)
 
 instance : DecidableLE NaiveCombination := fun p q ↦
-  inferInstanceAs (Decidable ((p.1.high.prominence, p.1.low.prominence) ≤
-    ((q : Combination).1.high.prominence, (q : Combination).1.low.prominence)))
+  inferInstanceAs (Decidable ((p.1.high, p.1.low) ≤
+    ((q : Combination).1.high, (q : Combination).1.low)))
 
 /-- A Person Case Constraint is a map from the combinations to the truth values, true on the
 well-formed ones, Table 4's cells. -/
@@ -214,7 +214,7 @@ def mPCC : PCC := .ofRestriction _root_.PCC.MeFirst
 /-- Table 4 gives the strong, ultrastrong, weak and me-first PCCs as stated in (19). -/
 theorem table4 :
     (∀ p, sPCC p = true ↔ p.1.low = .third) ∧
-      (∀ p, uPCC p = true ↔ p.1.low.prominence < p.1.high.prominence) ∧
+      (∀ p, uPCC p = true ↔ p.1.low < p.1.high) ∧
       (∀ p, wPCC p = true ↔ (p.1.high = .third → p.1.low = .third)) ∧
       ∀ p, mPCC p = true ↔ (p.1.high ≠ .first → p.1.low ≠ .first) := by
   decide

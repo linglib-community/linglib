@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Oswalt1986` — typed example data
@@ -76,7 +78,7 @@ def s7 : Datum :=
     language := "kash1280"
     primaryText := "hú·ʔ men s̓í-ya-m ṭa ʔa"
     glossedTokens := [("hú·ʔ", "Yes"), ("men", "thus"), ("s̓í-ya-m", "do-VISUAL-RESP"), ("ṭa", ""), ("ʔa", "I")]
-    glossedWords := [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], none⟩]⟩, ⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], [⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], none⟩]⟩, ⟨['s', '̓', 'í', '-', 'y', 'a', '-', 'm'], ['d', 'o', '-', 'V', 'I', 'S', 'U', 'A', 'L', '-', 'R', 'E', 'S', 'P'], [⟨['s', '̓', 'í'], ['d', 'o'], none⟩, ⟨['y', 'a'], ['V', 'I', 'S', 'U', 'A', 'L'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], []⟩, ⟨['ʔ', 'a'], ['I'], [⟨['ʔ', 'a'], ['I'], none⟩]⟩]
+    glossedWords := [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], [⟨['h', 'ú', '·', 'ʔ'], ['Y', 'e', 's'], none⟩]⟩, ⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], [⟨['m', 'e', 'n'], ['t', 'h', 'u', 's'], none⟩]⟩, ⟨['s', '̓', 'í', '-', 'y', 'a', '-', 'm'], ['d', 'o', '-', 'V', 'I', 'S', 'U', 'A', 'L', '-', 'R', 'E', 'S', 'P'], [⟨['s', '̓', 'í'], ['d', 'o'], none⟩, ⟨['y', 'a'], ['V', 'I', 'S', 'U', 'A', 'L'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], [⟨['ṭ', 'a'], [], none⟩]⟩, ⟨['ʔ', 'a'], ['I'], [⟨['ʔ', 'a'], ['I'], none⟩]⟩]
     lgrConformance := some .morphemeAligned
     context := "A response to a remark by someone else."
     judgment := .acceptable
@@ -298,7 +300,7 @@ def s29 : Datum :=
     language := "kash1280"
     primaryText := "qacúhse hqamac̓-kʰe =ʔ-do-m ṭa"
     glossedTokens := [("qacúhse", "grass game"), ("hqamac̓-kʰe", "play-FUT"), ("=ʔ-do-m", "=ASS-QUOT-RESP"), ("ṭa", "")]
-    glossedWords := [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], none⟩]⟩, ⟨['h', 'q', 'a', 'm', 'a', 'c', '̓', '-', 'k', 'ʰ', 'e'], ['p', 'l', 'a', 'y', '-', 'F', 'U', 'T'], [⟨['h', 'q', 'a', 'm', 'a', 'c', '̓'], ['p', 'l', 'a', 'y'], none⟩, ⟨['k', 'ʰ', 'e'], ['F', 'U', 'T'], some '-'⟩]⟩, ⟨['=', 'ʔ', '-', 'd', 'o', '-', 'm'], ['=', 'A', 'S', 'S', '-', 'Q', 'U', 'O', 'T', '-', 'R', 'E', 'S', 'P'], [⟨['ʔ'], ['A', 'S', 'S'], some '='⟩, ⟨['d', 'o'], ['Q', 'U', 'O', 'T'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], []⟩]
+    glossedWords := [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], [⟨['q', 'a', 'c', 'ú', 'h', 's', 'e'], ['g', 'r', 'a', 's', 's', ' ', 'g', 'a', 'm', 'e'], none⟩]⟩, ⟨['h', 'q', 'a', 'm', 'a', 'c', '̓', '-', 'k', 'ʰ', 'e'], ['p', 'l', 'a', 'y', '-', 'F', 'U', 'T'], [⟨['h', 'q', 'a', 'm', 'a', 'c', '̓'], ['p', 'l', 'a', 'y'], none⟩, ⟨['k', 'ʰ', 'e'], ['F', 'U', 'T'], some '-'⟩]⟩, ⟨['=', 'ʔ', '-', 'd', 'o', '-', 'm'], ['=', 'A', 'S', 'S', '-', 'Q', 'U', 'O', 'T', '-', 'R', 'E', 'S', 'P'], [⟨['ʔ'], ['A', 'S', 'S'], some '='⟩, ⟨['d', 'o'], ['Q', 'U', 'O', 'T'], some '-'⟩, ⟨['m'], ['R', 'E', 'S', 'P'], some '-'⟩]⟩, ⟨['ṭ', 'a'], [], [⟨['ṭ', 'a'], [], none⟩]⟩]
     lgrConformance := some .morphemeAligned
     context := "From the same conversation as S28."
     judgment := .acceptable
@@ -322,5 +324,60 @@ def s32 : Datum :=
     paperFeatures := [("evidential", "inferentialII")] }
 
 def all : List Datum := [s1, s2, s4, s6, s7, s8, s9, s13, s14, s15, s16, s17, s19, s19_visual, s19_auditory, s22, s25, s26, s27, s28, s29, s32]
+
+/-- The modes of speech, the columns of Table 1. -/
+inductive Mode where
+  /-- spontaneous: a remark prompted by the event itself -/
+  | spontaneous
+  /-- responsive: a response to another's words, marked by -m -/
+  | responsive
+  /-- narrative: the narrative construction -/
+  | narrative
+  /-- remote: the archaic remote past -/
+  | remote
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `mode`. -/
+def mode (e : Datum) : Option Mode :=
+  e.parse? "mode" [("spontaneous", .spontaneous), ("responsive", .responsive), ("narrative", .narrative),
+    ("remote", .remote)]
+
+/-- The aspect of the stem, where the example fixes it. -/
+inductive Aspect where
+  /-- imperfective: an imperfective stem -/
+  | imperfective
+  /-- perfective: a perfective stem -/
+  | perfective
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `aspect`. -/
+def aspect (e : Datum) : Option Aspect :=
+  e.parse? "aspect" [("imperfective", .imperfective), ("perfective", .perfective)]
+
+/-- The evidential an example illustrates, by the name of its row of Table 1. -/
+inductive Marker where
+  /-- performative: the performative pair -/
+  | performative
+  /-- factualVisual: the factual-visual pair -/
+  | factualVisual
+  /-- auditory: the auditory -/
+  | auditory
+  /-- inferential: inferential I -/
+  | inferential
+  /-- quotative: the quotative -/
+  | quotative
+  /-- inferentialII: inferential II, never verb-final -/
+  | inferentialII
+  /-- personalExperience: the personal experience of the narrative construction -/
+  | personalExperience
+  /-- remotePast: the remote past -/
+  | remotePast
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `evidential`. -/
+def marker (e : Datum) : Option Marker :=
+  e.parse? "evidential" [("performative", .performative), ("factualVisual", .factualVisual), ("auditory", .auditory),
+    ("inferential", .inferential), ("quotative", .quotative), ("inferentialII", .inferentialII),
+    ("personalExperience", .personalExperience), ("remotePast", .remotePast)]
 
 end Oswalt1986.Examples

@@ -1,7 +1,7 @@
 module
 
 public import Studies.Fox2007
-public import Linglib.Processing.Reasoning.Erotetic
+public import Linglib.Processing.Erotetic
 public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Logic.Team.Inquisitive
@@ -29,7 +29,7 @@ propositions strengthens the disjunction to its strongly exhaustive reading
 classically;
 posterior-based accounts, by contrast, cannot separate the conclusions *b* and *c* without a
 prior asymmetry (`Erotetic.posterior_eq_iff`). The shared apparatus lives in
-`Processing.Reasoning.Erotetic`; this file keeps what is specific to the paper. Footnote 6's
+`Processing.Erotetic`; this file keeps what is specific to the paper. Footnote 6's
 excludability asymmetry is derived (`might_not_excludable`, `allowed_excludable`), as is the
 fact that the revised flat premise disarms it for both modals (`revised_flat_not_excludable`).
 
@@ -40,7 +40,7 @@ of the illusion is read off the paper's verdict rows: *might* satisfies criteria
 and structure-insensitive — as the work of another mechanism, with the package deal of
 [merin-1992] and [van-rooy-2000] as the candidate ((16), a datum). The relational route (14)
 rests on realism of the modal base: a base is realistic exactly when necessity is veridical
-(`Modality.isRealistic_iff_pure_le_simpleNecessity`), equivalently when what is actual is
+(`Modality.Background.isRealistic_iff_pure_le_simpleNecessity`), equivalently when what is actual is
 possible, the assumption that is standard for epistemics and absurd for deontics; with an
 ordering source, reflexivity alone does not make best-worlds possibility veridical
 (`exists_not_possibility`).
@@ -134,19 +134,19 @@ section Relational
 
 theorem possibility_of_isRealistic {f g : Background W} {p : Set W}
     {w : W} (hf : f.IsRealistic) (hw : ∀ q ∈ g w, w ∈ q) (hp : w ∈ p) :
-    ∃ v ∈ bestWorlds f g w, v ∈ p :=
+    ∃ v ∈ f.bestWorlds g w, v ∈ p :=
   ⟨w, ⟨hf w, fun _ _ _ q hq _ ↦ hw q hq⟩, hp⟩
 
 /-- Realism of the base alone does not make best-worlds possibility veridical, so (14) needs
 more than (14b): the actual world must be among the best-ranked. -/
 theorem exists_not_possibility :
     ∃ (f g : Background Bool) (p : Set Bool) (w : Bool),
-      f.IsRealistic ∧ w ∈ p ∧ ¬ ∃ v ∈ bestWorlds f g w, v ∈ p :=
+      f.IsRealistic ∧ w ∈ p ∧ ¬ ∃ v ∈ f.bestWorlds g w, v ∈ p :=
   ⟨⊥, fun _ ↦ {{true}}, {false}, false, fun _ ↦ by simp, rfl,
     fun ⟨v, hvb, hv⟩ ↦ by
-      obtain ⟨_, hbest⟩ := mem_bestWorlds.1 hvb
-      have h := hbest true (accessible_bot _ _)
-      simp_all [Preorder.ofCriteria_le_iff]⟩
+      obtain ⟨_, hbest⟩ := Background.mem_bestWorlds.1 hvb
+      have h := hbest true (Background.accessible_bot _ _)
+      simp_all [Preorder.ofLowerSets_le_iff]⟩
 
 end Relational
 

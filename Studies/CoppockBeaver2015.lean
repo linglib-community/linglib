@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Part
 public import Mathlib.Basic.Nontrivial.Defs
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Semantics.Focus.Particles

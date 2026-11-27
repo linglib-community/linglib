@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
+public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic.Dirichlet
 public import Linglib.Core.Probability.Combinatorics.PitmanYor.Basic
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Statistics.ODonnell2015
@@ -159,8 +159,8 @@ theorem Suffix.licensed_word (s : Suffix) (i : ι) :
   cases s <;> simp [Suffix.word, RoseTree.licensed_node_iff, ContextFreeGrammar.Licenses, mem_rules,
     rNess, rIon, rAte, rAdj, rV, rBnd]
 
-theorem Suffix.ruleAt?_word (s : Suffix) (i : ι) :
-    RoseTree.ruleAt? (s.word i) [] = some s.rule := by
+theorem Suffix.rule?_word (s : Suffix) (i : ι) :
+    (s.word i).rule? = some s.rule := by
   cases s <;> rfl
 
 theorem Suffix.ruleCount_word (s s' : Suffix) (i : ι) :
@@ -335,7 +335,7 @@ def subtrees : Finset (RoseTree (Symbol T G.NT)) :=
 /-- The rule counts `X` of the full-listing analysis count the stored derivations with each rule
 at the root, since each table used its root rule once. -/
 def counts (r : ContextFreeRule T G.NT) : ℕ :=
-  ((subtrees D).filter (RoseTree.ruleAt? (g := G) · [] = some r)).card
+  ((subtrees D).filter (RoseTree.rule? · = some r)).card
 
 /-- The customers at the table of a stored derivation `s` are the words of the corpus that are
 `s` and the occurrences of `s` among the children of the stored derivations. -/
@@ -355,7 +355,7 @@ theorem card_seating (hD : ∀ t ∈ D, t.Licensed G.Licenses) (a : G.NT) :
   · refine Finset.sum_congr rfl fun r hr ↦ congrArg Finset.card (Finset.ext fun s ↦ ?_)
     obtain ⟨A, w⟩ := r
     obtain ⟨-, rfl⟩ := Finset.mem_filter.mp hr
-    simp [Finset.mem_filter, RoseTree.ruleAt?_nil_eq_some_iff, and_assoc]
+    simp [Finset.mem_filter, RoseTree.rule?_eq_some_iff, and_assoc]
   · obtain ⟨hsub, hv⟩ := Finset.mem_filter.mp hs
     obtain ⟨t, ht, hst⟩ : ∃ t ∈ D, RoseTree.IsSubtree s t := by
       simpa [subtrees, RoseTree.mem_subtrees] using hsub
@@ -368,7 +368,7 @@ has `r`'s left-hand side among its children, the derivations stored with `r` at 
 word types of the corpus formed with `r`. -/
 theorem counts_eq_card_filter_toFinset (hD : ∀ t ∈ D, t.Licensed G.Licenses)
     {r : ContextFreeRule T G.NT} (hr : ∀ r' ∈ G.rules, .nonterminal r.input ∉ r'.output) :
-    counts D r = (D.toFinset.filter (RoseTree.ruleAt? (g := G) · [] = some r)).card := by
+    counts D r = (D.toFinset.filter (RoseTree.rule? · = some r)).card := by
   refine congrArg Finset.card (Finset.ext fun s ↦ ?_)
   simp only [subtrees, Finset.mem_filter, Finset.mem_biUnion, Multiset.mem_toFinset,
     List.mem_toFinset, RoseTree.mem_subtrees]
@@ -376,7 +376,7 @@ theorem counts_eq_card_filter_toFinset (hD : ∀ t ∈ D, t.Licensed G.Licenses)
   by_contra hsD
   obtain ⟨r', hr', hmem⟩ :=
     (hD t ht).exists_mem_output_of_isSubtree hst fun h ↦ hsD (h ▸ ht)
-  exact hr r' hr' ((RoseTree.ruleAt?_nil_eq_some_iff.mp hs).1 ▸ hmem)
+  exact hr r' hr' ((RoseTree.rule?_eq_some_iff.mp hs).1 ▸ hmem)
 
 end FullListing
 
@@ -391,7 +391,7 @@ def tokens (D : Corpus ι) (s : Suffix) : ℕ :=
 /-- The word types of a nominalizer in a corpus are the distinct words formed with its rule. -/
 def wordTypes (D : Corpus ι) (s : Suffix) :
     Finset (RoseTree (Symbol (Sym ι) (suffixGrammar ι).NT)) :=
-  D.toFinset.filter (RoseTree.ruleAt? · [] = some s.rule)
+  D.toFinset.filter (RoseTree.rule? · = some s.rule)
 
 /-- The hapax legomena of a nominalizer in a corpus are its word types that occur once. -/
 def hapaxes (D : Corpus ι) (s : Suffix) : ℕ :=
@@ -490,10 +490,10 @@ theorem wordTypes_corpus (m : Suffix → ι → ℕ) (s : Suffix) :
     Finset.mem_univ, true_and]
   constructor
   · rintro ⟨⟨s', i, hm, rfl⟩, hr⟩
-    obtain rfl := Suffix.rule_injective (Option.some.inj ((s'.ruleAt?_word i).symm.trans hr))
+    obtain rfl := Suffix.rule_injective (Option.some.inj ((s'.rule?_word i).symm.trans hr))
     exact ⟨i, hm, rfl⟩
   · rintro ⟨i, hm, rfl⟩
-    exact ⟨⟨s, i, hm, rfl⟩, s.ruleAt?_word i⟩
+    exact ⟨⟨s, i, hm, rfl⟩, s.rule?_word i⟩
 
 theorem card_wordTypes_corpus (m : Suffix → ι → ℕ) (s : Suffix) :
     (wordTypes (corpus m) s).card = (Finset.univ.filter (m s · ≠ 0)).card := by

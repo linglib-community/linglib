@@ -4,9 +4,9 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.IntervalCases
-public import Linglib.Semantics.Causation.Morphological
+public import Linglib.Syntax.Voice.Causativization
 public import Linglib.Data.Examples.Song1996
-public import Linglib.Fragments.Korean.Verbs
+public import Linglib.Languages.Korean.Verbs
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -73,18 +73,11 @@ not (`clause_omitted_rows`), and the causee is nominative exactly where *ha-* co
 
 namespace Song1996
 
-open Causation.Morphological (CausativeComplexity causeeDemotion)
+open Examples (Vcause ClauseOrder)
+
+open Causativization (CausativeComplexity causeeDemotion)
 
 /-! ### Forms and types (chapter 2) -/
-
-/-- How [Vcause] is realized in a one-clause causative (§2.3): fused with [Veffect] beyond
-morphological analysis (English *kill*), bound to it (Turkish *-dür*), or a free verb beside it
-(French *faire*). -/
-inductive Vcause where
-  | fused
-  | bound
-  | free
-  deriving DecidableEq, Repr, Fintype
 
 /-- The term joining the two clauses of a biclausal causative is AND, a coordinator or nothing,
 the order of the clauses registering their sequence (§2.4), or PURP, a marker of goal or purpose
@@ -92,12 +85,6 @@ on the clause of effect (§2.5). -/
 inductive Link where
   | and_
   | purp
-  deriving DecidableEq, Repr, Fintype
-
-/-- The order of the clause of cause and the clause of effect. -/
-inductive ClauseOrder where
-  | causeEffect
-  | effectCause
   deriving DecidableEq, Repr, Fintype
 
 /-- A causative construction's form, in Song's operating terms (§2.2), is [Vcause] and [Veffect]
@@ -145,10 +132,9 @@ theorem type_eq_compact_iff {f : Form} :
 /-- The form of an example, as Song describes it. -/
 def ofRow (e : Datum) : Option Form :=
   match e.feature? "clauses" with
-  | some "one" => oneClause <$> e.parse? "vcause" [("fused", .fused), ("bound", .bound),
-      ("free", .free)]
+  | some "one" => oneClause <$> (Examples.vcause e)
   | some "two" => twoClauses <$> e.parse? "link" [("AND", .and_), ("PURP", .purp)] <*>
-      e.parse? "order" [("cause-effect", .causeEffect), ("effect-cause", .effectCause)]
+      Examples.order e
   | _ => none
 
 end Form

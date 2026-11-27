@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.EnergySource
-public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Denotation
 public import Linglib.Data.Examples.RappaportHovavLevin2024
 public import Linglib.Data.Examples.Readers
 
@@ -384,7 +384,8 @@ about the activity (42). -/
 def causativeEventStructure : Template .event := .cause .effector eventStructure
 
 -- (50)
-theorem causativeEventStructure_hasCause : causativeEventStructure.HasCause := by decide
+theorem cause_mem_kinds_causativeEventStructure : .cause ∈ causativeEventStructure.kinds := by
+  decide
 
 -- (50), (57)
 theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
@@ -392,9 +393,9 @@ theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
 
 -- (50)
 theorem not_forall_exists_become :
-    ¬ ∀ (M : Interpretation Unit Unit Unit) P Q y x v,
-      causativeEventStructure.denote M P Q y x v → ∃ s e, s ~[M.become] e :=
-  fun h ↦ absurd (hasResultState_iff.2 h) (by decide)
+    ¬ ∀ (M : Model Unit Unit) (θ : Unit → Unit → Prop) P Q y x v,
+      causativeEventStructure.denote M θ P Q y x v → ∃ e s, e ~[M.become] s :=
+  fun h ↦ absurd (result_mem_kinds_iff.2 h) (by decide)
 
 end EventStructure
 

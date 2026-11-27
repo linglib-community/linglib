@@ -5,7 +5,7 @@ public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Syntax.Category.Verb.Argument
-public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Languages.English.Verbs.Inventory
 
 /-!
 # Goldberg (1995): Constructions
@@ -23,7 +23,8 @@ Principles allow. The constructions form a network of normal-mode inheritance li
 
 Argument roles are `ThetaRole` labels: the cause of caused motion admits the labels whose Dowty
 profile entails causation, and the resultative's result-goal is a goal, change of state being
-change of location (pp. 81–84). A verb's participant roles are the slots of a frame its fragment
+change of location (pp. 81–84). A verb's participant roles are the slots of a frame its language
+file
 entry lists, linked to the labels the book construes them as; only *kick*'s entry records the
 entailments its labels derive from. Lexical profiling is the book's boldface. Caused motion's
 theme is contributable, as in Fig. 7.1 and the sneeze case, where Fig. 2.6 draws it as required.
@@ -176,7 +177,8 @@ def conative : Construction Sem :=
 
 /-! ### Verbs in constructions (§2.4)
 
-A verb's participant roles are the slots of a frame its fragment entry lists, linked to the roles
+A verb's participant roles are the slots of a frame its language file entry lists, linked to the
+roles
 the book construes them as. A fusion is written as its lines, each joining a slot of the verb to a
 slot of the construction. -/
 
@@ -414,7 +416,15 @@ each other, and the book's diagrams draw only the instance link. -/
 theorem resultative_subpart_driveCrazy :
     LinkType.subpart.Admits resultative.form driveCrazy.form :=
   LinkType.Admits.inverse_subpart <|
-    network_wellTyped .driveCrazy (.resultative, some .instance) (by decide) .instance rfl
+    network_wellTyped .driveCrazy .resultative .instance (by decide)
+
+-- *drive*-crazy, with its verb slot filled, is strictly less abstract than the resultative; the
+-- weak inequality holds of every instance link.
+example : driveCrazy.specificity < resultative.specificity :=
+  lt_of_le_of_ne
+    (LinkType.Admits.specificity_le <|
+      network_wellTyped .driveCrazy .resultative .instance (by decide))
+    (by decide)
 
 -- The links are asymmetric and proper: an open slot is not an instance of a filled one, the
 -- whole is not a subpart of its part, and no construction is a proper instance or proper

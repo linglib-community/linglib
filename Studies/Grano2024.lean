@@ -1,14 +1,14 @@
 module
 
-public import Linglib.Logic.Modal.Basic
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Logic.Modal.Definability
+public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Data.Examples.Grano2024
-public import Linglib.Fragments.Greek.StandardModern.Verbs
-public import Linglib.Fragments.Romance.Portuguese.Verbs
-public import Linglib.Fragments.Romance.Italian.Verbs
-public import Linglib.Fragments.Romance.Spanish.Verbs
-public import Linglib.Fragments.Romanian.Verbs
+public import Linglib.Languages.Greek.StandardModern.Verbs
+public import Linglib.Languages.Romance.Portuguese.Verbs
+public import Linglib.Languages.Romance.Italian.Verbs
+public import Linglib.Languages.Romance.Spanish.Verbs
+public import Linglib.Languages.Romanian.Verbs
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 
@@ -32,7 +32,8 @@ and perception reports. Section 3's case against [portner-rubinstein-2020] and
 'intend' patterns with 'hope', whose indicative those theories license by that very profile, yet
 every indicative row under 'intend' is rejected. The Hintikka semantics of (73) is the modal box
 over intention alternatives, and the three properties follow from their overlap with the doxastic
-alternatives (`realism` and its siblings); the verb entries of the language fragments record the
+alternatives (`realism` and its siblings); the verb entries of the language language files record
+the
 finite moods the pool accepts (`fragments_match_pool`); and section 7's synthesis reads the
 availability of the indicative off the two departures from default clausal semantics, a pair of
 modal backgrounds and eventuality abstraction (`indicative_possible_iff`).
@@ -249,7 +250,7 @@ theorem hope_varies :
       ∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .ungrammatical := by
   decide
 
-/-! ### Table 1 and the fragment entries -/
+/-! ### Table 1 and the language file entries -/
 
 /-- The finite moods among the complement types, as codings of a clausal argument position. -/
 def Complement.coding? : Complement → Option Clause.ComplementType
@@ -257,7 +258,7 @@ def Complement.coding? : Complement → Option Clause.ComplementType
   | .subjunctive => some .subjunctive
   | _ => none
 
-/-- The fragment verb for a language and a class of Table 1. -/
+/-- The language file verb for a language and a class of Table 1. -/
 def verbOf (l : Glottocode) (c : Class) : Option Verb :=
   List.lookup (l, c)
     [((.spanish, .want), Spanish.Verbs.querer),

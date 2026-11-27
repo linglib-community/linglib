@@ -20,10 +20,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 300
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: true
 
@@ -46,20 +46,78 @@ jobs:
           elan override set $(cat lean-toolchain)
           lake --version
 
-      - name: Cache .lake
-        uses: actions/cache@v4
+      # Linglib and Studies are built from scratch every night: a clean build is the check that the
+      # project builds without a cache, and the only build that times every module. The dependencies
+      # stay cached, mathlib and its compiled files included, so none of them is ever rebuilt here.
+      - name: Cache dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Linglib.lean') }}
-          restore-keys: |
-            lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-
-            lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
+          path: .lake/packages
+          key: lake-packages-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
 
       - name: Get Mathlib cache
         run: lake exe cache get
 
       - name: Build project
-        run: lake build
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee build.log
+
+      # Report only: lists the imports each module does not need. It never fails the job.
+      - name: Report unused imports
+        continue-on-error: true
+        timeout-minutes: 30
+        run: |
+          lake shake > shake.txt 2>&1 || true
+          {
+            echo '### Unused imports (report only)'
+            echo
+            echo "$(grep -c '\.lean:$' shake.txt) files have an import to remove or add."
+            echo
+            echo '<details><summary>First 400 lines</summary>'
+            echo
+            echo '```'
+            head -n 400 shake.txt
+            echo '```'
+            echo
+            echo '</details>'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # The dependency map is built from the table extracted here, with the tooling of
+      # linglib-community/taproot. These steps never fail the job.
+      - name: Check out the dependency map tooling
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: linglib-community/taproot
+          path: .taproot
+          persist-credentials: false
+
+      - name: Extract declaration dependencies
+        continue-on-error: true
+        timeout-minutes: 20
+        run: |
+          python3 .taproot/taproot.py --times build.log
+          python3 .taproot/taproot.py --extract-only .lake/build/declaration-dependencies
+
+      # The map published, unlinked, at /taproot/. Everything about it lives in the tooling.
+      - name: Build the dependency map
+        continue-on-error: true
+        timeout-minutes: 10
+        run: bash .taproot/lib/ci_map.sh .lake/build/taproot-map/index.html
+
+      - name: Remove the dependency map tooling
+        if: always()
+        run: rm -rf .taproot
+
+      - name: Upload declaration dependencies
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: declaration-dependencies
+          path: .lake/build/declaration-dependencies
+          retention-days: 14
+          if-no-files-found: warn
 
       - name: Build documentation (Linglib only, skip Mathlib)
         run: |
@@ -129,6 +187,9 @@ jobs:
       - name: Check example literals
         run: python3 scripts/check_examples.py
 
+      - name: Export human checks
+        run: python3 scripts/checks.py status --json > .lake/build/checks.json
+
       - name: Compose site
         run: |
           # doc-gen4 output lives under /docs/, so existing deep links survive. Its landing, study and
@@ -140,18 +201,27 @@ jobs:
           # The bibliography at /bibliography/, with where each work is cited.
           python3 scripts/gen_bibliography_page.py --out .lake/build/doc-site/bibliography
           # The rebuilt landing, study and theory pages, read from doc-gen4's untouched output and
-          # written over its copy at /docs/. A declaration that loses its anchor fails the deploy.
+          # written over its copy at /docs/, each declaration with its human checks. A declaration
+          # that loses its anchor fails the deploy.
           # /docs-new/, where the study pages were previewed, forwards to them.
           python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs --check \
-            --redirect .lake/build/doc-site/docs-new
+            --redirect .lake/build/doc-site/docs-new --checks .lake/build/checks.json
+          # The dependency map at /taproot/, a development page that nothing links to and that asks
+          # not to be indexed. It is absent when the steps that build it did not run.
+          if [ -f .lake/build/taproot-map/index.html ]; then
+            mkdir -p .lake/build/doc-site/taproot
+            cp .lake/build/taproot-map/index.html .lake/build/doc-site/taproot/index.html
+          fi
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: '.lake/build/doc-site'
+          # Versions before v4 uploaded dotfiles; keep doing so.
+          include-hidden-files: true
 
   deploy:
     environment:
@@ -162,4 +232,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

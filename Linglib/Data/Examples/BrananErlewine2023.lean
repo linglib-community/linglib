@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `BrananErlewine2023` — typed example data
@@ -574,5 +576,31 @@ def ex_126 : Datum :=
     paperFeatures := [("process", "movement"), ("msf", "phrase"), ("leftmost", "free")] }
 
 def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_7, ex_8, ex_17b, ex_18b, ex_21, ex_30a, ex_30b, ex_38, ex_65_goal, ex_65_theme, ex_66a, ex_66b, ex_67_goal, ex_67_theme, ex_68a, ex_68b, ex_69a, ex_69b, ex_70a, ex_70b, ex_109a, ex_109b, ex_111a, ex_111b, ex_114a, ex_114b, ex_120a, ex_120b, ex_121a, ex_121b, ex_123, ex_124, ex_125, ex_126]
+
+/-- A focus is marked by a particle on a phrase or by movement of the phrase. -/
+inductive Process where
+  /-- particle: particle -/
+  | particle
+  /-- movement: movement -/
+  | movement
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `process`. -/
+def process (e : Datum) : Option Process :=
+  e.parse? "process" [("particle", .particle), ("movement", .movement)]
+
+/-- When a phase is spelled out, a particle adjoins to a phrase left-aligned with the focus, preferably to such a phrase, or to any phrase overlapping the focus, in the strong, the weak and the free variant of the rule ((117)). -/
+inductive LeftmostRequirement where
+  /-- strong: strong -/
+  | strong
+  /-- weak: weak -/
+  | weak
+  /-- free: free -/
+  | free
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `leftmost`. -/
+def leftmost (e : Datum) : Option LeftmostRequirement :=
+  e.parse? "leftmost" [("strong", .strong), ("weak", .weak), ("free", .free)]
 
 end BrananErlewine2023.Examples

@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Data.Finset.Basic
@@ -12,7 +17,7 @@ terminal carries a category and a word, a phrase a category and its kind, and th
 of [heim-kratzer-1998]'s trace theory of movement an index and a category. A phrase is a
 projection or an adjunction structure, which on the segment theory of [may-1985] and
 [chomsky-1995] is a further segment of its host's category; only the head relation of
-`Syntax/Tree/Projection.lean` tells the two apart. Positions, subtrees and the frontier are the
+`Syntax/Projection/Tree.lean` tells the two apart. Positions, subtrees and the frontier are the
 rose tree's, and the terminals with their positions, in the order of the yield, ascend in
 [precedence](##pairwise_precedes_positionedTerminals). A tree without categories can be written in
 labelled brackets, as `tree% [x [y z]]`.
@@ -409,8 +414,8 @@ the same index binds. -/
 def freeIndices : Tree C W → Finset ℕ :=
   RoseTree.fold fun l ss ↦ match l with
     | .trace n _ => {n}
-    | .bind n _ => (ss.foldr (· ∪ ·) ∅).erase n
-    | _ => ss.foldr (· ∪ ·) ∅
+    | .bind n _ => (ss.foldr (fun s t : Finset ℕ ↦ s ∪ t) ∅).erase n
+    | _ => ss.foldr (fun s t : Finset ℕ ↦ s ∪ t) ∅
 
 @[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := by
   simp [freeIndices]
@@ -475,7 +480,7 @@ end LeafSubst
 /-! ### Positions of the terminals
 
 A tree takes Gorn addresses as a rose tree, and with them the dominance order on its positions and,
-in `Syntax/Tree/Command.lean`, the command relations. The terminals, paired with their positions,
+in `Syntax/Command/Tree.lean`, the command relations. The terminals, paired with their positions,
 are the word-bearing leaves, so the order of the yield is precedence
 (`RoseTree.pairwise_precedes_positionedLeaves`). -/
 

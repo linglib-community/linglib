@@ -3,8 +3,8 @@ module
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Syntax.Minimalist.Clause.Size
-public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Size
+public import Linglib.Languages.Romance.Italian.Verbs
 public import Linglib.Data.Examples.FuscoSgrizzi2026
 public import Studies.Grano2024
 public import Linglib.Data.Examples.Readers
@@ -46,7 +46,7 @@ reaches (`rows_predicted`).
   closure head (23b) is `Event.closure` and the prejacent of *a* is `Event.causedClosure`, the
   operators of [grano-2024]'s account, so a complement takes its world before its eventuality.
 * The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
-  `Fragments/Romance/Italian/Verbs.lean`.
+  `Languages/Romance/Italian/Verbs.lean`.
 
 ## References
 
@@ -62,7 +62,11 @@ reaches (`rows_predicted`).
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace FuscoSgrizzi2026
+
+open Examples (Diagnostic)
 
 open Modality Minimalist Italian.Verbs Event
 open scoped SetRel ModalLogic
@@ -72,17 +76,17 @@ section Semantics
 variable {I V W : Type*}
 
 /-- The inertia worlds of a state, `INERTIA(s)` of (25), are the best worlds of the state's
-circumstances under an inertial ordering of its own ([dowty-1979], [kratzer-2013]): `bestWorlds`
-with the state in place of a world. -/
+circumstances under an inertial ordering of its own ([dowty-1979], [kratzer-2013]):
+`Background.bestWorlds` with the state in place of a world. -/
 def inertiaWorlds (circumstances : V → Set (W → Prop)) (inertia : V → Set (Set W)) (s : V) :
     Set W :=
-  (premisePreorder (inertia s)).minimals {w | sInf (circumstances s) w}
+  (≤[inertia s]).minimals {w | sInf (circumstances s) w}
 
 /-- The head *a* (25), anchored to the attitude state, is necessity over the state's inertia
 worlds, with the eventuality argument of its complement closed over what the state causes. -/
 def aP (circumstances : V → Set (W → Prop)) (inertia : V → Set (Set W))
     (causeStar : W → SetRel V V) (P : W → V → Prop) (s : V) : Prop :=
-  □[.ofSuccessors (inertiaWorlds circumstances inertia)] (causedClosure causeStar s P) s
+  □[.cgraph (inertiaWorlds circumstances inertia)] (causedClosure causeStar s P) s
 
 -- (134) [grano-2024]
 theorem aP_empty (circumstances : V → Set (W → Prop)) (causeStar : W → SetRel V V)
@@ -92,8 +96,8 @@ theorem aP_empty (circumstances : V → Set (W → Prop)) (causeStar : W → Set
   simp [aP, inertiaWorlds, Grano2024.sbjvCausal, ModalLogic.Box]
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
-def diP (con : V → Option (Set W)) (Q : W → Prop) (s : V) : Prop :=
-  □[contentAccessible con] Q s
+def diP (con : V →. Set W) (Q : W → Prop) (s : V) : Prop :=
+  □[compatible con] Q s
 
 /-- The relations the denotation (24) draws on, convincing events, the thematic relations,
 causation between eventualities, and the class of rational attitudes. -/
@@ -111,7 +115,7 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
 
-variable (F : Frame I V W) (con : V → Option (Set W)) (circumstances : V → Set (W → Prop))
+variable (F : Frame I V W) (con : V →. Set W) (circumstances : V → Set (W → Prop))
   (inertia : V → Set (Set W)) (causeStar : W → SetRel V V) (P : W → V → Prop) (x y : I) (e : V)
   (w : W)
 
@@ -160,11 +164,11 @@ def diSize : ComplementSize := .cP
 /-- The *a*-infinitive is a projection below tense with negation as its highest head (22). -/
 def aSize : ComplementSize := ⟨.Neg⟩
 
-/-- The complement an infinitival complementizer of the fragment selects. -/
+/-- The complement an infinitival complementizer of the language file selects. -/
 def sizeOf (z : Complementizer) : Option ComplementSize :=
   if z = di then some diSize else if z = a then some aSize else none
 
-/-- The readings a verb's complementizers yield, in the order the fragment lists them. -/
+/-- The readings a verb's complementizers yield, in the order the language file lists them. -/
 def readings (v : Italian.Verb) : List Reading :=
   v.clauseTypers.filterMap fun z ↦ (sizeOf z).map readingFromSize
 
@@ -175,25 +179,12 @@ theorem convincere_pensare_readings :
 
 /-! ### The diagnostics of sections 3 and 3.1 -/
 
-/-- A property of an infinitival complement the paper tests. -/
-inductive Diagnostic
-  | belief
-  | intention
-  | truthAssessable
-  | subjectControl
-  | passive
-  | aspectual
-  | negation
-  | independentTime
-  | cliticClimbing
-  deriving DecidableEq, Repr
-
 /-- What complement size predicts for a diagnostic, the readings by the phase threshold; truth
 assessment by propositionality; subject control by the finiteness head that hosts the logophoric
 centre ([rizzi-1997]); passive, low aspectual verbs and negation by the Voice, v and negation
 heads; a temporal domain of its own by structure above vP; clitic climbing by a complement no
 larger than vP. -/
-def Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
+def Examples.Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
   | .belief, cs => readingFromSize cs = .belief
   | .intention, cs => readingFromSize cs = .intention
   | .truthAssessable, cs => .cP ≤ cs
@@ -217,10 +208,7 @@ structure Row where
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let s ← ex.parse? "size" [("cP", diSize), ("aP", aSize), ("vP", ComplementSize.vP)]
-  let d ← ex.parse? "diagnostic" [("belief", Diagnostic.belief), ("intention", .intention),
-    ("truthAssessable", .truthAssessable), ("subjectControl", .subjectControl),
-    ("passive", .passive), ("aspectual", .aspectual), ("negation", .negation),
-    ("independentTime", .independentTime), ("cliticClimbing", .cliticClimbing)]
+  let d ← (Examples.diagnostic ex)
   let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
   pure ⟨s, d, g⟩
 

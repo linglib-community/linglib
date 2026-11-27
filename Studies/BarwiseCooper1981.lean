@@ -1,10 +1,11 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Conservative
 public import Linglib.Core.ModelTheory.Monadic
-public import Linglib.Semantics.Quantification.Witness
-public import Linglib.Fragments.English.Determiners
+public import Linglib.Semantics.Quantifier.Witness
+public import Linglib.Semantics.Quantifier.Global
+public import Linglib.Languages.English.Determiners
 public import Linglib.Data.Examples.BarwiseCooper1981
 public import Mathlib.Data.Finset.Fin
 public import Mathlib.Data.Set.Card
@@ -28,7 +29,7 @@ determiners validate *D N that VP, VP* (C8); negation reverses monotonicity (C9)
 increasing quantifier and its dual overlap (C10); a monotone quantifier is decided by its
 witness sets (C11). C12 and C13 prove that *more than half* is definable neither in
 first-order logic nor from the unrelativized majority quantifier, so *most* is a determiner,
-not a quantifier. The fragment's quantity words instantiate Table II. *Exactly three or
+not a quantifier. The language file's quantity words instantiate Table II. *Exactly three or
 exactly five*, one of the quantifiers the monotonicity constraint U6 rules out,
 [fails it](##not_rightContinuous_exactly_three_sup_exactly_five), and the paper's
 artificial determiners witness that U7 and U8 are not logical truths either. Under the
@@ -315,7 +316,8 @@ theorem most_apply_self {d : Det.Family} (hd : d ∈ ⟦English.Determiners.most
 /-- On a restrictor of odd size, *more than half* is self-dual (§4.11). -/
 theorem most_selfDual_of_odd_count {A : Set α} (h : Odd A.ncard) (S : Set α) :
     dual (most : Det α) A S ↔ most A S := by
-  simp only [dual, innerNeg, compl_apply, most_apply, not_lt, Set.sdiff_compl, ← Set.sdiff_eq]
+  simp only [Det.dual, Det.innerNeg, compl_apply, most_apply, not_lt, Set.sdiff_compl,
+    ← Set.sdiff_eq]
   have hd := Set.ncard_inter_add_ncard_sdiff_eq_ncard A S
   obtain ⟨k, hk⟩ := h
   omega

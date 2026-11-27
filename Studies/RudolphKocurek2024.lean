@@ -6,7 +6,7 @@ public import Linglib.Core.ModelTheory.LanguageMap
 public import Linglib.Core.ModelTheory.Semantics
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.Defs.Unbundled
-public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Semantics.Modality.ComparativeLikelihood
 public import Linglib.Semantics.Delineation
 
 /-!

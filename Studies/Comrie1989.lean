@@ -4,13 +4,13 @@ public import Mathlib.Data.Finset.Card
 public import Linglib.Core.Order.Monotone.Extension
 public import Linglib.Data.Examples.Comrie1989
 public import Linglib.Syntax.Clause.Alignment
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
-public import Linglib.Fragments.Turkish.ObjectMarking
+public import Linglib.Languages.Turkish.ObjectMarking
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Syntax.Person.Class
-public import Linglib.Semantics.Causation.Morphological
+public import Linglib.Syntax.Feature.Person.Scale
+public import Linglib.Syntax.Voice.Causativization
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
@@ -86,7 +86,9 @@ its pivot](##bias_rows) and [need not match case marking](##dyirbal_marking_synt
 
 namespace Comrie1989
 
-open Alignment ArgumentStructure Causation.Morphological
+open Examples (Test)
+
+open Alignment ArgumentStructure Causativization
 
 /-! ### The discriminatory function of case -/
 
@@ -122,7 +124,7 @@ def acceptable : List Datum := Examples.all.filter (·.judgment = .acceptable)
 
 /-- An argument's prominence is its person, animacy and degree of definiteness, ordered
 componentwise. -/
-abbrev Prominence := Person.Class × Animacy × Definiteness
+abbrev Prominence := Person.Scale × Animacy × Definiteness
 
 /-- One argument's marking in a row records its role, the parameters the book invokes for the
 language, and the marking its position takes. -/
@@ -130,7 +132,7 @@ structure Marking where
   /-- A or P; S, taking the unmarked case, has no row. -/
   role : ArgumentRole
   /-- Whether the argument is a speech-act participant, where the marking consults it. -/
-  person : Option Person.Class
+  person : Option Person.Scale
   /-- The argument's animacy, where the marking consults it. -/
   animacy : Option Animacy
   /-- The argument's degree of definiteness, where the marking consults it. -/
@@ -141,10 +143,10 @@ structure Marking where
 
 /-- The animacy labels of the rows, read as person and animacy apart, the speech-act
 participants being human and the nouns third person. -/
-def animacyNames : List (String × (Person.Class × Animacy)) :=
-  [("speaker", (.participant, .human)), ("addressee", (.participant, .human)),
-    ("human", (.nonParticipant, .human)), ("animal", (.nonParticipant, .animate)),
-    ("inanimate", (.nonParticipant, .inanimate))]
+def animacyNames : List (String × (Person.Scale × Animacy)) :=
+  [("speaker", (.locuphoric, .human)), ("addressee", (.locuphoric, .human)),
+    ("human", (.aliophoric, .human)), ("animal", (.aliophoric, .animate)),
+    ("inanimate", (.aliophoric, .inanimate))]
 
 /-- The markings a row records, one per argument whose marking it gives, under the key
 prefixes `A.` and `P.`; a row whose marking the book attributes to a parameter beside the
@@ -247,7 +249,7 @@ theorem marking_contrast : ∀ role : ArgumentRole, role = .A ∨ role = .P →
   decide
 
 -- (13), (14) and (25): the Turkish rows mark P exactly on the degrees of definiteness the
--- fragment's accusative covers, the continuum cut at the specific indefinites.
+-- language file's accusative covers, the continuum cut at the specific indefinites.
 theorem turkish_rows : ∀ r ∈ Examples.all, r.language = .turkish → ∀ m ∈ Marking.ofRow r,
     ∀ d ∈ m.definiteness, (m.overtness = .obligatory ↔ d ∈ Turkish.ObjectMarking.accusative) := by
   decide
@@ -409,36 +411,30 @@ theorem control_rows :
 /-! ### Compactness and directness (§8.1) -/
 
 /-- The causative construction a row records, its formal complexity and its mediation. -/
-def CausativeConstruction.ofRow (row : Datum) : Option CausativeConstruction := do
+def construction? (row : Datum) : Option (CausativeComplexity × Mediation) := do
   guard (row.feature? "construction" = some "compactness")
-  return ⟨← row.parse? "complexity"
+  return (← row.parse? "complexity"
       [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
       ("analytic", .periphrastic)],
-    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)]⟩
+    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)])
 
 -- Nivkh (6)–(7) and English *Anton broke the stick* against *Anton brought it about that the
 -- stick broke*.
 theorem compactness_rows :
-    (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ CausativeConstruction.ofRow r₁,
+    (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ construction? r₁,
       ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language),
-        ∀ c₂ ∈ CausativeConstruction.ofRow r₂, c₁.ComrieMonotone c₂) ∧
+        ∀ c₂ ∈ construction? r₂, c₁ ≤ c₂ ∨ c₂ ≤ c₁) ∧
       ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
-        ∃ c₁ ∈ CausativeConstruction.ofRow r₁, ∃ c₂ ∈ CausativeConstruction.ofRow r₂,
-          c₁.complexity < c₂.complexity ∧ c₁.mediation < c₂.mediation := by
+        ∃ c₁ ∈ construction? r₁, ∃ c₂ ∈ construction? r₂, c₁.1 < c₂.1 ∧ c₁.2 < c₂.2 := by
   decide
 
 /-! ### Subject as a prototype (chapter 5) -/
-
-/-- The constructions tested. -/
-inductive Test
-  | coordination | imperative | indirectCommand | resultative | infinitive
-  deriving DecidableEq, Repr, Fintype
 
 /-- The property a construction asks of its pivot, on the book's explanation: the addressee of an
 imperative and the recipient of an indirect command must control the resulting situation, and a
 resultative attributes a change of state; coordination and the Chukchi infinitive ask for
 neither (§5.3, §5.4). -/
-def Test.property : Test → Option ProtoRoleFeature
+def Examples.Test.property : Test → Option ProtoRoleFeature
   | .imperative | .indirectCommand => some .volition
   | .resultative => some .changeOfState
   | .coordination | .infinitive => none
@@ -446,7 +442,7 @@ def Test.property : Test → Option ProtoRoleFeature
 /-- A construction is biased toward the alignment identifying S with the transitive argument whose
 prototype has its property: A, the agent of the prototypical transitive situation, for a
 proto-agent property, and P, the patient, for a proto-patient one. -/
-def Test.bias (t : Test) : Option AlignmentType :=
+def Examples.Test.bias (t : Test) : Option AlignmentType :=
   t.property.map fun f ↦ if f ∈ ProtoRoleFeature.agentCluster then .accusative else .ergative
 
 /-- A grouping row's configuration: the construction and the core roles that may bear its shared
@@ -464,9 +460,7 @@ def Grouped.marking (g : Grouped) (r : ArgumentRole) : Bool := decide (r ∈ g.p
 /-- The configuration a grouping row records. -/
 def Grouped.ofRow (row : Datum) : Option Grouped := do
   guard (row.feature? "construction" = some "grouping")
-  return ⟨← row.parse? "test" [("coordination", Test.coordination), ("imperative", .imperative),
-      ("indirectCommand", .indirectCommand), ("resultative", .resultative),
-      ("infinitive", .infinitive)],
+  return ⟨← (Examples.test row),
     ← row.parseAll? "pivot" [("S", ArgumentRole.S), ("A", .A), ("P", .P)]⟩
 
 /-- Imperative addressee deletion follows its bias in every language, accusative even in Dyirbal,

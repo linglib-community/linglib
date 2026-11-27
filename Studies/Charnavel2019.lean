@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Charnavel2019
-public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Discourse.LogophoricRole
 public import Linglib.Syntax.Binding.Tree
 public import Linglib.Data.Examples.Readers
 
@@ -60,26 +60,16 @@ the antecedent of an unacceptable anaphor](##exists_unacceptable_mem_centersOf_i
 
 namespace Charnavel2019
 
+open Examples (Center)
+
 open PhraseStructure PhraseStructure.Tree Binding
 open scoped Function
 
 /-! ### Perspective centers -/
 
-/-- The kinds of perspective center the book tells apart. -/
-inductive Center where
-  /-- The source of a report who holds no attitude toward its content. -/
-  | nonAttitudinalSource
-  /-- One whose thought or speech a clause reports, the speaker included. -/
-  | attitudeHolder
-  /-- One whose sensory or emotional experience the speaker takes up. -/
-  | empathyLocus
-  /-- A spatial point of reference, which need have no mental state. -/
-  | deicticCenter
-  deriving DecidableEq, Fintype, Repr
-
 /-- A center is logophoric when its perspective is mental and first-personal, as an attitude
 holder's and an empathy locus's are. -/
-def Center.IsLogophoric (c : Center) : Prop := c = .attitudeHolder ∨ c = .empathyLocus
+def Examples.Center.IsLogophoric (c : Center) : Prop := c = .attitudeHolder ∨ c = .empathyLocus
 
 instance : DecidablePred Center.IsLogophoric := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
@@ -424,12 +414,6 @@ def sentences : List (Datum × Sentence) :=
 
 theorem map_fst_sentences : sentences.map Prod.fst = Examples.all := rfl
 
-/-- The kind of perspective center the paper's tests make the antecedent of an example. -/
-def antecedent? (d : Datum) : Option Center :=
-  d.parse? "antecedent"
-    [("non-attitudinal source", .nonAttitudinalSource), ("attitude holder", .attitudeHolder),
-      ("empathy locus", .empathyLocus), ("deictic center", .deicticCenter)]
-
 /-- Each example is acceptable exactly when its sentence is grammatical. -/
 theorem acceptable_iff_grammatical :
     ∀ p ∈ sentences, (p.1.judgment = .acceptable ↔ p.2.Grammatical) := by
@@ -449,7 +433,7 @@ theorem locallyBound_pronoun :
   decide
 
 theorem mem_centers_iff : ∀ p ∈ sentences,
-    (∀ k ∈ antecedent? p.1, (1 ∈ p.2.centers ↔ k.IsLogophoric)) ∧
+    (∀ k ∈ Examples.antecedent p.1, (1 ∈ p.2.centers ↔ k.IsLogophoric)) ∧
       (p.1.feature? "animacy" = some "inanimate" → 1 ∉ p.2.centers) := by
   decide
 
@@ -462,10 +446,10 @@ theorem locallyBound_overt_of_inanimate : ∀ p ∈ sentences,
     ((acceptable_iff_grammatical p hp).1 ha) hb ((mem_centers_iff p hp).2 hi)
 
 theorem licit_tree_antecedent :
-    ∀ p ∈ sentences, (antecedent? p.1).isSome → Licit p.2.tree 1 := by
+    ∀ p ∈ sentences, (Examples.antecedent p.1).isSome → Licit p.2.tree 1 := by
   decide +kernel
 
-theorem exists_not_locallyBound_antecedent : ∀ p ∈ sentences, (antecedent? p.1).isSome →
+theorem exists_not_locallyBound_antecedent : ∀ p ∈ sentences, (Examples.antecedent p.1).isSome →
     ∃ b : Overt p.2.tree, b.1.1.2 = .anaphor 1 ∧
       ¬ (overtConfiguration p.2.tree).LocallyBound (Coindexed 1 on Subtype.val) b := by
   decide +kernel
@@ -473,9 +457,10 @@ theorem exists_not_locallyBound_antecedent : ∀ p ∈ sentences, (antecedent? p
 -- p. 179: where the tests classify the antecedent, the anaphor is acceptable exactly when the
 -- antecedent is an attitude holder or an empathy locus.
 theorem acceptable_iff_isLogophoric :
-    ∀ p ∈ sentences, ∀ k ∈ antecedent? p.1, (p.1.judgment = .acceptable ↔ k.IsLogophoric) := by
+    ∀ p ∈ sentences, ∀ k ∈ Examples.antecedent p.1,
+      (p.1.judgment = .acceptable ↔ k.IsLogophoric) := by
   intro p hp k hk
-  have hs : (antecedent? p.1).isSome := Option.isSome_of_mem hk
+  have hs : (Examples.antecedent p.1).isSome := Option.isSome_of_mem hk
   obtain ⟨b, hb, hn⟩ := exists_not_locallyBound_antecedent p hp hs
   rw [acceptable_iff_grammatical p hp, grammatical_iff_of_not_locallyBound hb hn,
     ← (mem_centers_iff p hp).1 k hk]
@@ -484,7 +469,7 @@ theorem acceptable_iff_isLogophoric :
 /-- The source and the pivot of Sells, and not the self, each take in the antecedent of an
 unacceptable anaphor, a source that holds no attitude and a deictic center (Table 3.3). -/
 theorem exists_unacceptable_mem_centersOf_iff {r : LogophoricRole} :
-    (∃ d ∈ Examples.all, d.judgment ≠ .acceptable ∧ ∃ k ∈ antecedent? d, k ∈ centersOf r) ↔
+    (∃ d ∈ Examples.all, d.judgment ≠ .acceptable ∧ ∃ k ∈ Examples.antecedent d, k ∈ centersOf r) ↔
       r ≠ .self := by
   cases r <;> decide
 

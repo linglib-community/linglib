@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Phonology.Subregular.Dependence
-public import Linglib.Phonology.Subregular.BMRS
+public import Linglib.Phonology.Subregular.Function.Dependence
+public import Linglib.Phonology.Subregular.Function.BMRS
 public import Linglib.Data.Wordlist.Yolyan2025
 public import Studies.McCollumEtAl2020
 

@@ -241,6 +241,7 @@ AUTO_FEATURES = {
     "143A": {"enum": "NegVerbOrder",       "author": "dryer-2013-wals"},
 
     # ── Questions (Ch 116) ─────────────────────────────────────────────
+    "92A": {"enum": "QuestionParticlePosition", "author": "dryer-2013-wals"},
     "116A": {"enum": "PolarQuestionType",  "author": "dryer-2013-wals"},
 
     # ── Gender/Number (Ch 30–31, 33–35) ────────────────────────────────
@@ -257,6 +258,10 @@ AUTO_FEATURES = {
     "121A": {"enum": "ComparativeType",    "author": "stassen-2013"},
     "122A": {"enum": "SubjectRelativization", "author": "comrie-kuteva-2013a"},
     "123A": {"enum": "ObliqueRelativization", "author": "comrie-kuteva-2013b"},
+
+    # ── Complementation (Ch 124, 128) ──────────────────────────────────
+    "124A": {"enum": "WantComplementSubject", "author": "haspelmath-2013-want"},
+    "128A": {"enum": "UtteranceComplement", "author": "cristofaro-2013"},
 
     # ── Morphology (Ch 20–22, 26–27) ──────────────────────────────────
     "20A": {"enum": "FusionType",          "author": "bickel-nichols-2013a"},

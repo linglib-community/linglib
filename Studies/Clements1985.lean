@@ -1,11 +1,9 @@
 module
 
-public import Linglib.Fragments.English.Phonology
-public import Linglib.Core.Data.Fintype.Order
-public import Mathlib.Data.Fintype.Card
+public import Linglib.Languages.English.Phonology
+public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Phonology.FeatureGeometry
-public import Mathlib.Data.List.Iterate
-public import Linglib.Phonology.Subregular.LocalRewrite
+public import Linglib.Phonology.Subregular.Function.LocalRewrite
 
 /-!
 # Clements (1985): the geometry of phonological features
@@ -46,8 +44,9 @@ root's feature class is the paper's inventory rather than all of Hayes's; `[labi
 counts as primary by table (22). Spreading is `Finset.piecewise` on a node's feature class,
 so the trigger's unspecified features under the node replace the target's, as the delinking
 convention of (13) requires; single-feature spreading is `Function.update`
-(`Spreading.apply_feature`). The English segments are the Fragment's, except /r/: the
-Fragment's /ɹ/ is PHOIBLE's, [−consonantal, −anterior, +distributed], where table (10) makes /r/
+(`Spreading.apply_feature`). The English segments are the language file's, except /r/: the
+language file's /ɹ/ is PHOIBLE's, [−consonantal, −anterior, +distributed], where table (10) makes
+/r/
 [−distributed] and (11) makes it a trigger of (12), whose trigger is [+consonantal], as liquids
 are in SPE. The SPE rule (14) is `Effect.copyRight` on the two-feature set and (12) the same
 effect on the place class, so the comparison is between the sets a rule may copy, not between
@@ -60,7 +59,7 @@ formalisms.
   the insertion rule (18), which needs two such nodes, is blocked. This needs
   feature-level linking (`Autosegmental/AR.lean`), not the segment-wise spreading here.
 * §4's consonant–vowel asymmetries follow from plain consonants lacking S features
-  underlyingly while vowels always carry them. The Fragment's segments are PHOIBLE's surface
+  underlyingly while vowels always carry them. The language file's segments are PHOIBLE's surface
   specifications, in which every consonant carries `[round]` and /k/ carries `[high]` and
   `[back]`, so stating them needs the underspecified consonants.
 
@@ -98,28 +97,19 @@ def pred : Node → Node
   | .laryngeal | .supralaryngeal => .root
   | .manner | .place => .supralaryngeal
 
-/-- `a ≤ b` when `a` lies on the walk from `b` up to the root, so the root is `⊥` and the parent
-is `Order.pred`. -/
-instance : PartialOrder Node where
-  le a b := a ∈ List.iterate pred b (Fintype.card Node)
-  le_refl := by decide
-  le_trans := by decide +kernel
-  le_antisymm := by decide
+/-- The tree (3). -/
+def tree : ParentTree Node := .ofIterate pred .root 2 (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
+/-- `a ≤ b` when `a` dominates `b`, so the root is `⊥` and the parent is `Order.pred`. -/
+instance : PartialOrder Node := tree.toPartialOrder
+
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : OrderBot Node := tree.toOrderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.toPredOrder
 
 end Node
 
@@ -182,6 +172,9 @@ def apply : Segment := Segment.piecewise σ.features src tgt
 
 theorem apply_eqOn : Set.EqOn (σ.apply src tgt) src ↑σ.features :=
   fun _ hf ↦ Finset.piecewise_eq_of_mem _ _ _ hf
+
+theorem apply_node (a : Node) : (node a).apply src tgt = Segment.spread classNode? a src tgt :=
+  rfl
 
 theorem apply_feature (f : Feature) :
     ((feature f).apply src tgt).val = Function.update tgt.val f (src f) :=
@@ -325,8 +318,7 @@ theorem preaspiration (v c : Segment) :
         ↑(featureClass classNode? Node.supralaryngeal) ∧
       Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c
         ↑(featureClass classNode? Node.laryngeal) :=
-  ⟨Spreading.apply_eqOn _ v c,
-    Finset.eqOn_piecewise_of_disjoint (disjoint_featureClass ⟨by decide, by decide⟩)⟩
+  ⟨Spreading.apply_eqOn _ v c, spread_eqOn_of_incompRel ⟨by decide, by decide⟩⟩
 
 /-! ### Primary and secondary place features (§4) -/
 

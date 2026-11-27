@@ -62,6 +62,12 @@ policy `leaveNothing`, which always leaves nothing, gives the cuts of the Connes
 
 ## Implementation notes
 
+`rootCuts` and `childrenCuts` recurse structurally, on the tree and on its list of children, with
+the choices at one child written out in `childrenCuts` and named afterwards as `childCuts`. A
+third mutually recursive function for those choices would call `rootCuts` on its own argument,
+which only well-founded recursion accepts, and the kernel does not unfold that: with the structural
+definitions the cuts of a closed tree are computed by `decide`.
+
 `crown` is this library's word for the forest a cut removes, which none of its sources names. The
 book writes it `π_C(T)`, and Connes and Kreimer speak of cut branches and a trunk.
 
@@ -86,24 +92,29 @@ mutual
 def rootCuts (extract : RoseTree α → Option (List (RoseTree α))) :
     RoseTree α → Multiset (Multiset (RoseTree α) × RoseTree α)
   | .node a cs => (childrenCuts extract cs).map fun p ↦ (p.1, .node a p.2)
+termination_by structural t => t
 /-- The cuts of a list of children, as pairs of a crown and the list of what remains. A surviving
     child contributes its trunk and a cut child contributes `extract` of it. -/
 def childrenCuts (extract : RoseTree α → Option (List (RoseTree α))) :
     List (RoseTree α) → Multiset (Multiset (RoseTree α) × List (RoseTree α))
   | [] => {((0 : Multiset (RoseTree α)), ([] : List (RoseTree α)))}
   | t :: ts =>
-      ((childCuts extract t ×ˢ childrenCuts extract ts) : Multiset _).map
-        fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2)
+      ((((match extract t with
+          | none => (0 : Multiset _)
+          | some r => {(({t} : Multiset (RoseTree α)), r)})
+        + (rootCuts extract t).map fun p ↦ (p.1, [p.2])) ×ˢ childrenCuts extract ts) :
+          Multiset _).map fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2)
+termination_by structural ts => ts
+end
+
 /-- The choices at one child `t` are to cut `t` itself, with crown `{t}` and remainder
     `extract t` when the policy allows it, or to cut inside `t`. -/
-def childCuts (extract : RoseTree α → Option (List (RoseTree α))) :
-    RoseTree α → Multiset (Multiset (RoseTree α) × List (RoseTree α))
-  | t =>
-      (match extract t with
-       | none => (0 : Multiset _)
-       | some r => {(({t} : Multiset (RoseTree α)), r)})
-      + (rootCuts extract t).map fun p ↦ (p.1, [p.2])
-end
+def childCuts (extract : RoseTree α → Option (List (RoseTree α))) (t : RoseTree α) :
+    Multiset (Multiset (RoseTree α) × List (RoseTree α)) :=
+  (match extract t with
+   | none => (0 : Multiset _)
+   | some r => {(({t} : Multiset (RoseTree α)), r)})
+  + (rootCuts extract t).map fun p ↦ (p.1, [p.2])
 
 variable (extract : RoseTree α → Option (List (RoseTree α)))
 
@@ -122,14 +133,14 @@ variable (extract : RoseTree α → Option (List (RoseTree α)))
       ((childCuts extract t ×ˢ childrenCuts extract ts) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
   conv_lhs => unfold childrenCuts
+  rfl
 
 @[simp] theorem childCuts_eq (t : RoseTree α) :
     childCuts extract t =
       (match extract t with
        | none => (0 : Multiset _)
        | some r => {(({t} : Multiset (RoseTree α)), r)})
-      + (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := by
-  conv_lhs => unfold childCuts
+      + (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := rfl
 
 theorem childCuts_eq_none (t : RoseTree α) (h : extract t = none) :
     childCuts extract t = (rootCuts extract t).map fun p ↦ (p.1, [p.2]) := by
@@ -155,25 +166,29 @@ example (a : α) : rootCuts extract (RoseTree.leaf a) = {(0, RoseTree.leaf a)} :
 /-- The cuts of a list of children are the product of the cuts at each child in the monoid
 semiring, where a product adds crowns and appends remainders. -/
 theorem ofMultiset_childrenCuts (l : List (RoseTree α)) :
-    AddMonoidAlgebra.ofMultiset ℕ (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α))
-        (childrenCuts extract l) =
+    AddMonoidAlgebra.ofMultiset ℕ
+        ((childrenCuts extract l).map (Prod.map id FreeAddMonoid.ofList)) =
       (l.map fun t ↦ AddMonoidAlgebra.ofMultiset ℕ
-        (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α)) (childCuts extract t)).prod := by
+        ((childCuts extract t).map (Prod.map id FreeAddMonoid.ofList))).prod := by
   induction l with
-  | nil => rw [childrenCuts_nil, AddMonoidAlgebra.ofMultiset_singleton]; rfl
+  | nil =>
+    rw [childrenCuts_nil, Multiset.map_singleton, AddMonoidAlgebra.ofMultiset_singleton]; rfl
   | cons t ts ih =>
-    rw [childrenCuts_cons, List.map_cons, List.prod_cons, ← ih]
-    exact AddMonoidAlgebra.ofMultiset_map_add_product _ _
+    rw [childrenCuts_cons, List.map_cons, List.prod_cons, ← ih,
+      ← AddMonoidAlgebra.ofMultiset_map_add_product]
+    exact congrArg _ (Multiset.map_map_product_distrib (fun _ _ ↦ rfl) _ _)
 
 theorem childrenCuts_append (l₁ l₂ : List (RoseTree α)) :
     childrenCuts extract (l₁ ++ l₂) =
       ((childrenCuts extract l₁ ×ˢ childrenCuts extract l₂) : Multiset _).map
         fun p ↦ (p.1.1 + p.2.1, p.1.2 ++ p.2.2) := by
-  refine AddMonoidAlgebra.ofMultiset_injective ℕ
-    (M := Multiset (RoseTree α) × FreeAddMonoid (RoseTree α))
-    (.trans ?_ (AddMonoidAlgebra.ofMultiset_map_add_product _ _).symm)
-  rw [ofMultiset_childrenCuts, ofMultiset_childrenCuts, ofMultiset_childrenCuts, List.map_append,
-    List.prod_append]
+  refine Multiset.map_injective
+    (Function.injective_id.prodMap (g := FreeAddMonoid.ofList)
+      fun _ _ h ↦ congrArg FreeAddMonoid.toList h)
+    (AddMonoidAlgebra.ofMultiset_injective ℕ ?_)
+  rw [ofMultiset_childrenCuts, List.map_append, List.prod_append, ← ofMultiset_childrenCuts,
+    ← ofMultiset_childrenCuts, ← AddMonoidAlgebra.ofMultiset_map_add_product]
+  exact congrArg _ (Multiset.map_map_product_distrib (fun _ _ ↦ rfl) _ _).symm
 
 /-! ### Induction over cuts
 
@@ -336,7 +351,8 @@ private theorem childrenCuts_proj_perm (extract : RoseTree α → Option (List (
 
 /-- For an invariant policy, the projected cuts of a tree depend only on the unordered tree. -/
 theorem rootCuts_proj_perm (hExt : ExtractInvariant extract) {t s : RoseTree α}
-    (h : RoseTree.Perm t s) : (rootCuts extract t).map projCut = (rootCuts extract s).map projCut := by
+    (h : RoseTree.Perm t s) :
+    (rootCuts extract t).map projCut = (rootCuts extract s).map projCut := by
   refine h.induction_on fun a cs ds ih ↦ ?_
   have hL : (childrenCuts extract cs).map projChildrenCut =
       (childrenCuts extract ds).map projChildrenCut := by

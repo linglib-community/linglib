@@ -1,20 +1,23 @@
 module
 
 public import Linglib.Core.Data.Part
-public import Linglib.Semantics.Index
-public import Linglib.Core.Order.PartialUnify
+public import Linglib.Logic.Modal.Index.Defs
+public import Linglib.Core.Order.BoundedComplete
+public import Mathlib.Basic.Rel
 public import Mathlib.Data.PFun
 public import Mathlib.Logic.Function.Basic
 
 /-!
 # Possibilities
 
-This file defines a *possibility*, a world paired with an assignment of discourse referents, and
-the structure of its partial points, whose assignments are families of partial values
-`V → Part M`: the descent order, compatibility and joins, restriction, and the classification of
-each stratum as world–assignment pairs. Partial values form a forest, so two compatible points
-have a join, the point that extends both and is defined only where one of them is
-([the join](##DynamicSemantics.Possibility.isLUB_pair_iff)).
+This file defines a *possibility*, a world paired with an assignment of discourse referents, the
+relation on possibilities that a family of relations on assignments determines world by world
+(`Possibility.liftRel`), with equality of two possibilities on a set of referents as an instance
+(`Possibility.EqOn`), and the structure of the partial points, whose assignments are families of
+partial values `V → Part M`: the descent order, compatibility and joins, restriction, and the
+classification of each stratum as world–assignment pairs. Partial values form a forest, so two
+compatible points have a join, the point that extends both and is defined only where one of them
+is (`Possibility.isLUB_pair_iff`).
 
 ## References
 
@@ -53,6 +56,87 @@ def update : Possibility W V M :=
     (p.update x e).assignment = Function.update p.assignment x e := rfl
 
 end Update
+
+/-! ### Relations world by world -/
+
+section LiftRel
+
+open scoped SetRel
+
+variable {R S : W → SetRel (V → M) (V → M)} {a b : Possibility W V M}
+
+/-- The relation on possibilities that a family of relations on assignments determines: the
+world is kept, and the assignments are related by the relation at that world. -/
+def liftRel (R : W → SetRel (V → M) (V → M)) : SetRel (Possibility W V M) (Possibility W V M) :=
+  {(a, b) | a.world = b.world ∧ a.assignment ~[R a.world] b.assignment}
+
+theorem mem_liftRel :
+    a ~[liftRel R] b ↔ a.world = b.world ∧ a.assignment ~[R a.world] b.assignment := Iff.rfl
+
+@[simp] theorem liftRel_id :
+    liftRel (fun _ ↦ SetRel.id) = (SetRel.id : SetRel (Possibility W V M) (Possibility W V M)) := by
+  ext ⟨a, b⟩
+  exact Possibility.ext_iff.symm
+
+theorem liftRel_comp (R S : W → SetRel (V → M) (V → M)) :
+    liftRel (fun w ↦ R w ○ S w) = liftRel R ○ liftRel S := by
+  ext ⟨a, b⟩
+  constructor
+  · rintro ⟨hw, g, h₁, h₂⟩
+    exact ⟨⟨a.world, g⟩, ⟨rfl, h₁⟩, hw, h₂⟩
+  · rintro ⟨c, ⟨hw₁, h₁⟩, hw₂, h₂⟩
+    exact ⟨hw₁.trans hw₂, c.assignment, h₁, by rwa [hw₁]⟩
+
+theorem mem_dom_liftRel : a ∈ (liftRel R).dom ↔ a.assignment ∈ (R a.world).dom :=
+  ⟨fun ⟨b, _, h⟩ ↦ ⟨b.assignment, h⟩, fun ⟨g, h⟩ ↦ ⟨⟨a.world, g⟩, rfl, h⟩⟩
+
+end LiftRel
+
+/-! ### Equality on a set of referents -/
+
+section EqOn
+
+open scoped SetRel
+
+variable {X Y : Set V} {p q r : Possibility W V M}
+
+/-- Two possibilities are equal on the referents in `X` when they share their world and their
+assignments take the same values on `X`. -/
+structure EqOn (p q : Possibility W V M) (X : Set V) : Prop where
+  /-- The possibilities share their world. -/
+  world_eq : p.world = q.world
+  /-- The assignments take the same values on `X`. -/
+  assignment_eqOn : Set.EqOn p.assignment q.assignment X
+
+theorem EqOn.refl (p : Possibility W V M) (X : Set V) : p.EqOn p X :=
+  ⟨rfl, Set.eqOn_refl _ _⟩
+
+@[symm] theorem EqOn.symm (h : p.EqOn q X) : q.EqOn p X := ⟨h.world_eq.symm, h.assignment_eqOn.symm⟩
+
+theorem EqOn.trans (h : p.EqOn q X) (h' : q.EqOn r X) : p.EqOn r X :=
+  ⟨h.world_eq.trans h'.world_eq, h.assignment_eqOn.trans h'.assignment_eqOn⟩
+
+theorem EqOn.mono (hXY : X ⊆ Y) (h : p.EqOn q Y) : p.EqOn q X :=
+  ⟨h.world_eq, h.assignment_eqOn.mono hXY⟩
+
+theorem eqOn_comm : p.EqOn q X ↔ q.EqOn p X := ⟨.symm, .symm⟩
+
+@[simp] theorem eqOn_empty : p.EqOn q ∅ ↔ p.world = q.world :=
+  ⟨EqOn.world_eq, fun h ↦ ⟨h, Set.eqOn_empty _ _⟩⟩
+
+@[simp] theorem eqOn_univ : p.EqOn q Set.univ ↔ p = q :=
+  ⟨fun h ↦ Possibility.ext h.world_eq (funext fun v ↦ h.assignment_eqOn (Set.mem_univ v)),
+    fun h ↦ h ▸ .refl _ _⟩
+
+theorem eqOn_update [DecidableEq V] {x : V} (hx : x ∉ X) (m : M) : p.EqOn (p.update x m) X :=
+  ⟨rfl, fun _ hv ↦ (Function.update_of_ne (ne_of_mem_of_not_mem hv hx) _ _).symm⟩
+
+/-- Equality on `X` is the relation that equality of assignments on `X` determines world by
+world. -/
+theorem eqOn_iff_liftRel : p.EqOn q X ↔ p ~[liftRel fun _ ↦ {(g, h) | Set.EqOn g h X}] q :=
+  ⟨fun h ↦ ⟨h.world_eq, h.assignment_eqOn⟩, fun ⟨hw, h⟩ ↦ ⟨hw, h⟩⟩
+
+end EqOn
 
 /-! ### Partial points -/
 
@@ -246,20 +330,11 @@ theorem exists_isLUB (h : Compat p q) : ∃ u, IsLUB {p, q} u := by
     split_ifs at hv with hp
     exacts [.inl hp, .inr hv]
 
+instance : IsBoundedComplete (Possibility W V (Part M)) := ⟨fun _ _ ↦ exists_isLUB⟩
+
 theorem domain_eq_of_isLUB (h : IsLUB {p, q} u) : u.domain = p.domain ∪ q.domain :=
   have ⟨hp, hq, hdom⟩ := isLUB_pair_iff.mp h
   hdom.antisymm (Set.union_subset (domain_mono hp) (domain_mono hq))
-
-open Classical in
-/-- Unification of points returns their join when they are compatible, and fails otherwise. The
-instance is noncomputable, since compatibility is not decided. -/
-noncomputable instance : PartialUnify (Possibility W V (Part M)) where
-  unify p q := if h : Compat p q then ↑(exists_isLUB h).choose else ⊤
-  isLUB_of_unify_eq_coe {p q u} h := by
-    split_ifs at h with hc
-    · exact WithTop.coe_inj.mp h ▸ (exists_isLUB hc).choose_spec
-    · exact absurd h WithTop.top_ne_coe
-  unify_ne_top_of_bddAbove {p q} h := by simp [h]
 
 theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) : p = q :=
   have ⟨u, hu⟩ := exists_isLUB h

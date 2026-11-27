@@ -1,10 +1,10 @@
 module
 
-public import Linglib.Syntax.Person.CaseConstraint
-public import Linglib.Semantics.Reference.Logophoricity
-public import Linglib.Syntax.Person.Features
-public import Linglib.Fragments.Romance.Italian.Pronouns
-public import Linglib.Fragments.Romance.Spanish.Clitics
+public import Linglib.Generalizations.PersonCaseConstraint
+public import Linglib.Discourse.LogophoricRole
+public import Linglib.Syntax.Feature.Person.Decomposition
+public import Linglib.Languages.Romance.Italian.Pronouns
+public import Linglib.Languages.Romance.Spanish.Clitics
 
 /-!
 # Pancheva and Zubizarreta (2018): The Person Case Constraint
@@ -21,12 +21,19 @@ and P-Primacy, generate the five attested varieties, strong, ultra-strong, weak,
 and me-first, together with three predicted ones, and the grammars of four of them
 [license the combinations of the descriptive
 varieties](##PanchevaZubizarreta2018.isLicit_iff_variety). The three prominence values
-correspond to Sells's logophoric roles pivot, self, and source (`prominenceToSellsRole`).
+correspond to Sells's logophoric roles pivot, self, and source
+(`ProminenceThreshold.toLogophoricRole`), and a person meets a value by its own features when its
+referents include a participant holding that role, the speaker being a source and the addressee a
+self (`logophoricRole`).
 
 ## Implementation notes
 
-The Italian and Spanish clitic combinations are read off the Fragments, the French, Catalan,
-Kambera, and Bulgarian ones off the parameter settings, since no clitic Fragment exists for
+The roles a participant holds are a lower set of Sells's hierarchy, recorded by its greatest
+element, so the addressee, a self, is also a pivot. The paper says of the addressee that it can
+be a pivot, and gives second person the feature [+proximate].
+
+The Italian and Spanish clitic combinations are read off the language files, the French, Catalan,
+Kambera, and Bulgarian ones off the parameter settings, since no clitic language file exists for
 those languages. The paper's separation of the Clitic Logophoric Restriction from the PCC,
 against the unification Charnavel and Mateu propose, the two phenomena sharing only
 the point-of-view marking on the applicative head, is not represented: the restriction is a
@@ -64,21 +71,48 @@ inductive ProminenceThreshold where
 instance : LinearOrder ProminenceThreshold :=
   LinearOrder.lift' (·.ctorIdx) (by decide)
 
-/-- A person meets a prominence threshold by its own features, speech-act participants meeting
-`proximate` and `participant` and the speaker `author`. A 3P meets `proximate` only
-contextually (`IOSatisfiesProminence`). -/
-def ProminenceThreshold.InherentlyMetBy : ProminenceThreshold → Person → Prop
-  | .proximate | .participant => Person.IsSAP
-  | .author => Person.IncludesSpeaker
+/-! ### Logophoric roles -/
 
-instance : (t : ProminenceThreshold) → DecidablePred t.InherentlyMetBy
-  | .proximate | .participant => inferInstanceAs (DecidablePred Person.IsSAP)
-  | .author => inferInstanceAs (DecidablePred Person.IncludesSpeaker)
+/-- (46): the prominence values are the logophoric roles of [sells-1987] in the order of his
+hierarchy, a `proximate` argument being at least a pivot, a `participant` at least a self, and an
+`author` a source. -/
+def ProminenceThreshold.toLogophoricRole : ProminenceThreshold ≃o LogophoricRole where
+  toFun
+    | .proximate => .pivot
+    | .participant => .self
+    | .author => .source
+  invFun
+    | .pivot => .proximate
+    | .self => .participant
+    | .source => .author
+  left_inv := by decide
+  right_inv := by decide
+  map_rel_iff' := by decide
+
+/-- The highest logophoric role a participant of the speech act holds: the speaker is a source,
+and with it a self and a pivot, and the addressee is a self, and with it a pivot. -/
+def logophoricRole : SpeechAct.Role → LogophoricRole
+  | .speaker => .source
+  | .addressee => .self
+
+/-- A person meets a prominence threshold by its own features when every referent it covers
+includes a participant holding the threshold's logophoric role. A 3P meets `proximate` only
+contextually (`IOSatisfiesProminence`). -/
+def ProminenceThreshold.InherentlyMetBy (t : ProminenceThreshold) (p : Person) : Prop :=
+  ∀ s ∈ p.participantSets, ∃ x ∈ s, t.toLogophoricRole ≤ logophoricRole x
+
+instance (t : ProminenceThreshold) : DecidablePred t.InherentlyMetBy := fun p ↦
+  inferInstanceAs (Decidable (∀ s ∈ p.participantSets, ∃ x ∈ s, _ ≤ _))
 
 theorem ProminenceThreshold.inherentlyMetBy_antitone (p : Person) :
-    Antitone (InherentlyMetBy · p) := fun t₁ t₂ ht hm => by
-  revert ht hm
-  cases p <;> cases t₁ <;> cases t₂ <;> decide
+    Antitone (InherentlyMetBy · p) := fun _ _ ht h s hs ↦
+  let ⟨x, hx, hle⟩ := h s hs
+  ⟨x, hx, (toLogophoricRole.monotone ht).trans hle⟩
+
+-- (11): speech-act participants are [+proximate] and [+participant], the speaker [+author].
+theorem ProminenceThreshold.inherentlyMetBy_iff {t : ProminenceThreshold} {p : Person} :
+    t.InherentlyMetBy p ↔ if t = .author then p.IncludesSpeaker else p ≠ .third := by
+  cases t <;> cases p <;> decide
 
 /-! ### The grammars -/
 
@@ -202,7 +236,7 @@ def positiveFeatures (p : Person) : Finset ProminenceThreshold :=
 /-- The Person Hierarchy is derived, the prominence order coinciding with the order by count of
 positive features (§2.1). -/
 theorem personHierarchy_from_features (p q : Person) :
-    p.prominence ≤ q.prominence ↔ (positiveFeatures p).card ≤ (positiveFeatures q).card := by
+    p ≤ q ↔ (positiveFeatures p).card ≤ (positiveFeatures q).card := by
   cases p <;> cases q <;> decide
 
 /-! ### The varieties (§4) -/
@@ -278,24 +312,6 @@ theorem ultra_le_weak : ultraStrongGrammar ≤ weakGrammar := by decide
 theorem strong_le_weak : strongGrammar ≤ weakGrammar := strong_le_ultra.trans ultra_le_weak
 
 theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
-
-/-! ### Logophoric roles (§6.2) -/
-
-/-- The prominence values are the logophoric roles of [sells-1987], proximate arguments being
-pivots, participants selves, and authors sources. -/
-def prominenceToSellsRole : ProminenceThreshold → LogophoricRole
-  | .proximate => .pivot
-  | .participant => .self
-  | .author => .source
-
-theorem family_logophoric_assignments :
-    prominenceToSellsRole strongGrammar.prominence = .pivot ∧
-      prominenceToSellsRole ultraStrongGrammar.prominence = .pivot ∧
-      prominenceToSellsRole weakGrammar.prominence = .pivot ∧
-      prominenceToSellsRole superStrongGrammar.prominence = .self ∧
-      prominenceToSellsRole meFirstGrammar.prominence = .source ∧
-      prominenceToSellsRole pg3Grammar.prominence = .source := by
-  decide
 
 /-! ### The paper's examples (§4) -/
 

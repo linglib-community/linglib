@@ -1,0 +1,56 @@
+{
+  "features": [
+    {
+      "key": "modifier",
+      "lean": "modifier",
+      "type": "Modifier",
+      "doc": "The numeral modifiers the paper contrasts.",
+      "levels": [
+        {"name": "atLeast", "label": "at least", "doc": "the superlative modifier *at least*"},
+        {"name": "moreThan", "label": "more than", "doc": "the comparative modifier *more than*"}
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "coppockbrochhagen2013_70a",
+      "source": {"bibkey": "coppock-brochhagen-2013", "paperLabel": "(70a)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "A hexagon has at least five sides.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Spoken by someone who knows how many sides hexagons have.",
+      "judgment": "unacceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["modifier", "at least"],
+        ["numeral", "5"]
+      ],
+      "comment": "The paper marks the sentence #.",
+      "verified": "page-image"
+    },
+    {
+      "id": "coppockbrochhagen2013_70b",
+      "source": {"bibkey": "coppock-brochhagen-2013", "paperLabel": "(70b)"},
+      "reportedIn": null,
+      "language": "stan1293",
+      "primaryText": "A hexagon has more than four sides.",
+      "discourseSegments": [],
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Spoken by someone who knows how many sides hexagons have.",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "paperFeatures": [
+        ["modifier", "more than"],
+        ["numeral", "4"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

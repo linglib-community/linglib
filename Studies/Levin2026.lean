@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-public import Linglib.Fragments.English.Adjectives
+public import Linglib.Languages.English.Adjectives
 public import Linglib.Data.Examples.Levin2026
 public import Linglib.Data.Examples.Readers
 
@@ -177,7 +177,7 @@ def Frame.labels : List (String × Frame) :=
 
 /-! ### Licensing -/
 
-/-- A result phrase has an adjective, recorded where the fragment has it, and the sense the
+/-- A result phrase has an adjective, recorded where the language file has it, and the sense the
 adjective is used in. -/
 structure Result where
   spatialConfig : Option SpatialConfigType

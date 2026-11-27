@@ -5,8 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Logic.Function.FactorsThrough
-public import Linglib.Fragments.Tangale.Phonology
+public import Linglib.Languages.Tangale.Phonology
 
 /-!
 # Kenstowicz (1987): The Phonology and Syntax of Wh-Expressions in Tangale

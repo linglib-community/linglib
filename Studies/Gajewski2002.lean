@@ -1,9 +1,10 @@
 module
 
 public import Linglib.Semantics.Composition.Sorts
-public import Linglib.Semantics.Quantification.Continuation
-public import Linglib.Semantics.Quantification.Exceptive
-public import Linglib.Semantics.Quantification.Lindstrom
+public import Linglib.Semantics.Quantifier.Continuation
+public import Linglib.Semantics.Quantifier.Exceptive
+public import Linglib.Semantics.Quantifier.Lindstrom
+public import Linglib.Semantics.Quantifier.Global
 public import Studies.BarwiseCooper1981
 public import Studies.VonFintel1993
 public import Linglib.Core.Data.Fin.VecNotation
@@ -254,7 +255,7 @@ def thereSkeleton (Q : Det E) : Skeleton E fun _ : Unit ↦ Ty.et :=
 quantifier. -/
 theorem thereSkeleton_isLTautology {Q : Det E} (hc : Conservative Q) (hs : PositiveStrong Q) :
     (thereSkeleton Q).IsLTautology :=
-  fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs _
+  fun _ ↦ BarwiseCooper1981.there_of_positiveStrong hc hs _
 
 -- (25)
 theorem thereSkeleton_some_not_isLAnalytic (a : E) :

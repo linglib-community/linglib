@@ -114,11 +114,11 @@ theorem readings_pexIE_lp : readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ
 its bivalent variants is true, the variant reading each item at its own standard, by its parse with
 the operator at K3 (`readings_pexIE_k3`) and without it at LP (`readings_pexIE_lp`) (§5) ((21),
 (24)). -/
-theorem eval_strongKleene_pexIE_eq_true_iff [DecidableEq U] (φ : Trivalent.Formula U) :
-    Trivalent.Formula.eval .strongKleene (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ) w) φ = .true ↔
-      ∀ ψ ∈ φ.bivalentVariants, Trivalent.Formula.evalBool (fun x ↦
+theorem eval_strongKleene_pexIE_eq_true_iff [DecidableEq U] (φ : Propositional.Formula U) :
+    Propositional.Formula.eval .strongKleene (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ) w) φ = .true ↔
+      ∀ ψ ∈ φ.bivalentVariants, Propositional.Formula.evalBool (fun x ↦
         decide (w ∈ readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) x.2 x.1)) ψ = true := by
-  rw [Trivalent.Formula.eval_strongKleene_eq_supervaluation, Trivalent.supervaluation_eq_true_iff]
+  rw [Propositional.Formula.eval_strongKleene_eq_supervaluation, Trivalent.supervaluation_eq_true_iff]
   rfl
 
 end Readings
@@ -479,7 +479,7 @@ theorem exactlyTwo_parses_false_entitywise_undefined (g : ℕ → Fin 3) :
 
 -- (22)
 theorem not_some_eq_true_iff (w : World) :
-    Trivalent.Formula.eval .strongKleene (meaning · w) (.neg (.atom .some)) = .true ↔
+    Propositional.Formula.eval .strongKleene (meaning · w) (.neg (.atom .some)) = .true ↔
       w = .none := by
   simp [meaning, pexIE_eq_false_iff, literal]
 

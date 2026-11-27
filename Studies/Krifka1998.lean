@@ -1,10 +1,11 @@
 module
 
 public import Linglib.Semantics.Aspect.Telicity
+public import Linglib.Semantics.Aspect.Incremental
 public import Studies.Krifka1989
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.FinCases
-public import Linglib.Semantics.Mereology.Measure
+public import Linglib.Semantics.Mereology.Extensive
 
 /-!
 # Krifka (1998): The Origins of Telicity
@@ -27,9 +28,9 @@ two non-contemporaneous events are atelic.
   its event axioms that overlapping events never precede each other enters as
   `NoPartPrecedes`, which is all the proofs use and which [any precedence on a part structure
   of events satisfies](##IsTemporalPrecedence.noPartPrecedes).
-* Overlap is `Mereology.Overlap`, relative to a possible null element. The paper's part
+* Objects and times have a null element here, and overlap is `¬ Disjoint`. The paper's part
   structures have none, so the expansion theorems assume that the thematic relation never
-  relates the null object.
+  relates the null object. Events have no null element.
 * The source and goal conditions quantify the subpath and the subevent separately; the
   formalization ties them through the thematic relation, as the paper's telicity proof does.
 * The measure adverbial (55) is formalized only through its part relation `IsTemporalPart`,
@@ -59,21 +60,21 @@ variable {α β : Type*}
 
 section MeasureAdverbial
 
-variable {T : Type*} [PartialOrder β] [PartialOrder T] (τ : β → T)
+variable {T : Type*} [PartialOrder β] [PartialOrder T] [OrderBot T] (τ : β → T)
 
 /-- `e'` is a temporal part of `e`, in the part relation of a temporal measure (55), if it is
 part of `e` and `e` has a part whose runtime does not overlap the runtime of `e'`. -/
 structure IsTemporalPart (e' e : β) : Prop where
   le : e' ≤ e
-  exists_not_overlap : ∃ e'' ≤ e, ¬ Overlap (τ e') (τ e'')
+  exists_not_overlap : ∃ e'' ≤ e, Disjoint (τ e') (τ e'')
 
 variable {τ}
 
 theorem IsTemporalPart.ne {e' e : β} (hτ : Monotone τ) (h : IsTemporalPart τ e' e)
-    (h₀ : ∀ e'', e'' ≤ e → ¬ IsBot (τ e'')) : e' ≠ e := by
+    (h₀ : ∀ e'', e'' ≤ e → (τ e'') ≠ ⊥) : e' ≠ e := by
   rintro rfl
   obtain ⟨_, e'', he'', hov⟩ := h
-  exact hov ⟨τ e'', h₀ e'' he'', hτ he'', le_rfl⟩
+  exact not_disjoint_iff_exists.2 ⟨τ e'', h₀ e'' he'', hτ he'', le_rfl⟩ hov
 
 end MeasureAdverbial
 
@@ -95,9 +96,10 @@ local instance : TemporalTrace Ev ℕ := ⟨Prod.snd⟩
 
 -- A telic predicate need not be quantized.
 theorem exists_isTelic_not_qua :
-    ∃ P : Ev → Prop, IsTelic (Precedes : Ev → Ev → Prop) P ∧ ¬ QUA P ∧
-      ¬ IsTelic (Precedes : Ev → Ev → Prop) fun _ ↦ True := by
-  refine ⟨(τ · = ⟨(3, 4), by decide⟩), isTelic_runTime_eq monotone_snd _, fun h ↦ ?_, fun h ↦ ?_⟩
+    ∃ s : Set Ev, IsTelic (Precedes : Ev → Ev → Prop) s ∧ ¬ QUA s ∧
+      ¬ IsTelic (Precedes : Ev → Ev → Prop) Set.univ := by
+  refine ⟨{e | τ e = ⟨(3, 4), by decide⟩}, isTelic_runTime_eq monotone_snd _, fun h ↦ ?_,
+    fun h ↦ ?_⟩
   · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
       (fun hxy ↦ absurd (congrArg Prod.fst hxy) (by decide))
       (Prod.mk_le_mk.2 ⟨(by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1}), le_rfl⟩)
@@ -125,19 +127,20 @@ theorem eat_sinc : SINC eat where
 theorem eat_sum : SUM eat := fun ⟨_, _⟩ h₁ ⟨_, _⟩ h₂ ↦ congr_arg₂ (· ⊔ ·) h₁ h₂
 
 /-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
-theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
+theorem eat_apples_cum : CUM (VP eat {x | x.Nonempty}) :=
   vp_cum eat_sum fun _ hx _ _ ↦ hx.mono Finset.subset_union_left
 
 /-- *eat two apples* is quantized, since a measure phrase is quantized and *eat* is strictly
 incremental and summative (54). -/
-theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
+theorem eat_two_apples_qua : QUA (VP eat {x | x.card = 2}) :=
   eat_sinc.vp_qua eat_sum
-    (qua_pullback (IsExtensiveMeasure.strictMono Finset.card) (singleton_qua 2))
+    (QUA.preimage Finset.card_strictMono
+      (Set.subsingleton_singleton.isAntichain _))
 
 end Eat
 
 theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : SetRel α β} (h : SINC θ)
-    (y : α) : QUA (VP θ (· = y)) :=
+    (y : α) : QUA (VP θ {y}) :=
   vp_eq θ y ▸ h.uo.qua_of_mso h.mso y
 
 -- Uniqueness of events is mapping to events without the iterativity of Krifka (1989).
@@ -176,12 +179,12 @@ theorem twoThemes_sinc : SINC twoThemes where
 
 -- §3.3, after (54)
 theorem not_qua_vp_twoThemes :
-    QUA (· ∈ ({{0, 1}, {2}} : Finset (Finset (Fin 3)))) ∧
-      ¬ QUA (VP twoThemes (· ∈ ({{0, 1}, {2}} : Finset (Finset (Fin 3))))) := by
-  refine ⟨?_, fun h ↦ h (x := {0}) ⟨{2}, by decide, by decide⟩ (y := {0, 1})
-    ⟨{0, 1}, by decide, by decide⟩ (by decide) (by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1})⟩
+    QUA ({{0, 1}, {2}} : Set (Finset (Fin 3))) ∧
+      ¬ QUA (VP twoThemes {{0, 1}, {2}}) := by
+  refine ⟨?_, fun h ↦ h (x := {0}) ⟨{2}, Or.inr rfl, by decide⟩ (y := {0, 1})
+    ⟨{0, 1}, Or.inl rfl, by decide⟩ (by decide) (by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1})⟩
   rintro x hx y hy hne hle
-  simp only [Set.mem_ofPred_eq, Finset.mem_insert, Finset.mem_singleton] at hx hy
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx hy
   rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
     first | exact hne rfl | exact absurd hle (by decide)
 
@@ -240,7 +243,7 @@ instance : IsStrictOrder (Finset (Fin 3)) precedes where
 
 /-- *Read the article* is not telic, since the strict reading `{0, 1}` is a part of the reading
 `{0, 1, 2}` that the re-reading `{2}` follows. -/
-theorem not_isTelic_read : ¬ IsTelic precedes (Finset.univ ~[read] ·) := fun h ↦ by
+theorem not_isTelic_read : ¬ IsTelic precedes {e | Finset.univ ~[read] e} := fun h ↦ by
   have h₁ : Finset.univ ~[read] {0, 1} := subset_supClosure (by decide)
   have h₂ : Finset.univ ~[read] {0, 2} := subset_supClosure (by decide)
   have hsum : Finset.univ ~[read] {0, 1, 2} := by
@@ -255,10 +258,11 @@ end Reading
 
 section Expansion
 
-variable [SemilatticeSup α] [SemilatticeSup β] (precedes : β → β → Prop) (θ : SetRel α β)
+variable [SemilatticeSup α] [OrderBot α] [SemilatticeSup β] (precedes : β → β → Prop)
+  (θ : SetRel α β)
 
 /-- A relation is expansive if the objects of temporally ordered events do not overlap. -/
-def EXP : Prop := ∀ x y e e', x ~[θ] e → y ~[θ] e' → precedes e e' → ¬ Overlap x y
+def EXP : Prop := ∀ x y e e', x ~[θ] e → y ~[θ] e' → precedes e e' → Disjoint x y
 
 /-- A relation is strictly expansive incremental if it is expansive and maps to objects. -/
 structure SEINC : Prop where
@@ -266,28 +270,28 @@ structure SEINC : Prop where
   mo : MO θ
 
 variable {precedes θ} [IsStrictOrder β precedes] (h : SEINC precedes θ)
-  (h₀ : ∀ x e, x ~[θ] e → ¬ IsBot x) {x : α} {e e' : β}
+  (h₀ : ∀ x e, x ~[θ] e → x ≠ ⊥) {x : α} {e e' : β}
 include h h₀
 
 theorem isInitialPart_of_seinc (hx : x ~[θ] e) (hx' : x ~[θ] e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
   isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
     let ⟨y, hy, hθ⟩ := h.mo hx h''
-    h.exp y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
+    not_disjoint_iff_exists.2 ⟨y, h₀ y e'' hθ, le_rfl, hy⟩ (h.exp y x e'' e' hθ hx' hp)⟩
 
 theorem isFinalPart_of_seinc (hx : x ~[θ] e) (hx' : x ~[θ] e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
   isInitialPart_iff.mpr ⟨hle, fun e'' h'' hp ↦
     let ⟨y, hy, hθ⟩ := h.mo hx h''
-    h.exp x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
+    not_disjoint_iff_exists.2 ⟨y, h₀ y e'' hθ, hy, le_rfl⟩ (h.exp x y e' e'' hx' hθ hp)⟩
 
-theorem isTelic_of_seinc (x : α) : IsTelic precedes (x ~[θ] ·) :=
+theorem isTelic_of_seinc (x : α) : IsTelic precedes {e | x ~[θ] e} :=
   fun _ _ hx hx' hle ↦
     ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
 /-- The verb phrase of a quantized object under a strictly expansive incremental relation with
 unique participants is telic, as *eat two apples* is. -/
-theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
+theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : Set α} (hOBJ : QUA OBJ) :
     IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := h.mo hx hle
@@ -360,7 +364,7 @@ uniqueness of participants, as *walk from the university to the capitol* is. -/
 theorem isTelic_sourceGoal (hax : NoPartPrecedes precedes) (hMO : MO θ) (hUP : UP θ)
     (u v : α) :
     IsTelic precedes
-      (fun e ↦ ∃ x, x ~[θ] e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e) := by
+      {e | ∃ x, x ~[θ] e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e} := by
   rintro e e' ⟨x, hx, hS, hG⟩ ⟨x', hx', hS', hG'⟩ hle
   obtain ⟨x'', hx''le, hx''⟩ := hMO hx hle
   obtain rfl := hUP.eq hx' (SetRel.mem_inv.1 hx'')

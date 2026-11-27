@@ -29,7 +29,7 @@ against the plural alternative, [makes the singular strictly singular](##strengt
 Under a numeral the two definites presuppose the same, but at the number phrase Maximize
 Presupposition [still rules out the singular](##minimalFor_defined_numPStar_iff). The purely
 syntactic account, whose null singular is $[+\text{atomic}]$, leaves [a numeral on a singular
-nothing to count](##numeral_atomsOf_eq_empty).
+nothing to count](##numeral_atoms_eq_empty).
 
 ## Implementation notes
 
@@ -71,6 +71,8 @@ restrictor and in a bound possessive, and competition by informativeness are not
 
 namespace BaleKhanjian2014
 
+open Examples (NumberHead)
+
 open Mereology Number Presupposition PhraseStructure Tree Interpreter
 
 /-! ### Denotations -/
@@ -80,23 +82,18 @@ section Denotations
 variable {α : Type*} {B x : Finset α}
 
 /-- *dəgha* 'boy' over the boys `B` denotes every nonempty group of them, general number (9a):
-Link's `*` of the boys, by `Mereology.algClosure_image_singleton`. -/
+Link's `*` of the boys, by `Mereology.mem_supClosure_image_singleton`. -/
 def boy (B : Finset α) : Set (Finset α) := Set.Ioc ∅ B
 
 theorem mem_boy : x ∈ boy B ↔ x ⊆ B ∧ 1 ≤ x.card := by
   rw [boy, Set.mem_Ioc, Finset.empty_ssubset, Finset.one_le_card, and_comm]
 
-/-- The head of the number phrase: the null singular *-∅* or the plural *-ner*. -/
-inductive NumberHead
-  | sg
-  | pl
-  deriving DecidableEq, Fintype, Repr
-
 /-- A number head restricts the noun it heads: *-ner* to its non-atoms, Harbour's
 $[-\text{atomic}]$ (19), and the null singular, on this analysis, to nothing. -/
-def NumberHead.denote {E : Type*} [PartialOrder E] : NumberHead → Set E → Set E
+def Examples.NumberHead.denote {E : Type*} [PartialOrder E] [OrderBot E] :
+    NumberHead → Set E → Set E
   | .sg, X => X
-  | .pl, X => {x | nonAtomsOf (· ∈ X) x}
+  | .pl, X => {x | x ∈ X ∧ ¬ IsAtom x}
 
 -- (15b): the singular noun holds of the groups of one or more boys
 theorem denote_sg_boy : NumberHead.sg.denote (boy B) = {x | x ⊆ B ∧ 1 ≤ x.card} :=
@@ -105,7 +102,7 @@ theorem denote_sg_boy : NumberHead.sg.denote (boy B) = {x | x ⊆ B ∧ 1 ≤ x.
 -- (16b): the plural noun holds of the groups of two or more
 theorem denote_pl_boy : NumberHead.pl.denote (boy B) = {x | x ⊆ B ∧ 2 ≤ x.card} := by
   ext x
-  simp only [NumberHead.denote, Set.mem_ofPred_eq, nonAtomsOf, mem_boy, atom_finset_iff_card_eq_one,
+  simp only [NumberHead.denote, Set.mem_ofPred_eq, mem_boy, isAtom_finset_iff_card_eq_one,
     and_assoc]
   exact and_congr_right fun _ ↦ by omega
 
@@ -124,9 +121,9 @@ theorem numeral_denote_boy {k : ℕ} (hk : 2 ≤ k) (n : NumberHead) :
 /-- On the purely syntactic account, whose null singular restricts the noun to its atoms (19), a
 numeral other than *meg* 'one' on a singular number phrase denotes nothing, which is why that
 account needs the numeral *yergu* to be ambiguous (p. 13). -/
-theorem numeral_atomsOf_eq_empty {k : ℕ} (hk : k ≠ 1) (X : Set (Finset α)) :
-    numeral k {x | atomsOf (· ∈ X) x} = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, ha⟩, hc⟩ ↦ hk (hc ▸ atom_finset_iff_card_eq_one.1 ha)
+theorem numeral_atoms_eq_empty {k : ℕ} (hk : k ≠ 1) (X : Set (Finset α)) :
+    numeral k {x | x ∈ X ∧ IsAtom x} = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, ha⟩, hc⟩ ↦ hk (hc ▸ isAtom_finset_iff_card_eq_one.1 ha)
 
 end Denotations
 
@@ -477,7 +474,7 @@ private theorem Transports.denote (h : Transports σ X X') (n : NumberHead) :
     Transports σ (n.denote X) (n.denote X') := fun x ↦ by
   cases n
   · exact h x
-  · simp only [NumberHead.denote, Set.mem_ofPred_eq, nonAtomsOf, atom_finset_iff_card_eq_one,
+  · simp only [NumberHead.denote, Set.mem_ofPred_eq, isAtom_finset_iff_card_eq_one,
       Finset.card_map]
     exact and_congr_left' (h x)
 
@@ -655,9 +652,9 @@ theorem good_val (hB : 2 ≤ B.card) {c : Cat} {w : Morpheme}
     refine .modifier fun X hX ↦ ⟨?_, fun x hx ↦ ?_⟩
     · cases m
       · exact hX.self
-      · simpa [NumberHead.denote, nonAtomsOf, atom_finset_iff_card_eq_one, hX.self] using
+      · simpa [NumberHead.denote, isAtom_finset_iff_card_eq_one, hX.self] using
           (by omega : B.card ≠ 1)
-    · cases m <;> simp [NumberHead.denote, nonAtomsOf] at hx
+    · cases m <;> simp [NumberHead.denote] at hx
       · exact hX.le x hx
       · exact hX.le x hx.1
   | def_ =>
@@ -828,7 +825,7 @@ predicate noun, and its numeral. -/
 def predicative? (r : Datum) : Option (Finset Boy × NumberHead × Option ℕ) :=
   if r.feature? "construction" = some "predicative" then
     (r.parse? "subject" [("atom", {.john}), ("group", {.john, .brad})]).bind fun s ↦
-      (r.parse? "number" [("SG", .sg), ("PL", .pl)]).map fun n ↦
+      ((Examples.number r)).map fun n ↦
         (s, n, r.parse? "numeral" [("one", 1), ("two", 2)])
   else none
 
@@ -845,7 +842,7 @@ theorem rows_predicative :
 /-- The definite numeral phrases of (14). -/
 def numeralDefinite? (r : Datum) : Option NumberHead :=
   if r.feature? "construction" = some "definite" ∧ r.feature? "numeral" = some "two" then
-    r.parse? "number" [("SG", .sg), ("PL", .pl)]
+    Examples.number r
   else none
 
 -- (14): with John and Brad the boys, the rows fit Maximize Presupposition at NumP*

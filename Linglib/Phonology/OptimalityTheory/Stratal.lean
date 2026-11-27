@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.LinearExtension
+public import Linglib.Phonology.OptimalityTheory.Ranking.LinearExtension
 
 /-!
 # Stratal Optimality Theory

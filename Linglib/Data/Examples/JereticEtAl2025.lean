@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `JereticEtAl2025` — typed example data
@@ -26,7 +28,7 @@ def jeretic2025_1a : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "universal"), ("dual", "false")] }
+    paperFeatures := [("slot", "universal"), ("marking", "plain")] }
 
 def jeretic2025_1c : Datum :=
   { id := "jeretic2025_1c"
@@ -39,7 +41,7 @@ def jeretic2025_1c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "universal"), ("dual", "true")] }
+    paperFeatures := [("slot", "universal"), ("marking", "dual")] }
 
 def jeretic2025_2a : Datum :=
   { id := "jeretic2025_2a"
@@ -52,7 +54,7 @@ def jeretic2025_2a : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "french"), ("slot", "universal"), ("dual", "false")] }
+    paperFeatures := [("slot", "universal"), ("marking", "plain")] }
 
 def jeretic2025_2b : Datum :=
   { id := "jeretic2025_2b"
@@ -65,7 +67,7 @@ def jeretic2025_2b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "french"), ("slot", "universal"), ("dual", "true")] }
+    paperFeatures := [("slot", "universal"), ("marking", "dual")] }
 
 def jeretic2025_6a : Datum :=
   { id := "jeretic2025_6a"
@@ -78,7 +80,7 @@ def jeretic2025_6a : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "negative"), ("dual", "false")] }
+    paperFeatures := [("slot", "negative"), ("marking", "plain")] }
 
 def jeretic2025_6a_neither : Datum :=
   { id := "jeretic2025_6a_neither"
@@ -91,7 +93,7 @@ def jeretic2025_6a_neither : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "negative"), ("dual", "true")] }
+    paperFeatures := [("slot", "negative"), ("marking", "dual")] }
 
 def jeretic2025_6b : Datum :=
   { id := "jeretic2025_6b"
@@ -104,7 +106,7 @@ def jeretic2025_6b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "french"), ("slot", "negative"), ("dual", "false")] }
+    paperFeatures := [("slot", "negative"), ("marking", "plain")] }
 
 def jeretic2025_6c : Datum :=
   { id := "jeretic2025_6c"
@@ -117,12 +119,13 @@ def jeretic2025_6c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "german"), ("slot", "negative"), ("dual", "false")] }
+    paperFeatures := [("slot", "negative"), ("marking", "plain")] }
 
 def jeretic2025_7a : Datum :=
   { id := "jeretic2025_7a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(7a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "icel1247"
     primaryText := "Á hvor-um handlegg-num brotna-ði hún?"
     glossedTokens := []
@@ -130,12 +133,13 @@ def jeretic2025_7a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "icelandic"), ("slot", "which"), ("dual", "true")] }
+    paperFeatures := [("slot", "which"), ("marking", "dual")] }
 
 def jeretic2025_7b : Datum :=
   { id := "jeretic2025_7b"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(7b)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "icel1247"
     primaryText := "Á hvaða handlegg brotna-ði hún?"
     glossedTokens := []
@@ -143,7 +147,7 @@ def jeretic2025_7b : Datum :=
     judgment := .marginal
     contrasts := []
     readings := []
-    paperFeatures := [("language", "icelandic"), ("slot", "which"), ("dual", "false")] }
+    paperFeatures := [("slot", "which"), ("marking", "plain")] }
 
 def jeretic2025_8a : Datum :=
   { id := "jeretic2025_8a"
@@ -156,7 +160,7 @@ def jeretic2025_8a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "which"), ("dual", "true")] }
+    paperFeatures := [("slot", "which"), ("marking", "dual")] }
 
 def jeretic2025_8b : Datum :=
   { id := "jeretic2025_8b"
@@ -169,7 +173,7 @@ def jeretic2025_8b : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "which"), ("dual", "false")] }
+    paperFeatures := [("slot", "which"), ("marking", "plain")] }
 
 def jeretic2025_9a : Datum :=
   { id := "jeretic2025_9a"
@@ -182,7 +186,7 @@ def jeretic2025_9a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "each"), ("dual", "true")] }
+    paperFeatures := [("slot", "each"), ("marking", "dual")] }
 
 def jeretic2025_9b : Datum :=
   { id := "jeretic2025_9b"
@@ -195,7 +199,7 @@ def jeretic2025_9b : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "each"), ("dual", "false")] }
+    paperFeatures := [("slot", "each"), ("marking", "plain")] }
 
 def jeretic2025_10a : Datum :=
   { id := "jeretic2025_10a"
@@ -208,7 +212,7 @@ def jeretic2025_10a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "one"), ("dual", "true")] }
+    paperFeatures := [("slot", "one"), ("marking", "dual")] }
 
 def jeretic2025_10b : Datum :=
   { id := "jeretic2025_10b"
@@ -221,7 +225,7 @@ def jeretic2025_10b : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "one"), ("dual", "false")] }
+    paperFeatures := [("slot", "one"), ("marking", "plain")] }
 
 def jeretic2025_11a : Datum :=
   { id := "jeretic2025_11a"
@@ -234,7 +238,7 @@ def jeretic2025_11a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "which"), ("dual", "false")] }
+    paperFeatures := [("slot", "which"), ("marking", "plain")] }
 
 def jeretic2025_11b : Datum :=
   { id := "jeretic2025_11b"
@@ -247,7 +251,7 @@ def jeretic2025_11b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "each"), ("dual", "false")] }
+    paperFeatures := [("slot", "each"), ("marking", "plain")] }
 
 def jeretic2025_11c : Datum :=
   { id := "jeretic2025_11c"
@@ -260,7 +264,7 @@ def jeretic2025_11c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "one"), ("dual", "false")] }
+    paperFeatures := [("slot", "one"), ("marking", "plain")] }
 
 def jeretic2025_12a : Datum :=
   { id := "jeretic2025_12a"
@@ -273,7 +277,7 @@ def jeretic2025_12a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "french"), ("slot", "which"), ("dual", "false")] }
+    paperFeatures := [("slot", "which"), ("marking", "plain")] }
 
 def jeretic2025_12b : Datum :=
   { id := "jeretic2025_12b"
@@ -286,7 +290,7 @@ def jeretic2025_12b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "french"), ("slot", "each"), ("dual", "false")] }
+    paperFeatures := [("slot", "each"), ("marking", "plain")] }
 
 def jeretic2025_12c : Datum :=
   { id := "jeretic2025_12c"
@@ -299,7 +303,7 @@ def jeretic2025_12c : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "french"), ("slot", "one"), ("dual", "false")] }
+    paperFeatures := [("slot", "one"), ("marking", "plain")] }
 
 def jeretic2025_80a : Datum :=
   { id := "jeretic2025_80a"
@@ -312,7 +316,7 @@ def jeretic2025_80a : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "always"), ("dual", "false")] }
+    paperFeatures := [("slot", "always"), ("marking", "plain")] }
 
 def jeretic2025_80b : Datum :=
   { id := "jeretic2025_80b"
@@ -325,7 +329,7 @@ def jeretic2025_80b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "english"), ("slot", "always"), ("dual", "true")] }
+    paperFeatures := [("slot", "always"), ("marking", "dual")] }
 
 def jeretic2025_81a : Datum :=
   { id := "jeretic2025_81a"
@@ -338,7 +342,7 @@ def jeretic2025_81a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "french"), ("slot", "always"), ("dual", "false")] }
+    paperFeatures := [("slot", "always"), ("marking", "plain")] }
 
 def jeretic2025_83a : Datum :=
   { id := "jeretic2025_83a"
@@ -351,7 +355,7 @@ def jeretic2025_83a : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "german"), ("slot", "always"), ("dual", "false")] }
+    paperFeatures := [("slot", "always"), ("marking", "plain")] }
 
 def jeretic2025_83b : Datum :=
   { id := "jeretic2025_83b"
@@ -364,7 +368,7 @@ def jeretic2025_83b : Datum :=
     judgment := .unacceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "always"), ("dual", "false")] }
+    paperFeatures := [("slot", "always"), ("marking", "plain")] }
 
 def jeretic2025_85 : Datum :=
   { id := "jeretic2025_85"
@@ -377,7 +381,7 @@ def jeretic2025_85 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("language", "japanese"), ("slot", "always"), ("dual", "true")] }
+    paperFeatures := [("slot", "always"), ("marking", "dual")] }
 
 def jeretic2025_36 : Datum :=
   { id := "jeretic2025_36"
@@ -390,7 +394,7 @@ def jeretic2025_36 : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("slot", "definite"), ("dual", "true")] }
+    paperFeatures := [("slot", "definite"), ("marking", "dual")] }
 
 def jeretic2025_25a : Datum :=
   { id := "jeretic2025_25a"
@@ -403,7 +407,7 @@ def jeretic2025_25a : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("example", "25")] }
+    paperFeatures := [] }
 
 def jeretic2025_25b : Datum :=
   { id := "jeretic2025_25b"
@@ -416,8 +420,43 @@ def jeretic2025_25b : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("example", "25")] }
+    paperFeatures := [] }
 
 def all : List Datum := [jeretic2025_1a, jeretic2025_1c, jeretic2025_2a, jeretic2025_2b, jeretic2025_6a, jeretic2025_6a_neither, jeretic2025_6b, jeretic2025_6c, jeretic2025_7a, jeretic2025_7b, jeretic2025_8a, jeretic2025_8b, jeretic2025_9a, jeretic2025_9b, jeretic2025_10a, jeretic2025_10b, jeretic2025_11a, jeretic2025_11b, jeretic2025_11c, jeretic2025_12a, jeretic2025_12b, jeretic2025_12c, jeretic2025_80a, jeretic2025_80b, jeretic2025_81a, jeretic2025_83a, jeretic2025_83b, jeretic2025_85, jeretic2025_36, jeretic2025_25a, jeretic2025_25b]
+
+/-- The quantificational expressions the paper compares across languages. -/
+inductive Slot where
+  /-- universal: the universal quantifier over a definite plural, *all* and *tous* -/
+  | universal
+  /-- negative: the negative quantifier, *no* and *aucun* -/
+  | negative
+  /-- which: the interrogative determiner -/
+  | which
+  /-- each: the distributive universal -/
+  | each
+  /-- one: the existential -/
+  | one
+  /-- always: the universal quantifier over times -/
+  | always
+  /-- definite: the plural definite description -/
+  | definite
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `slot`. -/
+def slot (e : Datum) : Option Slot :=
+  e.parse? "slot" [("universal", .universal), ("negative", .negative), ("which", .which), ("each", .each),
+    ("one", .one), ("always", .always), ("definite", .definite)]
+
+/-- Whether the expression of the slot is the plain one or one that expresses duality. -/
+inductive Marking where
+  /-- plain: the expression unmarked for the size of its domain -/
+  | plain
+  /-- dual: a dual item or a phrase with the numeral *two* -/
+  | dual
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `marking`. -/
+def marking (e : Datum) : Option Marking :=
+  e.parse? "marking" [("plain", .plain), ("dual", .dual)]
 
 end JereticEtAl2025.Examples

@@ -1,4 +1,43 @@
-[
+{
+  "features": [
+    {
+      "key": "directIndex",
+      "lean": "directIndex",
+      "type": "Stance",
+      "doc": "The stances that the particles of Figure 14.1 directly index.",
+      "levels": [
+        {
+          "name": "coarseIntensity",
+          "label": "coarse intensity",
+          "doc": "coarse intensity"
+        },
+        {
+          "name": "delicateIntensity",
+          "label": "delicate intensity",
+          "doc": "delicate intensity"
+        }
+      ]
+    },
+    {
+      "key": "indirectIndex",
+      "lean": "indirectIndex",
+      "type": "Gender",
+      "doc": "The genders of the figure's indirect indexes, a male and a female \"voice\".",
+      "levels": [
+        {
+          "name": "male",
+          "label": "male voice",
+          "doc": "male voice"
+        },
+        {
+          "name": "female",
+          "label": "female voice",
+          "doc": "female voice"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "ochs1992_ze",
     "source": {"bibkey": "ochs-1992", "paperLabel": "Figure 14.1"},
@@ -178,3 +217,4 @@
     "verified": "page-image"
   }
 ]
+}

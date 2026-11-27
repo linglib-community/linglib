@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Kind
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Semantics.Quantification.Individual
+public import Linglib.Semantics.Quantifier.Individual
 public import Linglib.Data.Examples.LeBruynDeSwart2022
 
 /-!
@@ -44,27 +44,27 @@ inductive Book
   deriving DecidableEq, Nonempty
 
 /-- *books* holds of every plurality of books, singular or plural. -/
-def books : Unit → Set (Individual Book) := fun _ ↦ Set.univ
+def books : Set (Individual Book) := Set.univ
 
 /-- A plurality was read to the end, distributively, when every book in it was finished. -/
 def read : Set (Individual Book) := {x | x.1 ⊆ {Book.finished}}
 
 /-- With Krifka's existential shift in place (40), no book was read. -/
-def krifkaUnscrambled : Prop := ¬ Det.some (books ()) read
+def krifkaUnscrambled : Prop := ¬ Det.some books read
 
 /-- With Krifka's existential shift scrambled over negation (41), some book was not read. -/
-def krifkaScrambled : Prop := Det.some (books ()) readᶜ
+def krifkaScrambled : Prop := Det.some books readᶜ
 
 /-- On the kinds approach (38), the bare plural shifts to its kind, and derived kind predication
 introduces the existential over its instances below negation. -/
 def chierchiaUnscrambled : Prop :=
-  ¬ Det.some (Kind.up (Kind.down books) ()) read
+  ¬ Det.some (Kind.up (Kind.down books)) read
 
 /-- On the kinds approach with the kind scrambled over negation, the kind binds a kind-level
 trace below negation. -/
 def chierchiaScrambled : Prop :=
   Quantifier.individual (Kind.down books)
-    {k : Unit → Part (Individual Book) | Det.some (Kind.up k ()) read}ᶜ
+    {k : Part (Individual Book) | Det.some (Kind.up k) read}ᶜ
 
 /-- Scrambling a kind over negation changes nothing, since a kind takes no scope, as a name
 takes none, so the kinds approach gives narrow scope at either position. -/
@@ -82,9 +82,9 @@ theorem books_example : krifkaScrambled ∧ ¬ krifkaUnscrambled ∧ ¬ chierchi
   refine ⟨⟨Individual.atom .unfinished, trivial, not_read_unfinished⟩,
     not_not.2 ⟨Individual.atom .finished, trivial, read_finished⟩, ?_⟩
   rw [chierchiaScrambled_iff, chierchiaUnscrambled, not_not]
-  have hd : ⟨Set.univ, Set.univ_nonempty⟩ ∈ Kind.down books () :=
+  have hd : ⟨Set.univ, Set.univ_nonempty⟩ ∈ Kind.down books :=
     Kind.mem_down.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
-  rw [Kind.up_apply_of_mem hd]
+  rw [Kind.up_of_mem hd]
   exact ⟨Individual.atom .finished, (Set.subset_univ _ : Individual.atom Book.finished ≤ _),
     read_finished⟩
 

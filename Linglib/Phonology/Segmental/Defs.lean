@@ -21,7 +21,7 @@ segment `s` gives each feature the value `+`, `−` or none (`s f = true`, `s f 
 `s f = none`), as a row of a feature chart does.
 
 The file also names some natural classes by their features. The sonority hierarchy is in
-`Phonology/Segmental/Sonority.lean`, and the theorems about segments in
+`Phonology/Segmental/Sonority/Basic.lean`, and the theorems about segments in
 `Phonology/Segmental/Basic.lean`.
 
 ## Implementation notes

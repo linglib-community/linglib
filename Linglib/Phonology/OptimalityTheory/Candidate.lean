@@ -57,12 +57,6 @@ namespace OptimalityTheory
 
 open Prosody Finset
 
-/-- The morae of a form in order of their heads, and by index under one head. -/
-def _root_.Prosody.MoraicForm.moraList {α : Type*} (X : MoraicForm α) : List Mora :=
-  (List.range X.melody.length).flatMap fun i ↦
-    (List.range (X.morae.sup (·.idx) + 1)).filterMap fun k ↦
-      if (⟨i, k⟩ : Mora) ∈ X.morae then some ⟨i, k⟩ else none
-
 /-- A parse: a moraic form, prosodic structure above the syllable as trees whose syllable
 leaves name the form's syllables, and a metrical grid over the syllables in nucleus order. -/
 structure Parse (α : Type*) where

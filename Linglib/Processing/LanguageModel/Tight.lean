@@ -7,27 +7,21 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Log.Summable
 public import Linglib.Core.MeasureTheory.Measure.Basic
-public import Linglib.Core.Probability.BranchingProcess.GaltonWatson
-public import Linglib.Processing.LanguageModel.Autoregressive
+public import Linglib.Processing.LanguageModel.OfMeasure
 
 /-!
 # Tight autoregressive sequence models
 
 Survival is the probability that no end symbol appears in the first `n` steps. The string
-probabilities and the limit of survival [sum to one](##tsum_stringProb_add_iInf_survival), so a
-model is tight [exactly when survival tends to zero](##isTight_iff_tendsto_survival), and since
-survival is [the product](##survival_eq_prod) of one minus the conditional end probability at each
-step, [exactly when](##isTight_iff) that probability reaches one or has a divergent sum. In a tight
-model the strings extending a prefix have
-[total probability its prefix probability](##IsTight.stringMeasure_cylinder), the conditionals
-are [the next-symbol laws](##IsTight.next_ofMeasure_stringMeasure) of the string law, the model
-after a prefix [generates the continuation](##IsTight.continuation_stringMeasure), and the
-expected length is [the total survival](##IsTight.lintegral_length) after the first step.
-
-The model is also [a Galton–Watson process](##galtonWatson) whose types are the prefixes, each
-with at most one offspring, and it is tight
-[exactly when that process dies out](##isTight_iff_extinctionProb), which is how a probabilistic
-context-free grammar is tight.
+probabilities and the limit of survival sum to one (`tsum_stringProb_add_iInf_survival`), so a
+model is tight exactly when survival tends to zero (`isTight_iff_tendsto_survival`), and since
+survival is the product of one minus the conditional end probability at each step
+(`survival_eq_prod`), exactly when that probability reaches one or has a divergent sum
+(`isTight_iff`). In a tight model the strings extending a prefix have total probability its prefix
+probability (`IsTight.stringMeasure_cylinder`), the conditionals are the next-symbol laws of the
+string law (`IsTight.next_ofMeasure_stringMeasure`), the model after a prefix generates the
+continuation (`IsTight.continuation_stringMeasure`), and the expected length is the total survival
+after the first step (`IsTight.lintegral_length`).
 
 ## Implementation notes
 
@@ -41,7 +35,6 @@ context-free grammar is tight.
 ## References
 
 * [du-etal-2023]
-* [neveu-1986]
 * [opedal-chodroff-cotterell-wilcox-2024]
 -/
 
@@ -73,7 +66,7 @@ noncomputable def eosHazard (n : ℕ) : ℝ≥0∞ := M.stopProb n / M.survival 
   rfl
 
 theorem tsum_stringProb : ∑' x, M.stringProb x = ∑' n, M.stopProb n := by
-  rw [← (Equiv.sigmaFiberEquiv List.length).tsum_eq, ENNReal.tsum_sigma']
+  rw [← (Equiv.sigmaFiberEquiv List.length).tsum_eq, tsum_sigma']
   rfl
 
 /-- Strings of length `n + 1` are the strings of length `n` followed by a symbol. -/
@@ -90,7 +83,7 @@ theorem mul_survival_le_stopProb {n : ℕ} {c : ℝ≥0∞}
     (hc : ∀ x : List α, x.length = n → c ≤ M.next x {none}) :
     c * M.survival n ≤ M.stopProb n := by
   rw [survival, ← ENNReal.tsum_mul_left, stopProb]
-  refine ENNReal.tsum_le_tsum fun x ↦ ?_
+  refine tsum_le_tsum fun x ↦ ?_
   rw [stringProb, mul_comm c]
   gcongr
   exact hc x x.2
@@ -103,11 +96,31 @@ theorem prefixProb_mul_survival_after_le (x : List α) (n : ℕ) :
         rw [survival, ← ENNReal.tsum_mul_left]
         exact tsum_congr fun z ↦ (M.prefixProb_append x z).symm
     _ ≤ M.survival (n + x.length) :=
-      ENNReal.tsum_comp_le_tsum_of_injective
+      tsum_comp_le_tsum_of_injective
         (f := fun z ↦
           (⟨x ++ z.1, by simp [z.2, add_comm]⟩ : {y : List α // y.length = n + x.length}))
         (fun z z' h ↦ Subtype.ext (List.append_cancel_left (congrArg Subtype.val h)))
         fun y ↦ M.prefixProb y.1
+
+@[simp] theorem stopProb_zero : M.stopProb 0 = M.next [] {none} := by
+  rw [stopProb, tsum_eq_single (⟨[], rfl⟩ : {x : List α // x.length = 0}) fun x hx ↦
+    absurd (Subtype.ext (List.eq_nil_of_length_eq_zero x.2)) hx]
+  simp [stringProb]
+
+/-- Strings of length `n + 1` are a symbol followed by a string of length `n`. -/
+private def consEquiv (n : ℕ) :
+    α × {x : List α // x.length = n} ≃ {y : List α // y.length = n + 1} where
+  toFun p := ⟨p.1 :: p.2.1, by simp [p.2.2]⟩
+  invFun y := (y.1.head (List.ne_nil_of_length_eq_add_one y.2), ⟨y.1.tail, by simp [y.2]⟩)
+  left_inv p := by ext <;> simp
+  right_inv y := Subtype.ext (List.cons_head_tail _)
+
+/-- A string of length `n + 1` is a first symbol and then a string of length `n` of the model
+after it. -/
+theorem stopProb_succ (n : ℕ) :
+    M.stopProb (n + 1) = ∑' a, M.next [] {some a} * (M.after [a]).stopProb n := by
+  rw [stopProb, ← (consEquiv n).tsum_eq, tsum_prod']
+  simp only [consEquiv, Equiv.coe_fn_mk, stringProb_cons, ENNReal.tsum_mul_left, stopProb]
 
 variable [MeasurableSingletonClass α] [Countable α]
 
@@ -119,8 +132,8 @@ theorem next_none_add_tsum_next_some (x : List α) :
     measure_singleton_none_add_measure_range_some, measure_univ]
 
 theorem survival_succ_add_stopProb (n : ℕ) : M.survival (n + 1) + M.stopProb n = M.survival n := by
-  rw [survival, ← (concatEquiv n).tsum_eq, ENNReal.tsum_prod', stopProb, survival,
-    ← ENNReal.tsum_add]
+  rw [survival, ← (concatEquiv n).tsum_eq, tsum_prod', stopProb, survival,
+    ← tsum_add]
   refine tsum_congr fun x ↦ ?_
   simp only [concatEquiv, Equiv.coe_fn_mk, prefixProb_concat, ENNReal.tsum_mul_left, stringProb,
     ← mul_add, add_comm (∑' a, _), next_none_add_tsum_next_some, mul_one]
@@ -321,7 +334,7 @@ length by the total survival after the first step. -/
 theorem stringMeasure_setOf_length_le (n : ℕ) :
     M.stringMeasure {y | n ≤ y.length} ≤ M.survival n := by
   rw [← Measure.tsum_measure_cylinder_length, survival]
-  refine ENNReal.tsum_le_tsum fun x ↦ ?_
+  refine tsum_le_tsum fun x ↦ ?_
   rw [M.stringMeasure_cylinder]
   exact mul_le_of_le_one_right' (M.after x.1).tsum_stringProb_le_one
 
@@ -336,7 +349,7 @@ step. -/
 theorem lintegral_length_le :
     ∫⁻ x, (x.length : ℝ≥0∞) ∂M.stringMeasure ≤ ∑' n, M.survival (n + 1) := by
   rw [lintegral_natCast_eq_tsum_measure_lt .of_discrete]
-  exact ENNReal.tsum_le_tsum fun n ↦ M.stringMeasure_setOf_length_le (n + 1)
+  exact tsum_le_tsum fun n ↦ M.stringMeasure_setOf_length_le (n + 1)
 
 /-- In a tight model the expected length is the total survival after the first step. -/
 theorem IsTight.lintegral_length {M : AutoregressiveSequenceModel α} (hM : M.IsTight) :
@@ -359,83 +372,9 @@ theorem lintegral_length_le_div {c : ℝ≥0∞} (hc : ∀ x : List α, c ≤ M.
   have hc1 : c ≤ 1 := (hc []).trans prob_le_one
   calc ∫⁻ x, (x.length : ℝ≥0∞) ∂M.stringMeasure
       ≤ ∑' n, M.survival (n + 1) := M.lintegral_length_le
-    _ ≤ ∑' n, (1 - c) ^ (n + 1) := ENNReal.tsum_le_tsum fun n ↦ M.survival_le_pow hc (n + 1)
+    _ ≤ ∑' n, (1 - c) ^ (n + 1) := tsum_le_tsum fun n ↦ M.survival_le_pow hc (n + 1)
     _ = (1 - c) / c := by
         simp_rw [pow_succ', ENNReal.tsum_mul_left, ENNReal.tsum_geometric,
           ENNReal.sub_sub_cancel ENNReal.one_ne_top hc1, div_eq_mul_inv]
-
-/-! ### The model as a branching process
-
-A model is a Galton–Watson process whose types are the prefixes: a prefix has no offspring when
-the string ends after it, and otherwise one, the prefix extended by the next symbol. Its family
-tree is a path, finite exactly when the string ends, so tightness is extinction. -/
-
-omit [MeasurableSingletonClass α] [Countable α] in
-theorem stringProb_cons (a : α) (x : List α) :
-    M.stringProb (a :: x) = M.next [] {some a} * (M.after [a]).stringProb x := by
-  simpa [prefixProb] using M.stringProb_append [a] x
-
-omit [MeasurableSingletonClass α] [Countable α] in
-@[simp] theorem stopProb_zero : M.stopProb 0 = M.next [] {none} := by
-  rw [stopProb, tsum_eq_single (⟨[], rfl⟩ : {x : List α // x.length = 0}) fun x hx ↦
-    absurd (Subtype.ext (List.eq_nil_of_length_eq_zero x.2)) hx]
-  simp [stringProb]
-
-/-- Strings of length `n + 1` are a symbol followed by a string of length `n`. -/
-private def consEquiv (n : ℕ) :
-    α × {x : List α // x.length = n} ≃ {y : List α // y.length = n + 1} where
-  toFun p := ⟨p.1 :: p.2.1, by simp [p.2.2]⟩
-  invFun y := (y.1.head (List.ne_nil_of_length_eq_add_one y.2), ⟨y.1.tail, by simp [y.2]⟩)
-  left_inv p := by ext <;> simp
-  right_inv y := Subtype.ext (List.cons_head_tail _)
-
-omit [MeasurableSingletonClass α] [Countable α] in
-/-- A string of length `n + 1` is a first symbol and then a string of length `n` of the model
-after it. -/
-theorem stopProb_succ (n : ℕ) :
-    M.stopProb (n + 1) = ∑' a, M.next [] {some a} * (M.after [a]).stopProb n := by
-  rw [stopProb, ← (consEquiv n).tsum_eq, ENNReal.tsum_prod']
-  simp only [consEquiv, Equiv.coe_fn_mk, stringProb_cons, ENNReal.tsum_mul_left, stopProb]
-
-/-- The model as a Galton–Watson process on prefixes: a prefix has no offspring with the
-probability of ending after it, and the prefix extended by `a` with the probability of `a`. -/
-noncomputable def galtonWatson : Kernel (List α) (List (List α)) :=
-  ⟨fun c ↦ (M.next c).map fun o ↦ o.toList.map (c ++ [·]), .of_discrete⟩
-
-theorem lintegral_galtonWatson (c : List α) (F : List (List α) → ℝ≥0∞) :
-    ∫⁻ js, F js ∂M.galtonWatson c =
-      M.next c {none} * F [] + ∑' a, M.next c {some a} * F [c ++ [a]] := by
-  change ∫⁻ js, F js ∂(M.next c).map _ = _
-  rw [lintegral_map .of_discrete (measurable_of_countable _), lintegral_option]
-  simp [mul_comm]
-
-instance : IsMarkovKernel M.galtonWatson :=
-  ⟨fun c ↦ by change IsProbabilityMeasure ((M.next c).map _); infer_instance⟩
-
-/-- The probability that the family tree is complete within `n` generations is the probability
-of a string shorter than `n`. -/
-theorem extinctWithin_galtonWatson (n : ℕ) (c : List α) :
-    GaltonWatson.extinctWithin M.galtonWatson n c = ∑ k ∈ range n, (M.after c).stopProb k := by
-  induction n generalizing c with
-  | zero => simp
-  | succ n ih =>
-    rw [GaltonWatson.extinctWithin_succ _ fun _ ↦ prob_le_one, lintegral_galtonWatson]
-    simp only [List.map_nil, List.prod_nil, List.map_cons, List.prod_cons, mul_one, ih]
-    rw [sum_range_succ', stopProb_zero, next_after, List.append_nil, add_comm]
-    congr 1
-    simp_rw [stopProb_succ, next_after, List.append_nil, after_after, mul_sum]
-    exact Summable.tsum_finsetSum fun _ _ ↦ ENNReal.summable
-
-/-- The extinction probability of the process at a prefix is the total probability of the strings
-of the model after it. -/
-theorem extinctionProb_galtonWatson (c : List α) :
-    GaltonWatson.extinctionProb M.galtonWatson c = ∑' z, (M.after c).stringProb z := by
-  rw [GaltonWatson.extinctionProb_eq_iSup, tsum_stringProb, ENNReal.tsum_eq_iSup_nat]
-  exact iSup_congr fun n ↦ M.extinctWithin_galtonWatson n c
-
-/-- A model is tight exactly when its branching process dies out almost surely. -/
-theorem isTight_iff_extinctionProb :
-    M.IsTight ↔ GaltonWatson.extinctionProb M.galtonWatson [] = 1 := by
-  rw [extinctionProb_galtonWatson, after_nil, IsTight]
 
 end AutoregressiveSequenceModel

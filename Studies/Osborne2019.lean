@@ -1,231 +1,410 @@
 module
 
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Adpositions
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Determiners
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Adpositions
 public import Linglib.Syntax.DependencyGrammar.Valency
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Syntax.DependencyGrammar.Catena
-public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.DependencyGrammar.Stemma
+public import Linglib.Syntax.Category.Adposition.Word
+public import Linglib.Syntax.Category.Determiner.Word
+public import Linglib.Syntax.Category.Noun.Word
 
 /-!
 # Osborne (2019): A Dependency Grammar of English
 
-This file formalizes the parts of the dependency grammar of [osborne-2019] that the English fragment
-lexicon supports. A verb's valency frame (sixth chapter) is a lexical property, read here off the
-argument roles of the fragment's basic frame, and the passive participle's frame is not listed but
-related to the active one by a shuffle of indices, the passive voice moving the active's
-participants, with the demoted subject an optional *by*-phrase (`voiceValency_passive`); an ergative
-verb's intransitive use suppresses the agent instead and has no *by*-phrase
-(`voiceValency_anticausative`). Trees over fragment words satisfy their frames, and a spurious
-or a missing object violates them. The catena (fourth chapter), any set of words connected by
-dominance, is the unit that constituents do not always match: every constituent is a catena,
-a head with one of its dependents is always a catena, and it is never a constituent when the
-head has another dependent, so a verb with its subject but not its object is a catena and not
-a constituent (`IsConstituent.isCatena`, `isCatena_pair`, `not_isConstituent_pair`); that is
-the material gapping elides (§12.7). Control and raising (§6.8, §6.9) share one basic tree,
-whose embedded verb lacks a subject; the enhanced graph adds the subject arc, which the basic
-tree cannot carry without ceasing to be a tree (`hasUnrepresentedArg_enhance`,
-`Graph.not_isForest_enhance`).
+[osborne-2019] builds a dependency grammar of English on two orders over the words of a
+sentence, precedence and dominance. This file formalizes its units of structure and its valency
+frames.
+
+A *string* is a word or a combination of words continuous with respect to precedence, and a
+*catena* one continuous with respect to dominance; a *component* is both, a *constituent* is a
+word together with all the words it dominates, and a *phrase* is a constituent of two or more
+words. In a tree, a catena is equally a set of words exactly one of which is not immediately
+dominated by another word of the set, which is how `catenae` counts them (`mem_catenae`). A
+tree has as many constituents as words (`card_isConstituent`), and when it is projective every
+constituent is a string, hence a component (`isString_of_isConstituent`). The *catena ratio*
+of a tree sets its catenae against the remaining $2^n - 1$ word combinations;
+`card_units_surprised` and its siblings compute the catenae, components and constituents of the
+book's example trees.
+The component *the number* of (8) and the 24 catenae of (9a) are counted as the definitions
+give them.
+
+The *valency frame* of a verb form lists the valents it can or must take, the subject first and
+the objects after it. A finite form takes its subject as a dependent, and the subject valent of
+a nonfinite form appears higher in the structure, as a dependent of the finite auxiliary. Here
+the valents a form takes as dependents are computed from an argument frame and the form's
+finiteness (`dependents`), so a finite form takes those of the nonfinite form and the subject
+(`dependents_finite`). The frame of a passive participle is the active frame with its indices
+shuffled: the active object is the subject and the active subject the optional object of *by*.
+The passive voice's two derived frames, with the demoted subject implicit or in a *by*-phrase,
+give the participle the remaining objects and an optional *by*-phrase
+(`dependents_passiveFrames`), and its links are the shuffle (`passive_image`). The book's trees
+have these dependents verb by verb (`satisfies_trees`, `satisfies_passive`), and the
+intransitive use of an ergative verb admits no *by*-phrase (`satisfies_ergative`).
+
+A valent is an *argument* of its carrier when the carrier semantically selects it. A control
+predicate selects all its valents and a raising expression has a valent it does not select, the
+one that serves as the subject of its verbal valent (`control_selects_valents`,
+`raising_subject_not_selected`, `believe_object_not_selected`).
 
 ## Implementation notes
 
-The trees are Universal Dependencies graphs over fragment words after [tesniere-1959], and
-the enhanced graph is the basic tree with the recovered subject arc added; the general lemmas
-live in the dependency-grammar substrate and are instantiated here on the fragment trees. The
-UD trees make the subject of a passive participle its dependent, where [osborne-2019]'s
-function-word-headed trees mark it with ↑ as a dependent of the finite auxiliary.
+The trees are unlabeled, with function words as heads as the book draws them: the subject
+depends on the finite auxiliary, a preposition heads its noun. The trees of the valency frames
+have the shape of the book's examples over words and verbs of the language file. The category of a
+valent is read off the word that heads it (`category`) and compared with the positions of the
+verb's argument frame, so a frame's symbols are not stored: an optional valent is a position
+the verb has both an implicit and an expressed diathesis for, the ↑ mark is nonfiniteness, and
+an index is the participant a voice links to the position. The book's `R`, a subject of any
+category, is a nominal here, the only kind the trees have; the frames of the auxiliaries are
+stated in the study, the language file recording none.
+
+Whether a valent is an argument is read off the diatheses of the language file's verbs: a valent is
+an argument when a participant of the verb fills its slot.
+
+## TODO
+
+* The pseudopassive, which keeps the stranded preposition as a valent, and valents of several
+  admissible categories, as the copula's.
+* The *there* diagnostic for raising, an expletive standing only where a valent is not an
+  argument; the language file has no infinitival diathesis for *refuse*, *appear*, *tell* or *deem*,
+  the verbs of the book's examples.
 
 ## References
 
 * [osborne-2019]
-* [tesniere-1959]
 -/
 
 @[expose] public section
 
 namespace Osborne2019
 
-open DependencyGrammar
+open DependencyGrammar Finset
+open Stemma (node leaf)
 open Morphology (Word)
 
-/-! ### Words from the Fragment lexicon -/
+/-! ### Units of structure -/
 
-abbrev john := English.Nouns.john.toWord
-abbrev mary := English.Nouns.mary.toWord
-abbrev ball := English.Nouns.ball.toWordSg
-abbrev book := English.Nouns.book.toWordSg
-abbrev pizza := English.Nouns.pizza.toWordSg
-abbrev the_ := English.Determiners.the.toWord
-abbrev was_ := English.Auxiliaries.was.toWord
-abbrev by_ := English.Adpositions.by_.toWord
-abbrev to_ := English.Adpositions.to_.toWord
-abbrev sleeps := English.Verbs.sleep.toWord .thirdSg
-abbrev devours := English.Verbs.devour.toWord .thirdSg
-abbrev gives := English.Verbs.give.toWord .thirdSg
-private abbrev kicked := English.Verbs.kick.toWord .past
-abbrev kickedPass := English.Verbs.kick.passiveParticiple
-abbrev givenPass := English.Verbs.give.passiveParticiple
-abbrev a_ := English.Determiners.a.toWord
-abbrev manages := English.Verbs.manage.toWord .thirdSg
-abbrev persuaded := English.Verbs.persuade.toWord .past
-abbrev seems := English.Verbs.seem.toWord .thirdSg
-abbrev sleep_ := English.Verbs.sleep.toWord .base
-abbrev run_ := English.Verbs.run.toWord .base
+section Units
 
-/-! ### Valency frames from the Fragment (sixth chapter) -/
+variable {L : Type*} {n : ℕ} (g : DependencyGraph L (Fin n))
 
-/-- The valency of the fragment entry's basic frame. -/
-private def citationValency (v : English.Verbs.Verb) : Valency :=
-  (v.valency.frames.head?.map Valency.ofFrame).getD []
+/-- A string is a word or a combination of words continuous with respect to precedence. -/
+def IsString (s : Finset (Fin n)) : Prop := s.Nonempty ∧ (↑s : Set (Fin n)).OrdConnected
 
-def intransTree : Graph UD.DepRel 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
+instance : DecidablePred (IsString (n := n)) := fun s ↦
+  decidable_of_iff (s.Nonempty ∧ ∀ a ∈ s, ∀ b ∈ s, ∀ c, a ≤ c → c ≤ b → c ∈ s) <| by
+    simp [IsString, Set.ordConnected_def, Set.subset_def]
 
-def transTree : Graph UD.DepRel 3 :=
-  .ofArcs [john, devours, pizza] 1 [(1, 0, .nsubj), (1, 2, .obj)]
+/-- The sets of words exactly one of which is not immediately dominated by another word of the
+set. -/
+def catenae : Finset (Finset (Fin n)) := {s | #{v ∈ s | ∀ u ∈ s, ¬ g.unlabelled.Adj u v} = 1}
 
-def ditransTree : Graph UD.DepRel 4 :=
-  .ofArcs [john, gives, mary, book] 1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
+variable {g} {s : Finset (Fin n)}
 
-example : intransTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
+/-- In a forest the set-theoretic definition of the catena picks out the sets of words
+continuous with respect to dominance. -/
+theorem mem_catenae (hF : g.unlabelled.IsBranching) : s ∈ catenae g ↔ g.unlabelled.IsCatena s := by
+  simp [catenae, hF.isCatena_iff_card_eq_one]
+
+-- In a projective graph a constituent is a string, and so a component.
+theorem isString_of_isConstituent (hP : g.unlabelled.IsProjective)
+    (h : g.unlabelled.IsConstituent s) : IsString s := by
+  obtain ⟨v, hv⟩ := h
+  exact ⟨⟨v, Finset.mem_coe.1 (hv ▸ Relation.ReflTransGen.refl)⟩, hv ▸ hP v⟩
+
+theorem card_isConstituent (hF : g.unlabelled.IsBranching) :
+    #{s : Finset (Fin n) | g.unlabelled.IsConstituent s} = n :=
+  hF.card_isConstituent
+
+end Units
+
+/-- (6) of the fourth chapter, *Catenae are everywhere*. -/
+def everywhere : Stemma Unit :=
+  node (.mk' "are" .AUX) [((), leaf (.mk' "Catenae" .NOUN))] [((), leaf (.mk' "everywhere" .ADV))]
+
+/-- (7) of the fourth chapter, *Insurance for everyone is possible*. -/
+def insurance : Stemma Unit :=
+  node (.mk' "is" .AUX)
+    [((), node (.mk' "Insurance" .NOUN) []
+      [((), node (.mk' "for" .ADP) [] [((), leaf (.mk' "everyone" .PRON))])])]
+    [((), leaf (.mk' "possible" .ADJ))]
+
+/-- (4) of the fourth chapter, *That the students understood surprised the instructor*. -/
+def surprised : Stemma Unit :=
+  node (.mk' "surprised" .VERB)
+    [((), node (.mk' "That" .SCONJ) []
+      [((), node (.mk' "understood" .VERB)
+        [((), node (.mk' "students" .NOUN) [((), leaf (.mk' "the" .DET))] [])] [])])]
+    [((), node (.mk' "instructor" .NOUN) [((), leaf (.mk' "the" .DET))] [])]
+
+/-- (8) of the fourth chapter, *Counting the number of catenae can be tedious*. -/
+def counting : Stemma Unit :=
+  node (.mk' "can" .AUX)
+    [((), node (.mk' "Counting" .VERB) []
+      [((), node (.mk' "number" .NOUN) [((), leaf (.mk' "the" .DET))]
+        [((), node (.mk' "of" .ADP) [] [((), leaf (.mk' "catenae" .NOUN))])])])]
+    [((), node (.mk' "be" .AUX) [] [((), leaf (.mk' "tedious" .ADJ))])]
+
+/-- (9a) of the fourth chapter, *Many people favor the public option*. -/
+def favor : Stemma Unit :=
+  node (.mk' "favor" .VERB)
+    [((), node (.mk' "people" .NOUN) [((), leaf (.mk' "Many" .ADJ))] [])]
+    [((), node (.mk' "option" .NOUN)
+      [((), leaf (.mk' "the" .DET)), ((), leaf (.mk' "public" .ADJ))] [])]
+
+-- The catena ratio of (6) is 6:1.
+theorem card_catenae_everywhere : #(catenae everywhere.toGraph) = 6 := by decide
+
+-- The catena, component and constituent ratios of (7) are 15:16, 11:20 and 5:26.
+theorem card_units_insurance : #(catenae insurance.toGraph) = 15 ∧
+    #{s ∈ catenae insurance.toGraph | IsString s} = 11 ∧
+    #{s | insurance.toGraph.unlabelled.IsConstituent s} = 5 :=
+  ⟨by decide, by decide, card_isConstituent insurance.isArborescence_toGraph.toIsBranching⟩
+
+theorem card_units_surprised : #{s : Finset (Fin surprised.size) | IsString s} = 28 ∧
+    #(catenae surprised.toGraph) = 28 ∧ #{s ∈ catenae surprised.toGraph | IsString s} = 15 ∧
+    #{s | surprised.toGraph.unlabelled.IsConstituent s} = 6 + 1 ∧
+    #{s | surprised.toGraph.unlabelled.IsConstituent s ∧ 1 < #s} = 4 + 1 :=
+  ⟨by decide, by decide, by decide, card_isConstituent
+    surprised.isArborescence_toGraph.toIsBranching,
+    by decide⟩
+
+-- (8) has 44 catenae, 23 components and 8 constituents among its 255 word combinations.
+theorem card_units_counting : #(catenae counting.toGraph) = 44 ∧
+    #{s ∈ catenae counting.toGraph | IsString s} = 23 ∧
+    #{s | counting.toGraph.unlabelled.IsConstituent s} = 8 :=
+  ⟨by decide, by decide, card_isConstituent counting.isArborescence_toGraph.toIsBranching⟩
+
+-- (9a) has 24 catenae, 14 components and 6 constituents among its 63 word combinations.
+theorem card_units_favor : #(catenae favor.toGraph) = 24 ∧
+    #{s ∈ catenae favor.toGraph | IsString s} = 14 ∧
+        #{s | favor.toGraph.unlabelled.IsConstituent s} = 6 :=
+  ⟨by decide, by decide, card_isConstituent favor.isArborescence_toGraph.toIsBranching⟩
+
+-- In (4) the verb with its subordinator is a catena and not a string, the determiner with the
+-- verb before it a string and not a catena, and the subject clause a phrase.
+example : ({0, 3} : Finset (Fin surprised.size)) ∈ catenae surprised.toGraph ∧
+    ¬ IsString ({0, 3} : Finset (Fin surprised.size)) := by decide
+example : IsString ({3, 4} : Finset (Fin surprised.size)) ∧
+    ({3, 4} : Finset (Fin surprised.size)) ∉ catenae surprised.toGraph := by decide
+example : surprised.toGraph.unlabelled.IsConstituent {0, 1, 2, 3} := by decide
+
+/-! ### Valency frames
+
+A valency frame lists the valents of one form of a verb. The valents a form takes as dependents
+are the expressed positions of its argument frame, without the subject when the form is
+nonfinite: the subject valent of a nonfinite verb, marked ↑ in the book's frames, appears
+higher in the structure. -/
+
+section Frames
+
+open ArgumentFrame (Position)
+
+/-- The valent a word heads: a nominal, the phrase of a preposition, or a verb in its form. -/
+def category (w : Word) : Option Position :=
+  if w.cat = .NOUN ∨ w.cat = .PROPN ∨ w.cat = .PRON then some .nominal
+  else if w.cat = .ADP then
+    (English.Adpositions.inventory.find? (·.toWord = w)).map fun a ↦
+      .adpositional (adposition := some a)
+  else if w.cat = .VERB ∨ w.cat = .AUX then
+    if w.features .verbForm = ↑UD.VerbForm.Inf then some (.clausal { coding := {.infinitive} })
+    else if w.features .verbForm = ↑UD.VerbForm.Part then
+      some (.clausal { coding := {.participle} })
+    else some (.clausal { coding := {.indicative} })
+  else none
+
+/-- A word is a finite verb form. -/
+def IsFinite (w : Word) : Prop := w.features .verbForm = ↑UD.VerbForm.Fin
+
+instance : DecidablePred IsFinite := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+/-- The valents among the dependents of a word. -/
+def valents {L : Type*} {n : ℕ} (words : Fin n → Word) (g : DependencyGraph L (Fin n)) (v : Fin n) :
+    Multiset Position :=
+  (g.unlabelled.outNeighborFinset v).val.filterMap fun w ↦ category (words w)
+
+/-- The valents a form of a verb with the frame `fr` takes as dependents: the expressed
+positions of the frame, the subject among them only when the form is finite. -/
+def dependents (fr : ArgumentFrame) (finite : Prop) [Decidable finite] : Multiset Position :=
+  ↑((if finite then fr.external.toList else []) ++ fr.complements.filter (·.IsExpressed))
+
+/-- (5), (6): a finite form takes the dependents of the nonfinite form and the subject. -/
+theorem dependents_finite (fr : ArgumentFrame) :
+    dependents fr True = ↑fr.external.toList + dependents fr False := by
+  simp [dependents]
+
+/-- The word at `v` has the dependents its form takes under one of the frames `frs`. -/
+def Satisfies {L : Type*} {n : ℕ} (words : Fin n → Word) (g : DependencyGraph L (Fin n)) (v : Fin n)
+    (frs : List ArgumentFrame) : Prop :=
+  ∃ fr ∈ frs, valents words g v = dependents fr (IsFinite (words v))
+
+instance {L : Type*} {n : ℕ} (words : Fin n → Word) (g : DependencyGraph L (Fin n)) (v : Fin n)
+    (frs : List ArgumentFrame) : Decidable (Satisfies words g v frs) :=
+  inferInstanceAs (Decidable (∃ fr ∈ frs, _))
+
+/-- The *by*-phrase of the passive. -/
+abbrev byPhrase : Position := .adpositional (adposition := some English.Adpositions.by_)
+
+/-- The frames of the passive participle of a verb with the active frame `fr`, without and with
+the *by*-phrase. -/
+def passiveFrames (fr : ArgumentFrame) : List ArgumentFrame :=
+  [(Voice.passive fr).derived.toArgumentFrame, (Voice.passive fr byPhrase).derived.toArgumentFrame]
+
+/-- (39), (41): an auxiliary takes a subject and a verb in the form it governs. -/
+def auxiliaryFrame (c : Clause.ComplementType) : ArgumentFrame :=
+  ⟨some .nominal, [.clausal { coding := {c} }]⟩
+
+-- (8a): the active object is the passive subject, the active subject the object of *by*.
+theorem passive_image : (Voice.passive .np byPhrase).image (.complement 0) = some .external ∧
+    (Voice.passive .np byPhrase).image .external = some (.complement 0) := by
   decide
-example : transTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.devour)]) := by
-  decide
-example : ditransTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.give)]) := by
-  decide
 
-/-- *John sleeps book, an intransitive with a spurious object. -/
-def intransWithObj : Graph UD.DepRel 3 :=
-  .ofArcs [john, sleeps, book] 1 [(1, 0, .nsubj), (1, 2, .obj)]
-
-/-- *John devours, a transitive missing its object. -/
-def transNoObj : Graph UD.DepRel 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
-
-example :
-    ¬ intransWithObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
-  decide
-example : ¬ transNoObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.devour)]) := by
+-- (8b): the first object is the passive subject and the second object stays.
+theorem passive_image_np_np :
+    (Voice.passive .np_np byPhrase).image (.complement 0) = some .external ∧
+    (Voice.passive .np_np byPhrase).image (.complement 1) = some (.complement 0) ∧
+    (Voice.passive .np_np byPhrase).image .external = some (.complement 1) := by
   decide
 
-/-! ### The passive frame from the active frame (§6.6)
+/-- (8): the passive participle takes the remaining objects of the active frame and an optional
+*by*-phrase. -/
+theorem dependents_passiveFrames (fr : ArgumentFrame) (m : Multiset Position) :
+    (∃ gr ∈ passiveFrames fr, m = dependents gr False) ↔
+      m ∈ Valency.withOptional (↑(fr.complements.tail.filter (·.IsExpressed))) {byPhrase} := by
+  have h₁ : [Position.implicit].filter (·.IsExpressed) = [] := by decide
+  have h₂ : [byPhrase].filter (·.IsExpressed) = [byPhrase] := by decide
+  rw [Valency.mem_withOptional_singleton]
+  simp only [passiveFrames, dependents, Voice.passive, Voice.of, List.mem_cons, List.not_mem_nil,
+    or_false, exists_eq_or_imp, exists_eq_left, ite_false, List.nil_append, List.filter_append,
+    h₁, h₂, List.append_nil, ← Multiset.coe_add, Multiset.coe_singleton]
 
-The passive participle's frame is not listed but related to the active frame by a shuffle of
-indices, (8): the active object is the subject and the active subject the optional object of
-*by*. The shuffle is the passive voice's links of its participants, and the *by*-phrase
-realizes the participant it denucleativizes. The intransitive use of an ergative verb, *It
-opened*, also makes the object the subject, but it suppresses the agent, and no *by*-phrase
-expresses it. -/
+end Frames
 
-/-- The valency of the construction a voice derives, its derived frame's valency and an
-optional *by*-phrase for each initial core term the voice denucleativizes. -/
-def voiceValency (v : Voice) : Valency :=
-  Valency.ofFrame v.derived.toArgumentFrame ++
-    (v.initial.coreSlots.filter (v.fate · = .denucleativized)).map
-      fun _ ↦ ⟨.obl, .headInitial, false⟩
+section Trees
 
-/-- In (8a) the English passive has the subject and an optional *by*-phrase. -/
-theorem voiceValency_passive : voiceValency English.Verbs.passive = Valency.passiveTransitive := by
+open English
+
+abbrev the_ := Determiners.the.toWord
+abbrev john := Nouns.john.toWord
+abbrev thePizza : Stemma Unit := node Nouns.pizza.toWordSg [((), leaf the_)] []
+abbrev theBall : Stemma Unit := node Nouns.ball.toWordSg [((), leaf the_)] []
+abbrev byJohn : Stemma Unit := node Adpositions.by_.toWord [] [((), leaf john)]
+
+/-- *John sleeps*, as (5a). -/
+def johnSleeps : Stemma Unit := node (Verbs.sleep.toWord .thirdSg) [((), leaf john)] []
+
+/-- *John will sleep*, as (5b): the subject depends on the auxiliary. -/
+def johnWillSleep : Stemma Unit :=
+  node Auxiliaries.will.toWord [((), leaf john)] [((), leaf (Verbs.sleep.toWord .base))]
+
+/-- *John devours the pizza*, as (6a). -/
+def johnDevoursPizza : Stemma Unit :=
+  node (Verbs.devour.toWord .thirdSg) [((), leaf john)] [((), thePizza)]
+
+/-- *John should devour the pizza*, as (6b). -/
+def johnShouldDevourPizza : Stemma Unit :=
+  node Auxiliaries.should.toWord [((), leaf john)]
+    [((), node (Verbs.devour.toWord .base) [] [((), thePizza)])]
+
+/-- *The ball was kicked*, as (8a) without the *by*-phrase. -/
+def ballWasKicked : Stemma Unit :=
+  node Auxiliaries.was.toWord [((), theBall)] [((), leaf Verbs.kick.passiveParticiple)]
+
+/-- *The ball was kicked by John*, as (8a). -/
+def ballWasKickedByJohn : Stemma Unit :=
+  node Auxiliaries.was.toWord [((), theBall)]
+    [((), node Verbs.kick.passiveParticiple [] [((), byJohn)])]
+
+/-- *Mary was given a book*, as (8b). -/
+def maryWasGivenBook : Stemma Unit :=
+  node Auxiliaries.was.toWord [((), leaf Nouns.mary.toWord)]
+    [((), node Verbs.give.passiveParticiple []
+      [((), node Nouns.book.toWordSg [((), leaf Determiners.a.toWord)] [])])]
+
+/-- *The ball opened*, the intransitive use of an ergative verb. -/
+def ballOpened : Stemma Unit := node (Verbs.open_.toWord .past) [((), theBall)] []
+
+/-- *The ball opened by John* adds the *by*-phrase of a passive to the intransitive use. -/
+def ballOpenedByJohn : Stemma Unit :=
+  node (Verbs.open_.toWord .past) [((), theBall)] [((), byJohn)]
+
+/-- *John sleeps the pizza* adds an object to the intransitive. -/
+def johnSleepsPizza : Stemma Unit :=
+  node (Verbs.sleep.toWord .thirdSg) [((), leaf john)] [((), thePizza)]
+
+/-- *Was the ball kicked* with the subject a dependent of the participle. -/
+def wasBallKicked : Stemma Unit :=
+  node Auxiliaries.was.toWord [] [((), node Verbs.kick.passiveParticiple [((), theBall)] [])]
+
+theorem satisfies_trees :
+    Satisfies johnSleeps.word johnSleeps.toGraph 1 Verbs.sleep.valency.frames ∧
+    Satisfies johnWillSleep.word johnWillSleep.toGraph 1 [auxiliaryFrame .infinitive] ∧
+    Satisfies johnWillSleep.word johnWillSleep.toGraph 2 Verbs.sleep.valency.frames ∧
+    Satisfies johnDevoursPizza.word johnDevoursPizza.toGraph 1 Verbs.devour.valency.frames ∧
+    Satisfies johnShouldDevourPizza.word johnShouldDevourPizza.toGraph 1
+      [auxiliaryFrame .infinitive] ∧
+    Satisfies johnShouldDevourPizza.word johnShouldDevourPizza.toGraph 2
+      Verbs.devour.valency.frames := by
   decide
 
--- (8b)
-theorem voiceValency_passive_np_np : voiceValency (Voice.passive .np_np) =
-    [⟨.nsubj, .headFinal, true⟩, ⟨.obj, .headInitial, true⟩, ⟨.obl, .headInitial, false⟩] := by
+/-- The passive participle under its auxiliary has the dependents of a passive frame, with or
+without the *by*-phrase. -/
+theorem satisfies_passive :
+    Satisfies ballWasKicked.word ballWasKicked.toGraph 2 [auxiliaryFrame .participle] ∧
+    Satisfies ballWasKicked.word ballWasKicked.toGraph 3
+      (Verbs.kick.valency.frames.flatMap passiveFrames) ∧
+    Satisfies ballWasKickedByJohn.word ballWasKickedByJohn.toGraph 3
+      (Verbs.kick.valency.frames.flatMap passiveFrames) ∧
+    Satisfies maryWasGivenBook.word maryWasGivenBook.toGraph 2
+      (Verbs.give.valency.frames.flatMap passiveFrames) := by
   decide
 
-theorem voiceValency_anticausative : English.Verbs.open_.Alternates Voice.anticausative ∧
-    voiceValency Voice.anticausative = Valency.intransitive := by
+-- An ergative verb's intransitive use has no *by*-phrase.
+theorem satisfies_ergative :
+    Satisfies ballOpened.word ballOpened.toGraph 2 Verbs.open_.valency.frames ∧
+    ¬ Satisfies ballOpenedByJohn.word ballOpenedByJohn.toGraph 2 Verbs.open_.valency.frames := by
   decide
 
-/-- The valency of the fragment entry's passive participle. -/
-private def passiveValency (v : English.Verbs.Verb) : Valency :=
-  (v.valency.frames.head?.map fun fr ↦ voiceValency (Voice.passive fr)).getD []
+example : ¬ Satisfies johnSleepsPizza.word johnSleepsPizza.toGraph 1
+    Verbs.sleep.valency.frames := by decide
 
-/-- *The ball was kicked (by John)* satisfies the participle's derived valency. -/
-def passiveTree : Graph UD.DepRel 4 :=
-  .ofArcs [the_, ball, was_, kickedPass] 3 [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux)]
-
-def longPassiveTree : Graph UD.DepRel 6 :=
-  .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
-    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obl), (5, 4, .case)]
-
-example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
-  decide
-example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
+-- A participle with a subject dependent has a valent too many, and its auxiliary one too few.
+example : ¬ Satisfies wasBallKicked.word wasBallKicked.toGraph 3
+      (Verbs.kick.valency.frames.flatMap passiveFrames) ∧
+    ¬ Satisfies wasBallKicked.word wasBallKicked.toGraph 0 [auxiliaryFrame .participle] := by
   decide
 
-/-- *The ball was kicked the pizza, a passive with a leftover object. -/
-def passiveWithObj : Graph UD.DepRel 6 :=
-  .ofArcs [the_, ball, was_, kickedPass, the_, pizza] 3
-    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obj), (5, 4, .det)]
+end Trees
 
-example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
+/-! ### Control and raising
+
+A valent is an argument of its carrier when a participant of the carrier fills its slot. The
+frames of *try*, *want* and *persuade* have only arguments, the controller among them; *seem*
+and *happen* raise into a subject that is no argument of theirs, and *believe* with an
+infinitive into such an object. -/
+
+open English.Verbs in
+theorem control_selects_valents : ∀ v ∈ [try_, want, persuade], ∀ d ∈ v.valency.basic?,
+    ¬ d.IsRaising ∧ ∀ s ∈ d.slots, d.participantAt s ≠ none := by
   decide
 
-/-- In *Mary was given a book* the passive of a double-object verb keeps its second object. -/
-def ditransPassiveTree : Graph UD.DepRel 5 :=
-  .ofArcs [mary, was_, givenPass, a_, book] 2
-    [(2, 0, .nsubj), (2, 1, .aux), (2, 4, .obj), (4, 3, .det)]
-
-/-- *Mary was given, with the second object missing. -/
-def ditransPassiveNoObj : Graph UD.DepRel 3 :=
-  .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .aux)]
-
-example :
-    ditransPassiveTree.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
-  decide
-example :
-    ¬ ditransPassiveNoObj.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
+open English.Verbs in
+/-- The subject of a subject-raising verb is the one valent the verb does not select, and it
+serves as the subject of the verbal valent. -/
+theorem raising_subject_not_selected : ∀ v ∈ [seem, happen], ∀ d ∈ v.valency.basic?,
+    d.IsRaising ∧ d.controllerSlot? = some .external ∧
+      ∀ s ∈ d.slots, d.participantAt s = none ↔ s = .external := by
   decide
 
-/-! ### Catenae against constituents (fourth chapter, §12.7)
-
-In *John devours pizza* the verb with its subject is a catena, being a head with a dependent,
-but not a constituent, since the verb has another dependent; the whole clause and the object
-are constituents and therefore catenae. The verb with its subject is what gapping elides in
-*John devours pizza and Mary wine*. -/
-
-example : IsCatena transTree {1, 0} := isCatena_pair transTree (by decide) (by decide)
-
-example : ¬ IsConstituent transTree {1, 0} :=
-  not_isConstituent_pair (u := 2) (by decide) (by decide) (by decide) (by decide)
-
-example : IsCatena transTree {0, 1, 2} :=
-  (show IsConstituent transTree {0, 1, 2} by decide).isCatena
-
-example : IsCatena transTree {2} := (show IsConstituent transTree {2} by decide).isCatena
-
-example : ¬ IsCatena transTree {0, 2} := by decide
-
-/-! ### Control and raising (§6.8, §6.9)
-
-The basic tree of *John manages to sleep*, *John persuaded Mary to run*, and *John seems to
-sleep* leaves the embedded verb without a subject; control and raising differ thematically,
-not structurally. The enhanced graph recovers the subject arc, an argument relation the
-basic tree does not carry and cannot, since a second head breaks the tree. -/
-
-def subjControl : Graph UD.DepRel 4 :=
-  .ofArcs [john, manages, to_, sleep_] 1 [(1, 0, .nsubj), (1, 3, .xcomp), (3, 2, .mark)]
-
-def objControl : Graph UD.DepRel 5 :=
-  .ofArcs [john, persuaded, mary, to_, run_] 1
-    [(1, 0, .nsubj), (1, 2, .obj), (1, 4, .xcomp), (4, 3, .mark)]
-
-def raising : Graph UD.DepRel 4 :=
-  .ofArcs [john, seems, to_, sleep_] 1 [(1, 0, .nsubj), (1, 3, .xcomp), (3, 2, .mark)]
-
-example : HasUnrepresentedArg subjControl (subjControl.enhance [(3, 0, .nsubj)]) 0 :=
-  hasUnrepresentedArg_enhance _ (x := 3) .nsubj _ (by simp) (by decide)
-
-example : HasUnrepresentedArg objControl (objControl.enhance [(4, 2, .nsubj)]) 2 :=
-  hasUnrepresentedArg_enhance _ (x := 4) .nsubj _ (by simp) (by decide)
-
-example : HasUnrepresentedArg raising (raising.enhance [(3, 0, .nsubj)]) 0 :=
-  hasUnrepresentedArg_enhance _ (x := 3) .nsubj _ (by simp) (by decide)
-
-example : ¬ (subjControl.enhance [(3, 0, .nsubj)]).IsTree := fun hT ↦
-  Graph.not_isForest_enhance (v := 1) (w := 0) (x := 3) (by decide) (by decide) .nsubj _ (by simp)
-    hT.toIsForest
+open English.Verbs in
+theorem believe_object_not_selected : ∃ d ∈ believe.valency.diatheses,
+    d.IsRaising ∧ d.controllerSlot? = some (.complement 0) ∧
+      ∀ s ∈ d.slots, d.participantAt s = none ↔ s = .complement 0 := by
+  decide
 
 end Osborne2019

@@ -1,26 +1,28 @@
 module
 
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Haspelmath2007
 public import Linglib.Syntax.Category.Coordinator
-public import Linglib.Fragments.English.Coordination
-public import Linglib.Fragments.Finnish.Coordination
-public import Linglib.Fragments.German.Coordination
-public import Linglib.Fragments.Hausa.Adpositions
-public import Linglib.Fragments.Hausa.Coordination
-public import Linglib.Fragments.Hungarian.Coordination
-public import Linglib.Fragments.Irish.Coordination
-public import Linglib.Fragments.Kannada.Coordination
-public import Linglib.Fragments.Korean.Coordination
-public import Linglib.Fragments.Lango.Adpositions
-public import Linglib.Fragments.Lango.Coordination
-public import Linglib.Fragments.Latin.Coordination
-public import Linglib.Fragments.Tibetic.Classical.Case
-public import Linglib.Fragments.Tibetic.Classical.Coordination
-public import Linglib.Fragments.Turkish.Adpositions
-public import Linglib.Fragments.Turkish.Coordination
-public import Linglib.Fragments.Yoruba.Coordination
+public import Linglib.Languages.English.Coordination
+public import Linglib.Languages.Finnish.Coordination
+public import Linglib.Languages.German.Coordination
+public import Linglib.Languages.Hausa.Adpositions
+public import Linglib.Languages.Hausa.Coordination
+public import Linglib.Languages.Hungarian.Coordination
+public import Linglib.Languages.Irish.Coordination
+public import Linglib.Languages.Kannada.Coordination
+public import Linglib.Languages.Korean.Coordination
+public import Linglib.Languages.Lango.Adpositions
+public import Linglib.Languages.Lango.Coordination
+public import Linglib.Languages.Latin.Coordination
+public import Linglib.Languages.Tibetic.Classical.Case
+public import Linglib.Languages.Tibetic.Classical.Coordination
+public import Linglib.Languages.Turkish.Adpositions
+public import Linglib.Languages.Turkish.Coordination
+public import Linglib.Languages.Yoruba.Coordination
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -42,16 +44,16 @@ counterexample from Tinrin the chapter records.
 
 ## Implementation notes
 
-* A binary pattern (17) is a `Coordinator.Pattern`, the side of each coordinand's coordinator,
-  `none` for a bare coordinand.
-* A construction's coordinators are its language's Fragment entries where they exist, and are
+* A binary pattern (17) is a `Coordinator.Pattern` with at most one coordinator on each
+  coordinand, `∅` for a bare coordinand; there are nine, `card_patterns`.
+* A construction's coordinators are its language's language file entries where they exist, and are
   written inline otherwise. A pair of coordinators is a `Coordinator.Correlative`; the single
   coordinator of a mixed pair, (27) and (28), is taken to be its second, as in (45b).
 * The rows record emphasis only where the chapter states it. Keeping every coordinator of a
   multiple coordination is emphatic in European languages, p. 12, which is not emphasis by
   correlatives, so `emphatic_iff_correlative` is about binary coordination.
 * Classical Tibetan *-daŋ* and Turkish *-le*, which the chapter says "come from a former
-  case-marker" without naming the case, have no source in the rows; the Fragments record, after
+  case-marker" without naming the case, have no source in the rows; the language files record, after
   Beyer and after Göksel and Kerslake, that both are still comitative markers
   (`former_case_marker_isAlsoComitative`).
 * The rows record §1.4 coordinator omission as a feature, all but the last coordinator kept,
@@ -84,8 +86,14 @@ open Coordinator (Pattern)
 /-! ### Binary patterns, (17) -/
 
 -- §1.2
-theorem monosyndetic_bare {p : Pattern} (h : p.syndesis = 1) : p.1 = none ∨ p.2 = none := by
-  rcases p with ⟨_ | _, _ | _⟩ <;> simp_all [Pattern.syndesis]
+theorem monosyndetic_bare {p : Pattern} (h : p.syndesis = 1) : p 0 = ∅ ∨ p 1 = ∅ := by
+  rcases Nat.add_eq_one_iff.mp h with ⟨h0, _⟩ | ⟨_, h1⟩
+  exacts [.inl (Finset.card_eq_zero.mp h0), .inr (Finset.card_eq_zero.mp h1)]
+
+-- (17)
+theorem card_patterns :
+    (Finset.univ.filter fun p : Pattern ↦ ∀ i, (p i).card ≤ 1).card = 9 := by
+  decide
 
 /-! ### Diachronic sources, §1.2 -/
 
@@ -104,9 +112,9 @@ coordinand when modifiers precede the noun and the second when they follow it, m
 of its adposition, and the focus particle marks the second conjunct on its own side, so that
 'A, B too' gives A B-co and 'A, also B' gives A co-B. -/
 def pattern : DiachronicSource → Pattern
-  | .comitative adposition .before => (some adposition, none)
-  | .comitative adposition .after => (none, some adposition)
-  | .focusParticle particle => (none, some particle)
+  | .comitative adposition .before => ![{adposition}, ∅]
+  | .comitative adposition .after => ![∅, {adposition}]
+  | .focusParticle particle => ![∅, {particle}]
 
 /-- A comitative source is harmonic when modifiers precede the noun in a language with
 postpositions or follow it in one with prepositions, the orders that go together
@@ -120,13 +128,13 @@ instance : DecidablePred Harmonic
   | .focusParticle _ => inferInstanceAs (Decidable True)
 
 theorem pattern_eq_coAB_iff {s : DiachronicSource} :
-    s.pattern = (some .before, none) ↔ s = .comitative .before .before := by
+    s.pattern = ![{.before}, ∅] ↔ s = .comitative .before .before := by
   rcases s with ⟨_ | _, _ | _⟩ | (_ | _) <;> decide
 
 /-- No harmonic source has the pattern co-A B, which §1.2 offers as the explanation of its
 absence from [stassen-2000]'s sample of 260 languages. -/
 theorem coAB_unsourced {s : DiachronicSource} (h : s.Harmonic) :
-    s.pattern ≠ (some .before, none) :=
+    s.pattern ≠ ![{.before}, ∅] :=
   fun h' ↦ by rw [pattern_eq_coAB_iff.1 h'] at h; exact h rfl
 
 end DiachronicSource
@@ -137,57 +145,55 @@ end DiachronicSource
 coordinand, and a monosyndetic pattern leaves bare the coordinand bare in the binary
 construction and marks every other one as its marked coordinand is marked; the mixed patterns
 have no full pattern in the chapter. -/
-def full (p : Pattern) (n : ℕ) : Option (List (Option Morph.Side)) :=
-  match p with
-  | (none, s) => some (none :: List.replicate (n - 1) s)
-  | (s, none) => some (List.replicate (n - 1) s ++ [none])
-  | (s, t) => if s = t then some (List.replicate n s) else none
+def full (p : Pattern) (n : ℕ) : Option (List (Finset Morph.Side)) :=
+  if p 0 = ∅ then some (∅ :: List.replicate (n - 1) (p 1))
+  else if p 1 = ∅ then some (List.replicate (n - 1) (p 0) ++ [∅])
+  else if p 0 = p 1 then some (List.replicate n (p 0)) else none
 
 /-- Keep the first coordinator of a construction, eliminating the rest. -/
-def keepFirst : List (Option Morph.Side) → List (Option Morph.Side)
+def keepFirst : List (Finset Morph.Side) → List (Finset Morph.Side)
   | [] => []
-  | none :: l => none :: keepFirst l
-  | s :: l => s :: l.map fun _ ↦ none
+  | s :: l => if s = ∅ then ∅ :: keepFirst l else s :: l.map fun _ ↦ ∅
 
-theorem keepFirst_countP (l : List (Option Morph.Side)) :
-    (keepFirst l).countP Option.isSome ≤ 1 := by
+theorem keepFirst_countP (l : List (Finset Morph.Side)) :
+    (keepFirst l).countP (· ≠ ∅) ≤ 1 := by
   induction l with
   | nil => simp [keepFirst]
   | cons s l ih =>
-    cases s <;> simp_all [keepFirst]
+    by_cases hs : s = ∅ <;> simp_all [keepFirst]
 
 /-- Coordinator omission, §1.4, eliminates all but the last coordinator, the omission of
 Table 1.1. -/
-def omitted (p : Pattern) (n : ℕ) : Option (List (Option Morph.Side)) :=
+def omitted (p : Pattern) (n : ℕ) : Option (List (Finset Morph.Side)) :=
   (full p n).map fun l ↦ (keepFirst l.reverse).reverse
 
 /-- Omission eliminating all but the first coordinator, the Classical Tibetan and Amharic
 alternative of (36), which p. 13 sets against Table 1.1. -/
-def omittedFirst (p : Pattern) (n : ℕ) : Option (List (Option Morph.Side)) :=
+def omittedFirst (p : Pattern) (n : ℕ) : Option (List (Finset Morph.Side)) :=
   (full p n).map keepFirst
 
 -- Table 1.1
 theorem table_1_1 :
-    full (none, some .before) 4 = some [none, some .before, some .before, some .before] ∧
-      omitted (none, some .before) 4 = some [none, none, none, some .before] ∧
-    full (some .after, none) 4 = some [some .after, some .after, some .after, none] ∧
-      omitted (some .after, none) 4 = some [none, none, some .after, none] ∧
-    full (some .after, some .after) 4 = some (.replicate 4 (some .after)) ∧
-      omitted (some .after, some .after) 4 = some [none, none, none, some .after] ∧
-    full (some .before, some .before) 4 = some (.replicate 4 (some .before)) ∧
-      omitted (some .before, some .before) 4 = some [none, none, none, some .before] ∧
-    full (none, some .after) 4 = some [none, some .after, some .after, some .after] ∧
-      omitted (none, some .after) 4 = some [none, none, none, some .after] := by
+    full ![∅, {.before}] 4 = some [∅, {.before}, {.before}, {.before}] ∧
+      omitted ![∅, {.before}] 4 = some [∅, ∅, ∅, {.before}] ∧
+    full ![{.after}, ∅] 4 = some [{.after}, {.after}, {.after}, ∅] ∧
+      omitted ![{.after}, ∅] 4 = some [∅, ∅, {.after}, ∅] ∧
+    full ![{.after}, {.after}] 4 = some (.replicate 4 {.after}) ∧
+      omitted ![{.after}, {.after}] 4 = some [∅, ∅, ∅, {.after}] ∧
+    full ![{.before}, {.before}] 4 = some (.replicate 4 {.before}) ∧
+      omitted ![{.before}, {.before}] 4 = some [∅, ∅, ∅, {.before}] ∧
+    full ![∅, {.after}] 4 = some [∅, {.after}, {.after}, {.after}] ∧
+      omitted ![∅, {.after}] 4 = some [∅, ∅, ∅, {.after}] := by
   decide
 
 /-! ### The chapter's examples -/
 
 /-- The labels of the patterns in the rows, A co-B as `a_co_b`. -/
 def patternLabels : List (String × Pattern) :=
-  [("asyndetic", (none, none)), ("a_co_b", (none, some .before)), ("a'co_b", (some .after, none)),
-    ("a_b'co", (none, some .after)), ("co'a_b", (some .before, none)),
-    ("co'a_co'b", (some .before, some .before)), ("a'co_b'co", (some .after, some .after)),
-    ("co'a_b'co", (some .before, some .after)), ("a'co_co'b", (some .after, some .before))]
+  [("asyndetic", ![∅, ∅]), ("a_co_b", ![∅, {.before}]), ("a'co_b", ![{.after}, ∅]),
+    ("a_b'co", ![∅, {.after}]), ("co'a_b", ![{.before}, ∅]),
+    ("co'a_co'b", ![{.before}, {.before}]), ("a'co_b'co", ![{.after}, {.after}]),
+    ("co'a_b'co", ![{.before}, {.after}]), ("a'co_co'b", ![{.after}, {.before}])]
 
 /-- The binary pattern of a row, for a multiple coordination that of its binary construction. -/
 def pattern? (d : Datum) : Option Pattern := d.parse? "pattern" patternLabels
@@ -200,12 +206,12 @@ theorem pattern?_isSome :
     ∀ d ∈ Examples.all, (d.feature? "pattern").isSome → (pattern? d).isSome := by
   decide
 
-theorem pattern?_ne_coAB : ∀ d ∈ Examples.all, pattern? d ≠ some (some .before, none) := by
+theorem pattern?_ne_coAB : ∀ d ∈ Examples.all, pattern? d ≠ some ![{.before}, ∅] := by
   decide
 
 -- §1.3 [stassen-2000]
 theorem prepositive_bisyndetic_emphatic :
-    ∀ d ∈ Examples.all, pattern? d = some (some .before, some .before) →
+    ∀ d ∈ Examples.all, pattern? d = some ![{.before}, {.before}] →
       emphatic? d = some true := by
   decide
 
@@ -213,14 +219,14 @@ theorem prepositive_bisyndetic_emphatic :
 theorem allButFirst_ne_omitted :
     ∀ d ∈ Examples.all, d.feature? "omission" = some "allButFirst" →
       ∀ p ∈ pattern? d, ∀ n ∈ d.nat? "coordinands",
-        omittedFirst p n = some (some .after :: List.replicate (n - 1) none) ∧
+        omittedFirst p n = some ({.after} :: List.replicate (n - 1) ∅) ∧
           omittedFirst p n ≠ omitted p n := by
   decide
 
 -- p. 14, Table 1.1 [rowlands-1969]
 theorem deletion_omitted :
     ∃ p ∈ pattern? Examples.deletion, ∃ n ∈ Examples.deletion.nat? "coordinands",
-      omitted p n = some [none, none, none, some .before] := by
+      omitted p n = some [∅, ∅, ∅, {.before}] := by
   decide
 
 -- (85b), §5.1, (81), (86)
@@ -228,7 +234,7 @@ theorem comitative_patterns : ∀ d ∈ Examples.all, d.feature? "source" = some
     ∀ p ∈ pattern? d,
       (∃ a m, (DiachronicSource.comitative a m).Harmonic ∧
         (DiachronicSource.comitative a m).pattern = p) ∨
-      d.source.paperLabel = "(85b)" ∧ p = (some .after, some .after) ∨
+      d.source.paperLabel = "(85b)" ∧ p = ![{.after}, {.after}] ∨
       d.source.paperLabel ∈ ["(81)", "(86)"] ∧
         p = (DiachronicSource.comitative .after .after).pattern := by
   decide
@@ -252,19 +258,24 @@ instance : DecidablePred Coordinators.IsCorrelative
   | .correlative _ => inferInstanceAs (Decidable True)
 
 /-- The forms on the coordinands a pattern marks, each with its marking. -/
-def Coordinators.marking : Coordinators → Pattern → List (Option Morph.Side × Morph)
-  | .plain c, (s, t) => [(s, c.morph), (t, c.morph)].filter (·.1.isSome)
-  | .correlative k, (s, t) => k.first.map (s, ·) ++ k.second.map (t, ·)
+def Coordinators.marking : Coordinators → Pattern → List (Morph.Side × Morph)
+  | .plain c, p => (sides (p 0) ++ sides (p 1)).map (·, c.morph)
+  | .correlative k, p =>
+    (sides (p 0)).flatMap (fun s ↦ k.first.map (s, ·)) ++
+      (sides (p 1)).flatMap fun s ↦ k.second.map (s, ·)
+where
+  /-- The sides of a coordinand that are marked, in order. -/
+  sides (t : Finset Morph.Side) : List Morph.Side := [.before, .after].filter (· ∈ t)
 
 /-- A coordinate construction the chapter cites, a row with its coordinators. -/
 structure Attestation where
   datum : Datum
   coordinators : Coordinators
 
-/-- A conjunctive coordinator with no Fragment entry. -/
+/-- A conjunctive coordinator with no language file entry. -/
 def co (morph : Morph) : Coordinator := { morph, gloss := "and", role := .conjunctive }
 
-/-- A disjunctive coordinator with no Fragment entry. -/
+/-- A disjunctive coordinator with no language file entry. -/
 def dis (form : String) : Coordinator :=
   { morph := .free form, gloss := "or", role := .disjunctive }
 
@@ -318,7 +329,7 @@ theorem attestations_label : attestations.map (·.datum.source.paperLabel) =
   decide
 
 theorem marking_agrees_with_side : ∀ a ∈ attestations, ∀ p ∈ pattern? a.datum,
-    ∀ m ∈ a.coordinators.marking p, ∀ s ∈ m.2.kind.side?, m.1 = some s := by
+    ∀ m ∈ a.coordinators.marking p, ∀ s ∈ m.2.kind.side?, m.1 = s := by
   decide
 
 /-- The chapter presents a binary coordination as emphatic exactly when its coordinators are
@@ -330,7 +341,7 @@ theorem emphatic_iff_correlative : ∀ a ∈ attestations, a.datum.nat? "coordin
 /-- Non-correlative bisyndesis is postpositive (§2.1, §1.3), so prepositive bisyndesis is emphatic,
 as [stassen-2000] finds. -/
 theorem normal_bisyndetic_postpositive : ∀ a ∈ attestations, ¬ a.coordinators.IsCorrelative →
-    ∀ p ∈ pattern? a.datum, p.syndesis = 2 → p = (some .after, some .after) := by
+    ∀ p ∈ pattern? a.datum, p.syndesis = 2 → p = ![{.after}, {.after}] := by
   decide
 
 theorem comitative_source_isAlsoComitative :

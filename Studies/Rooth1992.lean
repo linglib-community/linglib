@@ -69,6 +69,8 @@ goal](##Rooth1992.lf_goal_scenario).
 
 namespace Rooth1992
 
+open Examples (Q)
+
 open Exhaustification Focus WithAlternatives
 
 /-! ### Focus semantic values (2) -/
@@ -426,14 +428,8 @@ theorem only_rows : ∀ d ∈ onlyData, (d.2 = true ↔
   · exact ⟨fun h ↦ absurd h Bool.false_ne_true, fun h ↦ absurd h (three_a _ _ _ _ (by decide))⟩
   · exact ⟨fun _ ↦ three_b _ _ _ _ (by decide), fun _ ↦ trivial⟩
 
-/-- The questions of (23). -/
-inductive Q where
-  | whoCutBill
-  | whoDidMaryCut
-  deriving DecidableEq, Repr
-
 /-- The denotation of a question, over all persons. -/
-def Q.den : Q → Set (Set (Set (Person × Person)))
+def Examples.Q.den : Q → Set (Set (Set (Person × Person)))
   | .whoCutBill => whoCut Set.univ .bill
   | .whoDidMaryCut => (fun y ↦ cut Person.mary y) '' Set.univ
 
@@ -456,7 +452,7 @@ def AnswerFocus.value (f : AnswerFocus) : Set (Set (Set (Person × Person))) :=
 
 /-- The question, the answer's focus position, and the judgment of a question-answer row. -/
 def qaRow (r : Datum) : Option (Q × AnswerFocus × Bool) := do
-  let q ← r.parse? "question" [("whoCutBill", Q.whoCutBill), ("whoDidMaryCut", .whoDidMaryCut)]
+  let q ← (Examples.question r)
   let f ← r.parse? "focus" [("Mary", AnswerFocus.mary), ("Bill", .bill)]
   pure (q, f, decide (r.judgment = .acceptable))
 

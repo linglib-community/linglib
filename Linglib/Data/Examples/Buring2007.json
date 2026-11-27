@@ -1,0 +1,311 @@
+[
+  {
+    "id": "buring2007_1a",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(1a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is shorter than Mary is tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "nearlyUngrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed with the mark ?*.",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_1b",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(1b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary is taller than John is short.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_2a",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Unfortunately, the ladder was shorter than the house was high.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_2b",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "My yacht is shorter than yours is wide.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_2c",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(2c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Your dinghy should be shorter than your boat is wide.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed with the continuation (otherwise you'll bump into the bulkhead all the time).",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_3",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(3)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Funiculus narrowing medially, segments 3–5 narrower than long.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "From a translation of Santschi's 1919 description of the ant Aenictogiton sulcatus.",
+    "verified": "page-image",
+    "method": "corpus"
+  },
+  {
+    "id": "buring2007_4",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(4)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Unfortunately, the hose is shorter than the ladder is long.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "nearlyUngrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed with the mark ?*.",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_5",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(5)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Unfortunately, the house is higher than the ladder is short.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_10",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(10)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Unfortunately, the ladder was shorter than the house was.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Comparative deletion; it does not mean what (2a) means.",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_26",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(26)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You rope is more than mine is long.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "contrasts": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Ellipsis of the degree morphology in the main clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_29",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(29)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Unfortunately, the existing drawbridge is shorter than the new moat has to be wide.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A regulation requires the moat to be at least 30 feet wide; the existing drawbridge is 15 feet long.",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "the minimum required width of the moat is more than the length of the drawbridge",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "the maximum allowed width of the moat is more than the length of the drawbridge",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_34",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(34)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The new drawbridge is less wide than the coaches have to be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "the coaches have to be wider than the drawbridge is",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_35",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The new drawbridge is narrower than the coaches have to be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "the coaches can be wider than the drawbridge is",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buring2007_38",
+    "source": {
+      "bibkey": "buring-2007",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The moat around our new castle is narrower than drawbridges are allowed to be long around here.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The speaker feared that local codes allow no drawbridge long enough to span the moat.",
+    "judgment": "acceptable",
+    "contrasts": [],
+    "readings": [
+      {
+        "name": "the width of the moat is less than the maximum permitted length of drawbridges",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "the width of the moat is less than the minimum permitted length of drawbridges",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Printed after the exclamation Thank Odin!",
+    "verified": "page-image"
+  }
+]

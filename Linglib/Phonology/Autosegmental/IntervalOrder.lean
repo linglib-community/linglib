@@ -13,8 +13,11 @@ public import Linglib.Phonology.Autosegmental.Basic
 # Representations in time
 
 Read in time, the order of each tier is precedence and an association line is overlap. A
-representation has an interval order when some interval order on its positions extends the
-order of each tier and leaves associated positions incomparable. The `2 + 2` condition of an
+reading of a representation sends its positions to events so that the order of each tier goes to
+a precedence and each line to a relation between events, and it has no crossing lines whenever
+no two precedences are joined crosswise by the relation. A representation has an interval order
+when some interval order on its positions extends the order of each tier and leaves associated
+positions incomparable. The `2 + 2` condition of an
 interval order is the No-Crossing Constraint between two tiers, and when lines join only tiers
 adjacent in a forest, every non-crossing representation has an interval order. Around a cycle
 of three tiers, lines that cross none pairwise can chain into a precedence that no interval
@@ -22,11 +25,15 @@ order admits.
 
 ## Main definitions
 
+* `AR.IsReading`: a map of the positions reads the tiers as a precedence and the lines as a
+  relation.
 * `AR.HasIntervalOrder`: the representation has an interval order.
 
 ## Main results
 
 * `IsNonCrossing.of_intervals`: overlaps of intervals placed in tier order are non-crossing.
+* `AR.IsReading.noCrossing`: a reading whose relation joins no two precedences crosswise obeys
+  the NCC.
 * `AR.HasIntervalOrder.noCrossing`: a representation with an interval order obeys the NCC.
 * `AR.noCrossing_iff_hasIntervalOrder_of_isAcyclic`: on a forest of tiers the converse holds,
   and `AR.noCrossing_iff_hasIntervalOrder_of_card_le_two` on at most two tiers.
@@ -77,6 +84,39 @@ namespace AR
 
 variable {ι : Type*} {τ : ι → Type*}
 
+/-! ### Readings -/
+
+section Reading
+
+variable {E : Type*} {X : AR τ} {prec ov ov' : E → E → Prop} {I : X.Pos → E}
+
+variable (X prec ov I) in
+/-- `I` reads `X` in the events `E`: it sends the order of each tier to the precedence `prec`
+and each line to the relation `ov`. -/
+structure IsReading : Prop where
+  /-- The order of each tier is precedence. -/
+  prec_of_lt : ∀ i ⦃p q : Fin (X.word i).length⦄, p < q → prec (I ⟨i, p⟩) (I ⟨i, q⟩)
+  /-- Each line is in the relation. -/
+  ov_of_adj : ∀ ⦃v w⦄, X.assoc.Adj v w → ov (I v) (I w)
+
+theorem IsReading.mono (h : X.IsReading prec ov I) (hov : ∀ ⦃a b⦄, ov a b → ov' a b) :
+    X.IsReading prec ov' I :=
+  ⟨h.prec_of_lt, fun _ _ hvw ↦ hov (h.ov_of_adj hvw)⟩
+
+/-- A reading obeys the No-Crossing Constraint when its relation joins no two precedences
+crosswise. -/
+theorem IsReading.noCrossing (h : X.IsReading prec ov I)
+    (hc : ∀ ⦃w x y z⦄, prec w x → prec y z → ov w z → ov x y → False) : X.NoCrossing :=
+  fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
+    by_contra! hgt
+    exact hc (h.prec_of_lt i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt))
+      (h.prec_of_lt j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hgt))
+      (h.ov_of_adj h₁.adj) (h.ov_of_adj h₂.adj)
+
+end Reading
+
+/-! ### Interval orders -/
+
 variable (X : AR τ) in
 /-- `X` has an interval order: an interval order on its positions that extends the order of
 each tier and leaves associated positions incomparable. -/
@@ -87,22 +127,19 @@ def HasIntervalOrder : Prop :=
 
 variable {X : AR τ}
 
-theorem hasIntervalOrder_of_intervals {T : Type*} [LinearOrder T] (I : X.Pos → NonemptyInterval T)
-    (hI : ∀ i ⦃p q : Fin (X.word i).length⦄, p < q → (I ⟨i, p⟩).Precedes (I ⟨i, q⟩))
-    (hA : ∀ ⦃v w⦄, X.assoc.Adj v w → (I v).Overlaps (I w)) : X.HasIntervalOrder :=
-  ⟨InvImage Precedes I, isIntervalOrder_precedes.invImage I, hI,
-    fun _ _ h hp ↦ Precedes.not_overlaps hp (hA h)⟩
+/-- A reading in intervals, with precedence and overlap, gives an interval order. -/
+theorem IsReading.hasIntervalOrder {T : Type*} [LinearOrder T] {I : X.Pos → NonemptyInterval T}
+    (h : X.IsReading Precedes Overlaps I) : X.HasIntervalOrder :=
+  ⟨InvImage Precedes I, isIntervalOrder_precedes.invImage I, h.prec_of_lt,
+    fun _ _ hvw hp ↦ Precedes.not_overlaps hp (h.ov_of_adj hvw)⟩
 
 /-- A representation with an interval order obeys the No-Crossing Constraint: two crossing
 lines would make the order of their tiers a `2 + 2`. -/
 theorem HasIntervalOrder.noCrossing (h : X.HasIntervalOrder) : X.NoCrossing := by
   obtain ⟨r, hr, htier, hadj⟩ := h
-  refine fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ ?_
-  by_contra! hgt
-  rcases hr.two_plus_two
-    (htier i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt))
-    (htier j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hgt)) with h | h
-  exacts [hadj h₁.adj h, hadj h₂.symm.adj h]
+  exact (IsReading.mk (I := id) (ov := fun a b ↦ ¬ r a b ∧ ¬ r b a) htier
+    fun _ _ hvw ↦ ⟨hadj hvw, hadj hvw.symm⟩).noCrossing
+      fun _ _ _ _ hwx hyz hwz hxy ↦ (hr.two_plus_two hwx hyz).elim hwz.1 hxy.2
 
 /-- Intervals place the tiers of `s`: in order along each tier, with the lines among them
 overlaps. -/
@@ -172,7 +209,7 @@ theorem noCrossing_iff_hasIntervalOrder_of_isAcyclic [Finite ι] {G : SimpleGrap
   have := Fintype.ofFinite ι
   suffices ∀ s : Finset ι, Placed X s by
     obtain ⟨T, _, I, hI, hA⟩ := this .univ
-    exact hasIntervalOrder_of_intervals I (fun i ↦ hI i (by simp)) fun _ _ ↦ hA (by simp) (by simp)
+    exact (IsReading.mk (fun i ↦ hI i (by simp)) fun _ _ ↦ hA (by simp) (by simp)).hasIntervalOrder
   intro s
   induction s using Finset.strongInduction with | H s ih => ?_
   obtain rfl | hs := s.eq_empty_or_nonempty

@@ -5,8 +5,9 @@ public import Linglib.Semantics.Plurality.Reciprocal
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.Ring
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Lindstrom
+public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Lindstrom
+public import Linglib.Semantics.Quantifier.Global
 
 /-!
 # Peters and Westerståhl (2006): Quantifiers in Language and Logic
@@ -43,9 +44,11 @@ The two models are the successor graphs of `+ 1` on `ZMod (2 ^ (r + 1))` and of 
 `ZMod 2 × ZMod (2 ^ r)`, and the game is won by the general result for successor graphs of
 permutations with long cycles, `FirstOrder.Language.duplicatorWinsBijective_successor`.
 
-The universal and the claim are stated of denotations, not of the fragments' entries. An entry's
+The universal and the claim are stated of denotations, not of the language files' entries. An
+entry's
 readings are determiner symbols, which meet both by construction
-(`QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`), and the fragments draw some of
+(`QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`), and the language files draw
+some of
 their readings from sources later than the book.
 
 ## TODO
@@ -272,8 +275,10 @@ theorem not_foDefinable_most : ¬ (NumberTree.most.toFamily : Det.Family.{u}).FO
 theorem foDefinable_atLeast (k : ℕ) :
     ((NumberTree.atLeast k).toFamily : Det.Family.{u}).FODefinable :=
   (NumberTree.foDefinable_toFamily_iff _).2
-    ⟨k, fun _ _ _ _ ↦ by simp only [NumberTree.atLeast]; omega, fun _ _ _ _ ↦ .rfl,
-      fun _ _ _ _ ↦ by simp only [NumberTree.atLeast]; omega⟩
+    ⟨k, fun _ _ _ _ ↦ by
+        simp only [NumberTree.atLeast, NumberTree.cardinal_apply, Set.mem_Ici]; omega,
+      fun _ _ _ _ ↦ .rfl, fun _ _ _ _ ↦ by
+        simp only [NumberTree.atLeast, NumberTree.cardinal_apply, Set.mem_Ici]; omega⟩
 
 theorem exists_toFamily_eq_thresholdGt (p q : ℕ) :
     ∃ D : Lindstrom.Det.{u}, D.toFamily = (NumberTree.thresholdGt p q).toFamily :=

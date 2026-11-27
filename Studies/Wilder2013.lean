@@ -8,11 +8,11 @@ public import Linglib.Semantics.Focus.Polarity
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Data.Examples.Readers
 public import Linglib.Syntax.Clause.Basic
-public import Linglib.Fragments.English.Verbs.Attitude
-public import Linglib.Fragments.English.Verbs.Levin
-public import Linglib.Fragments.English.Complementizers
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Particles
+public import Linglib.Languages.English.Verbs.Attitude
+public import Linglib.Languages.English.Verbs.Levin
+public import Linglib.Languages.English.Complementizers
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.English.Particles
 
 /-!
 # Wilder (2013): English emphatic *do*
@@ -38,10 +38,11 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * Congruence is Roberts's, equality of the focus alternatives with the answers. Rooth's
   containment admits a sentence whose further focus answers the constituent question, as the
   object focus of the paper's *Fred did eat the beans* does, so it cannot reject *do* there.
-* Each row is linked to the fragment entries its sentence stands under: the embedding verb, the
+* Each row is linked to the language file entries its sentence stands under: the embedding verb, the
   complementizer or interrogative word typing its clause, its context's interrogative word, and
   *yes*. Its clause type is derived from their fields, the sentence types a typer allows and the
-  verb's factivity, and checked against [the paper's heading](##heading_derived); the linked
+  verb's recorded factivity class, with the paper's own grouping of *believe*, *appear* and
+  *seem*, and checked against [the paper's heading](##heading_derived); the linked
   forms are [checked against its words](##links_attested). Clefts, relatives, adverbial clauses
   and preposing are structural and name no entry.
 * The account excludes a contrastive topic from interrogative clauses, with Büring, so it rejects
@@ -57,8 +58,10 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 * The example schema records no prosody, so the two patterns and the contrastive-topic
   constituent, which the paper defines by the printed contour, are still read off row labels.
 * The contrast of *believe*-type with factive complements is Hooper and Thompson's assertive versus
-  non-assertive embedding, read here off the fragment's factivity; the general clause API has no
-  assertive embedding, its embedding contexts being those of interrogative embedding.
+  non-assertive embedding. A factive complement is read off the language file's factivity class.
+  The *believe* type is the paper's list, since an entry records a class for a factive only and
+  the general clause API has no assertive embedding, its embedding contexts being those of
+  interrogative embedding.
 
 ## References
 
@@ -72,7 +75,11 @@ grounds the account [fits every judgment](##checks_predicted) of the two sentenc
 
 @[expose] public section
 
+open Inquisitive
+
 namespace Wilder2013
+
+open Examples (Heading Constituent)
 
 open Focus
 
@@ -150,13 +157,13 @@ variable {W : Type*}
 
 -- (59), (60)
 theorem congruent_polarityFocus {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    (polarityFocus p).alternatives = (Question.polar p).alt := by
-  rw [polarityFocus_alternatives_eq_orbit, Question.alt_polar_eq_orbit hne hnu]
+    (polarityFocus p).alternatives = (Inquisitive.Proposition.polar p).alt := by
+  rw [polarityFocus_alternatives_eq_orbit, Inquisitive.Proposition.alt_polar_eq_orbit hne hnu]
 
 /-- A sentence with emphatic *do* is incongruent with a constituent question one of whose answers
 has a negation that is no answer, whatever its other foci: a contrastive-topic sentence directly
 answering such a question rejects *do* ((113), (114)). -/
-theorem not_congruent_sigma_focused {Q : Question W} {a : Set W} (ha : a ∈ Q.alt)
+theorem not_congruent_sigma_focused {Q : Proposition (Set W)} {a : Set W} (ha : a ∈ Q.alt)
     (hc : aᶜ ∉ Q.alt) (m : WithAlternatives (Set W)) :
     (sigma .focused m).alternatives ≠ Q.alt := fun h ↦
   hc (h ▸ compl_mem_alternatives_sigma_focused (h ▸ ha))
@@ -186,14 +193,15 @@ theorem not_assertion_self_resolves (p : Set W) :
 existential F-closure (66), which is the informative content of the question the alternatives
 generate. -/
 def Given (a : Set W) (m : WithAlternatives (Set W)) : Prop :=
-  a ⊆ (Question.generate m.alternatives).info
+  a ⊆ (Inquisitive.Proposition.generate m.alternatives).info
 
 -- (72): the F-closure of a clause with one narrow focus says that some alternative to the focus
 -- satisfies the rest of the clause.
 theorem info_generate_map₂_focused {α β : Type*} (f : α → β → Set W) (x : α) (y : β) :
-    (Question.generate (WithAlternatives.map₂ f (.focused x) (.unfeatured y)).alternatives).info =
+    (Proposition.generate (WithAlternatives.map₂ f (.focused x) (.unfeatured y)).alternatives).info
+      =
       ⋃ x', f x' y := by
-  simp [Question.info_generate, Set.image2_singleton_right, Set.sUnion_range]
+  simp [Inquisitive.Proposition.info_generate, Set.image2_singleton_right, Set.sUnion_range]
 
 -- (63): *John ate a green apple* makes *He ate a [red]F apple* Given, the antecedent being the
 -- clause with an alternative in place of the focus.
@@ -205,42 +213,43 @@ theorem given_map₂_focused {α β : Type*} (f : α → β → Set W) (x x' : �
 -- p. 157: a clause places no requirement on its antecedent exactly when the question its focus
 -- evokes is not informative.
 theorem forall_given_iff (m : WithAlternatives (Set W)) :
-    (∀ a, Given a m) ↔ ¬ (Question.generate m.alternatives).IsInformative := by
-  rw [Question.IsInformative, not_not]
+    (∀ a, Given a m) ↔ ¬ (Inquisitive.Proposition.generate m.alternatives).IsInformative := by
+  rw [Inquisitive.Proposition.IsInformative, not_not]
   exact ⟨fun h ↦ Set.univ_subset_iff.1 (h _), fun h a ↦ (Set.subset_univ a).trans h.ge⟩
 
 /-- Any salient antecedent makes a clause with polarity focus Given, so the antecedent of an
 emphatic *do* sentence need not be its negation (p. 157). -/
 theorem given_polarityFocus (a p : Set W) : Given a (polarityFocus p) :=
-  (forall_given_iff _).2 (generate_polarityFocus p ▸ Question.not_isInformative_polar p) a
+  (forall_given_iff _).2 (generate_polarityFocus p ▸ Proposition.not_isInformative_polar p) a
 
 -- p. 156: without F on Σ, the negated antecedent (71a) does not make the clause (71b) Given.
 theorem not_given_compl_of_unfeatured {p : Set W} (hp : p ≠ Set.univ) :
     ¬ Given pᶜ (sigma .unfeatured (.unfeatured p)) := by
-  simpa [Given, Question.info_generate] using hp
+  simpa [Given, Inquisitive.Proposition.info_generate] using hp
 
 /-! ### Contrastive topic and strategies -/
 
 /-- [buring-2003]'s contrastive-topic value, as Wilder quotes its formation in footnote 28: for
 each alternative `c` to the contrastive topic, the question generated by the focus alternatives of
 the sentence with `c` in its place. -/
-def ctValue {γ : Type*} (f : γ → WithAlternatives (Set W)) (cts : Set γ) : Set (Question W) :=
-  (fun c ↦ Question.generate (f c).alternatives) '' cts
+def ctValue {γ : Type*} (f : γ → WithAlternatives (Set W)) (cts : Set γ) :
+    Set (Proposition (Set W)) :=
+  (fun c ↦ Inquisitive.Proposition.generate (f c).alternatives) '' cts
 
 /-- A contrastive topic on a sentence whose only focus is on Σ indicates a strategy of polar
 questions, so the question such a sentence directly answers in it is polar, Wilder's hypothesis
 (112). -/
 theorem ctValue_polarityFocus {γ : Type*} (P : γ → Set W) (cts : Set γ) :
-    ctValue (fun c ↦ polarityFocus (P c)) cts = (fun c ↦ Question.polar (P c)) '' cts := by
+    ctValue (fun c ↦ polarityFocus (P c)) cts = (fun c ↦ Proposition.polar (P c)) '' cts := by
   simp only [ctValue, generate_polarityFocus]
 
 /-- The strategy the contrastive-topic verb phrase of (106) and (107) indicates asks whether he is
 a good doctor, divided into whether he has a lot of patients, diagnoses well and treats his
 patients politely. -/
-def doctorStrategy (good patients diagnose polite : Set W) : Discourse.Strategy W :=
-  .node (Question.polar good)
-    [.leaf (Question.polar patients), .leaf (Question.polar diagnose),
-      .leaf (Question.polar polite)]
+def doctorStrategy (good patients diagnose polite : Set W) : Question.Strategy W :=
+  .node (Inquisitive.Proposition.polar good)
+    [.leaf (Inquisitive.Proposition.polar patients), .leaf (Inquisitive.Proposition.polar diagnose),
+      .leaf (Inquisitive.Proposition.polar polite)]
 
 -- (106), (107): the subquestions are the contrastive-topic value of the verb phrase.
 theorem doctorStrategy_children (good patients diagnose polite : Set W) :
@@ -257,8 +266,8 @@ theorem doctorStrategy_isComplete {good patients diagnose polite : Set W}
   refine .node (fun _ ↦ ?_) (by simp)
   simp only [RoseTree.leaf, RoseTree.value_node, List.map_cons, List.map_nil, Multiset.inf_coe,
     List.foldr, inf_top_eq]
-  refine Question.mem_determined.1 (BooleanSubalgebra.closure_le.2 (fun q hq ↦ ?_) h)
-  rw [SetLike.mem_coe, Question.mem_determined]
+  refine Inquisitive.Proposition.mem_determined.1 (BooleanSubalgebra.closure_le.2 (fun q hq ↦ ?_) h)
+  rw [SetLike.mem_coe, Inquisitive.Proposition.mem_determined]
   rcases hq with rfl | rfl | rfl
   exacts [inf_le_left, inf_le_right.trans inf_le_left, inf_le_right.trans inf_le_right]
 
@@ -276,11 +285,6 @@ theorem not_good_of_not_diagnose {good patients diagnose polite : Set W}
 
 /-! ### The two sentence types across clause types -/
 
-/-- The constituent bearing the contrastive-topic accent. -/
-inductive Constituent
-  | subject | vp | object
-  deriving DecidableEq, Repr
-
 /-- The form of the question a contrastive-topic sentence directly answers. -/
 inductive Answers
   | polar | constituent
@@ -289,13 +293,13 @@ inductive Answers
 /-- The congruence emphatic *do* must meet in a sentence answering a question of the form: with
 the polar question whether its proposition `p` holds, its only focus being Σ, or with a
 constituent question `Q`, whatever the focus structure `m` under Σ. -/
-def Answers.Congruent : Answers → Set W → WithAlternatives (Set W) → Question W → Prop
-  | .polar, p, _, _ => (polarityFocus p).alternatives = (Question.polar p).alt
+def Answers.Congruent : Answers → Set W → WithAlternatives (Set W) → Proposition (Set W) → Prop
+  | .polar, p, _, _ => (polarityFocus p).alternatives = (Inquisitive.Proposition.polar p).alt
   | .constituent, _, m, Q => (sigma .focused m).alternatives = Q.alt
 
 -- Emphatic *do* is congruent with the question a sentence answers exactly when it is polar.
 theorem Answers.congruent_iff (k : Answers) {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
-    (m : WithAlternatives (Set W)) {Q : Question W} {a : Set W} (ha : a ∈ Q.alt)
+    (m : WithAlternatives (Set W)) {Q : Proposition (Set W)} {a : Set W} (ha : a ∈ Q.alt)
     (hc : aᶜ ∉ Q.alt) : k.Congruent p m Q ↔ k = .polar := by
   cases k
   · simpa [Answers.Congruent] using congruent_polarityFocus hne hnu
@@ -311,7 +315,7 @@ inductive Kind
 
 /-! ### What a sentence stands in
 
-Each row is linked to the fragment entries that embed or type its sentence: the verb whose
+Each row is linked to the language file entries that embed or type its sentence: the verb whose
 complement it is, the complementizer or interrogative word that types its clause, the interrogative
 word of a constituent question its context asks, and the answer particle it opens with. The clause
 types of sections 3.5 and 3.6 are derived from these, and the paper's heading for a row is a
@@ -324,9 +328,16 @@ inductive Typer
 
 /-- The sentence types a typer allows: those its complementizer types, or the constituent
 interrogative. -/
-def Typer.types : Typer → Clause.Selection
+def Typer.types : Typer → Finset Clause.SentenceType
   | .complementizer c => c.types
-  | .wh _ => .only .constituent
+  | .wh _ => {.constituent}
+
+/-- A set of sentence types is interrogative when it does not admit every type and admits an
+interrogative one. -/
+def Interrogative (s : Finset Clause.SentenceType) : Prop :=
+  s ≠ Finset.univ ∧ ∃ t ∈ s, t.IsInterrogative
+
+instance : DecidablePred Interrogative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- What a sentence stands in: a root clause with its interrogative word where it has one, a root
 declarative with a preposed object, the complement of a verb with what types it, a cleft, a
@@ -338,48 +349,51 @@ inductive Host
   | cleft | relative | adverbial
 
 /-- The clause types of sections 3.5 and 3.6 as the account reads them: a root clause or an
-interrogative complement with the sentence types of its clause, a declarative complement of a verb
-that is not a full factive or of one that is, a cleft, a restrictive relative, an adverbial
+interrogative complement with the sentence types of its clause, a declarative complement of a
+*believe*-type verb or of a full factive, a cleft, a restrictive relative, an adverbial
 clause, and a root declarative with a preposed object. -/
 inductive Environment
-  | root (s : Clause.Selection)
+  | root (s : Finset Clause.SentenceType)
   | believeComplement | factiveComplement
-  | interrogativeComplement (s : Clause.Selection)
+  | interrogativeComplement (s : Finset Clause.SentenceType)
   | itCleft | restrictiveRelative | adverbialClause | objectPreposing
   deriving DecidableEq
 
+/-- The verbs whose declarative complements the paper heads as *believe* complements, (27).
+Their entries record no factivity class, which does not say that they are non-factive, so the
+grouping is the paper's. -/
+def believeType : List English.Verbs.Verb :=
+  [English.Verbs.believe, English.Verbs.appear, English.Verbs.seem]
+
 /-- The environment of a host: an interrogative word types a root clause as a constituent
 question, a typer types a complement as interrogative or declarative, and a declarative
-complement is factive when its verb is a full factive. -/
-def Host.environment : Host → Environment
-  | .root none => .root (.only .declarative)
-  | .root (some _) => .root (.only .constituent)
-  | .preposed => .objectPreposing
+complement is factive when its verb is recorded as a full factive and a *believe* complement
+when its verb is one the paper heads so. A declarative complement of any other verb has no
+environment. -/
+def Host.environment : Host → Option Environment
+  | .root none => some (.root {.declarative})
+  | .root (some _) => some (.root {.constituent})
+  | .preposed => some .objectPreposing
   | .complement v t =>
-    if t.types.IsInterrogative then .interrogativeComplement t.types
-    else if v.factivity = some .full then .factiveComplement else .believeComplement
-  | .cleft => .itCleft
-  | .relative => .restrictiveRelative
-  | .adverbial => .adverbialClause
+    if Interrogative t.types then some (.interrogativeComplement t.types)
+    else if v.factivity = some .full then some .factiveComplement
+    else if v.morphs ∈ believeType.map (·.morphs) then some .believeComplement
+    else none
+  | .cleft => some .itCleft
+  | .relative => some .restrictiveRelative
+  | .adverbial => some .adverbialClause
 
 /-- The clause a sentence stands in is interrogative. -/
 def Environment.IsInterrogative : Environment → Prop
-  | .root s | .interrogativeComplement s => s.IsInterrogative
+  | .root s | .interrogativeComplement s => Interrogative s
   | _ => False
 
 instance : DecidablePred Environment.IsInterrogative := fun e ↦ by
   cases e <;> unfold Environment.IsInterrogative <;> infer_instance
 
-/-- The clause type under which the paper gives a row: its headings for (27)–(33) and its
-descriptions of the others. -/
-inductive Heading
-  | root | believeComplement | interrogativeComplement | factiveComplement | itCleft
-  | restrictiveRelative | adverbialClause | whSubjectQuestion | objectPreposing
-  deriving DecidableEq, Repr
-
 /-- The paper's heading of an environment. -/
 def Environment.heading : Environment → Heading
-  | .root s => if s.IsInterrogative then .whSubjectQuestion else .root
+  | .root s => if Interrogative s then .whSubjectQuestion else .root
   | .believeComplement => .believeComplement
   | .factiveComplement => .factiveComplement
   | .interrogativeComplement _ => .interrogativeComplement
@@ -388,20 +402,12 @@ def Environment.heading : Environment → Heading
   | .adverbialClause => .adverbialClause
   | .objectPreposing => .objectPreposing
 
-/-- The heading a row records. -/
-def heading? (ex : Datum) : Option Heading :=
-  ex.parse? "environment" [("root", .root), ("believeComplement", .believeComplement),
-    ("interrogativeComplement", .interrogativeComplement),
-    ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
-    ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
-    ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
-
-/-- A row's link to the fragment: what its sentence stands in, the interrogative word of the
+/-- A row's link to the language file: what its sentence stands in, the interrogative word of the
 constituent question its context asks, and the answer particle it opens with. -/
 structure Link where
   host : Host
   contextWh : Option InterrogativePronoun := none
-  particle : Option Particle := none
+  particle : Option Morphology.Morph := none
 
 namespace Host
 
@@ -489,7 +495,8 @@ instance (l : Link) (ex : Datum) : Decidable (l.Attested ex) :=
 theorem links_attested : ∀ p ∈ links, p.2.Attested p.1 := by decide +kernel
 
 -- The clause type derived from a row's items is the paper's heading for it.
-theorem heading_derived : ∀ p ∈ links, heading? p.1 = some p.2.host.environment.heading := by
+theorem heading_derived :
+    ∀ p ∈ links, Examples.heading p.1 = p.2.host.environment.map (·.heading) := by
   decide
 
 /-- The sentence and environment of an emphatic *do* row: its pattern and contrastive-topic
@@ -498,18 +505,19 @@ the environment its items derive. -/
 def sentence? (ex : Datum) : Option (Kind × Environment) := do
   let l ← link? ex
   let a : Answers := if l.contextWh.isSome then .constituent else .polar
-  let k := ex.parse? "ctConstituent" [("subject", .subject), ("vp", .vp), ("object", .object)]
+  let k := (Examples.ctConstituent ex)
   let kind ← match ex.feature? "pattern" with
     | some "VF" => some .vf
     | some "CT" => (Kind.ct · a) <$> k
     | _ => none
-  return (kind, l.host.environment)
+  let e ← l.host.environment
+  return (kind, e)
 
 /-- The environment of a row that opens with *yes*, a Yes-answer to a polar question. -/
 def yesAnswer? (ex : Datum) : Option Environment := do
   let l ← link? ex
   guard (l.particle = some English.PolarityParticles.yes)
-  return l.host.environment
+  l.host.environment
 
 /-- The paper rejects a Yes-answer to a polar question in the environment, (127). -/
 def RejectsYesAnswer (e : Environment) : Prop :=

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.UpperLower.Closure
 public import Mathlib.Data.Part
 public import Mathlib.Data.Set.Subsingleton
 public import Mathlib.Order.Antichain
@@ -150,8 +151,7 @@ theorem iota_isGreatest_empty : iota {x | IsGreatest (∅ : Set E) x} = Part.non
 /-- On a lower set, the largest member is the partial inverse of `Set.Iic`. -/
 theorem IsLowerSet.mem_iota_isGreatest (hX : IsLowerSet X) :
     d ∈ iota {x | IsGreatest X x} ↔ Set.Iic d = X :=
-  _root_.mem_iota_isGreatest.trans
-    ⟨fun hd ↦ (hX.Iic_subset hd.1).antisymm hd.2, (· ▸ isGreatest_Iic)⟩
+  _root_.mem_iota_isGreatest.trans hX.isGreatest_iff
 
 theorem IsAntichain.iota_isGreatest (hs : IsAntichain (· ≤ ·) X) :
     iota {x | IsGreatest X x} = iota X :=

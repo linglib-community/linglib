@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "route",
+      "lean": "route",
+      "type": "NegationRoute",
+      "doc": "Whether a lexicalization negates inside, on the disjuncts, or outside, on the whole.",
+      "levels": [
+        {
+          "name": "inner",
+          "label": "inner",
+          "doc": "inner"
+        },
+        {
+          "name": "outer",
+          "label": "outer",
+          "doc": "outer"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "horn1972_ex1_58b_more",
     "source": {
@@ -1912,3 +1933,4 @@
     "verified": "page-image"
   }
 ]
+}

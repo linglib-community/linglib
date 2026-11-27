@@ -38,7 +38,7 @@ footnote 17's observation that blocking neither stays above the expected utility
 indifference. The modal conjunction fallacy (34) and modal base-rate neglect (41) are theorems
 about `must` over every measure realizing the paper's printed conditional probabilities, each
 with a finite witness model; the Kratzer row of Table 2 is `Filter.inter_mem_iff` for
-`Modality.humanNecessity`, conjunction elimination, which the expected-value `must` escapes.
+`Modality.Background.necessity`, conjunction elimination, which the expected-value `must` escapes.
 
 ## Implementation notes
 
@@ -130,8 +130,8 @@ theorem expectedValue_le_of_cond_eq_one {p : Measure W} {e φ : Set W} (ψ : Set
 paper's §3.1 is "more or less a reproduction of Lassiter's analysis". -/
 theorem toReal_expectedValue (p : Measure W) (R : ι → Set W) (φ : Set W) :
     (expectedValue p R φ).toReal =
-      Desire.ExpectedValue.expectedValue p (fun w ↦ (countTrue R w).toReal) Set.univ φ := by
-  rw [Desire.ExpectedValue.expectedValue, Set.univ_inter, expectedValue,
+      Desire.expectedValue p (fun w ↦ (countTrue R w).toReal) φ := by
+  rw [Desire.expectedValue_eq_integral_cond, expectedValue,
     integral_toReal Measurable.of_discrete.aemeasurable]
   exact Filter.Eventually.of_forall fun w ↦ by
     simp only [countTrue, Finset.sum_apply]
@@ -450,15 +450,15 @@ open Modality in
 are unsatisfiable on [kratzer-1991]'s account (16). -/
 theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
     (w : V) (inA inB bA bB bN : Set V)
-    (hbest : (bestWorlds f g w).Nonempty)
+    (hbest : (f.bestWorlds g w).Nonempty)
     (hcover : ∀ v ∈ f.accessibleWorlds w, v ∈ inA ∨ v ∈ inB)
     (hA : ∀ v ∈ bA, v ∉ bN) (hB : ∀ v ∈ bB, v ∉ bN) :
-    ¬ (bestWorlds f g w ⊆ bN ∧ bestWorlds (f.restrict inA) g w ⊆ bA ∧
-        bestWorlds (f.restrict inB) g w ⊆ bB) := by
+    ¬ (f.bestWorlds g w ⊆ bN ∧ (f.restrict inA).bestWorlds g w ⊆ bA ∧
+        (f.restrict inB).bestWorlds g w ⊆ bB) := by
   rintro ⟨hN, hAB, hBB⟩
   obtain ⟨v, hv⟩ := hbest
   have hacc : v ∈ f.accessibleWorlds w := Preorder.minimals_subset _ _ hv
-  have key : ∀ α : Set V, v ∈ α → v ∈ bestWorlds (f.restrict α) g w := fun α hα ↦
+  have key : ∀ α : Set V, v ∈ α → v ∈ (f.restrict α).bestWorlds g w := fun α hα ↦
     Preorder.mem_minimals_of_subset (fun _ hu ↦ (Background.mem_accessibleWorlds_restrict.1 hu).1)
       hv
       (Background.mem_accessibleWorlds_restrict.2 ⟨hacc, hα⟩)

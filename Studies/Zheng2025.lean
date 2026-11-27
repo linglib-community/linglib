@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Zheng2025
-public import Linglib.Fragments.Mandarin.QuestionParticles
+public import Linglib.Languages.Mandarin.QuestionParticles
 public import Linglib.Pragmatics.DecisionTheoretic.Basic
 public import Linglib.Semantics.Modality.Kernel
 public import Linglib.Semantics.Questions.Bias
@@ -53,7 +53,7 @@ paraphrases it.
 
 namespace Zheng2025
 
-open MeasureTheory Modality DTS Question
+open MeasureTheory Modality DTS Question Inquisitive Inquisitive.Proposition
 open Theiler2021 (Property instantiations instantiations_zero Necessary Sufficient)
 
 /-! ### Felicity conditions, (11) and (13) -/
@@ -130,8 +130,8 @@ end Resolution
 
 open Mandarin.QuestionParticles (nandao) in
 /-- *Nandao* selects polar questions only, (12). -/
-theorem nandao_distribution : nandao.distribution.possible.dom = {.polar} := by
-  ext t; cases t <;> decide
+theorem nandao_distribution : nandao.distribution.types = {.polar} := by
+  decide
 
 /-- The sentence type of a row, the polar question of the nandao-questions and the declarative
 and wh-question of (12). -/
@@ -141,7 +141,7 @@ def sentenceType? (e : Datum) : Option Clause.SentenceType :=
 
 open Mandarin.QuestionParticles (nandao) in
 theorem nandao_distribution_judgments : ∀ e ∈ Examples.all, ∀ t ∈ sentenceType? e,
-    (t ∈ nandao.distribution.possible.dom ↔ e.judgment ≠ .ungrammatical) := by
+    (t ∈ nandao.distribution.types ↔ e.judgment ≠ .ungrammatical) := by
   decide
 
 /-! ### Bias profiles -/

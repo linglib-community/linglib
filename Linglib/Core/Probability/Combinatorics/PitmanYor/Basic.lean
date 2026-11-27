@@ -85,8 +85,8 @@ theorem crpRule_succ_apply_singleton (s : Fin (n + 1) → ℕ) (c : ℕ) :
     crpRule α θ (n + 1) s {c} =
       (if c = n + 1 then ENNReal.ofReal ((θ + #(univ.image s) * α) / (n + 1 + θ)) else 0) +
         if c ∈ univ.image s then ENNReal.ofReal ((countVec s c - α) / (n + 1 + θ)) else 0 := by
-  simp only [crpRule, Kernel.ofFunOfCountable, Kernel.coe_mk, Measure.add_apply,
-    Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply, smul_eq_mul,
+  simp only [crpRule, Kernel.ofFunOfCountable, Kernel.coe_mk, add_apply,
+    smul_apply, FunLike.coe_sum, Finset.sum_apply, smul_eq_mul,
     Measure.dirac_apply' _ (measurableSet_singleton c), Set.indicator_apply,
     Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero, eq_comm (a := c)]
   congr 1
@@ -108,8 +108,8 @@ theorem isMarkovKernel_crpRule : ∀ n, IsMarkovKernel (crpRule α θ n)
       have := (card_eq_sum_card_image s univ).symm
       rw [card_univ, Fintype.card_fin] at this
       exact_mod_cast this
-    simp only [crpRule, Kernel.ofFunOfCountable, Kernel.coe_mk, Measure.add_apply,
-      Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+    simp only [crpRule, Kernel.ofFunOfCountable, Kernel.coe_mk, add_apply,
+      FunLike.coe_sum, Finset.sum_apply, smul_apply, measure_univ, smul_eq_mul,
       mul_one]
     rw [← ENNReal.ofReal_sum_of_nonneg fun c hc ↦ div_nonneg ?_ hn.le,
       ← ENNReal.ofReal_add (div_nonneg (by nlinarith) hn.le)

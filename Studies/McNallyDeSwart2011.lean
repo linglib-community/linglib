@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Dutch.Adjectives
+public import Linglib.Languages.Dutch.Adjectives
 public import Linglib.Semantics.Modification.Basic
 
 /-!
@@ -25,7 +25,7 @@ inflected form are named for later comparison (`InflectedAnalysis`).
 
 ## Implementation notes
 
-The roots and their forms come from the Dutch adjective fragment, and the paper's primitive
+The roots and their forms come from the Dutch adjective language file, and the paper's primitive
 subkind relation is modelled as sharing a root; the model is extensional, so the kind denoted
 by the derived nominal coincides with the uninflected one. The trope is the pair of the aspect
 property and its bearer. The paper's observation that the inflected
@@ -46,7 +46,7 @@ namespace McNallyDeSwart2011
 
 /-! ### Kinds: the uninflected and derived nominals -/
 
-/-- A shade: an adjective entry of the fragment with an index, so that several shades belong
+/-- A shade: an adjective entry of the language file with an index, so that several shades belong
 to one colour. -/
 structure Shade where
   root : Dutch.Adjectives.Adjective

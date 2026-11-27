@@ -1,15 +1,16 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Semantics.Coordinator
 public import Linglib.Data.Examples.MitrovicSauerland2016
-public import Linglib.Fragments.English.Coordination
-public import Linglib.Fragments.English.FocusParticles
-public import Linglib.Fragments.Japanese.Determiners
-public import Linglib.Fragments.Japanese.FocusParticles
-public import Linglib.Fragments.Hungarian.Coordination
-public import Linglib.Fragments.Hungarian.FocusParticles
-public import Linglib.Fragments.Latin.Determiners
+public import Linglib.Languages.English.Coordination
+public import Linglib.Languages.English.FocusParticles
+public import Linglib.Languages.Japanese.Determiners
+public import Linglib.Languages.Japanese.FocusParticles
+public import Linglib.Languages.Hungarian.Coordination
+public import Linglib.Languages.Hungarian.FocusParticles
+public import Linglib.Languages.Latin.Determiners
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Tactic.DeriveFintype
@@ -30,7 +31,7 @@ have the additive and quantificational uses of Japanese *mo*.
 * The heads an example pronounces are those its gloss line writes outside parentheses, or for
   Latin *-que* and *atque* those of the configurations (38b) and (39). The examples are (1c),
   (23)–(29) with fn. 9, and (33).
-* The J coordinators with Fragment entries are English *and*, Japanese *to*, the verbal
+* The J coordinators with language file entries are English *and*, Japanese *to*, the verbal
   conjunction of Table 1, and Hungarian *és*; the μ coordinators are Japanese *mo*, Hungarian *is*
   and Latin *-que*. A coordinator's additive use is `Coordinator.IsAlsoAdditive` against the
   additive particles of its language in the Fragments.
@@ -135,12 +136,14 @@ inductive Head where
 
 theorem card_head : Fintype.card Head = 3 := rfl
 
-/-- The labels of the heads in the rows. -/
-def Head.labels : List (String × Head) := [("j", .j), ("mu-first", .mu 0), ("mu-second", .mu 1)]
+/-- The head that a label of the rows names. -/
+def Examples.HeadLabel.head : Examples.HeadLabel → Head
+  | .j => .j
+  | .muFirst => .mu 0
+  | .muSecond => .mu 1
 
 /-- The heads an example pronounces. -/
-def pronounced (d : Datum) : Finset Head :=
-  ((d.features "head").filterMap (List.lookup · Head.labels)).toFinset
+def pronounced (d : Datum) : Finset Head := ((Examples.heads d).map (·.head)).toFinset
 
 /-- The sets of heads the examples pronounce. -/
 def attested : Finset (Finset Head) := (Examples.all.map pronounced).toFinset
@@ -164,11 +167,11 @@ theorem languages_pronounced_eq_univ :
 
 /-! ### Other uses, §3 -/
 
-/-- The coordinators the paper takes for J that have Fragment entries. -/
+/-- The coordinators the paper takes for J that have language file entries. -/
 def jCoordinators : List Coordinator :=
   [English.Coordination.and_, Japanese.Coordination.to_, Hungarian.Coordination.es]
 
-/-- The coordinators the paper takes for μ that have Fragment entries. -/
+/-- The coordinators the paper takes for μ that have language file entries. -/
 def muCoordinators : List Coordinator :=
   [Japanese.Coordination.mo, Hungarian.Coordination.is_, Latin.Coordination.que]
 

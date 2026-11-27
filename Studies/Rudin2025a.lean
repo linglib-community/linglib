@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Dynamic.OrderedInformationState
 public import Linglib.Semantics.Modality.Background
 public import Linglib.Semantics.Modality.DomainSemantics
@@ -39,6 +39,8 @@ assertor's evidence leaving both open and the participant knowing the actual one
 -/
 
 @[expose] public section
+
+open scoped PremiseOrdering
 
 namespace Rudin2025a
 
@@ -245,17 +247,17 @@ namespace OrdState
 
 /-- The best worlds of a state are the worlds of its base that no world of the base betters
 under its ordering source. -/
-def best (i : OrdState W) : Set W := (premisePreorder i.ordering).minimals i.base
+def best (i : OrdState W) : Set W := (≤[i.ordering]).minimals i.base
 
 /-- A state as an ordered information state, its ordering source inducing the pattern and its best
 worlds the optimal worlds. -/
 def toOrderedInformationState (i : OrdState W) : OrderedInformationState W :=
-  ⟨i.base, premisePreorder i.ordering⟩
+  ⟨i.base, ≤[i.ordering]⟩
 
 theorem best_singleton {d p : Set W} (h : (d ∩ p).Nonempty) : best ⟨d, {p}⟩ = d ∩ p := by
   obtain ⟨w, hwd, hwp⟩ := h
   simpa [best, Set.sep_mem_eq] using
-    Preorder.minimals_ofCriteria_eq (sat := (· ∈ ·)) (criteria := {p}) (s := d)
+    Preorder.minimals_ofLowerSets_eq (A := {p}) (s := d)
       ⟨w, hwd, by simpa using hwp⟩
 
 end OrdState
@@ -287,18 +289,18 @@ theorem toOrderedInformationState_mightOrdUpdate (h : (c.base ∩ p).Nonempty) :
     (mightOrdUpdate p c).toOrderedInformationState =
       c.toOrderedInformationState.promote (· ∈ p) := by
   rw [mightOrdUpdate, ite_eq_left h]
-  exact congrArg (OrderedInformationState.mk _) (premisePreorder_insert _ _)
+  exact congrArg (OrderedInformationState.mk _) (Preorder.ofLowerSets_insert _ _)
 
 theorem commensurate_mightOrdUpdate [Finite W] (p : Set W) :
     Commensurate OrdState.base (mightOrd p) (mightOrdUpdate p) := by
   intro c hc _ _
   have h := compatible_mightOrd.1 hc
-  obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (premisePreorder (insert p c.ordering))
+  obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (≤[insert p c.ordering])
     (s := c.base ∩ p) h
   rw [mightOrdUpdate, ite_eq_left h]
   refine ⟨m, ?_, (Preorder.minimals_subset _ _ hm).2⟩
   rw [Preorder.mem_minimals_iff] at hm
-  exact (Preorder.mem_minimals_iff (p := premisePreorder _)).2
+  exact (Preorder.mem_minimals_iff (p := ≤[_])).2
     ⟨hm.1.1, fun v hv hvm ↦ hm.2 ⟨hv, hvm p (Set.mem_insert _ _) hm.1.2⟩ hvm⟩
 
 /-! ### *must* under the ordering semantics -/
@@ -319,13 +321,13 @@ theorem compatible_mustOrd [Finite W] :
     Compatible OrdState.base (mustOrd p) c ↔ (c.base ∩ p).Nonempty := by
   refine ⟨fun ⟨c', hc', ⟨v, hv⟩, h⟩ ↦ ?_, fun h ↦ ⟨⟨c.base, {p}⟩, subset_rfl,
     h.mono Set.inter_subset_left, mk_singleton_mem_MI_mustOrd h⟩⟩
-  obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (premisePreorder c'.ordering) (s := c'.base) ⟨v, hv⟩
+  obtain ⟨m, hm⟩ := Preorder.minimals_nonempty (≤[c'.ordering]) (s := c'.base) ⟨v, hv⟩
   exact ⟨m, hc' (Preorder.minimals_subset _ _ hm), h v hv hm⟩
 
 /-- Decide a claim about a three-world state by unfolding the operators. -/
 local macro "decide_states" : tactic =>
   `(tactic| (simp only [MI, mustOrd, OrdState.best, Preorder.mem_minimals_iff,
-      premisePreorder, Preorder.ofCriteria_le_iff,
+      Preorder.ofLowerSets_le_iff,
       Set.mem_ofPred_eq, Set.mem_univ, Set.mem_insert_iff, Set.mem_singleton_iff, Set.subset_def,
       Set.mem_inter_iff, Set.Nonempty, forall_eq_or_imp, forall_eq, Set.mem_empty_iff_false,
       false_implies, implies_true, true_and, and_true, forall_const]; decide))
@@ -368,7 +370,7 @@ theorem MI_diamond_eq_MI_might {R : Set W → SetRel W W} (hR : ∀ i, ∀ w ∈
 theorem MI_relational_eq_MI_mightOrd {f : OrdState W → W → Set W}
     {g : OrdState W → W → Set (Set W)} (hf : ∀ i, ∀ w ∈ i.base, f i w = i.base)
     (hg : ∀ i, ∀ w ∈ i.base, g i w = i.ordering) (p : Set W) :
-    MI OrdState.base (fun i w ↦ ((premisePreorder (g i w)).minimals (f i w) ∩ p).Nonempty) =
+    MI OrdState.base (fun i w ↦ ((≤[g i w]).minimals (f i w) ∩ p).Nonempty) =
       MI OrdState.base (mightOrd p) :=
   Set.ext fun i ↦ forall₂_congr fun w hw ↦ by
     simp only [mightOrd, OrdState.best, hf i w hw, hg i w hw]

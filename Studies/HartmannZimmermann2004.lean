@@ -6,15 +6,14 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Phonology.OptimalityTheory.Filtration
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Semantics.Exhaustification.Basic
 public import Linglib.Syntax.Reflex
-public import Linglib.Fragments.Tangale.TAM
-public import Linglib.Fragments.Tangale.Focus
-public import Linglib.Fragments.Tangale.Phonology
+public import Linglib.Languages.Tangale.TAM
+public import Linglib.Languages.Tangale.Focus
+public import Linglib.Languages.Tangale.Phonology
 public import Linglib.Data.Examples.HartmannZimmermann2004
 public import Linglib.Data.Examples.Readers
 
@@ -38,8 +37,8 @@ makes it audible.
 
 Realisation uses the shared `Reflex` vocabulary, and the paper's strategy
 labels are read off the reflex shape where `marking_matches_rows` pins the configurations to the
-data rows. Configurations carry the fragment's tense–aspect type: the perfective rows are
-Kidda's singular perfective and the paper's progressive is the fragment's continuous
+data rows. Configurations carry the language file's tense–aspect type: the perfective rows are
+Kidda's singular perfective and the paper's progressive is the language file's continuous
 (preposed *né*, transcribed *n* by the paper), with the paradigm restriction in the
 well-formedness predicate. The paper's fn. 6 notes that *-i* does not occur with all
 intransitive verbs; the realisation idealises it as the intransitive perfective strategy. The
@@ -162,7 +161,8 @@ theorem candidates_isUtterance :
 
 /-- ALIGN-Focus is violated when no φ begins at the focus's left edge, the object at leaf 1. -/
 def alignFocus : Constraint Prosody.Tree :=
-  Constraint.alignLeft.comap fun t ↦ ([⟨(1, 2), by decide⟩], Prosody.levelSpans .ph t)
+  fun t ↦ (OptimalityTheory.Correspondence.ofEdges .left .left [⟨(1, 2), by decide⟩]
+    (Prosody.levelSpans .ph t)).maxViol
 
 /-- Phrasal economy assigns one violation per φ. -/
 def starPhi : Constraint Prosody.Tree := fun t ↦ (Prosody.levelSpans .ph t).length

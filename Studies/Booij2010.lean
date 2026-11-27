@@ -7,11 +7,11 @@ module
 
 public import Linglib.Core.Order.Cover
 public import Linglib.Data.Wordlist.Booij2010
-public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Languages.Dutch.Verbs
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
@@ -34,7 +34,7 @@ subschema overrides the recursive-modifier default that the NN subschema inherit
 (`compound_inheritance`). Dutch *-baar* is the paper's demand for default inheritance: the
 hierarchy of the schema and its words is derived from their descriptions, the regular
 *leesbaar* inherits the schema's transitive base (`leesbaar_inherits`), and *werkbaar*, whose
-base the Dutch verb fragment records as intransitive, overrides it (`werkbaar_overrides`).
+base the Dutch verb language file records as intransitive, overrides it (`werkbaar_overrides`).
 Schema unification composes *on-* prefixation with *-baar* suffixation into one schema whose
 instances are exactly their common instances (`onbaar_unifies`,
 `onbaarSchema_instantiates_iff`), so *onbedwingbaar* is generated over the empty lexicon, with
@@ -54,7 +54,7 @@ no intermediate *bedwingbaar* listed (`onbedwingbaar_generates`).
   matched monotonically by unification, the attribute inherited by default
   (`DefaultInheritance.inherited`). A regular word stores no value of its own, since the paper
   counts all its information as redundant, and the exceptional word stores the transitivity
-  of its base as the Dutch verb fragment records it.
+  of its base as the Dutch verb language file records it.
 * The holistic constructions (Malay reduplication, Romance VN compounds, the intensifying
   compounds, Maale *nayi*), the phrasal constructional idioms and the inflectional schemas
   are not formalized.
@@ -102,9 +102,8 @@ theorem carlessness_instantiates : nessSchema.Instantiates Wordlist.carlessness.
 /-- Coining is unification: unifying the adjective *carless* with the schema returns the
 construct *carlessness*. -/
 theorem carlessness_unifies :
-    PartialUnify.unify nessSchema.body Wordlist.carlessness.morphSlots =
-      WithTop.some Wordlist.carlessness.morphSlots :=
-  nessSchema.instantiates_iff_unify.mp carlessness_instantiates
+    IsLUB {nessSchema.body, Wordlist.carlessness.morphSlots} Wordlist.carlessness.morphSlots :=
+  nessSchema.instantiates_iff_isLUB.mp carlessness_instantiates
 
 theorem nessSchema_isProductive : nessSchema.IsProductive := Schema.isProductive_productive _
 
@@ -229,7 +228,7 @@ theorem le_schema : ∀ n : BaarNode, n ≤ .schema := by decide
 
 /-- Whether the base verb is transitive: the schema's default is transitive, the regular
 *leesbaar* stores nothing, and *werkbaar* stores the transitivity of *werken* as the Dutch verb
-fragment records its basic frame. -/
+language file records its basic frame. -/
 def baseTransitive : BaarNode → Option Bool
   | .schema => some true
   | .leesbaar => none
@@ -269,14 +268,14 @@ theorem baarSchema_eq_comap : baarSchema₃.comap ![1, 2] = baarSchema :=
     congrArg Schema.productive <| funext fun i ↦ by fin_cases i <;> rfl
 
 /-- The *on-* and *-baar* descriptions unify into the *on-V-baar* description (16). -/
-theorem onbaar_unifies :
-    PartialUnify.unify onSchema.body baarSchema₃.body = ↑onbaarSchema.body := by decide
+theorem onbaar_unifies : IsLUB {onSchema.body, baarSchema₃.body} onbaarSchema.body := by
+  decide
 
 /-- The unified schema's instances are exactly the words at once *on-* prefixed and *-baar*
 suffixed. -/
 theorem onbaarSchema_instantiates_iff {w : Fin 3 → Flat String} :
     onbaarSchema.Instantiates w ↔ onSchema.Instantiates w ∧ baarSchema₃.Instantiates w :=
-  Schema.instantiates_iff_of_unify_eq_coe onbaar_unifies
+  Schema.instantiates_iff_of_isLUB onbaar_unifies
 
 /-- The unified schema coins *onbedwingbaar* over the empty lexicon: no intermediate
 *bedwingbaar* need be listed. -/

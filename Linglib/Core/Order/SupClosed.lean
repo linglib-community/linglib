@@ -87,6 +87,12 @@ theorem SupClosed.exists_isGreatest (hs : SupClosed s) (hfin : s.Finite) (hne : 
     hs.finsetSup'_mem _ fun _ h ↦ hfin.mem_toFinset.1 h,
     fun _ h ↦ Finset.le_sup' id (hfin.mem_toFinset.2 h)⟩
 
+/-- The greatest element of the sup-closure of a set is the least upper bound of the set, where
+the sup-closure contains it. -/
+theorem isGreatest_supClosure_iff {a : α} :
+    IsGreatest (supClosure s) a ↔ IsLUB s a ∧ a ∈ supClosure s :=
+  ⟨fun h ↦ ⟨isLUB_supClosure.1 h.isLUB, h.1⟩, fun h ↦ ⟨h.2, (isLUB_supClosure.2 h.1).1⟩⟩
+
 /-- A finite lower set has a greatest element exactly when it is nonempty and sup-closed. -/
 theorem IsLowerSet.exists_isGreatest_iff (hs : IsLowerSet s) (hfin : s.Finite) :
     (∃ a, IsGreatest s a) ↔ s.Nonempty ∧ SupClosed s :=

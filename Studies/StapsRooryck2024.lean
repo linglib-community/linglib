@@ -2,8 +2,8 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.ArgumentStructure.EventIdentification
-public import Linglib.Logic.Trivalent.Pointwise
-public import Linglib.Fragments.Romance.French.Verbs
+public import Linglib.Logic.Trivalent.Proposition
+public import Linglib.Languages.Romance.French.Verbs
 
 /-!
 # Staps and Rooryck (2024): Formalizing Spatial-Causal Polysemy of Agent Prepositions
@@ -17,7 +17,7 @@ external argument of Angelopoulos, Collins and Terzi, combined with the verb by 
 Identification. The agentive instantiations share the at-issue relation Initiator and differ in
 presupposition, high proto-agentivity for *par* and low for *de*, where proto-agentivity is
 relational in the terms of Dowty and of Hopper and Thompson: bringing about a change,
-volitionality and telicity, with change primary. Over the fragment's verbs this derives the
+volitionality and telicity, with change primary. Over the language file's verbs this derives the
 paper's readings, such as the exclusion of *de* by verbs of change.
 
 ## Main definitions
@@ -148,10 +148,11 @@ noncomputable def deAgentive (init : Entity → E → Prop) (High : Entity → E
 
 variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 
-theorem agentive_eq_true_iff_of_ne_undefined (e : E) :
-    (parAgentive init High x e ≠ .undefined → (parAgentive init High x e = .true ↔ init x e)) ∧
-      (deAgentive init High x e ≠ .undefined → (deAgentive init High x e = .true ↔ init x e)) := by
-  simp_all [parAgentive, deAgentive]
+open Classical Bilattice in
+theorem agentive_kLE (e : E) :
+    parAgentive init High x e ≤ₖ Trivalent.ofProp (init x e) ∧
+      deAgentive init High x e ≤ₖ Trivalent.ofProp (init x e) :=
+  ⟨Trivalent.condEvent_kLE, Trivalent.condEvent_kLE⟩
 
 theorem parAgentive_ne_undefined_iff (e : E) :
     parAgentive init High x e ≠ .undefined ↔ deAgentive init High x e = .undefined := by

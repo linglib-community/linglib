@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Category.Verb.Defs
@@ -509,9 +514,10 @@ def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : 
   match fr.argumentRole s, fr.get? s with
   | some r, _ => .term (.ofArgumentRole r)
   | none, some .incorporated => .incorporated
-  | none, some (.implicit (some .reflexive)) | none, some (.implicit (some .reciprocal)) =>
-      (fr.argumentRole .external).elim .implicit (.term ∘ .ofArgumentRole)
-  | none, some (.implicit _) => .implicit
+  | none, some (.implicit i) =>
+      if i = {.reflexive} ∨ i = {.reciprocal} then
+        (fr.argumentRole .external).elim .implicit (.term ∘ .ofArgumentRole)
+      else .implicit
   | none, some p => if p.IsExpressed then .term .X else .absent
   | none, none => .absent
 

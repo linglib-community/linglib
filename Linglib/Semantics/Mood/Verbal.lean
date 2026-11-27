@@ -5,7 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Core.Order.Filter.AtBotOn
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering
+public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Semantics.Mood.State
 
 /-!
@@ -32,8 +34,8 @@ indicative when it means 'ask' and the subjunctive when it means 'wonder'.
 
 ## Main statements
 
-* `Mood.Grammatical.interp_iff_boxOn`: with a most normal world in the context set, each mood
-  is the necessity modal of its component.
+* `Mood.Grammatical.interp_subjunctive_iff`: with a most normal world in the context set, the
+  subjunctive is truth at the optimal worlds.
 * `Mood.Grammatical.indicative_ne_subjunctive`: the two moods disagree on some state.
 
 ## References
@@ -69,28 +71,26 @@ def target : Grammatical → Component
 necessity: some world of the context set has only `p`-worlds among the worlds of the context set
 at least as normal as itself, good possibility under the ordering. -/
 def interp : Grammatical → OrderedInformationState W → (W → Prop) → Prop
-  | .indicative, σ, p => σ.boxCs p
+  | .indicative, σ, p => ∀ w ∈ σ.info, p w
   | .subjunctive, σ, p => ∃ v ∈ σ.info, ∀ w ∈ σ.info, σ.order.le w v → p w
 
 @[simp] theorem interp_indicative (σ : OrderedInformationState W) (p : W → Prop) :
-    indicative.interp σ p = σ.boxCs p := rfl
+    indicative.interp σ p = ∀ w ∈ σ.info, p w := rfl
 
 @[simp] theorem interp_subjunctive (σ : OrderedInformationState W) (p : W → Prop) :
     subjunctive.interp σ p = ∃ v ∈ σ.info, ∀ w ∈ σ.info, σ.order.le w v → p w := rfl
 
-/-- When the context set has a world at least as normal as all of its worlds, each mood is the
-necessity modal of the component it targets. Without one they come apart, as when two
-incomparable optimal worlds each make a different proposition locally necessary. -/
-theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
-    (hleast : ∀ v ∈ c.info, c.order.le b v) (m : Grammatical) (p : W → Prop) :
-    m.interp c.toOrderedInformationState p ↔ m.target.boxOn c p := by
-  let := c.order
-  cases m
-  · exact Iff.rfl
-  · exact ⟨fun ⟨v, hv, hp⟩ ↦ (Filter.setOf_minimalFor_subset_iff_of_least (f := id) (t := {w | p w})
-        hb hleast).2 fun w hw hwb ↦ hp w hw (hwb.trans (hleast v hv)),
-      fun h ↦ ⟨b, hb, (Filter.setOf_minimalFor_subset_iff_of_least (f := id) (t := {w | p w})
-        hb hleast).1 h⟩⟩
+/-- When the context set has a world at least as normal as all of its worlds, the subjunctive is
+truth at the optimal worlds. Without one they come apart, as when two incomparable optimal worlds
+each make a different proposition locally necessary. -/
+theorem interp_subjunctive_iff {σ : OrderedInformationState W} {b : W} (hb : b ∈ σ.info)
+    (hleast : ∀ v ∈ σ.info, σ.order.le b v) (p : W → Prop) :
+    subjunctive.interp σ p ↔ ∀ w ∈ σ.optimal, p w := by
+  let := σ.order
+  exact ⟨fun ⟨v, hv, hp⟩ ↦ (Filter.setOf_minimalFor_subset_iff_of_least (f := id) (t := {w | p w})
+      hb hleast).2 fun w hw hwb ↦ hp w hw (hwb.trans (hleast v hv)),
+    fun h ↦ ⟨b, hb, (Filter.setOf_minimalFor_subset_iff_of_least (f := id) (t := {w | p w})
+      hb hleast).1 h⟩⟩
 
 /-- Every world is in the context set, and `false`, the one `sepProp`-world, is the one optimal
 world. -/

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Compare
+public import Linglib.Logic.Temporal.PartitionScheme
 public import Mathlib.Algebra.Order.Kleene
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Fintype.Powerset
@@ -8,7 +9,7 @@ public import Mathlib.Data.Fintype.Powerset
 /-!
 # The point algebra
 
-An element of the point algebra of [vilain-kautz-1986] is a set of the orderings in which one
+An element of the point algebra of Vilain and Kautz is a set of the orderings in which one
 point of a linear order may stand to another, read as the disjunction of the relations `<`, `=`
 and `>` that it contains. Elements form a Boolean algebra with a converse and a composition whose
 unit is `{eq}`; composition distributes over joins, which the `IdemSemiring` instance records.
@@ -17,11 +18,15 @@ two points the relations [order as the elements do](##PointAlgebra.toSetRel_subs
 and passing to the relation preserves joins, complements and converses. The relation of a product
 contains the composite of the relations, and is the composite for all elements [exactly when the
 order is dense and has no least or greatest point](##PointAlgebra.toSetRel_mul_iff), where the
-algebra is that of the relations definable from `<`.
+algebra is that of the relations definable from `<`. In the terms of Ligozat and Renz the
+orderings are the basic relations of the partition scheme of a linear order
+(`PointAlgebra.scheme`), reading an element as a relation is a weak representation, and the
+product is weak composition on dense time without endpoints (`PointAlgebra.weakComp_eq_mul`).
 
 ## References
 
 * [vilain-kautz-1986]
+* [ligozat-renz-2004]
 -/
 
 @[expose] public section
@@ -159,6 +164,14 @@ theorem toSetRel_inv (C : PointAlgebra) : (toSetRel C⁻¹ : SetRel T T) = (toSe
   exact ⟨fun ⟨o, ho, h⟩ ↦ ⟨o.swap, ho, Ordering.compares_swap.2 h⟩,
     fun ⟨o, ho, h⟩ ↦ ⟨o.swap, by rwa [Ordering.swap_swap], Ordering.compares_swap.2 h⟩⟩
 
+/-- Reversing the order takes the relation of an element to the relation of its converse. -/
+theorem mem_toSetRel_toDual (C : PointAlgebra) :
+    OrderDual.toDual x ~[toSetRel C] OrderDual.toDual y ↔ x ~[toSetRel C⁻¹] y := by
+  simp only [mem_toSetRel, mem_inv]
+  exact ⟨fun ⟨o, ho, h⟩ ↦ ⟨o.swap, by rwa [Ordering.swap_swap],
+      Ordering.compares_swap.2 (toDual_compares_toDual.1 h)⟩,
+    fun ⟨o, ho, h⟩ ↦ ⟨o.swap, ho, toDual_compares_toDual.2 (Ordering.compares_swap.2 h)⟩⟩
+
 /-- The relation `<` relates a point to a smaller one through a third exactly when the order is
 dense. -/
 theorem toSetRel_lt_subset_comp_self_iff :
@@ -266,6 +279,39 @@ theorem toSetRel_mul_iff :
   · obtain ⟨s, hs, -⟩ := (h {.gt} {.lt}).subset
       (mem_toSetRel_iff.2 ((by decide : ({.gt} : PointAlgebra) * {.lt} = ⊤) ▸ mem_top) : (t, t) ∈ _)
     exact ⟨s, mem_toSetRel_gt.1 hs⟩
+
+/-! ### The partition scheme of a linear order -/
+
+/-- The partition scheme of a linear order: two points stand in `<`, `=` or `>`. -/
+def scheme (T : Type*) [LinearOrder T] : PartitionScheme T Ordering where
+  index p := compare p.2 p.1
+  inv := Ordering.swap
+  index_swap _ := Std.OrientedCmp.eq_swap
+
+/-- The relation of an element is the relation of its orderings in the scheme of the order. -/
+theorem toSetRel_eq_rel (C : PointAlgebra) :
+    (toSetRel C : SetRel T T) = (scheme T).rel {o | o ∈ C} := by
+  ext ⟨x, y⟩
+  exact mem_toSetRel_iff
+
+/-- The weak composition of two elements on any linear order lies in their product. -/
+theorem weakComp_subset_mul (C D : PointAlgebra) :
+    (scheme T).weakComp {o | o ∈ C} {o | o ∈ D} ⊆ {o | o ∈ C * D} := by
+  rintro _ ⟨⟨x, z⟩, ⟨y, h₁, h₂⟩, rfl⟩
+  exact compare_mem_mul h₂ h₁
+
+/-- On dense time without endpoints the product of two elements is their weak composition, so
+the point algebra is the algebra of the partition scheme of such an order. -/
+theorem weakComp_eq_mul [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] [Nontrivial T]
+    (C D : PointAlgebra) : (scheme T).weakComp {o | o ∈ C} {o | o ∈ D} = {o | o ∈ C * D} := by
+  refine (weakComp_subset_mul C D).antisymm fun o ho ↦ ?_
+  obtain ⟨a, b, hab⟩ := exists_pair_lt T
+  obtain ⟨x, z, rfl⟩ : ∃ x z : T, compare z x = o := by
+    cases o
+    exacts [⟨b, a, compare_lt_iff_lt.2 hab⟩, ⟨a, a, compare_eq_iff_eq.2 rfl⟩,
+      ⟨a, b, compare_gt_iff_gt.2 hab⟩]
+  obtain ⟨y, hD, hC⟩ := compare_mem_mul_iff.1 ho
+  exact ⟨(x, z), ⟨y, hC, hD⟩, rfl⟩
 
 end LinearOrder
 

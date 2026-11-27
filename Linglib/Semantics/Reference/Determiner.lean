@@ -33,6 +33,9 @@ participants gives the personal pronoun's person
 ## Main declarations
 
 * `DemonstrativeDeterminer.denote`: the demonstrative's `Definite`.
+* `Article.quantifiers`, `Determiner.Entry.DenotesQuantifier`: the quantifiers an article
+  denotes, those of its definite readings and the existential of an indefinite one, and a
+  determiner denoting a given quantifier.
 * `Article.denotations`: an article's possible `Definite`s, one per admissible strength; a
   syncretic article (English *the*) denotes both the uniqueness and the anaphoric definite.
 * `PossessiveDeterminer.denote`: the possessive determiner's `Definite`, the unique satisfier of
@@ -134,18 +137,20 @@ end Demonstrative
 /-- The `Definite`s an article can denote are the images of its admissible [schwarz-2009]
 strengths under `Definite.ofStrength`. A syncretic article such as English *the* denotes both the
 uniqueness and the anaphoric definite. -/
-noncomputable def _root_.Article.denotations (a : Article) (R : (ℕ → E) → W → Set E) (idx : ℕ) :
+noncomputable def _root_.Article.denotations [PartialOrder E] (a : Article)
+    (R : (ℕ → E) → W → Set E) (idx : ℕ) :
     Set (Definite (ℕ → E) W E) :=
   (ofStrength · R idx) '' a.strengths
 
 /-- An article denotes the set of its readings on every model, the restrictor and the index
 being the Reader arguments of its domain. -/
 noncomputable instance : Denotes Article
-    (∀ (E W : Type), ((ℕ → E) → W → Set E) → ℕ → Set (Definite (ℕ → E) W E)) :=
-  ⟨fun a _ _ ↦ a.denotations⟩
+    (∀ (E W : Type) [PartialOrder E],
+      ((ℕ → E) → W → Set E) → ℕ → Set (Definite (ℕ → E) W E)) :=
+  ⟨fun a _ _ _ ↦ a.denotations⟩
 
 /-- Each denotation of an article is the definite of a strength the article marks. -/
-theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
+theorem _root_.Article.denotations_realized [PartialOrder E] (a : Article) (idx : ℕ)
     (nd : Definite (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
     ∃ p : Strength,
       Determiner.Inventory.Realizes [.article a] p.toKind ∧ nd = ofStrength p R idx := by
@@ -179,3 +184,29 @@ theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
     Determiner.Inventory.Realizes [.possessive p] NominalKind.possessive :=
   ⟨.possessive p, List.mem_singleton_self _, rfl⟩
 
+/-! ### The quantifiers of a determiner -/
+
+/-- The quantifiers an article denotes over a restrictor: the individuals of its definite
+readings, and the existential where it marks an indefinite degree. -/
+noncomputable def Article.quantifiers {E W : Type} [PartialOrder E] (a : Article)
+    (R : (ℕ → E) → W → Set E) (d : ℕ) : Set ((ℕ → E) → W → Quantifier E) :=
+  Definite.quantifier '' a.denotations R d ∪
+    {q | (∃ δ ∈ a.definiteness, δ < .definite) ∧ q = fun g s ↦ Quantifier.Det.some (R g s)}
+
+namespace Determiner.Entry
+
+/-- A determiner denotes a quantifier over a restrictor when the quantifier is among an
+article's, or is what a demonstrative denotes at every relation locating referents at participant
+sets, or a possessive at every possessor and possession relation. A quantificational determiner
+is not counted, *some* leaving ∃ to the bare plural. -/
+def DenotesQuantifier {E W : Type} [PartialOrder E] (e : Entry) (R : (ℕ → E) → W → Set E)
+    (d : ℕ) (q : (ℕ → E) → W → Quantifier E) : Prop :=
+  match e with
+  | .article a => q ∈ a.quantifiers R d
+  | .demonstrative dem =>
+      ∀ N : SetRel (Finset SpeechAct.Role) E, (dem.denote R d N).quantifier = q
+  | .possessive p => ∀ (possessor : (ℕ → E) → W → E) (rel : (ℕ → E) → W → E → E → Prop),
+      (p.denote R possessor rel).quantifier = q
+  | .quantifier _ => False
+
+end Determiner.Entry

@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.TemporalDeictic
-public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Syntax.DependencyGrammar.Projectivity
-public import Linglib.Syntax.DependencyGrammar.Valency
+public import Linglib.Languages.English.Auxiliaries
+public import Linglib.Languages.English.Nouns
+public import Linglib.Languages.English.Pronouns
+public import Linglib.Languages.English.TemporalDeictic
+public import Linglib.Languages.English.Verbs.Inventory
+public import Linglib.Syntax.WordOrder.Projectivity
+public import Linglib.Syntax.WordOrder
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen
 public import Mathlib.Tactic.DeriveFintype
@@ -36,7 +36,7 @@ extracted word is placed by a positional head outside the landmark tree.
 
 * The landmark rules are a `DefaultInheritance` network over the concepts *parent* and
   *subordinate parent*, and a landmark relation is checked for `IsTree` and `IsProjective` as an
-  unlabeled `DependencyGrammar.Graph`.
+  unlabeled `DependencyGrammar.DependencyGraph`.
 * Each dependency type fixes the direction of its head with respect to its dependent
   (`Rel.direction`), and an extractee's direction overrides an object's.
 * Chosen landmarks range over each word's heads; the Best Landmark Principle's preference for the
@@ -59,7 +59,7 @@ extracted word is placed by a positional head outside the landmark tree.
 
 namespace Gisborne2026
 
-open DependencyGrammar DefaultInheritance Relation
+open DefaultInheritance Relation
 open Morphology (Word)
 
 /-! ### Word Grammar analyses -/
@@ -224,12 +224,12 @@ instance : Decidable (A.IsLandmark w p) := decidable_of_iff _ isLandmark_iff.sym
 
 variable (A) (L : Fin n → Fin n → Prop) [DecidableRel L] (root : Fin n)
 
-/-- The unlabeled graph of a landmark relation, `L w p` saying that `p` is the landmark of `w`,
-rooted at `root`, with an arc from each word's landmark to the word. -/
-def graphOf : Graph Unit n where
-  words := A.words
-  label p w := if L w p then some () else none
-  root := root
+/-- The digraph of a landmark relation, `L w p` saying that `p` is the landmark of `w`, with an
+arc from each word's landmark to the word. -/
+def graphOf : Digraph (Fin n) where
+  Adj p w := L w p
+
+instance : DecidableRel (graphOf L).Adj := fun p w ↦ inferInstanceAs (Decidable (L w p))
 
 /-- Every word stands on the side of its landmark that its dependency on the landmark fixes, the
 extractee's side when it is extracted from the landmark, which overrides the side of its other
@@ -240,7 +240,7 @@ def RespectsLandmarks : Prop :=
 /-- The landmarks order the analysis when they form a projective tree from the root and every word
 stands on its side of its landmark. -/
 def Orders : Prop :=
-  (A.graphOf L root).IsTree ∧ (A.graphOf L root).IsProjective ∧ A.RespectsLandmarks L
+  (graphOf L).IsArborescence root ∧ (graphOf L).IsProjective ∧ A.RespectsLandmarks L
 
 /-- Extraction by landmark, where the head a word is extracted from is its landmark. -/
 def ExtractionBy : Prop := ∀ h w, A.Dep h w .extractee → L w h
@@ -250,7 +250,7 @@ instance : Decidable (A.Orders L root) := inferInstanceAs (Decidable (_ ∧ _))
 instance : Decidable (A.ExtractionBy L) := inferInstanceAs (Decidable (∀ _ _, _))
 
 /-- The graph in which every parent is a landmark, as in the diagrams (52) to (55). -/
-abbrev parentGraph : Graph Unit n := A.graphOf (fun w p ↦ A.Parent p w) A.root
+abbrev parentGraph : Digraph (Fin n) := graphOf (fun w p ↦ A.Parent p w)
 
 /-- The positional head of an extracted word, by the revision's start-rule of extraction, is the
 head it is extracted from. -/
@@ -293,16 +293,17 @@ instance : Decidable A.OrderedByChosenLandmarks := inferInstanceAs (Decidable (�
 
 variable {A L root}
 
-@[simp] theorem graphOf_adj : (A.graphOf L root).Adj p w ↔ L w p := by
-  simp only [Graph.Adj, graphOf]
-  split_ifs <;> simp [*]
+omit [DecidableRel L] in
+@[simp] theorem graphOf_adj : (graphOf L).Adj p w ↔ L w p := Iff.rfl
 
-theorem not_isTree_graphOf (h₁ : L w p) (h₂ : L p w) : ¬ (A.graphOf L root).IsTree := fun hT ↦
-  hT.not_dominates_of_adj (graphOf_adj.2 h₁) (.single (graphOf_adj.2 h₂))
+omit [DecidableRel L] in
+theorem not_isArborescence_graphOf (h₁ : L w p) (h₂ : L p w) :
+    ¬ (graphOf L).IsArborescence root := fun hT ↦
+  hT.not_reachable_of_adj (graphOf_adj.2 h₁) (.single (graphOf_adj.2 h₂))
 
-theorem not_isTree_parentGraph (h₁ : A.Parent p w) (h₂ : A.Parent w p) :
-    ¬ A.parentGraph.IsTree :=
-  not_isTree_graphOf h₁ h₂
+theorem not_isArborescence_parentGraph (h₁ : A.Parent p w) (h₂ : A.Parent w p) :
+    ¬ A.parentGraph.IsArborescence A.root :=
+  not_isArborescence_graphOf h₁ h₂
 
 theorem not_extractionBy_isLandmark (hex : A.Dep h w .extractee)
     (hs : A.SubordinateParent w h) : ¬ A.ExtractionBy A.IsLandmark := fun hE ↦
@@ -339,8 +340,9 @@ def theySeemedToDance : Analysis 4 where
   root := 1
 
 -- (9)
-theorem not_isTree_parentGraph_theySeemedToDance :
-    ¬ theySeemedToDance.parentGraph.IsTree ∧ ¬ theySeemedToDance.parentGraph.IsProjective := by
+theorem not_isArborescence_parentGraph_theySeemedToDance :
+    ¬ theySeemedToDance.parentGraph.IsArborescence theySeemedToDance.root ∧ ¬
+      theySeemedToDance.parentGraph.IsProjective := by
   decide
 
 theorem isLandmark_theySeemedToDance :
@@ -376,8 +378,8 @@ def whHeaded : Analysis 4 where
   root := 0
 
 theorem not_orderedByLandmarks_whHeaded :
-    ¬ whHeaded.parentGraph.IsTree ∧ ¬ whHeaded.OrderedByLandmarks :=
-  ⟨Analysis.not_isTree_parentGraph (p := 1) (w := 3) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
+    ¬ whHeaded.parentGraph.IsArborescence whHeaded.root ∧ ¬ whHeaded.OrderedByLandmarks :=
+  ⟨Analysis.not_isArborescence_parentGraph (p := 1) (w := 3) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 3) (w := 1) (q := 0) (by decide)
       ⟨.comp, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
@@ -399,8 +401,9 @@ def iAteWhatTheyAte : Analysis 5 where
 
 -- (53), (55)
 theorem not_orderedByLandmarks_iAteWhatTheyAte :
-    ¬ iAteWhatTheyAte.parentGraph.IsTree ∧ ¬ iAteWhatTheyAte.OrderedByLandmarks :=
-  ⟨Analysis.not_isTree_parentGraph (p := 2) (w := 4) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
+    ¬ iAteWhatTheyAte.parentGraph.IsArborescence iAteWhatTheyAte.root ∧ ¬
+      iAteWhatTheyAte.OrderedByLandmarks :=
+  ⟨Analysis.not_isArborescence_parentGraph (p := 2) (w := 4) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 4) (w := 2) (q := 1) (by decide)
       ⟨.obj, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
@@ -424,8 +427,9 @@ def whatHeBoughtCostLots : Analysis 5 where
 /-- In (55), the parent graph is not a tree, and taking every parent as a landmark fails to order
 the sentence. -/
 theorem not_orderedByLandmarks_whatHeBoughtCostLots :
-    ¬ whatHeBoughtCostLots.parentGraph.IsTree ∧ ¬ whatHeBoughtCostLots.OrderedByLandmarks :=
-  ⟨Analysis.not_isTree_parentGraph (p := 0) (w := 2) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
+    ¬ whatHeBoughtCostLots.parentGraph.IsArborescence whatHeBoughtCostLots.root ∧ ¬
+      whatHeBoughtCostLots.OrderedByLandmarks :=
+  ⟨Analysis.not_isArborescence_parentGraph (p := 0) (w := 2) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 2) (w := 0) (q := 3) (by decide)
       ⟨.subj, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
@@ -452,8 +456,9 @@ def weSawWhatHappened : Analysis 4 where
   root := 1
 
 -- (58), (54)
-theorem not_isTree_parentGraph_weSawWhatHappened : ¬ weSawWhatHappened.parentGraph.IsTree :=
-  Analysis.not_isTree_parentGraph (p := 2) (w := 3) ⟨.comp, by decide⟩ ⟨.subj, by decide⟩
+theorem not_isArborescence_parentGraph_weSawWhatHappened :
+    ¬ weSawWhatHappened.parentGraph.IsArborescence weSawWhatHappened.root :=
+  Analysis.not_isArborescence_parentGraph (p := 2) (w := 3) ⟨.comp, by decide⟩ ⟨.subj, by decide⟩
 
 -- (58)
 theorem orderedByLandmarks_weSawWhatHappened : weSawWhatHappened.OrderedByLandmarks := by

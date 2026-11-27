@@ -2,10 +2,10 @@ module
 
 public import Linglib.Data.Examples.Blok2015
 public import Linglib.Data.Examples.Readers
-public import Linglib.Fragments.Dutch.NumeralModifiers
-public import Linglib.Fragments.Dutch.PolarityItems
+public import Linglib.Languages.Dutch.NumeralModifiers
+public import Linglib.Languages.Dutch.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Studies.CoppockBrochhagen2013
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Data.Examples.Languages
@@ -26,14 +26,15 @@ item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgm
 
 ## Implementation notes
 
-* Worlds are counts, one for each number, as in the paper's simplified model, and a proposition
-  is a `Set (Set ℕ)`: the library's `Question` is closed downward and would merge the nested
-  possibilities of *up to*. The choice functions of the entries are dropped, since applying them
-  pointwise yields the set they choose from (`CoppockBrochhagen2013.range_choice_apply`).
+* Worlds are counts, one for each number, as in the paper's simplified model, and a proposition is a
+  `Set (Set ℕ)`: the library's `Inquisitive.Proposition` is closed downward and would merge the
+  nested possibilities of *up to*. The choice functions of the entries are dropped, since applying
+  them pointwise yields the set they choose from (`CoppockBrochhagen2013.range_choice_apply`).
 * *At most* is Coppock and Brochhagen's entry on the one-sided answers to the question of how
   many, ranked by their lower bounds.
-* The account covers the Fragment's Class B modifiers that set an upper bound, checked against
-  their Fragment readings, and a modifier is directional when its entry is built on a directional
+* The account covers the language file's Class B modifiers that set an upper bound, checked against
+  their language file readings, and a modifier is directional when its entry is built on a
+  directional
   preposition. A row's number is counted in the unit of its scale: eggs one by one, cake by the
   slice, an absence by the day.
 * The scope of a modified numeral is the cardinal quantifier of what the sentence asserts, as a
@@ -44,7 +45,7 @@ item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgm
 * The evaluative adverbs, which target what a sentence asserts, and the plurals and modals that
   supply a range of values are not formalized.
 * The examples in languages other than English and Dutch are not recorded, their modifiers having
-  no Fragment entries.
+  no language file entries.
 
 ## References
 
@@ -77,11 +78,11 @@ def howMany : Set (Set ℕ) := range Ici
 /-- *At most `n`* is [coppock-brochhagen-2013]'s entry on the question of how many, with the
 answers ranked by their lower bounds. -/
 def atMost (n : ℕ) : Set (Set ℕ) :=
-  atMostInq (· ≥ ·) univ (oneSided id) n
+  Inquisitive.Unrestricted.atMost (· ≥ ·) univ (oneSided id) n
 
 -- (43c)
 theorem atMost_eq (n : ℕ) : atMost n = (Icc · n) '' Iic n :=
-  atMostInq_oneSided_id n
+  possibilities_atMost_id n
 
 theorem mem_sUnion_upTo : m ∈ ⋃₀ upTo s n ↔ s ≤ m ∧ s ≤ n := by
   simp only [upTo, sUnion_image, mem_iUnion, mem_Icc, mem_Ici, exists_prop]
@@ -102,11 +103,8 @@ theorem isUpperSet_sUnion_upTo : IsUpperSet (⋃₀ upTo s n) := fun _ _ hab h �
 
 /-! ### The implicated upper bound -/
 
-private theorem exh_howMany_Ici : Exhaustification.exh howMany (Ici m) = {m} := by
-  ext k
-  simp only [howMany, Exhaustification.mem_exh_range_iff, mem_Ici, Ici_subset_Ici,
-    mem_singleton_iff]
-  exact ⟨fun ⟨hk, h⟩ ↦ le_antisymm (h k le_rfl) hk, by rintro rfl; exact ⟨le_rfl, fun _ ↦ id⟩⟩
+private theorem exh_howMany_Ici : Exhaustification.exh howMany (Ici m) = {m} :=
+  Question.exh_degreeHamblin (μ := id) m
 
 -- (50), (51)
 theorem exh_upTo_howMany :
@@ -141,12 +139,12 @@ theorem nontrivial_atMost : (atMost n).Nontrivial ↔ 0 < n := by
 speaker knows exactly when *up to n* fails the range requirement: the maxim is silent on (52),
 which the range requirement rules out. -/
 theorem forall_interactiveSincerity_upTo_iff : (∀ k, InteractiveSincerity (upTo s n) k) ↔ n ≤ s :=
-  by rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_upTo, not_lt]
+  by rw [forall_interactiveSincerity_iff, nontrivial_upTo, not_lt]
 
 -- (53a)
 theorem forall_interactiveSincerity_atMost_iff :
     (∀ k, InteractiveSincerity (atMost n) k) ↔ n = 0 := by
-  rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_atMost, not_lt,
+  rw [forall_interactiveSincerity_iff, nontrivial_atMost, not_lt,
     Nat.le_zero]
 
 /-! ### Monotonicity -/
@@ -215,7 +213,7 @@ most* for any other. -/
 def raised (w : Numerals.NumeralModifier) (s n : ℕ) : Set (Set ℕ) :=
   if w.kind = some .directional then upTo s n else atMost n
 
-/-- The modifiers the account covers in the language of a row: the Fragment's Class B modifiers
+/-- The modifiers the account covers in the language of a row: the language file's Class B modifiers
 that set an upper bound. -/
 def upperBounded (l : Glottocode) : List Numerals.NumeralModifier :=
   (List.lookup l [(.english, [English.NumeralModifiers.atMost,
@@ -309,7 +307,7 @@ instance (w : Numerals.NumeralModifier) (t : Diagnostic) :
 def modifier? (e : Datum) : Option Numerals.NumeralModifier :=
   (e.feature? "modifier").bind fun f ↦ (upperBounded e.language).find? (·.form = f)
 
-/-- The diagnostic a row names; a negative polarity item needs the strength its Fragment entry
+/-- The diagnostic a row names; a negative polarity item needs the strength its language file entry
 records. -/
 def diagnostic? (e : Datum) : Option Diagnostic :=
   match e.feature? "test" with
@@ -323,7 +321,7 @@ def diagnostic? (e : Datum) : Option Diagnostic :=
   | _ => none
 
 /-- Every row is felicitous exactly when the account predicts it, for the modifier it names, read
-off the Fragment, with its number on a scale whose lowest positive point the row gives. -/
+off the language file, with its number on a scale whose lowest positive point the row gives. -/
 theorem judgment_rows :
     ∀ e ∈ Examples.all, ∃ w ∈ modifier? e, ∃ t ∈ diagnostic? e, ∃ s ∈ e.nat? "scaleBottom",
       ∃ n ∈ e.nat? "numeral", (e.JudgedFelicitous ↔ Felicitous (raised w s n) t) := by

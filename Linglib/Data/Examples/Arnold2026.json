@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "kind",
+      "lean": "kind",
+      "type": "Kind",
+      "doc": "The two kinds of singular *they*.",
+      "levels": [
+        {
+          "name": "underspecified",
+          "label": "underspecified",
+          "doc": "underspecified"
+        },
+        {
+          "name": "personal",
+          "label": "personal",
+          "doc": "personal"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "arnold2026_homework",
     "source": {"bibkey": "arnold-2026", "paperLabel": "§1"},
@@ -270,3 +291,4 @@
     "verified": "page-image"
   }
 ]
+}

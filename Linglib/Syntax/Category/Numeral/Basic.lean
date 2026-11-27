@@ -13,7 +13,7 @@ public import Mathlib.Data.Nat.Notation
 The numeral as a lexical entry: a word and the number it names. The entries of a language are
 its simple numerals, the words its complex numerals are built from, together with the fused
 words that name a number of their own, as English *eleven* and Welsh *pymtheg* 'fifteen' do. A
-fragment lists a language's numerals in two stocks, the digits in counting order and the
+language file lists a language's numerals in two stocks, the digits in counting order and the
 multipliers, the lexicon of a recursive numeral system; whether a fused word is a digit or
 spells out a complex numeral is a question for an analysis.
 

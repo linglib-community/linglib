@@ -3,7 +3,10 @@ module
 public import Mathlib.Algebra.Order.Ring.NNRat
 public import Mathlib.Data.NNRat.BigOperators
 public import Mathlib.MeasureTheory.Measure.AddContent
-public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Semantics.Questions.Hamblin.Modal
+public import Linglib.Semantics.Questions.Hamblin.Exhaustification
+public import Linglib.Semantics.Questions.Inquisitive.Hamblin
+public import Linglib.Semantics.Questions.Inquisitive.OfPartition
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Negation.Polarity
 
@@ -58,7 +61,7 @@ namespace Rouillard2026
 
 open Event (τ)
 
-open Question Aspect MeasureTheory NonemptyInterval Set
+open Question Inquisitive Inquisitive.Proposition Aspect MeasureTheory NonemptyInterval Set
 
 /-! ### Measuring times (§2.2) -/
 
@@ -159,8 +162,8 @@ theorem not_isMIPLicensed_of_not_isLeast {N : Type*} [LinearOrder N] {φ : N →
 theorem isMIPLicensed_of_isGreatest {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictAnti φ) {w : W} (h : ∃ n, IsGreatest {m | w ∈ φ m} n) : IsMIPLicensed φ := by
   obtain ⟨n, hn⟩ :=
-    isExhaustivelyResolvable_range_iff_exists.1
-      ((isExhaustivelyResolvable_range_iff_isGreatest hφ).2 h)
+    hasStrongestTrueAnswer_range_iff_exists.1
+      ((hasStrongestTrueAnswer_range_iff_isGreatest hφ).2 h)
   refine ⟨w, n, hn, fun m hm ↦ hφ.injective (subset_antisymm ?_ ?_)⟩
   exacts [(isStrongestTrueAnswer_range_iff.1 hm).2 n (isStrongestTrueAnswer_range_iff.1 hn).1,
     (isStrongestTrueAnswer_range_iff.1 hn).2 m (isStrongestTrueAnswer_range_iff.1 hm).1]
@@ -168,8 +171,8 @@ theorem isMIPLicensed_of_isGreatest {N : Type*} [LinearOrder N] {φ : N → Set 
 theorem isMIPLicensed_of_isLeast {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictMono φ) {w : W} (h : ∃ n, IsLeast {m | w ∈ φ m} n) : IsMIPLicensed φ := by
   obtain ⟨n, hn⟩ :=
-    isExhaustivelyResolvable_range_iff_exists.1
-      ((isExhaustivelyResolvable_range_iff_isLeast hφ).2 h)
+    hasStrongestTrueAnswer_range_iff_exists.1
+      ((hasStrongestTrueAnswer_range_iff_isLeast hφ).2 h)
   refine ⟨w, n, hn, fun m hm ↦ hφ.injective (subset_antisymm ?_ ?_)⟩
   exacts [(isStrongestTrueAnswer_range_iff.1 hm).2 n (isStrongestTrueAnswer_range_iff.1 hn).1,
     (isStrongestTrueAnswer_range_iff.1 hn).2 m (isStrongestTrueAnswer_range_iff.1 hm).1]
@@ -190,13 +193,13 @@ theorem eTIA_monotone (Q : W → E → Prop) : Monotone (eTIA μ Q) := by
 
 -- (83)
 theorem eTIA_eq_of_hasSubintervalProperty {Q : W → E → Prop}
-    (hQ : HasSubintervalProperty Q) (n m : α) : eTIA μ Q n = eTIA μ Q m := by
+    (hQ : ∀ w, HasSubintervalProperty (Q w)) (n m : α) : eTIA μ Q n = eTIA μ Q m := by
   suffices h : ∀ n m w, w ∈ eTIA μ Q n → w ∈ eTIA μ Q m from
     Set.ext fun w ↦ ⟨h n m w, h m n w⟩
   rintro n m w ⟨-, -, e, he, -⟩
   rcases le_total m (duration μ (τ e)) with hle | hge
   · obtain ⟨l, ⟨hl, hls⟩, hlm⟩ := IsTimeMeasure.exists_Ioc_eq_of_ge (τ e).fst_le_snd hle
-    obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hQ e w he
+    obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 (hQ w) e he
       ⟨⟨l, (τ e).snd⟩, hls⟩ (le_def.2 ⟨hl, le_rfl⟩)
     exact ⟨⟨⟨l, (τ e).snd⟩, hls⟩, hlm, e', he', he'τ.le⟩
   · obtain ⟨l, hl, hlm⟩ := IsTimeMeasure.exists_Ioc_eq_of_le hge
@@ -204,7 +207,7 @@ theorem eTIA_eq_of_hasSubintervalProperty {Q : W → E → Prop}
 
 /-- With an atelic VP, as in *Mary was sick in three days*, the E-TIA is not licensed. -/
 theorem not_isMIPLicensed_eTIA [Nontrivial α] {Q : W → E → Prop}
-    (hQ : HasSubintervalProperty Q) : ¬ IsMIPLicensed (eTIA μ Q) :=
+    (hQ : ∀ w, HasSubintervalProperty (Q w)) : ¬ IsMIPLicensed (eTIA μ Q) :=
   not_isMIPLicensed_of_forall_eq (eTIA_eq_of_hasSubintervalProperty μ hQ)
 
 omit [IsOrderedCancelAddMonoid α] [IsTimeMeasure μ] in
@@ -327,16 +330,16 @@ def uPerfGTIA (P : W → E → Prop) (s : T) (n : α) : Set W :=
   {w | ∃ t, duration μ t = n ∧
     ∃ l < s, Ioo l s ⊆ (t : Set T) ∧ ∃ e, P w e ∧ Ioo l s ⊆ (τ e : Set T)}
 
-theorem hasSubintervalProperty_ePerfFrame {P : W → E → Prop} {s : T}
-    (hP : HasSubintervalProperty P) : HasSubintervalProperty (ePerfFrame P s) :=
-  hasSubintervalProperty_iff_witnesses.2 fun e w ⟨he, l, hei⟩ t ht ↦
-    let ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he t ht
+theorem hasSubintervalProperty_ePerfFrame {P : W → E → Prop} {s : T} {w : W}
+    (hP : HasSubintervalProperty (P w)) : HasSubintervalProperty (ePerfFrame P s w) :=
+  hasSubintervalProperty_iff_witnesses.2 fun e ⟨he, l, hei⟩ t ht ↦
+    let ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e he t ht
     ⟨e', he'τ, he', l, he'τ ▸ (coe_subset_coe.2 ht).trans hei⟩
 
 omit [IsOrderedCancelAddMonoid α] in
 -- (117), (118)
 theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
-    (hP : HasSubintervalProperty P) {n m : α} (hn : 0 < n) (hm : 0 < m) :
+    (hP : ∀ w, HasSubintervalProperty (P w)) {n m : α} (hn : 0 < n) (hm : 0 < m) :
     eTIA μ (uPerfFrame P s) n = eTIA μ (uPerfFrame P s) m := by
   suffices h : ∀ n m : α, 0 < m → ∀ w, w ∈ eTIA μ (uPerfFrame P s) n →
       w ∈ eTIA μ (uPerfFrame P s) m from Set.ext fun w ↦ ⟨h n m hm w, h m n hn w⟩
@@ -345,7 +348,7 @@ theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
   have hse := (isLUB_Ioo hls).2 fun _ hx ↦ (hle hx).2
   obtain ⟨l', -, hl'm⟩ := IsTimeMeasure.exists_Ioc_eq μ s m
   have hl's : l' < s := IsTimeMeasure.pos_iff.1 (hm.trans_eq hl'm.symm)
-  obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he
+  obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 (hP w) e he
     ⟨⟨max l l', s⟩, (max_lt hls hl's).le⟩ (le_def.2 ⟨hel.trans (le_max_left _ _), hse⟩)
   exact ⟨⟨⟨l', s⟩, hl's.le⟩, hl'm, e', ⟨he', max l l', max_lt hls hl's,
     he'τ ▸ Ioo_subset_Icc_self⟩, he'τ ▸ le_def.2 ⟨le_max_right _ _, le_rfl⟩⟩
@@ -391,13 +394,14 @@ private instance [NoMaxOrder α] : Nontrivial {n : α // 0 < n} :=
 
 -- Table 1
 theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → E → Prop} {s : T}
-    (hP : HasSubintervalProperty P) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
+    (hP : ∀ w, HasSubintervalProperty (P w)) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (h : (pol, a, v) ≠ (.negative, .gap, .pfv)) : ¬ IsMIPLicensed (reading μ P s pol a v) := by
   have hconst : ∀ a v, (a, v) ≠ (.gap, .pfv) → ∀ n m : {n : α // 0 < n},
       positiveReading μ P s a v n = positiveReading μ P s a v m := by
     rintro a v h ⟨n, hn⟩ ⟨m, hm⟩
     cases a <;> cases v
-    · exact eTIA_eq_of_hasSubintervalProperty μ (hasSubintervalProperty_ePerfFrame hP) n m
+    · exact eTIA_eq_of_hasSubintervalProperty μ
+        (fun w ↦ hasSubintervalProperty_ePerfFrame (hP w)) n m
     · exact eTIA_uPerfFrame_eq μ hP hn hm
     · exact absurd rfl h
     · exact uPerfGTIA_eq μ hn hm

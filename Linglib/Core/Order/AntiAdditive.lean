@@ -120,8 +120,7 @@ variable {δ : Type*}
 
 theorem isAntiAdditive_iff_mem {f : Set γ → Set δ} :
     IsAntiAdditive f ↔ ∀ p q x, x ∈ f (p ∪ q) ↔ x ∈ f p ∧ x ∈ f q := by
-  simp only [IsAntiAdditive, Set.sup_eq_union, Set.inf_eq_inter, Set.ext_iff,
-    Set.mem_inter_iff]
+  simp only [IsAntiAdditive, Set.ext_iff, Set.mem_inter_iff]
 
 /-- The polar of a relation is anti-additive: what is related to everything in a union is
 related to everything in each part. -/

@@ -206,7 +206,7 @@ theorem defaultAspectualClass_eq {α T : Type*} (d : ScalarDimension) (m : α �
   simp only [Boundedness.ofOrder_Ici, Boundedness.ofOrder_degreeShape]
   rfl
 
-/-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
+/-- The adjective–verb pairs of the language file are *clean*, *dry*, *straight*, *flat* and *open*
 with scales closed above, *bent* with one closed only below, and *long*, *wide*, *cool* and
 *warm* with open ones. -/
 def pairs : List (Adjective × Verb) :=

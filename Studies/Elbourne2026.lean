@@ -8,7 +8,7 @@ public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.Constituency
 public import Linglib.Semantics.Composition.Sorts
 public import Linglib.Semantics.Modification.Intensional
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Powerset
 
@@ -393,7 +393,7 @@ theorem everyone_entered_a_local_bar [LT I] (person bar : I → E → Prop)
 
 /-! ### Replies to criticisms -/
 
-/-- *former*, the fragment's non-subsective adjective, and some intersective adjective give
+/-- *former*, the language file's non-subsective adjective, and some intersective adjective give
 different meanings in their two orders, as *presumpte* 'alleged' and *jove* 'young' do in *jove
 presumpte assassí* (92a) and *presumpte jove assassí* (92b). An adjective commutes with every
 intersective one just when it is intersective itself, so the difference is one of scope between

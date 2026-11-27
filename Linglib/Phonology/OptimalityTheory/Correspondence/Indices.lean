@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Ident
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.List.OfFn
 public import Mathlib.Algebra.BigOperators.Fin

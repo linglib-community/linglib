@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 
 /-!
 # Cohen (1999): Think Generic!
@@ -158,13 +158,13 @@ theorem homogeneous_iff (hψ : MeasurableSet ψ) (hφ : MeasurableSet φ) :
   · by_cases h0 : μ (ψ ∩ φ) = 0
     · exact .inl (by rw [cond_apply hψ, h0, mul_zero])
     · rw [← h φ hφ h0]
-      exact .inr ((cond_apply_eq_one_iff (hψ.inter hφ) hφ h0).2 inter_subset_right.eventuallyLE)
+      exact .inr ((cond_apply_eq_one_iff (hψ.inter hφ) hφ h0).2 inter_subset_right.eventuallySubset)
   · rintro (h | h) ω hω hc
     · rw [h, cond_apply_eq_zero_iff (hψ.inter hω)]
-      exact inter_subset_left.eventuallyLE.trans ((cond_apply_eq_zero_iff hψ).1 h)
+      exact inter_subset_left.eventuallySubset.trans ((cond_apply_eq_zero_iff hψ).1 h)
     · have hc' : μ ψ ≠ 0 := fun h0 ↦ hc (measure_mono_null inter_subset_left h0)
       rw [h, cond_apply_eq_one_iff (hψ.inter hω) hφ hc]
-      exact inter_subset_left.eventuallyLE.trans ((cond_apply_eq_one_iff hψ hφ hc').1 h)
+      exact inter_subset_left.eventuallySubset.trans ((cond_apply_eq_one_iff hψ hφ hc').1 h)
 
 /-! ### Salient partitions -/
 

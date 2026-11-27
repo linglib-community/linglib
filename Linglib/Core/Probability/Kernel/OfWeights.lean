@@ -37,8 +37,7 @@ private theorem uniformOn_mul_uniformOn_apply_singleton [MeasurableSingletonClas
       if b ∈ A ∩ B then ((A.card : ℝ≥0∞) * B.card)⁻¹ else 0 := by
   rw [← Finset.coe_singleton, uniformOn_apply_finset, uniformOn_apply_finset]
   by_cases hA : b ∈ A <;> by_cases hB : b ∈ B <;>
-    simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, hA, hB,
-      ENNReal.mul_inv, div_eq_mul_inv]
+    simp [Finset.inter_singleton_of_notMem, hA, hB, ENNReal.mul_inv, div_eq_mul_inv]
 
 variable [Countable α] [MeasurableSingletonClass α] [Fintype β]
 

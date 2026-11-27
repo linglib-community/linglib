@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.TemporalDeictic
+public import Linglib.Languages.English.TemporalDeictic
 public import Linglib.Data.Examples.AnandToosarvandani2019
 public import Linglib.Data.Examples.Readers
 
@@ -34,6 +34,8 @@ in (7) and (36b) is the aspectual constraint of Partee's (6), outside the accoun
 @[expose] public section
 
 namespace AnandToosarvandani2019
+
+open Examples (Position)
 
 open Tense Tense.Perspective
 open scoped Denotes
@@ -115,12 +117,6 @@ theorem eq_of_cats_of_presup_then (h : Cats a u τ₀)
   exact ⟨by rw [← hfst]; exact a.fst_le_snd, by rw [hfst]; exact τ₀.fst_le_snd⟩
 
 /-! ### Position (sections 4 and 6) -/
-
-/-- The position of a demonstrative in its sentence. -/
-inductive Position where
-  | initial
-  | final
-  deriving DecidableEq
 
 /-- The positions, relative to the time of the preceding sentence, of the intervals a
 sentence-initial demonstrative may pick out: a later time by Narration as Default (33), an earlier
@@ -312,7 +308,7 @@ def anteriorOf (row : Datum) : Bool := row.feature? "anterior" == some "yes"
 overlapping reading, the aspect of the sentences allows overlap, as in Partee's (6). -/
 theorem accepted_iff_admits : ∀ row ∈ Examples.all,
     ∀ d ∈ row.parse? "demonstrative" [("now", Demonstrative.now), ("then", .then)],
-    ∀ p ∈ row.parse? "position" [("initial", Position.initial), ("final", .final)],
+    ∀ p ∈ (Examples.position row),
     ∀ reading ∈ row.readings, ∀ o ∈ readingRelation.lookup reading.1,
       (reading.2 = .acceptable ↔ Admits d p (sisterOf row) (anteriorOf row) o ∧
         ¬ (row.feature? "aspect" = some "state cannot overlap" ∧ o = .eq)) := by

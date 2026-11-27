@@ -1,32 +1,21 @@
 module
 
-public import Mathlib.Data.Finset.Basic
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Kripke
 
 /-!
-# Kripke models
+# Teams on Kripke models
 
-A Kripke model gives each world the finite set of worlds it accesses and each atom the worlds
-at which it is true. BSML and modal dependence and inclusion logic evaluate formulas on these
-models, and InqML on the inquisitive models they induce. `KripkeModel.accessible` reads the
-successor sets as the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take.
+BSML and modal dependence and inclusion logic evaluate formulas on a team of worlds of a Kripke
+model (`Logic/Modal/Kripke.lean`), and InqML on the inquisitive models they induce. A pointed
+team model, `ModalLogic.PointedTeam`, is a Kripke model with a team on it.
 
 The file also states Aloni's two conditions on a successor function relative to a team, which
-distinguish epistemic from deontic modals: indisputability, that every world of the team sees the
-same worlds, and state-basedness, that every world of the team sees exactly the team.
-
-## Main definitions
-
-* `ModalLogic.KripkeModel`, with the accessibility relation `KripkeModel.accessible`.
-* `ModalLogic.PointedTeam`: a Kripke model with a team on it.
-* `Team.IsIndisputable`, `Team.IsStateBased`: the conditions of [aloni-2022] Definition 5.
+distinguish epistemic from deontic modals: indisputability, `Team.IsIndisputable`, that every
+world of the team sees the same worlds, and state-basedness, `Team.IsStateBased`, that every
+world of the team sees exactly the team ([aloni-2022] Definition 5).
 
 ## Implementation notes
 
-The sources take any relation `R ⊆ W × W` and a valuation `V : X → ℘(W)`
-([aloni-anttila-yang-2024] Definition 2.2). Successor sets here are `Finset`s, since the team
-clauses evaluate subformulas on `R[w]` as a team; frames are therefore image-finite. The
-valuation is `Prop`-valued, and decision procedures for support take `[DecidableRel M.val]`.
 Aloni's conditions are not closed under bisimulation ([aloni-2022] fn. 21): they are
 [not invariant at any depth](##ModalLogic.not_boundedBisimInvariant_setOf_isIndisputable), so no
 team logic defines them. [anttila-2021] Definition 3.3.1 (p. 46) restates them up to
@@ -46,53 +35,6 @@ bisimilarity of the successor sets.
 universe u
 
 namespace ModalLogic
-
-/-- A **Kripke model** over worlds `W` and atoms `Atom` has successor sets and a valuation. -/
-structure KripkeModel (W : Type*) (Atom : Type*) where
-  /-- `access w` is the set of worlds accessible from `w`. -/
-  access : W → Finset W
-  /-- `val p w` says that the atom `p` is true at the world `w`. -/
-  val : Atom → W → Prop
-
-variable {W W' : Type*} {Atom : Type*}
-
-/-- The disjoint union of two Kripke models. -/
-def KripkeModel.sum (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) :
-    KripkeModel (W ⊕ W') Atom where
-  access := Sum.elim (fun w ↦ (M.access w).map .inl) (fun w ↦ (M'.access w).map .inr)
-  val p := Sum.elim (M.val p) (M'.val p)
-
-section Sum
-
-variable {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
-
-@[simp] theorem KripkeModel.sum_access_inl (w : W) :
-    (M.sum M').access (.inl w) = (M.access w).map .inl := rfl
-
-@[simp] theorem KripkeModel.sum_access_inr (w : W') :
-    (M.sum M').access (.inr w) = (M'.access w).map .inr := rfl
-
-@[simp] theorem KripkeModel.sum_val_inl (p : Atom) (w : W) :
-    (M.sum M').val p (.inl w) ↔ M.val p w := .rfl
-
-@[simp] theorem KripkeModel.sum_val_inr (p : Atom) (w : W') :
-    (M.sum M').val p (.inr w) ↔ M'.val p w := .rfl
-
-end Sum
-
-open SetRel in
-/-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
-This is the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take. -/
-def KripkeModel.accessible (M : KripkeModel W Atom) : SetRel W W :=
-  .ofSuccessors fun w ↦ ↑(M.access w)
-
-open SetRel in
-@[simp] theorem KripkeModel.mem_accessible {M : KripkeModel W Atom} {w v : W} :
-    w ~[M.accessible] v ↔ v ∈ M.access w := .rfl
-
-open SetRel in
-instance [DecidableEq W] (M : KripkeModel W Atom) (w v : W) : Decidable (w ~[M.accessible] v) :=
-  inferInstanceAs (Decidable (v ∈ M.access w))
 
 /-- A **pointed team model** is a Kripke model with a team on it, the pointed state model of
 [anttila-2025] (p. 23); a class of them is a state property (Definition 2.3.9). -/

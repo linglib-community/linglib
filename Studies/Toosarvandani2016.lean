@@ -1,8 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Toosarvandani2016
-public import Linglib.Semantics.Aspect.Viewpoint
-public import Linglib.Syntax.Clause.Chaining
+public import Linglib.Semantics.Aspect.Viewpoint.Basic
 public import Linglib.Data.Examples.Readers
 
 /-!
@@ -20,12 +19,12 @@ sequential marked clauses are not ordered at all (§4.3).
 
 ## Implementation notes
 
-The suffixes are a `MedialForm` whose timing is their relative tense, each marked clause evaluated
-against the unmarked clause rather than the next one. The aspects are `Aspect.Perfectivity`, the
-opposition the simultaneous suffix selects on, and the imperfective has the progressive's meaning,
-overt (35) or null (41), which the unmarked clause of (39), glossed IPFV, is taken to share. The
-contexts are configurations of run times on the natural numbers; the truth conditions compare
-endpoints, so they hold there as on any dense copy. Narrative progression (§5) is not formalized.
+Each marked clause is evaluated against the unmarked clause rather than the next one. The aspects
+are `Aspect.Perfectivity`, the opposition the simultaneous suffix selects on, and the imperfective
+has the progressive's meaning, overt (35) or null (41), which the unmarked clause of (39), glossed
+IPFV, is taken to share. The contexts are configurations of run times on the natural numbers; the
+truth conditions compare endpoints, so they hold there as on any dense copy. Narrative progression
+(§5) is not formalized.
 
 ## References
 
@@ -36,42 +35,29 @@ endpoints, so they hold there as on any dense copy. Narrative progression (§5) 
 
 namespace Toosarvandani2016
 
+open Examples (Suffix)
+
 open Event (τ)
 open Aspect (Perfectivity)
 open scoped SetRel
 
 /-! ### Aspect and relative tense -/
 
-/-- The cell of an aspect, the reference time first: within a nonfinal subpart of the event time
-for the imperfective, whose meaning is the progressive's (35), (41), and around it for the
-perfective (36). -/
+/-- The cell of an aspect says how the event time stands to the reference time: the reference
+time is within a nonfinal subpart of the event time for the imperfective, whose meaning is the
+progressive's (35), (41), and around the event time for the perfective (36). -/
 def cell : Perfectivity → IntervalAlgebra
-  | .imperfective => IntervalAlgebra.nonfinalSubinterval
+  | .imperfective => IntervalAlgebra.nonfinalSubinterval⁻¹
   | .perfective => Aspect.ViewpointType.perfective.cell
-
-/-- The suffixes of a marked clause, the simultaneous *-na* and the sequential *-si*. -/
-inductive Suffix where
-  | sim
-  | seq
-  deriving DecidableEq, Repr, Fintype
 
 /-- The relative tense of a suffix, the reference time of the marked clause first: around its
 evaluation time (38) or before it (46). -/
-def Suffix.timing : Suffix → IntervalAlgebra
+def Examples.Suffix.timing : Suffix → IntervalAlgebra
   | .sim => IntervalAlgebra.le⁻¹
   | .seq => IntervalAlgebra.precedes
 
-/-- The suffixes are medial forms that mark no switch-reference, which Northern Paiute lacks. -/
-instance : MedialForm Suffix where
-  sr _ := none
-  relations
-    | .sim => {.simultaneous}
-    | .seq => {.sequential}
-  timing := Suffix.timing
-  IndexesSubject _ := False
-
 /-- The simultaneous suffix selects the imperfective, the sequential suffix either aspect (40). -/
-def Suffix.Selects : Suffix → Perfectivity → Prop
+def Examples.Suffix.Selects : Suffix → Perfectivity → Prop
   | .sim, p => p = .imperfective
   | .seq, _ => True
 
@@ -83,25 +69,24 @@ section
 
 variable {T : Type*} [LinearOrder T] {t₁ t s : NonemptyInterval T}
 
-@[simp] theorem mem_cell_imperfective :
-    (s, t) ∈ IntervalAlgebra.toSetRel (cell .imperfective) ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
+@[simp] theorem relation_mem_cell_imperfective :
+    Allen.relation s t ∈ cell .imperfective ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
   simp [cell, NonemptyInterval.NonfinalSubinterval]
 
-@[simp] theorem mem_cell_perfective :
-    (s, t) ∈ IntervalAlgebra.toSetRel (cell .perfective) ↔ t.fst ≤ s.fst ∧ s.snd ≤ t.snd := by
+@[simp] theorem relation_mem_cell_perfective :
+    Allen.relation s t ∈ cell .perfective ↔ t.fst ≤ s.fst ∧ s.snd ≤ t.snd := by
   rw [show cell .perfective = Aspect.ViewpointType.perfective.cell from rfl,
-    ← Aspect.ViewpointType.ttTSitRelation_iff]
+    Aspect.ViewpointType.relation_mem_cell_perfective]
   exact NonemptyInterval.le_def
 
 @[simp] theorem mem_timing_sim :
-    (t, t₁) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.sim) ↔ t₁.fst ≤ t.fst ∧ t.snd ≤
-      t₁.snd := by
-  change (t, t₁) ∈ IntervalAlgebra.toSetRel IntervalAlgebra.le⁻¹ ↔ _
+    (t, t₁) ∈ IntervalAlgebra.toSetRel Suffix.sim.timing ↔ t₁.fst ≤ t.fst ∧ t.snd ≤ t₁.snd := by
+  rw [Suffix.timing]
   simp [NonemptyInterval.le_def]
 
 @[simp] theorem mem_timing_seq :
-    (t, t₁) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.seq) ↔ t₁.snd < t.fst := by
-  change (t, t₁) ∈ IntervalAlgebra.toSetRel .precedes ↔ _
+    (t, t₁) ∈ IntervalAlgebra.toSetRel Suffix.seq.timing ↔ t₁.snd < t.fst := by
+  rw [Suffix.timing]
   simp [NonemptyInterval.Precedes]
 
 end
@@ -112,10 +97,11 @@ section
 
 variable {T : Type*} [LinearOrder T] {W E : Type*} [TemporalTrace E T]
 
+open ModalLogic in
 /-- The operator of an aspect: the reference times at which it places an event of the
 predicate. -/
-def denote (p : Perfectivity) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  Aspect.ofRel (fun t s ↦ (s, t) ∈ IntervalAlgebra.toSetRel (cell p)) P
+def denote (p : Perfectivity) (P : E → Prop) : NonemptyInterval T → Prop :=
+  ◇[IntervalAlgebra.toSetRel (cell p)] (Event.runTimes P)
 
 /-- A marked clause: its suffix, its aspect and its predicate of events. -/
 structure Marked (W E : Type*) where
@@ -131,8 +117,8 @@ structure Marked (W E : Type*) where
 stands to `t` as the clause's suffix says (56). -/
 def Holds (cs : List (Marked W E × NonemptyInterval T)) (b : Perfectivity) (Q : W → E → Prop)
     (w : W) (t : NonemptyInterval T) : Prop :=
-  (∀ c ∈ cs, c.2 ∈ denote c.1.aspect c.1.pred w ∧
-    (t, c.2) ∈ IntervalAlgebra.toSetRel (MedialForm.timing c.1.suffix)) ∧ t ∈ denote b Q w
+  (∀ c ∈ cs, denote c.1.aspect (c.1.pred w) c.2 ∧
+    (t, c.2) ∈ IntervalAlgebra.toSetRel c.1.suffix.timing) ∧ denote b (Q w) t
 
 /-- The truth of a chain does not depend on the order of its marked clauses. -/
 theorem holds_perm {cs cs' : List (Marked W E × NonemptyInterval T)} (h : cs.Perm cs')
@@ -150,8 +136,8 @@ variable {T : Type*} [LinearOrder T]
 unmarked clause of aspect `b`: through the reference times of the two clauses. -/
 def eventRel (s : Suffix) (a b : Perfectivity) :
     SetRel (NonemptyInterval T) (NonemptyInterval T) :=
-  IntervalAlgebra.toSetRel (cell a) ○ (IntervalAlgebra.toSetRel (MedialForm.timing s)).inv ○
-    (IntervalAlgebra.toSetRel (cell b)).inv
+  (IntervalAlgebra.toSetRel (cell a)).inv ○ (IntervalAlgebra.toSetRel s.timing).inv ○
+    IntervalAlgebra.toSetRel (cell b)
 
 /-- The truth condition of a chain with one marked clause on the run times `i` of its marked event
 and `j` of its unmarked event. -/
@@ -179,9 +165,9 @@ theorem mem_eventRel_iff [DenselyOrdered T] {i j : NonemptyInterval T} {s : Suff
   have hi := i.fst_le_snd
   have hj := j.fst_le_snd
   cases s <;> cases a <;> cases b <;>
-    simp only [eventRel, SetRel.mem_comp, SetRel.mem_inv, mem_cell_imperfective,
-      mem_cell_perfective, mem_timing_sim, mem_timing_seq, TruthCondition,
-      NonemptyInterval.Precedes]
+    simp only [eventRel, SetRel.mem_comp, SetRel.mem_inv, mem_timing_sim, mem_timing_seq] <;>
+    simp only [IntervalAlgebra.mem_toSetRel, relation_mem_cell_imperfective,
+      relation_mem_cell_perfective, TruthCondition, NonemptyInterval.Precedes]
   · exact ⟨fun _ ↦ trivial, fun _ ↦ ⟨j, ⟨i ⊔ j, NonemptyInterval.le_def.1 le_sup_left,
       NonemptyInterval.le_def.1 le_sup_right⟩, le_rfl, le_rfl⟩⟩
   · constructor
@@ -250,7 +236,7 @@ the truth condition of its suffix and aspects. -/
 theorem exists_holds_iff :
     (∃ t₁ t : NonemptyInterval T, Holds [(⟨s, a, P⟩, t₁)] b Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e, τ e') ∈ eventRel s a b := by
-  simp only [Holds, eventRel, denote, List.mem_singleton, forall_eq, Aspect.mem_ofRel,
+  simp only [Holds, eventRel, denote, List.mem_singleton, forall_eq, Event.diamond_runTimes_iff,
     SetRel.mem_comp, SetRel.mem_inv]
   constructor
   · rintro ⟨t₁, t, ⟨⟨e, h₁, hP⟩, h₂⟩, e', h₃, hQ⟩
@@ -280,8 +266,8 @@ end
 /-- Any two times precede a common later one. -/
 theorem sequential_unordered {T : Type*} [LinearOrder T] [NoMaxOrder T]
     (t₁ t₂ : NonemptyInterval T) :
-    ∃ t, (t, t₁) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.seq) ∧
-      (t, t₂) ∈ IntervalAlgebra.toSetRel (MedialForm.timing Suffix.seq) := by
+    ∃ t, (t, t₁) ∈ IntervalAlgebra.toSetRel Suffix.seq.timing ∧
+      (t, t₂) ∈ IntervalAlgebra.toSetRel Suffix.seq.timing := by
   obtain ⟨b, hb⟩ := exists_gt (max t₁.snd t₂.snd)
   exact ⟨.pure b, mem_timing_seq.2 ((le_max_left _ _).trans_lt hb),
     mem_timing_seq.2 ((le_max_right _ _).trans_lt hb)⟩
@@ -333,7 +319,7 @@ def events : List (String × Ev) :=
 
 /-- The configuration of a row, read from its stimulus columns. -/
 def config (e : Datum) : Option Config := do
-  let s ← e.parse? "suffix" [("sim", .sim), ("seq", .seq)]
+  let s ← (Examples.suffix e)
   let a ← e.parse? "aspect" aspects
   let b ← e.parse? "unmarkedAspect" aspects
   let u ← e.parse? "unmarkedEvent" events

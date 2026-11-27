@@ -148,7 +148,7 @@ theorem length_binaryRules_application_sum_predicateModification_le_one [Decidab
     symbols_predicateModification, Application.rules, PredicateModification.rules,
     List.length_append, List.length_map]
   rcases l with _ | _ | ⟨a, b⟩ | _ <;> rcases r with _ | _ | ⟨c, d⟩ | _ <;>
-    (try rcases b with _ | _ | _ | _) <;> simp <;> split_ifs <;> (try simp) <;>
+    (try rcases b with _ | _ | _ | _) <;> simp <;> split_ifs <;> simp <;>
     first
     | exact Ty.ne_fn_fn_self _ _ _ _ (by assumption) (by assumption)
     | (obtain ⟨rfl, rfl⟩ := ‹_ ∧ _›; exact Ty.ne_fn_self _ _ (by assumption))

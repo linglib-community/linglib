@@ -1,0 +1,588 @@
+{
+  "features": [
+    {
+      "key": "clause",
+      "lean": "clause",
+      "type": "Clause",
+      "doc": "The clause types whose perfect auxiliary the paper compares (§3.1).",
+      "levels": [
+        {
+          "name": "transitive",
+          "label": "transitive",
+          "doc": "a transitive verb with canonical arguments"
+        },
+        {
+          "name": "unergative",
+          "label": "unergative",
+          "doc": "an unergative verb"
+        },
+        {
+          "name": "unaccusative",
+          "label": "unaccusative",
+          "doc": "an unaccusative verb"
+        },
+        {
+          "name": "directReflexive",
+          "label": "directReflexive",
+          "doc": "a reflexive clitic as the direct object"
+        },
+        {
+          "name": "indirectReflexive",
+          "label": "indirectReflexive",
+          "doc": "a reflexive clitic as the indirect object"
+        },
+        {
+          "name": "impersonal",
+          "label": "impersonal",
+          "doc": "the impersonal pronoun si"
+        }
+      ]
+    },
+    {
+      "key": "construction",
+      "lean": "construction",
+      "type": "Construction",
+      "doc": "The Icelandic DAT-NOM constructions the paper compares (§4.1.2).",
+      "levels": [
+        {
+          "name": "monoclausal",
+          "label": "monoclausal",
+          "doc": "the dative and the nominative are arguments of one clause"
+        },
+        {
+          "name": "biclausal",
+          "label": "biclausal",
+          "doc": "the nominative is the subject of an embedded non-finite clause"
+        }
+      ]
+    },
+    {
+      "key": "agreement",
+      "lean": "agreement",
+      "type": "Agreement",
+      "doc": "The form of the finite verb.",
+      "levels": [
+        {
+          "name": "number",
+          "label": "number",
+          "doc": "the verb agrees in number with the plural nominative"
+        },
+        {
+          "name": "default",
+          "label": "default",
+          "doc": "the verb is in the default third person singular"
+        }
+      ]
+    },
+    {
+      "key": "marking",
+      "lean": "marking",
+      "type": "Marking",
+      "doc": "The case marking of the arguments of the Hindi-Urdu clauses (§4.3.1).",
+      "levels": [
+        {
+          "name": "ergSubject",
+          "label": "ergSubject",
+          "doc": "the subject is ergative and the object unmarked"
+        },
+        {
+          "name": "bothMarked",
+          "label": "bothMarked",
+          "doc": "the subject is ergative and the object bears ko"
+        },
+        {
+          "name": "unmarkedSubject",
+          "label": "unmarkedSubject",
+          "doc": "the subject is unmarked"
+        }
+      ]
+    },
+    {
+      "key": "controller",
+      "lean": "controller",
+      "type": "Controller",
+      "doc": "The argument whose features the form of the verb shows.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the subject"
+        },
+        {
+          "name": "object",
+          "label": "object",
+          "doc": "the object"
+        },
+        {
+          "name": "default",
+          "label": "default",
+          "doc": "neither: the verb is in its default form"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "auxiliary",
+          "label": "auxiliary",
+          "doc": "the word holding the perfect auxiliary"
+        },
+        {
+          "name": "wh",
+          "label": "wh",
+          "doc": "a fronted wh-phrase"
+        },
+        {
+          "name": "participle",
+          "label": "participle",
+          "doc": "the past participle of the verb"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The perfect auxiliaries, the verbs of the Italian examples and the wh-words.",
+      "levels": [
+        {
+          "name": "avere",
+          "label": "avere",
+          "doc": "avere 'have'"
+        },
+        {
+          "name": "essere",
+          "label": "essere",
+          "doc": "essere 'be'"
+        },
+        {
+          "name": "koj",
+          "label": "koj",
+          "doc": "Bulgarian koj 'who', nominative"
+        },
+        {
+          "name": "kogo",
+          "label": "kogo",
+          "doc": "Bulgarian kogo 'whom', accusative"
+        },
+        {
+          "name": "lavare",
+          "label": "lavare",
+          "doc": "lavare 'wash'"
+        },
+        {
+          "name": "rispondere",
+          "label": "rispondere",
+          "doc": "rispondere 'answer'"
+        },
+        {
+          "name": "venire",
+          "label": "venire",
+          "doc": "venire 'come'"
+        },
+        {
+          "name": "mangiare",
+          "label": "mangiare",
+          "doc": "mangiare 'eat'"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The examples of the file."
+  },
+  "examples": [
+    {
+      "id": "amato2025_4a",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(4a)"},
+      "language": "ital1282",
+      "primaryText": "Teresa ha lavato le camicie.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["ha", "have.PRS.3SG"], ["lavato", "wash.PRTC"], ["le", "the"],
+        ["camicie.", "shirts"]
+      ],
+      "translation": "Teresa has washed the shirts.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "avere"},
+        {"start": 2, "label": "participle", "lexeme": "lavare"}
+      ],
+      "paperFeatures": [
+        ["clause", "transitive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_4b",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(4b)"},
+      "language": "ital1282",
+      "primaryText": "Teresa ha risposto a sua madre.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["ha", "have.PRS.3SG"], ["risposto", "answer.PRTC"], ["a", "at"],
+        ["sua", "her"], ["madre.", "mother"]
+      ],
+      "translation": "Teresa answered her mother.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "avere"},
+        {"start": 2, "label": "participle", "lexeme": "rispondere"}
+      ],
+      "paperFeatures": [
+        ["clause", "unergative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_4c",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(4c)"},
+      "language": "ital1282",
+      "primaryText": "Teresa è venut-a alla festa.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["è", "be.PRS.3SG"], ["venut-a", "come.PRTC-SG.F"], ["alla", "to.the"],
+        ["festa.", "party"]
+      ],
+      "translation": "Teresa has come to the party.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "venire"}
+      ],
+      "paperFeatures": [
+        ["clause", "unaccusative"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5a",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5a)"},
+      "language": "ital1282",
+      "primaryText": "Teresa si=è lavat-a.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["si=è", "REFL.ACC.3SG=be.PRS.3SG"], ["lavat-a.", "wash.PRTC-SG.F"]
+      ],
+      "translation": "Teresa washed herself.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "lavare"}
+      ],
+      "paperFeatures": [
+        ["clause", "directReflexive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5b",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5b)"},
+      "language": "ital1282",
+      "primaryText": "Teresa si=è lavat-a il vestito.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["si=è", "REFL.DAT.3SG=be.PRS.3SG"], ["lavat-a", "wash.PRTC-SG.F"],
+        ["il", "the"], ["vestito.", "dress"]
+      ],
+      "translation": "Teresa washed her dress (for herself).",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "lavare"}
+      ],
+      "paperFeatures": [
+        ["clause", "indirectReflexive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5c",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5c)"},
+      "language": "ital1282",
+      "primaryText": "Teresa si=è rispost-a.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Teresa", "Teresa"], ["si=è", "REFL.DAT.3SG=be.PRS.3SG"],
+        ["rispost-a.", "answer.PRTC-SG.F"]
+      ],
+      "translation": "Teresa has answered herself.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "rispondere"}
+      ],
+      "paperFeatures": [
+        ["clause", "indirectReflexive"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_5d",
+      "source": {"bibkey": "amato-2025", "paperLabel": "(5d)"},
+      "language": "ital1282",
+      "primaryText": "Ieri si=è mangiato il gelato.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Ieri", "yesterday"], ["si=è", "IMPERS=be.PRS.3SG"], ["mangiato", "eat.PRTC"],
+        ["il", "the"], ["gelato.", "ice_cream"]
+      ],
+      "translation": "Yesterday one has eaten the ice cream.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "label": "auxiliary", "lexeme": "essere"},
+        {"start": 2, "label": "participle", "lexeme": "mangiare"}
+      ],
+      "paperFeatures": [
+        ["clause", "impersonal"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29a_pl",
+      "source": {"bibkey": "ussery-2009", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29a)"},
+      "language": "icel1247",
+      "primaryText": "Það líka sumum stelpunum peningarnir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "expl"], ["líka", "like.3pl"], ["sumum", "some"], ["stelpunum", "girls.Dat"],
+        ["peningarnir.", "money-the.Nom.pl"]
+      ],
+      "translation": "There like some girls the money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "monoclausal"],
+        ["agreement", "number"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29a_sg",
+      "source": {"bibkey": "ussery-2009", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29a)"},
+      "language": "icel1247",
+      "primaryText": "Það líkar sumum stelpunum peningarnir.",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "expl"], ["líkar", "like.3sg"], ["sumum", "some"], ["stelpunum", "girls.Dat"],
+        ["peningarnir.", "money-the.Nom.pl"]
+      ],
+      "translation": "There like some girls the money.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "monoclausal"],
+        ["agreement", "default"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29b_sg",
+      "source": {"bibkey": "holmberg-hroarsdottir-2003", "paperLabel": "(12a)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29b)"},
+      "method": "elicitation",
+      "language": "icel1247",
+      "primaryText": "Það virðist einhverjum manni hestarnir vera seinir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "EXPL"], ["virðist", "seemSG"], ["einhverjum", "some"], ["manni", "manDAT"],
+        ["hestarnir", "the_horsesNOM"], ["vera", "be"], ["seinir", "slowNOM"]
+      ],
+      "translation": "A man finds the horses slow",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "biclausal"],
+        ["agreement", "default"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_29b_pl",
+      "source": {"bibkey": "holmberg-hroarsdottir-2003", "paperLabel": "(12b)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(29b)"},
+      "method": "elicitation",
+      "language": "icel1247",
+      "primaryText": "Það virðast einhverjum manni hestarnir vera seinir",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Það", "EXPL"], ["virðast", "seemPL"], ["einhverjum", "some"], ["manni", "manDAT"],
+        ["hestarnir", "the_horsesNOM"], ["vera", "be"], ["seinir", "slowNOM"]
+      ],
+      "translation": "A man finds the horses slow",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["construction", "biclausal"],
+        ["agreement", "number"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_35",
+      "source": {"bibkey": "rudin-1988", "paperLabel": "(5a)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(35)"},
+      "language": "bulg1262",
+      "primaryText": "Koj kogo vižda?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Koj", "who"], ["kogo", "whom"], ["vižda?", "sees"]
+      ],
+      "translation": "Who sees whom?",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "wh", "lexeme": "koj"},
+        {"start": 1, "label": "wh", "lexeme": "kogo"}
+      ],
+      "paperFeatures": [],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_35_reverse",
+      "source": {"bibkey": "rudin-1988", "paperLabel": "(54b)"},
+      "language": "bulg1262",
+      "primaryText": "Kogo koj vižda?",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["Kogo", "whom"], ["koj", "who"], ["vižda?", "sees"]
+      ],
+      "translation": "Who sees whom?",
+      "context": "",
+      "judgment": "ungrammatical",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 0, "label": "wh", "lexeme": "kogo"},
+        {"start": 1, "label": "wh", "lexeme": "koj"}
+      ],
+      "paperFeatures": [],
+      "comment": "The source prints the words without a gloss line; the glosses are those of its (5a).",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_37",
+      "source": {"bibkey": "mahajan-1990", "paperLabel": "(5)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(37)"},
+      "language": "hind1269",
+      "primaryText": "raam-ne roTii khaayii thii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["raam-ne", "Ram(m.)-erg."], ["roTii", "bread(f.)"], ["khaayii", "eat(perf.f.)"],
+        ["thii", "be(pst.f.)"]
+      ],
+      "translation": "Ram had eaten bread.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["marking", "ergSubject"],
+        ["controller", "object"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_38a",
+      "source": {"bibkey": "mahajan-1990", "paperLabel": "(6)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(38a)"},
+      "language": "hind1269",
+      "primaryText": "baccoN-ne siitaa-ko dekhaa thaa",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["baccoN-ne", "children(m.)-erg."], ["siitaa-ko", "Sita(f.)-dat."],
+        ["dekhaa", "see(perf.m.sg.)"], ["thaa", "be(pst.m.sg.)"]
+      ],
+      "translation": "The children had seen Sita.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["marking", "bothMarked"],
+        ["controller", "default"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "amato2025_38b",
+      "source": {"bibkey": "mahajan-1990", "paperLabel": "(4)"},
+      "reportedIn": {"bibkey": "amato-2025", "paperLabel": "(38b)"},
+      "language": "hind1269",
+      "primaryText": "siitaa kelaa khaatii thii",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["siitaa", "Sita(f.)"], ["kelaa", "banana(m.)"], ["khaatii", "eat(imp.f.)"],
+        ["thii", "be(pst.f.)"]
+      ],
+      "translation": "Sita (habitually) ate bread.",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [],
+      "paperFeatures": [
+        ["marking", "unmarkedSubject"],
+        ["controller", "subject"]
+      ],
+      "comment": "The translation is the source's; its gloss line has 'banana'.",
+      "verified": "page-image"
+    }
+  ]
+}

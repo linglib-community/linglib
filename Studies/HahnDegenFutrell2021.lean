@@ -2,13 +2,15 @@ module
 
 public import Linglib.Core.InformationTheory.EntropyRate
 public import Linglib.Data.UD.DepRel
-public import Linglib.Syntax.DependencyGrammar.Reordering
-public import Linglib.Fragments.Japanese.Morph
-public import Linglib.Fragments.Sesotho.Morph
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.WordOrder.Reordering
+public import Linglib.Languages.Japanese.Morph
+public import Linglib.Languages.Sesotho.Morph
 public import Studies.Bybee1985
 public import Linglib.Data.Examples.HahnDegenFutrell2021
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Hahn, Degen, and Futrell (2021): Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal
@@ -38,7 +40,7 @@ head-final mirror image get the same bound.
   out of the comparison.
 * The paper orders the Sesotho passive before the perfect, in its text, its Table 4 and its
   supplement; Demuth's schema (14) and examples (28) and (44) order the perfect before
-  the passive, and the Fragment follows Demuth. The paper's order is `paperSesothoTemplate`.
+  the passive, and the language file follows Demuth. The paper's order is `paperSesothoTemplate`.
 * The Sesotho rows are the verbs of Demuth's examples, their glosses without the noun classes,
   and two corpus forms from the supplement in which a tense prefix is fused with the
   neighbouring marker and glossed as that marker.
@@ -69,40 +71,35 @@ open Morphology (Word)
 
 /-! ### Dependency locality -/
 
-/-- The unshifted order of example (2), in which the object precedes the prepositional phrase. -/
-def longObjectFirst : Graph UD.DepRel 11 :=
-  .ofArcs
-    [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "the" .DET,
-      Word.mk' "extremely" .ADV, Word.mk' "delicious" .ADJ, Word.mk' "bright" .ADV,
-      Word.mk' "green" .ADJ, Word.mk' "broccoli" .NOUN, Word.mk' "with" .ADP,
-      Word.mk' "a" .DET, Word.mk' "fork" .NOUN]
-    1 [(1, 0, .nsubj), (1, 7, .obj), (7, 2, .det), (4, 3, .advmod), (7, 4, .amod),
+/-- The unshifted order of example (2), *Lucy ate the extremely delicious bright green broccoli
+with a fork*, in which the object precedes the prepositional phrase. -/
+def longObjectFirst : DependencyGraph UD.DepRel (Fin 11) :=
+  .ofArcs [(1, 0, .nsubj), (1, 7, .obj), (7, 2, .det), (4, 3, .advmod), (7, 4, .amod),
       (6, 5, .advmod), (7, 6, .amod), (10, 8, .case), (10, 9, .det), (1, 10, .obl)]
 
 /-- The shifted order of example (2), in which the prepositional phrase precedes the long
 object. -/
-def shifted : Graph UD.DepRel 11 :=
-  .ofArcs
-    [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "with" .ADP, Word.mk' "a" .DET,
-      Word.mk' "fork" .NOUN, Word.mk' "the" .DET, Word.mk' "extremely" .ADV,
-      Word.mk' "delicious" .ADJ, Word.mk' "bright" .ADV, Word.mk' "green" .ADJ,
-      Word.mk' "broccoli" .NOUN]
-    1 [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
+def shifted : DependencyGraph UD.DepRel (Fin 11) :=
+  .ofArcs [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
       (9, 8, .advmod), (10, 9, .amod), (4, 2, .case), (4, 3, .det), (1, 4, .obl)]
 
-theorem longObjectFirst_eq_reorderDependents :
-    longObjectFirst = shifted.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩) :=
-  Graph.ext (funext (by decide +kernel : ∀ x, _)) (funext₂ (by decide +kernel : ∀ x y, _))
-    (by decide +kernel)
+theorem longObjectFirst_adj_iff_reorderDependents : ∀ v w, longObjectFirst.unlabelled.Adj v w ↔
+    (shifted.unlabelled.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩)).Adj v w := by
+  decide +kernel
 
 /-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
 raises its distance to the object from six to nine, so the total dependency length falls: by
 Behaghel's law at the verb, the phrases after it grow outward in the shifted order and not in the
 unshifted one ((2)). -/
-theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by
-  rw [longObjectFirst_eq_reorderDependents]
-  exact (Graph.totalLength_lt_reorderDependents_iff (by decide +kernel) (by decide +kernel)
+theorem heavyNPShift_shorter : shifted.unlabelled.totalLength <
+    longObjectFirst.unlabelled.totalLength := by
+  have h := (Digraph.totalLength_lt_reorderDependents_iff (G := shifted.unlabelled) (v := 1)
+    (σ := .swap ⟨4, by decide⟩ ⟨10, by decide⟩) (by decide +kernel) (by decide +kernel)
     (by decide +kernel) (by decide +kernel)).2 (by decide +kernel)
+  have e : (shifted.unlabelled.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10,
+      by decide⟩)).totalLength =
+      longObjectFirst.unlabelled.totalLength := by decide +kernel
+  exact e ▸ h
 
 /-! ### The information locality bound -/
 
@@ -224,7 +221,7 @@ end Reversal
 /-! ### The Japanese suffix template
 
 The supplement tabulates the relative orders of the Japanese verb suffixes in attested forms,
-each segmented into a stem and its suffixes. Every suffix gloss names a suffix of the Fragment,
+each segmented into a stem and its suffixes. Every suffix gloss names a suffix of the language file,
 and the suffixes of every form are licensed by its template. -/
 
 /-- The paper's glosses of the Japanese suffixes, as suffixes of the Fragment. -/
@@ -256,7 +253,7 @@ theorem japanese_forms_licensed :
 
 The paper's examples (2), the forms of [demuth-1992] its supplement tabulates, and two forms
 from the corpus are segmented into a stem and its affixes; every gloss but the stem's names an
-affix of the Fragment, and the affixes of every form are licensed by its template. -/
+affix of the language file, and the affixes of every form are licensed by its template. -/
 
 /-- The affixes a gloss names, the glosses being Demuth's labels, the corpus labels of the
 supplement and the fused applicative perfect *-ets-*. Demuth's mood vowel is read as the
@@ -294,9 +291,9 @@ theorem sesotho_forms_licensed :
       Sesotho.Verb.template.Licensed (sesothoAffixes r) := by
   decide
 
-/-- The Fragment's template with the paper's own suffix order, which places the passive before
+/-- The language file's template with the paper's own suffix order, which places the passive before
 the perfect. -/
-def paperSesothoTemplate : AffixTemplate Sesotho.Verb.Slot :=
+def paperSesothoTemplate : Morphotactics.Template Sesotho.Verb.Slot :=
   { Sesotho.Verb.template with
     suffixSlots := [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative] }
 
@@ -327,14 +324,6 @@ def sesothoCategory? : Sesotho.Verb.Slot → Option RelevanceHierarchy
   | .mood => some .mood
   | .interrogativeRelative => none
 
-/-- The Sesotho suffix order in Bybee's vocabulary, stem-outward. -/
-def sesothoSuffixCategories : List RelevanceHierarchy :=
-  Sesotho.Verb.template.suffixSlots.filterMap sesothoCategory?
-
-/-- The Sesotho prefix order in Bybee's vocabulary, stem-outward. -/
-def sesothoPrefixCategories : List RelevanceHierarchy :=
-  Sesotho.Verb.template.prefixSlots.reverse.filterMap sesothoCategory?
-
 /-- The hierarchy category of a Japanese suffix position, when the paper's label is one. -/
 def japaneseCategory? : Japanese.Verb.Slot → Option RelevanceHierarchy
   | .derivation => none
@@ -350,15 +339,16 @@ def japaneseCategories : List RelevanceHierarchy :=
   Japanese.Verb.template.suffixSlots.filterMap japaneseCategory?
 
 theorem paper_sesotho_suffixes_respect_relevance :
-    (paperSesothoTemplate.suffixSlots.filterMap sesothoCategory?).SortedLE := by decide
+    paperSesothoTemplate.SuffixesAscend sesothoCategory? := by decide
 
-/-- The Fragment's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
+/-- The language file's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
 before voice, and is not sorted by the hierarchy: the paper's agreement rests on its order. -/
-theorem sesotho_suffixes_violate_relevance : ¬ sesothoSuffixCategories.SortedLE := by decide
+theorem sesotho_suffixes_violate_relevance :
+    ¬ Sesotho.Verb.template.SuffixesAscend sesothoCategory? := by decide
 
 theorem sesotho_prefixes_violate_relevance :
     (∀ a ∈ sesothoCategory? .tam, ∀ b ∈ sesothoCategory? .subject, a < b) ∧
-      ¬ sesothoPrefixCategories.SortedLE := by
+      ¬ Sesotho.Verb.template.PrefixesAscend sesothoCategory? := by
   decide
 
 theorem japanese_valence_voice_inside :
@@ -366,11 +356,11 @@ theorem japanese_valence_voice_inside :
   decide
 
 /-- The Japanese suffix order is nonetheless not sorted by the hierarchy: [bybee-1985]'s survey
-ranks tense closer to the stem than mood, `Bybee1985.SurveyedCloser`, and the desiderative, a
+ranks tense closer to the stem than mood, `Bybee1985.Closer`, and the desiderative, a
 mood suffix, precedes the final inflection, read as tense. The paper claims no order of mood
 and tense. -/
 theorem japanese_violates_surveyed_relevance :
-    Bybee1985.SurveyedCloser .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
+    Bybee1985.Closer .tense .mood ∧ ¬ Japanese.Verb.template.SuffixesAscend japaneseCategory? := by
   decide
 
 end HahnDegenFutrell2021

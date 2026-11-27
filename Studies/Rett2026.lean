@@ -57,7 +57,7 @@ and note 16 of the January text, while `tallerNeg` already reads the bound throu
 
 namespace Rett2026
 
-open Tense Rett2020a
+open Tense Temporal Rett2020a
 open Comparison (maxOnScale mem_maxOnScale_lt)
 
 /-! ### Ambivalence -/
@@ -143,13 +143,13 @@ end Degrees
 
 section Times
 
-variable {T : Type*} [LinearOrder T] (A : Set (NonemptyInterval T))
+variable {T : Type*} [LinearOrder T] (A : NonemptyInterval T → Prop)
 
 /-- *A until B* (73) holds when the last time of `A` precedes the first time of `B`. -/
-def until_ (B : Set (NonemptyInterval T)) : Prop :=
+def until_ (B : NonemptyInterval T → Prop) : Prop :=
   ∃ m ∈ maxOnScale .gt (timeTrace A), ∃ m' ∈ maxOnScale .lt (timeTrace B), m < m'
 
-theorem until_iff_of_isLeast {B : Set (NonemptyInterval T)} {m' : T}
+theorem until_iff_of_isLeast {B : NonemptyInterval T → Prop} {m' : T}
     (h : IsLeast (timeTrace B) m') :
     until_ A B ↔ ∃ m ∈ maxOnScale .gt (timeTrace A), m < m' := by
   simp only [until_, mem_maxOnScale_lt]
@@ -157,19 +157,19 @@ theorem until_iff_of_isLeast {B : Set (NonemptyInterval T)} {m' : T}
     fun ⟨m, hm, hlt⟩ ↦ ⟨m, hm, m', h, hlt⟩⟩
 
 /-- *A since B* holds when some time of `B` is at or before every time of `A`. -/
-def since (B : Set (NonemptyInterval T)) : Prop := ∃ t ∈ timeTrace B, ∀ t' ∈ timeTrace A, t ≤ t'
+def since (B : NonemptyInterval T → Prop) : Prop := ∃ t ∈ timeTrace B, ∀ t' ∈ timeTrace A, t ≤ t'
 
 variable [OrderBot T] (s : T)
 
 /-- The runtime of a negated event is the interval from the beginning of time to the event's start.
 -/
-def preEvent : Set (NonemptyInterval T) := Set.Iic ⟨⟨⊥, s⟩, bot_le⟩
+def preEvent : NonemptyInterval T → Prop := (· ≤ ⟨⟨⊥, s⟩, bot_le⟩)
 
 theorem isLeast_timeTrace_preEvent : IsLeast (timeTrace (preEvent s)) ⊥ :=
-  isLeast_timeTrace_Iic _
+  isLeast_timeTrace_subintervals _
 
 theorem isGreatest_timeTrace_preEvent : IsGreatest (timeTrace (preEvent s)) s :=
-  isGreatest_timeTrace_Iic _
+  isGreatest_timeTrace_subintervals _
 
 theorem isLeast_timeTrace_completive_preEvent :
     IsLeast (timeTrace (completive (preEvent s))) s := by
@@ -186,8 +186,8 @@ theorem before_preEvent_completive_iff :
   before_completive_iff (isGreatest_timeTrace_preEvent s)
 
 theorem before_ambidirectional (i : NonemptyInterval T) :
-    before A (Set.Iic i) ↔ before A (completive (preEvent i.fst)) :=
-  (before_iff_of_isLeast (isLeast_timeTrace_Iic i)).trans
+    before A (· ≤ i) ↔ before A (completive (preEvent i.fst)) :=
+  (before_iff_of_isLeast (isLeast_timeTrace_subintervals i)).trans
     (before_preEvent_completive_iff A i.fst).symm
 
 theorem after_preEvent_iff : after A (preEvent s) ↔ ∃ t ∈ timeTrace A, s < t :=
@@ -198,14 +198,14 @@ theorem after_preEvent_inchoative {t : T} (ht : t ∈ timeTrace A) (h : t ≠ �
   (after_inchoative_iff (isLeast_timeTrace_preEvent s)).mpr ⟨t, ht, bot_lt_iff_ne_bot.mpr h⟩
 
 theorem until_preEvent_completive_iff (i : NonemptyInterval T) :
-    until_ A (Set.Iic i) ↔ until_ A (completive (preEvent i.fst)) := by
-  rw [until_iff_of_isLeast A (isLeast_timeTrace_Iic i),
+    until_ A (· ≤ i) ↔ until_ A (completive (preEvent i.fst)) := by
+  rw [until_iff_of_isLeast A (isLeast_timeTrace_subintervals i),
     until_iff_of_isLeast A (isLeast_timeTrace_completive_preEvent i.fst)]
 
 theorem since_preEvent_completive_iff :
-    since A (completive (preEvent s)) ↔ since A {NonemptyInterval.pure s} := by
+    since A (completive (preEvent s)) ↔ since A (· = NonemptyInterval.pure s) := by
   unfold since
-  rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_preEvent s), timeTrace_singleton,
+  rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_preEvent s), timeTrace_eq,
     NonemptyInterval.coe_pure]
 
 end Times
@@ -221,18 +221,17 @@ def IsAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
 variable {T : Type*}
 
 theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
-    ¬ ∀ (A : Set (NonemptyInterval T)) (B : Set T),
+    ¬ ∀ (A : NonemptyInterval T → Prop) (B : Set T),
       IsAmbidirectional (fun X ↦ ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, m < t) B := by
   obtain ⟨a, b, hab⟩ := hab
   intro h
-  have h_amb := h {NonemptyInterval.pure b} {a}
-  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : Set (NonemptyInterval T)),
+  have h_amb := h (· = NonemptyInterval.pure b) {a}
+  have h_fB : ∃ t ∈ timeTrace ((· = NonemptyInterval.pure b) : NonemptyInterval T → Prop),
       ∃ m ∈ maxOnScale .gt ({a} : Set T), m < t :=
     ⟨b, ⟨NonemptyInterval.pure b, rfl, le_refl _, le_refl _⟩,
      a, ⟨rfl, fun _ hx' hne ↦ absurd hx' hne⟩, hab⟩
   obtain ⟨t, ht_A, m, ⟨_, hm_dom⟩, htm⟩ := h_amb.mp h_fB
   obtain ⟨j, hj_mem, hj_s, hj_f⟩ := ht_A
-  simp only [Set.mem_singleton_iff] at hj_mem
   subst hj_mem
   simp only [NonemptyInterval.pure] at hj_s hj_f
   have ht_eq : t = b := le_antisymm hj_f hj_s

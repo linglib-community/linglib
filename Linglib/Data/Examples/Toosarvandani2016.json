@@ -1,4 +1,25 @@
-[
+{
+  "features": [
+    {
+      "key": "suffix",
+      "lean": "suffix",
+      "type": "Suffix",
+      "doc": "The suffixes of a marked clause, the simultaneous *-na* and the sequential *-si*.",
+      "levels": [
+        {
+          "name": "sim",
+          "label": "sim",
+          "doc": "sim"
+        },
+        {
+          "name": "seq",
+          "label": "seq",
+          "doc": "seq"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "toosarvandani2016_39a",
     "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(39a)"},
@@ -323,3 +344,4 @@
     "verified": "page-image"
   }
 ]
+}

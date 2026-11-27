@@ -5,7 +5,7 @@ public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.Reference.Iota
 
 /-!
@@ -167,11 +167,11 @@ noncomputable def definite (F B : Set E) : W → Trivalent :=
 
 theorem isSUM_scope_of_filtrating {d : Det E} (hd : d.Filtrating) (A : Set E) :
     IsSUM (scope (W := W) d A) :=
-  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.1 A h, fun _ _ _ ↦ hd.2 A _ _⟩
+  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.scopeMonotone A h, fun _ _ _ ↦ hd.scopeIntersective A _ _⟩
 
 theorem isSUM_modal_of_filtrating {d : Det W} (hd : d.Filtrating) (R : SetRel W W) :
     IsSUM (modal d R) :=
-  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.1 _ h, fun _ _ _ ↦ hd.2 _ _ _⟩
+  isSUM_ofProp_iff.2 ⟨fun _ _ h _ ↦ hd.scopeMonotone _ h, fun _ _ _ ↦ hd.scopeIntersective _ _ _⟩
 
 end Environments
 
@@ -191,7 +191,7 @@ open Classical in
 theorem not_isSUM_negation [Nonempty W] (x : E) :
     ¬ IsSUM fun F : Set E ↦ fun _ : W ↦ Trivalent.ofProp (x ∉ F) :=
   not_isSUM_of_isStrawsonDE (.of_antitone (a := fun F _ ↦ x ∉ F)
-    (fun _ _ h _ hG hF ↦ hG (Set.mem_of_mem_of_subset hF h)) fun _ _ _ ↦ by simp)
+    (fun _ _ h _ hG hF ↦ hG (Set.mem_of_mem_of_subset hF h)) fun _ _ ↦ Bilattice.kLE_refl _)
     (Set.empty_subset {x}) (w := Classical.arbitrary W) (by simp) (by simp) (by simp)
 
 -- *\*Everyone who left ate any pizza* and *\*Mary must drink anything*: the scope of *every*
@@ -263,8 +263,11 @@ theorem isSUM_tautology_contradiction (A : Set E) :
     IsSUM (scope (W := W) (Det.atLeast 0) A) ∧
       IsSUM (scope (W := W) (Det.atMost 1 ⊓ Det.atLeast 3) A) :=
   ⟨isSUM_ofProp_iff.2 ⟨fun _ _ _ _ _ ↦ Nat.zero_le _, fun _ _ _ _ _ ↦ Nat.zero_le _⟩,
-    isSUM_ofProp_iff.2 ⟨fun _ _ _ _ h ↦ absurd (h.2.trans h.1) (by norm_num),
-      fun _ _ _ h ↦ absurd (h.2.trans h.1) (by norm_num)⟩⟩
+    isSUM_ofProp_iff.2
+      ⟨fun _ _ _ _ h ↦
+          absurd ((Det.atLeast_apply.1 h.2).trans (Det.atMost_apply.1 h.1)) (by norm_num),
+        fun _ _ _ h ↦
+          absurd ((Det.atLeast_apply.1 h.2).trans (Det.atMost_apply.1 h.1)) (by norm_num)⟩⟩
 
 -- *\*The student with any books sold them* has an environment SUM for one premise: *the novel
 -- was long* and *there was exactly one book* entail *the book was long* (19).

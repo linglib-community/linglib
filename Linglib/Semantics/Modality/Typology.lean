@@ -43,18 +43,18 @@ structure ModalItem where
 
 namespace ModalItem
 
-/-- A modal item is epistemic when every pair it expresses is. -/
-def Epistemic (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor = .epistemic
-
-/-- A modal item is circumstantial, in the broad sense covering the priority flavours, when no
-pair it expresses is epistemic. -/
-def Circumstantial (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor ≠ .epistemic
-
 /-- The forces a modal item expresses. -/
 def forces (m : ModalItem) : Finset ModalForce := m.meaning.image Prod.fst
 
 /-- The flavours a modal item expresses. -/
 def flavors (m : ModalItem) : Finset ModalFlavor := m.meaning.image Prod.snd
+
+/-- A modal item is epistemic when it expresses no other flavour. -/
+def Epistemic (m : ModalItem) : Prop := m.flavors ⊆ {.epistemic}
+
+/-- A modal item is circumstantial, in the broad sense covering the priority flavours, when it
+does not express the epistemic flavour. -/
+def Circumstantial (m : ModalItem) : Prop := .epistemic ∉ m.flavors
 
 /-- The forces a modal item expresses under a flavour. -/
 def forcesOf (m : ModalItem) (fl : ModalFlavor) : Finset ModalForce :=
@@ -66,9 +66,11 @@ def VariesForce (m : ModalItem) : Prop := 2 ≤ m.forces.card
 /-- A modal item varies in flavour when it expresses two flavours. -/
 def VariesFlavor (m : ModalItem) : Prop := 2 ≤ m.flavors.card
 
-instance : DecidablePred Epistemic := fun _ ↦ inferInstanceAs (Decidable (∀ _ ∈ _, _ = _))
+instance : DecidablePred Epistemic :=
+  fun m ↦ inferInstanceAs (Decidable (m.flavors ⊆ {.epistemic}))
 
-instance : DecidablePred Circumstantial := fun _ ↦ inferInstanceAs (Decidable (∀ _ ∈ _, _ ≠ _))
+instance : DecidablePred Circumstantial :=
+  fun m ↦ inferInstanceAs (Decidable (.epistemic ∉ m.flavors))
 
 instance : DecidablePred VariesForce := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 

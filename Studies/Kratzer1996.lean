@@ -77,10 +77,10 @@ def mittie : LexicalItem.Token := ⟨.of .D [] "Mittie", 204⟩
 def theDog : LexicalItem.Token := ⟨.of .D [] "the dog", 205⟩
 
 /-- (21): `[VoiceP Mittie [Voice′ Agent [VP the dog feed]]]`. -/
-def tree : PlanarSyntacticObject := mittie * (agentVoice * (theDog * feed))
+def tree : PlanarSyntacticObject TokenLeaf := mittie * (agentVoice * (theDog * feed))
 
 /-- (25): the Voice′ of *Mittie owns the dog*, the Voice head `h` merged with *own the dog*. -/
-def ownsBar (h : LexicalItem.Token) : PlanarSyntacticObject := h * (theDog * own)
+def ownsBar (h : LexicalItem.Token) : PlanarSyntacticObject TokenLeaf := h * (theDog * own)
 
 section Syntax
 
@@ -133,9 +133,9 @@ def Word.val : {a : Ty Base} → Word a → a.Domain Entity Unit { eventuality :
 
 /-- The meanings of a syntactic object by Functional Application, Predicate Modification and
 Event Identification. -/
-def meanings (t : PlanarSyntacticObject) :
+def meanings (t : PlanarSyntacticObject TokenLeaf) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  (t.toTree traceIndex).values (typeDriven Voice.grammar)
+  t.toTree.values (typeDriven Voice.grammar)
     (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
     (Word.val ρ feedRel m d) (entries lexicon)
 
@@ -230,9 +230,9 @@ def PWord.val : {a : Ty Base} → PWord a → a.Domain Entity Unit { eventuality
 
 /-- The meanings of a syntactic object by Functional Application and Kratzer's Event
 Identification, over partial predicates. -/
-def partialMeanings (t : PlanarSyntacticObject) :
+def partialMeanings (t : PlanarSyntacticObject TokenLeaf) :
     List (Denotation Entity Unit { eventuality := V }) :=
-  (t.toTree traceIndex).values (typeDriven partialGrammar)
+  t.toTree.values (typeDriven partialGrammar)
     (D := Ty.Dom (Base.Dom Entity Unit { eventuality := V })) inferInstance
     (PWord.val IsAction IsState ρ ownRel d) (entries partialLexicon)
 

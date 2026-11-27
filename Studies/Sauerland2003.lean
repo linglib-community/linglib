@@ -1,8 +1,9 @@
 module
 
+public import Linglib.Core.Order.Atoms
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Trivalent.Quantifier
 public import Linglib.Semantics.Presupposition.Strengthening
 
 /-!
@@ -25,7 +26,7 @@ context whose speaker is part of the addressee, where the first and second perso
 coincide and competition cannot separate them (`strengthen_second_of_degenerate`).
 
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
-restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
+restrictor (`der_unique`; his cover-based `*` is mathlib's `supClosure` by definition),
 and `JE`, a universal over the atomic parts of a group individual that projects its scope's
 presupposition universally (`JE`), whose truth on a bivalent scope is Link's distributivity
 operator (`je_eq_true_iff_D`, `je_eq_true_iff_forall`). The indefinite projects existentially
@@ -47,7 +48,7 @@ unmarked values, plural and third person (`politeness_unmarked`).
 
 namespace Sauerland2003
 
-open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
+open Mereology (cum_maximal_unique not_isAtom_sup_of_ne)
 open Mereology (D)
 open Presupposition Trivalent
 
@@ -57,15 +58,23 @@ variable {E : Type*}
 
 section Number
 
-variable [SemilatticeSup E] {a b : E}
+variable [SemilatticeSup E] [OrderBot E] {a b : E}
 
-theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
+theorem coordination_plural (ha : IsAtom a) (hb : IsAtom b) (hne : a ≠ b) :
     a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
-  (Number.mem_dom_singular _).not.2 (not_atom_sup_of_ne ha hb hne)
+  (Number.mem_dom_singular _).not.2 (not_isAtom_sup_of_ne ha hb hne)
 
-theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)
-    (h₂ : Maximal (AlgClosure R) m₂) : m₁ = m₂ :=
-  cum_maximal_unique algClosure_cum h₁ h₂
+-- The singular's presupposition on the referent of a definite is uniqueness in its noun: an
+-- upper bound of a nonempty set of atoms is in the singular's domain exactly when the set has
+-- one member.
+theorem mem_dom_singular_iff_eq_singleton {s : Set E} (ha : a ∈ upperBounds s)
+    (hne : s.Nonempty) (hs : ∀ x ∈ s, IsAtom x) :
+    a ∈ Number.dom (E := E) (some .singular) ↔ s = {a} :=
+  (Number.mem_dom_singular _).trans (isAtom_iff_eq_singleton_of_mem_upperBounds ha hne hs)
+
+theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (· ∈ supClosure {x | R x}) m₁)
+    (h₂ : Maximal (· ∈ supClosure {x | R x}) m₂) : m₁ = m₂ :=
+  cum_maximal_unique supClosed_supClosure h₁ h₂
 
 /-- With `[Sg]` blocked by an independent factor, `[Pl]` is used of atoms too, (13)–(14). -/
 theorem strengthen_plural_of_singular_blocked :
@@ -75,10 +84,10 @@ theorem strengthen_plural_of_singular_blocked :
   rw [Set.mem_singleton_iff.1 hψ] at hss
   exact hss.ne rfl
 
-theorem atom_mem_strengthen_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
+theorem atom_mem_strengthen_iff (ha : IsAtom a) (hb : IsAtom b) (hne : a ≠ b) :
     a ∉ strengthen Number.alts Number.dom (some .plural) ∧
       a ∈ strengthen (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
-  rw [Number.strengthen_plural (not_atom_sup_of_ne ha hb hne),
+  rw [Number.strengthen_plural (not_isAtom_sup_of_ne ha hb hne),
     strengthen_plural_of_singular_blocked]
   exact ⟨fun h ↦ h.2 ha, Set.mem_univ _⟩
 
@@ -161,34 +170,35 @@ noncomputable def aSem (R : E → Prop) (S : E → Trivalent) : Trivalent :=
 
 section Every
 
-variable [PartialOrder E]
+variable [PartialOrder E] [OrderBot E]
 
 /-- `JE`, the quantificational part of *every*, ranges over the atomic parts of a group
 individual `X`, presupposing the scope predicate is defined at each and asserting it holds
 at each. -/
 noncomputable def JE (X : E) (P : E → Trivalent) : Trivalent :=
-  forallWeak fun a : {a // Atom a ∧ a ≤ X} ↦ P a
+  forallWeak fun a : {a // IsAtom a ∧ a ≤ X} ↦ P a
 
 theorem je_eq_true_iff_forall {R Q : E → Prop} [DecidablePred Q] {maxR : E}
-    (hR : ∀ x, R x ↔ Atom x ∧ x ≤ maxR) :
+    (hR : ∀ x, R x ↔ IsAtom x ∧ x ≤ maxR) :
     JE maxR (fun x ↦ Trivalent.ofProp (Q x)) = .true ↔ ∀ x, R x → Q x := by
   simp [JE, hR]
 
 theorem projection_asymmetry {boys a₁ a₂ : E} {R : E → Prop} {S : E → Trivalent}
-    (ha₂ : Atom a₂) (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : S a₁ ≠ .undefined) (hdom₂ : S a₂ = .undefined) :
+    (ha₂ : IsAtom a₂) (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : S a₁ ≠ .undefined)
+    (hdom₂ : S a₂ = .undefined) :
     aSem R S ≠ .undefined ∧ JE boys S = .undefined :=
   ⟨fun h ↦ hdom₁ (existsHaug_eq_undefined_iff.1 h ⟨a₁, hR₁⟩),
     forallWeak_eq_undefined_iff.2 ⟨⟨a₂, ha₂, h₂⟩, hdom₂⟩⟩
 
 theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} [DecidablePred harvest]
     (h : aSem starR (fun x ↦ Trivalent.ofProp (harvest x)) = .false)
-    (hsg : aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ Trivalent.ofProp (harvest x)) ≠ .undefined) :
-    aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ Trivalent.ofProp (harvest x)) = .false := by
+    (hsg : aSem (fun x ↦ IsAtom x ∧ starR x) (fun x ↦ Trivalent.ofProp (harvest x)) ≠ .undefined) :
+    aSem (fun x ↦ IsAtom x ∧ starR x) (fun x ↦ Trivalent.ofProp (harvest x)) = .false := by
   simp_all [aSem]
 
 end Every
 
-theorem je_eq_true_iff_D [SemilatticeSup E] (X : E) (P : E → Prop) [DecidablePred P] :
+theorem je_eq_true_iff_D [SemilatticeSup E] [OrderBot E] (X : E) (P : E → Prop) [DecidablePred P] :
     JE X (fun x ↦ Trivalent.ofProp (P x)) = .true ↔ D P X := by
   simp only [JE, forallWeak_eq_true_iff, Trivalent.ofProp_eq_true_iff, Subtype.forall, and_imp, D]
   exact forall_congr' fun _ ↦ imp.swap
@@ -226,8 +236,9 @@ theorem czech_gender :
 
 /-! ### Politeness -/
 
-theorem politeness_unmarked {W P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) :
+theorem politeness_unmarked {W P T : Type*} [PartialOrder E] [OrderBot E]
+    (c : SpeechAct.Context W E P T) :
     Number.dom (E := E) (some .plural) = Set.univ ∧ Person.dom c (some .third) = Set.univ :=
-  ⟨rfl, rfl⟩
+  ⟨rfl, Person.dom_third c⟩
 
 end Sauerland2003

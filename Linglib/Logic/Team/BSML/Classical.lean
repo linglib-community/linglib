@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.BSML.Defs
-public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # The classical fragment of BSML

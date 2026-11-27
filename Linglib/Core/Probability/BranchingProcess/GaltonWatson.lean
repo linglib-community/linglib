@@ -80,7 +80,7 @@ instance (μ : Measure (List ι)) : IsProbabilityMeasure (killed μ) := by
   refine ⟨?_⟩
   unfold killed
   split_ifs with h
-  · rw [Measure.add_apply, Measure.map_apply measurable_some .univ, Measure.smul_apply]
+  · rw [add_apply, Measure.map_apply measurable_some .univ, smul_apply]
     simp [add_tsub_cancel_of_le h]
   · simp
 
@@ -88,8 +88,8 @@ omit [MeasurableSpace ι] in
 theorem killed_some {μ : Measure (List ι)} (h : μ Set.univ ≤ 1) (js : List ι) :
     killed μ {some js} = μ {js} := by
   have : (some ⁻¹' {(some js : Option (List ι))}) = {js} := by ext; simp
-  rw [killed, ite_eq_left h, Measure.add_apply, Measure.map_apply measurable_some .of_discrete,
-    Measure.smul_apply, this, Measure.dirac_apply' _ .of_discrete]
+  rw [killed, ite_eq_left h, add_apply, Measure.map_apply measurable_some .of_discrete,
+    smul_apply, this, Measure.dirac_apply' _ .of_discrete]
   simp
 
 variable (ξ : Kernel ι (List ι))
@@ -120,13 +120,6 @@ omit [MeasurableSpace ι]
 
 variable {ω : Draws ι} {u : GornAddress} {i : ι}
 
-private theorem isSome_mapM {α β : Type*} (f : α → Option β) :
-    ∀ l : List α, (l.mapM f).isSome ↔ ∀ a ∈ l, (f a).isSome
-  | [] => by simp
-  | a :: l => by
-    have ih := isSome_mapM f l
-    cases hfa : f a <;> cases hl : l.mapM f <;> simp_all [List.mapM_cons]
-
 private theorem mapM_mono {α β : Type*} {f g : α → Option β}
     (h : ∀ a b, f a = some b → g a = some b) :
     ∀ (l : List α) (bs : List β), l.mapM f = some bs → l.mapM g = some bs
@@ -152,7 +145,7 @@ theorem isSome_treeWithin_succ (ω : Draws ι) (n : ℕ) (u : GornAddress) (i : 
     (treeWithin ω (n + 1) u i).isSome ↔ ∃ js, ω (u, i) = some js ∧
       ∀ p ∈ js.zipIdx, (treeWithin ω n (u * .of p.2) p.1).isSome := by
   rw [treeWithin]
-  cases hω : ω (u, i) <;> simp [isSome_mapM]
+  cases hω : ω (u, i) <;> simp
 
 /-- The family tree of an individual of type `i` is rooted at `i`. -/
 theorem value_eq_of_treeWithin_eq_some : ∀ {n : ℕ} {u : GornAddress} {i : ι} {t : RoseTree ι},
@@ -530,7 +523,7 @@ theorem law_apply_univ (i : ι) :
       exact h <| Option.some.inj <| (treeWithin_mono (le_max_left n n') hn).symm.trans
         (treeWithin_mono (le_max_right n n') hn')
   rw [law, ofFunOfCountable_apply, Measure.sum_apply _ .univ]
-  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← measure_iUnion hdisj hmeas]
   congr 1
   ext ω

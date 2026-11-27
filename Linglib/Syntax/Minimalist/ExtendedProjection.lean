@@ -1,8 +1,14 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Order.Antisymmetrization
 public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Syntax.Cartography
+public import Linglib.Syntax.Minimalist.Category
 public import Mathlib.Order.RelClasses
 
 /-!
@@ -26,15 +32,24 @@ level](##Minimalist.Cat.antisymmRel_T); Rizzi's topics recur on both sides of th
 and focus are level](##Minimalist.Cat.antisymmRel_Top_Foc). Where the sources agree the order is
 strict, as along the verbal spine from the verb to Force and the nominal spine from the noun to K,
 and where no source relates two heads they are incomparable: Keine's nominalized clause [neither
-contains nor is contained in a CP](##Minimalist.Cat.not_extendsTo_Nmlz_C).
+contains nor is contained in a CP](##Minimalist.Cat.not_extendsTo_Nmlz_C). The heads of any one
+cited sequence extend one another in its order (`Minimalist.Cat.pairwise_extendsTo`), and that
+stays true as further sequences are cited, so a claim about the heads a source draws is stated
+over that sequence.
 
 ## Main definitions
 
+* `Cartography.Head.cat`: the category of a head of Cinque's hierarchy.
 * `Minimalist.citedSequences`, `Minimalist.citedIdentifications`: the structures the sources draw.
 * `Minimalist.Cat.Step`: a cited step, from a head to the one a source merges directly above it.
 * `Minimalist.Cat.ExtendsTo`: the extension order, the reflexive-transitive closure of the steps.
 
 ## Implementation notes
+
+`Cartography.Head.cat` sends Cinque's four aspect heads below Voice to inner aspect, the aspect of
+the v shell, the other aspect heads to outer aspect, the speech-act mood to the speech-act head,
+as Speas and Tenny project their speech-act phrase from Cinque's speech-act mood head, and the
+other moods but the evidential to `Cat.Mood`.
 
 A root, a VP and the verb of a cited structure are its lexical head, an IP is `T`, Cinque's heads
 are read through `Cartography.Head.cat`, and the heads of a structure that are not categories here
@@ -72,9 +87,29 @@ demonstrative, so those pairs are incomparable.
 * [newman-2024]
 * [dendikken-2010]
 * [arregi-pietraszko-2021]
+* [thoms-etal-2026]
+* [elkins-torrence-brown-2026]
 -/
 
 @[expose] public section
+
+namespace Cartography.Head
+
+/-- The category of a head among the categorial features. -/
+def cat : Head → Minimalist.Cat
+  | voice => .Voice
+  | aspSgCompletiveII | aspFrequentativeII | aspRepetitiveII | aspCelerativeII => .InnerAsp
+  | tAnterior | tFuture | tPast => .T
+  | modVolitional | modPossibility | modNecessity | modEpistemic => .Mod
+  | moodEvidential => .Evid
+  | moodSpeechAct => .SA
+  | moodIrrealis | moodEvaluative => .Mood
+  | _ => .Asp
+
+theorem family_cat (h : Head) : h.cat.family = .verbal := by
+  cases h <;> rfl
+
+end Cartography.Head
 
 namespace Minimalist
 
@@ -94,11 +129,13 @@ def citedSequences : List (List Cat) :=
     [.T, .Pol, .C],                               -- [laka-1990] (46)–(47), p. 127
     [.v, .T, .Nmlz],                              -- [keine-2020] (106), p. 74
     [.v, .T, .C],                                 -- [keine-2020] (238), p. 156
+    [.V, .v, .Voice, .Dir, .C],                   -- [elkins-torrence-brown-2026] (8), p. 6
     [.T, .Fin, .Top, .Foc, .Top, .Force],         -- [rizzi-1997] (41), p. 297
     [.T, .Foc, .Say],                             -- [egressy-2026] p. 14
     [.Mood, .SA],                                 -- [speas-tenny-2003] p. 332
     [.N, .Q, .Num, .D],                           -- [borer-2005] (8a), p. 96
     [.N, .Num, .Dem],                             -- [cinque-2005] (7a), p. 321
+    [.n, .Poss, .Num],                            -- [thoms-etal-2026] (38), p. 22
     [.D, .K],                                     -- [newman-2024] (217), p. 129
     [.D, .Lnk],                                   -- [arregi-pietraszko-2021] (14), p. 250
     [.P, .Place, .Path]]                          -- [dendikken-2010] (20c), p. 81
@@ -149,6 +186,28 @@ theorem Step.extendsTo (h : c.Step d) : c.ExtendsTo d := .single h
 
 theorem Step.family_eq (h : c.Step d) : c.family = d.family :=
   (by decide +kernel : ∀ p ∈ citedSteps, p.1.family = p.2.family) _ h
+
+private theorem isChain_of_forall_mem_zip_tail {r : Cat → Cat → Prop} :
+    ∀ {l : List Cat}, (∀ p ∈ l.zip l.tail, r p.1 p.2) → l.IsChain r
+  | [], _ => .nil
+  | [_], _ => .singleton _
+  | x :: y :: _, h =>
+    List.isChain_cons_cons.2 ⟨h (x, y) List.mem_cons_self,
+      isChain_of_forall_mem_zip_tail fun p hp ↦ h p (List.mem_cons_of_mem _ hp)⟩
+
+/-- The heads of a cited sequence extend one another in its order: a source's own hierarchy
+embeds in the order that collects them all. -/
+theorem pairwise_extendsTo {l : List Cat} (hl : l ∈ citedSequences) : l.Pairwise ExtendsTo :=
+  List.isChain_iff_pairwise.1 <| isChain_of_forall_mem_zip_tail fun p hp ↦
+    Step.extendsTo (c := p.1) (d := p.2) <| List.mem_append_left _ <|
+      List.mem_flatMap.2 ⟨l, List.mem_cons_of_mem _ hl, hp⟩
+
+/-- Two heads of one cited sequence are comparable, whatever other sequences are cited. -/
+theorem extendsTo_or_extendsTo {l : List Cat} (hl : l ∈ citedSequences) (hc : c ∈ l)
+    (hd : d ∈ l) : c.ExtendsTo d ∨ d.ExtendsTo c :=
+  have h := pairwise_extendsTo hl
+  List.Pairwise.forall_of_forall_of_flip (R := fun x y ↦ x.ExtendsTo y ∨ y.ExtendsTo x)
+    (fun _ _ ↦ .inl .refl) (h.imp Or.inl) (h.imp Or.inr) hc hd
 
 /-- A category extends only to categories of its family. -/
 theorem ExtendsTo.family_eq (h : c.ExtendsTo d) : c.family = d.family := by

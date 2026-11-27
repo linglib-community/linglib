@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Syntax.Feature.Person.Defs
 
 /-!
 # Olivier (2026): Agree in Restructuring

@@ -1,11 +1,14 @@
 module
 
-public import Linglib.Core.Algebra.Free
-public import Linglib.Syntax.Minimalist.Clause.VerbalSpine
+public import Linglib.Data.UD.UPOS
+public import Linglib.Syntax.Minimalist.Category
+public import Mathlib.Data.List.DropRight
 public import Linglib.Data.Examples.ArregiPietraszko2021
 public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Linglib.Data.Wordlist.ArregiPietraszko2021
-public import Linglib.Fragments.Ndebele.Phonology
+public import Linglib.Languages.Ndebele.Phonology
+public import Linglib.Morphology.DistributedMorphology.Basic
+public import Linglib.Syntax.Minimalist.HeadChain
 public import Linglib.Morphology.DistributedMorphology.Spellout
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Phonology.Hiatus
@@ -17,20 +20,23 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Arregi and Pietraszko (2021): The ups and downs of head displacement
 
-Arregi and Pietraszko replace head raising and lowering by one syntactic operation, Generalized
-Head Movement, in which a head shares its M-value, the morphological features that Vocabulary
-Insertion spells out, with the head of its complement. The heads of a clause thus form a head
-chain around one complex head, pronounced in the chain's highest strong position, or in its
-highest position if none is strong. A chain that ends in a strong verb splits when a specifier
-intervenes or the verb phrase is elided or fronted, and the verb's terminal, an orphan in the
-half without the verb, is exponed as *do*.
+This file formalizes the Generalized Head Movement of [arregi-pietraszko-2021]. A head shares its
+M-value, the morphological features that Vocabulary Insertion spells out, with the head of its
+complement, so the heads of a clause form a head chain around one complex head. The chain is
+pronounced in its highest strong position, or in its highest position if none is strong
+(`HeadChain.pronounced`).
+
+A chain that ends in a strong verb splits when a specifier intervenes or the verb phrase is elided
+or fronted, and *do* expones the verb's terminal in the half without the verb. *Do*-support thus
+arises exactly where the chain splits (`doSupport_iff`).
 
 ## Implementation notes
 
-* A clause is a `Minimalist.VerbalSpine`: the tag of its verb, the heads related to the verb,
-  the heads whose specifier is pronounced, and what becomes of the verb phrase. A specifier
-  intervenes when it is that of a head below the highest. A negative imperative, where Σ keeps C
-  out of the verb's chain, is thereby the spine of a declarative.
+* A `Clause` holds what head-chain formation reads: the tag of the verb, the heads related to
+  the verb, the heads whose specifier is pronounced, and what becomes of the verb phrase. A
+  specifier intervenes when it is that of a head below the highest; the specifier of the highest
+  head does not, since that head does not c-command it. A negative imperative, where Σ keeps C
+  out of the verb's chain, is thereby the clause of a declarative.
 * Strength is a property of the functional heads and, for the verb, of its tag, so that English
   lexical verbs are strong and its auxiliaries weak while Danish auxiliaries are strong too.
 * Split-by-Deletion applies in every language, the possibility the paper raises for its typology
@@ -39,10 +45,12 @@ half without the verb, is exponed as *do*.
   where no do-support or fronting datum shows it. The fates are the library's impoverishment and
   obliteration rules, and the elsewhere exponent comes from impoverishing the orphan at its own
   insertion only, which leaves its features to condition the stem.
-* An M-value is an element of the free magma over the terminals, each product listing the lower
-  constituent first. The operation leaves linear order open, and only the Ndebele prefix is
-  linearized. Negative Merger applies to a chain, which makes its terminal an orphan there, an
-  ordering the paper notes is indistinguishable from its own.
+* An M-value is a `DistributedMorphology.ComplexHead`, the lowest terminal with the terminals
+  above it, since GenHM adds one terminal at a time. Its head-adjunction structure is `comb`, an
+  element of the free magma that lists the lower constituent of each product first. The
+  operation leaves linear order open, and only the Ndebele prefix is linearized. Negative
+  Merger applies to a chain, which makes its terminal an orphan there, an ordering the paper
+  notes is indistinguishable from its own.
 
 ## References
 
@@ -57,7 +65,8 @@ half without the verb, is exponed as *do*.
 
 namespace ArregiPietraszko2021
 
-open Phonology FreeMagma DistributedMorphology Morphology Minimalist
+open Phonology FreeMagma Morphology Minimalist
+open DistributedMorphology hiding Cat
 
 /-! ### Head chains -/
 
@@ -65,35 +74,29 @@ open Phonology FreeMagma DistributedMorphology Morphology Minimalist
 complex head over morphological terminals. -/
 structure HeadChain where
   positions : List Cat
-  mvalue : FreeMagma Cat
+  mvalue : ComplexHead Cat Cat
 
 namespace HeadChain
 
 /-- The morphological terminals of the M-value, lowest first. -/
-def terminals (c : HeadChain) : List Cat := (FreeMagma.lift FreeMonoid.of c.mvalue).toList
+def terminals (c : HeadChain) : List Cat := c.mvalue.root :: c.mvalue.heads
 
 /-- Generalized Head Movement, GenHM, relates a head to the chain of its complement's head. The
 head joins the chain, and its morphological terminal attaches outside the shared M-value. -/
-def extend (x : Cat) (c : HeadChain) : HeadChain := ⟨c.positions ++ [x], c.mvalue * of x⟩
+def extend (x : Cat) (c : HeadChain) : HeadChain :=
+  ⟨c.positions ++ [x], ⟨c.mvalue.root, c.mvalue.heads ++ [x]⟩⟩
 
 /-- The chain that cyclic GenHM builds from `bottom` up through the heads `above`. -/
 def ofHeads (bottom : Cat) (above : List Cat) : HeadChain :=
-  ⟨bottom :: above, above.foldl (· * of ·) (of bottom)⟩
+  ⟨bottom :: above, ⟨bottom, above⟩⟩
 
 theorem extend_ofHeads (bottom x : Cat) (above : List Cat) :
-    (ofHeads bottom above).extend x = ofHeads bottom (above ++ [x]) := by
-  simp [extend, ofHeads]
+    (ofHeads bottom above).extend x = ofHeads bottom (above ++ [x]) :=
+  rfl
 
-/-- By the **Mirror Principle**, the terminals of a complex head are ordered as its heads are. -/
 theorem terminals_ofHeads (bottom : Cat) (above : List Cat) :
-    (ofHeads bottom above).terminals = bottom :: above := by
-  simp [terminals, ofHeads, toList_lift_foldl_mul_of]
-
-/-- GenHM derives the Mirror Principle: each terminal of a complex head attaches outside the
-complex head of the heads below it. -/
-theorem isLeftComb_mvalue_ofHeads (bottom : Cat) (above : List Cat) :
-    (ofHeads bottom above).mvalue.IsLeftComb :=
-  (isLeftComb_foldl_mul_of _ _).mpr (isLeftComb_of _)
+    (ofHeads bottom above).terminals = bottom :: above :=
+  rfl
 
 /-- Orphan Assignment marks a morphological terminal in a chain that does not contain its
 syntactic terminal. -/
@@ -125,6 +128,11 @@ theorem pronounced_of_forall_not_mem {strong : Finset Cat} {c : HeadChain}
 theorem pronounced_extend_of_mem {strong : Finset Cat} {x : Cat} (hx : x ∈ strong)
     (c : HeadChain) : (c.extend x).pronounced strong = some x := by
   simp [pronounced, extend, List.filter_append, hx]
+
+-- Head Chain Pronunciation is the library's, on the positions of the chain.
+theorem pronounced_eq_site (strong : Finset Cat) (c : HeadChain) :
+    c.pronounced strong = Minimalist.HeadChain.site (· ∈ strong) c.positions :=
+  rfl
 
 end HeadChain
 
@@ -298,33 +306,54 @@ theorem fronted_forms :
       OrphanFate.obliterated.spellout.pf fronted.domain = [[.stem]] := by
   decide
 
-/-! ### Spines and chain splitting -/
+/-! ### Clauses and chain splitting -/
+
+/-- The verb phrase is pronounced in place, elided, or pronounced in a fronted copy. -/
+inductive VPStatus
+  | inSitu | elided | fronted
+  deriving DecidableEq, Repr
+
+/-- A clause as head-chain formation reads it: the tag of the verb, the heads above the verb that
+it is related to, lowest first, the heads among them whose specifier is pronounced, and the status
+of the verb phrase. -/
+structure Clause where
+  verb : UD.UPOS := .VERB
+  above : List Cat
+  specifiers : Finset Cat := ∅
+  vp : VPStatus := .inSitu
+  deriving DecidableEq
+
+/-- A pronounced specifier stands between the highest head and the verb: the specifier of a head
+below the highest. -/
+def Clause.Intervenes (x : Clause) : Prop := ∃ c ∈ x.above.dropLast, c ∈ x.specifiers
+
+instance (x : Clause) : Decidable x.Intervenes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- T is related to the verb, the subject pronounced in its specifier. -/
-def declarative : VerbalSpine := { above := [.T], specifiers := {.T} }
+def declarative : Clause := { above := [.T], specifiers := {.T} }
 
 /-- Σ stands between T and the verb, and its specifier, negation or verum focus, is pronounced. -/
-def polarity : VerbalSpine := { above := [.Pol, .T], specifiers := {.Pol, .T} }
+def polarity : Clause := { above := [.Pol, .T], specifiers := {.Pol, .T} }
 
 /-- Sentential negation in a language. -/
-def negation (L : Language) : VerbalSpine := if L.adverbialNegation then declarative else polarity
+def negation (L : Language) : Clause := if L.adverbialNegation then declarative else polarity
 
 /-- C is related to T and the specifier of T is not pronounced, as in a subject question, whose
 Spec,TP holds a lower copy, a subject-initial verb-second clause, and an affirmative
 imperative. -/
-def toC : VerbalSpine := { above := [.T, .C] }
+def toC : Clause := { above := [.T, .C] }
 
 /-- C is related to T across the subject pronounced in Spec,TP. -/
-def inversion : VerbalSpine := { toC with specifiers := {.T} }
+def inversion : Clause := { toC with specifiers := {.T} }
 
 /-- A chain that ends in a strong lexical verb splits at the verb when the language has
 Split-by-Intervention and a pronounced specifier intervenes, or when the verb is unpronounced
 under ellipsis or as the lower copy of a fronted verb phrase. -/
-def Splits (L : Language) (x : VerbalSpine) : Prop :=
+def Splits (L : Language) (x : Clause) : Prop :=
   x.verb = .VERB ∧ .VERB ∈ L.strongVerbs ∧ x.above ≠ [] ∧
     (L.splitByIntervention ∧ x.Intervenes ∨ x.vp ≠ .inSitu)
 
-instance (L : Language) (x : VerbalSpine) : Decidable (Splits L x) :=
+instance (L : Language) (x : Clause) : Decidable (Splits L x) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The head chains of a clause at Spell-Out, with the strong positions of the clause. -/
@@ -341,7 +370,7 @@ structure Chains where
 /-- `derive L x` holds the chains of a clause. GenHM relates the verb to the heads above it, a
 split leaves the verb alone in one half, and a fronted verb phrase carries a copy of the verb with
 the whole M-value. -/
-def derive (L : Language) (x : VerbalSpine) : Chains :=
+def derive (L : Language) (x : Clause) : Chains :=
   let c := HeadChain.ofHeads .V x.above
   let alone : HeadChain := ⟨[.V], c.mvalue⟩
   { verb := if Splits L x then alone else c
@@ -366,7 +395,7 @@ instance (d : Chains) : Decidable d.HasC := inferInstanceAs (Decidable (_ ∈ _)
 
 end Chains
 
-variable {L : Language} {x : VerbalSpine}
+variable {L : Language} {x : Clause}
 
 theorem splits_of_doSupport (h : (derive L x).DoSupport) : Splits L x := by
   by_contra hs
@@ -380,7 +409,7 @@ theorem doSupport_iff (h : .V ∉ x.above) : (derive L x).DoSupport ↔ Splits L
       .V :: x.above := HeadChain.terminals_ofHeads .V x.above
   simp [Chains.DoSupport, derive, hs, HeadChain.Orphan, ht, h]
 
-theorem not_doSupport_of_isAuxiliary (h : x.IsAuxiliary) : ¬ (derive L x).DoSupport :=
+theorem not_doSupport_of_verb_eq_aux (h : x.verb = .AUX) : ¬ (derive L x).DoSupport :=
   fun hd ↦ absurd ((splits_of_doSupport hd).1.symm.trans h) (by decide)
 
 theorem doSupport_iff_strong_of_ne_inSitu (h : .V ∉ x.above) (hne : x.above ≠ [])
@@ -396,7 +425,7 @@ theorem doSupport_iff_of_intervenes (h : .V ∉ x.above) (hne : x.above ≠ [])
 theorem finitePosition_declarative (hT : .T ∉ L.strongAt .VERB) :
     (derive L declarative).finitePosition = some (if .V ∈ L.strongAt .VERB then .V else .T) := by
   by_cases hV : Cat.V ∈ L.strongAt .VERB <;>
-    simp [Chains.finitePosition, derive, Splits, declarative, VerbalSpine.Intervenes,
+    simp [Chains.finitePosition, derive, Splits, declarative, Clause.Intervenes,
       HeadChain.pronounced, HeadChain.ofHeads, List.filter, hV, hT]
 
 theorem danish_verb_second :
@@ -424,7 +453,7 @@ theorem imperatives :
       (derive vallader toC).finitePosition = some .T ∧
       (∀ L, (derive L toC).HasC ∧ ¬ (derive L declarative).HasC) := by
   refine ⟨by decide, by decide, fun L ↦ ?_⟩
-  simp only [Chains.HasC, derive, Splits, toC, declarative, VerbalSpine.Intervenes]
+  simp only [Chains.HasC, derive, Splits, toC, declarative, Clause.Intervenes]
   split_ifs <;> simp [HeadChain.terminals, HeadChain.ofHeads]
 
 /-! ### Negative Merger -/
@@ -432,7 +461,7 @@ theorem imperatives :
 /-- Negative Merger, a postsyntactic rule, adjoins the M-value of the negation in the specifier
 of ΣP to the M-value of a chain that contains Σ, outside what GenHM has built. -/
 def HeadChain.negativeMerger (c : HeadChain) : HeadChain :=
-  if .Pol ∈ c.positions then ⟨c.positions, c.mvalue * of .Neg⟩ else c
+  if .Pol ∈ c.positions then ⟨c.positions, ⟨c.mvalue.root, c.mvalue.heads ++ [.Neg]⟩⟩ else c
 
 theorem HeadChain.terminals_negativeMerger {c : HeadChain} (h : .Pol ∈ c.positions) :
     c.negativeMerger.terminals = c.terminals ++ [.Neg] := by
@@ -454,7 +483,7 @@ theorem Chains.finitePosition_negativeMerger (d : Chains) :
 
 theorem contracted_negation :
     let negated := (derive english (negation english)).negativeMerger
-    let question : VerbalSpine := { above := [.Pol, .T, .C], specifiers := {.Pol, .T} }
+    let question : Clause := { above := [.Pol, .T, .C], specifiers := {.Pol, .T} }
     negated.finite.word english = some [[.dummy], [.finite], [.contracted]] ∧
       negated.verb.word english = some [[.stem]] ∧
       (derive english { negation english with verb := .AUX }).negativeMerger.finite.word english =
@@ -495,7 +524,7 @@ def languages : List (Glottocode × Language) :=
 
 /-- The context each label of the rows names in a language. The elided verb-second clause is
 subject-initial, and in the fronting ones the subject follows the finite verb. -/
-def contexts (L : Language) : List (String × VerbalSpine) :=
+def contexts (L : Language) : List (String × Clause) :=
   [("declarative", declarative), ("negation", negation L), ("verum", polarity),
     ("inversion", inversion), ("v2", inversion), ("subjectWh", toC),
     ("imperativeAff", toC), ("imperativeNeg", declarative),
@@ -590,6 +619,10 @@ def resolve (j : Hiatus.Juncture) : List Segment :=
 def join (x y : List Segment) : List Segment :=
   (Hiatus.Juncture.ofForms? x y).elim (x ++ y) resolve
 
+/-- The head-adjunction structure of a complex head, in which each head is adjoined outside the
+heads below it. -/
+def comb {H : Type*} (c : ComplexHead H H) : FreeMagma H := c.heads.foldl (· * of ·) (of c.root)
+
 /-- The exponent of a constituent of a complex head of prefixes. -/
 structure Exponent where
   segments : List Segment
@@ -620,8 +653,8 @@ def exponents? (a : Wordlist.Analysis) : Option (Cat → Exponent) := do
 
 theorem relative_prefixes :
     ∀ a ∈ Wordlist.analyses, a.form.languageId = .zimbabweanNdebele → ∃ e ∈ exponents? a,
-      some (lift e relative.mvalue).segments = transcribe? a.form.form.toList ∧
-        Hiatus.Free (lift e relative.mvalue).segments ∧
+      some (lift e (comb relative.mvalue)).segments = transcribe? a.form.form.toList ∧
+        Hiatus.Free (lift e (comb relative.mvalue)).segments ∧
         ¬ Hiatus.Free (relative.terminals.reverse.flatMap fun h ↦ (e h).segments) := by
   decide +kernel
 
@@ -631,52 +664,93 @@ def nonMirror : FreeMagma Cat := of .T * (of .C * (of .D * of .Lnk))
 /-- In class 9 the Mirror-obeying complex head spells out as the attested *e-* and the opposite
 bracketing of the same terminals as *i-*. -/
 theorem mirror_class9 :
-    (FreeMagma.lift FreeMonoid.of nonMirror).toList = relative.terminals ∧
+    toFreeSemigroup nonMirror = toFreeSemigroup (comb relative.mvalue) ∧
       ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis,
-        (lift e relative.mvalue).segments = [Ndebele.e] ∧
+        (lift e (comb relative.mvalue)).segments = [Ndebele.e] ∧
           (lift e nonMirror).segments = [Ndebele.i] := by
   decide +kernel
 
-/-- Coalescence is not associative. An associative juncture rule would spell out every
-bracketing of the same terminals alike, and the two bracketings of the class 9 prefix come out
-differently, /i/ and /i/ merging before /a/ coalesces with them in one and after in the other. -/
-theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun h ↦ by
-  let _ : Semigroup Exponent := { (inferInstance : Mul Exponent) with mul_assoc := h }
-  obtain ⟨hterm, hspell⟩ := mirror_class9
-  obtain ⟨e, -, he, hi⟩ := hspell
-  have := congrArg Exponent.segments
-    (lift_eq_lift_of_lift_of_eq e (FreeMonoid.toList.injective hterm))
-  exact absurd (he.symm.trans (this.symm.trans hi)) (by decide)
+/-- Coalescence is not associative: of /a/, /i/ and /i/, the two /i/ merge before /a/ coalesces
+with them in one bracketing and after in the other, which is why the two bracketings of the
+class 9 prefix come out differently. -/
+theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun h ↦
+  absurd (h ⟨[Ndebele.i]⟩ ⟨[Ndebele.i]⟩ ⟨[Ndebele.a]⟩) (by decide)
 
 /-! ### Amalgamation -/
 
 section Amalgamation
 
-open HarizanovGribanova2019
+open HarizanovGribanova2019 Amalgamation
+
+variable {H : Type*}
+
+/-- A head-adjunction structure is a left comb when every product in it has a single head as its
+right factor. -/
+private def IsLeftComb : FreeMagma H → Prop
+  | .of _ => True
+  | .mul x (.of _) => IsLeftComb x
+  | .mul _ (.mul _ _) => False
+
+@[simp] private theorem isLeftComb_of (h : H) : IsLeftComb (of h) := trivial
+
+@[simp] private theorem isLeftComb_mul_of (x : FreeMagma H) (h : H) :
+    IsLeftComb (x * of h) ↔ IsLeftComb x := Iff.rfl
+
+@[simp] private theorem not_isLeftComb_mul_mul (x y z : FreeMagma H) :
+    ¬ IsLeftComb (x * (y * z)) := id
+
+private theorem isLeftComb_iff_mem_range_comb {x : FreeMagma H} :
+    IsLeftComb x ↔ x ∈ Set.range comb := by
+  constructor
+  · induction x with
+    | ih1 a => exact fun _ ↦ ⟨⟨a, []⟩, rfl⟩
+    | ih2 x y ihx _ =>
+      cases y with
+      | of a =>
+        intro h
+        obtain ⟨c, rfl⟩ := ihx h
+        exact ⟨⟨c.root, c.heads ++ [a]⟩, by simp [comb]⟩
+      | mul y z => exact fun h ↦ (not_isLeftComb_mul_mul x y z h).elim
+  · rintro ⟨⟨r, hs⟩, rfl⟩
+    induction hs using List.reverseRec with
+    | nil => trivial
+    | append_singleton l a ih => simpa [comb] using ih
+
+-- On the French clause the two constructions give the same word with the same site.
+theorem amalgamation_sited_french :
+    (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.sited =
+      some (Minimalist.HeadChain.sited (· ≠ Cat.V) (· = Cat.T) ⟨[.V, .v, .Neg, .T]⟩) := by
+  decide
+
+-- On the French clause the two constructions give one hosting: every position is pronounced at T.
+theorem amalgamation_hosts_french :
+    (amalgamate HarizanovGribanova2019.french).map MorphosyntacticWord.hosts =
+      some (Minimalist.HeadChain.hosts (· ≠ Cat.V) (· = Cat.T) ⟨[.V, .v, .Neg, .T]⟩) := by
+  decide
 
 theorem amalgamation_bracketing (x y z : Cat) :
-    amalgamateSpine [.single z none, .single y (some .lowering), .single x (some .lowering)] =
-        some [⟨z, (HeadChain.ofHeads z [y, x]).mvalue, none⟩] ∧
-      amalgamateSpine [.single z none, .single y (some .raising), .single x (some .lowering)] =
-        some [⟨z, of z * (of y * of x), none⟩] :=
+    amalgamate ⟨[⟨z, none⟩, ⟨y, some .lowering⟩, ⟨x, some .lowering⟩]⟩ =
+        some [⟨z, comb (HeadChain.ofHeads z [y, x]).mvalue⟩] ∧
+      amalgamate ⟨[⟨z, none⟩, ⟨y, some .raising⟩, ⟨x, some .lowering⟩]⟩ =
+        some [⟨z, of z * (of y * of x)⟩] :=
   ⟨rfl, rfl⟩
 
 theorem amalgamation_class9 :
-    amalgamateSpine [.single .T none, .single .C (some .lowering), .single .D (some .lowering),
-        .single .Lnk (some .lowering)] = some [⟨.T, relative.mvalue, none⟩] ∧
-      ∃ a, amalgamateSpine [.single .T none, .single .C (some .lowering),
-          .single .D (some .raising), .single .Lnk (some .lowering)] = some [a] ∧
-        a.members = relative.terminals ∧ a.complex ≠ relative.mvalue ∧
-        ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.complex).segments = [Ndebele.i] :=
+    amalgamate ⟨[⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .lowering⟩,
+        ⟨.Lnk, some .lowering⟩]⟩ = some [⟨.T, comb relative.mvalue⟩] ∧
+      ∃ a, amalgamate ⟨[⟨.T, none⟩, ⟨.C, some .lowering⟩, ⟨.D, some .raising⟩,
+          ⟨.Lnk, some .lowering⟩]⟩ = some [a] ∧
+        a.heads = relative.terminals ∧ a.bracketing ≠ comb relative.mvalue ∧
+        ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis, (lift e a.bracketing).segments = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
 
 theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
     (h : lo ++ s :: hi = b :: rest) (hnd : (b :: rest).Nodup) :
     (HeadChain.ofHeads b rest).pronounced {s} = some s ∧
-      amalgamateSpine (lo.map (.single · (some .raising)) ++ .single s none ::
-          hi.map (.single · (some .lowering))) =
-        some [⟨s, (HeadChain.ofHeads b rest).mvalue, none⟩] := by
-  refine ⟨?_, amalgamateSpine_raising_lowering h⟩
+      amalgamate ⟨lo.map (Terminal.mk · (some .raising)) ++ ⟨s, none⟩ ::
+          hi.map (Terminal.mk · (some .lowering))⟩ =
+        some [⟨s, comb (HeadChain.ofHeads b rest).mvalue⟩] := by
+  refine ⟨?_, amalgamate_raising_lowering h⟩
   have hs : s ∉ lo ++ hi := (List.nodup_cons.mp (List.nodup_middle.mp (h ▸ hnd))).1
   have h₁ : lo.filter (· = s) = [] :=
     List.filter_eq_nil_iff.mpr fun y hy ↦ by simpa using fun h : y = s ↦ hs (by simp [← h, hy])
@@ -684,14 +758,44 @@ theorem amalgamation_at_pronounced {lo hi rest : List Cat} {s b : Cat}
     List.filter_eq_nil_iff.mpr fun y hy ↦ by simpa using fun h : y = s ↦ hs (by simp [← h, hy])
   simp [HeadChain.pronounced, HeadChain.ofHeads, ← h, List.filter_append, h₁, h₂]
 
+private theorem forall_isLeftComb_amalgamate {below : List (MorphosyntacticWord H)}
+    {pending : Option (FreeMagma H)} {hs : List (Terminal H)} {out : List (MorphosyntacticWord H)}
+    (h : amalgamateAux below pending hs = some out) :
+    (∀ a ∈ out, IsLeftComb a.bracketing) ↔
+      (∀ b ∈ below, IsLeftComb b.bracketing) ∧ (∀ p ∈ pending, IsLeftComb p) ∧
+        ((pending.map fun _ ↦ Direction.raising) :: hs.map (·.m)).IsChain
+          fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+  induction hs generalizing below pending out with
+  | nil => cases pending <;> simp_all [amalgamateAux]
+  | cons x hs ih =>
+    obtain ⟨x, m⟩ := x
+    rcases m with _ | _ | _ <;> cases below <;> cases pending <;>
+      simp only [amalgamateAux] at h <;>
+      first
+        | cases h
+        | (rw [ih h]; rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;>
+            simp [List.isChain_cons_cons] <;> tauto)
+
+/-- GenHM builds only complex heads in which each head is adjoined outside the heads below it,
+the bracketing of the Mirror Principle. Amalgamation builds only such complex heads exactly when
+no head Lowers right after a head has Raised into it. -/
+theorem forall_mem_range_comb_iff {s : Spine (Terminal H)} {out : List (MorphosyntacticWord H)}
+    (h : amalgamate s = some out) :
+    (∀ a ∈ out, a.bracketing ∈ Set.range comb) ↔
+      (s.map Terminal.m).heads.IsChain fun p q ↦ ¬ (p = some .raising ∧ q = some .lowering) := by
+  obtain ⟨hs⟩ := s
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+  have := forall_isLeftComb_amalgamate hr
+  simp only [← isLeftComb_iff_mem_range_comb]
+  rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;> simp_all [List.isChain_cons_cons]
+
 theorem amalgamation_keeps_verb_site (m : Cat → Option Direction)
-    {out out' : List (Amalgam Cat)} {a a' : Amalgam Cat}
-    (h : amalgamateSpine ([Cat.V, .T].map fun x ↦ .single x (m x)) = some out)
-    (h' : amalgamateSpine ([Cat.V, .T, .C].map fun x ↦ .single x (m x)) = some out')
-    (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.members) (hV' : .V ∈ a'.members) :
+    {out out' : List (MorphosyntacticWord Cat)} {a a' : MorphosyntacticWord Cat}
+    (h : amalgamate ⟨[Cat.V, .T].map fun x ↦ ⟨x, m x⟩⟩ = some out)
+    (h' : amalgamate ⟨[Cat.V, .T, .C].map fun x ↦ ⟨x, m x⟩⟩ = some out')
+    (ha : a ∈ out) (ha' : a' ∈ out') (hV : .V ∈ a.heads) (hV' : .V ∈ a'.heads) :
     a'.site = a.site :=
-  site_eq_of_append (extra := [Amalgam.single Cat.C (m .C)]) h h'
-    (by simp [Amalgam.members, Amalgam.single]) ha ha' hV hV'
+  site_eq_of_amalgamate_append (extra := [⟨Cat.C, m .C⟩]) h h' (by simp) ha ha' hV hV'
 
 theorem doSupport_iff_intervener {L : Language} (hV : .VERB ∈ L.strongVerbs)
     (hs : L.splitByIntervention) :
@@ -700,22 +804,22 @@ theorem doSupport_iff_intervener {L : Language} (hV : .VERB ∈ L.strongVerbs)
   refine ⟨rfl, (doSupport_iff (by decide)).mpr ⟨rfl, hV, by decide, .inl ⟨hs, by decide⟩⟩,
     fun h ↦ ?_⟩
   have := splits_of_doSupport h
-  simp [Splits, toC, VerbalSpine.Intervenes] at this
+  simp [Splits, toC, Clause.Intervenes] at this
 
 /-- The settings and context of a French or Danish clause among the verb-placement examples of
 the amalgamation study. -/
-def clauseOf (r : Datum) : Option (Language × VerbalSpine) :=
-  let cx (L : Language) : VerbalSpine :=
+def clauseOf (r : Datum) : Option (Language × Clause) :=
+  let cx (L : Language) : Clause :=
     if r.feature? "diagnostic" = some "negation" then negation L else declarative
   List.lookup (r.language, r.feature? "clause")
     [((.french, none), (french, cx french)), ((.danish, some "embedded"), (danish, cx danish)),
       ((.danish, some "root"), (danish, toC))]
 
 /-- The finite word of a clause whose verb has the tag is pronounced in T or above. -/
-def PlacedHigh (L : Language) (x : VerbalSpine) (verb : UD.UPOS) : Prop :=
+def PlacedHigh (L : Language) (x : Clause) (verb : UD.UPOS) : Prop :=
   (derive L { x with verb }).finitePosition ∈ [some .T, some .C]
 
-instance (L : Language) (x : VerbalSpine) (verb : UD.UPOS) : Decidable (PlacedHigh L x verb) :=
+instance (L : Language) (x : Clause) (verb : UD.UPOS) : Decidable (PlacedHigh L x verb) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 theorem amalgamation_rows :

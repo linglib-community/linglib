@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Data.Examples.Gasparri2025
 public import Linglib.Data.Examples.Readers
 
@@ -42,6 +42,8 @@ a referentialist needs must introduce the naming predicate itself.
 
 namespace Gasparri2025
 
+open Examples (Subject Context Level)
+
 open Quantifier Quantifier.Det
 
 theorem referentialist_generic_is_token {E : Type} [Fintype E] [DecidableEq E] (j : E)
@@ -50,23 +52,6 @@ theorem referentialist_generic_is_token {E : Type} [Fintype E] [DecidableEq E] (
   most_singleton_iff j VP
 
 /-! ### The paper's judgments -/
-
-/-- The subject of a sentence, as the paper classifies it. -/
-inductive Subject
-  | bareName | modifiedName | pluralName | quotedName | definiteName
-  | definiteCommon | modifiedCommon | bareCommonPlural
-  deriving DecidableEq, Repr
-
-/-- What the sentence is embedded in: nothing, a locative adjunct, a discourse about naming
-conventions, a binding quantifier, a discourse with kinds in focus, or a contrastive adjunct. -/
-inductive Context
-  | outOfTheBlue | locative | naming | binding | focusedKinds | contrast
-  deriving DecidableEq, Repr
-
-/-- Whether the predicate is characterizing or kind-level. -/
-inductive Level
-  | characterizing | kindLevel
-  deriving DecidableEq, Repr
 
 /-- A sentence of the paper with the judgment of its generic reading, if the paper lists one. -/
 structure Row where
@@ -78,16 +63,10 @@ structure Row where
   deriving DecidableEq, Repr
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let subject ← ex.parse? "subject" [("bareName", Subject.bareName),
-    ("modifiedName", .modifiedName), ("pluralName", .pluralName), ("quotedName", .quotedName),
-    ("definiteName", .definiteName), ("definiteCommon", .definiteCommon),
-    ("modifiedCommon", .modifiedCommon), ("bareCommonPlural", .bareCommonPlural)]
-  let context ← ex.parse? "context" [("outOfTheBlue", Context.outOfTheBlue),
-    ("locative", .locative), ("naming", .naming), ("binding", .binding),
-    ("focusedKinds", .focusedKinds), ("contrast", .contrast)]
+  let subject ← (Examples.subject ex)
+  let context ← (Examples.context ex)
   let qadv ← ex.parse? "qadv" [("yes", true), ("no", false)]
-  let level ← ex.parse? "level" [("characterizing", Level.characterizing),
-    ("kindLevel", .kindLevel)]
+  let level ← (Examples.level ex)
   pure ⟨subject, context, qadv, level, ex.readings.lookup "generic"⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum

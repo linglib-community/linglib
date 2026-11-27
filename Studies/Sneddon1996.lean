@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Indonesian.Phonology
+public import Linglib.Languages.Indonesian.Phonology
 public import Linglib.Phonology.Segmental.NaturalClass
 public import Linglib.Data.Wordlist.Sneddon1996
 
@@ -11,7 +11,7 @@ Sneddon's grammar of Indonesian gives the nasal that ends the prefixes *meN-* an
 lists of the sounds a base may begin with: *m* before *b*, *p*, *f*; *n* before *d*, *t*, *c*,
 *j*, *sy*, *z*; *ny* before *s*; *ng* before a vowel and before *g*, *k*, *h*, *kh*; and no
 nasal before the other consonants, with an initial *p*, *t*, *s* or *k* lost. The Indonesian
-phonology fragment derives the nasal from the place of the following obstruent, and [the two
+phonology language file derives the nasal from the place of the following obstruent, and [the two
 agree on every phoneme](##juncture_eq_of_mem_rules): each list's nasal [is homorganic with its
 obstruents](##homorganic_iff_of_mem_rules), the palatal before *s* excepted. Since *k* and *s*
 are lost, [a derived form does not determine its base](##prefixN_k_cons). A base that keeps
@@ -62,7 +62,7 @@ theorem pairwise_disjoint_rules : rules.Pairwise (Function.onFun Disjoint Prod.f
 theorem sup_rules : rules.toFinset.sup Prod.fst = consonants ∪ vowels := by
   decide +kernel
 
-/-- The juncture of the fragment is that of the rules: before a sound of a rule's list the
+/-- The juncture of the language file is that of the rules: before a sound of a rule's list the
 nasal is the rule's, and the sound follows it unless it is *p*, *t*, *s* or *k*, which are
 lost (pp. 9–10). -/
 theorem juncture_eq_of_mem_rules : ∀ r ∈ rules, ∀ x ∈ r.1,
@@ -121,7 +121,7 @@ def segment? (g : String) : Option Segment :=
 def segmentsOf (w : Form Cell) : Option (List Segment) :=
   w.segments.mapM segment?
 
--- every form is read, as phonemes of the fragment
+-- every form is read, as phonemes of the language file
 theorem segmentsOf_all :
     ∀ w ∈ all, ∃ ss ∈ segmentsOf w, ∀ x ∈ ss, x ∈ consonants ∪ vowels := by
   decide +kernel

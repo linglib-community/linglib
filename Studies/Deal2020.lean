@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Context.Overwrite
+public import Linglib.Syntax.Spine.Label
 public import Linglib.Data.Examples.Deal2020
 public import Mathlib.Data.Finset.Powerset
 public import Linglib.Data.Examples.Readers
@@ -59,10 +60,7 @@ variable {W E P T : Type u} {α : Type*}
 
 /-- The functional sequence of shifty operators (152), lowest first: OP_TIME, OP_AUTH, OP_ADDR,
 OP_LOC, each overwriting one coordinate of the context with that of the index (126). -/
-def sequence : List Coord := [.time, .agent, .addressee, .position]
-
-/-- A class's position in the sequence. -/
-def rank (k : Coord) : ℕ := sequence.idxOf k
+def sequence : Spine Coord := ⟨[.time, .agent, .addressee, .position]⟩
 
 /-- The operators `l` stacked over `χ`, the first innermost. -/
 def stackOf (l : List Coord) (χ : Character (Context W E P T) (Context W E P T) α) :
@@ -72,19 +70,16 @@ def stackOf (l : List Coord) (χ : Character (Context W E P T) (Context W E P T)
 /-- A complement projecting the lowest `n` operators of the sequence (128). -/
 def stack (n : ℕ) : Character (Context W E P T) (Context W E P T) α →
     Character (Context W E P T) (Context W E P T) α :=
-  stackOf (sequence.take n)
+  stackOf (sequence.take n).heads
 
 /-- The classes a complement projecting the lowest `n` operators shifts. -/
-def shifted (n : ℕ) : Finset Coord := (sequence.take n).toFinset
+def shifted (n : ℕ) : Finset Coord := (sequence.take n).label
 
-theorem mem_shifted_iff {n : ℕ} {k : Coord} : k ∈ shifted n ↔ k ∈ sequence ∧ rank k < n := by
-  rw [shifted, List.mem_toFinset]
-  refine ⟨fun h ↦ ?_, fun ⟨h, h'⟩ ↦ (List.mem_take_iff_idxOf_lt h).2 h'⟩
-  have hk := List.mem_of_mem_take h
-  exact ⟨hk, (List.mem_take_iff_idxOf_lt hk).1 h⟩
+theorem mem_shifted_iff {n : ℕ} {k : Coord} :
+    k ∈ shifted n ↔ k ∈ sequence ∧ sequence.height k < n :=
+  Spine.mem_label.trans Spine.mem_take_iff
 
-theorem shifted_mono : Monotone shifted := fun _ _ h _ hk ↦
-  mem_shifted_iff.2 ⟨(mem_shifted_iff.1 hk).1, (mem_shifted_iff.1 hk).2.trans_le h⟩
+theorem shifted_mono : Monotone shifted := sequence.take_mono
 
 theorem stackOf_eq (l : List Coord) (χ : Character (Context W E P T) (Context W E P T) α) :
     stackOf l χ = shiftyOp l.toFinset χ := by
@@ -110,8 +105,8 @@ theorem diag_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P T)
 /-- (G2): in a complement of any size, an indexical class shifts only if every class below it in
 the sequence shifts as well (§4.4). -/
 theorem mem_shifted_of_lt {n : ℕ} {k k' : Coord} (hk : k ∈ shifted n) (hk' : k' ∈ sequence)
-    (h : rank k' < rank k) : k' ∈ shifted n :=
-  mem_shifted_iff.2 ⟨hk', h.trans (mem_shifted_iff.1 hk).2⟩
+    (h : sequence.height k' < sequence.height k) : k' ∈ shifted n :=
+  Spine.mem_label.2 (Spine.mem_take_of_height_lt (Spine.mem_label.1 hk) hk' h)
 
 /-! ### The complementizer and the de se -/
 
@@ -162,13 +157,14 @@ the operators above it, overwriting from the event. -/
 def complement (n p : ℕ) (R : Ev → Set (Context W E P T)) (ev : Ev → Context W E P T)
     (χ : Character (Context W E P T) (Context W E P T) Prop) :
     Ev → Character (Context W E P T) (Context W E P T) Prop :=
-  eventStackOf ev ((sequence.take n).filter (· ∉ sequence.take p)) (comp R (stack (min p n) χ))
+  eventStackOf ev ((sequence.take n).heads.filter (· ∉ sequence.take p))
+    (comp R (stack (min p n) χ))
 
 theorem complement_apply (n p : ℕ) (R : Ev → Set (Context W E P T)) (ev : Ev → Context W E P T)
     (χ : Character (Context W E P T) (Context W E P T) Prop) (e : Ev) (c i : Context W E P T) :
     complement n p R ev χ e c i ↔ ∀ i' ∈ R e,
       χ (overwrite (deSe n p) (overwrite (eventShifted n p) c (ev e)) i') i' := by
-  have : ((sequence.take n).filter (· ∉ sequence.take p)).toFinset = eventShifted n p := by
+  have : ((sequence.take n).heads.filter (· ∉ sequence.take p)).toFinset = eventShifted n p := by
     ext k; simp [eventShifted, shifted]
   rw [complement, eventStackOf_eq, this, stack_eq]
   rfl
@@ -233,7 +229,7 @@ def ofBundles (bs : Finset (Finset Coord)) : Finset (Finset Coord) :=
   bs.powerset.image fun t ↦ t.sup id
 
 theorem mem_of_mem_ofSizes {ns : Finset ℕ} {s : Finset Coord} (hs : s ∈ ofSizes ns) {k k' : Coord}
-    (hk : k ∈ s) (hk' : k' ∈ sequence) (h : rank k' < rank k) : k' ∈ s := by
+    (hk : k ∈ s) (hk' : k' ∈ sequence) (h : sequence.height k' < sequence.height k) : k' ∈ s := by
   obtain ⟨n, -, rfl⟩ := Finset.mem_image.1 hs
   exact mem_shifted_of_lt hk hk' h
 
@@ -318,6 +314,11 @@ def depth? : String → Option ℕ
   | "lowest reported context" => some 2
   | _ => none
 
+/-- The paper accepts a reading it leaves unmarked or marks `?`. -/
+def Accepted (j : Judgment) : Prop := j = .acceptable ∨ j = .marginal
+
+instance (j : Judgment) : Decidable (Accepted j) := inferInstanceAs (Decidable (_ ∨ _))
+
 /-- A row's verb, and the coordinates its indexicals read. -/
 def verbCoords? (r : Datum) : Option (Verb × List Coord) :=
   ((r.feature? "verb").bind verb?).bind fun v ↦ ((r.features "indexical").mapM coord?).map (v, ·)
@@ -327,14 +328,14 @@ exactly the coordinates it shifts, per (G2) and Shift Together (72). -/
 theorem rows_shift :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings,
       ∀ ps ∈ (shifted? x.1).toList,
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
+        (Accepted x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
   decide +kernel
 
 /-- A judged de se reading of the rows' shifted indexicals is available exactly when a complement
 the verb selects shifts their coordinates. -/
 theorem rows_deSe :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings, x.1 = "de se" →
-      (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s) := by
+      (Accepted x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s) := by
   decide +kernel
 
 /-- (G3) in the rows: a judged non-de se reading of the rows' shifted indexicals is available
@@ -343,7 +344,7 @@ complementizer, `eventShifted n c = shifted n \ shifted c`. -/
 theorem rows_nonDeSe :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ c ∈ p.1.cPosition.toList,
       ∀ x ∈ r.readings, x.1 = "non-de se" →
-        (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
+        (Accepted x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
   decide +kernel
 
 /-- In the lowest of two reports, a first-person reading is available iff the two verbs' complements
@@ -352,7 +353,7 @@ theorem rows_double_report :
     ∀ r ∈ Examples.all, r.feature? "lowest_shift" = some "yes" →
       ∀ p ∈ (verbCoords? r).toList, ∀ v₂ ∈ ((r.feature? "lower_verb").bind verb?).toList,
         ∀ x ∈ r.readings, ∀ d ∈ (depth? x.1).toList,
-          (.marginal ≤ x.2 ↔ ∃ s₁ ∈ p.1.options, ∃ s₂ ∈ v₂.options, .addressee ∈ s₂ ∧
+          (Accepted x.2 ↔ ∃ s₁ ∈ p.1.options, ∃ s₂ ∈ v₂.options, .addressee ∈ s₂ ∧
             ∀ k ∈ p.2, localDepth [s₁, s₂] k = d) := by
   decide +kernel
 

@@ -7,9 +7,9 @@ public import Linglib.Semantics.Degree.Superlative
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Exhaustification.Basic
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantifier.Counting
 public import Linglib.Semantics.PolarityItem.LicensingContext
-public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Languages.English.PolarityItems
 public import Linglib.Data.Examples.Gajewski2011
 public import Linglib.Data.Examples.Readers
 
@@ -51,6 +51,8 @@ and a presupposition trigger's full meaning fails plain downward entailment.
 @[expose] public section
 
 namespace Gajewski2011
+
+open Examples (Strength)
 
 open NaturalLogic Presupposition Quantifier Quantifier.Det Desire.BestWorlds
 
@@ -108,11 +110,6 @@ theorem atMostFive_not_strong :
 /-- The paper's licensers. -/
 inductive Licenser
   | no | atMostFive | some | only | conditional | sorryThat
-  deriving DecidableEq, Repr
-
-/-- Weak items are *any* and *ever*, strong ones *in weeks*, *either* and *until*. -/
-inductive Strength
-  | weak | strong
   deriving DecidableEq, Repr
 
 /-- The two licensing principles applied to a licenser's analysis, on which a weak item needs
@@ -200,7 +197,7 @@ def Licenser.context : Licenser → Option PolarityItem.LicensingContext
   | .sorryThat => Option.some .adversative
 
 /-- An English item of each strength, *ever* and *in years*. -/
-def Strength.item : Strength → PolarityItem
+def Examples.Strength.item : Strength → PolarityItem
   | .weak => English.PolarityItems.ever
   | .strong => English.PolarityItems.inYears
 
@@ -259,7 +256,7 @@ structure Row where
 def Row.ofDatum (ex : Datum) : Option Row := do
   let licenser ← ex.parse? "licenser" [("no", Licenser.no), ("atMostFive", .atMostFive),
     ("some", .some), ("only", .only), ("conditional", .conditional), ("sorry", .sorryThat)]
-  let strength ← ex.parse? "strength" [("weak", Strength.weak), ("strong", .strong)]
+  let strength ← (Examples.strength ex)
   pure ⟨licenser, strength, ex.judgment⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum

@@ -4,8 +4,8 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Order.BooleanSubalgebra
 public import Mathlib.Order.Hom.CompleteLattice
-public import Linglib.Logic.Modal.Defs
-public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Data.Examples.Coppock2018
 public import Linglib.Data.Examples.Readers
 
@@ -39,13 +39,13 @@ conditions on the three verbs are checked.
   outlooks, the image of the powerset of the worlds under preimage, and are order-isomorphic
   to it when every world is refined, the paper's footnote 8.
 * Acceptance is the Kripke box over the agent's accessibility relation on outlooks, from
-  `Logic/Modal/Defs.lean`, and rejection the box of falsity, stronger than the paper's
+  `Logic/Modal/Basic.lean`, and rejection the box of falsity, stronger than the paper's
   gloss "holds in none" on a trivalent proposition but the reading its analysis of (38)
   uses. *Think* and *tycka* are trivalent propositions built with the Weak Kleene
-  conjunction of `Logic/Trivalent/Basic.lean`, the paper's ∂ being the join `a ⊔ 0` with
+  conjunction of `Logic/Trivalent/Connectives.lean`, the paper's ∂ being the join `a ⊔ 0` with
   the gap, so that presupposition projection through negation is the logic's rather than a
   stipulation.
-* The formal fragment's syntax and translations (§5.1, §5.3), the context-of-utterance
+* The formal language file's syntax and translations (§5.1, §5.3), the context-of-utterance
   parameter, and the §4 pragmatics of assertion as a proposal are not modelled.
 
 ## TODO

@@ -1,8 +1,8 @@
 module
 
 public import Studies.DeSwartSag2002
-public import Linglib.Fragments.Slavic.Czech.Determiners
-public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Languages.Slavic.Czech.Determiners
+public import Linglib.Languages.Romance.Italian.Determiners
 
 /-!
 # Zeijlstra (2004): Sentential Negation and Negative Concord
@@ -166,13 +166,14 @@ end Comparison
 
 /-! ### The readings of n-words
 
-N-words are non-negative indefinites, so of the readings the fragments list for an n-word,
+N-words are non-negative indefinites, so of the readings the language files list for an n-word,
 Zeijlstra's is the one that is upward monotone in its scope. -/
 
 section Readings
 
 theorem not_scopeMonotone_no : ¬ ScopeMonotone (no : Det PUnit.{u + 1}) := fun h ↦
-  not_no_self Set.univ_nonempty <| h Set.univ (Set.empty_subset _) fun x _ ↦ Set.notMem_empty x
+  Set.univ_nonempty.ne_empty <| no_self_iff.1 <|
+    h Set.univ (Set.empty_subset _) fun x _ ↦ Set.notMem_empty x
 
 /-- Of the readings of Italian *nessuno*, the one upward monotone in its scope on every finite
 domain is the indefinite. -/

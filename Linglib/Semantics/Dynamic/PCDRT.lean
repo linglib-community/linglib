@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Linglib.Logic.Assignment
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantifier.Defs
 public import Mathlib.Order.SupClosed
 public import Mathlib.Data.Fin.VecNotation
 

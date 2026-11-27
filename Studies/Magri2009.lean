@@ -2,8 +2,8 @@ module
 
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Events.Lifespan
+public import Linglib.Semantics.Quantifier.Basic
+public import Linglib.Semantics.Tense.Lifespan
 public import Linglib.Data.Examples.Magri2009
 public import Linglib.Data.Examples.Readers
 
@@ -22,7 +22,7 @@ equivalent to the utterance (`disjoint_exhR`), while an ordinary implicature dep
 (`odd_univ_iff`).
 
 Individual-level predicates differ from stage-level ones only in common knowledge: they are
-permanent, (70) (`Event.Permanent`), hence homogeneous over any part of a lifespan (`Homogeneous`,
+permanent, (70) (`Tense.Permanent`), hence homogeneous over any part of a lifespan (`Homogeneous`,
 (71)). The oddness of *sometimes* with *tall*, (72b), is then that of *some* with *come from a warm
 country*, (73) (`odd_some`, `sometimes_odd`). An existential in the scope of a universal, against
 its alternatives with definite descriptions (49), (94), is odd when common knowledge fixes a single
@@ -41,8 +41,8 @@ the German word order facts that Diesing describes, (8) and (125) (`word_order_r
   at issue over individuals and an index (times, or objects and times), with lifespans, nouns and
   restrictors held fixed, so every extension is a logically possible world. The worlds the paper
   exhibits, (98), the table of (54) and the world of §4.3, are constructed.
-* Lifespans are sets of times `span d`, and (70) is `Event.Permanent` of
-  `Semantics/Events/Lifespan.lean`. Following Musan, (76) gives every predicate but a few such
+* Lifespans are sets of times `span d`, and (70) is `Tense.Permanent` of
+  `Semantics/Tense/Lifespan.lean`. Following Musan, (76) gives every predicate but a few such
   as *famous* the presupposition that its argument is alive, which (77) adds to the restrictor of
   a Q-adverb.
 * GEN contributes its universal assertion (137) to truth conditions; its homogeneity
@@ -76,7 +76,7 @@ the German word order facts that Diesing describes, (8) and (125) (`word_order_r
 namespace Magri2009
 
 open Exhaustification Quantifier Set
-open Event (Permanent)
+open Tense (Permanent)
 
 /-! ### Blind strengthening and oddness (§3.2) -/
 

@@ -1,4 +1,89 @@
-[
+{
+  "features": [
+    {
+      "key": "holder",
+      "lean": "holder",
+      "type": "Holder",
+      "doc": "Whose belief the comparison bears on.",
+      "levels": [
+        {
+          "name": "addressee",
+          "label": "addressee",
+          "doc": "the listener, now"
+        },
+        {
+          "name": "formerAddressee",
+          "label": "formerAddressee",
+          "doc": "the listener at an earlier time, *di quanto tu credevi* (13)"
+        },
+        {
+          "name": "thirdParty",
+          "label": "thirdParty",
+          "doc": "someone else, *di quanto lui crede* (14)"
+        }
+      ]
+    },
+    {
+      "key": "complementizer",
+      "lean": "complementizer",
+      "type": "Complementizer",
+      "doc": "The complementizer of the embedded clause.",
+      "levels": [
+        {
+          "name": "quanto",
+          "label": "quanto",
+          "doc": "*(di) quanto*, the comparative quantifier in complementizer position"
+        },
+        {
+          "name": "che",
+          "label": "che",
+          "doc": "che"
+        },
+        {
+          "name": "se",
+          "label": "se",
+          "doc": "*se* 'if', of an indirect question"
+        }
+      ]
+    },
+    {
+      "key": "standard",
+      "lean": "standard",
+      "type": "Standard",
+      "doc": "The standard of a comparison is a clause, *di quanto è Carlo* (4), or a belief, *di quanto tu credi* (5).",
+      "levels": [
+        {
+          "name": "clausal",
+          "label": "clausal",
+          "doc": "clausal"
+        },
+        {
+          "name": "belief",
+          "label": "belief",
+          "doc": "belief"
+        }
+      ]
+    },
+    {
+      "key": "predicate",
+      "lean": "predicate",
+      "type": "Predicate",
+      "doc": "The predicate of a comparative clause, when it is not deleted.",
+      "levels": [
+        {
+          "name": "adjective",
+          "label": "adjective",
+          "doc": "A predicate adjective, repeated (75) or another one (82)"
+        },
+        {
+          "name": "lo",
+          "label": "lo",
+          "doc": "the clitic *lo* for the predicate adjective (79)"
+        }
+      ]
+    }
+  ],
+  "examples": [
   {
     "id": "napolinespor1976_ex6a",
     "source": {"bibkey": "napoli-nespor-1976", "paperLabel": "(6)"},
@@ -158,6 +243,7 @@
     "translation": "As I see it, you're making a mistake; you should ask her. M is more intelligent than you believe.",
     "context": "Dario: Non ho capito per niente quest'ultima lezione, comunque non credo che valga la pena di chiedere aiuto a Maria. 'I didn't understand this last lesson at all, but I don't believe it's worth the trouble to ask M for help.'",
     "judgment": "acceptable",
+    "alsoJudged": ["marginal"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -169,8 +255,7 @@
       ["negation", "none"],
       ["mood", "indicative"],
       ["complementizer", "quanto"],
-      ["evidence", "inferred"],
-      ["alsoJudged", "marginal"]
+      ["evidence", "inferred"]
     ],
     "comment": "Printed (?): unmarked for some speakers, ? for others.",
     "verified": "page-image"
@@ -1501,7 +1586,7 @@
     "glossedTokens": [],
     "translation": "M is more intelligent than you believe.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1550,6 +1635,7 @@
     "translation": "M is more intelligent than you believe.",
     "context": "",
     "judgment": "acceptable",
+    "alsoJudged": ["marginal"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1560,8 +1646,7 @@
       ["holder", "addressee"],
       ["negation", "none"],
       ["mood", "subjunctive"],
-      ["complementizer", "quanto"],
-      ["alsoJudged", "marginal"]
+      ["complementizer", "quanto"]
     ],
     "comment": "Printed (?): good for some speakers, less preferable for others.",
     "verified": "page-image"
@@ -1598,7 +1683,7 @@
     "glossedTokens": [],
     "translation": "M is more intelligent than C is.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1647,6 +1732,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
+    "alsoJudged": ["marginal"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1657,8 +1743,7 @@
       ["holder", "addressee"],
       ["negation", "none"],
       ["mood", "subjunctive"],
-      ["complementizer", "quanto"],
-      ["alsoJudged", "marginal"]
+      ["complementizer", "quanto"]
     ],
     "comment": "Printed (?): good for some speakers, less preferable for others.",
     "verified": "page-image"
@@ -1699,6 +1784,7 @@
     "translation": "The situation in Africa is worse than one may possibly imagine, even with all the fantasy in the world.",
     "context": "",
     "judgment": "marginal",
+    "alsoJudged": ["questionable"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1710,8 +1796,7 @@
       ["negation", "none"],
       ["mood", "subjunctive"],
       ["complementizer", "quanto"],
-      ["element", "pur"],
-      ["alsoJudged", "questionable"]
+      ["element", "pur"]
     ],
     "comment": "Printed (?)?.",
     "verified": "page-image"
@@ -1725,6 +1810,7 @@
     "translation": "M is more intelligent than you may be convinced, and G isn't convinced of it either.",
     "context": "",
     "judgment": "marginal",
+    "alsoJudged": ["questionable"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1736,8 +1822,7 @@
       ["negation", "none"],
       ["mood", "subjunctive"],
       ["complementizer", "quanto"],
-      ["element", "neanche"],
-      ["alsoJudged", "questionable"]
+      ["element", "neanche"]
     ],
     "comment": "Printed (?)?.",
     "verified": "page-image"
@@ -1751,6 +1836,7 @@
     "translation": "M is more intelligent than C is.",
     "context": "",
     "judgment": "acceptable",
+    "alsoJudged": ["marginal"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1761,8 +1847,7 @@
       ["holder", "addressee"],
       ["negation", "none"],
       ["mood", "subjunctive"],
-      ["complementizer", "che"],
-      ["alsoJudged", "marginal"]
+      ["complementizer", "che"]
     ],
     "comment": "Printed (?).",
     "verified": "page-image"
@@ -1776,6 +1861,7 @@
     "translation": "M is more intelligent than you think.",
     "context": "",
     "judgment": "acceptable",
+    "alsoJudged": ["marginal"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1786,8 +1872,7 @@
       ["holder", "addressee"],
       ["negation", "none"],
       ["mood", "subjunctive"],
-      ["complementizer", "che"],
-      ["alsoJudged", "marginal"]
+      ["complementizer", "che"]
     ],
     "comment": "Printed (?).",
     "verified": "page-image"
@@ -1800,7 +1885,7 @@
     "glossedTokens": [],
     "translation": "M is more intelligent than C is.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1824,7 +1909,7 @@
     "glossedTokens": [],
     "translation": "M is more intelligent than you think.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1944,7 +2029,7 @@
     "glossedTokens": [],
     "translation": "M is more intelligent than her brother is.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1969,6 +2054,7 @@
     "translation": "M is more intelligent than her brother was at that age.",
     "context": "",
     "judgment": "marginal",
+    "alsoJudged": ["questionable"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -1979,8 +2065,7 @@
       ["holder", "addressee"],
       ["negation", "non2"],
       ["mood", "indicative"],
-      ["complementizer", "quanto"],
-      ["alsoJudged", "questionable"]
+      ["complementizer", "quanto"]
     ],
     "comment": "Printed ?(?).",
     "verified": "page-image"
@@ -1993,7 +2078,7 @@
     "glossedTokens": [],
     "translation": "M is more intelligent than you believe.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "nearlyUngrammatical",
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -2018,6 +2103,7 @@
     "translation": "M is more intelligent than you believed.",
     "context": "",
     "judgment": "marginal",
+    "alsoJudged": ["questionable"],
     "contrasts": [],
     "readings": [],
     "paperFeatures": [
@@ -2028,8 +2114,7 @@
       ["holder", "formerAddressee"],
       ["negation", "non2"],
       ["mood", "indicative"],
-      ["complementizer", "quanto"],
-      ["alsoJudged", "questionable"]
+      ["complementizer", "quanto"]
     ],
     "comment": "Printed ?(?).",
     "verified": "page-image"
@@ -2498,3 +2583,4 @@
     "verified": "page-image"
   }
 ]
+}

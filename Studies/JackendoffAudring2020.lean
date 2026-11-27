@@ -7,15 +7,15 @@ module
 
 public import Linglib.Data.Examples.JackendoffAudring2020
 public import Linglib.Data.Wordlist.JackendoffAudring2020
-public import Linglib.Fragments.English.Phonology
-public import Linglib.Fragments.German.Phonology
+public import Linglib.Languages.English.Phonology
+public import Linglib.Languages.German.Phonology
 public import Linglib.Morphology.ConstructionMorphology.Pattern
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Phonology.Prosody.Syllable
 public import Linglib.Logic.Nonmonotonic.Inheritance
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Morphology.Paradigm.Linkage
-public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Morphology.Inflection.Linkage
+public import Linglib.Morphology.Inflection.Paradigm.Morphome
 public import Linglib.Core.Order.Flat
 public import Studies.Audring2019
 public import Mathlib.Data.Fintype.Prod
@@ -231,7 +231,7 @@ inductive Pair
   | assassinate
   deriving DecidableEq
 
-theorem assassin_cycle [PartialOrder Pair] (hphon : Pair.assassinate < .assassin)
+theorem assassin_cycle (_ : PartialOrder Pair) (hphon : Pair.assassinate < .assassin)
     (hsem : Pair.assassin < .assassinate) : False :=
   hphon.asymm hsem
 

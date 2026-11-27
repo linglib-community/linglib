@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Mandarin.Aspect
+public import Linglib.Languages.Mandarin.Aspect
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Degree.Comparison
 public import Mathlib.Algebra.Order.Interval.Basic
@@ -14,13 +14,13 @@ Zhao's dissertation analyzes the Mandarin particles *le*, *méi-yǒu* and *guò*
 event in time with verbs and a degree on a scale in comparatives. A verbal projection denotes a
 quantifier over events, atomically distributive when the traces it applies at form a lower set,
 which for an existential quantifier is [the subinterval
-property](##Aspect.hasSubintervalProperty_iff_forall_atomDist). *Le* is defined only of a
+property](##Aspect.hasSubintervalProperty_iff_atomDist). *Le* is defined only of a
 quantifier that is not, so it [rejects a stative](##Zhao2025.not_le_dom_of_hasSubintervalProperty),
 and a duration argument or a measure phrase [repairs the failure](##Zhao2025.le_dom_dur_iff)
 whatever length it names, a length being measured only off points. *Guò* introduces events whose
 trace surpasses their theme; they license *méi-yǒu* and [place the theme strictly
 before](##Zhao2025.exists_snd_lt_of_surpasses) the point of evaluation, where [*le*
-asserts](##Zhao2025.le_get_some_iff_mem_image) the perfect along the trace, on either domain.
+asserts](##Zhao2025.le_get_some_iff_diamond) the perfect along the trace, on either domain.
 
 ## Implementation notes
 
@@ -31,8 +31,8 @@ analyses do not use. An event quantifier is a `Quantifier` over events, and Atom
 particles take the measurement of their evaluation argument as an interval, a point for the
 utterance time or a height and a run time for a matrix event. *Le* is commonly called a perfective
 marker; the dissertation strips its temporal content down to precedence, which is the relation
-`Aspect` assigns to the perfect, [not the perfective](##Zhao2025.pure_notMem_denote_le) under which
-`Fragments/Mandarin/Aspect.lean` enters it. A surpassing event is one whose trace has the
+`Aspect` assigns to the perfect, [not the perfective](##Zhao2025.not_denote_le_pure) under which
+`Languages/Mandarin/Aspect.lean` enters it. A surpassing event is one whose trace has the
 measurement of its theme `NonemptyInterval.During` it.
 
 The presupposition is formalized as printed, so a quantifier that applies at no trace is
@@ -179,13 +179,21 @@ section LinearOrder
 
 variable [LinearOrder α] {τ : E → NonemptyInterval α} {A : Set E} {a : NonemptyInterval α}
 
+open ModalLogic in
 /-- Along any trace, *le* on an existential quantifier asserts the perfect of the traces: the
-evaluation interval lies in their image under the cell of the perfect. -/
-theorem le_get_some_iff_mem_image (h : (le τ (Det.some A) a).Dom) :
+trace of some event of the quantifier stands in the cell of the perfect to the evaluation
+interval. -/
+theorem le_get_some_iff_diamond (h : (le τ (Det.some A) a).Dom) :
     (le τ (Det.some A) a).get h ↔
-      a ∈ (IntervalAlgebra.toSetRel ViewpointType.perfect.cell).image (τ '' A) := by
-  change (∃ e, e ∈ A ∧ ViewpointType.perfect.ttTSitRelation a (τ e)) ↔ _
-  simp [SetRel.image, ViewpointType.ttTSitRelation_iff]
+      ◇[IntervalAlgebra.toSetRel ViewpointType.perfect.cell]
+        (◇[(Function.graph τ).inv] (· ∈ A)) a := by
+  change (∃ e, e ∈ A ∧ (τ e).snd ≤ a.fst) ↔ _
+  constructor
+  · rintro ⟨e, he, hle⟩
+    exact ⟨τ e, ViewpointType.relation_mem_cell_perfect.2 hle, e, rfl, he⟩
+  · rintro ⟨s, hle, e, hτ, he⟩
+    obtain rfl : τ e = s := hτ
+    exact ⟨e, he, ViewpointType.relation_mem_cell_perfect.1 hle⟩
 
 end LinearOrder
 
@@ -196,22 +204,23 @@ variable {W T : Type*} [LinearOrder T] [TemporalTrace E T] {P : W → E → Prop
 
 /-- (3.40): *le* is not defined of the existential quantifier of a predicate with the subinterval
 property, the bare stative. -/
-theorem not_le_dom_of_hasSubintervalProperty (hP : Aspect.HasSubintervalProperty P) :
+theorem not_le_dom_of_hasSubintervalProperty (hP : Aspect.HasSubintervalProperty (P w)) :
     ¬ (le Event.τ (Det.some {e | P w e}) a).Dom :=
-  not_not_intro (hasSubintervalProperty_iff_forall_atomDist.1 hP w)
+  not_not_intro (hasSubintervalProperty_iff_atomDist.1 hP)
 
 -- in time this is the perfect operator: the evaluation time is preceded by an event
-theorem le_get_some_iff_mem_perfect (h : (le Event.τ (Det.some {e | P w e}) a).Dom) :
+theorem le_get_some_iff_perfect (h : (le Event.τ (Det.some {e | P w e}) a).Dom) :
     (le Event.τ (Det.some {e | P w e}) a).get h ↔
-      a ∈ Aspect.ViewpointType.perfect.denote P w := by
-  rw [le_get_some_iff_mem_image, ViewpointType.denote_eq_image]
+      Aspect.ViewpointType.perfect.denote (P w) a :=
+  le_get_some_iff_diamond h
 
--- the fragment's perfective holds at no point of evaluation of a predicate without point events
-theorem pure_notMem_denote_le (hP : ∀ e, P w e → ¬ (Event.τ e).IsPoint) (t : T) :
-    .pure t ∉ Mandarin.Aspect.le.viewpoint.denote P w :=
-  fun ⟨e, hle, he⟩ ↦ hP e he <|
-    le_antisymm (Event.τ e).fst_le_snd ((NonemptyInterval.le_def.1 hle).2.trans
-      (NonemptyInterval.le_def.1 hle).1)
+-- the language file's perfective holds at no point of evaluation of a predicate without point
+-- events
+theorem not_denote_le_pure (hP : ∀ e, P w e → ¬ (Event.τ e).IsPoint) (t : T) :
+    ¬ Mandarin.Aspect.le.viewpoint.denote (P w) (.pure t) := fun h ↦
+  let ⟨e, hle, he⟩ := ViewpointType.denote_iff.1 h
+  have hle := NonemptyInterval.le_def.1 (ViewpointType.relation_mem_cell_perfective.1 hle)
+  hP e he <| le_antisymm (Event.τ e).fst_le_snd (hle.2.trans hle.1)
 
 /-- A predicate with the stratified subinterval reference of [champollion-2017] has no event at a
 point, a point having no proper subinterval, so *le* is defined of its existential quantifier. -/

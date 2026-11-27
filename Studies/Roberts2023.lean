@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Discourse.SpeechAct.Basic
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Core.Data.List.Forall2
@@ -76,9 +76,12 @@ rather than built into the domain of `realizes`.
 
 @[expose] public section
 
+open scoped PremiseOrdering
+
 namespace Roberts2023
 
-open HistoricalAlternatives Modality Quantifier Filter
+open Temporal Modality Quantifier Filter
+open scoped SetRel
 
 variable {W T E : Type*}
 
@@ -107,16 +110,16 @@ theorem profile_lt_of_strictlyBetter {G : List (Set (Index W T))} {c c' : Index 
 
 section Semantics
 
-variable [Preorder T] (history : HistoricalAlternatives W T)
+variable [Preorder T] (F : TWFrame W T)
   (g : Index W T → List (Set (Index W T)))
 
 /-- The timely future circumstances of a circumstance (50): its possible futures at which the
 goals held at it remain in force. -/
 def timelyFut (c : Index W T) : Set (Index W T) :=
-  {c' ∈ futureHistoryBase history c | ∀ p ∈ g c, p ∈ g c'}
+  {c' | c ~[F.futureHistoryBase] c' ∧ ∀ p ∈ g c, p ∈ g c'}
 
 theorem timelyFut_subset (c : Index W T) :
-    timelyFut history g c ⊆ futureHistoryBase history c :=
+    timelyFut F g c ⊆ {c' | c ~[F.futureHistoryBase] c'} :=
   fun _ h ↦ h.1
 
 variable (f : Background (Index W T)) (P : Index W T → E → Prop) (a : E)
@@ -126,54 +129,54 @@ circumstance compatible with the base at a circumstance lies in its world, later
 has a timely future at which `a` realizes `P`. -/
 def IsFuturate : Prop :=
   ∀ c c', c' ∈ f.accessibleWorlds c →
-    c'.world = c.world ∧ c.time < c'.time ∧ ∃ c'' ∈ timelyFut history g c', P c'' a
+    c'.world = c.world ∧ c.time < c'.time ∧ ∃ c'' ∈ timelyFut F g c', P c'' a
 
 /-- The applicable circumstances (53) for the realization of `P` by `a` at `c`: those
 compatible with the modal base at `c` in whose timely futures a realizer of `P` is at least as
 good as a non-realizer by the goals held there. -/
 def applic (c : Index W T) : Set (Index W T) :=
   {c' ∈ f.accessibleWorlds c |
-    ∀ c₁ ∈ timelyFut history g c', ∀ c₂ ∈ timelyFut history g c',
+    ∀ c₁ ∈ timelyFut F g c', ∀ c₂ ∈ timelyFut F g c',
       P c₁ a → ¬ P c₂ a → profile (g c') c₂ ≤ profile (g c') c₁}
 
 /-- The realization conditions (54): `a` has the property at `c` when in every applicable
 circumstance `a` comes, at a timely later time in the same world, to realize `P`. -/
 def realizes (c : Index W T) : Prop :=
-  ∀ c' ∈ applic history g f P a c,
-    ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a ∧ ⟨c'.world, t'⟩ ∈ timelyFut history g c'
+  ∀ c' ∈ applic F g f P a c,
+    ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a ∧ ⟨c'.world, t'⟩ ∈ timelyFut F g c'
 
-variable {history g f P a}
+variable {F g f P a}
 
-theorem applic_future (hf : IsFuturate history g f P a) {c c' : Index W T}
-    (h : c' ∈ applic history g f P a c) : c'.world = c.world ∧ c.time < c'.time :=
+theorem applic_future (hf : IsFuturate F g f P a) {c c' : Index W T}
+    (h : c' ∈ applic F g f P a c) : c'.world = c.world ∧ c.time < c'.time :=
   let ⟨h₁, h₂, _⟩ := hf c c' h.1
   ⟨h₁, h₂⟩
 
-theorem realizes_time_lt {c c' : Index W T} (h : realizes history g f P a c)
-    (hc' : c' ∈ applic history g f P a c) : ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a :=
+theorem realizes_time_lt {c c' : Index W T} (h : realizes F g f P a c)
+    (hc' : c' ∈ applic F g f P a c) : ∃ t', c'.time < t' ∧ P ⟨c'.world, t'⟩ a :=
   let ⟨t', ht, hP, _⟩ := h c' hc'
   ⟨t', ht, hP⟩
 
-theorem not_mem_applic {c c' c₁ c₂ : Index W T} (h₁ : c₁ ∈ timelyFut history g c')
-    (h₂ : c₂ ∈ timelyFut history g c') (hP : P c₁ a) (hnP : ¬ P c₂ a)
-    (hlt : profile (g c') c₁ < profile (g c') c₂) : c' ∉ applic history g f P a c :=
+theorem not_mem_applic {c c' c₁ c₂ : Index W T} (h₁ : c₁ ∈ timelyFut F g c')
+    (h₂ : c₂ ∈ timelyFut F g c') (hP : P c₁ a) (hnP : ¬ P c₂ a)
+    (hlt : profile (g c') c₁ < profile (g c') c₂) : c' ∉ applic F g f P a c :=
   fun h ↦ h.2 c₁ h₁ c₂ h₂ hP hnP hlt
 
 theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
-    (h₁ : c₁ ∈ timelyFut history g c') (h₂ : c₂ ∈ timelyFut history g c') (hP : P c₁ a)
-    (hnP : ¬ P c₂ a) (hlt : (c₂ <[{p | p ∈ g c'}] c₁)) : c' ∉ applic history g f P a c :=
+    (h₁ : c₁ ∈ timelyFut F g c') (h₂ : c₂ ∈ timelyFut F g c') (hP : P c₁ a)
+    (hnP : ¬ P c₂ a) (hlt : (c₂ <[{p | p ∈ g c'}] c₁)) : c' ∉ applic F g f P a c :=
   not_mem_applic h₁ h₂ hP hnP (profile_lt_of_strictlyBetter hlt)
 
 theorem applic_restrict_subset (q : Set (Index W T)) (c : Index W T) :
-    applic history g (f.restrict q) P a c ⊆ applic history g f P a c :=
+    applic F g (f.restrict q) P a c ⊆ applic F g f P a c :=
   fun _ h ↦ ⟨Background.accessibleWorlds_anti (Set.subset_insert _ _) h.1, h.2⟩
 
-theorem IsFuturate.restrict (hf : IsFuturate history g f P a) (q : Set (Index W T)) :
-    IsFuturate history g (f.restrict q) P a :=
+theorem IsFuturate.restrict (hf : IsFuturate F g f P a) (q : Set (Index W T)) :
+    IsFuturate F g (f.restrict q) P a :=
   fun c c' h ↦ hf c c' (Background.accessibleWorlds_anti (Set.subset_insert _ _) h)
 
-theorem realizes_restrict {c : Index W T} (h : realizes history g f P a c)
-    (q : Set (Index W T)) : realizes history g (f.restrict q) P a c :=
+theorem realizes_restrict {c : Index W T} (h : realizes F g f P a c)
+    (q : Set (Index W T)) : realizes F g (f.restrict q) P a c :=
   fun c' hc' ↦ h c' (applic_restrict_subset q c hc')
 
 end Semantics
@@ -186,7 +189,7 @@ structure Scoreboard (I W T : Type*) where
   /-- The common ground, the propositions the interlocutors accept. -/
   cg : Filter (Index W T)
   /-- The questions under discussion, the immediate one first. -/
-  qud : List (Question (Index W T))
+  qud : List (Inquisitive.Proposition (Set (Index W T)))
   /-- Each interlocutor's evident goals, highest priority first. -/
   goals : I → List (Set (Index W T))
 
@@ -196,7 +199,7 @@ inductive Denotation (I W T : Type*)
   /-- A declarative's proposition. -/
   | proposition (p : Set (Index W T))
   /-- An interrogative's question. -/
-  | question (q : Question (Index W T))
+  | question (q : Inquisitive.Proposition (Set (Index W T)))
   /-- An imperative's property, indexed to the addressee. -/
   | property (P : Index W T → I → Prop)
 
@@ -272,13 +275,13 @@ def nobody (addr : Set E) : Quantifier E := Det.no addr
 theorem nobody_livesOn (addr : Set E) : Quantifier.LivesOn (nobody addr) addr :=
   Det.conservative_no.livesOn addr
 
-theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
+theorem realizes_nobody_move [Preorder T] {F : TWFrame W T}
     {g : Index W T → List (Set (Index W T))} {f : Background (Index W T)}
     {addr : Set E}
     {move : Index W T → E → Prop} {c c' : Index W T} {x y : E}
-    (h : realizes history g f (fun c _ ↦ nobody addr {y | move c y}) x c)
-    (hc' : c' ∈ applic history g f (fun c _ ↦ nobody addr {y | move c y}) x c) (hy : y ∈ addr) :
-    ∃ t', c'.time < t' ∧ ¬ move ⟨c'.world, t'⟩ y ∧ ⟨c'.world, t'⟩ ∈ timelyFut history g c' :=
+    (h : realizes F g f (fun c _ ↦ nobody addr {y | move c y}) x c)
+    (hc' : c' ∈ applic F g f (fun c _ ↦ nobody addr {y | move c y}) x c) (hy : y ∈ addr) :
+    ∃ t', c'.time < t' ∧ ¬ move ⟨c'.world, t'⟩ y ∧ ⟨c'.world, t'⟩ ∈ timelyFut F g c' :=
   let ⟨t', ht, hP, hfut⟩ := h c' hc'
   ⟨t', ht, hP hy, hfut⟩
 

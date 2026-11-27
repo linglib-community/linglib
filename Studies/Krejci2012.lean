@@ -43,20 +43,22 @@ stay with the causee of the periphrastic one.
 
 @[expose] public section
 
+universe u
+
 namespace Krejci2012
 
 open Event (τ)
 
 open KoontzGarboden2009 ArgumentStructure
-open scoped SetRel
+open scoped SetRel ModalLogic
 
 /-! ### Antireflexivization -/
 
 section Model
 
-variable {Entity State T E : Type*} [LinearOrder T] [TemporalTrace E T]
-  (M : ArgumentStructure.EventStructure.Interpretation Entity State E)
-  (manip : Entity → E → Prop) (S : Entity → State → Prop)
+variable {Entity T : Type*} {State E : Type u} [LinearOrder T] [TemporalTrace E T]
+  (M : ArgumentStructure.EventStructure.Model State E)
+  (effector manip : Entity → E → Prop) (S : Entity → State → Prop)
 
 /-- In the lexical causative (38a) the causer's manipulation of food brings the causee to the
 state of potential digestion. -/
@@ -69,12 +71,12 @@ abbrev eat : Entity → E → Prop := reflexivize (feed M manip S)
 /-- The periphrastic causative *make eat* adds a further causing event, with its own effector,
 of an eating. -/
 def makeEat (z x : Entity) (e : E) : Prop :=
-  ∃ w, M.effector z w ∧ w ~[M.cause] e ∧ eat M manip S x e
+  ∃ w, effector z w ∧ w ~[M.cause] e ∧ eat M manip S x e
 
 /-- Causativization by causer addition ((94)) is the analysis the report rejects, on which the
 simple form is an activity `ingest` with no causing subevent and the causative adds a causer. -/
 def causerAddition (ingest : Entity → E → Prop) (y x : Entity) (e : E) : Prop :=
-  ∃ w, M.effector y w ∧ w ~[M.cause] e ∧ ingest x e
+  ∃ w, effector y w ∧ w ~[M.cause] e ∧ ingest x e
 
 /-- `earlier` relates an event to the events whose run time is before its own. -/
 def earlier : SetRel E E := {(e, e') | (τ e').snd ≤ (τ e).fst}
@@ -92,7 +94,7 @@ presupposes that the whole event happened before. -/
 def Repetitive (P : Entity → E → Prop) (x : Entity) (e : E) : Prop :=
   Presupposition.again earlier (P x) e = .true
 
-variable {M manip S} {x y z : Entity} {e : E}
+variable {M effector manip S} {x y z : Entity} {e : E}
 
 theorem eat_eq_anticausative : eat M manip S = anticausative M manip S := rfl
 
@@ -102,25 +104,25 @@ theorem exists_manip_of_eat (h : eat M manip S x e) : ∃ w, manip x w ∧ w ~[M
 
 -- (45)
 theorem exists_manip_of_feed (h : feed M manip S y x e) : ∃ w, manip y w ∧ w ~[M.cause] e :=
-  let ⟨w, h₁, h₂, _⟩ := h; ⟨w, h₁, h₂⟩
+  let ⟨w, h₁, h₂, _⟩ := (causative_iff M manip S).1 h; ⟨w, h₁, h₂⟩
 
 -- (44c)
-theorem inchoative_of_feed (h : feed M manip S y x e) : M.vBecome S x e :=
-  let ⟨_, _, _, h⟩ := h; h
+theorem inchoative_of_feed (h : feed M manip S y x e) : ◇[M.become] (S x) e :=
+  let ⟨_, _, _, h⟩ := (causative_iff M manip S).1 h; h
 
 -- (47a)
-theorem exists_manip_of_makeEat (h : makeEat M manip S z x e) :
+theorem exists_manip_of_makeEat (h : makeEat M effector manip S z x e) :
     ∃ w, manip x w ∧ w ~[M.cause] e :=
   let ⟨_, _, _, h⟩ := h; exists_manip_of_eat h
 
 -- (95)
 theorem ingest_of_causerAddition {ingest : Entity → E → Prop}
-    (h : causerAddition M ingest y x e) : ingest x e :=
+    (h : causerAddition M effector ingest y x e) : ingest x e :=
   let ⟨_, _, _, h⟩ := h; h
 
 -- (114a)
-theorem licensesBySelf_eat (h : ∀ x w, manip x w → M.effector x w) :
-    LicensesBySelf M (eat M manip S) :=
+theorem licensesBySelf_eat (h : ∀ x w, manip x w → effector x w) :
+    LicensesBySelf M effector (eat M manip S) :=
   fun _ _ he ↦ let ⟨w, hm, hc⟩ := exists_manip_of_eat he; ⟨w, hc, h _ _ hm⟩
 
 end Model
@@ -149,69 +151,68 @@ def e₁ : NonemptyInterval ℤ := ev 4 5
 states at the times 2 and 5. -/
 def digesting (x : Participant) (s : ℤ) : Prop := x = .john ∧ (s = 2 ∨ s = 5)
 
-/-- `eating causing eff` is the model in which the events `causing` lists bring John to potential
-digestion, with `eff` the effectors of events. States are times, and a change gives rise to the
+/-- `eating causing` is the model in which the events `causing` lists bring John to potential
+digestion. States are times, and a change gives rise to the
 state at its end. -/
-def eating (causing : NonemptyInterval ℤ → NonemptyInterval ℤ → Prop)
-    (eff : Participant → NonemptyInterval ℤ → Prop) :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) where
-  become := {p | (∃ w, causing w p.2) ∧ p.1 = (τ p.2).toProd.2}
-  cause := {p | causing p.1 p.2}
-  effector := eff
+def eating (causing : NonemptyInterval ℤ → NonemptyInterval ℤ → Prop) :
+    ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) where
+  become := {(e, s) | (∃ w, causing w e) ∧ s = (τ e).toProd.2}
+  cause := {(w, e) | causing w e}
 
 /-- Mary manipulates the food. -/
 def spoonManip (y : Participant) (w : NonemptyInterval ℤ) : Prop := y = .mary ∧ At w 0 1
 
 /-- In spoon feeding ((44a)) Mary's manipulation of the food causes John's change. -/
-def spoonFeeding :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) :=
-  eating (fun w e ↦ At w 0 1 ∧ At e 1 2) spoonManip
+def spoonFeeding : ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) :=
+  eating fun w e ↦ At w 0 1 ∧ At e 1 2
 
 /-- John manipulates the food. -/
 def supManip (y : Participant) (w : NonemptyInterval ℤ) : Prop := y = .john ∧ At w 0 1
 
 /-- Under supervision ((48)) John's manipulation of the food and Mary's supervising action both
 cause John's change. -/
-def supervising :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) :=
-  eating (fun w e ↦ (At w 0 1 ∨ At w 0 2) ∧ At e 1 2)
-    (fun y w ↦ (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2))
+def supervising : ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) :=
+  eating fun w e ↦ (At w 0 1 ∨ At w 0 2) ∧ At e 1 2
+
+/-- Under supervision John is the effector of his manipulation and Mary of her supervising. -/
+def supEffector (y : Participant) (w : NonemptyInterval ℤ) : Prop :=
+  (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2)
 
 /-- Mary manipulates the food the first time, John the second. -/
 def twoManip (y : Participant) (w : NonemptyInterval ℤ) : Prop :=
   (y = .mary ∧ At w 0 1) ∨ (y = .john ∧ At w 3 4)
 
 /-- In the model of two meals Mary feeds John, and later John eats. -/
-def twoMeals :
-    ArgumentStructure.EventStructure.Interpretation Participant ℤ (NonemptyInterval ℤ) :=
-  eating (fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
+def twoMeals : ArgumentStructure.EventStructure.Model ℤ (NonemptyInterval ℤ) :=
+  eating fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)
 
 /-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent, since John, fed by Mary,
 manipulated no food (44a). -/
 theorem not_eat_and_feed :
     ¬ eat spoonFeeding spoonManip digesting .john e₀ ∧
       feed spoonFeeding spoonManip digesting .mary .john e₀ :=
-  ⟨fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h,
-    ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, 2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩⟩
+  ⟨fun h ↦ let ⟨_, ⟨h, _⟩, _⟩ := (causative_iff _ _ _).1 h; Participant.noConfusion h,
+    (causative_iff _ _ _).2 ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, 2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩⟩
 
 /-- Feeding is not making eat, since John, fed, was not made to eat, as whoever is made to eat
 manipulates food ((47a)). -/
 theorem feed_not_makeEat :
     feed spoonFeeding spoonManip digesting .mary .john e₀ ∧
-      ¬ makeEat spoonFeeding spoonManip digesting .mary .john e₀ :=
+      ¬ makeEat spoonFeeding spoonManip spoonManip digesting .mary .john e₀ :=
   ⟨not_eat_and_feed.2, fun ⟨_, _, _, h⟩ ↦ not_eat_and_feed.1 h⟩
 
 -- (48)
 theorem makeEat_not_feed :
-    makeEat supervising supManip digesting .mary .john e₀ ∧
+    makeEat supervising supEffector supManip digesting .mary .john e₀ ∧
       ¬ feed supervising supManip digesting .mary .john e₀ :=
-  ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, 2,
-      ⟨⟨w₀, Or.inl rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩,
-    fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h⟩
+  ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, (causative_iff _ _ _).2
+      ⟨w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, 2, ⟨⟨w₀, Or.inl rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩⟩,
+    fun h ↦ let ⟨_, ⟨h, _⟩, _⟩ := (causative_iff _ _ _).1 h; Participant.noConfusion h⟩
 
 -- (113d)
 theorem not_licensesBySelf_inchoative :
-    ¬ LicensesBySelf spoonFeeding (spoonFeeding.vBecome digesting) := fun h ↦
+    ¬ LicensesBySelf spoonFeeding spoonManip
+      (fun x ↦ ◇[spoonFeeding.become] (digesting x)) := fun h ↦
   let ⟨_, _, hw⟩ := h .john e₀ ⟨2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩
   Participant.noConfusion hw.1
 
@@ -220,10 +221,12 @@ and false on the repetitive one. -/
 theorem restitutive_not_repetitive :
     eat twoMeals twoManip (againState {p | p.2 < p.1} digesting) .john e₁ ∧
       ¬ Repetitive (eat twoMeals twoManip digesting) .john e₁ :=
-  ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, 5, ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
+  ⟨(causative_iff _ _ _).2 ⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, 5,
+      ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
       Presupposition.again_eq_true_iff.2 ⟨⟨2, by decide, rfl, .inl rfl⟩, rfl, .inr rfl⟩⟩,
     fun h ↦ by
-      obtain ⟨⟨e', hb, w, hm, hc, _⟩, _⟩ := Presupposition.again_eq_true_iff.1 h
+      obtain ⟨⟨e', hb, he'⟩, _⟩ := Presupposition.again_eq_true_iff.1 h
+      obtain ⟨w, hm, hc, _⟩ := (causative_iff _ _ _).1 he'
       rcases hm with ⟨h, _⟩ | ⟨_, hw⟩
       · exact Participant.noConfusion h
       rcases hc with ⟨h, _⟩ | ⟨_, he⟩

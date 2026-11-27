@@ -26,7 +26,7 @@ wide, in light and dark mode, before opening a PR.
 `gen_docs_pages.py` rebuilds doc-gen4's study and theory pages from its output (read by
 `docgen_index.py`) and writes them over doc-gen4's at the same addresses, `/docs/Studies/` and
 `/docs/Linglib/{Semantics,Syntax,Pragmatics,Morphology,Phonology,Processing,Discourse,Logic}/`, so
-links to a page keep landing. Core, Data and Fragments stay doc-gen4's. `/docs-new/`, where the study
+links to a page keep landing. Core, Data and Languages stay doc-gen4's. `/docs-new/`, where the study
 pages were previewed, forwards to them. They depart from the rules above where a reference page
 needs it:
 
@@ -48,12 +48,15 @@ needs it:
 - A study's right column has the theorems whose statements name another paper's definitions, with
   their sentences: this page's about other papers, and other pages' about this one. Say "about",
   never "uses" or "cites": a theorem may name a definition to argue against it.
-- Color for the kind of node (study, theory, fragment) and solid against dashed for formalized
+- Color for the kind of node (study, theory, language) and solid against dashed for formalized
   or proved against not yet, the same vocabulary as the bibliography's roles.
 - Every entry of a References list links to its bibliography entry, the study's own paper too;
   a paper another study formalizes adds a "formalized" link to that study.
 - A study's definition's docstring that opens with a paper locator shows it as a tag naming the paper
   on hover. A bare number is a numbered example; any other display names its kind (`Eq. (12)`).
+- A declaration that states an item of a source, in `checks/`, says under its statement who checked
+  it against the item and when, or that its statement has changed since, or which unchecked item
+  the check relies on. Unchecked items say nothing. It is a line of prose, like "Used by".
 - The page's own styles and script are the shared files `docs_page/docs.css` and `docs.js`, since
   two thousand pages carry them.
 
@@ -69,7 +72,7 @@ checks the statement, not that the sentence says the same thing.
 
 The landing page at `/docs/` (`docs_page/index.html`, where `/docs/Studies/` forwards) is the
 page's title, one box that filters the page as you type and sends Enter to doc-gen4's search, and
-every module in folds: theory by area, studies by decade, then fragments, data and core.
+every module in folds: theory by area, studies by decade, then languages, data and core.
 
 Every declaration doc-gen4 indexes keeps its anchor on the rebuilt page, so search and `find/`
 links still land. `--check` confirms it, and that every relative link on a rebuilt page lands on a

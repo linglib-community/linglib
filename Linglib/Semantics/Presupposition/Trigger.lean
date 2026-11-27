@@ -1,28 +1,49 @@
 module
 
+public import Linglib.Semantics.Aspect.Phasal
+
 /-!
 # Presupposition triggers
 
-A presupposition trigger is an expression whose use takes some proposition for granted. A trigger
-belongs to a class by the kind of expression that hosts it (`TriggerClass`), the consensus inventory
-of the projection literature after Zeevat and after Tonhauser, Beaver, Roberts and Simons. Abusch
-divides triggers into hard ones, whose presupposition always projects, and soft ones, whose
-presupposition can be suspended (`Hardness`). Karttunen divides the factive predicates into true
-factives and semi-factives (`Factivity`). The entry of a clause-embedding predicate records its
-factivity, and whether it is a trigger is derived (`Clause.Embedding.IsTrigger`, `Verb.IsTrigger`);
-an adverb, particle or affix that triggers a presupposition is a `TriggerItem`.
+A presupposition trigger is an expression whose sentences are true or false only where some
+proposition, its presupposition, holds. This file defines the classifications of triggers that
+lexical entries record. Abusch divides triggers into hard ones, whose presupposition resists
+suspension, and soft ones, whose presupposition a context can suspend. Karttunen divides the
+factive predicates into true factives and semi-factives. The adverbs and particles that trigger a
+presupposition fall into classes by what they presuppose of their prejacent: a phasal adverb
+presupposes a prior state and an iterative a prior occurrence, an additive and an exclusive relate
+the prejacent to its alternatives, and a contrastive presupposes that an alternative is false.
+
+The meanings are defined elsewhere. A sentence presupposing `A` and asserting `B` is the
+conditional event `Trivalent.condEvent A B`, which lies below `B` in the knowledge order, and the
+operators of the classes are `Presupposition.again`, `Aspect.Phasal.denote`, `Focus.additive` and
+`Focus.only`.
+
+## Main definitions
+
+* `Presupposition.Hardness`: hard and soft triggers.
+* `Presupposition.Factivity`: true factives and semi-factives.
+* `Presupposition.TriggerClass`: the classes of adverbs and particles that trigger a
+  presupposition.
+* `Presupposition.TriggerItem`: the lexical record of such an adverb or particle.
 
 ## Implementation notes
 
-What a predicate does with the presuppositions of its complement is not recorded on its entry.
-It follows from the predicate's semantics: a factive, an aspectual or an implicative passes them
-on unchanged, and an attitude verb makes its report presuppose that the holder believes them,
-as Karttunen and Heim argue.
+The entry of a clause-embedding predicate records its factivity class where a source gives one,
+and nothing otherwise: there is no class for a non-factive, so an entry without a class is not
+counted as one. Whether a predicate is a trigger is derived, not recorded. What a predicate does
+with the presuppositions of its complement is not recorded on its entry. It follows from the predicate's semantics: a factive, an
+aspectual or an implicative passes them on unchanged, and an attitude verb makes its report
+presuppose that the holder believes them, as Karttunen and Heim argue.
+
+A phasal adverb carries the class of the phasal verbs, *still* that of *continue* and *no longer*
+that of *stop*, so that one denotation serves an adverb and a verb. `TriggerClass` has no class
+for a definite description, a cleft or a factive verb, which are triggers by their own entries and
+constructions and are never a `TriggerItem`.
 
 ## References
 
-* [zeevat-1992]
-* [tonhauser-beaver-roberts-simons-2013]
+* [abusch-2002]
 * [abusch-2010]
 * [karttunen-1971b]
 * [karttunen-1974-presupposition]
@@ -36,11 +57,12 @@ as Karttunen and Heim argue.
 
 namespace Presupposition
 
-/-- Whether a presupposition trigger is hard or soft, in the classification of [abusch-2010]. Hard
-triggers always project (*too*, *again*, *also*), and soft triggers project context-sensitively
-(*stop*, *know*). -/
+/-- Whether a presupposition trigger is hard or soft, in the classification of [abusch-2002] and
+[abusch-2010]. The presupposition of a hard trigger, *too*, *also*, *again* or a cleft, resists
+suspension, and that of a soft trigger, *stop*, *know* or *win*, is suspended in a context that
+leaves it open. -/
 inductive Hardness where
-  /-- A trigger whose presupposition projects in every context. -/
+  /-- A trigger whose presupposition a context that leaves it open does not suspend. -/
   | hard
   /-- A trigger whose presupposition can be suspended in context. -/
   | soft
@@ -58,31 +80,22 @@ inductive Factivity where
 
 /-- The class of a presupposition trigger, by the kind of expression that hosts it. -/
 inductive TriggerClass where
-  /-- A definite description *the X* presupposes that a unique X exists. -/
-  | definite
-  /-- A factive predicate, *know* or *regret that p*, presupposes `p`. -/
-  | factive
-  /-- A change-of-state expression, *stop*, *start* or *no longer*, presupposes the prior state. -/
-  | changeOfState
-  /-- A repetitive iterative, *again*, presupposes a prior occurrence. An intervening interval
-  without the eventuality is presupposed only for stative hosts, in competition with the
-  continuative; eventive *again* (*John won again*) requires precedence only
-  ([von-stechow-1996]). Its meaning is `Presupposition.again`. -/
+  /-- A phasal adverb presupposes the prior state of its class and asserts the result state, as a
+  phasal verb does: *still* ([ippolito-2007]) and *no longer* both presuppose that the state held
+  before, and differ in whether it holds now. Its meaning is `Aspect.Phasal.denote`. -/
+  | phasal (t : Aspect.Phasal)
+  /-- An iterative, *again*, presupposes a prior occurrence ([von-stechow-1996]). Its meaning is
+  `Presupposition.again`. -/
   | iterative
-  /-- A continuative, *still*, presupposes that the state has held without interruption up to
-  the reference time ([ippolito-2007]). -/
-  | continuative
   /-- An additive, *too* or *also*, presupposes that a distinct salient alternative satisfies
-  the predicate, and is the paradigm anaphoric trigger ([kripke-2009]). -/
+  the predicate, and is the paradigm anaphoric trigger ([kripke-2009]). Its meaning is
+  `Focus.additive`. -/
   | additive
-  /-- An exclusive, *only p*, presupposes its prejacent `p`. -/
+  /-- An exclusive, *only*, presupposes that an alternative at least as strong as its prejacent
+  is true. Its meaning is `Focus.only`. -/
   | exclusive
   /-- A contrastive, *instead*, presupposes that a salient alternative is false. -/
   | contrastive
-  /-- A cleft *it was X that ...* presupposes existence. -/
-  | cleft
-  /-- An aspectual predicate, *finish* or *continue*, presupposes event structure. -/
-  | aspectual
   deriving DecidableEq, Repr
 
 /-- A presupposition trigger that is an adverb, particle or affix, with its trigger class. A

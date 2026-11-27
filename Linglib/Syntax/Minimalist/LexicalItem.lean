@@ -14,22 +14,16 @@ public import Linglib.Syntax.Minimalist.Feature.Basic
 
 The leaves of syntactic objects are drawn from `SO₀`, the lexical items and syntactic features. A
 lexical item is a category with its selectional stack, its phonological form and its feature
-bundle, and a token of it is the item with the index that tells its tokens apart. An item is [+wh]
-when its bundle values [wh] as `true`, and it has [E] when its bundle bears the privative [E]. The
-carrier built over tokens is `SyntacticObject/Basic.lean`.
+bundle, and a token of it is the item with the index that tells its tokens apart. The objects
+built over tokens are in `SyntacticObject/Token.lean`.
 
 ## Main definitions
 
 * `Minimalist.LexicalItem`, `Minimalist.LexicalItem.Token`
-* `Minimalist.LexicalItem.IsWh`: the item is [+wh].
-* `Minimalist.LexicalItem.HasE`: the item has [E].
-* `Minimalist.LexicalItem.Token.PreservesSelection`: relabellings of tokens that selection does
-  not see.
 
 ## References
 
 * [marcolli-chomsky-berwick-2025], §1.1 (Definition 1.1.1)
-* [merchant-2001]
 -/
 
 @[expose] public section
@@ -42,7 +36,7 @@ structure LexicalItem where
   /-- The category. -/
   cat : Cat
   /-- The selectional stack, consumed left to right. -/
-  sel : SelStack
+  sel : List Cat
   /-- The phonological form, empty for a silent item. -/
   phonForm : String
   /-- The feature bundle the item has in the lexicon. -/
@@ -51,23 +45,9 @@ structure LexicalItem where
 
 /-- The lexical item of a category and selectional stack, silent and without features unless the
 optional arguments say otherwise. -/
-def LexicalItem.of (cat : Cat) (sel : SelStack) (phonForm : String := "")
+def LexicalItem.of (cat : Cat) (sel : List Cat) (phonForm : String := "")
     (features : FeatureBundle := ⊥) : LexicalItem :=
   ⟨cat, sel, phonForm, features⟩
-
-/-- The item is [+wh]: its bundle values [wh] as `true`. -/
-def LexicalItem.IsWh (li : LexicalItem) : Prop := li.features .wh = .valued true
-
-instance (li : LexicalItem) : Decidable li.IsWh := inferInstanceAs (Decidable (_ = _))
-
-/-- The item has [E], which leaves its complement unpronounced ([merchant-2001]). -/
-def LexicalItem.HasE (li : LexicalItem) : Prop := li.features .ellipsis = .valued ()
-
-instance (li : LexicalItem) : Decidable li.HasE := inferInstanceAs (Decidable (_ = _))
-
-/-- The phonological form of a pronounced item, `none` for a silent one. -/
-def LexicalItem.phonForm? (li : LexicalItem) : Option String :=
-  if li.phonForm.isEmpty then none else some li.phonForm
 
 /-- A token of a lexical item. Syntactic objects are compared as values, so two occurrences of
 one item, the two *the*s of a transitive clause, are different leaves only through their tokens;
@@ -78,34 +58,5 @@ structure LexicalItem.Token where
   /-- The index among the tokens of `item`. -/
   id : ℕ
   deriving Repr, DecidableEq
-
-/-- The placeholder head of a bare trace, which remembers no token. Selection reads it as a
-saturated silent noun, and its index lies above those lexical tokens use, so it equals none of
-them. -/
-def LexicalItem.Token.bareTrace : LexicalItem.Token := ⟨.of .N [], 10000⟩
-
-/-- A relabelling of tokens preserves selection when it keeps each token's category and
-selectional stack and fixes the placeholder of the bare trace, so that it may change only what
-selection does not read, such as the phonological form; the term is this library's. -/
-structure LexicalItem.Token.PreservesSelection (f : LexicalItem.Token → LexicalItem.Token) :
-    Prop where
-  /-- The category is kept. -/
-  cat : ∀ t, (f t).item.cat = t.item.cat
-  /-- The selectional stack is kept. -/
-  sel : ∀ t, (f t).item.sel = t.item.sel
-  /-- The placeholder of the bare trace is fixed. -/
-  bareTrace : f .bareTrace = .bareTrace
-
-namespace LexicalItem.Token.PreservesSelection
-
-protected theorem id : PreservesSelection (_root_.id : LexicalItem.Token → LexicalItem.Token) :=
-  ⟨fun _ ↦ rfl, fun _ ↦ rfl, rfl⟩
-
-theorem comp {f g : LexicalItem.Token → LexicalItem.Token} (hf : PreservesSelection f)
-    (hg : PreservesSelection g) : PreservesSelection (f ∘ g) :=
-  ⟨fun t ↦ (hf.cat _).trans (hg.cat t), fun t ↦ (hf.sel _).trans (hg.sel t),
-    (congrArg f hg.bareTrace).trans hf.bareTrace⟩
-
-end LexicalItem.Token.PreservesSelection
 
 end Minimalist

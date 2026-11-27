@@ -143,22 +143,13 @@ variable {ι : Type*} {τ : ι → Type*}
 /-- An event structure on the positions of a representation (26): it satisfies the axioms,
 extends the order of each tier, and makes each line an overlap. -/
 structure IsEventStructureOf (X : AR τ) (prec ov : X.Pos → X.Pos → Prop) : Prop extends
-    IsEventStructure prec ov where
-  /-- The order of each tier is precedence. -/
-  prec_of_lt : ∀ i ⦃p q : Fin (X.word i).length⦄, p < q → prec ⟨i, p⟩ ⟨i, q⟩
-  /-- Each line is an overlap. -/
-  ov_of_adj : ∀ ⦃v w⦄, X.assoc.Adj v w → ov v w
+    IsEventStructure prec ov, X.IsReading prec ov id
 
 variable {X : AR τ} {prec ov : X.Pos → X.Pos → Prop}
 
 /-- A representation with an event structure obeys the No-Crossing Constraint. -/
 theorem IsEventStructureOf.noCrossing (h : IsEventStructureOf X prec ov) : X.NoCrossing :=
-  fun i j ↦ AR.isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
-    by_contra! hgt
-    exact h.not_crossing
-      (h.prec_of_lt i (show (⟨p, h₁.lt_left⟩ : Fin _) < ⟨p', h₂.lt_left⟩ from hlt))
-      (h.prec_of_lt j (show (⟨q', h₂.lt_right⟩ : Fin _) < ⟨q, h₁.lt_right⟩ from hgt))
-      (h.ov_of_adj h₁.adj) (h.ov_of_adj h₂.adj)
+  h.toIsReading.noCrossing fun _ _ _ _ ↦ h.not_crossing
 
 theorem exists_isEventStructureOf_of_hasIntervalOrder (h : X.HasIntervalOrder) :
     ∃ prec ov, IsEventStructureOf X prec ov := by

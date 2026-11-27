@@ -273,7 +273,7 @@ theorem amount_reading [Preorder E] (ha : a ∈ P) (hP : ∀ x ∈ P, AntisymmRe
 -- (59), (65), (66)
 theorem cell_cresswellSetoid_measure {D : Type*} [LinearOrder D] (μ : E → D) (a : E) :
     (cresswellSetoid fun x y ↦ μ y ≤ μ x).cell a = μ ⁻¹' {μ a} := by
-  rw [cresswellSetoid_le_measure]
+  rw [cresswellSetoid_eq_ker_of_le (μ := μ) fun _ _ ↦ .rfl]
   rfl
 
 /-- Taxonomic kinds of champagne, (64). -/

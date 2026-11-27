@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.CCG.Derivation
@@ -8,64 +13,59 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # CCG intonation and information structure
 
-Steedman aligns prosodic structure with CCG derivations through an INFORMATION feature, theme or
-rheme, that pitch accents mark on words and that combination unifies up the derivation. CCG's
-spurious ambiguity is the engine: alternative derivations of one string are alternative
-information structures, disambiguated by intonation, so "Anna married Manny" derives both
-[Anna][married Manny] and, by composition, [Anna married][Manny], and the theme tune on
-"ANNA married" selects the latter. Because a `ProsodicPhrase` carries a `Derivation`, only CCG
-constituents can be prosodic phrases, which is Selkirk's Sense Unit Condition by construction.
-
-## Main definitions
-
-* `CCG.Intonation.Info`, `CCG.Intonation.InfoFeature`: the values of the INFORMATION feature,
-  and the feature, a value or unmarked in the flat order.
-* `CCG.Intonation.accentInfo`: the marking an accent slot contributes.
-* `CCG.Derivation.infoFeature`: the feature a derivation projects under an accent assignment,
-  `none` on a theme/rheme clash.
-* `CCG.Intonation.Tune`, `CCG.Intonation.themeTune`, `CCG.Intonation.rhemeTune`: pitch accent
-  plus terminal contour.
-* `CCG.Intonation.ProsodicPhrase`, `CCG.Intonation.extractInfoStructure`: tune-marked
-  constituents and the theme/rheme partition of an utterance.
+In Steedman's account of English intonation, a pitch accent marks its word as part of the
+*theme* of the utterance, what it is about, or of the *rheme*, what it says about the theme. The
+marking is a feature of the word's category, called INFORMATION, and it spreads: when two
+constituents combine their features are unified, an unaccented word taking on the value of its
+neighbour, and a theme-marked constituent cannot combine with a rheme-marked one. The feature
+of a derivation is therefore [the join of the features of its
+words](##CCG.Derivation.infoFeature_le_iff), with `⊤` for a clash. It follows that [two
+derivations of one string project the same feature](##CCG.Derivation.infoFeature_eq_of_yield_eq)
+and that [a string with a theme accent and a rheme accent has no derivation without a
+clash](##CCG.Derivation.infoFeature_eq_top_of_not_compat). Intonation does not choose among the
+derivations of a phrase. It chooses how the utterance divides into phrases, each of which must
+be a constituent.
 
 ## Implementation notes
 
-The prosodic vocabulary comes from `Prosody`'s autosegmental-metrical types. Relating these
-phrases to the phonology-side prosodic hierarchy (`Phonology/Prosody/Phrase`) is left to
-study-level work.
+[steedman-2000] treats two of the pitch accents of [pierrehumbert-1980], L+H* and H*, so the
+accents are given as a function of the two values, `Info.accent`. Boundary tones are elements
+of the string in the book, functions from a theme- or rheme-marked category into a phrasal
+category with a third value of the feature that unifies only with itself. They are not
+modelled: a boundary is represented by where an utterance is divided, and the feature has the
+two values that accents assign.
+
+## TODO
+
+Boundaries as string elements, with the phrasal value and the unmarked theme that a boundary
+closes, need INFORMATION on the categories of `CCG.Cat`.
 
 ## References
 
 * [steedman-2000]
-* [selkirk-1984]
-* [pierrehumbert-hirschberg-1990]
+* [pierrehumbert-1980]
 * [carpenter-1992]
-* [kuroda-1972]
 -/
 
 @[expose] public section
 
-namespace CCG.Intonation
-
-open CCG
 open Prosody
+
+namespace CCG
 
 /-! ### The INFORMATION feature -/
 
-/-- The values of the INFORMATION feature of [steedman-2000]. -/
+/-- The values that pitch accents give the INFORMATION feature of [steedman-2000]. -/
 inductive Info where
   /-- Theme. -/
   | θ
   /-- Rheme. -/
   | ρ
-  /-- Phrasal, after a boundary has applied. -/
-  | φ
   deriving Repr, DecidableEq, Fintype
 
-/-- The INFORMATION feature is a value or unmarked, the underspecified feature that "can unify
-with either" theme or rheme. It carries the flat order of feature unification
-([carpenter-1992]): unmarked is `⊥`, the values are pairwise incomparable above it, unification
-is the partial join and generalization the meet. -/
+/-- The INFORMATION feature is a value or unspecified, and an unspecified feature unifies with
+either value. It carries the flat order of feature unification ([carpenter-1992]): unspecified
+is `⊥` and the values are incomparable above it. -/
 abbrev InfoFeature := Flat Info
 
 namespace InfoFeature
@@ -76,86 +76,64 @@ namespace InfoFeature
 /-- The rheme. -/
 @[match_pattern] abbrev ρ : InfoFeature := Flat.some .ρ
 
-/-- The phrasal feature. -/
-@[match_pattern] abbrev φ : InfoFeature := Flat.some .φ
-
 end InfoFeature
 
-/-! ### Projecting information structure through a derivation -/
+/-- The pitch accent that marks a value in [steedman-2000]: L+H* the theme and H* the rheme. -/
+def Info.accent : Info → PitchAccent
+  | .θ => .leading .L .H
+  | .ρ => .mono .H
 
-/-- The information marking an accent slot contributes. In [steedman-2000] L+H* marks the
-theme and H* and H*+L the rheme, and unaccented material is unmarked. The book classes no other
-accent, and the rest are grouped with the rheme here. -/
-def accentInfo : Option PitchAccent → InfoFeature
-  | some (.leading .L .H) => .θ
-  | none => ⊥
-  | some _ => .ρ
+theorem Info.accent_injective : Function.Injective Info.accent := by decide
 
-/-- An assignment of pitch accents to the tokens of a derivation, `none` for an unaccented
-token. -/
-def AccentAssignment (T : Type*) := T → Option PitchAccent
+/-! ### Projecting the feature through a derivation -/
 
-/-- The INFORMATION feature a derivation projects under an accent assignment. Leaves contribute
-the `accentInfo` of their accent and combination unifies the daughters' features, with `none` on
-a theme/rheme clash, the prosodic analogue of `Derivation.interp`'s reading of the same tree. -/
-def _root_.CCG.Derivation.infoFeature {T α : Type*} {R : RuleSystem α}
-    (acc : AccentAssignment T) : {c : Cat α} → Derivation T R c → Option InfoFeature
-  | _, .lex f _ => some (accentInfo (acc f))
-  | _, .node _ d₁ d₂ => do (← d₁.infoFeature acc).unify (← d₂.infoFeature acc)
+namespace Derivation
 
-/-! ### Tunes and prosodic phrases -/
+variable {T α : Type*} {R : RuleSystem α} {c c' : Cat α} (mark : T → InfoFeature)
 
-/-- An intonational tune is a pitch accent plus a terminal contour. Of the two main tunes of
-English in [steedman-2000], L+H* LH% marks the theme and H* LL% the rheme. -/
-structure Tune where
-  /-- The pitch accent. -/
-  accent : PitchAccent
-  /-- The phrase accent and boundary tone. -/
-  terminal : TerminalContour
-  deriving Repr, DecidableEq
+/-- The INFORMATION feature a derivation projects when `mark` gives the feature of each word.
+A leaf has the feature of its word and a combination the unification of its daughters'
+features, `⊤` when a theme meets a rheme. -/
+def infoFeature : {c : Cat α} → Derivation (fun _ ↦ T) R c → WithTop InfoFeature
+  | _, .lex _ t => (mark t : InfoFeature)
+  | _, .node _ d₁ d₂ => d₁.infoFeature ⊔ d₂.infoFeature
 
-/-- The theme tune, L+H* with the rise LH%. -/
-def themeTune : Tune := ⟨.leading .L .H, ⟨.L, .H⟩⟩
+@[simp] theorem infoFeature_lex (c : Cat α) (t : T) :
+    (lex (W := fun _ ↦ T) (R := R) c t).infoFeature mark = (mark t : InfoFeature) := rfl
 
-/-- The rheme tune, H* with the fall LL%. -/
-def rhemeTune : Tune := ⟨.mono .H, ⟨.L, .L⟩⟩
+@[simp] theorem infoFeature_node {l r : Cat α} (ru : Rule R l r c) (d₁ : Derivation (fun _ ↦ T) R l)
+    (d₂ : Derivation (fun _ ↦ T) R r) :
+    (node ru d₁ d₂).infoFeature mark = d₁.infoFeature mark ⊔ d₂.infoFeature mark := rfl
 
-/-- A prosodic phrase is a tune-marked CCG constituent. Because `deriv` is a derivation, only
-constituents can be phrases, the Sense Unit Condition of [selkirk-1984] by construction. -/
-structure ProsodicPhrase (T : Type*) {α : Type*} (R : RuleSystem α) where
-  /-- The category of the constituent. -/
-  cat : Cat α
-  /-- The constituent's derivation. -/
-  deriv : Derivation T R cat
-  /-- The tune the phrase carries. -/
-  tune : Tune
+variable {mark}
 
-/-- An information-structure analysis is a theme/rheme partition, following [steedman-2000].
-The theme is what the utterance is about (the λ-abstract presupposing a QUD, marked in English by
-the L+H* LH% tune per [pierrehumbert-hirschberg-1990]) and the rheme is what is asserted about it
-(marked H* LL%). `theme := none` encodes an all-rheme structure, thetic in [kuroda-1972]'s sense,
-with no theme constituent. -/
-structure InfoStructure (P : Type*) where
-  /-- The theme (λ-abstract, presupposed QUD); `none` for all-rheme
-  (thetic) structures. -/
-  theme : Option P
-  /-- The rheme (comment, answer, assertion). -/
-  rheme : P
-  /-- Focused elements (evoking alternatives). -/
-  foci : List P := []
-  /-- Background elements (given). -/
-  background : List P := []
+/-- The feature of a derivation is the least bound of the features of its words. -/
+theorem infoFeature_le_iff {d : Derivation (fun _ ↦ T) R c} {x : WithTop InfoFeature} :
+    d.infoFeature mark ≤ x ↔ ∀ t ∈ d.yield, (mark t : WithTop InfoFeature) ≤ x := by
+  induction d with
+  | lex c t => simp [yield]
+  | node ru d₁ d₂ ih₁ ih₂ => simp [yield, ih₁, ih₂, or_imp, forall_and]
 
-/-- The information structure of a sequence of prosodic phrases takes the phrase with the theme
-tune as theme and the phrase with the rheme tune as rheme, and a theme-less utterance is
-all-rheme. It is `none` when the phrases yield no coherent partition. -/
-def extractInfoStructure {T α : Type*} {R : RuleSystem α} (phrases : List (ProsodicPhrase T R)) :
-    Option (InfoStructure (ProsodicPhrase T R)) :=
-  let themes := phrases.filter (·.tune == themeTune)
-  let rhemes := phrases.filter (·.tune == rhemeTune)
-  match themes, rhemes with
-  | [t], [r] => some { theme := some t, rheme := r }
-  | [], [r] => some { theme := none, rheme := r }
-  | _, _ => none
+theorem le_infoFeature {d : Derivation (fun _ ↦ T) R c} {t : T} (ht : t ∈ d.yield) :
+    (mark t : WithTop InfoFeature) ≤ d.infoFeature mark :=
+  infoFeature_le_iff.1 le_rfl t ht
 
-end CCG.Intonation
+/-- Derivations of one string project one feature, whatever their combinatory structure and
+their categories. -/
+theorem infoFeature_eq_of_yield_eq {d : Derivation (fun _ ↦ T) R c}
+    {d' : Derivation (fun _ ↦ T) R c'} (h : d.yield = d'.yield) :
+    d.infoFeature mark = d'.infoFeature mark :=
+  eq_of_forall_ge_iff fun x ↦ by rw [infoFeature_le_iff, infoFeature_le_iff, h]
+
+/-- A derivation over two words whose features do not unify clashes. -/
+theorem infoFeature_eq_top_of_not_compat {d : Derivation (fun _ ↦ T) R c} {t u : T}
+    (ht : t ∈ d.yield) (hu : u ∈ d.yield) (h : ¬ Compat (mark t) (mark u)) :
+    d.infoFeature mark = ⊤ := by
+  by_contra hd
+  obtain ⟨x, hx⟩ := WithTop.ne_top_iff_exists.1 hd
+  exact h (.of_le (WithTop.coe_le_coe.1 (hx ▸ le_infoFeature ht))
+    (WithTop.coe_le_coe.1 (hx ▸ le_infoFeature hu)))
+
+end Derivation
+
+end CCG

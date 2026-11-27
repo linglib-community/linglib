@@ -146,8 +146,8 @@ theorem integral_recency (f : Fin n → ℝ) :
 
 instance (n : ℕ) : IsProbabilityMeasure (recency γ (n + 1)) := by
   constructor
-  rw [recency, Measure.coe_finsetSum, Finset.sum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
+  rw [recency, FunLike.coe_sum, Finset.sum_apply]
+  simp only [smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
     mul_one, ENNReal.smul_def]
   rw [← ENNReal.ofNNReal_finsetSum, ← sum_div, sum_pow_rev,
     div_self (geom_sum_pos zero_le (Nat.succ_ne_zero n)).ne']
