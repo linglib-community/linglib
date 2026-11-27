@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Preference.Degree
+public import Linglib.Semantics.Embedding.Preference.Degree
 public import Linglib.Data.Examples.UegakiSudo2019
 public import Mathlib.Data.Set.Subsingleton
 import Mathlib.Basic.Nontrivial.Basic

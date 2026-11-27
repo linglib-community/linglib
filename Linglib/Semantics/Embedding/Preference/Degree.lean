@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Distributivity
+public import Linglib.Semantics.Embedding.Distributivity
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Order.Interval.Set.Defs
 

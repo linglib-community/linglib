@@ -5,7 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.MeasureTheory.Group.MeasurableEquiv
 public import Mathlib.MeasureTheory.Constructions.Pi
+public import Mathlib.MeasureTheory.Group.Action
 
 /-!
 # Splitting one coordinate off a finite product measure
@@ -25,6 +27,8 @@ and `Measure.pi_pi` this computes probabilities that tie the other coordinates t
 * `MeasureTheory.measurePreserving_piSplitAt`: splitting a coordinate preserves the product measure.
 * `MeasureTheory.Measure.pi_setOf_apply_eq_apply`: two coordinates are almost surely distinct when
   one of the factors has no atoms.
+* `MeasureTheory.Measure.pi.smulInvariantMeasure_domMulAct`: a finite product of copies of one
+  measure is invariant under a group acting on the indices.
 
 ## Implementation notes
 
@@ -105,3 +109,24 @@ theorem pi_setOf_apply_eq_apply {j k : ι} (hjk : j ≠ k) [NullSingletonClass (
       (measure_singleton a)
 
 end MeasureTheory.Measure
+
+/-! ### Invariance under a group acting on the indices -/
+
+namespace MeasureTheory
+
+/-- A finite product of copies of one measure is invariant under a group acting on the indices,
+so under permuting the coordinates. -/
+@[to_additive /-- A finite product of copies of one measure is invariant under an additive group
+acting on the indices. -/]
+instance Measure.pi.smulInvariantMeasure_domMulAct {G ι α : Type*} [Group G] [MulAction G ι]
+    [Fintype ι] [MeasurableSpace α] (ν : Measure α) [SigmaFinite ν] :
+    SMulInvariantMeasure Gᵈᵐᵃ (ι → α) (Measure.pi fun _ : ι ↦ ν) := by
+  refine ⟨fun c s _ ↦ ?_⟩
+  have hc : (fun x : ι → α ↦ c • x) =
+      MeasurableEquiv.piCongrLeft (fun _ ↦ α) (MulAction.toPerm (DomMulAct.mk.symm c)).symm := by
+    ext x i
+    simp [MeasurableEquiv.piCongrLeft, Equiv.piCongrLeft, Equiv.piCongrLeft', DomMulAct.smul_apply]
+  rw [hc]
+  exact (measurePreserving_piCongrLeft (fun _ : ι ↦ ν) _).measure_preimage_equiv s
+
+end MeasureTheory

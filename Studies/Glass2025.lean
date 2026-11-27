@@ -16,8 +16,9 @@ scope, requiring only that the Common Ground be compatible with not-p (`Compatib
 stronger requirement is unattested; the weaker is the postsupposition Glass gives Mandarin yǐwéi
 in earlier work (`yiweiDefined`). Table 1, the states of the Common Ground each profile admits,
 is derived from the requirements (`Profile.condition_iff`). The profile of *know* comes from
-the factivity class of its language file entry, and the presupposition of a factive sentence is
-the requirement of the factive profile (`subset_compl_gapExt_factive_iff`, `rows_admits`).
+the factivity class of its language file entry, and a context admits the presupposition of a verb's
+report exactly when it meets the requirement of that profile
+(`subset_compl_gapExt_report_iff`, `rows_admits`).
 
 ## Implementation notes
 
@@ -167,16 +168,38 @@ entry with no recorded class gives none: the record does not say that a verb is 
 postsuppositions are invisible to it. -/
 def Profile.ofFactivity : Option Factivity → Option Profile := Option.map fun _ ↦ .factive
 
-/-- A factive predicate's presupposition is admitted iff its complement is Common Ground (10),
-the requirement of the factive profile, whatever attitude it asserts. -/
-theorem subset_compl_gapExt_factive_iff (att : (W → Prop) → W → Prop) :
-    c ⊆ (Trivalent.gapExt (factive att p))ᶜ ↔ Profile.factive.condition c p := by
-  simp [Set.subset_def, Profile.condition, EntailsP]
+open Classical in
+/-- The report of a verb with factivity class `fac` asserting the attitude `att` towards `p` is the
+factive sentence, presupposing `p`, when a class is recorded, and the bare attitude otherwise. -/
+noncomputable def report (fac : Option Factivity) (att : (W → Prop) → W → Prop) (p : W → Prop) :
+    W → Trivalent :=
+  if fac.isSome then factive att p else fun w ↦ .ofProp (att p w)
+
+/-- A context admits the presupposition of a verb's report exactly when it meets the requirement
+of the profile the verb's factivity class gives, (10) for a factive. -/
+theorem subset_compl_gapExt_report_iff (fac : Option Factivity)
+    (att : (W → Prop) → W → Prop) :
+    c ⊆ (Trivalent.gapExt (report fac att p))ᶜ ↔
+      ∀ pr ∈ Profile.ofFactivity fac, pr.condition c p := by
+  cases fac <;>
+    simp [report, Profile.ofFactivity, factive, Set.subset_def, Profile.condition, EntailsP]
 
 /-- yǐwéi's profile on the paper's analysis. -/
 def yiweiProfile : Profile := .weakContrafactive
 
 theorem know_profile : Profile.ofFactivity know.factivity = some .factive := rfl
+
+-- (10): the report of *know*, whatever attitude it asserts, is admitted where the complement is
+-- Common Ground, and that of *think* everywhere
+theorem subset_compl_gapExt_know_iff (att : (W → Prop) → W → Prop) :
+    c ⊆ (Trivalent.gapExt (report know.factivity att p))ᶜ ↔ EntailsP c p := by
+  simpa [know_profile, Profile.condition] using
+    subset_compl_gapExt_report_iff (c := c) (p := p) know.factivity att
+
+theorem gapExt_report_think (att : (W → Prop) → W → Prop) :
+    Trivalent.gapExt (report think.factivity att p) = ∅ := by
+  classical
+  exact Trivalent.gapExt_ofProp _
 
 -- The entries of *think*, rènwéi and yǐwéi record no factivity class.
 theorem ofFactivity_eq_none :

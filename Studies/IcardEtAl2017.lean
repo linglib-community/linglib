@@ -5,7 +5,7 @@ public import Linglib.Semantics.Causation.CausalStrength
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
-public import Mathlib.Probability.StrongLaw
+public import Linglib.Core.Probability.StrongLaw
 
 /-!
 # Icard, Kominsky and Knobe (2017): Normality and actual causal strength
@@ -491,22 +491,10 @@ theorem ae_tendsto_hits [IsFiniteMeasure μ] [IsProbabilityMeasure (step μ w₀
     ∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S),
       Tendsto (fun K : ℕ ↦ (K : ℝ)⁻¹ * ∑ k ∈ Finset.range K, hit w₀ E S (ω k)) atTop
         (𝓝 (causalStrength μ w₀ E S)) := by
-  set P := Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S
-  have hmeas : Measurable (hit w₀ E S) := measurable_of_countable _
-  have hlaw (n : ℕ) : P.map (· n) = step μ w₀ E S := Measure.infinitePi_map_eval _ n
-  have hind : Pairwise fun i j ↦ IndepFun (fun ω ↦ hit w₀ E S (ω i)) (fun ω ↦ hit w₀ E S (ω j)) P :=
-    fun i j hij ↦ ((iIndepFun_infinitePi (P := fun _ : ℕ ↦ step μ w₀ E S) (X := fun _ ↦ id)
-      fun _ ↦ measurable_id).indepFun hij).comp hmeas hmeas
-  have hident (n : ℕ) : IdentDistrib (fun ω ↦ hit w₀ E S (ω n)) (fun ω ↦ hit w₀ E S (ω 0)) P P :=
-    (IdentDistrib.mk (measurable_pi_apply n).aemeasurable (measurable_pi_apply 0).aemeasurable
-      ((hlaw n).trans (hlaw 0).symm)).comp hmeas
-  have hint : Integrable (fun ω ↦ hit w₀ E S (ω 0)) P :=
-    (show Integrable (hit w₀ E S) (P.map (· 0)) by rw [hlaw 0]; exact .of_finite).comp_measurable
-      (measurable_pi_apply 0)
-  filter_upwards [strong_law_ae _ hint hind hident] with ω hω
-  rw [← integral_map (measurable_pi_apply 0).aemeasurable hmeas.aestronglyMeasurable, hlaw 0,
-    integral_hit_step] at hω
-  simpa [smul_eq_mul] using hω
+  have := ae_tendsto_average_infinitePi (step μ w₀ E S) (measurable_of_countable (hit w₀ E S))
+    .of_finite
+  rw [integral_hit_step] at this
+  simpa [smul_eq_mul] using this
 
 end Algorithm
 

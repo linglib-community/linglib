@@ -536,14 +536,12 @@ theorem hanaxa_typers :
       hanaxa.typers complementizers = [aasha, zha] := by
   decide
 
-/-- *hanaxa* has the same attitude in its two frames, and is veridical with a nominalized complement
-and not with a bare one (§4.4.3). -/
+/-- *hanaxa* is veridical and transparent with a nominalized complement, and neither with a bare
+one (§4.4.3). -/
 theorem hanaxa_isVeridical_nominalized :
-    hanaxa.attitudeOn ArgumentFrame.finiteClause = hanaxa.attitudeOn nominalizedFrame ∧
-      (∀ a ∈ hanaxa.attitudeOn nominalizedFrame,
-        a.IsVeridical (hanaxa.factivityOn nominalizedFrame)) ∧
-      ∀ a ∈ hanaxa.attitudeOn ArgumentFrame.finiteClause,
-        ¬ a.IsVeridical (hanaxa.factivityOn ArgumentFrame.finiteClause) := by
+    ((hanaxa.on nominalizedFrame).IsVeridical ∧ ¬ (hanaxa.on nominalizedFrame).opaqueContext) ∧
+      ¬ (hanaxa.on ArgumentFrame.finiteClause).IsVeridical ∧
+        (hanaxa.on ArgumentFrame.finiteClause).opaqueContext := by
   decide
 
 end Bondarenko2022

@@ -9,8 +9,7 @@ public import Mathlib.Data.Fintype.Option
 This file defines the propositional language of knowledge and belief, with operators for what each
 agent knows and believes and their duals, and its possible-worlds semantics. A model has, for each
 agent, an epistemic and a doxastic alternativeness relation, the doxastic alternatives among the
-epistemic ones, and knowing and believing are necessity along them, the box `ModalLogic.Box` of
-the attitude semantics in `Semantics/Attitudes/Doxastic.lean`.
+epistemic ones, and knowing and believing are necessity along them, the box `ModalLogic.Box`.
 
 ## Main definitions
 

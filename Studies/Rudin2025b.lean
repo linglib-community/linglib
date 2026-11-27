@@ -5,7 +5,7 @@ public import Linglib.Discourse.Table.Basic
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Data.Examples.Rudin2025b
 public import Linglib.Data.Examples.Readers
-public import Linglib.Semantics.Questions.Inquisitive.Declarative
+public import Linglib.Logic.Inquisitive.Declarative
 public import Linglib.Semantics.Questions.Inquisitive.Polar
 
 /-!

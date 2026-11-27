@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Clause.Complementation
-public import Linglib.Syntax.Clause.Embedding
+public import Linglib.Semantics.Embedding.Defs
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Syntax.Category.Verb.Diathesis
 public import Linglib.Syntax.Voice.Defs
