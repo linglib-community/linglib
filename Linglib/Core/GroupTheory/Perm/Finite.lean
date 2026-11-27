@@ -16,7 +16,7 @@ public import Mathlib.Logic.Equiv.Fintype
 A permutation of any type agrees on a given finite set with a permutation that moves only
 finitely many points.
 
-`[UPSTREAM]` candidate, beside `Equiv.Perm.exists_extending_pair`.
+`[UPSTREAM]` candidate for `Mathlib/GroupTheory/Perm/Finite.lean`.
 -/
 
 public section
@@ -24,7 +24,7 @@ public section
 /-- A permutation agrees on any finite set of points with a permutation that moves finitely many
 points. -/
 theorem Equiv.Perm.exists_finite_setOf_ne_and_eqOn {α : Type*} (σ : Equiv.Perm α)
-    (s : Finset α) : ∃ τ : Equiv.Perm α, {a | τ a ≠ a}.Finite ∧ ∀ a ∈ s, τ a = σ a := by
+    (s : Finset α) : ∃ τ : Equiv.Perm α, {a | τ a ≠ a}.Finite ∧ Set.EqOn τ σ s := by
   classical
   let t : Finset α := s ∪ s.image σ
   obtain ⟨ρ, hρ⟩ := Equiv.Perm.exists_extending_pair (α := s) (β := t)

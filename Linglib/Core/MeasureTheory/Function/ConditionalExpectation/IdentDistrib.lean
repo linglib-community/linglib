@@ -8,19 +8,21 @@ module
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
 public import Mathlib.MeasureTheory.Function.FactorsThrough
+public import Mathlib.Probability.IdentDistrib
 
 /-!
-# Conditional expectations and equality in law
+# Conditional expectations: decreasing σ-algebras and equality in law
 
-If the pairs `(ξ, η)` and `(ξ, ζ)` have the same law and `η` is a function of `ζ`, then
-conditioning a bounded function of `ξ` on `ζ` gives the same result as conditioning it on `η`:
-the extra information in `ζ` is of no use for predicting `ξ`.
+Two facts about conditional expectations. If the conditional expectations of a function given
+each member of a decreasing sequence of σ-algebras are almost everywhere equal, they are equal
+to its conditional expectation given their intersection. If the pairs `(ξ, η)` and `(ξ, ζ)` are
+identically distributed and `η` is a function of `ζ`, then conditioning a bounded function of `ξ`
+on `ζ` gives the same result as conditioning it on `η`.
 
 ## Main results
 
-* `MeasureTheory.condExp_comap_ae_eq_of_map_prodMk_eq`: the statement above.
-* `MeasureTheory.integral_condExp_mul_of_bound`: against a bounded weight measurable for the
-  conditioning σ-algebra, a function and its conditional expectation have the same integral.
+* `MeasureTheory.condExp_ae_eq_condExp_iInf`: the statement for decreasing σ-algebras.
+* `MeasureTheory.condExp_comap_ae_eq_of_identDistrib`: the statement for pairs with one law.
 
 ## References
 
@@ -29,12 +31,44 @@ the extra information in `ζ` is of no use for predicting `ξ`.
 
 public section
 
-open Filter
-
 namespace MeasureTheory
+
+open Filter ProbabilityTheory
+
+section CondExp
 
 variable {Ω S T : Type*} {mΩ : MeasurableSpace Ω} [MeasurableSpace S] [MeasurableSpace T]
   {μ : Measure Ω}
+
+/-- If the conditional expectations of `g` along a decreasing sequence of σ-algebras all agree,
+they agree with the conditional expectation given the intersection. -/
+theorem condExp_ae_eq_condExp_iInf [IsFiniteMeasure μ] {m : ℕ → MeasurableSpace Ω}
+    (hm : Antitone m) (hm0 : m 0 ≤ mΩ) {g : Ω → ℝ}
+    (h : ∀ n, μ[g | m n] =ᵐ[μ] μ[g | m 0]) : μ[g | m 0] =ᵐ[μ] μ[g | ⨅ n, m n] := by
+  let U : ℕ → Ω → ℝ := fun n ↦ μ[g | m n]
+  have hU : ∀ᵐ ω ∂μ, ∀ n, U n ω = U 0 ω := ae_all_iff.2 h
+  let W : Ω → ℝ := fun ω ↦ limsup (fun n ↦ U n ω) atTop
+  have hWU : W =ᵐ[μ] U 0 := hU.mono fun ω hω ↦ by
+    have e : (fun n ↦ U n ω) = fun _ ↦ U 0 ω := funext hω
+    simp only [W, e, limsup_const]
+  have hWm : Measurable[⨅ n, m n] W := by
+    intro B hB
+    rw [MeasurableSpace.measurableSet_iInf]
+    intro N
+    have hN : Measurable[m N] fun ω ↦ limsup (fun n ↦ U (n + N) ω) atTop :=
+      Measurable.limsup fun n ↦
+        stronglyMeasurable_condExp.measurable.mono (hm (by omega)) le_rfl
+    have e : W = fun ω ↦ limsup (fun n ↦ U (n + N) ω) atTop :=
+      funext fun ω ↦ (limsup_nat_add (fun n ↦ U n ω) N).symm
+    rw [e]
+    exact hN hB
+  have hle : (⨅ n, m n) ≤ m 0 := iInf_le _ _
+  have hint : Integrable W μ := integrable_condExp.congr hWU.symm
+  calc μ[g | m 0] =ᵐ[μ] W := hWU.symm
+    _ = μ[W | ⨅ n, m n] := (condExp_of_stronglyMeasurable
+        (hle.trans hm0) hWm.stronglyMeasurable hint).symm
+    _ =ᵐ[μ] μ[U 0 | ⨅ n, m n] := condExp_congr_ae hWU
+    _ =ᵐ[μ] μ[g | ⨅ n, m n] := condExp_condExp_of_le hle hm0
 
 /-- Against a bounded `m`-measurable weight, a function and its conditional expectation given `m`
 have the same integral. -/
@@ -49,40 +83,42 @@ theorem integral_condExp_mul_of_bound {m : MeasurableSpace Ω} (hm : m ≤ mΩ)
         rw [integral_condExp hm]
         exact integral_congr_ae (ae_of_all _ fun ω ↦ mul_comm (w ω) (g ω))
 
-/-- If `(ξ, η)` and `(ξ', ζ)` have the same law, then integrating a function of the pair over the
-event `η ∈ B` or `ζ ∈ B` gives the same result. -/
-theorem setIntegral_preimage_snd_eq_of_map_prodMk_eq {ξ ξ' : Ω → S} {η ζ : Ω → T}
-    (hξ : Measurable ξ) (hξ' : Measurable ξ') (hη : Measurable η) (hζ : Measurable ζ)
-    (h : μ.map (fun ω ↦ (ξ ω, η ω)) = μ.map fun ω ↦ (ξ' ω, ζ ω))
+/-- If `(ξ, η)` and `(ξ', ζ)` are identically distributed, then integrating a function of the
+pair over the event `η ∈ B` or `ζ ∈ B` gives the same result. -/
+theorem setIntegral_preimage_snd_eq_of_identDistrib {ξ ξ' : Ω → S} {η ζ : Ω → T}
+    (h : IdentDistrib (fun ω ↦ (ξ ω, η ω)) (fun ω ↦ (ξ' ω, ζ ω)) μ μ)
     {F : S × T → ℝ} (hF : Measurable F) {B : Set T} (hB : MeasurableSet B) :
     ∫ ω in η ⁻¹' B, F (ξ ω, η ω) ∂μ = ∫ ω in ζ ⁻¹' B, F (ξ' ω, ζ ω) ∂μ := by
-  have hs : MeasurableSet ((Set.univ : Set S) ×ˢ B) := MeasurableSet.univ.prod hB
-  have h1 := setIntegral_map hs hF.aestronglyMeasurable (hξ.prodMk hη).aemeasurable (μ := μ)
-  have h2 := setIntegral_map hs hF.aestronglyMeasurable (hξ'.prodMk hζ).aemeasurable (μ := μ)
-  rw [h] at h1
-  simp only [Set.mk_preimage_prod, Set.preimage_univ, Set.univ_inter] at h1 h2
-  rw [← h1, h2]
+  have hG : Measurable ((Prod.snd ⁻¹' B : Set (S × T)).indicator F) :=
+    hF.indicator (measurable_snd hB)
+  rw [← integral_indicator₀ (h.aemeasurable_fst.snd.nullMeasurableSet_preimage hB),
+    ← integral_indicator₀ (h.aemeasurable_snd.snd.nullMeasurableSet_preimage hB)]
+  exact (h.comp hG).integral_eq
 
-/-- If `(ξ, η)` and `(ξ, ζ)` have the same law and `σ(η) ≤ σ(ζ)`, then conditioning a bounded
-function of `ξ` on `ζ` gives the same result as conditioning it on `η`
+/-- If `(ξ, η)` and `(ξ, ζ)` are identically distributed and `σ(η) ≤ σ(ζ)`, then conditioning a
+bounded function of `ξ` on `ζ` gives the same result as conditioning it on `η`
 ([kallenberg-2005] Lemma 1.3). -/
-theorem condExp_comap_ae_eq_of_map_prodMk_eq [IsFiniteMeasure μ] {ξ : Ω → S} {η ζ : Ω → T}
-    (hξ : Measurable ξ) (hη : Measurable η) (hζ : Measurable ζ)
-    (h : μ.map (fun ω ↦ (ξ ω, η ω)) = μ.map fun ω ↦ (ξ ω, ζ ω))
+theorem condExp_comap_ae_eq_of_identDistrib [IsFiniteMeasure μ] {ξ : Ω → S} {η ζ : Ω → T}
+    (hζ : Measurable ζ) (h : IdentDistrib (fun ω ↦ (ξ ω, η ω)) (fun ω ↦ (ξ ω, ζ ω)) μ μ)
     (hle : MeasurableSpace.comap η inferInstance ≤ MeasurableSpace.comap ζ inferInstance)
-    {f : S → ℝ} (hf : Measurable f) (hfb : ∃ C, ∀ s, |f s| ≤ C) :
+    {f : S → ℝ} (hf : Measurable f) (C : ℝ) (hC : ∀ s, |f s| ≤ C) :
     μ[f ∘ ξ | MeasurableSpace.comap ζ inferInstance] =ᵐ[μ]
       μ[f ∘ ξ | MeasurableSpace.comap η inferInstance] := by
   obtain ⟨C, hC0, hC⟩ : ∃ C, 0 ≤ C ∧ ∀ s, |f s| ≤ C :=
-    let ⟨C, hC⟩ := hfb; ⟨|C|, abs_nonneg C, fun s ↦ (hC s).trans (le_abs_self C)⟩
+    ⟨|C|, abs_nonneg C, fun s ↦ (hC s).trans (le_abs_self C)⟩
+  have hη : Measurable η := measurable_iff_comap_le.2 (hle.trans hζ.comap_le)
+  have hint : Integrable (f ∘ ξ) μ :=
+    .of_bound (hf.comp_aemeasurable h.aemeasurable_fst.fst).aestronglyMeasurable C
+      (ae_of_all _ fun ω ↦ hC (ξ ω))
+  have htr (F : S × T → ℝ) (hF : Measurable F) {B : Set T} (hB : MeasurableSet B) :=
+    setIntegral_preimage_snd_eq_of_identDistrib h hF hB
+  have hid (F : S × T → ℝ) (hF : Measurable F) :
+      ∫ ω, F (ξ ω, η ω) ∂μ = ∫ ω, F (ξ ω, ζ ω) ∂μ :=
+    (h.comp hF).integral_eq
   set G := MeasurableSpace.comap η inferInstance
   set H := MeasurableSpace.comap ζ inferInstance
-  have hG : G ≤ mΩ := hη.comap_le
   have hH : H ≤ mΩ := hζ.comap_le
-  have hint : Integrable (f ∘ ξ) μ :=
-    .of_bound (hf.comp hξ).aestronglyMeasurable C (ae_of_all _ fun ω ↦ hC (ξ ω))
-  have htr (F : S × T → ℝ) (hF : Measurable F) {B : Set T} (hB : MeasurableSet B) :=
-    setIntegral_preimage_snd_eq_of_map_prodMk_eq hξ hξ hη hζ h hF hB
+  have hG : G ≤ mΩ := hη.comap_le
   obtain ⟨φ, hφ, hUφ⟩ :=
     (stronglyMeasurable_condExp (f := f ∘ ξ) (m := H) (μ := μ)).exists_eq_measurable_comp
   let ψ : T → ℝ := fun t ↦ max (-C) (min C (φ t))
@@ -120,24 +156,24 @@ theorem condExp_comap_ae_eq_of_map_prodMk_eq [IsFiniteMeasure μ] {ξ : Ω → S
   have hvv : ∫ ω, ψ (η ω) * ψ (η ω) ∂μ = ∫ ω, f (ξ ω) * ψ (η ω) ∂μ :=
     (integral_congr_ae (hVψ.mono fun ω hω ↦ congrArg (· * ψ (η ω)) hω)).trans
       (integral_condExp_mul_of_bound hG hint hvG fun ω ↦ hψR (η ω))
-  have huu : ∫ ω, ψ (ζ ω) * ψ (ζ ω) ∂μ = ∫ ω, ψ (η ω) * ψ (η ω) ∂μ := by
-    simpa using (htr (fun p ↦ ψ p.2 * ψ p.2) (by fun_prop) MeasurableSet.univ).symm
+  have huu : ∫ ω, ψ (ζ ω) * ψ (ζ ω) ∂μ = ∫ ω, ψ (η ω) * ψ (η ω) ∂μ :=
+    (hid (fun p ↦ ψ p.2 * ψ p.2) (by fun_prop)).symm
   have huv' : Integrable (fun ω ↦ ψ (ζ ω) * ψ (η ω)) μ := hu.mul_bdd hv.aestronglyMeasurable hvb
   have huu' : Integrable (fun ω ↦ ψ (ζ ω) * ψ (ζ ω)) μ := hu.mul_bdd hu.aestronglyMeasurable hub
   have hvv' : Integrable (fun ω ↦ ψ (η ω) * ψ (η ω)) μ := hv.mul_bdd hv.aestronglyMeasurable hvb
+  have e (ω : Ω) : (ψ (ζ ω) - ψ (η ω)) ^ 2 =
+      ψ (ζ ω) * ψ (ζ ω) - 2 * (ψ (ζ ω) * ψ (η ω)) + ψ (η ω) * ψ (η ω) := by ring
+  have hsq' : Integrable (fun ω ↦ (ψ (ζ ω) - ψ (η ω)) ^ 2) μ := by
+    simp_rw [e]
+    exact (huu'.sub (huv'.const_mul 2)).add hvv'
   have hsq : ∫ ω, (ψ (ζ ω) - ψ (η ω)) ^ 2 ∂μ = 0 := by
-    have e (ω : Ω) : (ψ (ζ ω) - ψ (η ω)) ^ 2 =
-        ψ (ζ ω) * ψ (ζ ω) - 2 * (ψ (ζ ω) * ψ (η ω)) + ψ (η ω) * ψ (η ω) := by ring
     simp_rw [e]
     rw [integral_add ?_ hvv', integral_sub huu' (huv'.const_mul 2), integral_const_mul]
     · linarith
     · exact huu'.sub (huv'.const_mul 2)
-  have hsq' : Integrable (fun ω ↦ (ψ (ζ ω) - ψ (η ω)) ^ 2) μ := by
-    have e (ω : Ω) : (ψ (ζ ω) - ψ (η ω)) ^ 2 =
-        ψ (ζ ω) * ψ (ζ ω) - 2 * (ψ (ζ ω) * ψ (η ω)) + ψ (η ω) * ψ (η ω) := by ring
-    simp_rw [e]
-    exact (huu'.sub (huv'.const_mul 2)).add hvv'
   filter_upwards [(integral_eq_zero_iff_of_nonneg (fun ω ↦ sq_nonneg _) hsq').1 hsq] with ω hω
   simpa [sub_eq_zero] using hω
+
+end CondExp
 
 end MeasureTheory

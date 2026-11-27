@@ -2,6 +2,9 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Gamma.Basic
 public import Linglib.Core.Probability.Combinatorics.PolyaUrn
+public import Linglib.Core.Probability.Combinatorics.PolyaUrnProcess
+public import Linglib.Core.Probability.Distributions.Dirichlet
+public import Linglib.Core.Probability.Exchangeable.Basic
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Studies.GriffithsKalish2007
 
@@ -253,6 +256,32 @@ noncomputable def prior (α : ℝ) : Measure (Fin n → Fin k) :=
 theorem isProbabilityMeasure_prior [NeZero k] {α : ℝ} (hα : 0 < α) :
     IsProbabilityMeasure (prior (n := n) (k := k) α) :=
   isProbabilityMeasure_polyaUrn (fun _ ↦ hα) n
+
+-- the prior does not tell the meanings apart: the classes of the meanings are exchangeable
+theorem exchangeable_prior [NeZero k] {α : ℝ} (hα : 0 < α) :
+    Exchangeable (fun i (h : Fin n → Fin k) ↦ h i) (prior (n := n) (k := k) α) :=
+  exchangeable_eval_iff.2 (smulInvariantMeasure_polyaUrn (fun _ ↦ hα) n)
+
+-- under the prior a language draws the probabilities of the classes from a symmetric Dirichlet
+-- distribution and then gives each meaning its class independently
+theorem prior_eq_bind_dirichlet [NeZero k] {α : ℝ} (hα : 0 < α) :
+    prior (n := n) (k := k) α = (dirichlet fun _ : Fin k ↦ α).bind fun t ↦
+      Measure.pi fun _ : Fin n ↦ ∑ c, ENNReal.ofReal (t.weights c) • Measure.dirac c :=
+  polyaUrn_eq_bind_dirichlet (fun _ ↦ hα) n
+
+-- the priors for every number of meanings are the first draws of one infinite sequence of classes
+theorem polyaUrnProcess_map_restrict_eq_prior [NeZero k] {α : ℝ} (hα : 0 < α) :
+    (polyaUrnProcess (θ := fun _ : Fin k ↦ α) fun _ ↦ hα).map (fun x (i : Fin n) ↦ x i) =
+      prior α :=
+  polyaUrnProcess_map_restrict _ n
+
+-- the hidden distribution over classes that the exchangeability of that sequence forces has
+-- the symmetric Dirichlet law
+theorem map_directingMeasure_eq_dirichlet [NeZero k] {α : ℝ} (hα : 0 < α) :
+    (polyaUrnProcess (θ := fun _ : Fin k ↦ α) fun _ ↦ hα).map
+        (directingMeasure (fun i (x : ℕ → Fin k) ↦ x i) (polyaUrnProcess fun _ ↦ hα)) =
+      (dirichlet fun _ : Fin k ↦ α).map Convexity.StdSimplex.toProbabilityMeasure :=
+  map_directingMeasure_polyaUrnProcess _
 
 /-- Eqs. (3)–(4): the data produced by a language. -/
 noncomputable def produce (P : Measure (Fin n)) (ε : ℝ) :

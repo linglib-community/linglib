@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.MeasureTheory.Group.Action
+public import Linglib.Core.MeasureTheory.Constructions.Pi
 public import Linglib.Core.Probability.Kernel.Invariance
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.MeasureTheory.Group.Integral
