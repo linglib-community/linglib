@@ -12,9 +12,9 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 # Verb–complementizer selection
 
 Which complementizers a verb takes: those some frame of the verb takes
-(`ArgumentFrame.AnyTakes` of its frames). The complementizers of a verb within a language's inventory are read off
-this relation, so a language file states a verb's complementizers as a theorem about its frames
-and the inventory, and does not list them.
+(`ArgumentFrame.AnyTakes` of its frames). The complementizers of a verb within a language's
+inventory are read off this relation, so a language file states a verb's complementizers as a
+theorem about its frames and the inventory, and does not list them.
 
 ## Main definitions
 
