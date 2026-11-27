@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Data.Examples.SchlenkerEtAl2026
-public import Linglib.Semantics.Reference.Monster
-public import Studies.Kaplan1989
+public import Linglib.Semantics.Reference.Character.Operator
+public import Linglib.Semantics.Reference.Indexical
 public import Mathlib.Algebra.Torsor.Defs
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Defs
@@ -169,7 +169,7 @@ variable {x : E} {c : Context W E P T} {i : T × W} {lex : T × W → E → Prop
 omit [AddTorsor ℝ T] in
 -- (35): under Role Shift the first person denotes the character
 theorem roleShift_I (Q : T × W → E → Prop) :
-    roleShift x (fun c i ↦ Q i (Kaplan1989.I c i)) c i = Q i x := rfl
+    roleShift x (fun c i ↦ Q i (Indexical.I c i)) c i = Q i x := rfl
 
 omit [AddTorsor ℝ T] in
 /-- Role Shift to `x` is a monster if some context has an agent other than `x`. -/

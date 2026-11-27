@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Reference.Context.Basic
-public import Linglib.Semantics.Reference.Monster
+public import Linglib.Semantics.Reference.Character.Operator
 public import Mathlib.Data.Finset.Piecewise
 public import Mathlib.Logic.Function.DependsOn
 public import Mathlib.Tactic.DeriveFintype

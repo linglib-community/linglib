@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Context.Basic
-public import Linglib.Semantics.Reference.Monster
+public import Linglib.Semantics.Reference.Character.Operator
 
 /-!
 # Kaplan (1989): Demonstratives
@@ -75,27 +75,6 @@ theorem forall_isAPriori_const_imp_isNecessary_iff_surjective [Nonempty C] (ι :
     exact hp c'
 
 end Necessitation
-
-/-! ### The indexical constants -/
-
-section Indexicals
-
-variable {W E P T V : Type*}
-
-/-- The individual constant `I` denotes the agent of the context, at every index. -/
-def I : Character (Context W E P T) V E := Character.dthat Context.agent
-
-/-- The position constant `Here` denotes the position of the context, at every index. -/
-def here : Character (Context W E P T) V P := Character.dthat Context.position
-
-theorem isDirectlyReferential_I : (I : Character (Context W E P T) V E).IsDirectlyReferential :=
-  Character.dthat_isDirectlyReferential _
-
-theorem isDirectlyReferential_here :
-    (here : Character (Context W E P T) V P).IsDirectlyReferential :=
-  Character.dthat_isDirectlyReferential _
-
-end Indexicals
 
 /-! ### Proper contexts -/
 

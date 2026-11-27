@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.CoppockWechsler2018
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Trivalent.Proposition
 public import Linglib.Semantics.Reference.Context.Basic
-public import Linglib.Semantics.Reference.Monster
+public import Linglib.Semantics.Reference.Character.Operator
 public import Studies.Pearson2015
 public import Linglib.Data.Examples.Readers
 
