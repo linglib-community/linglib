@@ -5,34 +5,30 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Spine
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Complement sizes
 
-A clausal complement is measured by its highest projected head. Wurmbrand classifies infinitival
-complements by the structure they project, a bare vP for restructuring, a TP for propositional
-attitudes and a modal projection for future infinitives, beside the full CP of a finite clause,
-and a complement is at most as large as another when its highest head is extended by the other's.
-Two sizes with distinct heads at one level, tense and negation for instance, are then equivalent
-but not equal, so the order is a preorder, and two sizes no source relates, a nominalized clause
-and a CP, are incomparable. The size of a spine is its highest head. On extended
-projections the extension order of spines, inclusion of labels, refines the size order, and the
-standard sizes are those of the standard spines.
+How much of a clause does a complement contain? Wurmbrand sorts infinitival complements by the
+structure they project: a bare vP under a restructuring verb, a TP under a propositional attitude
+and a modal projection for a future infinitive, beside the full CP of a finite clause. A complement
+is measured by its highest head, its **size**, and one size is at most another when its highest
+head is at most the other's in the order of the categories. Two sizes whose heads are level, as
+tense and negation are, are each at most the other without being equal, and two sizes that no
+source relates, a nominalized clause and a CP, are incomparable.
 
-## Main definitions
+The **size of a spine** is its highest head. A spine whose heads all occur on an extended projection
+is no larger than it. The standard clauses are the vP, the TP and the CP, and their sizes ascend as
+their spines grow.
 
-* `Minimalist.ComplementSize`: a clausal complement measured by its highest head.
-* `Spine.size`: the size of a spine, its highest head.
-* `Minimalist.ComplementSize.vP`, `Minimalist.ComplementSize.tP`,
-  `Minimalist.ComplementSize.finP`, `Minimalist.ComplementSize.cP`: the standard sizes.
+## Implementation notes
 
-## Main results
-
-* `Minimalist.ComplementSize.le_def`: the order is the extension order of the highest heads.
-* `Spine.size_le_size`: on extended projections, the extension order refines the
-  size order, so that the standard sizes ascend as their spines do
-  (`Minimalist.ComplementSize.vP_le_tP`, `Minimalist.ComplementSize.tP_le_cP`).
+`Minimalist.ComplementSize` wraps a category and carries the order of the categories, lifted
+along `Minimalist.ComplementSize.highestHead`, as an instance of its own, so that a file that
+speaks of sizes need not adopt the order on the categories. Spines have an order of their own,
+inclusion of the sets of heads they project; `Spine.size_le_size` says that on extended projections
+it refines the order of sizes.
 
 ## References
 
@@ -42,9 +38,11 @@ standard sizes are those of the standard spines.
 
 @[expose] public section
 
+open scoped Minimalist.ExtendedProjection
+
 namespace Minimalist
 
-/-- A clausal complement measured by the highest head it projects. -/
+/-- A **complement size** is a clausal complement measured by the highest head it projects. -/
 structure ComplementSize where
   /-- The highest functional head in the complement. -/
   highestHead : Cat
@@ -54,21 +52,16 @@ namespace ComplementSize
 
 variable {a b : ComplementSize}
 
-/-- Complement sizes are ordered by the extension order of their highest heads, so that a
-complement is at most another when the other's highest head extends its own. -/
-instance : Preorder ComplementSize where
-  le a b := a.highestHead.ExtendsTo b.highestHead
-  le_refl _ := refl_of Cat.ExtendsTo _
-  le_trans _ _ _ := trans_of Cat.ExtendsTo
+/-- One complement size is at most another, written `a ≤ b`, when its highest head is at most the
+other's. -/
+instance : Preorder ComplementSize := Preorder.lift highestHead
 
 instance : DecidableLE ComplementSize := fun a b ↦
-  inferInstanceAs (Decidable (a.highestHead.ExtendsTo b.highestHead))
+  inferInstanceAs (Decidable (a.highestHead ≤ b.highestHead))
 
-instance : DecidableLT ComplementSize := fun a b ↦
-  inferInstanceAs (Decidable (a.highestHead.ExtendsTo b.highestHead ∧
-    ¬ b.highestHead.ExtendsTo a.highestHead))
+instance : DecidableLT ComplementSize := decidableLTOfDecidableLE
 
-theorem le_def : a ≤ b ↔ a.highestHead.ExtendsTo b.highestHead := Iff.rfl
+theorem le_def : a ≤ b ↔ a.highestHead ≤ b.highestHead := Iff.rfl
 
 end ComplementSize
 
@@ -80,55 +73,87 @@ open Minimalist
 
 variable {s t : Spine Cat} {c : Cat}
 
-/-- The size of a spine is its highest head; the empty spine has the size of a bare lexical head,
-the least size. -/
+/-!
+### The standard clauses
+
+The clauses of the verbal extended projection that the literature on complement size names.
+-/
+
+/-- The **vP** is the spine `[V, v]`, the small nonfinite clause. -/
+def vP : Spine Cat := ⟨[.V, .v]⟩
+
+/-- The **TP** is the spine `[V, v, T]`, the large nonfinite clause. -/
+def tP : Spine Cat := ⟨[.V, .v, .T]⟩
+
+/-- The **CP** is the spine `[V, v, T, C]`, the finite clause. -/
+def cP : Spine Cat := ⟨[.V, .v, .T, .C]⟩
+
+@[simp] theorem tP_below_T : tP.below .T = vP := by decide
+
+@[simp] theorem cP_below_T : cP.below .T = vP := by decide
+
+@[simp] theorem cP_below_C : cP.below .C = tP := by decide
+
+theorem vP_le_tP : vP ≤ tP := by decide
+
+theorem tP_le_cP : tP ≤ cP := by decide
+
+theorem cP_isExtendedProjection : cP.IsExtendedProjection := by decide +kernel
+
+/-!
+### The size of a spine
+-/
+
+/-- The **size** of a spine is its highest head. The empty spine has the size of a bare lexical
+head. -/
 def size (s : Spine Cat) : ComplementSize := ⟨s.heads.getLastD .V⟩
 
-private theorem extendsTo_getLastD {l : List Cat} (hp : l.Pairwise Cat.ExtendsTo) (hc : c ∈ l) :
-    c.ExtendsTo (l.getLastD .V) := by
+private theorem le_getLastD {l : List Cat} (hp : l.Pairwise (· ≤ ·)) (hc : c ∈ l) :
+    c ≤ l.getLastD .V := by
   have hne : l ≠ [] := List.ne_nil_of_mem hc
   rw [List.getLastD_eq_getLast?, List.getLast?_eq_some_getLast hne, Option.getD_some]
   rw [← List.dropLast_append_getLast hne, List.mem_append, List.mem_singleton] at hc
   rcases hc with hc | rfl
   · rw [← List.dropLast_append_getLast hne, List.pairwise_append] at hp
     exact hp.2.2 c hc _ (List.mem_singleton_self _)
-  · exact refl_of Cat.ExtendsTo _
+  · exact le_rfl
 
-/-- In an extended projection every head is extended by the highest one. -/
-theorem IsExtendedProjection.extendsTo_size (hs : s.IsExtendedProjection) (hc : c ∈ s) :
-    c.ExtendsTo s.size.highestHead :=
-  extendsTo_getLastD hs.pairwise hc
+/-- In an extended projection every head is at most the highest one. -/
+theorem IsExtendedProjection.le_size (hs : s.IsExtendedProjection) (hc : c ∈ s) :
+    c ≤ s.size.highestHead :=
+  le_getLastD hs.pairwise hc
 
-/-- On extended projections, the extension order refines the size order: a nonempty spine whose
-heads another projects is no larger. -/
+/-- A nonempty spine whose heads an extended projection projects is no larger than it. -/
 theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection) (hs : s.heads ≠ []) :
     s.size ≤ t.size := by
   obtain ⟨l, c, hlc⟩ := (List.eq_nil_or_concat s.heads).resolve_left hs
-  show (s.heads.getLastD .V).ExtendsTo t.size.highestHead
+  show s.heads.getLastD .V ≤ t.size.highestHead
   rw [hlc, List.concat_eq_append, List.getLastD_concat]
-  exact ht.extendsTo_size (le_iff_forall_mem.1 h c (by simp [hlc]))
+  exact ht.le_size (le_iff_forall_mem.1 h c (by simp [hlc]))
 
 end Spine
 
 namespace Minimalist
 
-/-! ### The standard sizes -/
+/-!
+### The standard sizes
+-/
 
 namespace ComplementSize
 
-/-- The vP-sized complement of a restructuring infinitive, the size of the vP spine. -/
+/-- The **vP size** is the size of the vP, the complement of a restructuring verb. -/
 def vP : ComplementSize := Spine.vP.size
 
-/-- The TP-sized complement of a propositional infinitive, the size of the TP spine. -/
+/-- The **TP size** is the size of the TP, the complement of a propositional attitude. -/
 def tP : ComplementSize := Spine.tP.size
 
-/-- The FinP-sized complement, the lowest layer of the left periphery. -/
+/-- The **FinP size** is the size of a clause that projects the lowest head of the left
+periphery. -/
 def finP : ComplementSize := ⟨.Fin⟩
 
-/-- The CP-sized complement of a finite clause, the size of the CP spine. -/
+/-- The **CP size** is the size of the CP, the finite clause. -/
 def cP : ComplementSize := Spine.cP.size
 
-/-- The standard sizes ascend as their spines do. -/
 theorem vP_le_tP : vP ≤ tP :=
   Spine.size_le_size Spine.vP_le_tP (by decide +kernel) (List.cons_ne_nil _ _)
 

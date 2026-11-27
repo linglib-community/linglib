@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Borer2005
 public import Linglib.Languages.English.Determiners
-public import Linglib.Syntax.Minimalist.ExtendedProjection
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 public import Mathlib.Order.Partition.Finpartition
 
 /-!
@@ -250,6 +250,7 @@ end Reticules
 /-! ### The nominal spine -/
 
 -- (27): the quantity head is above the dividing head.
-theorem asymmRel_Q_Num : AsymmRel Cat.ExtendsTo .Q .Num := by decide +kernel
+open scoped Minimalist.ExtendedProjection in
+theorem Q_lt_Num : Cat.Q < .Num := by decide +kernel
 
 end Borer2005

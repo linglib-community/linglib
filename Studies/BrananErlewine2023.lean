@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Data.Examples.BrananErlewine2023
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Syntax.Minimalist.ExtendedProjection
+public import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Data.Examples.Readers
@@ -56,6 +56,8 @@ tell pied-piping from anti-pied-piping.
 namespace BrananErlewine2023
 
 open Examples (Process LeftmostRequirement)
+
+open scoped Minimalist.ExtendedProjection
 
 open PhraseStructure Minimalist Focus Reflex OrderDual
 
@@ -136,7 +138,7 @@ variable {W : Type*}
 extend to the category of the phase, so that it belongs to the extended projection containing
 the phase head. -/
 def OnSpine (t : Tree Cat W) (p : GornAddress) : Prop :=
-  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, (Tree.cat s).ExtendsTo t.cat
+  ∀ q ∈ p.inits, ∃ s ∈ t[q]?, Tree.cat s ≤ t.cat
 
 instance (t : Tree Cat W) (p : GornAddress) : Decidable (OnSpine t p) := by
   unfold OnSpine; infer_instance
