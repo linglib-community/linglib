@@ -3,7 +3,7 @@ module
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Set.Subsingleton
 public import Linglib.Semantics.Reference.Iota
-public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Cat
 public import Linglib.Syntax.Tree.QuantifierRaising
 public import Linglib.Data.Examples.Palucci2026
 
