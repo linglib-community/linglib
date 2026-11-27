@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.GroupTheory.Perm.Finite
 public import Linglib.Core.MeasureTheory.Group.Action
 public import Mathlib.GroupTheory.Perm.ViaEmbedding
 public import Mathlib.MeasureTheory.Constructions.Projective
@@ -57,30 +58,6 @@ exchangeable, exchangeability, de Finetti
 public section
 
 open MeasureTheory
-
-/-- A permutation agrees on any finite set of points with a permutation that moves finitely many
-points. -/
-theorem Equiv.Perm.exists_finite_setOf_ne_and_eqOn {ι : Type*} (σ : Equiv.Perm ι)
-    (I : Finset ι) : ∃ τ : Equiv.Perm ι, {i | τ i ≠ i}.Finite ∧ ∀ i ∈ I, τ i = σ i := by
-  classical
-  let s : Finset ι := I ∪ I.image σ
-  let e : {x : s // x.1 ∈ I} ≃ {x : s // x.1 ∈ I.image σ} :=
-    { toFun := fun x ↦ ⟨⟨σ x.1.1, Finset.mem_union_right _ (Finset.mem_image_of_mem _ x.2)⟩,
-        Finset.mem_image_of_mem _ x.2⟩
-      invFun := fun y ↦ ⟨⟨σ.symm y.1.1, by
-        obtain ⟨a, ha, h⟩ := Finset.mem_image.1 y.2
-        simp [s, ← h, ha]⟩, by
-        obtain ⟨a, ha, h⟩ := Finset.mem_image.1 y.2
-        simp [← h, ha]⟩
-      left_inv := fun x ↦ by simp
-      right_inv := fun y ↦ by simp }
-  refine ⟨Equiv.Perm.ofSubtype (p := (· ∈ s)) e.extendSubtype, ?_, fun i hi ↦ ?_⟩
-  · refine s.finite_toSet.subset fun i hi ↦ ?_
-    by_contra h
-    exact hi (Equiv.Perm.ofSubtype_apply_of_not_mem _ h)
-  · have his : i ∈ s := by simp [s, hi]
-    rw [Equiv.Perm.ofSubtype_apply_of_mem _ his, e.extendSubtype_apply_of_mem (x := ⟨i, his⟩) hi]
-    rfl
 
 namespace ProbabilityTheory
 

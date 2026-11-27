@@ -28,8 +28,10 @@ of independent draws.
 * `ProbabilityTheory.lintegral_prod_pow_dirichlet`: the moments are Pólya urn probabilities.
 * `ProbabilityTheory.isProbabilityMeasure_dirichlet`: the Dirichlet distribution is a probability
   measure.
-* `ProbabilityTheory.polyaUrn_singleton_eq_lintegral_dirichlet`: the Pólya urn is a Dirichlet
-  mixture of independent draws.
+* `ProbabilityTheory.polyaUrn_singleton_eq_lintegral_dirichlet`: the probability that the Pólya
+  urn draws a sequence, as a Dirichlet integral.
+* `ProbabilityTheory.polyaUrn_eq_bind_dirichlet`: the law of the draws of the Pólya urn is a
+  Dirichlet mixture of the laws of independent draws.
 
 ## Implementation notes
 
@@ -216,5 +218,58 @@ theorem polyaUrn_singleton_eq_lintegral_dirichlet {α : Type*} [DecidableEq α] 
   refine lintegral_congr fun t ↦ (prod_congr rfl fun c _ ↦ ?_).trans
     (prod_fiberwise univ s fun i ↦ ENNReal.ofReal (t.weights (s i)))
   exact (prod_eq_pow_card fun i hi ↦ by rw [(mem_filter.1 hi).2]).symm
+
+section Mixture
+
+variable {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
+
+instance (t : StdSimplex ℝ α) :
+    IsFiniteMeasure (∑ a, ENNReal.ofReal (t.weights a) • Measure.dirac a) :=
+  ⟨by simp [ENNReal.sum_lt_top]⟩
+
+/-- Independent draws from a probability vector give a sequence the product of the weights of
+its terms. -/
+theorem pi_sum_weights_smul_dirac_singleton (t : StdSimplex ℝ α) {n : ℕ} (s : Fin n → α) :
+    (Measure.pi fun _ : Fin n ↦ ∑ a, ENNReal.ofReal (t.weights a) • Measure.dirac a) {s} =
+      ∏ i, ENNReal.ofReal (t.weights (s i)) := by
+  rw [← Set.univ_pi_singleton, Measure.pi_pi]
+  simp only [Measure.finsetSum_smul_dirac_singleton]
+
+/-- The law of `n` independent draws from a probability vector depends measurably on the
+vector. -/
+theorem measurable_pi_sum_weights_smul_dirac (n : ℕ) :
+    Measurable fun t : StdSimplex ℝ α ↦
+      Measure.pi fun _ : Fin n ↦ ∑ a, ENNReal.ofReal (t.weights a) • Measure.dirac a := by
+  refine Measure.measurable_of_measurable_coe _ fun S _ ↦ ?_
+  have hS : (S.toFinite.toFinset : Set (Fin n → α)) = S := S.toFinite.coe_toFinset
+  generalize S.toFinite.toFinset = F at hS
+  have (t : StdSimplex ℝ α) : (Measure.pi fun _ : Fin n ↦
+      ∑ a, ENNReal.ofReal (t.weights a) • Measure.dirac a) S =
+      ∑ s ∈ F, ∏ i, ENNReal.ofReal (t.weights (s i)) := by
+    rw [← hS, ← sum_measure_singleton]
+    exact Finset.sum_congr rfl fun s _ ↦ pi_sum_weights_smul_dirac_singleton t s
+  simp only [this]
+  fun_prop
+
+variable [DecidableEq α] [Nonempty α] {θ : α → ℝ}
+
+/-- The law of the first `n` draws of the Pólya urn is the Dirichlet mixture of the laws of `n`
+independent draws from a probability vector. -/
+theorem polyaUrn_eq_bind_dirichlet (hθ : ∀ i, 0 < θ i) (n : ℕ) :
+    polyaUrn θ n = (dirichlet θ).bind fun t ↦
+      Measure.pi fun _ : Fin n ↦ ∑ a, ENNReal.ofReal (t.weights a) • Measure.dirac a := by
+  refine Measure.ext_of_singleton fun s ↦ ?_
+  rw [polyaUrn_singleton_eq_lintegral_dirichlet hθ, Measure.bind_apply
+    (measurableSet_singleton s) (measurable_pi_sum_weights_smul_dirac n).aemeasurable]
+  exact lintegral_congr fun t ↦ (pi_sum_weights_smul_dirac_singleton t s).symm
+
+/-- As a mixture of laws of independent draws, the law of the draws of the Pólya urn is
+exchangeable. -/
+example (hθ : ∀ i, 0 < θ i) (n : ℕ) :
+    SMulInvariantMeasure (Equiv.Perm (Fin n))ᵈᵐᵃ (Fin n → α) (polyaUrn θ n) :=
+  polyaUrn_eq_bind_dirichlet hθ n ▸ smulInvariantMeasure_bind
+    (measurable_pi_sum_weights_smul_dirac n).aemeasurable (.of_forall fun _ ↦ inferInstance)
+
+end Mixture
 
 end ProbabilityTheory
