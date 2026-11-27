@@ -33,7 +33,7 @@ it refines the order of sizes.
 ## References
 
 * [wurmbrand-2014]
-* [grimshaw-2005]
+* [grimshaw-2000]
 -/
 
 @[expose] public section

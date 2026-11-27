@@ -17,7 +17,7 @@ public import Mathlib.Order.Comparable
 A clause is built on a verb, but most of its structure is not the verb's: tense, negation and the
 complementizer each head a phrase of their own above it. Grimshaw takes these phrases to form one
 **extended projection**, a lexical head together with the functional heads above it, all of the
-category of the lexical head, each at a functional level no lower than the one beneath it. A noun
+category of the lexical head and ordered by their functional level, the lexical head lowest. A noun
 phrase is built the same way, with number and the determiner above the noun.
 
 Which functional head stands above which? The heads are not numbered here. Their order is read off
@@ -29,7 +29,8 @@ first up to the second. Every cited spine ascends in this order, and the order h
 categories only where the cited structures force it to: a map on categories is monotone as soon as
 it never drops going up a cited spine. So assign each category a height, in any way that never
 drops going up a cited spine. One category is at most another exactly when every such assignment
-places it no higher.
+places it no higher. Such a height is what Grimshaw calls the functional value of a head, and her
+theory uses only the comparison of two values, never a value itself.
 
 A spine of categories is then an extended projection when its heads are of one family and it
 ascends in this order. Here the second condition brings the first with it, since no cited spine
@@ -66,12 +67,23 @@ Citing a further structure can only add to the order. A statement that one categ
 another therefore survives every later citation, while a statement that two categories are strictly
 ordered or incomparable holds of the structures cited so far.
 
+Grimshaw defines a projection on a tree, by dominance: a phrase is a projection of a head it
+dominates when the two share their categorial features, every node between them shares them too,
+and none of those nodes is lexical. An extended projection is a projection whose functional value
+differs from its head's. The two conditions are stated here of a spine, the heads on the path from
+the lexical head up. She leaves open whether the functional value must rise from each head to the
+next or may also stay the same. Here it may stay the same, since a cited spine can repeat a head.
+For her the adposition is the highest head of the nominal projection, as the complementizer is of
+the verbal one. Here it is the lexical head of a family of its own.
+
 A structure is transcribed as follows. A root, a VP or NP and the verb or noun are the lexical head,
 an IP is `T`, Cinque's heads are read through `Cartography.Head.cat`, and the heads of a structure
 that are not categories here (Agr, Cause, Deg, Laka's English AP) are left out, its other heads kept
 in order. A spine stops where a head takes a complement of another family, as where Thoms and
 colleagues' little v takes a noun phrase or Arregi and Pietraszko's determiner takes a clause, and
-a modifier of another family, such as the adjective of Cinque's noun phrase, is left out. Cinque's
+a modifier of another family, such as the adjective of Cinque's noun phrase, is left out. For
+Grimshaw only a lexical head takes a complement it forms no extended projection with; in these two
+structures the head that does so is not the lexical one. Cinque's
 demonstrative and numeral are specifiers, taken as heads as his footnote allows; Zanuttini's
 numbered negations are all `Neg`; Laka's Σ is `Pol`. Keine leaves open whether his nominalizer
 belongs to the extended projection of the clause it selects, and it is taken to. Only the high
@@ -89,13 +101,14 @@ nonfinite *di* is in the finiteness position, so an infinitival complementizer i
 ## TODO
 
 Inner aspect is placed by Liu and Yip's clause sizes, which follow Travis; Travis's own
-structure, Kratzer's Voice, Svenonius's adpositional heads and Grimshaw's definitions are not
-yet read from the sources. No cited structure relates little n to the dividing head or D to the
-demonstrative, so those pairs are incomparable.
+structure, Kratzer's Voice and Svenonius's adpositional heads are not yet read from the sources.
+No cited structure relates little n to the dividing head or D to the demonstrative, so those pairs
+are incomparable. Grimshaw's conditions on which heads take which complements, and her generalized
+theta criterion, are not formalized.
 
 ## References
 
-* [grimshaw-2005]
+* [grimshaw-2000]
 * [panagiotidis-2015]
 * [harley-2013]
 * [harley-2017]
