@@ -97,7 +97,7 @@ def profile (G : List (Set (Index W T))) (c : Index W T) : List Prop := G.map (c
 another realizes has at least as good a profile. -/
 theorem profile_le_of_atLeastAsGoodAs {G : List (Set (Index W T))} {c c' : Index W T}
     (h : c ≤[{p | p ∈ G}] c') : profile G c' ≤ profile G c :=
-  List.Forall₂.le <| List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <|
+  List.Forall₂.not_gt <| List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <|
     List.forall₂_same.2 h
 
 theorem profile_lt_of_strictlyBetter {G : List (Set (Index W T))} {c c' : Index W T}

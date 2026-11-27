@@ -6,132 +6,113 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.Forall2
-public import Mathlib.Logic.Relation
 public import Mathlib.Order.Basic
 
 /-!
-# Composition, transitivity, and antisymmetry of `List.Forall₂`
+# Transitivity, antisymmetry and decidability of `List.Forall₂`
 
-`List.Forall₂ R` relates lists of equal length pointwise. It composes pointwise
-(`List.forall₂_comp_iff`), so it inherits transitivity and antisymmetry from `R`, as
-`List.SublistForall₂` does in `Mathlib/Data/List/Forall2.lean`; with `R := (· ≤ ·)` this is the
-pointwise order on lists of equal length, which the lexicographic order refines
-(`List.Forall₂.le`, `List.Forall₂.lt_of_ne`), as `Pi.toLex_monotone` and `Pi.toLex_strictMono`
-say of `Pi.Lex`; the pointwise witnesses of `Phonology/Tone/Register.lean` lift to the
-lexicographic order this way. [UPSTREAM] candidates for that file, beside
-`List.SublistForall₂.is_refl` and `List.SublistForall₂.is_trans`; so are
-`List.sublistForall₂_cons_cons_iff` and `List.decidableSublistForall₂` below.
+`List.Forall₂ R` relates two lists of the same length whose entries are related by `R` position by
+position. It is transitive when `R` is and antisymmetric when `R` is. For `R := (· ≤ ·)` it is the
+pointwise order on lists of a fixed length, and the lexicographic order `<` on lists extends its
+strict part.
 
 ## Main results
 
-* `List.forall₂_comp_iff`: `Forall₂ (R ∘r S)` is the pointwise composite of `Forall₂ R` and
-  `Forall₂ S`.
-* `List.Forall₂.trans`, `List.Forall₂.antisymm`, and the `Std.Refl`, `IsTrans`, `Std.Antisymm`
-  instances on `Forall₂ R`.
-* `List.Forall₂.le`, `List.Forall₂.lt_of_ne`: lists ordered pointwise are ordered
-  lexicographically.
+* `List.Forall₂.trans`, `List.Forall₂.antisymm`: `Forall₂ R` is transitive and antisymmetric when
+  `R` is.
+* `List.Forall₂.not_gt`, `List.Forall₂.lt_of_ne`: if `l₁` is pointwise at most `l₂` then `l₂` is
+  not lexicographically below `l₁`, and `l₁` is lexicographically below `l₂` unless they are equal.
 * `List.decidableForall₂`, `List.decidableSublistForall₂`: `Decidable` instances for `Forall₂ R`
-  and `SublistForall₂ R` that `decide` can evaluate.
+  and `SublistForall₂ R` that `decide` can evaluate, the second by greedy matching.
 
 ## Implementation notes
 
+The lexicographic lemmas are stated for `<`, which is `List.Lex (· < ·)` under both the `LT`
+instance of core Lean and mathlib's linear order on lists. The two `≤` differ: core's `l₁ ≤ l₂`
+unfolds to `¬ l₂ < l₁`, and mathlib's, on a linear order, is reached with `not_lt`.
+
 Batteries decides `Forall₂` through `List.all₂`, whose body it stopped exposing to other modules
 in batteries#2006, so `decide` gets stuck on it. `List.decidableForall₂` takes priority over that
-instance; remove it once Batteries exposes `List.all₂` again.
+instance and is equal to it only propositionally; remove it once Batteries exposes `List.all₂`
+again.
+
+[UPSTREAM] candidates for `Mathlib/Data/List/Forall2.lean` and `Mathlib/Data/List/Lex.lean`.
 -/
 
 @[expose] public section
 
 namespace List
 
-variable {α β γ : Type*} {R : α → α → Prop}
+variable {α β : Type*} {R : α → β → Prop} {r : α → α → Prop}
 
-/-- `Forall₂` for a composite relation is the pointwise composite of the two `Forall₂`s. -/
-theorem forall₂_comp_iff {R : α → β → Prop} {S : β → γ → Prop} {l₁ : List α} {l₃ : List γ} :
-    Forall₂ (Relation.Comp R S) l₁ l₃ ↔ ∃ l₂, Forall₂ R l₁ l₂ ∧ Forall₂ S l₂ l₃ := by
-  constructor
-  · intro h
-    induction h with
-    | nil => exact ⟨[], .nil, .nil⟩
-    | cons hac _ ih =>
-      obtain ⟨b, hab, hbc⟩ := hac
-      obtain ⟨l₂, h₁, h₂⟩ := ih
-      exact ⟨b :: l₂, .cons hab h₁, .cons hbc h₂⟩
-  · rintro ⟨l₂, h₁, h₂⟩
-    induction h₁ generalizing l₃ with
-    | nil => cases h₂; exact .nil
-    | cons hab _ ih =>
-      cases h₂ with
-      | cons hbc h₂' => exact .cons ⟨_, hab, hbc⟩ (ih h₂')
+theorem Forall₂.trans [IsTrans α r] :
+    ∀ {l₁ l₂ l₃ : List α}, Forall₂ r l₁ l₂ → Forall₂ r l₂ l₃ → Forall₂ r l₁ l₃
+  | _, _, _, .nil, .nil => .nil
+  | _, _, _, .cons h₁ t₁, .cons h₂ t₂ => .cons (_root_.trans h₁ h₂) (t₁.trans t₂)
 
-theorem Forall₂.trans [IsTrans α R] {l₁ l₂ l₃ : List α} (h₁ : Forall₂ R l₁ l₂)
-    (h₂ : Forall₂ R l₂ l₃) : Forall₂ R l₁ l₃ :=
-  (forall₂_comp_iff.2 ⟨l₂, h₁, h₂⟩).imp fun _ _ ⟨_, hab, hbc⟩ ↦ _root_.trans hab hbc
-
-theorem Forall₂.antisymm [Std.Antisymm R] {l₁ l₂ : List α} :
-    Forall₂ R l₁ l₂ → Forall₂ R l₂ l₁ → l₁ = l₂
-  | .nil, .nil => rfl
-  | .cons h₁ t₁, .cons h₂ t₂ => by rw [_root_.antisymm h₁ h₂, t₁.antisymm t₂]
-
-instance Forall₂.instRefl [Std.Refl R] : Std.Refl (Forall₂ R) := ⟨forall₂_refl⟩
-
-instance Forall₂.instIsTrans [IsTrans α R] : IsTrans (List α) (Forall₂ R) :=
-  ⟨fun _ _ _ ↦ Forall₂.trans⟩
-
-instance Forall₂.instAntisymm [Std.Antisymm R] : Std.Antisymm (Forall₂ R) :=
-  ⟨fun _ _ ↦ Forall₂.antisymm⟩
+theorem Forall₂.antisymm [Std.Antisymm r] :
+    ∀ {l₁ l₂ : List α}, Forall₂ r l₁ l₂ → Forall₂ r l₂ l₁ → l₁ = l₂
+  | _, _, .nil, .nil => rfl
+  | _, _, .cons h₁ t₁, .cons h₂ t₂ => by rw [_root_.antisymm h₁ h₂, t₁.antisymm t₂]
 
 /-! ### Decidability -/
 
 /-- `Forall₂ R` decided by structural recursion on both lists, so that `decide` evaluates it
 outside this module. -/
-instance (priority := high) decidableForall₂ {R : α → β → Prop} [∀ a b, Decidable (R a b)] :
+instance (priority := high) decidableForall₂ [∀ a b, Decidable (R a b)] :
     ∀ l₁ l₂, Decidable (Forall₂ R l₁ l₂)
   | [], [] => isTrue .nil
   | [], _ :: _ | _ :: _, [] => isFalse nofun
   | a :: l₁, b :: l₂ =>
-    haveI := decidableForall₂ (R := R) l₁ l₂
+    haveI := decidableForall₂ l₁ l₂
     decidable_of_iff (R a b ∧ Forall₂ R l₁ l₂) forall₂_cons.symm
 
-/-- A `SublistForall₂` into a cons either relates the heads or skips the target's head. -/
-theorem sublistForall₂_cons_cons_iff {R : α → β → Prop} {a : α} {b : β} {l₁ : List α}
-    {l₂ : List β} :
-    SublistForall₂ R (a :: l₁) (b :: l₂) ↔
-      R a b ∧ SublistForall₂ R l₁ l₂ ∨ SublistForall₂ R (a :: l₁) l₂ := by
-  constructor
-  · intro h
-    cases h with
-    | cons h t => exact .inl ⟨h, t⟩
-    | cons_right t => exact .inr t
-  · rintro (⟨h, t⟩ | h)
-    exacts [.cons h t, .cons_right h]
+/-- Dropping the head of the first list preserves `SublistForall₂`. -/
+theorem SublistForall₂.of_cons {a : α} {l₁ : List α} {l₂ : List β}
+    (h : SublistForall₂ R (a :: l₁) l₂) : SublistForall₂ R l₁ l₂ := by
+  generalize hl : a :: l₁ = l at h
+  induction h generalizing a l₁ with
+  | nil => cases hl
+  | cons _ t _ => cases hl; exact .cons_right t
+  | cons_right _ ih => exact .cons_right (ih hl)
 
-/-- `SublistForall₂ R` decided by structural recursion, so that `decide` evaluates it. -/
-instance decidableSublistForall₂ {R : α → β → Prop} [∀ a b, Decidable (R a b)] :
+/-- When the heads are related, a `SublistForall₂` may as well relate them. -/
+theorem sublistForall₂_cons_cons_iff_of_rel {a : α} {b : β} {l₁ : List α} {l₂ : List β}
+    (h : R a b) : SublistForall₂ R (a :: l₁) (b :: l₂) ↔ SublistForall₂ R l₁ l₂ :=
+  ⟨fun | .cons _ t => t | .cons_right t => t.of_cons, .cons h⟩
+
+/-- When the heads are not related, a `SublistForall₂` skips the head of the second list. -/
+theorem sublistForall₂_cons_cons_iff_of_not_rel {a : α} {b : β} {l₁ : List α} {l₂ : List β}
+    (h : ¬ R a b) : SublistForall₂ R (a :: l₁) (b :: l₂) ↔ SublistForall₂ R (a :: l₁) l₂ :=
+  ⟨fun | .cons h' _ => absurd h' h | .cons_right t => t, .cons_right⟩
+
+/-- `SublistForall₂ R` decided by matching each entry of the first list to the first entry of the
+second that it is related to, in time linear in the second list. -/
+instance decidableSublistForall₂ [∀ a b, Decidable (R a b)] :
     ∀ l₁ l₂, Decidable (SublistForall₂ R l₁ l₂)
   | [], _ => isTrue .nil
   | _ :: _, [] => isFalse nofun
   | a :: l₁, b :: l₂ =>
-    haveI := decidableSublistForall₂ (R := R) l₁ l₂
-    haveI := decidableSublistForall₂ (R := R) (a :: l₁) l₂
-    decidable_of_iff (R a b ∧ SublistForall₂ R l₁ l₂ ∨ SublistForall₂ R (a :: l₁) l₂)
-      sublistForall₂_cons_cons_iff.symm
+    if h : R a b then
+      haveI := decidableSublistForall₂ l₁ l₂
+      decidable_of_iff _ (sublistForall₂_cons_cons_iff_of_rel h).symm
+    else
+      haveI := decidableSublistForall₂ (a :: l₁) l₂
+      decidable_of_iff _ (sublistForall₂_cons_cons_iff_of_not_rel h).symm
 
-/-! ### The lexicographic order refines the pointwise order -/
+/-! ### The lexicographic order extends the pointwise order -/
 
-/-- Lists ordered pointwise are ordered lexicographically, the list form of
-`Pi.toLex_monotone`. -/
-theorem Forall₂.le [Preorder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ ·) l₁ l₂) : l₁ ≤ l₂ := by
+/-- If `l₁` is pointwise at most `l₂`, then `l₂` is not lexicographically below `l₁`. -/
+theorem Forall₂.not_gt [Preorder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ ·) l₁ l₂) :
+    ¬ l₂ < l₁ := by
   induction h with
-  | nil => exact fun h ↦ nomatch h
+  | nil => exact nofun
   | cons hab _ ih =>
-    intro hlt
-    cases hlt with
-    | cons hlt => exact ih hlt
-    | rel hlt => exact hab.not_gt hlt
+    rintro (_ | hlt | hlt)
+    exacts [hab.not_gt hlt, ih hlt]
 
-/-- Distinct lists ordered pointwise are strictly ordered lexicographically, the list form of
-`Pi.toLex_strictMono`. -/
+/-- If `l₁` is pointwise at most `l₂` and differs from it, then `l₁` is lexicographically below
+`l₂`, as `Pi.toLex_strictMono` says of functions. -/
 theorem Forall₂.lt_of_ne [PartialOrder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ ·) l₁ l₂)
     (hne : l₁ ≠ l₂) : l₁ < l₂ := by
   induction h with
