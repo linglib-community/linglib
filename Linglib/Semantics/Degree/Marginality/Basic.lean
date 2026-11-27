@@ -35,6 +35,8 @@ and a large one on either side, are the predicate `MarginalScale.IsML`.
 * `MarginalScale.Block`, `MarginalScale.toBlock`, `MarginalScale.toBlockHom`: the blocks, and the
   monotone map taking a degree to its block.
 * `MarginalScale.IsML`: the scales that satisfy ML theory.
+* `MarginalScale.ofMarginallyLT`: the scale of a relation of being marginally smaller that
+  satisfies Axioms 2 and 3 of ML theory.
 
 ## Main results
 
@@ -51,7 +53,8 @@ and a large one on either side, are the predicate `MarginalScale.IsML`.
 ## Implementation notes
 
 The scale is the equivalence and not the relation of being marginally smaller with the axioms of
-ML theory as fields. The two presentations determine each other, and the equivalence is the one
+ML theory as fields. The two presentations determine each other, by `MarginalScale.ofMarginallyLT`
+and `MarginalScale.ofMarginallyLT_marginallyLT`, and the equivalence is the one
 under which the scale of an order-connected subgroup of an ordered group exists whatever the
 subgroup: when the subgroup is everything, as in an archimedean group, no difference is large and
 the scale does not satisfy ML theory.
@@ -129,7 +132,7 @@ theorem atMostMarginal_iff :
   · rintro (rfl | h | h)
     exacts [.refl _, h.2, h.2.symm]
 
-/-- In ML theory, marginally smaller than implies smaller than. -/
+/-- Axiom 2 of ML theory: marginally smaller than implies smaller than. -/
 @[grind →]
 theorem MarginallyLT.lt (h : ml.MarginallyLT x y) : x < y := h.1
 
@@ -216,30 +219,33 @@ theorem largelyLT_or_atMostMarginal_or_largelyLT (x y : α) :
 
 /-! ### Largely smaller than -/
 
-/-- In ML theory, whatever is smaller than something largely smaller than `z` is largely smaller
-than `z`. -/
+/-- The first half of Axiom 4 of ML theory: whatever is smaller than something largely smaller
+than `z` is largely smaller than `z`. -/
 theorem LargelyLT.of_lt_of_largelyLT (hxy : x < y) (h : ml.LargelyLT y z) : ml.LargelyLT x z :=
   toBlock_lt_toBlock.1 ((ml.toBlock_mono hxy.le).trans_lt (toBlock_lt_toBlock.2 h))
 
-/-- In ML theory, whatever is largely smaller than something smaller than `z` is largely smaller
-than `z`. -/
+/-- The second half of Axiom 4 of ML theory: whatever is largely smaller than something smaller
+than `z` is largely smaller than `z`. -/
 theorem LargelyLT.trans_lt (h : ml.LargelyLT x y) (hyz : y < z) : ml.LargelyLT x z :=
   toBlock_lt_toBlock.1 ((toBlock_lt_toBlock.2 h).trans_le (ml.toBlock_mono hyz.le))
 
 theorem LargelyLT.trans (hxy : ml.LargelyLT x y) (hyz : ml.LargelyLT y z) : ml.LargelyLT x z :=
   hxy.trans_lt hyz.lt
 
-/-- In ML theory, M-irrelevance: degrees that differ at most marginally are largely smaller than
-the same degrees. -/
 theorem AtMostMarginal.largelyLT_congr_left (h : ml.AtMostMarginal x y) :
     ml.LargelyLT x z ↔ ml.LargelyLT y z := by
   rw [← toBlock_lt_toBlock, ← toBlock_lt_toBlock, toBlock_eq_toBlock.2 h]
 
-/-- In ML theory, M-irrelevance: the same degrees are largely smaller than degrees that differ at
-most marginally. -/
 theorem AtMostMarginal.largelyLT_congr_right (h : ml.AtMostMarginal y z) :
     ml.LargelyLT x y ↔ ml.LargelyLT x z := by
   rw [← toBlock_lt_toBlock, ← toBlock_lt_toBlock, toBlock_eq_toBlock.2 h]
+
+/-- Axiom 3 of ML theory, M-irrelevance: when `x` is marginally smaller than `y`, whatever is
+largely smaller than `y` is largely smaller than `x`, and `y` is largely smaller than whatever `x`
+is largely smaller than. -/
+theorem MarginallyLT.irrelevance (h : ml.MarginallyLT x y) (z : α) :
+    (ml.LargelyLT z y → ml.LargelyLT z x) ∧ (ml.LargelyLT x z → ml.LargelyLT y z) :=
+  ⟨h.atMostMarginal.largelyLT_congr_right.2, h.atMostMarginal.largelyLT_congr_left.1⟩
 
 instance : Std.Asymm ml.LargelyLT := ⟨fun _ _ h h' ↦ h.lt.asymm h'.lt⟩
 
@@ -330,5 +336,66 @@ theorem infinite_Ioo (hxy : ml.LargelyLT x y) : (Set.Ioo x y).Infinite :=
     ⟨hz.1.lt, hz.2.lt⟩
 
 end IsML
+
+/-! ### Marginally smaller than as the primitive -/
+
+section OfMarginallyLT
+
+variable {M : α → α → Prop} (lt_of : ∀ ⦃x y⦄, M x y → x < y)
+  (irrelevance : ∀ ⦃x y⦄ z, M x y →
+    (z < y ∧ ¬ M z y → z < x ∧ ¬ M z x) ∧ (x < z ∧ ¬ M x z → y < z ∧ ¬ M y z))
+
+include lt_of irrelevance in
+theorem trans_of_irrelevance (hxy : M x y) (hyz : M y z) : M x z := by grind
+
+include irrelevance in
+theorem bounded_of_irrelevance (hxz : M x z) (hxy : x < y) (hyz : y < z) :
+    M x y ∧ M y z := by
+  grind
+
+variable (M) in
+/-- A relation that satisfies Axioms 2 and 3 of ML theory, with largely smaller than defined from
+it, is marginally smaller than in a marginal scale. -/
+def ofMarginallyLT : MarginalScale α where
+  r x y := x = y ∨ M x y ∨ M y x
+  iseqv :=
+    have t {x y z : α} : M x y → M y z → M x z := trans_of_irrelevance lt_of irrelevance
+    have b {x y z : α} : M x z → x < y → y < z → M x y ∧ M y z :=
+      bounded_of_irrelevance irrelevance
+    ⟨fun _ ↦ .inl rfl, fun h ↦ by grind, fun {x y z} hxy hyz ↦ by
+      rcases lt_trichotomy x z with hxz | rfl | hzx
+      · grind
+      · exact .inl rfl
+      · grind⟩
+  ordConnected' x :=
+    have t {x y z : α} : M x y → M y z → M x z := trans_of_irrelevance lt_of irrelevance
+    have b {x y z : α} : M x z → x < y → y < z → M x y ∧ M y z :=
+      bounded_of_irrelevance irrelevance
+    ⟨fun a ha c hc w hw ↦ by
+      change _ ∨ _ ∨ _ at ha hc ⊢
+      obtain ⟨haw, hwc⟩ := hw
+      rcases lt_trichotomy x w with hxw | rfl | hwx
+      · grind
+      · exact .inl rfl
+      · grind⟩
+
+theorem ofMarginallyLT_atMostMarginal_iff :
+    (ofMarginallyLT M lt_of irrelevance).AtMostMarginal x y ↔ x = y ∨ M x y ∨ M y x :=
+  Iff.rfl
+
+@[simp]
+theorem ofMarginallyLT_marginallyLT_iff :
+    (ofMarginallyLT M lt_of irrelevance).MarginallyLT x y ↔ M x y := by
+  rw [MarginallyLT, ofMarginallyLT_atMostMarginal_iff]
+  exact ⟨fun ⟨hxy, h⟩ ↦ h.elim (fun e ↦ absurd e hxy.ne) fun h ↦
+    h.elim id fun h ↦ absurd (lt_of h) hxy.not_gt, fun h ↦ ⟨lt_of h, .inr (.inl h)⟩⟩
+
+/-- A marginal scale is the scale of its relation of being marginally smaller. -/
+theorem ofMarginallyLT_marginallyLT (ml : MarginalScale α) :
+    ofMarginallyLT ml.MarginallyLT (fun _ _ h ↦ h.lt)
+      (fun _ _ z h ↦ h.irrelevance z) = ml :=
+  ext fun _ _ ↦ (ofMarginallyLT_atMostMarginal_iff ..).trans atMostMarginal_iff.symm
+
+end OfMarginallyLT
 
 end MarginalScale
