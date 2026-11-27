@@ -59,6 +59,11 @@ an answer and the belief the Maxim of Quality requires of an assertion are all t
 A question with focused *NOT* has the logical form of the negative reading of preposed negation,
 `LF.ni`.
 
+The logical forms of an example are read from its surface: where its negation sits, and whether it
+has *really* or focal stress on *NOT*. A question with preposed negation has both readings, and the
+reading the paper assigns to an example is not recorded; an example is predicted acceptable when
+one of its logical forms admits its polarity items and is felicitous in its context.
+
 ## TODO
 
 * The Principle of Economy, by which a question over VERUM is used only to resolve an epistemic
@@ -249,13 +254,17 @@ end Licensing
 
 /-! ### The paper's examples -/
 
-open Examples (all form scenario bias negation)
+open Examples (all emphasis scenario bias negation)
 
-/-- The logical form of each question the paper classes. -/
-def _root_.RomeroHan2004.Examples.Form.lf : Examples.Form → LF
-  | .pi => .pi
-  | .ni | .notFocus => .ni
-  | .really => .really
+/-- The logical forms of a row's question, by what brings VERUM into it. Preposed negation is one
+negation in either position, (64); *really* stands over a positive clause, and focal stress on
+*NOT* over a negative one. A question with none of the three has no logical form here. -/
+def candidates (e : Datum) : List LF :=
+  (if negation e = some .preposed then [.pi, .ni] else []) ++
+    match emphasis e with
+    | some .really => [.really]
+    | some .stressedNot => [.ni]
+    | none => []
 
 /-- The scenario a row records. -/
 def _root_.RomeroHan2004.Examples.Scenario.toScenario : Examples.Scenario → Scenario
@@ -318,34 +327,46 @@ private theorem LF.felicitous_iff_felicitousIn {W : Type} [Nonempty W] (p : Set 
   | contradiction s => exact l.felicitous_contradiction_iff p s
   | suggestion a => exact l.felicitous_suggestion_iff p a
 
-/-- A question the paper classes is acceptable exactly where the clause under VERUM admits its
-polarity items and, in a contradiction or a suggestion context, its logical form is felicitous. -/
+/-- A question over VERUM is acceptable exactly where one of its logical forms admits its polarity
+items in the clause under VERUM and, in a contradiction or a suggestion context, is felicitous. -/
 theorem acceptable_iff :
-    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ (W : Type) [Nonempty W] (p : Set W),
-      e.judgment = .acceptable ↔ (∀ i ∈ items e, (f.lf.licenser W).Admits i) ∧
-        ∀ σ ∈ (scenario e).toList, f.lf.Felicitous p σ.toScenario := by
-  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, (∀ i ∈ items e, ¬i.IsFCI) ∧
-      (e.judgment = .acceptable ↔
-        (∀ i ∈ items e, (i.IsPPI → f.lf.inner = .positive) ∧ (i.IsNPI → f.lf.inner = .negative)) ∧
-          ∀ σ ∈ (scenario e).toList, f.lf.FelicitousIn σ.toScenario) := by decide
-  intro e he f hf W _ p
-  obtain ⟨hfc, h⟩ := h e he f hf
+    ∀ e ∈ all, candidates e ≠ [] → ∀ (W : Type) [Nonempty W] (p : Set W),
+      e.judgment = .acceptable ↔ ∃ l ∈ candidates e, (∀ i ∈ items e, (l.licenser W).Admits i) ∧
+        ∀ σ ∈ (scenario e).toList, l.Felicitous p σ.toScenario := by
+  have h : ∀ e ∈ all, candidates e ≠ [] → (∀ i ∈ items e, ¬i.IsFCI) ∧
+      (e.judgment = .acceptable ↔ ∃ l ∈ candidates e,
+        (∀ i ∈ items e, (i.IsPPI → l.inner = .positive) ∧ (i.IsNPI → l.inner = .negative)) ∧
+          ∀ σ ∈ (scenario e).toList, l.FelicitousIn σ.toScenario) := by decide
+  intro e he hc W _ p
+  obtain ⟨hfc, h⟩ := h e he hc
   rw [h]
-  refine and_congr (forall₂_congr fun i hi ↦ (LF.admits_iff _ (hfc i hi)).symm)
-    (forall₂_congr fun σ _ ↦ (LF.felicitous_iff_felicitousIn p _ _).symm)
+  refine exists_congr fun l ↦ and_congr_right fun _ ↦
+    and_congr (forall₂_congr fun i hi ↦ (LF.admits_iff _ (hfc i hi)).symm)
+      (forall₂_congr fun σ _ ↦ (LF.felicitous_iff_felicitousIn p _ _).symm)
 
-example : (all.filter fun e ↦ (form e).isSome ∧ items e ≠ []).length = 13 := by decide
+example : (all.filter fun e ↦ candidates e ≠ []).length = 22 := by decide
 
--- (37), (110), (117)
+-- (6), (7), (105), (106): a polarity item settles the reading of preposed negation
+theorem admits_pi_iff_not_admits_ni :
+    ∀ e ∈ all, items e ≠ [] → ∀ (W : Type) [Nonempty W],
+      (∀ i ∈ items e, (LF.pi.licenser W).Admits i) ↔
+        ¬∀ i ∈ items e, (LF.ni.licenser W).Admits i := by
+  have h : ∀ e ∈ all, items e ≠ [] → (∀ i ∈ items e, ¬i.IsFCI) ∧
+      ((∀ i ∈ items e, (i.IsPPI → LF.pi.inner = .positive) ∧ (i.IsNPI → LF.pi.inner = .negative)) ↔
+        ¬∀ i ∈ items e,
+          (i.IsPPI → LF.ni.inner = .positive) ∧ (i.IsNPI → LF.ni.inner = .negative)) := by decide
+  intro e he hi W _
+  obtain ⟨hfc, h⟩ := h e he hi
+  rw [forall₂_congr fun i hi ↦ LF.admits_iff _ (hfc i hi),
+    forall₂_congr fun i hi ↦ LF.admits_iff _ (hfc i hi)]
+  exact h
+
+-- (1), (5), (14)–(18), (37), (110), (117): the implicature the paper reports is that of every
+-- logical form of the question, so preposed negation implicates the proposition on either reading
 theorem bias_eq_implicature :
-    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ b ∈ (bias e).toList, b.toSign = f.lf.implicature := by
+    ∀ e ∈ all, ∀ b ∈ (bias e).toList, ∀ l ∈ candidates e, b.toSign = l.implicature := by
   decide
 
--- (1), (5), (14)–(18): Generalization 1 for preposed negation, under assumption (64)
-theorem bias_of_preposed :
-    ∀ e ∈ all, ∀ n ∈ (negation e).toList, n = .preposed →
-      ∀ b ∈ (bias e).toList, ∀ l : LF, l.outer * l.inner = .negative →
-        b.toSign = l.implicature := by
-  decide
+example : (all.filter fun e ↦ (bias e).isSome ∧ candidates e ≠ []).length = 12 := by decide
 
 end RomeroHan2004

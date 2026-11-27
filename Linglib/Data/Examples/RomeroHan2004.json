@@ -47,30 +47,20 @@
       ]
     },
     {
-      "key": "form",
-      "lean": "form",
-      "type": "Form",
-      "doc": "The yes/no questions containing VERUM.",
+      "key": "emphasis",
+      "lean": "emphasis",
+      "type": "Emphasis",
+      "doc": "The emphasis on the polarity of a question.",
       "levels": [
-        {
-          "name": "pi",
-          "label": "pi",
-          "doc": "preposed negation on the reading that double-checks p, the PI-question"
-        },
-        {
-          "name": "ni",
-          "label": "ni",
-          "doc": "preposed negation on the reading that double-checks ¬p, the NI-question"
-        },
         {
           "name": "really",
           "label": "really",
-          "doc": "a positive question with really"
+          "doc": "the adverb really"
         },
         {
-          "name": "notFocus",
-          "label": "notFocus",
-          "doc": "non-preposed negation with polarity focus on NOT"
+          "name": "stressedNot",
+          "label": "stressedNot",
+          "doc": "focal stress on NOT"
         }
       ]
     },
@@ -218,7 +208,7 @@
       "readings": [],
       "paperFeatures": [
         ["negation", "none"],
-        ["form", "really"],
+        ["emphasis", "really"],
         ["bias", "negative"]
       ],
       "comment": "Negative epistemic implicature: the speaker believed or at least expected that John does not drink.",
@@ -264,7 +254,6 @@
       ],
       "paperFeatures": [
         ["negation", "preposed"],
-        ["form", "pi"],
         ["bias", "positive"],
         ["scenario", "contradictionP"]
       ],
@@ -291,7 +280,6 @@
       ],
       "paperFeatures": [
         ["negation", "preposed"],
-        ["form", "ni"],
         ["bias", "positive"],
         ["scenario", "contradictionP"]
       ],
@@ -317,7 +305,8 @@
         {"start": 4, "label": "polarityItem", "lexeme": "too"}
       ],
       "paperFeatures": [
-        ["form", "really"]
+        ["negation", "none"],
+        ["emphasis", "really"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -341,7 +330,8 @@
         {"start": 4, "label": "polarityItem", "lexeme": "either"}
       ],
       "paperFeatures": [
-        ["form", "really"]
+        ["negation", "none"],
+        ["emphasis", "really"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -365,7 +355,8 @@
         {"start": 4, "label": "polarityItem", "lexeme": "too"}
       ],
       "paperFeatures": [
-        ["form", "notFocus"]
+        ["negation", "nonPreposed"],
+        ["emphasis", "stressedNot"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -389,7 +380,8 @@
         {"start": 4, "label": "polarityItem", "lexeme": "either"}
       ],
       "paperFeatures": [
-        ["form", "notFocus"]
+        ["negation", "nonPreposed"],
+        ["emphasis", "stressedNot"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -659,7 +651,7 @@
         {"start": 3, "label": "polarityItem", "lexeme": "either"}
       ],
       "paperFeatures": [
-        ["form", "ni"],
+        ["negation", "preposed"],
         ["scenario", "contradictionNotP"]
       ],
       "comment": "The speaker believes ¬p and the addressee implied p.",
@@ -684,7 +676,7 @@
         {"start": 3, "label": "polarityItem", "lexeme": "too"}
       ],
       "paperFeatures": [
-        ["form", "pi"],
+        ["negation", "preposed"],
         ["scenario", "contradictionNotP"]
       ],
       "comment": "The speaker believes ¬p and the addressee implied p.",
@@ -710,7 +702,7 @@
         {"start": 2, "label": "polarityItem", "lexeme": "already"}
       ],
       "paperFeatures": [
-        ["form", "pi"],
+        ["negation", "preposed"],
         ["scenario", "suggestionP"]
       ],
       "comment": "Suggestion context: p, that Frege has reviewed, is a possible answer to the addressee's question.",
@@ -736,7 +728,7 @@
         {"start": 5, "label": "polarityItem", "lexeme": "yet"}
       ],
       "paperFeatures": [
-        ["form", "ni"],
+        ["negation", "preposed"],
         ["scenario", "suggestionNotP"]
       ],
       "comment": "Suggestion context: ¬p, that Frege has not reviewed, is a possible answer to the addressee's question.",
@@ -756,7 +748,8 @@
       "contrasts": [],
       "readings": [],
       "paperFeatures": [
-        ["form", "really"],
+        ["negation", "none"],
+        ["emphasis", "really"],
         ["bias", "negative"],
         ["scenario", "contradictionNotP"]
       ],
@@ -783,7 +776,8 @@
         {"start": 6, "label": "polarityItem", "lexeme": "already"}
       ],
       "paperFeatures": [
-        ["form", "really"],
+        ["negation", "none"],
+        ["emphasis", "really"],
         ["scenario", "suggestionP"]
       ],
       "comment": "Cannot be used to suggest Frege as a possible reviewer, unless cues other than this dialog are provided.",
@@ -808,7 +802,8 @@
         {"start": 4, "label": "polarityItem", "lexeme": "either"}
       ],
       "paperFeatures": [
-        ["form", "notFocus"],
+        ["negation", "nonPreposed"],
+        ["emphasis", "stressedNot"],
         ["bias", "positive"],
         ["scenario", "contradictionP"]
       ],
@@ -835,7 +830,8 @@
         {"start": 6, "label": "polarityItem", "lexeme": "yet"}
       ],
       "paperFeatures": [
-        ["form", "notFocus"],
+        ["negation", "nonPreposed"],
+        ["emphasis", "stressedNot"],
         ["scenario", "suggestionNotP"]
       ],
       "comment": "Cannot be used in this suggestion scenario if the focus on NOT is understood as contributing VERUM.",

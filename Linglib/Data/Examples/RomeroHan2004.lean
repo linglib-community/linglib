@@ -67,7 +67,7 @@ def does_john_really_drink : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negation", "none"), ("form", "really"), ("bias", "negative")] }
+    paperFeatures := [("negation", "none"), ("emphasis", "really"), ("bias", "negative")] }
 
 def isnt_jane_coming : Datum :=
   { id := "romerohan2004_isnt_jane_coming"
@@ -95,7 +95,7 @@ def isnt_jane_coming_too : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "polarityItem", some "too"⟩]
-    paperFeatures := [("negation", "preposed"), ("form", "pi"), ("bias", "positive"), ("scenario", "contradictionP")] }
+    paperFeatures := [("negation", "preposed"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def isnt_jane_coming_either : Datum :=
   { id := "romerohan2004_isnt_jane_coming_either"
@@ -110,7 +110,7 @@ def isnt_jane_coming_either : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "polarityItem", some "either"⟩]
-    paperFeatures := [("negation", "preposed"), ("form", "ni"), ("bias", "positive"), ("scenario", "contradictionP")] }
+    paperFeatures := [("negation", "preposed"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def is_jane_really_coming_too : Datum :=
   { id := "romerohan2004_is_jane_really_coming_too"
@@ -125,7 +125,7 @@ def is_jane_really_coming_too : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "polarityItem", some "too"⟩]
-    paperFeatures := [("form", "really")] }
+    paperFeatures := [("negation", "none"), ("emphasis", "really")] }
 
 def is_jane_really_coming_either : Datum :=
   { id := "romerohan2004_is_jane_really_coming_either"
@@ -140,7 +140,7 @@ def is_jane_really_coming_either : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "polarityItem", some "either"⟩]
-    paperFeatures := [("form", "really")] }
+    paperFeatures := [("negation", "none"), ("emphasis", "really")] }
 
 def is_jane_not_coming_too : Datum :=
   { id := "romerohan2004_is_jane_not_coming_too"
@@ -155,7 +155,7 @@ def is_jane_not_coming_too : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "polarityItem", some "too"⟩]
-    paperFeatures := [("form", "notFocus")] }
+    paperFeatures := [("negation", "nonPreposed"), ("emphasis", "stressedNot")] }
 
 def is_jane_not_coming_either : Datum :=
   { id := "romerohan2004_is_jane_not_coming_either"
@@ -170,7 +170,7 @@ def is_jane_not_coming_either : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "polarityItem", some "either"⟩]
-    paperFeatures := [("form", "notFocus")] }
+    paperFeatures := [("negation", "nonPreposed"), ("emphasis", "stressedNot")] }
 
 def greek_preposed : Datum :=
   { id := "romerohan2004_greek_preposed"
@@ -350,7 +350,7 @@ def isnt_jane_coming_either_95 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "polarityItem", some "either"⟩]
-    paperFeatures := [("form", "ni"), ("scenario", "contradictionNotP")] }
+    paperFeatures := [("negation", "preposed"), ("scenario", "contradictionNotP")] }
 
 def isnt_jane_coming_too_100 : Datum :=
   { id := "romerohan2004_isnt_jane_coming_too_100"
@@ -365,7 +365,7 @@ def isnt_jane_coming_too_100 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨3, 1, "polarityItem", some "too"⟩]
-    paperFeatures := [("form", "pi"), ("scenario", "contradictionNotP")] }
+    paperFeatures := [("negation", "preposed"), ("scenario", "contradictionNotP")] }
 
 def hasnt_frege_already_reviewed : Datum :=
   { id := "romerohan2004_hasnt_frege_already_reviewed"
@@ -380,7 +380,7 @@ def hasnt_frege_already_reviewed : Datum :=
     contrasts := []
     readings := []
     spans := [⟨2, 1, "polarityItem", some "already"⟩]
-    paperFeatures := [("form", "pi"), ("scenario", "suggestionP")] }
+    paperFeatures := [("negation", "preposed"), ("scenario", "suggestionP")] }
 
 def hasnt_frege_reviewed_yet : Datum :=
   { id := "romerohan2004_hasnt_frege_reviewed_yet"
@@ -395,7 +395,7 @@ def hasnt_frege_reviewed_yet : Datum :=
     contrasts := []
     readings := []
     spans := [⟨5, 1, "polarityItem", some "yet"⟩]
-    paperFeatures := [("form", "ni"), ("scenario", "suggestionNotP")] }
+    paperFeatures := [("negation", "preposed"), ("scenario", "suggestionNotP")] }
 
 def is_jane_really_coming : Datum :=
   { id := "romerohan2004_is_jane_really_coming"
@@ -408,7 +408,7 @@ def is_jane_really_coming : Datum :=
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("form", "really"), ("bias", "negative"), ("scenario", "contradictionNotP")] }
+    paperFeatures := [("negation", "none"), ("emphasis", "really"), ("bias", "negative"), ("scenario", "contradictionNotP")] }
 
 def has_frege_really_reviewed : Datum :=
   { id := "romerohan2004_has_frege_really_reviewed"
@@ -423,7 +423,7 @@ def has_frege_really_reviewed : Datum :=
     contrasts := []
     readings := []
     spans := [⟨6, 1, "polarityItem", some "already"⟩]
-    paperFeatures := [("form", "really"), ("scenario", "suggestionP")] }
+    paperFeatures := [("negation", "none"), ("emphasis", "really"), ("scenario", "suggestionP")] }
 
 def is_jane_not_coming_117 : Datum :=
   { id := "romerohan2004_is_jane_not_coming_117"
@@ -438,7 +438,7 @@ def is_jane_not_coming_117 : Datum :=
     contrasts := []
     readings := []
     spans := [⟨4, 1, "polarityItem", some "either"⟩]
-    paperFeatures := [("form", "notFocus"), ("bias", "positive"), ("scenario", "contradictionP")] }
+    paperFeatures := [("negation", "nonPreposed"), ("emphasis", "stressedNot"), ("bias", "positive"), ("scenario", "contradictionP")] }
 
 def has_frege_not_reviewed_yet : Datum :=
   { id := "romerohan2004_has_frege_not_reviewed_yet"
@@ -453,7 +453,7 @@ def has_frege_not_reviewed_yet : Datum :=
     contrasts := []
     readings := []
     spans := [⟨6, 1, "polarityItem", some "yet"⟩]
-    paperFeatures := [("form", "notFocus"), ("scenario", "suggestionNotP")] }
+    paperFeatures := [("negation", "nonPreposed"), ("emphasis", "stressedNot"), ("scenario", "suggestionNotP")] }
 
 def all : List Datum := [doesnt_john_drink, does_john_not_drink, does_john_drink, does_john_really_drink, isnt_jane_coming, isnt_jane_coming_too, isnt_jane_coming_either, is_jane_really_coming_too, is_jane_really_coming_either, is_jane_not_coming_too, is_jane_not_coming_either, greek_preposed, greek_nonpreposed, spanish_preposed, spanish_nonpreposed, bulgarian_preposed, bulgarian_nonpreposed, german_preposed, german_nonpreposed, korean_preposed, korean_nonpreposed_short, korean_nonpreposed_long, isnt_jane_coming_either_95, isnt_jane_coming_too_100, hasnt_frege_already_reviewed, hasnt_frege_reviewed_yet, is_jane_really_coming, has_frege_really_reviewed, is_jane_not_coming_117, has_frege_not_reviewed_yet]
 
@@ -485,21 +485,17 @@ inductive Bias where
 def bias (e : Datum) : Option Bias :=
   e.parse? "bias" [("positive", .positive), ("negative", .negative), ("none", .absent)]
 
-/-- The yes/no questions containing VERUM. -/
-inductive Form where
-  /-- pi: preposed negation on the reading that double-checks p, the PI-question -/
-  | pi
-  /-- ni: preposed negation on the reading that double-checks ¬p, the NI-question -/
-  | ni
-  /-- really: a positive question with really -/
+/-- The emphasis on the polarity of a question. -/
+inductive Emphasis where
+  /-- really: the adverb really -/
   | really
-  /-- notFocus: non-preposed negation with polarity focus on NOT -/
-  | notFocus
+  /-- stressedNot: focal stress on NOT -/
+  | stressedNot
   deriving DecidableEq, Repr, Fintype
 
-/-- The value a row records under `form`. -/
-def form (e : Datum) : Option Form :=
-  e.parse? "form" [("pi", .pi), ("ni", .ni), ("really", .really), ("notFocus", .notFocus)]
+/-- The value a row records under `emphasis`. -/
+def emphasis (e : Datum) : Option Emphasis :=
+  e.parse? "emphasis" [("really", .really), ("stressedNot", .stressedNot)]
 
 /-- The context a question is asked in, relative to its proposition p. -/
 inductive Scenario where
