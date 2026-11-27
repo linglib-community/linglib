@@ -130,9 +130,9 @@ theorem take_mono (s : Spine H) : Monotone s.take := fun _ _ h ↦
 
 /-! ### Complements of a head -/
 
-/-- The complement of the first occurrence of `c`, the spine of the heads strictly below it, so
-that `s.below .C` is the TP a finite clause's C⁰ selects. A spine that does not project `c` is its
-own complement. -/
+/-- The complement of the first occurrence of `c`, the spine of the heads strictly below it: on the
+spine `[a, b, c]` the complement of `c` is `[a, b]`. A spine that does not project `c` is its own
+complement. -/
 def below (s : Spine H) (c : H) : Spine H := ⟨s.heads.takeWhile (· != c)⟩
 
 @[simp] theorem heads_below (s : Spine H) (c : H) :

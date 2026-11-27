@@ -11,8 +11,9 @@ public import Mathlib.Data.List.Basic
 # Spines
 
 A spine is the list of heads a phrase projects, from the lowest upward, each the head of the
-complement of the next: `[V, v, T, C]` for a finite clause, `[N, Num, D]` for a noun phrase.
-Specifiers and adjuncts are not on it.
+complement of the next. A phrase whose head `c` takes as its complement a phrase headed by `b`,
+which in turn takes one headed by `a`, has the spine `[a, b, c]`. Specifiers and adjuncts are not
+on it.
 
 This file holds what is said of a spine by position: the head at a position, the truncation of a
 spine to its lowest `n` heads, a shell appended over a spine, and the image of a spine under a map
