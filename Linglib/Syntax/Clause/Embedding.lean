@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Natural.ImplicationSignature
-public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
@@ -14,20 +13,36 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 /-!
 # Clause-embedding predicates
 
-A predicate that embeds a clause has properties that concern its complement and do not depend on
-its word class, as *know*, *be aware* and the rest of Noonan's complement-taking predicates show:
-its factivity, the implication signature saying what it implies about the complement in positive
-and negative contexts, the attitude it expresses, whether it makes the complement opaque, and its
-monotonicity in the complement. A frame can override them for one complement
-(`Clause.Embedding.Reading`). A verb or an adjective carries them by extending `Clause.Embedding`,
-and a predicate that embeds no clause has the default values.
+A predicate that embeds a clause, whatever its word class, has properties that concern its
+complement: *know* and *be aware* are factive, *manage* implies its complement in a positive
+context and the complement's negation in a negative one, *believe* and *hope* express attitudes of
+different kinds. Some of these properties vary with the complement. Buryat *hanaxa* 'think' is
+translated 'remember' with a nominalized clause, which it presupposes, and not with a bare one. An
+entry therefore records the properties of the predicate together with the readings of single
+frames, each of which overrides some of them, and the predicate on a frame is the entry with the
+reading of that frame applied.
+
+## Main definitions
+
+* `Clause.Embedding`: what a predicate does with a clausal complement.
+* `Clause.Embedding.Reading`: the properties that one frame overrides.
+* `Clause.Embedding.on`: the predicate on a frame.
+* `Clause.Embedding.IsFactive`, `Clause.Embedding.IsVeridical`, `Clause.Embedding.IsTrigger`:
+  the predicate is recorded as factive, entails its complement, triggers a presupposition.
+
+## Main results
+
+* `Clause.Embedding.on_eq_self_iff`: the predicate is the same on a frame as off it exactly when
+  it has no readings.
 
 ## Implementation notes
 
-Whether such a predicate triggers a presupposition is derived, not recorded. A factive presupposes
-its complement, and an implicative presupposes that what it asserts is a condition for its
-complement (`Implicative.sentence`); veridicality is an entailment and does not make a predicate
-factive.
+Whether a predicate triggers a presupposition is derived, not recorded. A factive presupposes its
+complement, and an implicative presupposes that what it asserts is a condition for its complement;
+veridicality is an entailment and does not make a predicate factive.
+
+The predicate on a frame is again an entry, with no readings, so that every property of entries is
+a property of a predicate on a frame.
 
 ## References
 
@@ -37,19 +52,17 @@ factive.
 * [nairn-condoravdi-karttunen-2006]
 * [bondarenko-2022]
 * [wurmbrand-lohninger-2023]
-* [hintikka-1962]
-* [heim-1992]
 -/
 
 @[expose] public section
 
-open NaturalLogic (ImplicationSignature ProjectivitySignature)
+open NaturalLogic (ImplicationSignature)
 
 namespace Clause.Embedding
 
-/-- A frame-conditioned reading of a predicate ([bondarenko-2022] §4.4.3 *hanaxa*; Greek
-*thimame*) overrides the lexeme-level attitude, factivity and opacity for its frame (`none`
-inherits the lexeme's) and records the sort of the frame's complement. -/
+/-- The reading of a predicate on one frame overrides the predicate's attitude, factivity and
+opacity there, `none` leaving the predicate's own, and records the sort of the frame's complement.
+Buryat *hanaxa* 'think' has two ([bondarenko-2022] §4.4.3). -/
 structure Reading where
   /-- The reading applies to every frame of the predicate at most this one, in the order on
   `ArgumentFrame`. -/
@@ -82,15 +95,8 @@ structure Embedding where
   /-- The attitude the predicate expresses, doxastic or preferential, if it is an attitude
   predicate. -/
   attitude : Option Attitude := none
-  /-- The frame-conditioned readings ([bondarenko-2022] §4.4.3), per-frame attitude and opacity
-  overrides keyed to the predicate's frames. -/
+  /-- The readings of single frames, the first that applies to a frame taking precedence. -/
   readings : List Embedding.Reading := []
-  /-- Entailment signature of the complement position, the predicate's monotonicity with respect
-  to its clausal complement. `.mono` is upward monotone, the report closed under entailment of the
-  complement, as in Hintikka-style doxastic semantics ([hintikka-1962]). Set only where the
-  classification is textbook consensus (believe, think, know); preferential attitudes (want, hope)
-  are contested ([heim-1992]) and stay `none`. -/
-  complementSig : Option ProjectivitySignature := none
   deriving DecidableEq, Repr
 
 namespace Embedding
@@ -107,17 +113,34 @@ def IsTrigger (e : Embedding) : Prop := e.IsFactive ∨ e.implicative ≠ ⊥
 
 instance : DecidablePred IsTrigger := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The reading keyed to frame `fr` is the first whose frame `fr` is at most. -/
+/-- The predicate is a veridical attitude, entailing its complement: it is doxastic, and factive
+or over epistemic alternatives. -/
+def IsVeridical (e : Embedding) : Prop := ∃ a ∈ e.attitude, a.IsVeridical e.factivity
+
+instance : DecidablePred IsVeridical := fun e ↦
+  inferInstanceAs (Decidable (∃ a ∈ e.attitude, a.IsVeridical e.factivity))
+
+/-- The reading that applies to frame `fr` is the first whose frame `fr` is at most. -/
 def reading? (e : Embedding) (fr : ArgumentFrame) : Option Reading :=
   e.readings.find? fun r ↦ decide (fr ≤ r.frame)
 
-/-- The effective attitude on frame `fr` is the reading's override, else the lexeme's default. -/
-def attitudeOn (e : Embedding) (fr : ArgumentFrame) : Option Attitude :=
-  ((e.reading? fr).bind (·.attitude)).orElse fun _ ↦ e.attitude
+/-- The predicate on frame `fr` has each property from the reading that applies to `fr` where
+that reading gives one, and the predicate's own otherwise. -/
+@[simps]
+def on (e : Embedding) (fr : ArgumentFrame) : Embedding where
+  factivity := ((e.reading? fr).bind (·.factivity)).or e.factivity
+  implicative := e.implicative
+  opaqueContext := ((e.reading? fr).bind (·.opaqueContext)).getD e.opaqueContext
+  attitude := ((e.reading? fr).bind (·.attitude)).or e.attitude
+  readings := []
 
-/-- The effective factivity on frame `fr` is the reading's override, else the lexeme's default. -/
-def factivityOn (e : Embedding) (fr : ArgumentFrame) : Option Presupposition.Factivity :=
-  ((e.reading? fr).bind (·.factivity)).orElse fun _ ↦ e.factivity
+variable (e : Embedding) (fr fr' : ArgumentFrame)
+
+@[simp] theorem on_on : (e.on fr).on fr' = e.on fr := rfl
+
+/-- The predicate on a frame is the predicate itself exactly when it has no readings. -/
+theorem on_eq_self_iff : e.on fr = e ↔ e.readings = [] :=
+  ⟨fun h ↦ h ▸ rfl, fun h ↦ by cases e; subst h; rfl⟩
 
 end Embedding
 
