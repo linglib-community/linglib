@@ -65,7 +65,6 @@ def sheiDou : PolarityItem :=
     Etymologically *rèn* 'allow; appoint' + old interrogative *hé* 'what'
     ([haspelmath-1997] A.36.2). -/
 def renhe : PolarityItem :=
-  { form := Indefinites.renhe.form
-  , freeChoice := true }
+  { form := Indefinites.renhe.form }
 
 end Mandarin.PolarityItems

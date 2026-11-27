@@ -8,25 +8,25 @@ module
 public import Linglib.Logic.Natural.ProjectivitySignature
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
-public import Linglib.Semantics.PolarityItem.Basic
+public import Linglib.Semantics.PolarityItem.Class
 
 /-!
 # Licensers
 
 A *licenser* is the operator that a construction places over the position of a polarity item. It
 is given as a family of operators indexed by whatever the construction leaves open, such as the
-model, a restrictor, a bound, or an accessibility relation. A licenser is of one of five kinds. A
+model, a restrictor, a bound, or an accessibility relation. A licenser is of one of four kinds. A
 *classical* licenser is a map between bounded lattices. A *scalar* licenser is such a map that has
 stronger scale-mates. A *Strawsonian* licenser is von Fintel's map into trivalent propositions.
-The remaining kinds are a *modal* licenser and a wh-question. Following Gajewski, a licenser has a
+The remaining kind is a *modal* licenser. Following Gajewski, a licenser has a
 plain meaning below the exhaustivity operator and a second meaning above it. The meaning above
 the operator adds the *direct implicature* of the licenser, which is its exhaustification against
 its stronger scale-mates. Only a scalar licenser has a direct implicature.
 
-A context *licenses* a `PolarityItem` in one of two ways. Its licenser may carry the strength
-of negation that the item requires. Its licenser may license free choice, in which case the item
-must be a free choice item. A context *anti-licenses* an item when its licenser holds the
-blocking strength of the item outright. A non-trivial classical context [admits an item exactly
+A context *licenses* a class of polarity items in one of two ways. Its licenser may carry the
+strength of negation that the class requires. Its licenser may license free choice, in which case
+the class must be a free choice class. A context *anti-licenses* a class when its licenser holds
+the blocking strength of the class outright. A non-trivial classical context [admits an item exactly
 when the strength it carries lies in the interval of the
 item](##PolarityItem.Licenser.admits_iff_carried_mem_Ico). Such a context [blocks the positive
 polarity items of a strength exactly where it licenses the negative polarity items of that
@@ -35,7 +35,7 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 
 ## Main definitions
 
-* `PolarityItem.Licenser`: the five kinds of licenser.
+* `PolarityItem.Licenser`: the four kinds of licenser.
 * `PolarityItem.Licenser.exhaustified`: the meaning of a licenser above the exhaustivity operator,
   with its direct implicature added.
 * `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsStrawsonDE`,
@@ -49,7 +49,7 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
   the two routes of licensing. A downward-entailing licenser licenses by strengthening, after
   Kadmon and Landman, and a modal licenser licenses by free choice, after Chierchia.
 * `PolarityItem.Licenser.Licenses`, `PolarityItem.Licenser.AntiLicenses`,
-  `PolarityItem.Licenser.Admits`: the licensing relations between a licenser and an item.
+  `PolarityItem.Licenser.Admits`: the licensing relations between a licenser and a class of items.
 
 ## Main statements
 
@@ -69,12 +69,10 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
   weak strength not be upward entailing as well excludes them, since a map that is monotone in
   both directions modulo presupposition takes a single value at comparable arguments where it is
   defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
-* A question carries no operator, since it is downward entailing only in the domain of a
-  wh-phrase, and it licenses no item. Whether a question hosts an item does not follow the
-  strength that the item requires, so it is recorded with the item, among its contexts. Van Rooy
-  ties the use of an item in a question to the expectations of the questioner, through the
-  entropy of the question under the questioner's prior. That is a condition on a use of the
-  question and not on the construction, so it is not stated here.
+* A question is not a licenser. It is downward entailing only in the domain of a wh-phrase, and
+  whether it hosts an item does not follow the strength that the item requires. Van Rooy ties the
+  use of an item in a question to the expectations of the questioner, through the entropy of the
+  question under the questioner's prior, which is a condition on a use of the question.
 
 ## References
 
@@ -158,22 +156,12 @@ structure ScalarFamily extends OperatorFamily where
 end Licenser
 
 /-- The operator that a construction places over the position of a polarity item. It is
-classical, scalar with its enrichment, a map into trivalent propositions, modal, or a question. -/
+classical, scalar with its enrichment, a map into trivalent propositions, or modal. -/
 inductive Licenser : Type 2 where
   | classical (F : Licenser.OperatorFamily)
   | scalar (F : Licenser.ScalarFamily)
   | strawson (F : Licenser.PresupposingFamily)
   | modal (F : Licenser.ModalFamily)
-  | question
-
-/-- The route by which a context licenses polarity items. A context licenses by strengthening, as
-a generic context that licenses free choice items ([kadmon-landman-1993], [dayal-1996]), or by
-the entropy of a question ([van-rooy-2003a]). -/
-inductive LicensingMechanism where
-  | strengthening
-  | genericIndefinite
-  | entropy
-  deriving DecidableEq, Repr
 
 namespace Licenser
 
@@ -190,7 +178,6 @@ def Holds : Licenser → ProjectivitySignature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
   | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ Trivalent.posExt (F.op p x)
   | .modal F, σ => ∀ p, σ.HoldsFor (F.op p)
-  | .question, _ => False
 
 /-- A licenser is Strawson downward entailing when every operator in its family is downward
 entailing modulo its presupposition. -/
@@ -198,7 +185,6 @@ def IsStrawsonDE : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p, Antitone (F.op p)
   | .strawson F => ∀ p, Presupposition.IsStrawsonDE (F.op p)
   | .modal F => ∀ p, Antitone (F.op p)
-  | .question => False
 
 /-- A licenser is Strawson upward entailing when every operator in its family is upward entailing
 modulo its presupposition. A constant operator is both upward and downward entailing. -/
@@ -206,7 +192,6 @@ def IsStrawsonUE : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p, Monotone (F.op p)
   | .strawson F => ∀ p, Presupposition.IsStrawsonUE (F.op p)
   | .modal F => ∀ p, Monotone (F.op p)
-  | .question => False
 
 /-- A licenser *carries* weak strength when it is downward entailing and not upward entailing
 modulo presupposition. This is the condition that [von-fintel-1999], [gajewski-2011]'s Condition
@@ -242,12 +227,6 @@ theorem carries_ofOperator_iff :
 
 end OfOperator
 
-/-- The route by which a licenser licenses. -/
-def mechanism : Licenser → LicensingMechanism
-  | .classical _ | .scalar _ | .strawson _ => .strengthening
-  | .modal _ => .genericIndefinite
-  | .question => .entropy
-
 /-- A licenser *licenses by strengthening* when widening the domain of an existential strengthens
 the result under each of its operators. That is, the existential over the wider domain entails,
 modulo presupposition, the existential over the narrower domain ([kadmon-landman-1993]). -/
@@ -258,7 +237,6 @@ def LicensesByStrengthening : Licenser → Prop
       D ⊆ D' → strawsonEntails (F.op p (D'.sup P)) (F.op p (D.sup P))
   | .modal F => ∀ p (E : Type) (P : E → Set (F.W p)) ⦃D D' : Finset E⦄,
       D ⊆ D' → F.op p (D'.sup P) ≤ F.op p (D.sup P)
-  | .question => False
 
 /-- A modal licenser *licenses free choice* when the antiexhaustified existential is consistent
 under one of its operators, over a domain of at least two possible witnesses
@@ -266,7 +244,7 @@ under one of its operators, over a domain of at least two possible witnesses
 def LicensesFreeChoice : Licenser → Prop
   | .modal F => ∃ p, ∃ (E : Type) (P : E → Set (F.W p)) (D : Finset E), 1 < D.card ∧
       (antiExh (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
-  | .classical _ | .scalar _ | .strawson _ | .question => False
+  | .classical _ | .scalar _ | .strawson _ => False
 
 variable {L : Licenser} {σ τ : ProjectivitySignature} {s t : Negation.Strength}
 
@@ -274,7 +252,6 @@ theorem Holds.of_le (h : L.Holds σ) (hστ : σ ≤ τ) : L.Holds τ := by
   cases L with
   | classical F | strawson F | modal F => exact fun p ↦ (h p).of_le hστ
   | scalar F => exact fun p ↦ (h p).of_le hστ
-  | question => exact h
 
 theorem Holds.toProjectivitySignature_of_le (h : L.Holds t.toProjectivitySignature) (hst : s ≤ t) :
     L.Holds s.toProjectivitySignature :=
@@ -288,16 +265,13 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
     exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posExt
       (ProjectivitySignature.holdsFor_anti_iff.mp (h p))
   | modal F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
-  | question => exact h
 
 /-- Widening the domain strengthens under every operator of a licenser exactly when the licenser
 is downward entailing modulo presupposition. -/
 theorem licensesByStrengthening_iff : L.LicensesByStrengthening ↔ L.IsStrawsonDE := by
   classical
-  rcases L with F | ⟨F, _⟩ | F | _ | _
-  all_goals first
-    | exact Iff.rfl
-    | exact ⟨fun h p a b hab ↦ by
+  rcases L with F | ⟨F, _⟩ | F | _
+  all_goals exact ⟨fun h p a b hab ↦ by
           simpa [sup_eq_left.2 hab] using h p _ id (Finset.subset_insert b {a}),
         fun h p _ _ _ _ hD ↦ h p (Finset.sup_mono hD)⟩
 
@@ -455,107 +429,128 @@ end Licenser
 
 namespace Licenser
 
-variable (L : Licenser) (e : PolarityItem)
+variable {L : Licenser} {s s₀ : Negation.Strength}
 
-/-- A context **licenses** an item in one of two cases. Its licenser carries the licensor of the
-item, or its licenser licenses free choice and the item is a free choice item. -/
-def Licenses : Prop :=
-  (∃ r ∈ e.licensor, L.Carries r) ∨ (L.LicensesFreeChoice ∧ e.IsFCI)
+/-- A licenser that carries exactly the strengths up to `s₀` carries `s₀` as its greatest. -/
+theorem carried_eq_coe (h : ∀ s, L.Carries s ↔ s ≤ s₀) :
+    L.carried = ((s₀ : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength)) := by
+  refine le_antisymm ?_ (coe_le_carried_iff.2 ((h s₀).2 le_rfl))
+  obtain hb | ⟨t, ht⟩ := eq_bot_or_eq_ofStrength_of_lt_top (carried_lt_top : L.carried < ⊤)
+  · exact hb ▸ bot_le
+  · rw [ht]
+    exact WithBot.coe_le_coe.2 (WithTop.coe_le_coe.2 ((h t).1 (coe_le_carried_iff.1 ht.ge)))
 
-/-- A context **anti-licenses** an item when its licenser holds the strength that blocks the item
+theorem carried_eq_bot (h : ∀ s, ¬ L.Carries s) : L.carried = ⊥ := by
+  obtain hb | ⟨t, ht⟩ := eq_bot_or_eq_ofStrength_of_lt_top (carried_lt_top : L.carried < ⊤)
+  · exact hb
+  · exact absurd (coe_le_carried_iff.1 ht.ge) (h t)
+
+/-- A licenser that holds exactly the strengths up to `s₀` holds `s₀` as its greatest. -/
+theorem held_eq_coe (h : ∀ s, L.Holds s.toProjectivitySignature ↔ s ≤ s₀) :
+    L.held = ((s₀ : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength)) := by
+  refine le_antisymm ?_ (coe_le_held_iff.2 ((h s₀).2 le_rfl))
+  obtain hb | ⟨t, ht⟩ := eq_bot_or_eq_ofStrength_of_lt_top (held_lt_top : L.held < ⊤)
+  · exact hb ▸ bot_le
+  · rw [ht]
+    exact WithBot.coe_le_coe.2 (WithTop.coe_le_coe.2 ((h t).1 (coe_le_held_iff.1 ht.ge)))
+
+theorem held_eq_bot (h : ∀ s : Negation.Strength, ¬ L.Holds s.toProjectivitySignature) :
+    L.held = ⊥ := by
+  obtain hb | ⟨t, ht⟩ := eq_bot_or_eq_ofStrength_of_lt_top (held_lt_top : L.held < ⊤)
+  · exact hb
+  · exact absurd (coe_le_held_iff.1 ht.ge) (h t)
+
+variable (L) (k : Class)
+
+/-- A licenser **licenses** a class when it carries the strength that the class requires, or it
+licenses free choice and the class is a free choice class. -/
+def Licenses : Prop := k.requirement ≤ L.carried ∨ L.LicensesFreeChoice ∧ k.IsFCI
+
+/-- A licenser **anti-licenses** a class when it holds the strength that blocks the class
 outright, on its plain meaning ([vanderwouden-1997]'s laws (180), [szabolcsi-2004]'s (42)). -/
-def AntiLicenses : Prop := ∃ r ∈ e.antiLicensor, L.Holds r.toProjectivitySignature
+def AntiLicenses : Prop := k.blocker ≤ L.held
 
-/-- A context **admits** an item when it does not anti-license the item and, if the item requires
-licensing, licenses it. -/
-def Admits : Prop := (e.IsNPI ∨ e.IsFCI → L.Licenses e) ∧ ¬ L.AntiLicenses e
+/-- A licenser **admits** a class when it licenses the class and does not anti-license it. -/
+def Admits : Prop := L.Licenses k ∧ ¬ L.AntiLicenses k
 
-variable {L e} {e' : PolarityItem} {F : OperatorFamily} {r r' : Negation.Strength}
+open scoped Classical in
+/-- The profile of a licenser: the greatest strength it carries, the greatest strength it holds,
+and whether it licenses free choice. -/
+noncomputable def profile : Profile := ⟨L.carried, L.held, decide L.LicensesFreeChoice⟩
 
-instance [DecidablePred L.Licenses] [DecidablePred L.AntiLicenses] : DecidablePred L.Admits :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+variable {L k} {k' : Class} {F : OperatorFamily} {fc : Bool}
 
-theorem admits_iff_licenses (h : e.antiLicensor = none) (he : e.IsNPI ∨ e.IsFCI) :
-    L.Admits e ↔ L.Licenses e := by
-  simp [Admits, AntiLicenses, h, he]
+/-- The profile of a licenser from the greatest strengths it carries and holds and from whether
+it licenses free choice. -/
+theorem profile_eq_mk {a b : WithBot (WithTop Negation.Strength)} (hc : L.carried = a)
+    (hh : L.held = b) (hf : L.LicensesFreeChoice ↔ fc = true) : L.profile = ⟨a, b, fc⟩ := by
+  classical
+  subst hc hh
+  cases fc <;> simp_all [profile]
 
-theorem admits_iff_not_antiLicenses (hn : ¬ e.IsNPI) (hf : ¬ e.IsFCI) :
-    L.Admits e ↔ ¬ L.AntiLicenses e := by
-  simp [Admits, hn, hf]
+theorem profile_licenses_iff : L.profile.Licenses k ↔ L.Licenses k := by
+  simp [profile, Profile.Licenses, Licenses]
 
-theorem admits_of_carries (he : e.licensor = some r) (ha : e.antiLicensor = none)
-    (h : L.Carries r) : L.Admits e :=
-  (admits_iff_licenses ha (.inl (by simp [IsNPI, he]))).2 (.inl ⟨r, he, h⟩)
+theorem profile_antiLicenses_iff : L.profile.AntiLicenses k ↔ L.AntiLicenses k := .rfl
 
-theorem admits_of_not_holds (he : e.licensor = none) (hf : ¬ e.IsFCI)
-    (ha : e.antiLicensor = some r) (h : ¬ L.Holds r.toProjectivitySignature) : L.Admits e :=
-  (admits_iff_not_antiLicenses (by simp [IsNPI, he]) hf).2 fun ⟨_, hr, hh⟩ ↦
-    h (Option.some_inj.1 (hr.symm.trans ha) ▸ hh)
+theorem profile_admits_iff : L.profile.Admits k ↔ L.Admits k :=
+  and_congr profile_licenses_iff profile_antiLicenses_iff.not
 
-/-- An item that is not a free choice item is licensed exactly by the contexts whose licenser
-carries the strength it requires. -/
-theorem licenses_iff_carries (he : e.licensor = some r) (hf : ¬ e.IsFCI) :
-    L.Licenses e ↔ L.Carries r := by
-  simp [Licenses, he, hf]
+/-- A class of negative polarity items is licensed by the licensers that carry the strength it
+requires, and by those that license free choice when it is a free choice class as well. -/
+theorem licenses_npi_iff :
+    L.Licenses (.npi s fc) ↔ L.Carries s ∨ L.LicensesFreeChoice ∧ fc = true := by
+  simp [Licenses, Class.npi, coe_le_carried_iff]
 
-/-- An item that only requires a strength is admitted exactly by the contexts whose licenser
-carries that strength. -/
-theorem admits_iff_carries (he : e.licensor = some r)
-    (ha : e.antiLicensor = none) (hf : ¬ e.IsFCI) : L.Admits e ↔ L.Carries r :=
-  (admits_iff_licenses ha (.inl (by simp [IsNPI, he]))).trans (licenses_iff_carries he hf)
+theorem antiLicenses_ppi_iff : L.AntiLicenses (.ppi s) ↔ L.Holds s.toProjectivitySignature :=
+  coe_le_held_iff
 
-theorem antiLicenses_iff_holds (he : e.antiLicensor = some r) :
-    L.AntiLicenses e ↔ L.Holds r.toProjectivitySignature := by
-  simp [AntiLicenses, he]
+theorem not_antiLicenses_of_blocker_eq_top (h : k.blocker = ⊤) : ¬ L.AntiLicenses k := by
+  rw [AntiLicenses, h]
+  exact not_le.2 held_lt_top
 
-theorem Licenses.of_licensor_le (he : e.licensor = some r) (he' : e'.licensor = some r')
-    (hr : r' ≤ r) (hf : e.IsFCI → e'.IsFCI) : L.Licenses e → L.Licenses e' := by
-  rintro (⟨s, hs, hc⟩ | ⟨hc, hfc⟩)
-  · obtain rfl : s = r := Option.some_inj.1 (hs.symm.trans he)
-    exact .inl ⟨r', he', hc.of_le hr⟩
-  · exact .inr ⟨hc, hf hfc⟩
+/-- A class of negative polarity items that are not free choice items is admitted exactly by the
+licensers that carry the strength it requires. -/
+theorem admits_npi_iff : L.Admits (.npi s) ↔ L.Carries s :=
+  ⟨fun h ↦ (licenses_npi_iff.1 h.1).resolve_right (by simp),
+    fun h ↦ ⟨licenses_npi_iff.2 (.inl h), not_antiLicenses_of_blocker_eq_top rfl⟩⟩
+
+/-- A class of positive polarity items is admitted exactly by the licensers that do not hold the
+strength that blocks it. -/
+theorem admits_ppi_iff : L.Admits (.ppi s) ↔ ¬ L.Holds s.toProjectivitySignature :=
+  ⟨fun h hH ↦ h.2 (antiLicenses_ppi_iff.2 hH),
+    fun h ↦ ⟨.inl bot_le, fun ha ↦ h (antiLicenses_ppi_iff.1 ha)⟩⟩
+
+/-- The class of free choice items is admitted exactly by the licensers that license free
+choice. -/
+theorem admits_fci_iff : L.Admits .fci ↔ L.LicensesFreeChoice :=
+  ⟨fun h ↦ h.1.elim (fun hle ↦ absurd hle (not_le.2 carried_lt_top)) And.left,
+    fun h ↦ ⟨.inr ⟨h, rfl⟩, not_antiLicenses_of_blocker_eq_top rfl⟩⟩
+
+theorem Licenses.of_requirement_le (h : L.Licenses k) (hr : k'.requirement ≤ k.requirement)
+    (hf : k.IsFCI → k'.IsFCI) : L.Licenses k' :=
+  h.imp hr.trans (And.imp_right hf)
 
 /-- A non-trivial classical context blocks the positive polarity items of a strength exactly where
 it licenses the negative polarity items of that strength. This is the mirror image of
 [vanderwouden-1997]'s (181). -/
-theorem antiLicenses_iff_licenses (hn : ¬ (classical F).IsStrawsonUE)
-    (h : e.antiLicensor = e'.licensor) :
-    (classical F).AntiLicenses e ↔ (classical F).Licenses e' := by
-  simp only [AntiLicenses, Licenses, h, carries_classical_iff, and_iff_left hn, LicensesFreeChoice,
-    false_and, or_false]
+theorem antiLicenses_iff_licenses (hn : ¬ (classical F).IsStrawsonUE) :
+    (classical F).AntiLicenses (.ppi s) ↔ (classical F).Licenses (.npi s) := by
+  simp [antiLicenses_ppi_iff, licenses_npi_iff, carries_classical_iff, hn]
 
-/-- A licensing context that does not license free choice licenses an item exactly when it
-carries the strength that the item requires. -/
-theorem licenses_iff_requirement_le (hfc : ¬ L.LicensesFreeChoice) :
-    L.Licenses e ↔ e.IsNPI ∧ e.requirement ≤ L.carried := by
-  rcases h : e.licensor with _ | r
-  · simp [Licenses, IsNPI, hfc, h]
-  · simp [Licenses, IsNPI, requirement, hfc, h, coe_le_carried_iff]
+/-- A non-trivial classical context admits a class exactly when the strength it carries lies
+between the strength that the class requires and the strength that blocks it. The rows of
+[vanderwouden-1997]'s table (182) are the strengths, and its columns are the intervals of the
+classes. -/
+theorem admits_iff_carried_mem_Ico (hn : ¬ (classical F).IsStrawsonUE) :
+    (classical F).Admits k ↔ (classical F).carried ∈ Set.Ico k.requirement k.blocker := by
+  simp [Admits, Licenses, AntiLicenses, LicensesFreeChoice, carried_classical hn, Set.mem_Ico]
 
-/-- A context blocks an item exactly when it holds the strength that blocks the item. -/
-theorem antiLicenses_iff_blocker_le : L.AntiLicenses e ↔ e.blocker ≤ L.held := by
-  rcases h : e.antiLicensor with _ | r
-  · simp [AntiLicenses, blocker, h, not_le.2 held_lt_top]
-  · simp [AntiLicenses, blocker, h, coe_le_held_iff]
-
-/-- A non-trivial classical context admits an item that is not a free choice item exactly when the
-strength it carries lies between the strength that the item requires and the strength that blocks
-it. The rows of [vanderwouden-1997]'s table (182) are the strengths, and its columns are the
-intervals of the items. -/
-theorem admits_iff_carried_mem_Ico (hn : ¬ (classical F).IsStrawsonUE) (hf : ¬ e.IsFCI) :
-    (classical F).Admits e ↔ (classical F).carried ∈ Set.Ico e.requirement e.blocker := by
-  rw [Set.mem_Ico, Admits, licenses_iff_requirement_le id, antiLicenses_iff_blocker_le,
-    ← carried_classical hn, not_le]
-  rcases h : e.licensor with _ | r
-  · simp [IsNPI, IsFCI, requirement, h, hf]
-  · simp [IsNPI, h]
-
-/-- An antimorphic context blocks every positive polarity item, which is [vanderwouden-1997]'s
+/-- An antimorphic context blocks every positive polarity class, which is [vanderwouden-1997]'s
 (169). -/
-theorem antiLicenses_iff_isPPI (h : L.Holds .antiAddMult) : L.AntiLicenses e ↔ e.IsPPI :=
-  ⟨fun ⟨r, hr, _⟩ ↦ Option.isSome_iff_exists.2 ⟨r, hr⟩, fun he ↦
-    let ⟨r, hr⟩ := Option.isSome_iff_exists.1 he
-    ⟨r, hr, h.toProjectivitySignature_of_le (t := .antiMorphic) le_top⟩⟩
+theorem antiLicenses_iff_isPPI (h : L.Holds .antiAddMult) : L.AntiLicenses k ↔ k.IsPPI :=
+  ⟨fun ha ↦ ha.trans_lt held_lt_top, fun hk ↦
+    (le_ofStrength_antiMorphic hk).trans (coe_le_held_iff.2 h)⟩
 
 end Licenser
 

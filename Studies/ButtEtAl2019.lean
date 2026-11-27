@@ -13,11 +13,11 @@ before the verb when they follow it. They also have the positive meanings 'anyon
 'ever' after comparisons, under expressions of doubt, denial, and impossibility, in questions that
 expect the answer 'no', and after *antes de*, *antes que*, and *sin*. However, *jamás* never
 follows a comparison. Each example is linked to the lexical entry it contains and to the named
-context in which it stands, and [the entry says of that context what the example
-shows](##ButtEtAl2019.verdict_eq_verdictOf). The questions aside, [the verdicts on four of the
-words are those of the weak class](##ButtEtAl2019.classVerdict_weak). *Jamás* follows a superlative
-and not a comparison, and [no strength class has both
-verdicts](##ButtEtAl2019.jamás_comparative).
+context in which it stands, and [the entry lists that context as the example
+shows](##ButtEtAl2019.entries_agree). [The entries of four of the words are compatible with the
+class of weak negative polarity items](##ButtEtAl2019.compatible_weak). *Jamás* follows a
+superlative and not a comparison, and [its entry is compatible with no
+class](##ButtEtAl2019.jamás_comparative).
 
 ## Implementation notes
 
@@ -71,37 +71,29 @@ theorem links_attested :
     ∀ p ∈ links, p.2.item.form.toList ∈ Datum.wordsOf p.1.primaryText := by
   decide +kernel
 
-/-- The verdict that the judgment of an example gives on its context. -/
-def verdictOf : Judgment → Option Obligatoriness
-  | .acceptable => some .optional
-  | .ungrammatical => some .excluded
-  | _ => none
-
-/-- The entry of each item says of each context what the example in that context shows. -/
-theorem verdict_eq_verdictOf :
-    ∀ p ∈ links, p.2.item.verdict p.2.context = verdictOf p.1.judgment := by
+/-- The entry of each item lists the context of an acceptable example among those in which the
+item is attested, and the context of a starred example among those from which it is excluded. -/
+theorem entries_agree :
+    ∀ p ∈ links, (p.1.judgment = .acceptable → p.2.context ∈ p.2.item.attested) ∧
+      (p.1.judgment = .ungrammatical → p.2.context ∈ p.2.item.excluded) := by
   decide +kernel
 
 -- Each context that an entry lists is the context of an example of the item.
 theorem contexts_linked :
-    ∀ e ∈ items, ∀ q ∈ e.contexts, ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = q.1 := by
+    ∀ e ∈ items, ∀ c ∈ e.attested ∪ e.excluded,
+      ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = c := by
   decide +kernel
 
-/-- The questions aside, the verdicts on *nadie*, *nada*, *ninguno*, and *nunca* are those of the
-weak class. A question places no operator over the item. -/
-theorem classVerdict_weak :
-    ∀ e ∈ [nadie, nada, ninguno, nunca], ∀ q ∈ e.contexts,
-      q.1 ∉ [.polarQuestion, .constituentQuestion] → q.2 = q.1.classVerdict .weak := by
+/-- The entries of *nadie*, *nada*, *ninguno*, and *nunca* are compatible with the class of weak
+negative polarity items. -/
+theorem compatible_weak :
+    ∀ e ∈ [nadie, nada, ninguno, nunca], e.Compatible (.npi .weak) := by
   decide +kernel
 
-/-- *Jamás* follows a superlative and cannot follow a comparison. No strength class has both
-verdicts, since a class that takes the superlative is the weak class, which takes the
-comparison. -/
+/-- *Jamás* follows a superlative and cannot follow a comparison, so its entry is compatible with
+no class: a class that is possible after a superlative is possible after a comparison. -/
 theorem jamás_comparative :
-    tempranoJamas.judgment = .ungrammatical ∧
-      ∀ s, ∃ q ∈ jamás.contexts, q.1 ∉ [.polarQuestion, .constituentQuestion] ∧
-        q.2 ≠ q.1.classVerdict s := by
-  refine ⟨rfl, fun s ↦ ?_⟩
-  cases s <;> decide +kernel
+    tempranoJamas.judgment = .ungrammatical ∧ ∀ k, ¬ jamás.Compatible k := by
+  decide +kernel
 
 end ButtEtAl2019

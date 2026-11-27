@@ -5,73 +5,35 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Negation.Strength
 public import Linglib.Semantics.PolarityItem.Context
-public import Linglib.Syntax.Obligatoriness
+public import Mathlib.Data.Finset.Insert
 
 /-!
 # Polarity items
 
-A *polarity item* is a lexical item whose distribution is restricted to certain contexts. The
-restriction is graded by Zwarts's strengths of negation. A *negative polarity item* requires at
-least some strength of negation, and a *positive polarity item* is blocked by at least some
-strength. An item may be both, as Dutch *ooit* 'ever' is, in which case it is *bipolar*. A *free
-choice item* is licensed by the generic contexts. Each item therefore spans an interval of
-strengths, from [the strength it requires](##PolarityItem.requirement) to [the strength that
-blocks it](##PolarityItem.blocker). The licensers that admit an item are the subject of
-`Semantics/PolarityItem/Licenser.lean`.
+A *polarity item* is a lexical item whose distribution is restricted to certain contexts. Its
+entry holds its form and what its sources say of single contexts: the contexts in which they
+attest the item, and the contexts from which they exclude it. A context that no source mentions
+for the item is in neither set, so an entry says nothing of it.
+
+An entry does not classify the item. The classes of the strengths of negation are the subject of
+`Semantics/PolarityItem/Class.lean`, and an entry is [compatible](##PolarityItem.Compatible) with
+a class when its contexts agree with what the class predicts.
 
 ## References
 
 * [zwarts-1998]
-* [vanderwouden-1997]
-* [dayal-1996]
-* [chierchia-2006]
+* [haspelmath-1997]
 -/
 
 @[expose] public section
 
-/-- A polarity-sensitive lexical item. The record holds the form of the item, the weakest
-strength of negation that licenses it, the weakest strength that blocks it, and whether the
-generic contexts license it. -/
+/-- The entry of a polarity-sensitive lexical item: its form, the contexts in which its sources
+attest it, and the contexts from which they exclude it. -/
 structure PolarityItem where
   /-- The surface form. -/
   form : String
-  /-- The weakest strength of negation that licenses the item, when the item is a negative
-  polarity item. A negative concord item that requires clausemate negation carries
-  `antiMorphic`, which is the strength of clausal negation alone. -/
-  licensor : Option Negation.Strength := none
-  /-- The weakest strength of negation that blocks the item, when the item is a positive
-  polarity item. -/
-  antiLicensor : Option Negation.Strength := none
-  /-- Whether the generic contexts license the item. -/
-  freeChoice : Bool := false
-  /-- What the sources of the item say of single contexts: the item is excluded there, or it is
-  possible there. A context that no source mentions for the item is absent. -/
-  contexts : List (PolarityItem.LicensingContext × Obligatoriness) := []
-
-namespace PolarityItem
-
-/-- What the sources of an item say of a context, if anything. -/
-def verdict (e : PolarityItem) (c : LicensingContext) : Option Obligatoriness := e.contexts.lookup c
-
-/-- An item is a **negative polarity item** when some strength of negation licenses it. -/
-abbrev IsNPI (e : PolarityItem) : Prop := e.licensor.isSome
-
-/-- An item is a **positive polarity item** when some strength of negation blocks it. -/
-abbrev IsPPI (e : PolarityItem) : Prop := e.antiLicensor.isSome
-
-/-- An item is a **free choice item** when the generic contexts license it. -/
-abbrev IsFCI (e : PolarityItem) : Prop := e.freeChoice = true
-
-/-- The strength of negation that an item requires, or `⊥` if it requires none. -/
-def requirement (e : PolarityItem) : WithBot (WithTop Negation.Strength) :=
-  e.licensor.elim ⊥ fun s ↦
-    ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
-
-/-- The strength of negation that blocks an item, or `⊤` if none does. -/
-def blocker (e : PolarityItem) : WithBot (WithTop Negation.Strength) :=
-  e.antiLicensor.elim ⊤ fun s ↦
-    ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
-
-end PolarityItem
+  /-- The contexts in which a source attests the item. -/
+  attested : Finset PolarityItem.LicensingContext := ∅
+  /-- The contexts from which a source excludes the item. -/
+  excluded : Finset PolarityItem.LicensingContext := ∅

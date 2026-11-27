@@ -55,8 +55,7 @@ def nikogda : PolarityItem :=
 
 /-- *kto ugodno* (кто угодно) 'anyone at all', a free-choice item. -/
 def ktoUgodno : PolarityItem :=
-  { form := Indefinites.ktoUgodno.form
-  , freeChoice := true }
+  { form := Indefinites.ktoUgodno.form }
 
 /-! ### The entries -/
 

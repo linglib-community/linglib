@@ -34,29 +34,24 @@ open PolarityItem
 
 /-- *nikdo* 'nobody', the human concord item. -/
 def nikdo : PolarityItem :=
-  { form := "nikdo"
-  , licensor := some .antiMorphic }
+  { form := "nikdo" }
 
 /-- *nic* 'nothing', the non-human concord item. -/
 def nic : PolarityItem :=
-  { form := "nic"
-  , licensor := some .antiMorphic }
+  { form := "nic" }
 
 /-- *nikdy* 'never', the temporal concord item. -/
 def nikdy : PolarityItem :=
-  { form := "nikdy"
-  , licensor := some .antiMorphic }
+  { form := "nikdy" }
 
 /-- *nikam* 'nowhere (to)', the directional concord item. -/
 def nikam : PolarityItem :=
-  { form := "nikam"
-  , licensor := some .antiMorphic }
+  { form := "nikam" }
 
 /-- *žádný* 'no', the determiner concord item, licensed by inner negation alone in polar
 questions ([stankova-2026]). -/
 def zadny : PolarityItem :=
-  { form := Determiners.zadny.form
-  , licensor := some .antiMorphic }
+  { form := Determiners.zadny.form }
 
 /-- The strict concord items. -/
 def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]
@@ -66,14 +61,12 @@ def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]
 /-- *nějaký* 'some', the determiner positive polarity item, admitted by outer and medial
 negation in polar questions ([stankova-simik-2025], [stankova-2026]). -/
 def nejaky : PolarityItem :=
-  { form := Determiners.nejaky.form
-  , antiLicensor := some .antiMorphic }
+  { form := Determiners.nejaky.form }
 
 /-- *někdo* 'someone', the human positive polarity item, which replaces *nikdo* under the
 non-propositional negation of a fear-predicate complement ([stankova-simik-2025]). -/
 def nekdo : PolarityItem :=
-  { form := "někdo"
-  , antiLicensor := some .antiMorphic }
+  { form := "někdo" }
 
 /-- The positive polarity items. -/
 def neSeries : List PolarityItem := [nejaky, nekdo]

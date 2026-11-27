@@ -42,10 +42,8 @@ arriving before anyone else'. It stands in a constituent question, *¿quién ha 
 trabaje más que él?* 'who has ever seen anyone who works more than he does?'. -/
 def nadie : PolarityItem :=
   { form := "nadie"
-  , contexts := [(.negation, .optional), (.superlative, .optional), (.doubtVerb, .optional),
-      (.sinceTemporal, .optional), (.withoutClause, .optional), (.denyVerb, .optional),
-      (.tooTo, .optional), (.adversative, .optional), (.constituentQuestion, .optional),
-      (.beforeClause, .optional)] }
+  , attested := {.negation, .superlative, .doubtVerb, .sinceTemporal, .withoutClause, .denyVerb,
+      .tooTo, .adversative, .constituentQuestion, .beforeClause} }
 
 /-- *nada* 'nothing', 'anything', as in *más que nada, es taimado* 'more than anything, he's
 cunning', *pocos libros dirían nada semejante* 'few books would say anything similar', *he venido
@@ -53,24 +51,22 @@ sin nada* 'I've come without anything'. It stands in a constituent question, *¿
 han preguntado nada?* 'when did anyone ask you anything?'. -/
 def nada : PolarityItem :=
   { form := "nada"
-  , contexts := [(.negation, .optional), (.nobody, .optional), (.clausalComparative, .optional),
-      (.withoutClause, .optional), (.few, .optional), (.constituentQuestion, .optional),
-      (.beforeClause, .optional)] }
+  , attested := {.negation, .nobody, .clausalComparative, .withoutClause, .few,
+      .constituentQuestion, .beforeClause} }
 
 /-- *ninguno* 'none', 'any', as in *es más lista que ninguno de los otros* 'she's cleverer than any
 of the others', literary *si he sido insincero con ninguno de vosotros* 'if I have been insincere
 with any of you'. -/
 def ninguno : PolarityItem :=
   { form := "ninguno"
-  , contexts := [(.clausalComparative, .optional), (.conditionalAntecedent, .optional)] }
+  , attested := {.clausalComparative, .conditionalAntecedent} }
 
 /-- *nunca* 'never', 'ever', as in *salió más temprano que nunca* 'she went out earlier than ever
 before', *¿quién hubiera pensado nunca que se casaría con Julia?* 'who would ever have thought
 he'd have married Julia?'. -/
 def nunca : PolarityItem :=
   { form := "nunca"
-  , contexts := [(.negation, .optional), (.superlative, .optional),
-      (.clausalComparative, .optional), (.constituentQuestion, .optional)] }
+  , attested := {.negation, .superlative, .clausalComparative, .constituentQuestion} }
 
 /-- *jamás* 'never', 'ever' is stronger and less common than *nunca*, as in *el mejor que jamás
 hubiera* 'the best that ever was', and is never used after a comparative. It stands in a
@@ -78,9 +74,8 @@ constituent question, as *nunca* does, and in a polar question, *¿se vio jamás
 such a thing ever seen?'. -/
 def jamás : PolarityItem :=
   { form := "jamás"
-  , contexts := [(.negation, .optional), (.superlative, .optional),
-      (.clausalComparative, .excluded), (.constituentQuestion, .optional),
-      (.polarQuestion, .optional)] }
+  , attested := {.negation, .superlative, .constituentQuestion, .polarQuestion}
+  , excluded := {.clausalComparative} }
 
 /-- The polarity items. -/
 def items : List PolarityItem := [nadie, nada, ninguno, nunca, jamás]

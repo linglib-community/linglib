@@ -32,15 +32,12 @@ open PolarityItem
 /-- *pas*, the punctual *until* of a positive clause, as in *Marie kwam pas om 9 uur aan* 'Marie
 only arrived at nine' ([giannakidou-2002]'s (47)). -/
 def pas : PolarityItem :=
-  { form := "pas"
-  , antiLicensor := some .antiMorphic }
+  { form := "pas" }
 
 /-- *ooit* 'ever', a weak negative polarity item that is also a weak positive polarity item
 ([vanderwouden-1997]). -/
 def ooit : PolarityItem :=
-  { form := "ooit"
-  , licensor := some .weak
-  , antiLicensor := some .antiMorphic }
+  { form := "ooit" }
 
 /-- *hoeven* 'need', a weak negative polarity item. It is acceptable under monotone decreasing
 operators, anti-additive noun phrases, comparatives, superlatives, and *before*, but unacceptable
@@ -49,22 +46,24 @@ in questions, in conditionals, and in the restrictors of *alle* 'all' and *geen*
 his (234c). -/
 def hoeven : PolarityItem :=
   { form := "hoeven"
-  , licensor := some .weak }
+  , attested := {.atMost, .nobody} }
 
 /-- *kunnen velen* 'can abide', a weak negative polarity item ([zwarts-1998]). -/
 def kunnenVelen : PolarityItem :=
   { form := "kunnen velen"
-  , licensor := some .weak }
+  , attested := {.few, .nobody} }
 
 /-- *ook maar iets* 'anything at all', a strong negative polarity item, which requires an
 anti-additive context ([zwarts-1998]). -/
 def ookMaarIets : PolarityItem :=
   { form := "ook maar iets"
-  , licensor := some .antiAdditive }
+  , attested := {.nobody}
+  , excluded := {.atMost} }
 
 /-- *bijster* 'very', a strong negative polarity item ([zwarts-1998]). -/
 def bijster : PolarityItem :=
   { form := "bijster"
-  , licensor := some .antiAdditive }
+  , attested := {.nobody}
+  , excluded := {.few} }
 
 end Dutch.PolarityItems

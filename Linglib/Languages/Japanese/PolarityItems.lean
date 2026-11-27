@@ -49,7 +49,6 @@ def dareMo : PolarityItem :=
     wh + demo (built on the additive/'even' particle *mo*); free choice and
     concessive-conditional uses ([kratzer-shimoyama-2002]). -/
 def dareDemo : PolarityItem :=
-  { form := Indefinites.dareDemo.form
-  , freeChoice := true }
+  { form := Indefinites.dareDemo.form }
 
 end Japanese.PolarityItems

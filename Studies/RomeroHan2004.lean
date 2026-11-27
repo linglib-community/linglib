@@ -243,12 +243,11 @@ def LF.licenser : Licenser := .ofPolarity W l.inner
 
 variable {W}
 
-/-- The clause under VERUM admits positive polarity items when it is positive and negative
-polarity items when it is negative. -/
-theorem LF.admits_iff [Nonempty W] {e : PolarityItem} (hf : ¬e.IsFCI) :
-    (l.licenser W).Admits e ↔
-      (e.IsPPI → l.inner = .positive) ∧ (e.IsNPI → l.inner = .negative) :=
-  Licenser.admits_ofPolarity_iff hf
+/-- The clause under VERUM admits a class of polarity items exactly when its polarity does:
+positive polarity items when it is positive and negative polarity items when it is negative. -/
+theorem LF.admits_iff [Nonempty W] {k : PolarityItem.Class} :
+    (l.licenser W).Admits k ↔ l.inner.Admits k :=
+  Licenser.admits_ofPolarity_iff
 
 end Licensing
 
@@ -286,8 +285,20 @@ def _root_.RomeroHan2004.Examples.Lexeme.entry : Examples.Lexeme → PolarityIte
   | .already => English.PolarityItems.already
   | .yet => English.PolarityItems.yet
 
-/-- The polarity items of a row's question, the entries its spans name. -/
-def items (e : Datum) : List PolarityItem :=
+/-- The class of a lexeme of the data: *too* and *already* are positive polarity items, and
+*either* and *yet* are negative polarity items. -/
+def _root_.RomeroHan2004.Examples.Lexeme.cls : Examples.Lexeme → PolarityItem.Class
+  | .too => .ppi .antiMorphic
+  | .either => .npi .antiAdditive
+  | .already => .ppi .antiAdditive
+  | .yet => .npi .weak
+
+/-- The polarity items of a row's question, by the classes of the lexemes its spans name. -/
+def items (e : Datum) : List PolarityItem.Class :=
+  (e.spans.filterMap Examples.lexeme?).map (·.cls)
+
+/-- The entries of the polarity items of a row's question. -/
+def entries (e : Datum) : List PolarityItem :=
   (e.spans.filterMap Examples.lexeme?).map (·.entry)
 
 /-- The polarity items of the English language file that the paper's questions test. -/
@@ -309,7 +320,7 @@ theorem span_printed :
 -- no word of an English question that is written as a polarity item goes unmarked
 theorem exists_mem_items_of_written :
     ∀ e ∈ all, e.language = .english → ∀ i ∈ inventory,
-      i.form.toList ∈ Datum.wordsOf e.primaryText → ∃ j ∈ items e, j.form = i.form := by
+      i.form.toList ∈ Datum.wordsOf e.primaryText → ∃ j ∈ entries e, j.form = i.form := by
   decide
 
 /-- What `LF.Felicitous` comes to in each scenario. -/
@@ -333,15 +344,13 @@ theorem acceptable_iff :
     ∀ e ∈ all, candidates e ≠ [] → ∀ (W : Type) [Nonempty W] (p : Set W),
       e.judgment = .acceptable ↔ ∃ l ∈ candidates e, (∀ i ∈ items e, (l.licenser W).Admits i) ∧
         ∀ σ ∈ (scenario e).toList, l.Felicitous p σ.toScenario := by
-  have h : ∀ e ∈ all, candidates e ≠ [] → (∀ i ∈ items e, ¬i.IsFCI) ∧
-      (e.judgment = .acceptable ↔ ∃ l ∈ candidates e,
-        (∀ i ∈ items e, (i.IsPPI → l.inner = .positive) ∧ (i.IsNPI → l.inner = .negative)) ∧
+  have h : ∀ e ∈ all, candidates e ≠ [] →
+      (e.judgment = .acceptable ↔ ∃ l ∈ candidates e, (∀ i ∈ items e, l.inner.Admits i) ∧
           ∀ σ ∈ (scenario e).toList, l.FelicitousIn σ.toScenario) := by decide
   intro e he hc W _ p
-  obtain ⟨hfc, h⟩ := h e he hc
-  rw [h]
+  rw [h e he hc]
   refine exists_congr fun l ↦ and_congr_right fun _ ↦
-    and_congr (forall₂_congr fun i hi ↦ (LF.admits_iff _ (hfc i hi)).symm)
+    and_congr (forall₂_congr fun i _ ↦ (LF.admits_iff _).symm)
       (forall₂_congr fun σ _ ↦ (LF.felicitous_iff_felicitousIn p _ _).symm)
 
 example : (all.filter fun e ↦ candidates e ≠ []).length = 22 := by decide
@@ -351,15 +360,13 @@ theorem admits_pi_iff_not_admits_ni :
     ∀ e ∈ all, items e ≠ [] → ∀ (W : Type) [Nonempty W],
       (∀ i ∈ items e, (LF.pi.licenser W).Admits i) ↔
         ¬∀ i ∈ items e, (LF.ni.licenser W).Admits i := by
-  have h : ∀ e ∈ all, items e ≠ [] → (∀ i ∈ items e, ¬i.IsFCI) ∧
-      ((∀ i ∈ items e, (i.IsPPI → LF.pi.inner = .positive) ∧ (i.IsNPI → LF.pi.inner = .negative)) ↔
-        ¬∀ i ∈ items e,
-          (i.IsPPI → LF.ni.inner = .positive) ∧ (i.IsNPI → LF.ni.inner = .negative)) := by decide
+  have h : ∀ e ∈ all, items e ≠ [] →
+      ((∀ i ∈ items e, LF.pi.inner.Admits i) ↔ ¬∀ i ∈ items e, LF.ni.inner.Admits i) := by
+    decide
   intro e he hi W _
-  obtain ⟨hfc, h⟩ := h e he hi
-  rw [forall₂_congr fun i hi ↦ LF.admits_iff _ (hfc i hi),
-    forall₂_congr fun i hi ↦ LF.admits_iff _ (hfc i hi)]
-  exact h
+  rw [forall₂_congr fun i _ ↦ LF.admits_iff (W := W) LF.pi,
+    forall₂_congr fun i _ ↦ LF.admits_iff (W := W) LF.ni]
+  exact h e he hi
 
 -- (1), (5), (14)–(18), (37), (110), (117): the implicature the paper reports is that of every
 -- logical form of the question, so preposed negation implicates the proposition on either reading

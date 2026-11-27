@@ -29,27 +29,22 @@ open PolarityItem
 
 /-- *koii bhii* 'anyone', a negative polarity and free choice item. -/
 def koiiBhii : PolarityItem :=
-  { form := Indefinites.koiiBhii.form
-  , freeChoice := true }
+  { form := Indefinites.koiiBhii.form }
 
 /-- *ek bhii* 'even one', a negative polarity and free choice item. -/
 def ekBhii : PolarityItem :=
-  { form := "ek bhii"
-  , freeChoice := true }
+  { form := "ek bhii" }
 
 /-- *kuch bhii* 'anything, any (mass)', a negative polarity and free choice item. -/
 def kuchBhii : PolarityItem :=
-  { form := (Indefinites.bhii Indefinites.kuch).form
-  , freeChoice := true }
+  { form := (Indefinites.bhii Indefinites.kuch).form }
 
 /-- *zaraa bhii* 'even a little', a negative polarity and free choice item. -/
 def zaraaBhii : PolarityItem :=
-  { form := "zaraa bhii"
-  , freeChoice := true }
+  { form := "zaraa bhii" }
 
 /-- *kabhii bhii* 'ever, anytime', a negative polarity and free choice item. -/
 def kabhiiBhii : PolarityItem :=
-  { form := (Indefinites.bhii Indefinites.kabhii).form
-  , freeChoice := true }
+  { form := (Indefinites.bhii Indefinites.kabhii).form }
 
 end HindiUrdu.PolarityItems

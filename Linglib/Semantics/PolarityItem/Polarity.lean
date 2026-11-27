@@ -36,13 +36,19 @@ admits ([ladd-1981]).
 
 open NaturalLogic PolarityItem
 
-/-- The polarity `s` admits the item `e`: a positive polarity item needs `s` positive, and a
-negative polarity item needs `s` negative. -/
-def Polarity.Admits (s : Polarity) (e : PolarityItem) : Prop :=
-  (e.IsPPI → s = .positive) ∧ (e.IsNPI → s = .negative)
+/-- The profile of a clause of polarity `s`: a positive clause carries and holds no strength of
+negation, and a negative clause carries and holds every strength. -/
+def Polarity.profile : Polarity → PolarityItem.Profile
+  | .positive => ⟨⊥, ⊥, false⟩
+  | .negative => ⟨PolarityItem.ofStrength .antiMorphic, PolarityItem.ofStrength .antiMorphic, false⟩
 
-instance (s : Polarity) (e : PolarityItem) : Decidable (s.Admits e) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-- The polarity `s` admits the class `k` when its profile does. A positive clause admits the
+classes that require nothing, and a negative clause admits the classes that some strength of
+negation licenses and none blocks. -/
+def Polarity.Admits (s : Polarity) (k : PolarityItem.Class) : Prop := s.profile.Admits k
+
+instance (s : Polarity) (k : PolarityItem.Class) : Decidable (s.Admits k) :=
+  inferInstanceAs (Decidable (s.profile.Admits k))
 
 namespace PolarityItem.Licenser
 
@@ -54,28 +60,31 @@ def ofPolarity : Licenser := .ofOperator fun q : Set W ↦ s • q
 
 variable {W s}
 
-/-- The licenser of a polarity admits an item that is not a free choice item exactly when the
-polarity admits it. -/
-theorem admits_ofPolarity_iff [Nonempty W] {e : PolarityItem} (hf : ¬e.IsFCI) :
-    (ofPolarity W s).Admits e ↔ s.Admits e := by
+/-- The profile of the licenser of a polarity is the profile of the polarity. -/
+theorem profile_ofPolarity [Nonempty W] : (ofPolarity W s).profile = s.profile := by
   have hne : (Set.univ : Set W) ≠ ∅ := Set.univ_nonempty.ne_empty
   cases s
   · have hH : ¬(ofPolarity W .positive).Holds .anti := fun h ↦
       hne (Set.subset_empty_iff.1
         (ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨⟩) (Set.empty_subset Set.univ)))
-    have hL : ¬(ofPolarity W .positive).Licenses e := by
-      rintro (⟨r, -, hr⟩ | ⟨h, -⟩)
-      exacts [(carries_ofOperator_iff.1 hr).2 fun _ _ h ↦ h, h]
-    simp [Polarity.Admits, Admits, AntiLicenses, hL, hf, not_holds_toProjectivitySignature hH]
-  · have hH : (ofPolarity W .negative).Holds .antiAddMult := fun _ ↦
-      ProjectivitySignature.holdsFor_antiAddMult_compl
-    have hL : e.IsNPI → (ofPolarity W .negative).Licenses e := fun h ↦ by
-      obtain ⟨r, hr⟩ := Option.isSome_iff_exists.1 h
-      exact .inl ⟨r, hr, carries_ofOperator_iff.2
-        ⟨ProjectivitySignature.holdsFor_antiAddMult_compl.of_le
-          (Negation.Strength.toProjectivitySignature_antitone le_top),
-        fun hm ↦ hne (Set.subset_empty_iff.1 (by simpa using hm (Set.empty_subset Set.univ)))⟩⟩
-    rw [Admits, antiLicenses_iff_isPPI hH]
-    simpa [Polarity.Admits, hf] using fun _ ↦ hL
+    exact profile_eq_mk
+      (carried_eq_bot fun _ hr ↦ (carries_ofOperator_iff.1 hr).2 fun _ _ h ↦ h)
+      (held_eq_bot fun _ ↦ not_holds_toProjectivitySignature hH)
+      (iff_of_false id Bool.false_ne_true)
+  · have hH (r : Negation.Strength) :
+        (ofPolarity W .negative).Holds r.toProjectivitySignature := fun _ ↦
+      ProjectivitySignature.holdsFor_antiAddMult_compl.of_le
+        (Negation.Strength.toProjectivitySignature_antitone le_top)
+    exact profile_eq_mk
+      (carried_eq_coe fun r ↦ ⟨fun _ ↦ r.le_antiMorphic, fun _ ↦ carries_ofOperator_iff.2
+        ⟨hH r ⟨⟩, fun hm ↦ hne (Set.subset_empty_iff.1
+          (by simpa using hm (Set.empty_subset Set.univ)))⟩⟩)
+      (held_eq_coe fun r ↦ ⟨fun _ ↦ r.le_antiMorphic, fun _ ↦ hH r⟩)
+      (iff_of_false id Bool.false_ne_true)
+
+/-- The licenser of a polarity admits a class exactly when the polarity admits it. -/
+theorem admits_ofPolarity_iff [Nonempty W] {k : Class} :
+    (ofPolarity W s).Admits k ↔ s.Admits k := by
+  rw [← profile_admits_iff, profile_ofPolarity, Polarity.Admits]
 
 end PolarityItem.Licenser

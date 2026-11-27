@@ -55,9 +55,7 @@ polar question, *Der Lehrer hat gefragt, ob Hans irgendein Buch gelesen hat* 'Th
 whether Hans read any book' ([kratzer-shimoyama-2002] (22)). -/
 def irgendein : PolarityItem :=
   { form := "irgendein"
-  , licensor := some .weak
-  , freeChoice := true
-  , contexts := [(.polarQuestion, .optional)] }
+  , attested := {.polarQuestion} }
 
 /-! ### NPI -/
 
@@ -71,25 +69,26 @@ mitzubringen* 'She needs to bring an excuse', and in a positive polar question, 
 Entschuldigung mitzubringen?*, and fine under *niemand* ([buring-gunlogson-2000] (15)). -/
 def brauchen : PolarityItem :=
   { form := "brauchen"
-  , licensor := some .weak
-  , contexts := [(.positiveAssertion, .excluded), (.nobody, .optional), (.atMost, .optional),
-      (.polarQuestion, .excluded)] }
+  , attested := {.nobody, .atMost}
+  , excluded := {.positiveAssertion, .polarQuestion} }
 
 /-- *Ausstehen können* 'can stand', a weak negative polarity item ([zwarts-1998]). -/
 def ausstehenKoennen : PolarityItem :=
   { form := "ausstehen können"
-  , licensor := some .weak }
+  , attested := {.few, .nobody} }
 
 /-- *Auch nur irgendetwas* 'anything at all', a strong negative polarity item, which requires an
 anti-additive context ([zwarts-1998]). -/
 def auchNurIrgendetwas : PolarityItem :=
   { form := "auch nur irgendetwas"
-  , licensor := some .antiAdditive }
+  , attested := {.nobody}
+  , excluded := {.atMost} }
 
 /-- *Sonderlich* 'very', a strong negative polarity item ([zwarts-1998]). -/
 def sonderlich : PolarityItem :=
   { form := "sonderlich"
-  , licensor := some .antiAdditive }
+  , attested := {.nobody}
+  , excluded := {.few} }
 
 /-! ### PPI -/
 
@@ -97,7 +96,6 @@ def sonderlich : PolarityItem :=
 erst um 9 Uhr auf* 'the princess did not wake up until nine'. The sentence entails a waking at
 nine, and *erst* does not combine with negation. -/
 def erst : PolarityItem :=
-  { form := "erst"
-  , antiLicensor := some .antiMorphic }
+  { form := "erst" }
 
 end German.PolarityItems

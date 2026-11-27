@@ -48,14 +48,12 @@ open PolarityItem
 prigipisa dhen eftase para monon ta mesanixta* 'the princess did not arrive until midnight'. It is
 out under *amfivalo an* 'I doubt whether' and in a rhetorical question. -/
 def paraMonon : PolarityItem :=
-  { form := "para monon"
-  , licensor := some .antiAdditive }
+  { form := "para monon" }
 
 /-- Emphatic *TIPOTA* (τίποτα) 'nothing', the pronoun *tipota* under emphatic accent, as in *dhen
 ipa TIPOTA* 'I said nothing'. Negation and *xoris* 'without' license it; a question, a
 conditional, an imperative and *elpizo* 'I hope' do not. -/
 def emphaticTipota : PolarityItem :=
-  { form := Indefinites.tipota.form
-  , licensor := some .antiAdditive }
+  { form := Indefinites.tipota.form }
 
 end Greek.StandardModern.PolarityItems

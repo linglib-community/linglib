@@ -331,9 +331,10 @@ inductive Environment
 
 open LicensingContext in
 /-- The licenser of an environment. NOT(SOME(_)) is the operator the library gives *nobody* and
-NOT(EVERY(_)) the one it gives *doubt*, over individuals or accessible worlds alike (48). -/
+NOT(EVERY(_)) the one it gives *doubt*, over individuals or accessible worlds alike (48). A named
+context that places no operator over the item, a question, has the licenser of no licenser. -/
 noncomputable def Environment.licenser : Environment → Licenser
-  | .named c => c.licenser
+  | .named c => if h : c.HasLicenser then c.licenser h else .ofOperator (id : Prop → Prop)
   | .positive => .ofOperator (id : Prop → Prop)
   | .notSome => nobody.licenser
   | .notEvery => doubtVerb.licenser
@@ -375,12 +376,22 @@ theorem not_carries_notWantThink : ¬ Environment.notWantThink.licenser.Carries 
   Licenser.not_carries_strawson_antiAdditive
     ⟨⟨Fin 8, desC, belA, belC⟩, not_isAntiAdditive_posExt_notStack⟩
 
+theorem carries_named_iff (c : LicensingContext) :
+    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Licenses (.npi .antiAdditive) := by
+  by_cases h : c.HasLicenser
+  · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
+  · rw [Environment.licenser, dif_neg h]
+    exact iff_of_false (fun hc ↦ hc.weak.2 fun _ ↦ monotone_id)
+      (LicensingContext.not_licenses_of_not_hasLicenser h)
+
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with
-  | .named c => inferInstanceAs (Decidable (c.licenser.Carries .antiAdditive))
+  | .named c => decidable_of_iff _ (carries_named_iff c).symm
   | .positive => isFalse fun h ↦ h.weak.2 fun _ ↦ monotone_id
-  | .notSome => inferInstanceAs (Decidable (LicensingContext.nobody.licenser.Carries _))
-  | .notEvery => inferInstanceAs (Decidable (LicensingContext.doubtVerb.licenser.Carries _))
+  | .notSome => decidable_of_iff (LicensingContext.nobody.Licenses (.npi .antiAdditive))
+      (LicensingContext.licenses_npi_iff (by decide))
+  | .notEvery => decidable_of_iff (LicensingContext.doubtVerb.Licenses (.npi .antiAdditive))
+      (LicensingContext.licenses_npi_iff (by decide))
   | .notThinkStressed => isFalse not_carries_notThinkStressed
   | .notKnow => isFalse not_carries_notKnow
   | .noOneThinks => isTrue carries_noOneThinks
@@ -435,25 +446,18 @@ theorem links_attested :
       w ∈ Datum.wordsOf p.1.primaryText := by
   decide +kernel
 
-private theorem links_strict :
-    ∀ p ∈ links, p.2.item.licensor = some .antiAdditive ∧ p.2.item.antiLicensor = none ∧
-      ¬ p.2.item.IsFCI := by
-  decide +kernel
-
 private theorem links_carries :
     ∀ p ∈ links, p.2.environment ≠ .named .superlative → p.1 ≠ ex_74 →
       (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Carries .antiAdditive) := by
   decide +kernel
 
-/-- The licensing theory admits the strict NPI of each example in its environment exactly when the
-paper judges the example acceptable (55), the superlatives of (132) and the finite clause boundary
-of (74) aside. -/
+/-- The licenser of each example's environment admits the class of strict NPIs, which require
+anti-additive strength, exactly when the paper judges the example acceptable (55), the
+superlatives of (132) and the finite clause boundary of (74) aside. -/
 theorem judgments_predicted :
     ∀ p ∈ links, p.2.environment ≠ .named .superlative → p.1 ≠ ex_74 →
-      (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Admits p.2.item) :=
-  fun p hp hs h74 ↦
-    have ⟨hl, ha, hf⟩ := links_strict p hp
-    (links_carries p hp hs h74).trans (Licenser.admits_iff_carries hl ha hf).symm
+      (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Admits (.npi .antiAdditive)) :=
+  fun p hp hs h74 ↦ (links_carries p hp hs h74).trans Licenser.admits_npi_iff.symm
 
 /-- Strict NPIs are acceptable in superlative relative clauses, which are Strawson downward
 entailing and not anti-additive, the exception the paper leaves open (132). -/

@@ -313,13 +313,17 @@ def contextOf? (r : Datum) : Option LicensingContext :=
     | .nobody => .nobody
     | .negation => .negation
 
-/-- The library's licensing theory admits *irgendein* exactly where the paper finds it acceptable,
-(12), (13) and (16)–(18), inflectional negation (21) and the embedded question (22) aside. A
-question places no operator over the item, and the entry of *irgendein* records (22). -/
+/-- The class of *irgendein*: a weak negative polarity item that is a free choice item as well. -/
+abbrev irgendein : PolarityItem.Class := .npi .weak true
+
+/-- The ranked contexts admit the class of *irgendein* exactly where the paper finds the item
+acceptable, (12), (13) and (16)–(18), inflectional negation (21) aside. The embedded question of
+(22) has no profile, and the entry of *irgendein* records it. -/
 theorem rows_admits :
     ∀ r ∈ Examples.all, ∀ c ∈ contextOf? r, c ≠ .negation →
-      (r.judgment = .acceptable ↔ c.licenser.Admits German.PolarityItems.irgendein ∨
-        c = .polarQuestion ∧ German.PolarityItems.irgendein.verdict c = some .optional) := by
+      (r.judgment = .acceptable ↔
+        c.Admits irgendein ∨ c ∉ LicensingContext.ranked ∧
+          c ∈ German.PolarityItems.irgendein.attested) := by
   decide
 
 /-- Under a negative operator, *irgendein* is acceptable exactly when that operator closes its scope
@@ -332,7 +336,7 @@ theorem rows_irgendein_selective :
 /-- The licensing theory licenses *irgendein* under inflectional negation, yet (21) is
 ungrammatical, so selectivity rather than strength excludes it. -/
 theorem negation_licenses_irgendein :
-    LicensingContext.negation.licenser.Licenses German.PolarityItems.irgendein ∧
+    LicensingContext.negation.Licenses irgendein ∧
       Examples.ex21.judgment = .ungrammatical :=
   ⟨by decide, rfl⟩
 

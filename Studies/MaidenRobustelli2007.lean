@@ -13,10 +13,10 @@ colloquial usage they mean 'anybody' and 'anything' in questions. *Mai* means 'n
 negation and 'ever' in questions, superlatives, and comparatives. In formal usage *alcuno* replaces
 *nessuno* in negative sentences, and *affatto* 'at all' occurs only in negative sentences. Each
 example is linked to the lexical entry of the word it prints and to the named context in which the
-word stands. [The entry lists that context as one in which
-the word is possible](##MaidenRobustelli2007.verdict_eq_optional), and, the questions aside, [the
-verdicts on the six words are those of the weak
-class](##MaidenRobustelli2007.classVerdict_weak).
+word stands. [The entry lists that context among those in
+which the word is attested](##MaidenRobustelli2007.entries_agree), and [the entries of the six
+words are compatible with the class of weak negative polarity
+items](##MaidenRobustelli2007.compatible_weak).
 
 ## Implementation notes
 
@@ -73,24 +73,22 @@ theorem links_attested :
       p.2.word.toList <:+: p.2.item.form.toList := by
   decide +kernel
 
-/-- Every example is acceptable, and the entry of its item lists its context as one in which the
-item is possible. -/
-theorem verdict_eq_optional :
-    ∀ p ∈ links, p.1.judgment = .acceptable ∧
-      p.2.item.verdict p.2.context = some .optional := by
+/-- Every example is acceptable, and the entry of its item lists its context among those in which
+the item is attested. -/
+theorem entries_agree :
+    ∀ p ∈ links, p.1.judgment = .acceptable ∧ p.2.context ∈ p.2.item.attested := by
   decide +kernel
 
 -- Each context that an entry lists is the context of an example of the item.
 theorem contexts_linked :
-    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], ∀ q ∈ e.contexts,
-      ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = q.1 := by
+    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], ∀ c ∈ e.attested ∪ e.excluded,
+      ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = c := by
   decide +kernel
 
-/-- The questions aside, the verdicts on the six words are those of the weak class. A question
-places no operator over the item. -/
-theorem classVerdict_weak :
-    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], ∀ q ∈ e.contexts,
-      q.1 ≠ .polarQuestion → q.2 = q.1.classVerdict .weak := by
+/-- The entries of the six words are compatible with the class of weak negative polarity
+items. -/
+theorem compatible_weak :
+    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], e.Compatible (.npi .weak) := by
   decide +kernel
 
 end MaidenRobustelli2007

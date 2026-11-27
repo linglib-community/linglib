@@ -34,8 +34,8 @@ the minimal value, [every alternative is settled
 negatively](##VanRooy2003a.measure_alternative_eq_zero), which is the rhetorical reading.
 
 A question is not downward entailing in the position of the item, so the strengths of negation do
-not say which items stand in one: [the verdicts on *ever* and on *lift a finger* are those of no
-strength class](##VanRooy2003a.not_fitsStrength).
+not say which items stand in one: [no class is predicted to be possible in a
+question](##VanRooy2003a.question_notMem_region), where *ever* and *lift a finger* both stand.
 
 ## Main definitions
 
@@ -228,13 +228,20 @@ end Example
 
 /-! ### Questions and the strengths of negation
 
-A question is downward entailing only in the domain of its wh-phrase, so it carries no strength
-of negation, and an item that stands in a question has the verdicts of no strength class. -/
+A question is downward entailing only in the domain of its wh-phrase, so the strengths of negation
+give it no profile, and no class is predicted to be possible in one. -/
+
+-- §3.1
+theorem question_notMem_region (k : PolarityItem.Class) :
+    PolarityItem.LicensingContext.polarQuestion ∉ k.region ∧
+      PolarityItem.LicensingContext.constituentQuestion ∉ k.region := by
+  simp [PolarityItem.Class.region, PolarityItem.LicensingContext.Admits,
+    PolarityItem.LicensingContext.profile]
 
 -- (8b), (9b), (12)
-theorem not_fitsStrength (s : Negation.Strength) :
-    ¬ English.PolarityItems.ever.FitsStrength s ∧
-      ¬ English.PolarityItems.liftAFinger.FitsStrength s := by
-  cases s <;> decide
+theorem mem_attested :
+    PolarityItem.LicensingContext.polarQuestion ∈ English.PolarityItems.ever.attested ∧
+      PolarityItem.LicensingContext.polarQuestion ∈ English.PolarityItems.liftAFinger.attested := by
+  decide
 
 end VanRooy2003a

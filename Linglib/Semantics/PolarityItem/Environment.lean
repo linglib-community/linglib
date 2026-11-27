@@ -219,26 +219,27 @@ end Environment
 namespace Path
 
 variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] (p : Path σ P)
-  {s : Negation.Strength} {π : PolarityItem}
+  {s : Negation.Strength} {π : Class}
 
 /-- The licensing condition, which requires that some domain admit the item. -/
-def Licenses (π : PolarityItem) : Prop :=
+def Licenses (π : Class) : Prop :=
   ∃ t ∈ p.layers.tails, (Licenser.ofOperator (p.environment t)).Admits π
 
-/-- An item that a strength licenses is not licensed on a path along which every domain has
+/-- A class of negative polarity items is not licensed on a path along which every domain has
 positive sign. -/
-theorem not_licenses_of_mem_licensor (hs : s ∈ π.licensor)
-    (h : ∀ t ∈ p.layers.tails, (p.environment t).signature.sign = 1) : ¬p.Licenses π := by
+theorem not_licenses_npi {fc : Bool}
+    (h : ∀ t ∈ p.layers.tails, (p.environment t).signature.sign = 1) :
+    ¬p.Licenses (.npi s fc) := by
   rintro ⟨t, ht, ha⟩
-  obtain ⟨r, hr, hc⟩ | ⟨⟨⟩, -⟩ | ⟨⟨⟩, -⟩ := ha.1 (.inl (Option.isSome_iff_exists.2 ⟨s, hs⟩))
+  obtain hc | ⟨⟨⟩, -⟩ := Licenser.licenses_npi_iff.1 ha.1
   exact (p.environment t).not_carries_of_sign_eq_one (h t ht) hc
 
-/-- An item that a strength blocks is not licensed on a path along which every domain holds that
-strength. -/
-theorem not_licenses_of_mem_antiLicensor (hs : s ∈ π.antiLicensor)
+/-- A class of positive polarity items is not licensed on a path along which every domain holds
+the strength that blocks it. -/
+theorem not_licenses_ppi
     (h : ∀ t ∈ p.layers.tails,
       (Licenser.ofOperator (p.environment t)).Holds s.toProjectivitySignature) :
-    ¬p.Licenses π := fun ⟨t, ht, ha⟩ ↦ ha.2 ⟨s, hs, h t ht⟩
+    ¬p.Licenses (.ppi s) := fun ⟨t, ht, ha⟩ ↦ Licenser.admits_ppi_iff.1 ha (h t ht)
 
 end Path
 

@@ -26,7 +26,6 @@ open PolarityItem
 /-- *pi-pis*, wh + 'also/even', is a dual NPI/FCI covering the map's whole
     non-specific span (A.37). -/
 def piPis : PolarityItem :=
-  { form := Indefinites.piPis.form
-  , freeChoice := true }
+  { form := Indefinites.piPis.form }
 
 end Quechua.PolarityItems

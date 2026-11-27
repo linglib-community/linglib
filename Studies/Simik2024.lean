@@ -562,10 +562,11 @@ def NahodouLicensed (pol r : Polarity) : Prop :=
 instance (pol r : Polarity) : Decidable (NahodouLicensed pol r) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The language file entry of the indefinite of an example. -/
-def Examples.Indefinite.entry : Examples.Indefinite → PolarityItem
-  | .ppi => Czech.PolarityItems.nejaky
-  | .nci => Czech.PolarityItems.zadny
+/-- The class of the indefinite of an example: *nějaký* is a positive polarity item, and *žádný*
+is a negative concord item, which clausal negation licenses. -/
+def Examples.Indefinite.cls : Examples.Indefinite → PolarityItem.Class
+  | .ppi => .ppi .antiMorphic
+  | .nci => .npi .antiMorphic
 
 -- (43d), (43e): a question with *náhodou* is acceptable exactly when some reading of its negation
 -- licenses the particle and suits the indefinite, a positive polarity item escaping the negation
@@ -574,7 +575,7 @@ theorem nahodou_example (x : Examples.Example)
     (hx : x.datum.feature? "particle" = some Czech.Particles.nahodou.form) :
     ∀ s ∈ x.polarity, ∀ i ∈ x.indefinite,
       (x.datum.judgment = .acceptable ↔
-        ∃ r, NahodouLicensed s.toPolarity r ∧ r.Admits i.entry) := by
+        ∃ r, NahodouLicensed s.toPolarity r ∧ r.Admits i.cls) := by
   revert hx; cases x <;> decide
 
 -- `nahodou_example` reads the three rows of (43d) and (43e)

@@ -38,22 +38,29 @@ structure Link where
   context : LicensingContext
   /-- The words of the item as printed. -/
   words : List String
+  /-- The class that Zwarts gives the item. -/
+  cls : PolarityItem.Class
 
 open Dutch.PolarityItems German.PolarityItems in
-/-- The links of the examples. -/
+/-- The links of the examples. The items of (1) and (3) are weak, and those of (2) and (4) are
+strong. -/
 def links : List (Datum × Link) :=
-  [(ex_1a, ⟨hoeven, .atMost, ["hoeven"]⟩), (ex_1b, ⟨hoeven, .nobody, ["hoeven"]⟩),
-    (ex_1c, ⟨kunnenVelen, .few, ["kunnen", "velen"]⟩),
-    (ex_1d, ⟨kunnenVelen, .nobody, ["kunnen", "velen"]⟩),
-    (ex_2a, ⟨ookMaarIets, .atMost, ["ook", "maar", "iets"]⟩),
-    (ex_2b, ⟨ookMaarIets, .nobody, ["ook", "maar", "iets"]⟩),
-    (ex_2c, ⟨bijster, .few, ["bijster"]⟩), (ex_2d, ⟨bijster, .nobody, ["bijster"]⟩),
-    (ex_3a, ⟨brauchen, .atMost, ["brauchen"]⟩), (ex_3b, ⟨brauchen, .nobody, ["brauchen"]⟩),
-    (ex_3c, ⟨ausstehenKoennen, .few, ["ausstehen", "können"]⟩),
-    (ex_3d, ⟨ausstehenKoennen, .nobody, ["ausstehen", "können"]⟩),
-    (ex_4a, ⟨auchNurIrgendetwas, .atMost, ["auch", "nur", "irgendetwas"]⟩),
-    (ex_4b, ⟨auchNurIrgendetwas, .nobody, ["auch", "nur", "irgendetwas"]⟩),
-    (ex_4c, ⟨sonderlich, .few, ["sonderlich"]⟩), (ex_4d, ⟨sonderlich, .nobody, ["sonderlich"]⟩)]
+  [(ex_1a, ⟨hoeven, .atMost, ["hoeven"], .npi .weak⟩),
+    (ex_1b, ⟨hoeven, .nobody, ["hoeven"], .npi .weak⟩),
+    (ex_1c, ⟨kunnenVelen, .few, ["kunnen", "velen"], .npi .weak⟩),
+    (ex_1d, ⟨kunnenVelen, .nobody, ["kunnen", "velen"], .npi .weak⟩),
+    (ex_2a, ⟨ookMaarIets, .atMost, ["ook", "maar", "iets"], .npi .antiAdditive⟩),
+    (ex_2b, ⟨ookMaarIets, .nobody, ["ook", "maar", "iets"], .npi .antiAdditive⟩),
+    (ex_2c, ⟨bijster, .few, ["bijster"], .npi .antiAdditive⟩),
+    (ex_2d, ⟨bijster, .nobody, ["bijster"], .npi .antiAdditive⟩),
+    (ex_3a, ⟨brauchen, .atMost, ["brauchen"], .npi .weak⟩),
+    (ex_3b, ⟨brauchen, .nobody, ["brauchen"], .npi .weak⟩),
+    (ex_3c, ⟨ausstehenKoennen, .few, ["ausstehen", "können"], .npi .weak⟩),
+    (ex_3d, ⟨ausstehenKoennen, .nobody, ["ausstehen", "können"], .npi .weak⟩),
+    (ex_4a, ⟨auchNurIrgendetwas, .atMost, ["auch", "nur", "irgendetwas"], .npi .antiAdditive⟩),
+    (ex_4b, ⟨auchNurIrgendetwas, .nobody, ["auch", "nur", "irgendetwas"], .npi .antiAdditive⟩),
+    (ex_4c, ⟨sonderlich, .few, ["sonderlich"], .npi .antiAdditive⟩),
+    (ex_4d, ⟨sonderlich, .nobody, ["sonderlich"], .npi .antiAdditive⟩)]
 
 -- The words of each link occur in its example and in the form of its entry, so a link to the
 -- wrong entry fails.
@@ -62,11 +69,18 @@ theorem links_attested :
       w.toList ∈ Datum.wordsOf p.1.primaryText ∧ w.toList <:+: p.2.item.form.toList := by
   decide +kernel
 
-/-- The licensing theory admits the item of each example in its context exactly when Zwarts judges
-the example acceptable. The weak items are admitted in every context, and the strong items only
-under *no one* and *none of*. -/
+/-- A context admits the class of the item of each example exactly when Zwarts judges the example
+acceptable. The weak class is admitted in every context of the examples, and the strong class
+only under *no one* and *none of*. -/
 theorem judgments_predicted :
-    ∀ p ∈ links, (p.1.judgment = .acceptable ↔ p.2.context.licenser.Admits p.2.item) := by
+    ∀ p ∈ links, (p.1.judgment = .acceptable ↔ p.2.context.Admits p.2.cls) := by
+  decide +kernel
+
+-- The entry of each item lists the context of an acceptable example among those in which the item
+-- is attested, and the context of a starred example among those from which it is excluded.
+theorem entries_agree :
+    ∀ p ∈ links, (p.1.judgment = .acceptable → p.2.context ∈ p.2.item.attested) ∧
+      (p.1.judgment ≠ .acceptable → p.2.context ∈ p.2.item.excluded) := by
   decide +kernel
 
 end Zwarts1998

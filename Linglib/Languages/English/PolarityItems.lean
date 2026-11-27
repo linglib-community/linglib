@@ -57,47 +57,38 @@ open PolarityItem
 
 /-- *any*, the prototypical negative polarity and free choice item ([chierchia-2006]). -/
 def any : PolarityItem :=
-  { form := "any"
-  , licensor := some .weak
-  , freeChoice := true }
+  { form := "any" }
 
 /-- *ever*, a temporal negative polarity item. It stands in a polar question, *Have you ever been
 to China?*, and in a constituent question, *Who has ever been to China?* ([van-rooy-2003a] (9b),
 (8b)). -/
 def ever : PolarityItem :=
   { form := "ever"
-  , licensor := some .weak
-  , contexts := [(.polarQuestion, .optional), (.constituentQuestion, .optional)] }
+  , attested := {.polarQuestion, .constituentQuestion} }
 
 /-- *yet*, a temporal negative polarity item. -/
 def yet : PolarityItem :=
-  { form := "yet"
-  , licensor := some .weak }
+  { form := "yet" }
 
 /-- *anymore*, a temporal negative polarity item. -/
 def anymore : PolarityItem :=
-  { form := "anymore"
-  , licensor := some .weak }
+  { form := "anymore" }
 
 /-- *at all*, a degree negative polarity item. -/
 def atAll : PolarityItem :=
-  { form := "at all"
-  , licensor := some .weak }
+  { form := "at all" }
 
 /-- *in the least*, a degree negative polarity item. -/
 def inTheLeast : PolarityItem :=
-  { form := "in the least"
-  , licensor := some .weak }
+  { form := "in the least" }
 
 /-- *a single*, an emphatic existential negative polarity item. -/
 def aSingle : PolarityItem :=
-  { form := "a single"
-  , licensor := some .weak }
+  { form := "a single" }
 
 /-- *whatsoever*, an emphatic post-nominal negative polarity item. -/
 def whatsoever : PolarityItem :=
-  { form := "whatsoever"
-  , licensor := some .weak }
+  { form := "whatsoever" }
 
 /-! ### Strong NPIs -/
 
@@ -107,47 +98,38 @@ help Mary?*, and in a constituent question, *Who lifted a finger to help Mary?*
 ([van-rooy-2003a] (26a), (12a), (12b)). -/
 def liftAFinger : PolarityItem :=
   { form := "lift a finger"
-  , licensor := some .antiAdditive
-  , contexts := [(.negation, .optional), (.polarQuestion, .optional),
-      (.constituentQuestion, .optional)] }
+  , attested := {.negation, .polarQuestion, .constituentQuestion} }
 
 /-- *budge an inch*, an idiomatic minimizer needing an anti-additive licenser. -/
 def budgeAnInch : PolarityItem :=
-  { form := "budge an inch"
-  , licensor := some .antiAdditive }
+  { form := "budge an inch" }
 
 /-- *in years*, a temporal strong negative polarity item. -/
 def inYears : PolarityItem :=
-  { form := "in years"
-  , licensor := some .antiAdditive }
+  { form := "in years" }
 
 /-- *until*, a temporal strong negative polarity item in its punctual use. -/
 def until_ : PolarityItem :=
-  { form := "until"
-  , licensor := some .antiAdditive }
+  { form := "until" }
 
 /-- Additive *either* ([rullmann-2003], [gajewski-2011]), out under the Strawson anti-additive
 *only*: *\*Only John likes pancakes, either* ([gajewski-2011] p. 120). -/
 def either : PolarityItem :=
-  { form := "either"
-  , licensor := some .antiAdditive }
+  { form := "either" }
 
 /-! ### Free choice items -/
 
 /-- *whatever*, a free-relative free choice item. -/
 def whatever : PolarityItem :=
-  { form := "whatever"
-  , freeChoice := true }
+  { form := "whatever" }
 
 /-- *whoever*, a free-relative free choice item. -/
 def whoever : PolarityItem :=
-  { form := "whoever"
-  , freeChoice := true }
+  { form := "whoever" }
 
 /-- *whichever*, a free-relative free choice item. -/
 def whichever : PolarityItem :=
-  { form := "whichever"
-  , freeChoice := true }
+  { form := "whichever" }
 
 /-! ### Positive polarity items -/
 
@@ -156,93 +138,78 @@ operator, *\*John didn't call someone*, *\*No one called someone*, *\*John came 
 without someone*, and fine below *at most five*, *At most five boys called someone*
 ([szabolcsi-2004] (10)–(13); [vanderwouden-1997]). -/
 def someone : PolarityItem :=
-  { form := "someone"
-  , antiLicensor := some .antiAdditive }
+  { form := "someone" }
 
 /-- *already*, a temporal positive polarity item, blocked under *no one* and not under *few* or *at
 most three*, *\*No one has already finished his exam* ([ladusaw-1979]). -/
 def already : PolarityItem :=
-  { form := "already"
-  , antiLicensor := some .antiAdditive }
+  { form := "already" }
 
 /-- *too*, an additive positive polarity item, the positive counterpart of *either*
 ([ladd-1981]). -/
 def too : PolarityItem :=
-  { form := "too"
-  , antiLicensor := some .antiMorphic }
+  { form := "too" }
 
 /-- *somewhat*, a degree positive polarity item. -/
 def somewhat : PolarityItem :=
-  { form := "somewhat"
-  , antiLicensor := some .antiMorphic }
+  { form := "somewhat" }
 
 /-- *rather*, a positive polarity item, blocked under *no one* and not under *few* or *at most
 three*, *\*No one would rather be in Cleveland* ([ladusaw-1979]). -/
 def rather : PolarityItem :=
-  { form := "rather"
-  , antiLicensor := some .antiAdditive }
+  { form := "rather" }
 
 /-- *tons of*, an emphatic positive polarity item, as in *She has tons of friends.* -/
 def tonsOf : PolarityItem :=
-  { form := "tons of"
-  , antiLicensor := some .antiMorphic }
+  { form := "tons of" }
 
 /-- *awfully*, an emphatic positive polarity item, as in *I was awfully depressed.* -/
 def awfully : PolarityItem :=
-  { form := "awfully"
-  , antiLicensor := some .antiMorphic }
+  { form := "awfully" }
 
 /-! ### Maximizer NPIs -/
 
 /-- *wild horses*, an idiomatic maximizer negative polarity item, as in *Wild horses couldn't
 keep me away.* -/
 def wildHorses : PolarityItem :=
-  { form := "wild horses"
-  , licensor := some .weak }
+  { form := "wild horses" }
 
 /-- *all the tea in China*, an idiomatic maximizer negative polarity item, as in *I wouldn't do
 it for all the tea in China.* -/
 def allTheTeaInChina : PolarityItem :=
-  { form := "all the tea in China"
-  , licensor := some .weak }
+  { form := "all the tea in China" }
 
 /-- *a ten-foot pole*, an idiomatic maximizer negative polarity item, as in *I wouldn't touch it
 with a ten-foot pole.* -/
 def aTenFootPole : PolarityItem :=
-  { form := "a ten-foot pole"
-  , licensor := some .weak }
+  { form := "a ten-foot pole" }
 
 /-- *in a million years*, an idiomatic maximizer negative polarity item, as in *I wouldn't marry
 that woman in a million years.* -/
 def inAMillionYears : PolarityItem :=
-  { form := "in a million years"
-  , licensor := some .weak }
+  { form := "in a million years" }
 
 /-! ### Minimizer PPIs -/
 
 /-- *at the drop of a hat*, an idiomatic minimizer positive polarity item, as in *He'd quit at the
 drop of a hat.* -/
 def atTheDropOfAHat : PolarityItem :=
-  { form := "at the drop of a hat"
-  , antiLicensor := some .antiMorphic }
+  { form := "at the drop of a hat" }
 
 /-- *in a jiffy*, an idiomatic minimizer positive polarity item, as in *We'll be back in a
 jiffy.* -/
 def inAJiffy : PolarityItem :=
-  { form := "in a jiffy"
-  , antiLicensor := some .antiMorphic }
+  { form := "in a jiffy" }
 
 /-- *for a pittance*, an idiomatic minimizer positive polarity item, as in *He got Madonna to
 play for peanuts.* -/
 def forAPittance : PolarityItem :=
-  { form := "for a pittance"
-  , antiLicensor := some .antiMorphic }
+  { form := "for a pittance" }
 
 /-- *for a song*, an idiomatic minimizer positive polarity item, as in *He bought that painting
 for a song.* -/
 def forASong : PolarityItem :=
-  { form := "for a song"
-  , antiLicensor := some .antiMorphic }
+  { form := "for a song" }
 
 /-! ### Lexicon access -/
 

@@ -38,14 +38,12 @@ whose series is also used in comparatives (A201), under negation in a higher cla
 emphatically, in conditionals (A203), but not under direct negation (A199a) or in questions (A204)
 ([haspelmath-1997] A.26.3). -/
 def akárki : PolarityItem :=
-  { form := Indefinites.akárki.form
-  , freeChoice := true }
+  { form := Indefinites.akárki.form }
 
 /-- *bárki* 'anyone', a free choice item whose series is used as the *akár*-series is, in
 comparatives (A201), under negation in a higher clause (A202) and in conditionals (A203), but not
 under direct negation (A199a) or in questions (A204) ([haspelmath-1997] A.26.3). -/
 def bárki : PolarityItem :=
-  { form := Indefinites.bárki.form
-  , freeChoice := true }
+  { form := Indefinites.bárki.form }
 
 end Hungarian.PolarityItems

@@ -59,23 +59,21 @@ follows *senza*, *senza incontrare nessuno* 'without meeting anyone', and colloq
 'anybody' in a question, *C'è nessuno lì dentro?* 'Is there anybody in there?'. -/
 def nessuno : PolarityItem :=
   { form := Indefinites.nessuno.form
-  , contexts := [(.negation, .optional), (.superordinateNegation, .optional),
-      (.withoutClause, .optional), (.polarQuestion, .optional)] }
+  , attested := {.negation, .superordinateNegation, .withoutClause, .polarQuestion} }
 
 /-- *niente*, or *nulla*, 'nothing', as in *Non ho detto niente a nessuno* 'I haven't said
 anything to anybody', *senza niente che mi aiutasse* 'without anything to help me', and colloquially
 *Hai dimenticato niente?* 'Have you forgotten anything?'. -/
 def niente : PolarityItem :=
   { form := "niente/nulla"
-  , contexts := [(.negation, .optional), (.withoutClause, .optional),
-      (.polarQuestion, .optional)] }
+  , attested := {.negation, .withoutClause, .polarQuestion} }
 
 /-- *neanche* 'not even' has the variants *nemmeno* and *neppure*, as in *Non si comporta bene
 neanche a scuola* 'He doesn't behave well even at school', *Neanche a scuola si comporta bene*
 'Not even at school does he behave well'. -/
 def neanche : PolarityItem :=
   { form := "neanche/nemmeno/neppure"
-  , contexts := [(.negation, .optional)] }
+  , attested := {.negation} }
 
 /-! ### Weak NPIs -/
 
@@ -86,8 +84,7 @@ più dolce e più grande che abbia mai incontrato* 'the sweetest and greatest ma
 encountered', *Piove più che mai* 'It rains more than ever'. -/
 def mai : PolarityItem :=
   { form := "mai"
-  , contexts := [(.negation, .optional), (.nobody, .optional), (.superlative, .optional),
-      (.clausalComparative, .optional), (.polarQuestion, .optional)] }
+  , attested := {.negation, .nobody, .superlative, .clausalComparative, .polarQuestion} }
 
 /-- *alcuno* 'any' is a weak NPI of formal and bureaucratic styles without free choice uses, as in
 *Non ho comprato alcun libro* 'I didn't buy any book', *senza aver visto alcuno* 'without having
@@ -97,7 +94,7 @@ book, he would have told us', against *\*Ho comprato alcun libro*. The plural *a
 a plain indefinite. -/
 def alcuno : PolarityItem :=
   { form := "alcuno"
-  , contexts := [(.negation, .optional), (.withoutClause, .optional)] }
+  , attested := {.negation, .withoutClause} }
 
 /-- *pur con* 'even with', as in *pur con tutta la fantasia del mondo* 'even with all the fantasy
 in the world', which needs the verb of its clause negated, giving *Non puoi immaginarlo, pur con
@@ -112,7 +109,7 @@ haven't disappeared at all'; its non-negative use 'quite', *Affatto bello gli se
 spettacolo* 'The show seemed quite beautiful to him', is very formal and literary. -/
 def affatto : PolarityItem :=
   { form := "affatto"
-  , contexts := [(.negation, .optional)] }
+  , attested := {.negation} }
 
 /-! ### Free choice items -/
 
@@ -122,8 +119,7 @@ Episodically it needs a modifier, *Ieri ho parlato con qualsiasi filosofo che fo
 a parlarmi* against *??Ieri ho parlato con qualsiasi filosofo*, and under negation an unmodified
 one has only the rhetorical 'not just any' reading, *Non leggerò qualunque libro*. -/
 def qualsiasi : PolarityItem :=
-  { form := "qualsiasi/qualunque"
-  , freeChoice := true }
+  { form := "qualsiasi/qualunque" }
 
 /-- *un* N *qualsiasi*, or *qualunque*, is the existential free choice item, as in *Prendi un dolce
 qualunque* 'take a sweet whatever', *Pensa a un numero qualsiasi* 'Think of any number'. It is
@@ -131,8 +127,7 @@ marginal in a plain episodic sentence, *??Ieri ho parlato con un qualsiasi filos
 negation it has only the rhetorical reading, *Io non sono un agricoltore qualunque* 'I'm not
 just any old farmer'. -/
 def unoQualsiasi : PolarityItem :=
-  { form := "un N qualsiasi"
-  , freeChoice := true }
+  { form := "un N qualsiasi" }
 
 /-- The polarity items. -/
 def items : List PolarityItem :=

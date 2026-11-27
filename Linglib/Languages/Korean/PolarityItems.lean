@@ -33,7 +33,6 @@ def nwukwuTo : PolarityItem :=
 /-- *nwukwu-na* 'anybody', the free-choice item ([haspelmath-1997] (A291)); *-na* is not an
 additive particle. -/
 def nwukwuNa : PolarityItem :=
-  { form := Indefinites.nwukwuNa.form
-  , freeChoice := true }
+  { form := Indefinites.nwukwuNa.form }
 
 end Korean.PolarityItems
