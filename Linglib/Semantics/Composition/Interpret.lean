@@ -16,6 +16,7 @@ functions of the value its index is given](##PhraseStructure.Tree.interpret_bind
 
 ## Main definitions
 
+* `Interpreter.withAbstraction`: an interpreter that admits abstraction at an index.
 * `PhraseStructure.Tree.derive`: the derivations of a tree over a language of rules with
   abstraction, its traces variables.
 * `PhraseStructure.Tree.interpret`: their values, relative to an assignment.
@@ -27,6 +28,19 @@ functions of the value its index is given](##PhraseStructure.Tree.interpret_bind
 -/
 
 @[expose] public section
+
+namespace Interpreter
+
+variable {B : Type} {L : ManySorted.Language.{0, 0} (Ty B)}
+
+/-- An interpreter with predicate abstraction: a binder node admits abstraction over its index,
+and a binary node admits what the interpreter admits. -/
+def withAbstraction (I : Interpreter L ℕ) (Γ : ℕ → Ty B) :
+    Interpreter (L.withAbstraction Γ) ℕ where
+  bind n b := [⟨Γ n ⇒ b, ManySorted.Language.Sum.inr (PredicateAbstraction.index n b)⟩]
+  binary l r := (I.binary l r).map fun ⟨u, m⟩ ↦ ⟨u, .inl m⟩
+
+end Interpreter
 
 open ManySorted Interpreter
 
@@ -52,7 +66,7 @@ def Leaf.val (ρ : ∀ {a : Ty B}, W a → (∀ n, (Γ n).Dom D) → a.Dom D) :
   | _, .trace n => fun g ↦ g n
 
 /-- The leaves a word or a trace may be. -/
-def Leaf.lex {Lx : Type} (lex : Lx → List (Σ a, W a)) (Γ : ℕ → Ty B) :
+def Leaf.lex {Lx : Type} (lex : Lx → List (Sigma W)) (Γ : ℕ → Ty B) :
     Lx ⊕ ℕ → List (Σ a, Leaf W Γ a)
   | .inl w => (lex w).map fun ⟨a, x⟩ ↦ ⟨a, .word x⟩
   | .inr n => [⟨Γ n, .trace n⟩]
@@ -67,7 +81,7 @@ variable {C Lx : Type} {B : Type} {D : B → Type} {W : Ty B → Type}
 `Γ`: at each node the rules that apply to the types of its daughters, and at a binder
 abstraction over its index. -/
 def derive (L : Language.{0, 0} (Ty B)) [L.LocallyFinite] (Γ : ℕ → Ty B)
-    (lex : Lx → List (Σ a, W a)) (t : Tree C Lx) :
+    (lex : Lx → List (Sigma W)) (t : Tree C Lx) :
     List (Σ a, (L.withAbstraction Γ).Deriv (Leaf W Γ) a) :=
   t.derivs ((typeDriven L).withAbstraction Γ) (Leaf.lex lex Γ)
 
@@ -76,7 +90,7 @@ indices typed by `Γ`, relative to an assignment of values to the indices: the v
 derivations, an item's value being what `ρ` gives it. -/
 def interpret (L : Language.{0, 0} (Ty B)) (D : B → Type) [L.LocallyFinite]
     [M : L.Structure (Ty.Dom D)] (Γ : ℕ → Ty B)
-    (ρ : ∀ {a : Ty B}, W a → (∀ n, (Γ n).Dom D) → a.Dom D) (lex : Lx → List (Σ a, W a))
+    (ρ : ∀ {a : Ty B}, W a → (∀ n, (Γ n).Dom D) → a.Dom D) (lex : Lx → List (Sigma W))
     (t : Tree C Lx) : List (Σ a : Ty B, (∀ n, (Γ n).Dom D) → a.Dom D) :=
   t.values ((typeDriven L).withAbstraction Γ)
     (Language.withAbstraction.structure (Assignments.total D Γ)) (Leaf.val ρ) (Leaf.lex lex Γ)
@@ -85,7 +99,7 @@ section Compositional
 
 variable (L : Language.{0, 0} (Ty B)) [L.LocallyFinite] [M : L.Structure (Ty.Dom D)]
   (Γ : ℕ → Ty B) (ρ : ∀ {a : Ty B}, W a → (∀ n, (Γ n).Dom D) → a.Dom D)
-  (lex : Lx → List (Σ a, W a))
+  (lex : Lx → List (Sigma W))
 
 theorem interpret_eq_map (t : Tree C Lx) :
     t.interpret L D Γ ρ lex = (t.derive L Γ lex).map fun ⟨a, d⟩ ↦

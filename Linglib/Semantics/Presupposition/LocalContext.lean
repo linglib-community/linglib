@@ -19,6 +19,7 @@ restriction, and a presupposition is *satisfied* when the local context entails 
 * `Presupposition.Satisfied`: satisfaction of a presupposition in the local context.
 * `Presupposition.TransparentAt`: transparency for the resolutions of a trigger.
 * `Presupposition.StablyTransparent`: transparency for the truth values all continuations share.
+* `Presupposition.commitments`: what some of a set of propositions include and some exclude.
 
 ## Main results
 
@@ -35,6 +36,10 @@ restriction, and a presupposition is *satisfied* when the local context entails 
   transparency for each continuation alone; stable transparency is weaker.
 * `Presupposition.transparent_image_compl_iff`: transparency, unlike stable transparency, is
   invariant under negating the gap.
+* `Presupposition.isLocalContext_singleton_of_isTruthFunctional`,
+  `Presupposition.IsLocalContext.subset_commitments`: the local context of a truth-functional
+  environment is the commitments of what a single continuation expresses, and is included in the
+  commitments of what several do.
 
 ## Implementation notes
 
@@ -47,6 +52,7 @@ the context set, so a world outside it constrains nothing.
 
 * [schlenker-2009]
 * [kalomoiros-2023]
+* [barker-2022a]
 -/
 
 @[expose] public section
@@ -307,5 +313,64 @@ theorem stablyTransparent_iff (henv : ∀ f ∈ env, IsTruthFunctional f) :
       fun h' f hf hm ↦ h' f hf ((e hf).2 ((e' hf).1 hm))⟩
 
 end TruthFunctional
+
+/-! ### Commitments -/
+
+/-- The commitments of a set of propositions: what some of them include and some exclude, their
+least upper bound less their greatest lower bound. For the propositions a sentence may still
+express these are the worlds at which its truth value is open, [barker-2022a]'s semantic
+commitments of a context. Propositions are the elements of any complete Boolean algebra, sets of
+worlds or predicates of them. -/
+def commitments {β : Type*} [CompleteBooleanAlgebra β] (S : Set β) : β := sSup S \ sInf S
+
+/-- The commitments of predicates of worlds, at a world. -/
+theorem commitments_apply {S : Set (W → Prop)} {w : W} :
+    commitments S w ↔ (∃ p ∈ S, p w) ∧ ∃ p ∈ S, ¬ p w := by
+  simp only [commitments, Pi.sdiff_apply, sSup_apply, sInf_apply, iSup_Prop_eq, iInf_Prop_eq]
+  change _ ∧ ¬ _ ↔ _
+  simp
+
+section Commitments
+
+variable {S T : Set (Set W)} {C x : Set W} {env : Set (Set W → Set W)} {f : Set W → Set W} {w : W}
+
+theorem mem_commitments : w ∈ commitments S ↔ (∃ p ∈ S, w ∈ p) ∧ ∃ p ∈ S, w ∉ p := by
+  simp [commitments]
+
+theorem commitments_mono (h : S ⊆ T) : commitments S ⊆ commitments T := fun _ hw ↦
+  let ⟨⟨p, hp, hwp⟩, q, hq, hwq⟩ := mem_commitments.1 hw
+  mem_commitments.2 ⟨⟨p, h hp, hwp⟩, q, h hq, hwq⟩
+
+theorem DependsAt.mem_commitments (h : DependsAt f w) : w ∈ commitments (Set.range f) := by
+  by_cases hu : w ∈ f Set.univ
+  · exact Presupposition.mem_commitments.2
+      ⟨⟨_, ⟨_, rfl⟩, hu⟩, _, ⟨∅, rfl⟩, fun h0 ↦ h ⟨fun _ ↦ h0, fun _ ↦ hu⟩⟩
+  · exact Presupposition.mem_commitments.2 ⟨⟨_, ⟨∅, rfl⟩, by_contra fun h0 ↦
+      h ⟨fun hu' ↦ (hu hu').elim, fun h0' ↦ (h0 h0').elim⟩⟩, _, ⟨_, rfl⟩, hu⟩
+
+/-- The local context of a single truth-functional continuation is the commitments of the
+propositions it expresses, within the context. -/
+theorem isLocalContext_singleton_of_isTruthFunctional (hf : IsTruthFunctional f) :
+    IsLocalContext C {f} (C ∩ commitments (Set.range f)) := by
+  convert isLocalContext_of_isTruthFunctional (C := C) (env := {f}) (by simpa using hf) using 2
+  ext w
+  refine ⟨fun h ↦ ?_, fun ⟨g, hg, hdep⟩ ↦ by obtain rfl : g = f := hg; exact hdep.mem_commitments⟩
+  obtain ⟨⟨_, ⟨d, rfl⟩, hd⟩, _, ⟨d', rfl⟩, hd'⟩ := mem_commitments.1 h
+  refine ⟨f, rfl, fun hiff ↦ hd' ?_⟩
+  by_cases hw : w ∈ d <;> by_cases hw' : w ∈ d'
+  · exact (hf.mem_iff_of_mem hw').2 ((hf.mem_iff_of_mem hw).1 hd)
+  · exact (hf.mem_iff_of_notMem hw').2 (hiff.1 ((hf.mem_iff_of_mem hw).1 hd))
+  · exact (hf.mem_iff_of_mem hw').2 (hiff.2 ((hf.mem_iff_of_notMem hw).1 hd))
+  · exact (hf.mem_iff_of_notMem hw').2 ((hf.mem_iff_of_notMem hw).1 hd)
+
+/-- The local context of truth-functional continuations is included in the commitments of the
+propositions they express. -/
+theorem IsLocalContext.subset_commitments (henv : ∀ f ∈ env, IsTruthFunctional f)
+    (hx : IsLocalContext C env x) : x ⊆ C ∩ commitments (⋃ f ∈ env, Set.range f) := by
+  rw [hx.unique (isLocalContext_of_isTruthFunctional henv)]
+  exact fun w ⟨hC, f, hf, hdep⟩ ↦
+    ⟨hC, commitments_mono (Set.subset_biUnion_of_mem hf) hdep.mem_commitments⟩
+
+end Commitments
 
 end Presupposition

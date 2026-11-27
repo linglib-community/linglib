@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Mode
+public import Linglib.Semantics.Composition.Mode.Basic
 public import Linglib.Semantics.Composition.Rules
 public import Mathlib.Logic.Relator
 
@@ -44,19 +44,22 @@ variable {B : Type} {D D' : B → Type}
 /-- The datum of an effect: what a reader reads, a store holds, or a continuation returns. -/
 abbrev Eff.Datum (D : B → Type) : Eff B → Type
   | .R i | .W i | .C i => i.Dom D
-  | .S | .M => Unit
+  | .S | .M | .F => Unit
 
 /-- A relation between results through an effect, given a relation between its data:
 alternatives matched on each side, readers that agree at related data, stored pairs related in
-both parts, continuations that agree at related continuations, and partial values defined
-together and then related. -/
+both parts, continuations that agree at related continuations, partial values defined together
+and then related, and focused values related with their alternatives matched on each side. -/
 def Eff.RelWith : (f : Eff B) → (f.Datum D → f.Datum D' → Prop) → {α β : Type} →
-    (α → β → Prop) → Eff.F D f α → Eff.F D' f β → Prop
+    (α → β → Prop) → Eff.Obj D f α → Eff.Obj D' f β → Prop
   | .S, _, _, _, q => fun s s' ↦ (∀ a ∈ s, ∃ b ∈ s', q a b) ∧ ∀ b ∈ s', ∃ a ∈ s, q a b
   | .R _, rd, _, _, q => LiftFun rd q
-  | .W _, rd, _, _, q => fun x y ↦ q x.1 y.1 ∧ rd x.2 y.2
+  | .W _, rd, _, _, q => fun x y ↦ q x.val y.val ∧ rd x.log y.log
   | .C _, rd, _, _, q => LiftFun (LiftFun q rd) rd
   | .M, _, _, _, q => fun x y ↦ (x.Dom ↔ y.Dom) ∧ ∀ hx hy, q (x.get hx) (y.get hy)
+  | .F, _, _, _, q => fun x y ↦ q x.ordinary y.ordinary ∧
+    (∀ a ∈ x.alternatives, ∃ b ∈ y.alternatives, q a b) ∧
+      ∀ b ∈ y.alternatives, ∃ a ∈ x.alternatives, q a b
 
 mutual
 
@@ -73,15 +76,36 @@ termination_by structural a
 def Eff.DatumRel (r : ∀ b, D b → D' b → Prop) (f : Eff B) : f.Datum D → f.Datum D' → Prop :=
   match f with
   | .R i | .W i | .C i => Ty.LiftRel r i
-  | .S | .M => fun _ _ ↦ True
+  | .S | .M | .F => fun _ _ ↦ True
 termination_by structural f
 
 end
 
 /-- A relation between results, through an effect. -/
 abbrev Eff.LiftRel (r : ∀ b, D b → D' b → Prop) (f : Eff B) {α β : Type} (R : α → β → Prop) :
-    Eff.F D f α → Eff.F D' f β → Prop :=
+    Eff.Obj D f α → Eff.Obj D' f β → Prop :=
   Eff.RelWith f (Eff.DatumRel r f) R
+
+/-- The tops of a conjoinable type are related. -/
+theorem Ty.liftRel_top (r : ∀ b, D b → D' b → Prop) : (o : Ty B) → (h : o.Conjoinable) →
+    Ty.LiftRel r o (Ty.Dom.completeBooleanAlgebra D o h).top
+      (Ty.Dom.completeBooleanAlgebra D' o h).top
+  | .t, _ => Iff.rfl
+  | .fn _ b, h => fun _ _ _ ↦ Ty.liftRel_top r b h
+  | .comp (.R _) b, h => fun _ _ _ ↦ Ty.liftRel_top r b h
+  | .base _, h | .comp .S _, h | .comp (.W _) _, h | .comp (.C _) _, h | .comp .M _, h
+  | .comp .F _, h => h.elim
+
+/-- The meets of related elements of a conjoinable type are related. -/
+theorem Ty.liftRel_inf (r : ∀ b, D b → D' b → Prop) : (o : Ty B) → (h : o.Conjoinable) →
+    ∀ {a b : o.Dom D} {a' b' : o.Dom D'}, Ty.LiftRel r o a a' → Ty.LiftRel r o b b' →
+      Ty.LiftRel r o ((Ty.Dom.completeBooleanAlgebra D o h).inf a b)
+        ((Ty.Dom.completeBooleanAlgebra D' o h).inf a' b')
+  | .t, _ => fun ha hb ↦ and_congr ha hb
+  | .fn _ c, h => fun ha hb _ _ hx ↦ Ty.liftRel_inf r c h (ha hx) (hb hx)
+  | .comp (.R _) c, h => fun ha hb _ _ hx ↦ Ty.liftRel_inf r c h (ha hx) (hb hx)
+  | .base _, h | .comp .S _, h | .comp (.W _) _, h | .comp (.C _) _, h | .comp .M _, h
+  | .comp .F _, h => h.elim
 
 namespace Eff
 
@@ -104,6 +128,14 @@ theorem rel_map (f : Eff B) :
   | W o => exact ⟨hg hx.1, hx.2⟩
   | C o => exact fun _ _ hc ↦ hx fun _ _ hab ↦ hc (hg hab)
   | M => exact ⟨hx.1, fun hx₁ hx₂ ↦ hg (hx.2 hx₁ hx₂)⟩
+  | F =>
+    refine ⟨hg hx.1, fun _ hy ↦ ?_, fun _ hy ↦ ?_⟩
+    · obtain ⟨a, ha, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hy
+      obtain ⟨b, hb, hab⟩ := hx.2.1 a ha
+      exact ⟨g' b, WithAlternatives.mem_alternatives_map.2 ⟨b, hb, rfl⟩, hg hab⟩
+    · obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hy
+      obtain ⟨a, ha, hab⟩ := hx.2.2 b hb
+      exact ⟨g a, WithAlternatives.mem_alternatives_map.2 ⟨a, ha, rfl⟩, hg hab⟩
 
 theorem rel_pure (f : Eff B) (h : f.IsApplicative) :
     LiftFun R (LiftRel r f R) (pure f h) (pure f h) := by
@@ -111,9 +143,10 @@ theorem rel_pure (f : Eff B) (h : f.IsApplicative) :
   cases f with
   | S => exact ⟨fun _ ha ↦ ⟨b, rfl, ha ▸ hab⟩, fun _ hb ↦ ⟨a, rfl, hb ▸ hab⟩⟩
   | R i => exact fun _ _ _ ↦ hab
-  | W o => cases h; exact ⟨hab, Iff.rfl⟩
+  | W o => exact ⟨hab, Ty.liftRel_top r o h.out⟩
   | C o => exact fun _ _ hc ↦ hc hab
   | M => exact ⟨Iff.rfl, fun _ _ ↦ hab⟩
+  | F => exact ⟨hab, fun _ ha ↦ ⟨b, rfl, ha ▸ hab⟩, fun _ hb ↦ ⟨a, rfl, hb ▸ hab⟩⟩
 
 theorem rel_seq (f : Eff B) (h : f.IsApplicative) :
     LiftFun (LiftRel r f (LiftFun R S)) (LiftFun (LiftRel r f R) (LiftRel r f S))
@@ -131,11 +164,21 @@ theorem rel_seq (f : Eff B) (h : f.IsApplicative) :
       obtain ⟨a, ha, hab⟩ := hx.2 b hb
       exact ⟨k a, ⟨k, hk, a, ha, rfl⟩, hkk hab⟩
   | R i => exact fun _ _ hi ↦ hg hi (hx hi)
-  | W o => cases h; exact ⟨hg.1 hx.1, and_congr hg.2 hx.2⟩
+  | W o => exact ⟨hg.1 hx.1, Ty.liftRel_inf r o h.out hg.2 hx.2⟩
   | C o => exact fun _ _ hc ↦ hg fun _ _ hk ↦ hx fun _ _ hab ↦ hc (hk hab)
   | M =>
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.1 h₁, hx.1.1 h₂⟩, fun ⟨h₁, h₂⟩ ↦ ⟨hg.1.2 h₁, hx.1.2 h₂⟩⟩,
       fun ⟨h₁, h₂⟩ ⟨h₁', h₂'⟩ ↦ hg.2 h₁ h₁' (hx.2 h₂ h₂')⟩
+  | F =>
+    refine ⟨hg.1 hx.1, fun _ hy ↦ ?_, fun _ hy ↦ ?_⟩
+    · obtain ⟨k, hk, a, ha, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hy
+      obtain ⟨k', hk', hkk⟩ := hg.2.1 k hk
+      obtain ⟨b, hb, hab⟩ := hx.2.1 a ha
+      exact ⟨k' b, WithAlternatives.mem_alternatives_seq.2 ⟨k', hk', b, hb, rfl⟩, hkk hab⟩
+    · obtain ⟨k', hk', b, hb, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hy
+      obtain ⟨k, hk, hkk⟩ := hg.2.2 k' hk'
+      obtain ⟨a, ha, hab⟩ := hx.2.2 b hb
+      exact ⟨k a, WithAlternatives.mem_alternatives_seq.2 ⟨k, hk, a, ha, rfl⟩, hkk hab⟩
 
 theorem rel_join (f : Eff B) (h : f.IsApplicative) :
     LiftFun (LiftRel r f (LiftRel r f R)) (LiftRel r f R) (join f h) (join f h) := by
@@ -152,12 +195,22 @@ theorem rel_join (f : Eff B) (h : f.IsApplicative) :
       obtain ⟨a, ha, hab⟩ := hss.2 b hb
       exact ⟨a, ⟨s, hs, ha⟩, hab⟩
   | R i => exact fun _ _ hi ↦ hx hi hi
-  | W o => cases h; exact ⟨hx.1.1, and_congr hx.2 hx.1.2⟩
+  | W o => exact ⟨hx.1.1, Ty.liftRel_inf r o h.out hx.2 hx.1.2⟩
   | C o => exact fun _ _ hc ↦ hx fun _ _ hm ↦ hm hc
   | M =>
     exact ⟨⟨fun ⟨h₁, h₂⟩ ↦ ⟨hx.1.1 h₁, (hx.2 h₁ _).1.1 h₂⟩,
         fun ⟨h₁, h₂⟩ ↦ ⟨hx.1.2 h₁, (hx.2 _ h₁).1.2 h₂⟩⟩,
       fun ⟨h₁, h₂⟩ ⟨h₁', h₂'⟩ ↦ (hx.2 h₁ h₁').2 h₂ h₂'⟩
+  | F =>
+    refine ⟨hx.1.1, fun a hy ↦ ?_, fun b hy ↦ ?_⟩
+    · obtain ⟨s, hs, ha⟩ := WithAlternatives.mem_alternatives_bind.1 hy
+      obtain ⟨s', hs', hss⟩ := hx.2.1 s hs
+      obtain ⟨b, hb, hab⟩ := hss.2.1 a ha
+      exact ⟨b, WithAlternatives.mem_alternatives_bind.2 ⟨s', hs', hb⟩, hab⟩
+    · obtain ⟨s', hs', hb⟩ := WithAlternatives.mem_alternatives_bind.1 hy
+      obtain ⟨s, hs, hss⟩ := hx.2.2 s' hs'
+      obtain ⟨a, ha, hab⟩ := hss.2.2 b hb
+      exact ⟨a, WithAlternatives.mem_alternatives_bind.2 ⟨s, hs, ha⟩, hab⟩
 
 theorem rel_counit {i : Ty B} :
     LiftFun (LiftRel r (.W i) (LiftRel r (.R i) R)) R counit counit :=
@@ -191,21 +244,22 @@ theorem Mode.rel_eval
   | _, _, _, .mapL (f := f) m => fun _ _ ha _ _ hb ↦
     Eff.rel_map (R := Ty.LiftRel r _) (S := Ty.LiftRel r _) f
       (fun _ _ hx ↦ Mode.rel_eval hG m hx hb) ha
-  | _, _, _, .ap (f := f) h m => fun _ _ ha _ _ hb ↦
+  | _, _, _, .ap (f := f) m h => fun _ _ ha _ _ hb ↦
     Eff.rel_seq (R := Ty.LiftRel r _) (S := Ty.LiftRel r _) f h
       (Eff.rel_map (R := Ty.LiftRel r _) (S := LiftFun (Ty.LiftRel r _) (Ty.LiftRel r _)) f
         (fun _ _ hx _ _ hy ↦ Mode.rel_eval hG m hx hy) ha) hb
-  | _, _, _, .unitR (f := f) h m => fun _ _ ha _ _ hb ↦
+  | _, _, _, .unitR (f := f) m h => fun _ _ ha _ _ hb ↦
     Mode.rel_eval hG m (fun _ _ hx ↦ ha (Eff.rel_pure f h hx)) hb
-  | _, _, _, .unitL (f := f) h m => fun _ _ ha _ _ hb ↦
+  | _, _, _, .unitL (f := f) m h => fun _ _ ha _ _ hb ↦
     Mode.rel_eval hG m ha fun _ _ hy ↦ hb (Eff.rel_pure f h hy)
   | _, _, _, .counit (i := i) m => fun _ _ ha _ _ hb ↦
     Eff.rel_counit (Eff.rel_map (.W i)
       (fun _ _ hx ↦ Eff.rel_map (.R i) (fun _ _ hy ↦ Mode.rel_eval hG m hx hy) hb) ha)
   | _, _, _, .ejectR m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m ha (Eff.rel_eject hb)
   | _, _, _, .ejectL m => fun _ _ ha _ _ hb ↦ Mode.rel_eval hG m (Eff.rel_eject ha) hb
-  | _, _, _, .join (f := f) h m => fun _ _ ha _ _ hb ↦
-    Eff.rel_join f h (Mode.rel_eval hG m ha hb)
+  | _, _, _, .join (f := f) m h => fun _ _ ha _ _ hb ↦
+    (Mode.eval_join (D := D) m _ _).symm ▸ (Mode.eval_join (D := D') m _ _).symm ▸
+      Eff.rel_join f h (Mode.rel_eval hG m ha hb)
   | _, _, _, .lower m => fun _ _ ha _ _ hb ↦ Eff.rel_lower (Mode.rel_eval hG m ha hb)
 
 omit M M' in
@@ -244,7 +298,7 @@ lexicons give every derivation related values. -/
 theorem effectGrammar.isLogicalRel (h : M.IsLogicalRel M' (Ty.LiftRel r)) :
     (effectGrammar.structure (G := G) (M := M)).IsLogicalRel
       (effectGrammar.structure (G := G) (M := M')) (Ty.LiftRel r) :=
-  .mk₂ (fun s _ _ hx ↦ h.funMap s hx) fun m _ _ _ _ hx hy ↦
+  h.withBinary fun m _ _ _ _ hx hy ↦
     Mode.rel_eval (fun b _ _ hx _ _ hy ↦ h.funMap b ⟨hx, hy⟩) m hx hy
 
 end Interpreter
