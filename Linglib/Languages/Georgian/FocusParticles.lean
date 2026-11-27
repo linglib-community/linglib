@@ -23,6 +23,6 @@ is then the coordinator `Georgian.Coordination.c`.
 namespace Georgian.FocusParticles
 
 /-- *-c* 'too, also', *-ca* after a consonant, enclitic on the phrase it adds. -/
-def c : AdditiveParticle := { morph := .encl "c", gloss := "too, also" }
+def c : AdditiveParticle := { morph := .encl "c", side := .after }
 
 end Georgian.FocusParticles

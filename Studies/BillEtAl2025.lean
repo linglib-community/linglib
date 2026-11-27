@@ -260,6 +260,11 @@ theorem card_pattern_le_one_iff {s : Sentence} : (∀ i, (s.pattern i).card ≤ 
 theorem side?_exponent_georgian_mu (i : Fin 2) :
     (exponent .georgian (.mu i)).morph.kind.side? = some .after := rfl
 
+-- (1b) and (2b): the additive particle of each language stands on that side of its phrase
+theorem headPattern_mu_self (l : Language) (i : Fin 2) :
+    headPattern (.mu i) i = {(additiveParticle l).side} := by
+  revert l i; decide
+
 /-! ### Structures, accounts and their measures -/
 
 /-- A structure for the conjunction of two noun phrases, Fig. 1. -/
