@@ -1,40 +1,50 @@
 module
 
-public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Degree.Marginality.Hyperreal
+public import Linglib.Semantics.Degree.Sorites
 public import Mathlib.Algebra.Order.Ring.StandardPart
 public import Mathlib.Analysis.Real.Hyperreal
 
 /-!
 # Itzhaki (2021): Qualitative versus Quantitative Representation: A Non-Standard Analysis of the Sorites Paradox
 
-Itzhaki traces the Sorites paradox to the conflation of two maps from individuals to degrees. A
-quantitative map sends a pile to its number of grains and a person to their height, in an
-Archimedean scale; a qualitative map sends piles and changes into the hyperreals. A heap gets an
-infinite qualitative size, so that adding or removing a grain never crosses between heaps and
-non-heaps, and a change of one millimetre gets an infinitesimal qualitative magnitude, so that the
-standard part of a height ignores it. The premises of each Sorites are then jointly satisfiable
-under the qualitative map and inconsistent under the quantitative one, and the conclusion of the
-argument follows from its premises only when the inverse of the size map is total.
+Individuals are mapped to degrees in two ways. A quantitative map sends a pile to its number of
+grains and a person to their height, in an archimedean scale. A qualitative map takes values in
+the hyperreals: the qualitative size of a heap is its number of grains plus an infinite number
+`H`, and the qualitative magnitude of a change `r` below the smallest relevant unit is `ε * r`
+for an infinitesimal `ε`.
 
-A soritical argument is one schema, `Sorites`: a base case, tolerance along a step relation, and
-a counterexample. The classic and the reverse paradox of the heap are its instances along steps of
-one grain, read through either size map.
+The premises of the paradox of the heap hold under the qualitative size, because adding a grain
+keeps a size finite and removing one keeps it infinite. The premises of the paradox for *tall*
+hold on the hyperreal degrees for the predicate of having standard part at least the standard,
+because subtracting an infinitesimal leaves the standard part unchanged. In both cases the unit of
+change is negligible against the distance between the base case and the counterexample, and a
+monotone predicate satisfies the premises exactly then. Under the quantitative map the
+intermediate values are all degrees of some individual, a chain of steps leads from the base case
+to the counterexample, and the premises are inconsistent.
+
+When a gradable adjective modifies a collective noun, as in *small heap*, sizes are compared up
+to a finite difference. The premises then hold for some standard exactly when the two heaps are
+infinitely far apart.
 
 ## Implementation notes
 
-* The finite and the infinitesimal hyperreals are mathlib's subgroups of archimedean classes at
-  least and above that of `1`, and the standard part is mathlib's `stdPart`. Being finitely close
-  and being infinitely less are at most marginal difference and largely smaller than in
-  `Hyperreal.finiteScale`, from which their transitivity and congruence come.
+* Being indistinguishable and being finitely close are at most marginal difference in
+  `Hyperreal.infinitesimalScale` and `Hyperreal.finiteScale`, and being infinitely less is largely
+  smaller than in the latter. The preorder of the merged paradox is the order of the blocks of
+  `Hyperreal.finiteScale`. The standard part is mathlib's `ArchimedeanClass.stdPart`.
 * Whether the size of a heap is known is a parameter of the qualitative size; no result depends on
   it.
-* The pluralities of the heap model are their sizes, as the paper reduces them (fn. 23), and the
-  individuals of the tall model their heights in millimetres.
-* As printed, (9d) claims that an infinite number times a nonzero finite one is infinite, which
-  `ω * ε = 1` refutes (`not_forall_mk_mul_neg`), and (80) is unsatisfiable under the qualitative
-  size (36) (`not_merged_qualSize`).
+* The pluralities of the heap model are their sizes, one of each size, and the individuals of the
+  tall model their heights in millimetres.
+* The paradox for *tall* is stated on the hyperreal degrees and not on individuals, since no
+  individual's height is another's less an infinitesimal. Its tolerance premise at the height of
+  an individual is the induction premise of the paper.
+* Closure of the infinite numbers under multiplication is stated for a finite factor that is not
+  infinitesimal.
+* The merged paradox is stated for an arbitrary size map. Under the qualitative size with a single
+  `H` any two heaps are finitely close, and the comparison of two heaps takes them to have
+  qualitative sizes `H` and `G`.
 
 ## References
 
@@ -52,140 +62,29 @@ open ArchimedeanClass Hyperreal Relation MarginalScale
 
 /-! ### Finite, infinitesimal and infinite hyperreals -/
 
-/-- The infinitesimal hyperreals, those of archimedean class above that of `1` (7b). -/
-noncomputable abbrev infinitesimals : AddSubgroup ℝ* := ballAddSubgroup 0
+-- (9d): an infinite number plus a finite one is infinite
+theorem mk_add_neg {H a : ℝ*} (hH : mk H < 0) (ha : 0 ≤ mk a) : mk (H + a) < 0 :=
+  (mk_add_eq_mk_left (hH.trans_le ha)).symm ▸ hH
 
-/-- The finite hyperreals, those of archimedean class at least that of `1` (7a). -/
-noncomputable abbrev finites : AddSubgroup ℝ* := closedBallAddSubgroup 0
+-- (9d): an infinite number times a finite one that is not infinitesimal is infinite
+example {H a : ℝ*} (hH : mk H < 0) (ha : mk a = 0) : mk (H * a) < 0 := by
+  rwa [mk_mul, ha, add_zero]
 
-theorem mem_infinitesimals {a : ℝ*} : a ∈ infinitesimals ↔ 0 < mk a :=
-  mem_ballAddSubgroup_iff (by simp)
+-- §2.2.2: every finite number is a difference of two infinite ones
+theorem exists_sub_of_mk_nonneg {a : ℝ*} (ha : 0 ≤ mk a) :
+    ∃ G H : ℝ*, mk G < 0 ∧ mk H < 0 ∧ a = G - H :=
+  ⟨ω + a, ω, mk_add_neg archimedeanClassMk_omega_neg ha, archimedeanClassMk_omega_neg, by ring⟩
 
-theorem mem_finites {a : ℝ*} : a ∈ finites ↔ 0 ≤ mk a := mem_closedBallAddSubgroup_iff
-
-/-- `a` is indistinguishable from `b` when their difference is infinitesimal (10). -/
-def InfinitesimallyClose (a b : ℝ*) : Prop := a - b ∈ infinitesimals
-
-/-- `a` and `b` are finitely close when their difference is finite (74). -/
-def FinitelyClose (a b : ℝ*) : Prop := a - b ∈ finites
-
-/-- `a` is infinitely less than `b` when it is less and not finitely close (78). -/
-def InfinitelyLess (a b : ℝ*) : Prop := a < b ∧ ¬ FinitelyClose a b
-
--- (74) is at most marginal difference in the scale of finite differences.
-theorem finitelyClose_iff_atMostMarginal {a b : ℝ*} :
-    FinitelyClose a b ↔ finiteScale.AtMostMarginal a b := by
-  rw [finiteScale_atMostMarginal_iff, FinitelyClose, mem_finites, mk_sub_comm]
-
--- (78) is largely smaller than in the scale of finite differences.
-theorem infinitelyLess_iff_largelyLT {a b : ℝ*} :
-    InfinitelyLess a b ↔ finiteScale.LargelyLT a b := by
-  rw [LargelyLT, marginallyLT_iff_lt_and_atMostMarginal, ← finitelyClose_iff_atMostMarginal,
-    InfinitelyLess]
-  tauto
-
-/-- Being indistinguishable is an equivalence relation (11). -/
-instance : IsEquiv ℝ* InfinitesimallyClose where
-  refl _ := by simp [InfinitesimallyClose]
-  symm _ _ h := by simpa [InfinitesimallyClose] using infinitesimals.neg_mem h
-  trans _ _ _ h₁ h₂ := by simpa [InfinitesimallyClose] using infinitesimals.add_mem h₁ h₂
-
-theorem FinitelyClose.refl (a : ℝ*) : FinitelyClose a a := by simp [FinitelyClose]
-
-@[grind →]
-theorem FinitelyClose.symm {a b : ℝ*} (h : FinitelyClose a b) : FinitelyClose b a := by
-  have := finites.neg_mem h
-  rwa [neg_sub] at this
-
-theorem FinitelyClose.trans {a b c : ℝ*} (h₁ : FinitelyClose a b) (h₂ : FinitelyClose b c) :
-    FinitelyClose a c := by
-  have := finites.add_mem h₁ h₂
-  rwa [sub_add_sub_cancel] at this
-
-/-- Being finitely close is an equivalence relation (fn. 31). -/
-instance : IsEquiv ℝ* FinitelyClose where
-  refl := FinitelyClose.refl
-  symm _ _ := FinitelyClose.symm
-  trans _ _ _ := FinitelyClose.trans
-
--- (14), (67)
-theorem not_infinitesimallyClose_coe {r s : ℝ} (h : r ≠ s) :
-    ¬ InfinitesimallyClose (r : ℝ*) s := by
-  rw [InfinitesimallyClose, mem_infinitesimals, ← coe_sub, archimedeanClassMk_coe (sub_ne_zero.2 h)]
+-- (14), (67): distinct reals are distinguishable
+theorem not_atMostMarginal_coe {r s : ℝ} (h : r ≠ s) :
+    ¬ infinitesimalScale.AtMostMarginal (r : ℝ*) s := by
+  rw [infinitesimalScale_atMostMarginal_iff, ← coe_sub,
+    archimedeanClassMk_coe (sub_ne_zero.2 h.symm)]
   exact lt_irrefl 0
 
 -- (22)
-theorem stdPart_sub_infinitesimal (r : ℝ) {e : ℝ*} (he : e ∈ infinitesimals) :
-    stdPart ((r : ℝ*) - e) = r := by
-  rw [stdPart_sub_eq_left (mem_infinitesimals.1 he), stdPart_coe]
-
--- (9d)
-theorem not_forall_mk_mul_neg :
-    ¬ ∀ H a : ℝ*, mk H < 0 → a ≠ 0 → 0 ≤ mk a → mk (H * a) < 0 := fun h ↦ by
-  have := h ω ε archimedeanClassMk_omega_neg epsilon_ne_zero archimedeanClassMk_epsilon_pos.le
-  rw [mul_comm, epsilon_mul_omega] at this
-  simp at this
-
--- §2.2.2
-theorem exists_sub_of_mk_nonneg {a : ℝ*} (ha : 0 ≤ mk a) :
-    ∃ G H : ℝ*, mk G < 0 ∧ mk H < 0 ∧ a = G - H :=
-  ⟨a + ω, ω, by
-    rw [add_comm, mk_add_eq_mk_left (archimedeanClassMk_omega_neg.trans_le ha)]
-    exact archimedeanClassMk_omega_neg, archimedeanClassMk_omega_neg, by ring⟩
-
--- (38a)
-theorem mk_add_natCast_nonneg {a : ℝ*} (ha : 0 ≤ mk a) (n : ℕ) : 0 ≤ mk (a + n) :=
-  (le_min ha (mk_natCast_nonneg n)).trans (min_le_mk_add a n)
-
--- (38b)
-theorem mk_sub_natCast_neg {a : ℝ*} (ha : mk a < 0) (n : ℕ) : mk (a - n) < 0 := by
-  rw [sub_eq_add_neg, mk_add_eq_mk_left (by rw [mk_neg]; exact ha.trans_le (mk_natCast_nonneg n))]
-  exact ha
-
-/-! ### The soritical argument -/
-
-/-- A soritical argument has a base case `a` with `P`, tolerance of `P` along `R`, and a
-counterexample `b` without `P`, premises I, II and IV of (1) and (2). -/
-structure Sorites {α : Type*} (P : α → Prop) (R : α → α → Prop) (a b : α) : Prop where
-  base : P a
-  tolerance : ∀ ⦃x y⦄, P x → R x y → P y
-  counter : ¬ P b
-
-variable {α : Type*} {P : α → Prop} {R : α → α → Prop} {a b : α}
-
-theorem Sorites.not_reflTransGen (h : Sorites P R a b) : ¬ ReflTransGen R a b := fun hab ↦
-  let ⟨_, _, hcd, hc, hd, _⟩ := hab.exists_boundary (S := {x | P x}) h.base h.counter
-  hd (h.tolerance hc hcd)
-
-theorem Sorites.of_reflTransGen (h : Sorites P R a b) {y : α} (hy : ReflTransGen R a y) : P y :=
-  by_contra fun hn ↦ (Sorites.mk h.base h.tolerance hn).not_reflTransGen hy
-
-/-- `y` is one step `d` above `x` along the size map `s`. -/
-def Step (s : α → ℝ*) (d : ℝ*) (x y : α) : Prop := s y = s x + d
-
-variable {s : α → ℝ*} {d : ℝ*}
-
-/-- The conclusion of a Sorites (52.III) follows from its premises when the inverse of the size map
-is total on the intermediate values ((44)–(46)). -/
-theorem Sorites.conclusion (h : Sorites P (Step s d) a b) (hs : Function.Injective s) :
-    ∀ n : ℕ, (∀ m < n, ∃ x, s x = s a + m * d) → ∀ y, s y = s a + n * d → P y := by
-  intro n
-  induction n with
-  | zero => intro _ y hy; rw [Nat.cast_zero, zero_mul, add_zero] at hy; exact hs hy ▸ h.base
-  | succ n ih =>
-    intro htot y hy
-    obtain ⟨x, hx⟩ := htot n (Nat.lt_succ_self n)
-    refine h.tolerance (ih (fun m hm ↦ htot m (hm.trans (Nat.lt_succ_self n))) x hx) ?_
-    unfold Step
-    rw [hy, hx]
-    push_cast
-    ring
-
-/-- When the inverse of the size map is total and `b` is reached arithmetically from `a`, the
-premises of a Sorites are inconsistent. -/
-theorem Sorites.false_of_total (h : Sorites P (Step s d) a b) (hs : Function.Injective s)
-    (n : ℕ) (htot : ∀ m < n, ∃ x, s x = s a + m * d) (hb : s b = s a + n * d) : False :=
-  h.counter (h.conclusion hs n htot b hb)
+theorem stdPart_coe_sub (r : ℝ) {e : ℝ*} (he : 0 < mk e) : stdPart ((r : ℝ*) - e) = r := by
+  rw [stdPart_sub_eq_left he, stdPart_coe]
 
 /-! ### Collective nouns -/
 
@@ -199,7 +98,7 @@ size to `H`, and anything else to its size. -/
 noncomputable def qualSize (x : De) : ℝ* :=
   if heap x then (if known x then H + size x else H) else size x
 
-variable {heap known size H} {x y : De}
+variable {heap known size H} {x y a b : De}
 
 theorem qualSize_of_not_heap (hx : ¬ heap x) : qualSize heap known size H x = size x := by
   simp [qualSize, hx]
@@ -214,8 +113,7 @@ theorem mk_qualSize_neg (hH : mk H < 0) (hx : heap x) :
     mk (qualSize heap known size H x) < 0 := by
   unfold qualSize
   split_ifs
-  · exact (mk_add_eq_mk_left (hH.trans_le (mk_natCast_nonneg _))).symm ▸ hH
-  · exact hH
+  exacts [mk_add_neg hH (mk_natCast_nonneg _), hH]
 
 -- (37b)
 theorem natCast_lt_qualSize (hH : mk H < 0) (hpos : 0 < H) (hx : heap x) (n : ℕ) :
@@ -225,40 +123,43 @@ theorem natCast_lt_qualSize (hH : mk H < 0) (hpos : 0 < H) (hx : heap x) (n : �
     rwa [abs_one, nsmul_one, abs_of_pos hpos] at this
   unfold qualSize
   split_ifs
-  · exact hn.trans_le (le_add_of_nonneg_right (Nat.cast_nonneg _))
-  · exact hn
+  exacts [hn.trans_le (le_add_of_nonneg_right (Nat.cast_nonneg _)), hn]
 
-theorem finitelyClose_qualSize (hx : heap x) (hy : heap y) :
-    FinitelyClose (qualSize heap known size H x) (qualSize heap known size H y) := by
-  have hn (n : ℕ) : (n : ℝ*) ∈ finites := mem_finites.2 (mk_natCast_nonneg n)
-  unfold FinitelyClose qualSize
-  split_ifs <;> simp only [add_sub_add_left_eq_sub, add_sub_cancel_left, sub_add_cancel_left,
-    sub_self, finites.zero_mem, finites.sub_mem (hn _) (hn _), finites.neg_mem (hn _), hn]
+-- (76): two heaps are finitely close in qualitative size
+theorem atMostMarginal_qualSize (hx : heap x) (hy : heap y) :
+    finiteScale.AtMostMarginal (qualSize heap known size H x) (qualSize heap known size H y) := by
+  have hn (m n : ℕ) : 0 ≤ mk ((m : ℝ*) - n) :=
+    (le_min (mk_natCast_nonneg m) (mk_natCast_nonneg n)).trans (min_le_mk_sub ..)
+  rw [finiteScale_atMostMarginal_iff]
+  unfold qualSize
+  split_ifs
+  · simpa using hn _ _
+  · simpa using mk_natCast_nonneg (S := ℝ*) _
+  · simpa using mk_natCast_nonneg (S := ℝ*) _
+  · simp
 
-/-- Under the qualitative size, the paradox of the heap (52) is consistent, since adding a grain to
-a non-heap never yields a heap (38a). -/
-theorem sorites_not_heap (hH : mk H < 0) {g₁ g : De} (h₁ : ¬ heap g₁) (hg : heap g) :
-    Sorites (¬ heap ·) (Step (qualSize heap known size H) 1) g₁ g where
-  base := h₁
+/-- Under the qualitative size the premises of the paradox of the heap (52) hold, since adding a
+grain to a non-heap never yields a heap (38a). -/
+theorem sorites_not_heap (hH : mk H < 0) (ha : ¬ heap a) (hb : heap b) :
+    Sorites (¬ heap ·)
+      (fun x y ↦ qualSize heap known size H y = qualSize heap known size H x + 1) a b where
+  base := ha
   tolerance x y hx hxy hy := by
     have := mk_qualSize_neg (known := known) (size := size) hH hy
-    rw [hxy, ← Nat.cast_one] at this
-    exact (this.trans_le (mk_add_natCast_nonneg (mk_qualSize_nonneg hx) 1)).false
-  counter := not_not.2 hg
+    rw [hxy] at this
+    exact (this.trans_le ((le_min (mk_qualSize_nonneg hx) (by simp)).trans
+      (min_le_mk_add ..))).false
+  counter := not_not_intro hb
 
-/-- Under the qualitative size, the reverse paradox of the heap (54) is consistent, since removing a
-grain from a heap never yields a non-heap (38b). -/
-theorem sorites_heap (hH : mk H < 0) {g₁ g : De} (h₁ : ¬ heap g₁) (hg : heap g) :
-    Sorites heap (Step (qualSize heap known size H) (-1)) g g₁ where
-  base := hg
-  tolerance x y hx hxy := by
-    by_contra hy
-    have := mk_qualSize_nonneg (known := known) (size := size) (H := H) hy
-    rw [hxy, ← sub_eq_add_neg, ← Nat.cast_one] at this
-    exact (mk_sub_natCast_neg (mk_qualSize_neg hH hx) 1).not_ge this
-  counter := h₁
+-- (54): the reverse paradox is the contrapositive argument
+theorem sorites_heap (hH : mk H < 0) (ha : ¬ heap a) (hb : heap b) :
+    Sorites heap
+      (fun x y ↦ qualSize heap known size H y = qualSize heap known size H x - 1) b a :=
+  have h := (sorites_not_heap (known := known) (size := size) hH ha hb).swap
+  ⟨hb, fun _ _ hx hxy ↦ not_not.1 (h.tolerance (not_not_intro hx) (eq_sub_iff_add_eq.1 hxy).symm),
+    ha⟩
 
--- (47a)
+-- (47a): the quantitative size of a heap is nobody's qualitative size
 theorem natCast_size_notMem_range (hH : mk H < 0) (hs : Function.Injective size)
     (hx : heap x) : (size x : ℝ*) ∉ Set.range (qualSize heap known size H) := fun ⟨y, hy⟩ ↦ by
   by_cases hy' : heap y
@@ -278,11 +179,24 @@ theorem add_natCast_size_notMem_range (hH : mk H < 0) (hs : Function.Injective s
     · exact hx (hs (Nat.cast_injective (add_left_cancel hy)) ▸ hy')
     · exact hpos.ne' (Nat.cast_eq_zero.1 (add_eq_left.1 hy.symm))
   · rw [qualSize_of_not_heap hy'] at hy
-    have := mk_natCast_nonneg (S := ℝ*) (size y)
-    rw [hy, mk_add_eq_mk_left (hH.trans_le (mk_natCast_nonneg _))] at this
-    exact this.not_gt hH
+    exact (mk_add_neg hH (mk_natCast_nonneg _)).not_ge (hy ▸ mk_natCast_nonneg (S := ℝ*) (size y))
 
 end Heap
+
+/-- When the size map is injective and every intermediate size is the size of something, so that
+its inverse is total on them (44)–(46), the premises of a Sorites along steps of `d` are
+inconsistent. -/
+theorem not_sorites_of_forall_exists {α : Type*} {P : α → Prop} {s : α → ℝ*} {d : ℝ*} {a b : α}
+    (hs : Function.Injective s) {n : ℕ} (h : ∀ m < n, ∃ x, s x = s a + m • d)
+    (hb : s b = s a + n • d) : ¬ Sorites P (fun x y ↦ s y = s x + d) a b :=
+  fun hP ↦ hP.not_reflTransGen (reflTransGen_of_forall_exists_eq_add hs h hb)
+
+-- (81b): along steps of one grain a downward closed predicate of sizes satisfies the premises
+-- from `a` to `b` exactly when `a` is infinitely less than `b`
+theorem exists_isLowerSet_sorites_iff_largelyLT {a b : ℝ*} :
+    (∃ P : ℝ* → Prop, IsLowerSet {x | P x} ∧ Sorites P (fun x y ↦ y = x + 1) a b) ↔
+      finiteScale.LargelyLT a b := by
+  rw [exists_isLowerSet_sorites_add_iff zero_lt_one, finiteScale_largelyLT_iff, mk_one]
 
 /-! ### The model of the heap -/
 
@@ -309,19 +223,21 @@ example : qs g₁ = 1 ∧ qs g₁₀₀₀₀ = ω + 10000 := by
   simp [qs, qualSize, heap, g₁, g₁₀₀₀₀]
 
 -- (52)
-theorem sorites_qs : Sorites (¬ heap ·) (Step qs 1) g₁ g₁₀₀₀₀ :=
+theorem sorites_qs : Sorites (¬ heap ·) (fun x y ↦ qs y = qs x + 1) g₁ g₁₀₀₀₀ :=
   sorites_not_heap archimedeanClassMk_omega_neg (by simp [heap, g₁]) rfl
 
 -- (54)
-theorem sorites_qs_reverse : Sorites heap (Step qs (-1)) g₁₀₀₀₀ g₁ :=
+theorem sorites_qs_reverse : Sorites heap (fun x y ↦ qs y = qs x - 1) g₁₀₀₀₀ g₁ :=
   sorites_heap archimedeanClassMk_omega_neg (by simp [heap, g₁]) rfl
 
-/-- Under the quantitative size, the premises of the classic paradox are inconsistent. -/
-theorem not_sorites_size : ¬ Sorites (¬ heap ·) (Step (fun x : De ↦ (x.1 : ℝ*)) 1) g₁ g₁₀₀₀₀ :=
-  fun h ↦ h.false_of_total (fun _ _ e ↦ Subtype.ext (by simpa using e)) 9999
+-- under the quantitative size the premises of the classic paradox are inconsistent
+theorem not_sorites_size :
+    ¬ Sorites (¬ heap ·) (fun x y : De ↦ (y.1 : ℝ*) = x.1 + 1) g₁ g₁₀₀₀₀ :=
+  not_sorites_of_forall_exists (s := fun x : De ↦ (x.1 : ℝ*))
+    (fun _ _ e ↦ Subtype.ext (by simpa using e)) (n := 9999)
     (fun m hm ↦ ⟨⟨m + 1, by simp, by omega⟩, by simp [g₁]; ring⟩) (by simp [g₁₀₀₀₀, g₁]; norm_num)
 
-/-- The quantitative size of a heap is nobody's qualitative size (49a). -/
+-- (49a)
 example : ¬ ∃ y, qs y = qs g₁ + 9999 := fun ⟨y, hy⟩ ↦
   natCast_size_notMem_range (heap := heap) (known := fun _ ↦ True) (size := Subtype.val)
     (H := ω) (x := g₁₀₀₀₀) archimedeanClassMk_omega_neg Subtype.val_injective rfl
@@ -331,118 +247,77 @@ end Model55
 
 /-! ### Gradable adjectives -/
 
-/-- The qualitative magnitude (62) of a change `r` is an infinitesimal `e` when `r` is below the
-smallest contextually relevant unit `U`, and `r` otherwise. -/
-noncomputable def qualUnit (U : ℝ) (e : ℝ*) (r : ℝ) : ℝ* := if r < U then e else r
+/-- The qualitative magnitude (62) of a change `r` is `e * r` for an infinitesimal `e` when `r`
+is below the smallest contextually relevant unit `U`, and `r` otherwise. -/
+noncomputable def qualUnit (U : ℝ) (e : ℝ*) (r : ℝ) : ℝ* := if r < U then e * r else r
 
--- (61)
-theorem mem_infinitesimals_of_forall_mul_le {u : ℝ*} {c : ℝ} (hu : 0 < u)
-    (h : ∀ n : ℕ, (n : ℝ*) * u ≤ c) : u ∈ infinitesimals := by
-  rw [mem_infinitesimals, ← mk_one, mk_lt_mk]
-  intro n
-  by_contra hn
-  rw [not_lt, abs_one, abs_of_pos hu, nsmul_eq_mul] at hn
-  obtain ⟨m, hm⟩ := exists_nat_gt c
-  have h2 : (m : ℝ*) ≤ (n * m : ℕ) * u := by
-    push_cast
-    nlinarith [Nat.cast_nonneg (α := ℝ*) m]
-  have h3 : ((c : ℝ) : ℝ*) < (m : ℝ*) := by
-    rw [show (m : ℝ*) = ((m : ℝ) : ℝ*) by norm_cast]
-    exact coe_lt_coe.2 hm
-  exact (h3.trans_le h2).not_ge (h (n * m))
+variable {S U : ℝ} {e : ℝ*}
 
-variable {E : Type*} {tall : E → ℝ} {S U : ℝ} {e : ℝ*}
+theorem qualUnit_one_of_lt (hU : 1 < U) : qualUnit U e 1 = e := by simp [qualUnit, hU]
 
-/-- With a millimetre below the relevant unit, the induction premise (63) holds. -/
-theorem induction_premise (he : e ∈ infinitesimals) (hU : 1 < U) {x : E}
-    (hx : x ∈ tall ⁻¹' Set.Ici S) :
-    S ≤ stdPart ((tall x : ℝ*) - qualUnit U e 1) := by
-  rw [show qualUnit U e 1 = e by simp [qualUnit, hU], stdPart_sub_infinitesimal _ he]
-  exact hx
+theorem qualUnit_one_of_le (hU : U ≤ 1) : qualUnit U e 1 = 1 := by simp [qualUnit, hU.not_gt]
 
-/-- With a millimetre below the relevant unit, the conclusion (70.III) holds, since any number
-of qualitative millimetres below two metres is still tall. -/
-theorem conclusion_tall (he : e ∈ infinitesimals) (hU : 1 < U) (hS : S ≤ 2000) (n : ℕ) :
-    S ≤ stdPart ((2000 : ℝ*) - n * qualUnit U e 1) := by
-  have hne : (n : ℝ*) * e ∈ infinitesimals := by
-    rw [← nsmul_eq_mul]
-    exact infinitesimals.nsmul_mem he n
-  rw [show qualUnit U e 1 = e by simp [qualUnit, hU],
-    show (2000 : ℝ*) = ((2000 : ℝ) : ℝ*) by norm_num, stdPart_sub_infinitesimal _ hne]
-  exact hS
+-- (62): the qualitative magnitude of a change below the relevant unit is infinitesimal
+theorem mk_qualUnit_pos (he : 0 < mk e) {r : ℝ} (hr : r < U) : 0 < mk (qualUnit U e r) := by
+  simp only [qualUnit, hr, ↓reduceIte, mk_mul]
+  exact add_pos_of_pos_of_nonneg he (mk_map_nonneg_of_archimedean coeRingHom r)
 
-/-- With the quantitative unit, the conclusion of the tall paradox fails for any standard above
-one metre (66). -/
-theorem not_forall_sub_natCast_ge (hU : U ≤ 1) (hS : 1000 < S) :
-    ¬ ∀ n : ℕ, S ≤ stdPart ((2000 : ℝ*) - n * qualUnit U e 1) := fun h ↦ by
-  have := h 1000
-  norm_num [qualUnit, not_lt.2 hU, stdPart_ofNat] at this
-  linarith
+/-- With a millimetre below the relevant unit, the premises of the paradox for *tall* (70) hold of
+the degrees whose standard part is at least the standard: two metres is tall, one metre is not,
+and a qualitative millimetre less leaves the standard part unchanged (64). -/
+theorem sorites_tall (he : 0 < mk e) (hU : 1 < U) (h₁ : 1000 < S) (h₂ : S ≤ 2000) :
+    Sorites (fun x : ℝ* ↦ S ≤ stdPart x) (fun x y ↦ y = x - qualUnit U e 1) 2000 1000 where
+  base := by simpa using h₂
+  tolerance x y hx hxy := by rwa [hxy, qualUnit_one_of_lt hU, stdPart_sub_eq_left he]
+  counter := by simpa using h₁
 
-/-- In the model (71), heights run in millimetres, the standard is `1800` and the smallest
-relevant unit `2`; two metres is tall, one metre is not, and the induction premise and the
-conclusion hold. -/
-example : (2000 : ℕ) ∈ (fun i : ℕ ↦ (i : ℝ)) ⁻¹' Set.Ici 1800 ∧
-    (1000 : ℕ) ∉ (fun i : ℕ ↦ (i : ℝ)) ⁻¹' Set.Ici 1800 ∧
-    (∀ x ∈ (fun i : ℕ ↦ (i : ℝ)) ⁻¹' Set.Ici 1800,
-      1800 ≤ stdPart (((x : ℝ) : ℝ*) - qualUnit 2 ε 1)) ∧
-    ∀ n : ℕ, 1800 ≤ stdPart ((2000 : ℝ*) - n * qualUnit 2 ε 1) := by
-  have he : ε ∈ infinitesimals := mem_infinitesimals.2 archimedeanClassMk_epsilon_pos
-  refine ⟨by norm_num, by norm_num, fun x hx ↦ induction_premise he (by norm_num) hx,
-    conclusion_tall he (by norm_num) (by norm_num)⟩
+private theorem reflTransGen_sub {u a : ℝ*} (n : ℕ) :
+    ReflTransGen (fun x y : ℝ* ↦ y = x - u) a (a - n * u) := by
+  have := reflTransGen_add_iff (d := -u) (a := a).2 ⟨n, rfl⟩
+  simpa [sub_eq_add_neg] using this
+
+-- (70.III)
+theorem conclusion_tall (he : 0 < mk e) (hU : 1 < U) (h₁ : 1000 < S) (h₂ : S ≤ 2000) (n : ℕ) :
+    S ≤ stdPart ((2000 : ℝ*) - n * qualUnit U e 1) :=
+  (sorites_tall he hU h₁ h₂).of_reflTransGen (reflTransGen_sub n)
+
+-- (66): with the quantitative unit the premises are inconsistent, whatever the predicate
+theorem not_sorites_tall {P : ℝ* → Prop} (hU : U ≤ 1) :
+    ¬ Sorites P (fun x y ↦ y = x - qualUnit U e 1) 2000 1000 := fun h ↦
+  h.not_reflTransGen <| by
+    have := reflTransGen_sub (u := qualUnit U e 1) (a := 2000) 1000
+    rw [qualUnit_one_of_le hU] at this ⊢
+    norm_num at this
+    exact this
+
+/-- An upward closed predicate of degrees satisfies the premises of the paradox for *tall* along
+steps of `u` exactly when `u` is infinitesimal (61). -/
+theorem exists_isUpperSet_sorites_tall_iff {u : ℝ*} (hu : 0 < u) :
+    (∃ P : ℝ* → Prop, IsUpperSet {x | P x} ∧ Sorites P (fun x y ↦ y = x - u) 2000 1000) ↔
+      0 < mk u := by
+  rw [exists_isUpperSet_sorites_sub_iff hu]
+  norm_num
+
+-- (71): heights in millimetres, the standard `1800` and the smallest relevant unit `2`
+example : Sorites (fun x : ℝ* ↦ (1800 : ℝ) ≤ stdPart x) (fun x y ↦ y = x - qualUnit 2 ε 1)
+    2000 1000 :=
+  sorites_tall archimedeanClassMk_epsilon_pos (by norm_num) (by norm_num) (by norm_num)
 
 /-! ### The merged paradox -/
 
-/-- `a` is at most `b` up to a finite difference when they are finitely close or `a` is
-infinitely less (79). -/
-def LeUpToFinite (a b : ℝ*) : Prop := FinitelyClose a b ∨ InfinitelyLess a b
-
-/-- Being infinitely less is transitive (78). -/
-instance instIsTransInfinitelyLess : IsTrans ℝ* InfinitelyLess where
-  trans _ _ _ hab hbc := infinitelyLess_iff_largelyLT.2 <|
-    (infinitelyLess_iff_largelyLT.1 hab).trans (infinitelyLess_iff_largelyLT.1 hbc)
-
-theorem InfinitelyLess.of_finitelyClose {a b c : ℝ*} (hab : FinitelyClose a b)
-    (hbc : InfinitelyLess b c) : InfinitelyLess a c :=
-  infinitelyLess_iff_largelyLT.2 <| (finitelyClose_iff_atMostMarginal.1 hab).largelyLT_congr_left.2
-    (infinitelyLess_iff_largelyLT.1 hbc)
-
-theorem leUpToFinite_iff_not_infinitelyLess {a b : ℝ*} :
-    LeUpToFinite a b ↔ ¬ InfinitelyLess b a := by
-  unfold LeUpToFinite InfinitelyLess
-  grind [FinitelyClose.refl]
-
-theorem LeUpToFinite.add_one {a S : ℝ*} (h : LeUpToFinite a S) : LeUpToFinite (a + 1) S := by
-  have ha : finiteScale.AtMostMarginal a (a + 1) := finiteScale_atMostMarginal_iff.2 (by simp)
-  rw [leUpToFinite_iff_not_infinitelyLess, infinitelyLess_iff_largelyLT] at h ⊢
-  rwa [← ha.largelyLT_congr_right]
-
--- (81)
-theorem finitelyClose_or_infinitelyLess {a b : ℝ*} (h : a < b) :
-    FinitelyClose a b ∨ InfinitelyLess a b :=
-  (em _).imp_right (⟨h, ·⟩)
-
-/-- The merged paradox (80) is consistent for some standard exactly when the sizes of its small and
-large heaps are infinitely apart. -/
+/-- The premises of the merged paradox (80) hold for some standard exactly when the size of the
+small heap is infinitely less than that of the large one. A size is at most the standard up to a
+finite difference (79) when its block in the scale of finite differences is at most that of the
+standard. -/
 theorem merged_iff {De : Type*} {s : De → ℝ*} {g₅₀ g : De} :
-    (∃ S, Sorites (fun x ↦ LeUpToFinite (s x) S) (Step s 1) g₅₀ g) ↔
-      InfinitelyLess (s g₅₀) (s g) := by
-  constructor
-  · rintro ⟨S, hb, -, hc⟩
-    rw [leUpToFinite_iff_not_infinitelyLess, not_not] at hc
-    exact hb.elim (fun h ↦ InfinitelyLess.of_finitelyClose h hc) fun h ↦ IsTrans.trans _ _ _ h hc
-  · intro h
-    refine ⟨s g₅₀, .inl (.refl _), fun x y hx hxy ↦ hxy ▸ hx.add_one, ?_⟩
-    rw [leUpToFinite_iff_not_infinitelyLess, not_not]
-    exact h
+    (∃ S, Sorites (fun x ↦ finiteScale.toBlock (s x) ≤ finiteScale.toBlock S)
+      (fun x y ↦ s y = s x + 1) g₅₀ g) ↔ finiteScale.LargelyLT (s g₅₀) (s g) :=
+  ⟨fun ⟨_, h⟩ ↦ toBlock_lt_toBlock.1 (h.base.trans_lt (not_le.1 h.counter)),
+    fun h ↦ ⟨s g₅₀, (sorites_toBlock_le le_rfl h).comap s fun x y hxy ↦
+      finiteScale_atMostMarginal_iff.2 (by simp [hxy])⟩⟩
 
-/-- Under the qualitative size (36), the merged paradox (80) is unsatisfiable, since two heaps are
-never infinitely apart. -/
-theorem not_merged_qualSize {De : Type*} {heap known : De → Prop} [DecidablePred heap]
-    [DecidablePred known] {size : De → ℕ} {H : ℝ*} {g₅₀ g : De} (h₅₀ : heap g₅₀) (hg : heap g) :
-    ¬ ∃ S, Sorites (fun x ↦ LeUpToFinite (qualSize heap known size H x) S)
-      (Step (qualSize heap known size H) 1) g₅₀ g := by
-  rw [merged_iff]
-  exact fun h ↦ h.2 (finitelyClose_qualSize h₅₀ hg)
+-- (81): of two sizes, the smaller is finitely close to the larger or infinitely less
+example {a b : ℝ*} (h : a < b) : finiteScale.MarginallyLT a b ∨ finiteScale.LargelyLT a b :=
+  marginallyLT_or_largelyLT_of_lt h
 
 end Itzhaki2021

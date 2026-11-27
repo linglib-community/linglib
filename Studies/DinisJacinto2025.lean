@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.SuccPred.LinearLocallyFinite
 public import Linglib.Semantics.Degree.Marginality.Hom
 public import Linglib.Semantics.Degree.Marginality.Hyperreal
+public import Linglib.Semantics.Degree.Sorites
 public import Studies.Itzhaki2021
 public import Mathlib.Analysis.Real.Hyperreal
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
@@ -261,13 +262,17 @@ theorem Bald.tolerance :
   ⟨fun hx h ↦ (bald_congr h.atMostMarginal).not.1 hx,
     fun hx h ↦ (bald_congr h.atMostMarginal).2 hx⟩
 
+-- The premises of the Sorites hold of the not bald along at most marginal differences.
+theorem sorites_not_bald (hx : ¬ Bald ml e x) : Sorites (¬ Bald ml e ·) ml.AtMostMarginal x e :=
+  ⟨hx, fun _ _ hy h ↦ (bald_congr h).not.1 hy, not_not_intro (bald_of_le le_rfl)⟩
+
 /-- No finite chain of marginal steps leads from someone not bald to the last member, so a
 series in which each member is marginally balder than the one before satisfies the premises of
 the Sorites only if it is infinite. -/
 theorem not_transGen_marginallyLT (hx : ¬ Bald ml e x) :
-    ¬ Relation.TransGen ml.MarginallyLT x e := fun h ↦ by
-  rw [Relation.transGen_eq_self] at h
-  exact h.not_largelyLT (not_not.1 hx)
+    ¬ Relation.TransGen ml.MarginallyLT x e := fun h ↦
+  (sorites_not_bald hx).not_reflTransGen <|
+    h.to_reflTransGen.lift id fun _ _ ↦ MarginallyLT.atMostMarginal
 
 example :
     ¬ Bald (lex ℚ ℤ) (toLex (1, 0)) (toLex (0, 0)) ∧ Bald (lex ℚ ℤ) (toLex (1, 0)) (toLex (1, 0)) :=
@@ -277,25 +282,17 @@ end Sorites
 
 /-! ### Itzhaki's nonstandard heuristics -/
 
-theorem infinitesimalScale_atMostMarginal_iff_infinitesimallyClose {x y : ℝ*} :
-    infinitesimalScale.AtMostMarginal x y ↔ Itzhaki2021.InfinitesimallyClose x y := by
-  rw [infinitesimalScale_atMostMarginal_iff, Itzhaki2021.InfinitesimallyClose,
-    Itzhaki2021.mem_infinitesimals, mk_sub_comm]
-
 /-- Under Itzhaki's qualitative size, being a heap is the baldness of §5 on the finite scale (§6).
 -/
 theorem heap_iff_bald {De : Type*} {heap known : De → Prop} [DecidablePred heap]
     [DecidablePred known] {size : De → ℕ} {H : ℝ*} (hH : mk H < 0) (hpos : 0 < H) {e x : De}
     (he : heap e) : heap x ↔ Bald finiteScale (Itzhaki2021.qualSize heap known size H e)
       (Itzhaki2021.qualSize heap known size H x) := by
-  rw [Bald, ← Itzhaki2021.infinitelyLess_iff_largelyLT]
-  refine ⟨fun hx h ↦ h.2 (Itzhaki2021.finitelyClose_qualSize hx he),
+  refine ⟨fun hx h ↦ h.not_atMostMarginal (Itzhaki2021.atMostMarginal_qualSize hx he),
     fun h ↦ by_contra fun hx ↦ h ?_⟩
-  rw [Itzhaki2021.qualSize_of_not_heap hx]
-  refine ⟨Itzhaki2021.natCast_lt_qualSize hH hpos he _, fun hf ↦ ?_⟩
-  have hq := Itzhaki2021.finites.sub_mem
-    (Itzhaki2021.mem_finites.2 (mk_natCast_nonneg (size x))) hf
-  rw [sub_sub_cancel, Itzhaki2021.mem_finites] at hq
-  exact hq.not_gt (Itzhaki2021.mk_qualSize_neg hH he)
+  rw [Itzhaki2021.qualSize_of_not_heap hx, finiteScale_largelyLT_iff]
+  have hq := Itzhaki2021.mk_qualSize_neg (known := known) (size := size) hH he
+  exact ⟨Itzhaki2021.natCast_lt_qualSize hH hpos he _,
+    (mk_sub_eq_mk_left (hq.trans_le (mk_natCast_nonneg _))).symm ▸ hq⟩
 
 end DinisJacinto2025
