@@ -29,6 +29,8 @@ common ground is one of the projected ones, the Table is left empty.
 * `Commitment.Table A W`: the context structure, with participants `A` and worlds `W`.
 * `Commitment.Table.project`: the projection of an issue from a set of common grounds.
 * `Commitment.Table.projectedSet`: the projected set of a context.
+* `Commitment.Table.totalCommitment`, `Commitment.Table.IsCoherent`: the body of information a
+  participant's discourse commitments generate with the common ground, and its consistency.
 * `Commitment.Table.IsStable`: the Table is empty.
 * `Commitment.Table.InCrisis`: the common ground is inconsistent or no projected common ground is
   consistent.
@@ -55,14 +57,21 @@ common ground is one of the projected ones, the Table is left empty.
   issue on the Table exactly when nothing is projected.
 * `Commitment.Table.inCrisis_assert_assert_compl`: a denied assertion leaves the conversation in
   crisis.
-* `Commitment.Table.agreeToDisagree_assert_assert`: agreeing to disagree keeps both commitments
-  and restores the Table.
+* `Commitment.Table.agreeToDisagree_assert_assert`,
+  `Commitment.Table.generate_discourseCommitments_inf_eq_bot_agreeToDisagree`: agreeing to
+  disagree keeps both commitments and restores the Table, and the commitments of the two parties
+  are jointly inconsistent while the common ground is unchanged.
+* `Commitment.Table.totalCommitment_settle_of_mem`: settling a proposition leaves the total
+  commitment of a participant committed to it as it was.
 
 ## Implementation notes
 
 * The projected set can always be rebuilt from the common ground and the Table, so it is derived
   rather than stored. The projection is the pointwise infimum `ps ⊼ 𝓟 '' alt P` of two families of
   filters with `⊥` removed, so that its commutativity is that of `⊼`.
+* A discourse commitment list is a set of propositions, from which a proposition can be removed,
+  and a common ground is a filter. The filter a list generates relates the two, and its kernel is
+  the commitment set.
 * A common ground is a filter of propositions, so a proposition follows from it when it belongs
   to the filter. Every necessary proposition then follows from every common ground, and the
   trivial issue is always decided; a finer consequence relation is not represented.
@@ -243,6 +252,63 @@ theorem mem_discourseCommitments_commit_iff {b : A} {q : Set W} :
 theorem mem_discourseCommitments_commit_self : p ∈ (K.commit a p).discourseCommitments a := by
   simp
 
+/-! ### Total commitments -/
+
+private theorem generate_insert (S : Set (Set W)) (q : Set W) :
+    Filter.generate (insert q S) = Filter.generate S ⊓ 𝓟 q := by
+  rw [Set.insert_eq, Filter.generate_union, Filter.generate_singleton, inf_comm]
+
+/-- The total discourse commitment of `a` is the body of information that `a`'s discourse
+commitments generate together with the common ground. -/
+def totalCommitment : Filter W := Filter.generate (K.discourseCommitments a) ⊓ K.commonGround
+
+/-- A participant is coherent when their total discourse commitment is consistent. -/
+def IsCoherent : Prop := K.totalCommitment a ≠ ⊥
+
+theorem totalCommitment_le_commonGround : K.totalCommitment a ≤ K.commonGround := inf_le_right
+
+variable {K a} in
+theorem mem_totalCommitment_of_mem_discourseCommitments {q : Set W}
+    (h : q ∈ K.discourseCommitments a) : q ∈ K.totalCommitment a :=
+  mem_inf_of_left (Filter.GenerateSets.basic h)
+
+variable {K a} in
+theorem IsCoherent.commonGround_ne_bot (h : K.IsCoherent a) : K.commonGround ≠ ⊥ := fun e ↦
+  h (le_bot_iff.1 (e ▸ K.totalCommitment_le_commonGround a))
+
+/-- The kernel of the commitments `a`'s discourse commitments generate is `a`'s commitment set. -/
+theorem ker_generate_discourseCommitments :
+    (Filter.generate (K.discourseCommitments a)).ker = K.commitments.commitmentSet a := by
+  rw [Filter.generate_eq_biInf, State.commitmentSet, Set.sInter_eq_biInter]
+  simp [discourseCommitments]
+
+variable {K a p} in
+/-- Two participants committed to a proposition and to its negation have jointly inconsistent
+discourse commitments. -/
+theorem generate_discourseCommitments_inf_eq_bot {b : A} (ha : p ∈ K.discourseCommitments a)
+    (hb : pᶜ ∈ K.discourseCommitments b) :
+    Filter.generate (K.discourseCommitments a) ⊓ Filter.generate (K.discourseCommitments b) = ⊥ :=
+  Filter.empty_mem_iff_bot.1 <| Set.inter_compl_self p ▸
+    inter_mem_inf (Filter.GenerateSets.basic ha) (Filter.GenerateSets.basic hb)
+
+@[simp] theorem totalCommitment_empty : (empty : Table A W).totalCommitment a = ⊤ := by
+  simp [totalCommitment, Filter.generate_empty]
+
+@[simp] theorem totalCommitment_push : (K.push P).totalCommitment a = K.totalCommitment a := rfl
+
+@[simp] theorem totalCommitment_pop : K.pop.totalCommitment a = K.totalCommitment a := rfl
+
+@[simp] theorem totalCommitment_commit_self :
+    (K.commit a p).totalCommitment a = K.totalCommitment a ⊓ 𝓟 p := by
+  rw [totalCommitment, discourseCommitments_commit_self, generate_insert, commonGround_commit,
+    totalCommitment, inf_right_comm]
+
+variable {K a p} in
+theorem totalCommitment_commit_of_ne {b : A} (h : b ≠ a) :
+    (K.commit a p).totalCommitment b = K.totalCommitment b := by
+  rw [totalCommitment, discourseCommitments_commit_of_ne h]
+  rfl
+
 /-! ### The projected set -/
 
 /-- The projected set consists of the common grounds that canonically settle what is at issue,
@@ -379,6 +445,15 @@ theorem projectedSet_polarQuestion_of_isStable (hK : K.IsStable)
     (K.polarQuestion p).projectedSet = {K.commonGround ⊓ 𝓟 p, K.commonGround ⊓ 𝓟 pᶜ} := by
   rw [projectedSet_polarQuestion, projectedSet_of_isStable hK, project_singleton_polar hp hnp]
 
+@[simp] theorem totalCommitment_assert_self :
+    (K.assert a p).totalCommitment a = K.totalCommitment a ⊓ 𝓟 p :=
+  totalCommitment_commit_self K a p
+
+variable {K a p} in
+theorem totalCommitment_assert_of_ne {b : A} (h : b ≠ a) :
+    (K.assert a p).totalCommitment b = K.totalCommitment b :=
+  totalCommitment_commit_of_ne h
+
 /-! ### Settling a joint commitment -/
 
 open scoped Classical in
@@ -453,6 +528,22 @@ theorem commonGround_settle_mem_projectedSet_assert (hK : K.IsStable)
     (K.settle p).commonGround ∈ (K.assert a p).projectedSet :=
   projectedSet_assert_of_isStable a hK hp ▸ rfl
 
+/-- Settling `p` adds `p` to every total commitment. -/
+theorem totalCommitment_settle : (K.settle p).totalCommitment a = K.totalCommitment a ⊓ 𝓟 p := by
+  have key : Filter.generate (K.discourseCommitments a \ {p}) ⊓ 𝓟 p =
+      Filter.generate (K.discourseCommitments a) ⊓ 𝓟 p := by
+    rw [← generate_insert, ← generate_insert, Set.insert_sdiff_singleton]
+  rw [totalCommitment, discourseCommitments_settle, commonGround_settle, inf_left_comm, key,
+    inf_left_comm, totalCommitment, inf_assoc]
+
+variable {K a p} in
+/-- Settling a proposition leaves the total commitment of a participant committed to it as it
+was. -/
+theorem totalCommitment_settle_of_mem (h : p ∈ K.discourseCommitments a) :
+    (K.settle p).totalCommitment a = K.totalCommitment a :=
+  (totalCommitment_settle K a p).trans <|
+    inf_eq_left.2 (le_principal_iff.2 (mem_totalCommitment_of_mem_discourseCommitments h))
+
 /-! ### Crisis -/
 
 /-- A conversation is in crisis when its common ground or every projected common ground is
@@ -506,6 +597,18 @@ theorem agreeToDisagree_assert_assert (b : A) (q : Set W) :
 /-- Agreeing to disagree restores the crisis status of the context before the assertions. -/
 theorem inCrisis_agreeToDisagree_assert_assert (b : A) (q : Set W) :
     ((K.assert a p).assert b q).agreeToDisagree.InCrisis ↔ K.InCrisis := Iff.rfl
+
+@[simp] theorem totalCommitment_agreeToDisagree :
+    K.agreeToDisagree.totalCommitment a = K.totalCommitment a := rfl
+
+/-- After agreeing to disagree, the discourse commitments of the two parties are jointly
+inconsistent. -/
+theorem generate_discourseCommitments_inf_eq_bot_agreeToDisagree (b : A) :
+    Filter.generate (((K.assert a p).assert b pᶜ).agreeToDisagree.discourseCommitments a) ⊓
+      Filter.generate (((K.assert a p).assert b pᶜ).agreeToDisagree.discourseCommitments b) = ⊥ :=
+  generate_discourseCommitments_inf_eq_bot
+    ((mem_discourseCommitments_commit_iff ..).2 (.inr (mem_discourseCommitments_commit_self K a p)))
+    (mem_discourseCommitments_commit_self _ b pᶜ)
 
 end Table
 
