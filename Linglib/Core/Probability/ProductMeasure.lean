@@ -23,6 +23,8 @@ the coordinates, and it depends measurably on `ν`.
 * `MeasureTheory.Measure.infinitePi.smulInvariantMeasure_domMulAct`: invariance under
   permutations of the index type.
 * `MeasureTheory.measurable_infinitePi_const`: measurability in the factor.
+* `ProbabilityTheory.Kernel.iid ι E`: the kernel sending a probability measure `m` on `E` to the
+  law of an independent family of random variables with law `m`.
 
 `[UPSTREAM]` candidates for `Mathlib/Probability/ProductMeasure.lean`.
 -/
@@ -58,3 +60,23 @@ theorem measurable_infinitePi_const {E : Type*} [MeasurableSpace E] (ι : Type*)
     (Measure.measurable_coe (ht i)).comp measurable_subtype_coe
 
 end MeasureTheory
+
+namespace ProbabilityTheory
+
+open MeasureTheory
+
+/-- The kernel sending a probability measure `m` to the law `m^∞` of an independent family of
+random variables with law `m`. -/
+@[expose] noncomputable def Kernel.iid (ι E : Type*) [MeasurableSpace E] :
+    Kernel (ProbabilityMeasure E) (ι → E) where
+  toFun m := Measure.infinitePi fun _ : ι ↦ (m : Measure E)
+  measurable' := measurable_infinitePi_const ι
+
+@[simp]
+theorem Kernel.iid_apply {ι E : Type*} [MeasurableSpace E] (m : ProbabilityMeasure E) :
+    Kernel.iid ι E m = Measure.infinitePi fun _ : ι ↦ (m : Measure E) := rfl
+
+instance {ι E : Type*} [MeasurableSpace E] : IsMarkovKernel (Kernel.iid ι E) :=
+  ⟨fun m ↦ by rw [Kernel.iid_apply]; infer_instance⟩
+
+end ProbabilityTheory

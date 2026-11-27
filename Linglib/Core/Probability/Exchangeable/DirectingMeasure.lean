@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.Exchangeable.Mixture
+public import Linglib.Core.Probability.Exchangeable.DeFinetti
+public import Mathlib.Probability.Kernel.Condexp
 public import Mathlib.Probability.HasCondDistrib
 public import Mathlib.Probability.StrongLaw
 
@@ -27,8 +28,6 @@ conditional law of `X 0` given the tail σ-algebra.
 
 ## Main definitions
 
-* `ProbabilityTheory.Kernel.iid ι E`: the kernel sending a probability measure `m` on `E` to the
-  law of an independent family of random variables with law `m`.
 * `ProbabilityTheory.directingMeasure X μ`: the directing random measure of `X`.
 
 ## Main results
@@ -42,8 +41,14 @@ conditional law of `X 0` given the tail σ-algebra.
 ## Implementation notes
 
 The directing random measure is defined from the tail σ-algebra
-`limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop`. The shift-invariant σ-algebra
-gives the same random measure almost surely for a contractable sequence.
+`limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop`.
+
+## TODO
+
+* The conditional law of the first term given the shift-invariant σ-algebra is almost surely the
+  same random measure for a contractable sequence.
+* The coding representation `X j = f (α, ζ j)` of an exchangeable sequence by independent uniform
+  random variables.
 
 ## References
 
@@ -64,16 +69,6 @@ namespace ProbabilityTheory
 
 variable {Ω E : Type*} {mΩ : MeasurableSpace Ω} [MeasurableSpace E] {μ : Measure Ω}
   {X : ℕ → Ω → E}
-
-/-- The kernel sending a probability measure `m` to the law `m^∞` of an i.i.d. sequence of
-random variables with law `m`. -/
-noncomputable def Kernel.iid (ι E : Type*) [MeasurableSpace E] :
-    Kernel (ProbabilityMeasure E) (ι → E) where
-  toFun m := Measure.infinitePi fun _ : ι ↦ (m : Measure E)
-  measurable' := measurable_infinitePi_const ι
-
-instance (ι : Type*) : IsMarkovKernel (Kernel.iid ι E) := ⟨fun _ ↦ by
-  rw [Kernel.iid]; exact inferInstanceAs (IsProbabilityMeasure (Measure.infinitePi _))⟩
 
 /-- The directing random measure of a sequence: the conditional law of its first term given the
 tail σ-algebra. -/
@@ -184,9 +179,6 @@ theorem exchangeable_tfae [StandardBorelSpace E] [IsProbabilityMeasure μ]
         HasCondDistrib (fun ω i ↦ X i ω) η (Kernel.iid ℕ E) μ] := by
   have hJ : Measurable fun ω i ↦ X i ω := .of_eval hX
   tfae_have 1 ↔ 2 := (contractable_iff_exchangeable hX).symm
-  tfae_have 1 → 3 := fun h ↦
-    let ⟨Λ, hΛ, hmix⟩ := h.exists_probabilityMeasure_map_eq_bind_infinitePi
-    ⟨Λ, hΛ, hJ.aemeasurable, hmix⟩
   tfae_have 3 → 1 := fun ⟨_, _, h⟩ ↦ exchangeable_of_map_eq_bind hJ.aemeasurable h.map_eq
   tfae_have 2 → 4 := fun h ↦ by
     obtain ⟨ω⟩ := nonempty_of_isProbabilityMeasure μ

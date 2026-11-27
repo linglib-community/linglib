@@ -173,7 +173,7 @@ private theorem Contractable.condExp_iInf_tailFrom_ae_eq [IsFiniteMeasure μ]
 
 /-- Given the tail σ-algebra, the conditional expectation of a product of bounded functions of
 finitely many terms of a contractable sequence is the product of the conditional expectations of
-the same functions of the first term (Kallenberg 2005, Theorem 1.1). -/
+the same functions of the first term ([kallenberg-2005] Theorem 1.1). -/
 theorem Contractable.condExp_finsetProd_ae_eq [IsFiniteMeasure μ] (h : Contractable X μ)
     (hX : ∀ i, Measurable (X i)) (s : Finset ℕ) (f : ℕ → E → ℝ) (hf : ∀ i, Measurable (f i))
     (C : ℕ → ℝ) (hC : ∀ i x, |f i x| ≤ C i) :
@@ -261,7 +261,7 @@ private theorem Contractable.measureReal_map_perm_pi [IsFiniteMeasure μ] (h : C
     simp only [Finset.prod_map, Equiv.coe_toEmbedding, Equiv.symm_apply_apply]
 
 /-- Under a finite measure, a contractable sequence of measurable random variables is
-exchangeable (Kallenberg 2005, Theorem 1.1). -/
+exchangeable ([kallenberg-2005] Theorem 1.1). -/
 theorem Contractable.exchangeable [IsFiniteMeasure μ] (h : Contractable X μ)
     (hX : ∀ i, Measurable (X i)) : Exchangeable X μ := by
   refine ⟨h.aemeasurable, fun σ ↦ ?_⟩
@@ -277,7 +277,7 @@ theorem Contractable.exchangeable [IsFiniteMeasure μ] (h : Contractable X μ)
     rfl
 
 /-- Under a finite measure, a sequence of measurable random variables is contractable if and only
-if it is exchangeable (Kallenberg 2005, Theorem 1.1). -/
+if it is exchangeable ([kallenberg-2005] Theorem 1.1). -/
 theorem contractable_iff_exchangeable [IsFiniteMeasure μ] (hX : ∀ i, Measurable (X i)) :
     Contractable X μ ↔ Exchangeable X μ :=
   ⟨fun h ↦ h.exchangeable hX, Exchangeable.contractable⟩

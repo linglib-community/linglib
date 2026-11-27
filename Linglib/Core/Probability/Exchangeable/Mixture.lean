@@ -5,25 +5,24 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Probability.Exchangeable.DeFinetti
+public import Linglib.Core.Probability.Exchangeable.DirectingMeasure
 public import Mathlib.Probability.Independence.Conditional
 public import Mathlib.Probability.Kernel.Condexp
 
 /-!
-# De Finetti's theorem: exchangeable sequences are mixtures of i.i.d. sequences
+# Mixtures of i.i.d. sequences
 
-For a contractable probability measure on sequences in a standard Borel space, the conditional
-law of the sequence given the tail σ-algebra is almost surely the law of an independent and
-identically distributed sequence. Consequently the joint law of an exchangeable sequence is a
-mixture of such laws, and conversely.
+Consequences of de Finetti's theorem for an exchangeable sequence of random variables in a
+standard Borel space, with the weakest measurability hypotheses: its joint law is a mixture of
+laws of independent and identically distributed sequences, and conversely; its terms are
+conditionally independent given the tail σ-algebra; and for zeros and ones the mixing measure
+lives on `[0, 1]`.
 
 ## Main results
 
-* `ProbabilityTheory.Contractable.ae_condExpKernel_eq_infinitePi`: the conditional law given the
-  tail.
-* `ProbabilityTheory.exchangeable_iff_exists_probabilityMeasure_map_eq_bind_infinitePi`: a
-  sequence is exchangeable if and only if its law is a mixture of laws of independent and
-  identically distributed sequences.
+* `ProbabilityTheory.exchangeable_iff_exists_map_eq_iid_comp`: a sequence is exchangeable if and
+  only if its law is `Kernel.iid ℕ E ∘ₘ Λ` for a probability measure `Λ` on the probability
+  measures on `E`.
 * `ProbabilityTheory.Contractable.iCondIndepFun`: a contractable sequence is conditionally
   independent given its tail σ-algebra.
 * `ProbabilityTheory.Exchangeable.exists_measure_real_eq_integral_pow_mul`: for sequences of
@@ -33,10 +32,11 @@ mixture of such laws, and conversely.
 ## References
 
 * [kallenberg-2005]
+* [kallenberg-2021]
 
 ## Tags
 
-exchangeable, de Finetti, mixture, directing random measure
+exchangeable, de Finetti, mixture, conditionally independent
 -/
 
 @[expose] public section
@@ -50,134 +50,29 @@ section Mixture
 variable {Ω E : Type*} {mΩ : MeasurableSpace Ω} [MeasurableSpace E] {μ : Measure Ω}
   {X : ℕ → Ω → E}
 
-/-- Two families of finite measures on `ℕ → E`, for a countably generated `E`, are almost
-everywhere equal as soon as, box by box, they almost everywhere give the box the same mass. -/
-private theorem ae_eq_of_forall_ae_measureReal_pi_eq [MeasurableSpace.CountablyGenerated E]
-    {α : Type*} {_ : MeasurableSpace α} {ν : Measure α} {κ η : α → Measure (ℕ → E)}
-    (hκ : ∀ a, IsFiniteMeasure (κ a)) (hη : ∀ a, IsFiniteMeasure (η a))
-    (h : ∀ (s : Finset ℕ) (t : ℕ → Set E), (∀ i, MeasurableSet (t i)) →
-      ∀ᵐ a ∂ν, (κ a).real ((s : Set ℕ).pi t) = (η a).real ((s : Set ℕ).pi t)) :
-    ∀ᵐ a ∂ν, κ a = η a := by
-  classical
-  let g := MeasurableSpace.natGeneratingSequence E
-  let t : Finset (ℕ × ℕ) → ℕ → Set E := fun P i ↦ ⋂ p ∈ P.filter (·.1 = i), g p.2
-  let B : Finset (ℕ × ℕ) → Set (ℕ → E) := fun P ↦ ((P.image Prod.fst : Finset ℕ) : Set ℕ).pi (t P)
-  have ht (P : Finset (ℕ × ℕ)) (i : ℕ) : MeasurableSet (t P i) :=
-    Finset.measurableSet_biInter _ fun p _ ↦ MeasurableSpace.measurableSet_natGeneratingSequence _
-  have hB (P : Finset (ℕ × ℕ)) (x : ℕ → E) : x ∈ B P ↔ ∀ p ∈ P, x p.1 ∈ g p.2 := by
-    simp only [B, t, Set.mem_pi, Finset.coe_image, Set.mem_image, Finset.mem_coe, Set.mem_iInter,
-      Finset.mem_filter]
-    constructor
-    · exact fun hx p hp ↦ hx p.1 ⟨p, hp, rfl⟩ p ⟨hp, rfl⟩
-    · rintro hx _ ⟨q, hq, rfl⟩ p ⟨hp, hpq⟩
-      rw [← hpq]
-      exact hx p hp
-  have hpi : IsPiSystem (Set.range B) := by
-    rintro _ ⟨P, rfl⟩ _ ⟨Q, rfl⟩ _
-    refine ⟨P ∪ Q, Set.ext fun x ↦ ?_⟩
-    simp only [Set.mem_inter_iff, hB, Finset.forall_mem_union]
-  have hgen : (MeasurableSpace.pi : MeasurableSpace (ℕ → E)) =
-      MeasurableSpace.generateFrom (Set.range B) := by
-    refine le_antisymm (iSup_le fun i ↦ ?_) (MeasurableSpace.generateFrom_le ?_)
-    · rw [MeasurableSpace.comap_le_iff_le_map]
-      refine (MeasurableSpace.generateFrom_natGeneratingSequence E).symm.trans_le
-        (MeasurableSpace.generateFrom_le ?_)
-      rintro _ ⟨j, rfl⟩
-      refine MeasurableSpace.measurableSet_generateFrom ⟨{(i, j)}, Set.ext fun x ↦ ?_⟩
-      simp [hB, g]
-    · rintro _ ⟨P, rfl⟩
-      exact MeasurableSet.pi (Finset.countable_toSet _) fun i _ ↦ ht P i
-  filter_upwards [ae_all_iff.2 fun P ↦ h (P.image Prod.fst) (t P) (ht P)] with a ha
-  have := hκ a
-  have := hη a
-  refine ext_of_generate_finite _ hgen hpi ?_ ?_
-  · rintro _ ⟨P, rfl⟩
-    exact (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1 (ha P)
-  · have h0 := ha ∅
-    simp only [Finset.image_empty, Finset.coe_empty, Set.empty_pi] at h0
-    exact (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1 h0
-
-/-- Given the tail σ-algebra, the conditional law of the coordinates under a contractable law on
-`ℕ → E`, for a standard Borel `E`, is almost surely the law of an independent sequence whose terms
-all have the conditional law of the first coordinate (Kallenberg 2005, Theorem 1.1, equation
-(2)). -/
-theorem Contractable.ae_condExpKernel_eq_infinitePi [StandardBorelSpace E]
-    {μ : Measure (ℕ → E)} [IsProbabilityMeasure μ]
-    (h : Contractable (fun i (x : ℕ → E) ↦ x i) μ) :
-    ∀ᵐ x ∂μ, condExpKernel μ
-        (limsup (fun n ↦ MeasurableSpace.comap (fun x : ℕ → E ↦ x n) inferInstance) atTop) x =
-      Measure.infinitePi fun _ : ℕ ↦ (condExpKernel μ
-        (limsup (fun n ↦ MeasurableSpace.comap (fun x : ℕ → E ↦ x n) inferInstance) atTop) x).map
-          fun y ↦ y 0 := by
-  have h𝓣 : limsup (fun n ↦ MeasurableSpace.comap (fun x : ℕ → E ↦ x n) inferInstance) atTop ≤
-      MeasurableSpace.pi :=
-    limsup_le_iSup.trans (iSup_le fun n ↦ (measurable_pi_apply n).comap_le)
-  refine ae_eq_of_forall_ae_measureReal_pi_eq (fun x ↦ inferInstance) (fun x ↦ inferInstance)
-    fun s t ht ↦ ?_
-  have hS : MeasurableSet ((s : Set ℕ).pi t) := .pi s.countable_toSet fun i _ ↦ ht i
-  have hb (i : ℕ) (y : E) : |(t i).indicator (1 : E → ℝ) y| ≤ 1 := by
-    by_cases hy : y ∈ t i <;> simp [hy]
-  filter_upwards [condExpKernel_ae_eq_condExp h𝓣 hS,
-    h.condExp_finsetProd_ae_eq measurable_pi_apply s (fun i ↦ (t i).indicator 1)
-      (fun i ↦ measurable_one.indicator (ht i)) (fun _ ↦ 1) hb,
-    ae_all_iff.2 fun i ↦ condExpKernel_ae_eq_condExp h𝓣 (measurable_pi_apply 0 (ht i))]
-    with x hκ hprod hκ0
-  have e1 : ((s : Set ℕ).pi t).indicator (fun _ ↦ (1 : ℝ)) =
-      fun ω : ℕ → E ↦ ∏ i ∈ s, (t i).indicator 1 (ω i) :=
-    funext fun ω ↦ Set.indicator_pi_one_apply s t ω
-  have e2 (i : ℕ) : (t i).indicator (1 : E → ℝ) ∘ (fun x : ℕ → E ↦ x 0) =
-      ((fun f : ℕ → E ↦ f 0) ⁻¹' t i).indicator fun _ ↦ 1 := by
-    funext ω
-    by_cases hω : ω 0 ∈ t i <;> simp [hω]
-  rw [hκ, e1, hprod, measureReal_def, Measure.infinitePi_pi _ fun i _ ↦ ht i, ENNReal.toReal_prod]
-  refine Finset.prod_congr rfl fun i _ ↦ ?_
-  rw [e2, ← hκ0 i, ← measureReal_def, map_measureReal_apply (measurable_pi_apply 0) (ht i)]
-
 /-- The joint law of an exchangeable sequence of random variables in a standard Borel space is a
-mixture of laws of independent and identically distributed sequences (Kallenberg 2005,
-Theorem 1.1, equation (3)). -/
-theorem Exchangeable.exists_probabilityMeasure_map_eq_bind_infinitePi [StandardBorelSpace E]
-    [IsProbabilityMeasure μ] (h : Exchangeable X μ) :
+mixture of laws of independent and identically distributed sequences. -/
+theorem Exchangeable.exists_map_eq_iid_comp [StandardBorelSpace E] [IsProbabilityMeasure μ]
+    (h : Exchangeable X μ) :
     ∃ Λ : Measure (ProbabilityMeasure E), IsProbabilityMeasure Λ ∧
-      μ.map (fun ω i ↦ X i ω) =
-        Λ.bind fun m ↦ Measure.infinitePi fun _ : ℕ ↦ (m : Measure E) := by
-  set P := μ.map fun ω i ↦ X i ω
-  have : IsProbabilityMeasure P := (Measure.isProbabilityMeasure_map_iff h.aemeasurable).2 ‹_›
-  have hc : Contractable (fun i (x : ℕ → E) ↦ x i) P :=
-    ((exchangeable_iff_exchangeable_eval_map h.aemeasurable).1 h).contractable
-  have h𝓣 : limsup (fun n ↦ MeasurableSpace.comap (fun x : ℕ → E ↦ x n) inferInstance) atTop ≤
-      MeasurableSpace.pi :=
-    limsup_le_iSup.trans (iSup_le fun n ↦ (measurable_pi_apply n).comap_le)
-  let ν : Kernel (ℕ → E) E :=
-    ((condExpKernel P _).comap id (measurable_id'' h𝓣)).map fun y ↦ y 0
-  have : IsMarkovKernel ν := Kernel.IsMarkovKernel.map _ (measurable_pi_apply 0)
-  let g : (ℕ → E) → ProbabilityMeasure E := fun x ↦ ⟨ν x, inferInstance⟩
-  have hg : Measurable g := Measurable.subtype_mk ν.measurable
-  refine ⟨P.map g, (Measure.isProbabilityMeasure_map_iff hg.aemeasurable).2 ‹_›, ?_⟩
-  rw [Measure.bind_map hg.aemeasurable (measurable_infinitePi_const ℕ).aemeasurable]
-  ext S hS
-  rw [Measure.bind_apply hS (f := fun x ↦ Measure.infinitePi fun _ : ℕ ↦ (g x : Measure E))
-    ((measurable_infinitePi_const ℕ).comp hg).aemeasurable]
-  conv_lhs => rw [← condExpKernel_comp_trim (μ := P) h𝓣]
-  rw [Measure.bind_apply hS (Kernel.measurable _).aemeasurable,
-    lintegral_trim h𝓣 (Kernel.measurable_coe _ hS)]
-  refine lintegral_congr_ae (hc.ae_condExpKernel_eq_infinitePi.mono fun x hx ↦ ?_)
-  dsimp only
-  rw [hx]
-  simp [g, ν, Kernel.map_apply _ (measurable_pi_apply 0)]
+      μ.map (fun ω i ↦ X i ω) = Kernel.iid ℕ E ∘ₘ Λ := by
+  have : IsProbabilityMeasure (μ.map fun ω i ↦ X i ω) :=
+    (Measure.isProbabilityMeasure_map_iff h.aemeasurable).2 ‹_›
+  obtain ⟨Λ, hΛ, hlaw⟩ := ((exchangeable_tfae (μ := μ.map fun ω i ↦ X i ω)
+    (X := fun i (x : ℕ → E) ↦ x i) measurable_pi_apply).out 1 3).1
+    ((exchangeable_iff_exchangeable_eval_map h.aemeasurable).1 h)
+  exact ⟨Λ, hΛ, by simpa using hlaw.map_eq⟩
 
 /-- The joint law of a sequence of random variables in a standard Borel space is exchangeable if
-and only if it is a mixture of laws of independent and identically distributed sequences
-(Kallenberg 2005, Theorem 1.1). -/
-theorem exchangeable_iff_exists_probabilityMeasure_map_eq_bind_infinitePi [StandardBorelSpace E]
-    [IsProbabilityMeasure μ] (hX : AEMeasurable (fun ω i ↦ X i ω) μ) :
+and only if it is a mixture of laws of independent and identically distributed sequences. -/
+theorem exchangeable_iff_exists_map_eq_iid_comp [StandardBorelSpace E] [IsProbabilityMeasure μ]
+    (hX : AEMeasurable (fun ω i ↦ X i ω) μ) :
     Exchangeable X μ ↔ ∃ Λ : Measure (ProbabilityMeasure E), IsProbabilityMeasure Λ ∧
-      μ.map (fun ω i ↦ X i ω) = Λ.bind fun m ↦ Measure.infinitePi fun _ : ℕ ↦ (m : Measure E) :=
-  ⟨Exchangeable.exists_probabilityMeasure_map_eq_bind_infinitePi,
-    fun ⟨_, _, h⟩ ↦ exchangeable_of_map_eq_bind hX h⟩
+      μ.map (fun ω i ↦ X i ω) = Kernel.iid ℕ E ∘ₘ Λ :=
+  ⟨Exchangeable.exists_map_eq_iid_comp, fun ⟨_, _, h⟩ ↦ exchangeable_of_map_eq_bind hX h⟩
 
 /-- Given the tail σ-algebra, the terms of a contractable sequence of random variables are
-conditionally independent (Kallenberg 2005, Theorem 1.1). -/
+conditionally independent ([kallenberg-2005] Theorem 1.1). -/
 theorem Contractable.iCondIndepFun [StandardBorelSpace Ω] [IsFiniteMeasure μ]
     (h : Contractable X μ) (hX : ∀ i, Measurable (X i))
     (h𝓣 : limsup (fun n ↦ MeasurableSpace.comap (X n) inferInstance) atTop ≤ mΩ) :
@@ -230,7 +125,9 @@ theorem Exchangeable.exists_measure_real_eq_integral_pow_mul {X : ℕ → Ω →
           ∫ θ, θ ^ (Finset.univ.filter fun i ↦ x i = true).card *
             (1 - θ) ^ (Finset.univ.filter fun i ↦ x i = false).card ∂Λ := by
   classical
-  obtain ⟨Λ₀, hΛ₀, hmix⟩ := h.exists_probabilityMeasure_map_eq_bind_infinitePi
+  obtain ⟨Λ₀, hΛ₀, hmix'⟩ := h.exists_map_eq_iid_comp
+  have hmix : μ.map (fun ω i ↦ X i ω) =
+      Λ₀.bind fun m ↦ Measure.infinitePi fun _ : ℕ ↦ (m : Measure Bool) := hmix'
   let p : ProbabilityMeasure Bool → ℝ := fun m ↦ ((m : Measure Bool) {true}).toReal
   have hp : Measurable p :=
     ((Measure.measurable_coe (measurableSet_singleton true)).comp
