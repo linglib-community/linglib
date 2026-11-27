@@ -33,14 +33,10 @@ space need not add exactly its content to the common ground.
 
 ## References
 
-* [A. Cohen and M. Krifka, *Superlative quantifiers and meta-speech acts*
-  (2014)][cohen-krifka-2014]
-* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
-  and Question Tags* (2015)][krifka-2015]
-* [T. van der Leer, *Commitments, beliefs and expectations in conversation*
-  (2026)][van-der-leer-2026]
-* [E. Coppock and S. Wechsler, *The proper treatment of egophoricity in Kathmandu Newari*
-  (2018)][coppock-wechsler-2018]
+* [cohen-krifka-2014]
+* [krifka-2015]
+* [van-der-leer-2026]
+* [coppock-wechsler-2018]
 -/
 
 @[expose] public section

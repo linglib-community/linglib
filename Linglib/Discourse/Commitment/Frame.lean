@@ -46,9 +46,8 @@ hypothesis of the theorems that need it.
 
 ## References
 
-* [T. van der Leer, *Commitments, beliefs and expectations in conversation*
-  (2026)][van-der-leer-2026]
-* [N. Asher and A. Lascarides, *Logics of Conversation* (2003)][asher-lascarides-2003]
+* [van-der-leer-2026]
+* [asher-lascarides-2003]
 -/
 
 @[expose] public section

@@ -36,12 +36,10 @@ are the canonical model in which commitments vary from world to world.
 
 ## References
 
-* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
-  and Question Tags* (2015)][krifka-2015]
-* [M. Krifka, *Performative updates and the modeling of speech acts* (2024)][krifka-2024a]
-* [T. van der Leer, *Commitments, beliefs and expectations in conversation*
-  (2026)][van-der-leer-2026]
-* [T. Yamada, *Dynamic Logic of Propositional Commitments* (2012)][yamada-2012]
+* [krifka-2015]
+* [krifka-2024a]
+* [van-der-leer-2026]
+* [yamada-2012]
 -/
 
 @[expose] public section

@@ -60,12 +60,9 @@ content.
 
 ## References
 
-* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
-  and Question Tags* (2015)][krifka-2015]
-* [A. Cohen and M. Krifka, *Superlative quantifiers and meta-speech acts*
-  (2014)][cohen-krifka-2014]
-* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
-  (2010)][farkas-bruce-2010]
+* [krifka-2015]
+* [cohen-krifka-2014]
+* [farkas-bruce-2010]
 -/
 
 @[expose] public section

@@ -47,8 +47,7 @@ inconsistent.
 
 ## References
 
-* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
-  (2010)][farkas-bruce-2010]
+* [farkas-bruce-2010]
 -/
 
 @[expose] public section

@@ -33,16 +33,12 @@ common ground can contain without containing its content, is the notation `k ⊢
 
 ## References
 
-* [C. L. Hamblin, *Fallacies* (1970)][hamblin-1970]
-* [R. Brandom, *Making It Explicit* (1994)][brandom-1994]
-* [C. Gunlogson, *True to Form: Rising and Falling Declaratives as Questions in English*
-  (2001)][gunlogson-2001]
-* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
-  (2010)][farkas-bruce-2010]
-* [C. Condoravdi and S. Lauer, *Imperatives: Meaning and illocutionary force*
-  (2012)][condoravdi-lauer-2012]
-* [T. van der Leer, *Commitments, beliefs and expectations in conversation*
-  (2026)][van-der-leer-2026]
+* [hamblin-1970]
+* [brandom-1994]
+* [gunlogson-2001]
+* [farkas-bruce-2010]
+* [condoravdi-lauer-2012]
+* [van-der-leer-2026]
 -/
 
 @[expose] public section

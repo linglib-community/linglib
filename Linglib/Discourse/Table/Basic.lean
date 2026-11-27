@@ -63,11 +63,8 @@ the new common ground entails leave the Table.
 
 ## References
 
-* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
-  (2010)][farkas-bruce-2010]
-* [C. Gunlogson, *True to Form: Rising and Falling Declaratives as Questions in English*
-  (2001)][gunlogson-2001]
-* [L. Karttunen, *Syntax and Semantics of Questions* (1977)][karttunen-1977]
+* [farkas-bruce-2010]
+* [gunlogson-2001]
 -/
 
 @[expose] public section
