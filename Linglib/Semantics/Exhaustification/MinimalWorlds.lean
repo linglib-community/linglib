@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Exhaustification.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Powerset
@@ -10,13 +11,18 @@ public import Mathlib.Order.SymmDiff
 /-!
 # Minimal-world exhaustification
 
-This file defines Spector's minimal-world exhaustifier `exhMW ALT φ`: the worlds `w` of the
-prejacent `φ` whose set of true alternatives `{a ∈ ALT | w ∈ a}` is minimal among the worlds of the
-prejacent. These are Kratzer's best worlds, with the prejacent as modal base and the negated
-alternatives as ordering source. Over finitely many alternatives every world of the prejacent lies
-above a minimal one, so a satisfiable prejacent has minimal worlds. A minimal cover is a set of
-worlds of the prejacent that represents the minimal worlds up to having the same true alternatives;
-the exhaustifiers by innocent exclusion and innocent inclusion are computed from one.
+A set `ALT` of alternatives orders the worlds: `w ≤[ALT] u` when `w` verifies every alternative
+that `u` verifies. Exhaustification `exh ALT φ` keeps the greatest worlds of the prejacent `φ` in
+this order, those verifying only alternatives every world of `φ` verifies. The minimal-world
+exhaustifier `exhMW ALT φ` keeps the maximal ones, those whose set of true alternatives
+`{a ∈ ALT | w ∈ a}` is minimal among the worlds of the prejacent. A greatest world is maximal, and
+where there is one the maximal worlds are the greatest. In the order of the negated alternatives,
+`≤[compl '' ALT]`, these are the least and the minimal worlds: Kratzer's best worlds, with the
+prejacent as modal base and the negated alternatives as ordering source. Over finitely many
+alternatives every world of the prejacent lies below a maximal one, so a satisfiable prejacent has
+minimal worlds. A minimal cover is a set of worlds of the prejacent that represents the minimal
+worlds up to having the same true alternatives; the exhaustifiers by innocent exclusion and
+innocent inclusion are computed from one.
 
 An operation on propositions can be applied to the prejacent and to each alternative before
 exhaustifying, or to the exhaustification. The two agree for the pullback along a surjective map
@@ -25,12 +31,22 @@ surjective the worlds outside its range no longer compete, and a conjunction is 
 back along the diagonal. Under negation the first entails the second, and they are equal only
 when neither exhaustification removes a world.
 
+## Main definitions
+
+* `Exhaustification.exhMW`: the prejacent worlds whose set of true alternatives is minimal.
+* `Exhaustification.IsMinimalCover`: a set of prejacent worlds representing the minimal ones.
+
 ## Main results
 
+* `Exhaustification.mem_exh_iff_forall_le`, `Exhaustification.mem_exhMW_iff_forall_le`:
+  exhaustification keeps the greatest worlds of the prejacent and the minimal-world exhaustifier
+  the maximal ones.
+* `Exhaustification.exh_subset_exhMW`, `Exhaustification.exhMW_eq_exh_of_nonempty`: a greatest
+  world is maximal, and where there is one the two exhaustifiers agree.
 * `Exhaustification.exhMW_eq_minimals`: the minimal worlds are the best worlds of the prejacent
   under the premise set of the negated alternatives.
 * `Exhaustification.exists_mem_exhMW_le`: over finitely many alternatives, every world of the
-  prejacent lies above a minimal world.
+  prejacent lies below a minimal world.
 * `Exhaustification.ofLowerSets_image_union_le_iff`: under the premises that some individuals lack a
   property and others have it, a world is at least as good as another when fewer of the first and
   more of the second have the property in it.
@@ -69,16 +85,36 @@ theorem mem_exhMW : u ∈ exhMW ALT φ ↔ MinimalFor (· ∈ φ) (fun w ↦ {a 
 
 theorem exhMW_subset : exhMW ALT φ ⊆ φ := fun _ h ↦ h.1
 
-/-- Against an indexed family of alternatives, a prejacent world is minimal when no prejacent
-world verifies strictly fewer members of the family. -/
-theorem mem_exhMW_range {ι : Type*} {f : ι → Set W} :
-    u ∈ exhMW (Set.range f) φ ↔
-      u ∈ φ ∧ ∀ v ∈ φ, {i | v ∈ f i} ⊆ {i | u ∈ f i} → {i | u ∈ f i} ⊆ {i | v ∈ f i} := by
-  have key {x y : W} : {a ∈ Set.range f | x ∈ a} ⊆ {a ∈ Set.range f | y ∈ a} ↔
-      {i | x ∈ f i} ⊆ {i | y ∈ f i} :=
-    ⟨fun h i hi ↦ (h ⟨⟨i, rfl⟩, hi⟩).2, by rintro h _ ⟨⟨i, rfl⟩, hi⟩; exact ⟨⟨i, rfl⟩, h hi⟩⟩
-  exact ⟨fun ⟨hu, h⟩ ↦ ⟨hu, fun _ hv hvu ↦ key.1 (h hv (key.2 hvu))⟩,
-    fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ key.2 (h v hv (key.1 hvu))⟩⟩
+/-- Exhaustification keeps the greatest worlds of the prejacent: those verifying only alternatives
+that every world of the prejacent verifies. -/
+theorem mem_exh_iff_forall_le : u ∈ exh ALT φ ↔ u ∈ φ ∧ ∀ v ∈ φ, v ≤[ALT] u :=
+  ⟨fun h ↦ ⟨h.1, fun _ hv q hq huq ↦ h.2 q hq huq hv⟩,
+    fun h ↦ ⟨h.1, fun q hq huq _ hv ↦ h.2 _ hv q hq huq⟩⟩
+
+/-- The minimal-world exhaustifier keeps the maximal worlds of the prejacent: those above every
+world of the prejacent that they lie below. -/
+theorem mem_exhMW_iff_forall_le :
+    u ∈ exhMW ALT φ ↔ u ∈ φ ∧ ∀ v ∈ φ, (u ≤[ALT] v) → (v ≤[ALT] u) :=
+  ⟨fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv huv ↦ (Preorder.ofLowerSets_le_iff_subset ALT v u).2
+      (h hv ((Preorder.ofLowerSets_le_iff_subset ALT u v).1 huv))⟩,
+    fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ (Preorder.ofLowerSets_le_iff_subset ALT v u).1
+      (h v hv ((Preorder.ofLowerSets_le_iff_subset ALT u v).2 hvu))⟩⟩
+
+variable (ALT φ) in
+/-- A greatest world of the prejacent is maximal. -/
+theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ := fun _ hu ↦
+  mem_exhMW_iff_forall_le.2 ⟨hu.1, fun v hv _ ↦ (mem_exh_iff_forall_le.1 hu).2 v hv⟩
+
+variable (ALT φ) in
+/-- When the prejacent is consistent with the denial of every alternative it does not entail,
+minimal-world exhaustification denies them all too ([spector-2016]). -/
+theorem exhMW_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhMW ALT φ = exh ALT φ := by
+  obtain ⟨w, hw⟩ := h
+  refine (exh_subset_exhMW ALT φ).antisymm' fun u hu ↦ ?_
+  obtain ⟨huφ, hmax⟩ := mem_exhMW_iff_forall_le.1 hu
+  obtain ⟨hwφ, hgreatest⟩ := mem_exh_iff_forall_le.1 hw
+  have hwu : w ≤[ALT] u := hmax w hwφ (hgreatest u huφ)
+  exact mem_exh_iff_forall_le.2 ⟨huφ, fun v hv a ha hua ↦ hgreatest v hv a ha (hwu a ha hua)⟩
 
 theorem mem_exhMW_iff_minimal : u ∈ exhMW ALT φ ↔ u ∈ φ ∧
     Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) ({a ∈ ALT | u ∈ a}) := by
@@ -92,20 +128,19 @@ the premises. -/
 theorem exhMW_eq_minimals :
     exhMW ALT φ = (≤[compl '' ALT]).minimals φ := by
   have key (u v : W) : (≤[compl '' ALT]).le u v ↔
-      {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} := by
-    simp only [Preorder.ofLowerSets_le_iff, Set.forall_mem_image, Set.mem_compl_iff,
-      Set.subset_def, Set.mem_ofPred_eq, not_imp_not]
-    exact ⟨fun h a ⟨ha, hu⟩ ↦ ⟨ha, h ha hu⟩, fun h a ha hu ↦ (h a ⟨ha, hu⟩).2⟩
+      {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} :=
+    (Preorder.ofLowerSets_image_compl_le_iff ALT u v).trans
+      (Preorder.ofLowerSets_le_iff_subset ALT v u)
   ext u
   simp only [mem_exhMW, MinimalFor, Preorder.mem_minimals_iff, key]
 
-/-- Over finitely many alternatives, every world of the prejacent lies above a minimal world. -/
-theorem exists_mem_exhMW_le (hfin : ALT.Finite) (hw : w ∈ φ) :
-    ∃ u ∈ exhMW ALT φ, {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | w ∈ a} := by
+/-- Over finitely many alternatives, every world of the prejacent lies below a minimal world,
+one verifying only alternatives that it verifies. -/
+theorem exists_mem_exhMW_le (hfin : ALT.Finite) (hw : w ∈ φ) : ∃ u ∈ exhMW ALT φ, w ≤[ALT] u := by
   obtain ⟨u, ⟨hu, huw⟩, hmin⟩ := Set.Finite.exists_minimalFor' (fun w ↦ {a ∈ ALT | w ∈ a})
     {v | v ∈ φ ∧ {a ∈ ALT | v ∈ a} ⊆ {a ∈ ALT | w ∈ a}}
     (hfin.finite_subsets.subset (Set.image_subset_iff.2 fun _ _ _ h ↦ h.1)) ⟨w, hw, le_rfl⟩
-  exact ⟨u, ⟨hu, fun v hv hvu ↦ hmin ⟨hv, hvu.trans huw⟩ hvu⟩, huw⟩
+  exact ⟨u, ⟨hu, fun v hv hvu ↦ hmin ⟨hv, hvu.trans huw⟩ hvu⟩, fun a ha hua ↦ (huw ⟨ha, hua⟩).2⟩
 
 theorem exhMW_nonempty (hfin : ALT.Finite) (hφ : φ.Nonempty) : (exhMW ALT φ).Nonempty :=
   let ⟨_, hw⟩ := hφ
@@ -138,14 +173,15 @@ instance [Fintype W] {ι : Type*} [Fintype ι] {f : ι → Set W} [∀ i, Decida
 /-! ### Representative minimal worlds -/
 
 variable (ALT φ) in
-/-- A set of prejacent worlds represents the minimal worlds when every prejacent world lies above
-one of its members and no member's true alternatives strictly include another's. -/
+/-- A set of prejacent worlds represents the minimal worlds when every prejacent world lies below
+one of its members and no member lies strictly below another. -/
 structure IsMinimalCover (M : Set W) : Prop where
+  /-- The members are worlds of the prejacent. -/
   mem : ∀ v ∈ M, v ∈ φ
-  le : ∀ w ∈ φ, ∃ v ∈ M, {a ∈ ALT | v ∈ a} ⊆ {a ∈ ALT | w ∈ a}
-  antisymm : ∀ v ∈ M, ∀ u ∈ M,
-    {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} →
-      {a ∈ ALT | v ∈ a} ⊆ {a ∈ ALT | u ∈ a}
+  /-- Every world of the prejacent lies below a member. -/
+  le : ∀ w ∈ φ, ∃ v ∈ M, w ≤[ALT] v
+  /-- A member below another is above it. -/
+  antisymm : ∀ v ∈ M, ∀ u ∈ M, (v ≤[ALT] u) → (u ≤[ALT] v)
 
 variable {M : Set W}
 
@@ -155,9 +191,13 @@ theorem IsMinimalCover.exhMW_eq (hM : IsMinimalCover ALT φ M) :
   ext u
   refine ⟨fun ⟨hu, hmin⟩ ↦ ⟨hu, ?_⟩, fun ⟨hu, v, hv, hvu⟩ ↦ ⟨hu, fun x hx hxu ↦ ?_⟩⟩
   · obtain ⟨v, hv, hvu⟩ := hM.le u hu
+    have hvu := (Preorder.ofLowerSets_le_iff_subset ALT u v).1 hvu
     exact ⟨v, hv, hvu.antisymm (hmin (hM.mem v hv) hvu)⟩
   · obtain ⟨v', hv', hv'x⟩ := hM.le x hx
-    exact hvu.ge.trans ((hM.antisymm v hv v' hv' (hv'x.trans (hxu.trans hvu.ge))).trans hv'x)
+    have hv'x := (Preorder.ofLowerSets_le_iff_subset ALT x v').1 hv'x
+    exact hvu.ge.trans (((Preorder.ofLowerSets_le_iff_subset ALT v' v).1 (hM.antisymm v hv v' hv'
+      ((Preorder.ofLowerSets_le_iff_subset ALT v v').2 (hv'x.trans (hxu.trans hvu.ge))))).trans
+        hv'x)
 
 /-! ### The orderings of a property
 
@@ -237,8 +277,9 @@ variable {W' W₁ W₂ : Type*}
 private theorem sep_image_preimage_subset_iff (g : W' → W) (ALT : Set (Set W)) {x y : W'} :
     {a ∈ (g ⁻¹' ·) '' ALT | x ∈ a} ⊆ {a ∈ (g ⁻¹' ·) '' ALT | y ∈ a} ↔
       {a ∈ ALT | g x ∈ a} ⊆ {a ∈ ALT | g y ∈ a} :=
-  ⟨fun h a ha ↦ ⟨ha.1, (h ⟨⟨a, ha.1, rfl⟩, ha.2⟩).2⟩,
-    by rintro h _ ⟨⟨a, ha, rfl⟩, hx⟩; exact ⟨⟨a, ha, rfl⟩, (h ⟨ha, hx⟩).2⟩⟩
+  ((Preorder.ofLowerSets_le_iff_subset _ y x).symm.trans
+    (Preorder.ofLowerSets_image_preimage_le_iff g ALT y x)).trans
+      (Preorder.ofLowerSets_le_iff_subset ALT (g y) (g x))
 
 /-- Exhaustifying after pulling the prejacent and the alternatives back along a map of worlds is
 pulling back the exhaustification of the prejacent restricted to the range of the map. -/
@@ -283,14 +324,11 @@ private theorem sep_image2_prod_subset_iff {ALT₁ : Set (Set W₁)} {ALT₂ : S
     {x y : W₁ × W₂} (h₁ : ∃ a ∈ ALT₁, x.1 ∈ a) (h₂ : ∃ a ∈ ALT₂, x.2 ∈ a) :
     {a ∈ image2 (· ×ˢ ·) ALT₁ ALT₂ | x ∈ a} ⊆ {a ∈ image2 (· ×ˢ ·) ALT₁ ALT₂ | y ∈ a} ↔
       {a ∈ ALT₁ | x.1 ∈ a} ⊆ {a ∈ ALT₁ | y.1 ∈ a} ∧
-        {a ∈ ALT₂ | x.2 ∈ a} ⊆ {a ∈ ALT₂ | y.2 ∈ a} := by
-  obtain ⟨b₁, hb₁, hx₁⟩ := h₁
-  obtain ⟨b₂, hb₂, hx₂⟩ := h₂
-  refine ⟨fun h ↦ ⟨fun a ha ↦ ⟨ha.1, ?_⟩, fun a ha ↦ ⟨ha.1, ?_⟩⟩, ?_⟩
-  · exact (h ⟨mem_image2_of_mem ha.1 hb₂, ha.2, hx₂⟩).2.1
-  · exact (h ⟨mem_image2_of_mem hb₁ ha.1, hx₁, ha.2⟩).2.2
-  · rintro ⟨h₁, h₂⟩ _ ⟨⟨a₁, ha₁, a₂, ha₂, rfl⟩, hx⟩
-    exact ⟨mem_image2_of_mem ha₁ ha₂, (h₁ ⟨ha₁, hx.1⟩).2, (h₂ ⟨ha₂, hx.2⟩).2⟩
+        {a ∈ ALT₂ | x.2 ∈ a} ⊆ {a ∈ ALT₂ | y.2 ∈ a} :=
+  ((Preorder.ofLowerSets_le_iff_subset _ y x).symm.trans
+    (Preorder.ofLowerSets_image2_prod_le_iff h₁ h₂)).trans
+      ((Preorder.ofLowerSets_le_iff_subset ALT₁ y.1 x.1).and
+        (Preorder.ofLowerSets_le_iff_subset ALT₂ y.2 x.2))
 
 /-- Exhaustification of a product of prejacents against the products of their alternatives is the
 product of the exhaustifications, when the alternatives cover each prejacent. -/

@@ -64,21 +64,21 @@ theorem isMinimalCover_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : w₁ ∈ φ �
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
   refine ⟨by rintro v (rfl | rfl) <;> assumption, fun w hw ↦ ?_, ?_⟩
   · rcases hcov hw with h | h
-    · refine ⟨w₁, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+    · refine ⟨w₁, by simp, fun q hq hq' ↦ ?_⟩
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
       rcases hq with rfl | rfl | rfl | rfl
       exacts [hw, h, absurd hq' hw₁'.1, absurd hq' hw₁'.2]
-    · refine ⟨w₂, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+    · refine ⟨w₂, by simp, fun q hq hq' ↦ ?_⟩
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
       rcases hq with rfl | rfl | rfl | rfl
       exacts [hw, absurd hq' hw₂'.1, h, absurd hq' hw₂'.2]
   · intro v hv u hu huv
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hv hu
     rcases hv with rfl | rfl <;> rcases hu with rfl | rfl
-    · exact subset_rfl
-    · exact absurd (huv ⟨by simp, hw₂₂⟩).2 hw₁'.1
-    · exact absurd (huv ⟨by simp, hw₁₁⟩).2 hw₂'.1
-    · exact subset_rfl
+    · exact huv
+    · exact absurd (huv _ (by simp) hw₂₂) hw₁'.1
+    · exact absurd (huv _ (by simp) hw₁₁) hw₂'.1
+    · exact huv
 
 theorem exhIEII_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) :
@@ -210,8 +210,7 @@ theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     · obtain ⟨i, hi⟩ := Set.mem_iUnion.1 (hcov hw)
       obtain ⟨v, hv, hv'⟩ := hsep i
       refine ⟨v, ⟨i, hv, hv'⟩, ?_⟩
-      rintro q ⟨hq, hvq⟩
-      refine ⟨hq, ?_⟩
+      rintro q hq hvq
       rcases hq with rfl | ⟨j, rfl⟩
       · exact hw
       · by_cases hji : j = i
@@ -220,14 +219,13 @@ theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     · rintro v ⟨i, hv, hv'⟩ u ⟨j, hu, hu'⟩ huv
       by_cases hji : j = i
       · subst hji
-        rintro q ⟨hq, hvq⟩
-        refine ⟨hq, ?_⟩
+        rintro q hq hvq
         rcases hq with rfl | ⟨k, rfl⟩
         · exact hu.1
         · by_cases hkj : k = j
           · exact hkj ▸ hu.2
           · exact absurd hvq (hv' k hkj)
-      · exact absurd (huv ⟨Or.inr ⟨j, rfl⟩, hu.2⟩).2 (hv' j hji)
+      · exact absurd (huv _ (Or.inr ⟨j, rfl⟩) hu.2) (hv' j hji)
   have hφ : ∀ w ∈ φ, ∃ v ∈ {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j}, v ∈ φ := fun w hw ↦ by
     obtain ⟨i, -⟩ := Set.mem_iUnion.1 (hcov hw)
     obtain ⟨v, hv, hv'⟩ := hsep i
@@ -277,17 +275,17 @@ theorem exhIEII_quantified
   have hM : IsMinimalCover {φ, s₁, s₂, sb, e, e₁, e₂, eb} φ {w₁, w₂, w₃} := by
     refine ⟨by rintro v (rfl | rfl | rfl) <;> assumption, fun w hw ↦ ?_, ?_⟩
     · rcases hcov w hw with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩
-      · refine ⟨w₁, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+      · refine ⟨w₁, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, h1, absurd hq' hw₁s₂, absurd hq' hw₁sb, h2, h3, absurd hq' hw₁e₂,
           absurd hq' hw₁eb]
-      · refine ⟨w₂, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+      · refine ⟨w₂, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, absurd hq' hw₂s₁, h1, absurd hq' hw₂sb, h2, absurd hq' hw₂e₁, h3,
           absurd hq' hw₂eb]
-      · refine ⟨w₃, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+      · refine ⟨w₃, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, absurd hq' hw₃s₁, absurd hq' hw₃s₂, absurd hq' hw₃sb, h1, h2, h3,
@@ -295,15 +293,15 @@ theorem exhIEII_quantified
     · intro v hv u hu huv
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hv hu
       rcases hv with rfl | rfl | rfl <;> rcases hu with rfl | rfl | rfl
-      · exact subset_rfl
-      · exact absurd (huv ⟨by simp, hw₂s₂⟩).2 hw₁s₂
-      · exact absurd (huv ⟨by simp, hw₃e₂⟩).2 hw₁e₂
-      · exact absurd (huv ⟨by simp, hw₁s₁⟩).2 hw₂s₁
-      · exact subset_rfl
-      · exact absurd (huv ⟨by simp, hw₃e₁⟩).2 hw₂e₁
-      · exact absurd (huv ⟨by simp, hw₁s₁⟩).2 hw₃s₁
-      · exact absurd (huv ⟨by simp, hw₂s₂⟩).2 hw₃s₂
-      · exact subset_rfl
+      · exact huv
+      · exact absurd (huv _ (by simp) hw₂s₂) hw₁s₂
+      · exact absurd (huv _ (by simp) hw₃e₂) hw₁e₂
+      · exact absurd (huv _ (by simp) hw₁s₁) hw₂s₁
+      · exact huv
+      · exact absurd (huv _ (by simp) hw₃e₁) hw₂e₁
+      · exact absurd (huv _ (by simp) hw₁s₁) hw₃s₁
+      · exact absurd (huv _ (by simp) hw₂s₂) hw₃s₂
+      · exact huv
   rw [hM.exhIEII_eq ⟨w₀, hw₀, ?_⟩]
   · ext w
     simp [hw₁, hw₁s₁, hw₁e, hw₁e₁, hw₁s₂, hw₁sb, hw₁e₂, hw₁eb, hw₂, hw₂s₂, hw₂e, hw₂e₂, hw₂s₁,

@@ -118,7 +118,7 @@ private theorem isStrongestTrueAnswer_of_exhMW_subset {B : Set (Set W)} {φ : Se
     IsStrongestTrueAnswer B w φ :=
   ⟨⟨hφ, hw⟩, fun ψ ⟨hψ, hwψ⟩ _ hv ↦
     let ⟨_, hu, huv⟩ := exists_mem_exhMW_le hB hv
-    (huv ⟨hψ, (h hu ψ hψ).1 hwψ⟩).2⟩
+    huv ψ hψ ((h hu ψ hψ).1 hwψ)⟩
 
 /-- (26), with its extension in the appendix: for finitely many alternatives, they are strongly
 stable iff exhaustifying them yields every cell of the partition they induce, iff exhaustifying

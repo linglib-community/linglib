@@ -30,10 +30,9 @@ they coincide when the first is consistent.
   a maximal consistent exclusion iff the world is minimal.
 * `Exhaustification.isInnocentlyExcludable_iff_exhMW_subset_compl`: an alternative is innocently
   excludable iff it fails at every minimal world.
-* `Exhaustification.exh_subset_exhMW`, `Exhaustification.exhMW_subset_exhIE`: the three
-  exhaustifications are nested.
-* `Exhaustification.exhIE_eq_exh_of_nonempty`, `Exhaustification.exhMW_eq_exh_of_nonempty`: they
-  coincide when plain exhaustification is consistent.
+* `Exhaustification.exhMW_subset_exhIE`: innocent exclusion keeps the minimal worlds.
+* `Exhaustification.exhIE_eq_exh_of_nonempty`: innocent exclusion is exhaustification when that is
+  consistent.
 * `Exhaustification.exhIE_eq_exhMW_iff`: innocent exclusion keeps exactly the minimal worlds iff
   every other world of the prejacent verifies an alternative false at all of them.
 * `Exhaustification.mem_exhIE_iff_subset_sUnion`: innocent exclusion keeps the prejacent worlds
@@ -246,11 +245,6 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := fun _ hu ↦
 theorem exhIE_univ : exhIE univ φ = φ :=
   (exhIE_subset _ _).antisymm (exhMW_univ.ge.trans (exhMW_subset_exhIE _ _))
 
-/-- Exhaustification keeps the worlds whose true alternatives are least, and the minimal-world
-exhaustifier those whose true alternatives are minimal. -/
-theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
-  fun _ hu ↦ mem_exhMW.2 ((mem_exh_iff_isLeast_image.1 hu).2.minimalFor hu.1)
-
 theorem exh_subset_exhIE : exh ALT φ ⊆ exhIE ALT φ :=
   (exh_subset_exhMW ALT φ).trans (exhMW_subset_exhIE ALT φ)
 
@@ -295,14 +289,6 @@ theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhIE ALT φ = ex
   rw [exhIE_eq_inter_excludesIE, excludesIE_eq_excludes h, inter_univ]
   rfl
 
-/-- When the prejacent is consistent with the denial of every alternative it does not entail,
-minimal-world exhaustification denies them all too ([spector-2016]). -/
-theorem exhMW_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhMW ALT φ = exh ALT φ := by
-  obtain ⟨w, hw⟩ := h
-  ext u
-  rw [mem_exhMW, minimalFor_iff_of_isLeast (mem_exh_iff_isLeast_image.1 hw).2,
-    mem_exh_iff_isLeast_image]
-
 theorem exhIE_eq_self_of_forall (h : ∀ a ∈ ALT, (φ ∩ a).Nonempty → φ ⊆ a) : exhIE ALT φ = φ :=
   (exhIE_subset ALT φ).antisymm ((exh_eq_self_iff.2 h).ge.trans (exh_subset_exhIE ALT φ))
 
@@ -321,7 +307,7 @@ theorem not_isInnocentlyExcludable_of_subset_union (hfin : ALT.Finite) {p q : Se
   obtain ⟨w, hw, hwq⟩ := hne
   obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hw
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl ALT φ p hp]
-  exact fun h ↦ h hu ((hcov hu.1).resolve_right fun huq ↦ hwq (huw ⟨hq, huq⟩).2)
+  exact fun h ↦ h hu ((hcov hu.1).resolve_right fun huq ↦ hwq (huw q hq huq))
 
 variable {φ} in
 /-- Alternatives whose union covers the prejacent leave innocent exclusion vacuous, whether or not
@@ -347,7 +333,7 @@ theorem exhIE_notMem_lowerClosure (hfin : ALT.Finite) :
   rintro ⟨q, ⟨hq, hqφ⟩, hsq⟩
   obtain ⟨w, hwφ, hwq⟩ := not_subset.1 hqφ.2
   obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hwφ
-  exact hwq (huw ⟨hq, hsq (exhMW_subset_exhIE ALT φ hu)⟩).2
+  exact hwq (huw q hq (hsq (exhMW_subset_exhIE ALT φ hu)))
 
 theorem exhIE_eq_setOf_exhMW_subset_compl :
     exhIE ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, exhMW ALT φ ⊆ aᶜ → u ∉ a} :=

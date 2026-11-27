@@ -230,7 +230,7 @@ theorem not_isInnocentlyExcludable_union {A B : Set (Set World)}
       (Set.mem_biUnion (hS hi) ((hw i (hS hi)).2 rfl) : w ∈ ⋃ i ∈ I, p i)
     refine hmw hu (hu₁.2 hu.1 (fun r ⟨hr, hur⟩ ↦ ⟨hr, ?_⟩) ⟨hqA, not_not.1 hu₁q⟩).2
     obtain ⟨T, -, hT, rfl⟩ := Set.mem_supClosure_image.1 (hA hr)
-    obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 (huw ⟨Or.inl hr, hur⟩).2
+    obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 (huw _ (Or.inl hr) hur)
     exact Set.mem_biUnion hk ((hw k (hT hk)).1 hwk ▸ hu₁i)
   intro hq
   rcases hq.1 with hqA | hqB

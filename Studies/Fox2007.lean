@@ -401,17 +401,17 @@ theorem isMinimalCover_hornAlt {x y : W} (hx : x ∈ O a \ (O b ∪ O' (a ⊔ b)
   · rintro v (rfl | rfl)
     exacts [hO le_sup_left hx.1, hO le_sup_right hy.1]
   · rcases hab hw with hwa | hwb
-    · refine ⟨x, Or.inl rfl, fun c ⟨hc, hxc⟩ ↦ ⟨hc, ?_⟩⟩
+    · refine ⟨x, Or.inl rfl, fun c hc hxc ↦ ?_⟩
       rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
       exacts [hw, hwa, (hx.2 (Or.inl hxc)).elim, (hxK (hcK hxc)).elim]
-    · refine ⟨y, Or.inr rfl, fun c ⟨hc, hyc⟩ ↦ ⟨hc, ?_⟩⟩
+    · refine ⟨y, Or.inr rfl, fun c hc hyc ↦ ?_⟩
       rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
       exacts [hw, (hy.2 (Or.inl hyc)).elim, hwb, (hyK (hcK hyc)).elim]
   · rintro v (rfl | rfl) u (rfl | rfl) huv
-    · exact subset_rfl
-    · exact (hx.2 (Or.inl (huv ⟨by simp [hornAlt], hy.1⟩).2)).elim
-    · exact (hy.2 (Or.inl (huv ⟨by simp [hornAlt], hx.1⟩).2)).elim
-    · exact subset_rfl
+    · exact huv
+    · exact (hx.2 (Or.inl (huv _ (by simp [hornAlt]) hy.1))).elim
+    · exact (hy.2 (Or.inl (huv _ (by simp [hornAlt]) hx.1))).elim
+    · exact huv
 
 variable (ha : (O a \ (O b ∪ O' (a ⊔ b))).Nonempty) (hb : (O b \ (O a ∪ O' (a ⊔ b))).Nonempty)
 include ha hb
@@ -704,19 +704,19 @@ theorem embedded_scalar_implicature (hah : ah ⊆ sh) (hsh : (sh \ (r ∪ ah)).N
     · rintro v (rfl | rfl)
       exacts [Or.inr hxs, Or.inl hyr]
     · rcases hw with hwr | hws
-      · refine ⟨y, Or.inr rfl, fun c ⟨hc, hyc⟩ ↦ ⟨hc, ?_⟩⟩
+      · refine ⟨y, Or.inr rfl, fun c hc hyc ↦ ?_⟩
         rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [Or.inl hwr, hwr, (hys hyc).elim, (hys hyc.2).elim, Or.inl hwr, hwr,
           (hys (hah hyc)).elim, (hys (hah hyc.2)).elim]
-      · refine ⟨x, Or.inl rfl, fun c ⟨hc, hxc⟩ ↦ ⟨hc, ?_⟩⟩
+      · refine ⟨x, Or.inl rfl, fun c hc hxc ↦ ?_⟩
         rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [Or.inr hws, (hx (Or.inl hxc)).elim, hws, (hx (Or.inl hxc.1)).elim,
           (hx hxc).elim, (hx (Or.inl hxc)).elim, (hx (Or.inr hxc)).elim, (hx (Or.inl hxc.1)).elim]
     · rintro v (rfl | rfl) u (rfl | rfl) huv
-      · exact subset_rfl
-      · exact (hx (Or.inl (huv ⟨by simp, hyr⟩).2)).elim
-      · exact (hys (huv ⟨by simp, hxs⟩).2).elim
-      · exact subset_rfl
+      · exact huv
+      · exact (hx (Or.inl (huv _ (by simp) hyr))).elim
+      · exact (hys (huv _ (by simp) hxs)).elim
+      · exact huv
   rw [hM.exhIE_eq]
   ext u
   simp only [mem_ofPred_eq, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,

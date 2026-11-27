@@ -153,7 +153,8 @@ variable {ALT φ} {M : Set World}
 
 theorem IsMinimalCover.singleton {w₀ : World} (hw₀ : w₀ ∈ φ) (h : ∀ q ∈ ALT, w₀ ∈ q → φ ⊆ q) :
     IsMinimalCover ALT φ {w₀} :=
-  ⟨fun _ hv ↦ hv ▸ hw₀, fun _ hw ↦ ⟨w₀, rfl, fun q ⟨hq, hq₀⟩ ↦ ⟨hq, h q hq hq₀ hw⟩⟩, by simp⟩
+  ⟨fun _ hv ↦ hv ▸ hw₀, fun _ hw ↦ ⟨w₀, rfl, fun q hq hq₀ ↦ h q hq hq₀ hw⟩,
+    by rintro _ rfl _ rfl h; exact h⟩
 
 theorem IsMinimalCover.cell_eq (hM : IsMinimalCover ALT φ M) :
     cell ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)} := by

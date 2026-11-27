@@ -44,6 +44,9 @@ bottom filter can be stated through the subfamilies of `A` with a common point.
 * `Preorder.ofLowerSets_eq_of_subset_lowerSets`: a family of lower sets of a preorder containing
   the principal ones induces that preorder.
 * `Preorder.ofLowerSets_insert`: adding a set meets the ordering with that of the set.
+* `Preorder.ofLowerSets_image_compl_le_iff`, `Preorder.ofLowerSets_image_preimage_le_iff`,
+  `Preorder.ofLowerSets_image2_prod_le_iff`: the orderings of the complements, of the preimages
+  under a map, and of the products of two families.
 * `Preorder.ofLowerSets_eq_lift`: the ordering is the pullback of `⊇` along the map sending a
   point to the members of `A` containing it.
 * `Preorder.minimals_ofLowerSets_eq`: the minimal points are those in every member of `A`, when
@@ -61,14 +64,12 @@ unfolds to a conjunction and membership in `A` is not repeated on both sides. Th
 
 * A family is the family of lower sets of the ordering it generates just in case it is closed
   under arbitrary intersections and arbitrary unions, so that the closure operator of
-  `PremiseOrdering.gi` adds exactly these. The closure lemmas of `Exhaustification/Closure.lean`
-  and the expressible propositions of `Studies/Chemla2011.lean` are cases of it.
+  `PremiseOrdering.gi` adds exactly these. The expressible propositions
+  of `Studies/Chemla2011.lean` are a case of it.
 * Adding a set to a family is an operation on orderings, by `Preorder.ofLowerSets_insert`.
   Removing one is not: for independent `p` and `q`, the families `{p, q, p ∩ q}` and `{p, q}`
   generate the same ordering, and `{q, p ∩ q}` and `{q}` do not. Characterize the operations on
   families that descend to the orderings they generate.
-* The family of preimages of the members of `A` under a map generates the pullback of `≤[A]`
-  along it.
 * `Preorder.ofCriterion`, the decidability instance and `Filter.mem_atBotOn_satisfied_iff` are
   stated for a predicate or a relation and its criteria; restate them for families of sets.
 
@@ -129,6 +130,28 @@ theorem ofLowerSets_le_iff_subset (A : Set (Set α)) (a b : α) :
 theorem ofLowerSets_image_le_iff {ι : Type*} (f : ι → Set α) (I : Set ι) (a b : α) :
     (a ≤[f '' I] b) ↔ ∀ i ∈ I, b ∈ f i → a ∈ f i :=
   Set.forall_mem_image
+
+/-- The complements of a family induce the reverse ordering. -/
+theorem ofLowerSets_image_compl_le_iff (A : Set (Set α)) (a b : α) :
+    (a ≤[compl '' A] b) ↔ (b ≤[A] a) := by
+  simp only [ofLowerSets_le_iff, Set.forall_mem_image, Set.mem_compl_iff, not_imp_not]
+
+/-- The preimages of a family under a map induce the pullback of its ordering. -/
+theorem ofLowerSets_image_preimage_le_iff {β : Type*} (g : β → α) (A : Set (Set α)) (x y : β) :
+    (x ≤[(g ⁻¹' ·) '' A] y) ↔ ((g x) ≤[A] (g y)) :=
+  Set.forall_mem_image
+
+/-- The products of the members of two families induce the product ordering above a point each of
+whose components lies in some member. -/
+theorem ofLowerSets_image2_prod_le_iff {β : Type*} {A : Set (Set α)} {B : Set (Set β)}
+    {x y : α × β} (h₁ : ∃ s ∈ A, y.1 ∈ s) (h₂ : ∃ t ∈ B, y.2 ∈ t) :
+    (x ≤[Set.image2 (· ×ˢ ·) A B] y) ↔ (x.1 ≤[A] y.1) ∧ (x.2 ≤[B] y.2) := by
+  obtain ⟨s₀, hs₀, hy₁⟩ := h₁
+  obtain ⟨t₀, ht₀, hy₂⟩ := h₂
+  refine ⟨fun h ↦ ⟨fun s hs hy ↦ (h _ (Set.mem_image2_of_mem hs ht₀) ⟨hy, hy₂⟩).1,
+    fun t ht hy ↦ (h _ (Set.mem_image2_of_mem hs₀ ht) ⟨hy₁, hy⟩).2⟩, ?_⟩
+  rintro ⟨h₁, h₂⟩ _ ⟨s, hs, t, ht, rfl⟩ hy
+  exact ⟨h₁ s hs hy.1, h₂ t ht hy.2⟩
 
 /-- The ordering is the pullback of `⊇` along the map sending a point to the members of `A`
 containing it. -/

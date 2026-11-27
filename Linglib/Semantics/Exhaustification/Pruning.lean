@@ -252,8 +252,8 @@ theorem infClosure_diff_subset_prunedReadings (h : Separating I p) (hne : I.None
     obtain ⟨u, hu, hle⟩ := exists_mem_exhMW_le hfin
       (Set.mem_biUnion (hsx hi) ((hwi i (hsx hi)).2 rfl))
     obtain ⟨j, hj, huj⟩ := Set.mem_iUnion₂.1 hu.1
-    rcases (hle ⟨⟨supClosed_supClosure hq'.1 (subset_supClosure (Set.mem_image_of_mem _ hj)),
-      hq'.2.trans Set.subset_union_left⟩, Or.inr huj⟩).2 with hw | hw
+    rcases hle _ ⟨supClosed_supClosure hq'.1 (subset_supClosure (Set.mem_image_of_mem _ hj)),
+      hq'.2.trans Set.subset_union_left⟩ (Or.inr huj) with hw | hw
     · obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 hw
       exact hi' ((hwi k (hs'x hk)).1 hwk ▸ hk)
     · exact hmw hu (Set.mem_biUnion hi ((hwi j hj).1 hw ▸ huj))
