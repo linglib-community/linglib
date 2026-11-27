@@ -38,7 +38,8 @@ Each page is read as a text, and departs from the rules above to that end:
   in the column, and a declaration with no docstring is not in a text.
 - Example data and its schema (`Linglib/Data/`) have no page and no mark in a chart. A source's
   page ends with its examples, each as the paper sets it, and one that an item is about leads to
-  the item.
+  the item. An example is also set where it is used: above the claim of an item about it, and
+  under a Lean statement that mentions it.
 - The paragraphs that open a page are plain prose: a link a docstring makes there is not drawn.
 - A source and the study file that formalizes it are one page, the source's: the study's header
   opens it, the study's notes and references close it, and the two are one mark in a chart. A

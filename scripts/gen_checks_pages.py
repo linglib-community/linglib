@@ -123,6 +123,13 @@ class Site:
             rows = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
             self.examples[key] = {row["source"]["paperLabel"]: row for row in rows
                                   if isinstance(row, dict) and row.get("source")}
+        # The example a declaration of the example data stands for, as the generator names it.
+        self.example_of = {}
+        for key, module in self.study.items():
+            for row in self.examples[key].values():
+                name = f'{module.split(".")[-1]}.Examples.ex_{row["id"].split("_", 1)[-1]}'
+                if name in self.nodes:
+                    self.example_of[name] = row
         # A file's text has its documented declarations that a statement closure describes.
         self.shown = {m: [d for d in t["decls"] if d["doc"] and d["name"] in self.nodes]
                       for m, t in self.texts.items() if m not in self.source and not plumbing(m)}
@@ -314,6 +321,8 @@ class Page:
                              if u in nodes and u != n and not generated(u)],
                        "h": self.root + path if (path := self.site.decl_path(n)) else "",
                        "c": self.cover.get(n, []),
+                       "x": "".join(example(self.site.example_of[u]) for u in nodes[n]["uses"]
+                                    if u in self.site.example_of),
                        "a": people(nodes[n].get("credit"))}
             todo += used[n]["u"]
         return used
