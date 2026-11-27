@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Attitudes.Preference.ExpectedValue
 public import Linglib.Semantics.Modality.Necessity
@@ -27,8 +28,8 @@ antitone in the alternatives; against one alternative `ψ` it holds for the thre
 expected value of `ψ` up to that of `φ`. It depends on the prior only through the prior
 conditioned on the prejacent and on each alternative, so reweighting the prior by a density
 constant on each of them changes nothing, which is how the paper reads the neglect of base rates.
-A proposition that entails every member of `R` has the greatest expected value, so nothing is a
-*must* against such an alternative.
+A proposition of positive probability that entails every member of `R` has the greatest expected
+value, so nothing is a *must* against such an alternative.
 
 In the miners puzzle the ideals are that more than `k` of the ten miners are saved, and the
 measure function is the number saved. On a prior that makes the miners as likely to be in either
@@ -42,10 +43,10 @@ sentences. On Kratzer's account, with best worlds and the miners in one of the s
 
 With the paper's likelihoods for the Linda scenario, *must* holds of *bank teller and feminist*
 and not of *bank teller* for every threshold from 0.5 up to 1.5, where Kratzer's necessity and a
-threshold on probability hold of each conjunct of what they hold of. With its likelihoods for the
-lawyers and engineers scenario, *Jack must be an engineer* holds for the thresholds from 0.63 up
-to 1.33. In the inheritance scenario *Kim must marry Pat* is true at some threshold against its
-negation and at none against the other people Kim might marry.
+threshold on probability hold of every consequence of what they hold of. With its likelihoods
+for the lawyers and engineers scenario, *Jack must be an engineer* holds for the thresholds from
+0.63 up to 1.33. In the inheritance scenario *Kim must marry Pat* is true at some threshold
+against its negation and at none against the other people Kim might marry.
 
 ## Implementation notes
 
@@ -66,7 +67,6 @@ negation and at none against the other people Kim might marry.
 * The miners, Linda and inheritance models have uniform priors. The paper gives the miners'
   locations probability 0.5 and no prior for the other two; printed likelihoods are hypotheses on
   the conditioned measure.
-* The plausibility requirement is a strict lower bound on the prior of the prejacent.
 
 ## TODO
 
@@ -74,8 +74,9 @@ negation and at none against the other people Kim might marry.
   likelihood ratio measure, and the *might* that goes with it.
 * The Korean construction is not built from entries of the Korean language file, whose modal
   inventory has *-ya ha-* and *-to toy-* and not *-(e)ya toy-*.
-* No theorem reads the rows for Linda, Jack, the cold and the helicopter, and the felicity
-  condition on a known prejacent is not formalized.
+* No theorem reads the rows for Linda, Jack, the cold and the helicopter. The plausibility
+  requirement on the prior of the prejacent and the felicity condition on a known prejacent are
+  not formalized.
 
 ## References
 
@@ -129,10 +130,6 @@ def ought : Set (Set W) :=
 negation of `φ`. -/
 def might : Set (Set W) := {φ | φᶜ ∉ must p R {φ} θ}
 
-/-- §5: *must* with the plausibility requirement holds of `φ` when *must* does and the prior
-probability of `φ` exceeds a standard `θ'`. -/
-def mustPlausible (θ' : ℝ) : Set (Set W) := must p R alts θ ∩ p.real ⁻¹' Ioi θ'
-
 /-- `ofForce p R alts θ f` is the paper's entry for a modal of force `f`: (6) for necessity, (17)
 for weak necessity and (59) for possibility. -/
 def ofForce : Modality.ModalForce → Set (Set W)
@@ -146,6 +143,10 @@ variable {p R alts θ} {alts' : Set (Set W)} {φ ψ : Set W}
 theorem mem_must : φ ∈ must p R alts θ ↔
     θ < expectedValue p μ_EVAL[R] φ ∧ ∀ ψ ∈ alts, expectedValue p μ_EVAL[R] ψ ≤ θ := by
   simp only [must, mem_ofPred_eq, not_lt]
+
+theorem mem_ought : φ ∈ ought p R alts θ ↔ θ < expectedValue p μ_EVAL[R] φ ∧
+    ∀ ψ ∈ alts, expectedValue p μ_EVAL[R] ψ < expectedValue p μ_EVAL[R] φ :=
+  Iff.rfl
 
 -- §3.1
 theorem must_subset_ought : must p R alts θ ⊆ ought p R alts θ :=
@@ -167,19 +168,22 @@ theorem mem_must_singleton : φ ∈ must p R {ψ} θ ↔
     θ ∈ Ico (expectedValue p μ_EVAL[R] ψ) (expectedValue p μ_EVAL[R] φ) := by
   simp [mem_must, and_comm]
 
--- (49b)
-theorem notMem_mustPlausible_of_le {θ' : ℝ} (h : p.real φ ≤ θ') :
-    φ ∉ mustPlausible p R alts θ θ' :=
-  fun h' ↦ h'.2.not_ge h
-
 -- (59)
 theorem mem_might : φ ∈ might p R θ ↔
     expectedValue p μ_EVAL[R] φᶜ ≤ θ ∨ θ < expectedValue p μ_EVAL[R] φ := by
   simp [might, mem_must, imp_iff_not_or]
 
 -- §6
-theorem compl_notMem_might (h : φ ∈ must p R {φᶜ} θ) : φᶜ ∉ might p R θ := by
-  simpa [might] using h
+theorem compl_mem_might_iff : φᶜ ∈ might p R θ ↔ φ ∉ must p R {φᶜ} θ := by
+  rw [might, mem_ofPred_eq, compl_compl]
+
+/-- *Must* depends on the prior only through the prior conditioned on the prejacent and on each
+alternative. -/
+theorem mem_must_congr_cond {q : Measure W} (h : ∀ ψ ∈ insert φ alts, p[|ψ] = q[|ψ]) :
+    φ ∈ must p R alts θ ↔ φ ∈ must q R alts θ := by
+  rw [mem_must, mem_must, expectedValue_congr_cond (h φ (mem_insert _ _))]
+  exact and_congr_right fun _ ↦ forall₂_congr fun ψ hψ ↦ by
+    rw [expectedValue_congr_cond (h ψ (mem_insert_of_mem _ hψ))]
 
 end Operators
 
@@ -187,12 +191,12 @@ end Operators
 
 section ExpectedValue
 
-variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {p : Measure W} [IsFiniteMeasure p]
-  {R : ι → Set W} {alts : Set (Set W)} {θ : ℝ} {φ ψ : Set W}
+variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {p : Measure W} {R : ι → Set W}
+  {alts : Set (Set W)} {θ : ℝ} {φ ψ : Set W}
 
 -- (12)
-theorem expectedValue_eq_sum_cond (p : Measure W) [IsFiniteMeasure p] (R : ι → Set W)
-    (φ : Set W) : expectedValue p μ_EVAL[R] φ = ∑ i, p[|φ].real (R i) :=
+theorem expectedValue_eq_sum_cond (p : Measure W) (R : ι → Set W) (φ : Set W) :
+    expectedValue p μ_EVAL[R] φ = ∑ i, p[|φ].real (R i) :=
   expectedValue_sum_indicator_one _ fun _ _ ↦ .of_discrete
 
 theorem expectedValue_le_card : expectedValue p μ_EVAL[R] φ ≤ Fintype.card ι := by
@@ -200,29 +204,24 @@ theorem expectedValue_le_card : expectedValue p μ_EVAL[R] φ ≤ Fintype.card �
   exact (Finset.sum_le_sum fun _ _ ↦ measureReal_le_one).trans_eq (by simp)
 
 -- §7
-theorem expectedValue_eq_card_of_subset (hφ : p φ ≠ 0) (h : ∀ i, φ ⊆ R i) :
-    expectedValue p μ_EVAL[R] φ = Fintype.card ι := by
-  rw [expectedValue_congr (V' := fun _ ↦ (Fintype.card ι : ℝ)) .of_discrete fun w hw ↦ ?_,
-    expectedValue_const hφ]
-  simp [Finset.sum_apply, indicator_of_mem (h _ hw)]
+theorem expectedValue_eq_card_of_subset [IsFiniteMeasure p] (hφ : p φ ≠ 0) (h : ∀ i, φ ⊆ R i) :
+    expectedValue p μ_EVAL[R] φ = Fintype.card ι :=
+  expectedValue_eq_of_forall_mem_eq .of_discrete hφ fun w hw ↦ by
+    simp [Finset.sum_apply, indicator_of_mem (h _ hw)]
 
 -- (49), (50), (60b)
-theorem notMem_must_of_subset (hψ : ψ ∈ alts) (h₀ : p ψ ≠ 0) (h : ∀ i, ψ ⊆ R i) :
+theorem notMem_must_of_subset [IsFiniteMeasure p] (hψ : ψ ∈ alts) (h₀ : p ψ ≠ 0)
+    (h : ∀ i, ψ ⊆ R i) :
     φ ∉ must p R alts θ :=
   notMem_must_of_le hψ (expectedValue_le_card.trans_eq (expectedValue_eq_card_of_subset h₀ h).symm)
 
-omit [IsFiniteMeasure p] in
-/-- *Must* is blind to base rates: reweighting the prior by a density that is constant on the
-prejacent and on each alternative changes nothing (§3.3). -/
+-- §3.3: a density that is a positive finite constant on each hypothesis changes no *must*
 theorem mem_must_withDensity_iff {f : W → ℝ≥0∞}
     (hf : ∀ ψ ∈ insert φ alts, ∃ c, c ≠ 0 ∧ c ≠ ∞ ∧ ∀ w ∈ ψ, f w = c) :
-    φ ∈ must (p.withDensity f) R alts θ ↔ φ ∈ must p R alts θ := by
-  have h (ψ) (hψ : ψ ∈ insert φ alts) :
-      expectedValue (p.withDensity f) μ_EVAL[R] ψ = expectedValue p μ_EVAL[R] ψ := by
-    obtain ⟨c, hc₀, hc, hfc⟩ := hf ψ hψ
-    exact expectedValue_withDensity_of_forall_mem_eq .of_discrete hc₀ hc hfc
-  rw [mem_must, mem_must, h φ (mem_insert _ _)]
-  exact and_congr_right fun _ ↦ forall₂_congr fun ψ hψ ↦ by rw [h ψ (mem_insert_of_mem _ hψ)]
+    φ ∈ must (p.withDensity f) R alts θ ↔ φ ∈ must p R alts θ :=
+  mem_must_congr_cond fun ψ hψ ↦
+    let ⟨_, hc₀, hc, hfc⟩ := hf ψ hψ
+    cond_withDensity_of_forall_mem_eq p .of_discrete hc₀ hc hfc
 
 end ExpectedValue
 
@@ -260,11 +259,13 @@ inductive Action
 /-- A world settles the action taken and the shaft the miners are in (Table 1). -/
 abbrev World := Action × Shaft
 
-instance : MeasurableSpace World := ⊤
+instance : MeasurableSpace Shaft := ⊤
 
-instance : DiscreteMeasurableSpace World := ⟨fun _ ↦ trivial⟩
+instance : DiscreteMeasurableSpace Shaft := ⟨fun _ ↦ trivial⟩
 
-instance : Nonempty World := ⟨(.blockNeither, .A)⟩
+instance : MeasurableSpace Action := ⊤
+
+instance : DiscreteMeasurableSpace Action := ⟨fun _ ↦ trivial⟩
 
 /-- The proposition that action `a` is taken. -/
 abbrev act (a : Action) : Set World := Prod.fst ⁻¹' {a}
@@ -291,7 +292,7 @@ abbrev ideals (k : Fin 10) : Set World := {w | k < saved w}
 -- (8)
 theorem sum_indicator_ideals (w : World) : μ_EVAL[ideals] w = saved w := by
   rw [sum_indicator_one_apply]
-  exact_mod_cast (by revert w; decide : ∀ w : World, #{k : Fin 10 | w ∈ ideals k} = saved w) w
+  exact_mod_cast (by decide : ∀ w : World, #{k : Fin 10 | w ∈ ideals k} = saved w) w
 
 theorem forall_mem_others {a : Action} {P : Set World → Prop} :
     (∀ ψ ∈ others a, P ψ) ↔ ∀ b ≠ a, P (act b) :=
@@ -302,20 +303,17 @@ variable {p : Measure World} [IsFiniteMeasure p] {θ : ℝ}
 -- (19)
 theorem expectedValue_blockNeither (h : p (act .blockNeither) ≠ 0) :
     expectedValue p μ_EVAL[ideals] (act .blockNeither) = 9 := by
-  rw [expectedValue_congr (V' := fun _ ↦ 9) .of_discrete fun w hw ↦ ?_, expectedValue_const h]
-  obtain ⟨a, s⟩ := w
+  refine expectedValue_eq_of_forall_mem_eq .of_discrete h fun ⟨a, s⟩ hw ↦ ?_
   obtain rfl : a = .blockNeither := hw
   rw [sum_indicator_ideals]
   norm_num [saved]
 
-omit [IsFiniteMeasure p] in
 -- (20), (21)
 theorem expectedValue_block (p : Measure World) (s : Shaft) :
     expectedValue p μ_EVAL[ideals] (act (.block s)) =
       10 * p[|act (.block s)].real (inShaft s) := by
   rw [← expectedValue_indicator_one .of_discrete, ← expectedValue_const_mul]
-  refine expectedValue_congr .of_discrete fun w hw ↦ ?_
-  obtain ⟨a, s'⟩ := w
+  refine expectedValue_congr_fun .of_discrete fun ⟨a, s'⟩ hw ↦ ?_
   obtain rfl : a = .block s := hw
   rw [sum_indicator_ideals]
   by_cases h : s = s'
@@ -325,10 +323,8 @@ theorem expectedValue_block (p : Measure World) (s : Shaft) :
 -- (23)
 theorem expectedValue_cond_inShaft {s : Shaft} {a : Action} (h : p (inShaft s ∩ act a) ≠ 0) :
     expectedValue p[|inShaft s] μ_EVAL[ideals] (act a) = saved (a, s) := by
-  rw [expectedValue_cond .of_discrete .of_discrete,
-    expectedValue_congr (V' := fun _ ↦ (saved (a, s) : ℝ)) .of_discrete fun w hw ↦ ?_,
-    expectedValue_const h]
-  obtain ⟨a', s'⟩ := w
+  rw [expectedValue_cond .of_discrete .of_discrete]
+  refine expectedValue_eq_of_forall_mem_eq .of_discrete h fun ⟨a', s'⟩ hw ↦ ?_
   obtain ⟨rfl, rfl⟩ : s' = s ∧ a' = a := hw
   exact sum_indicator_ideals _
 
@@ -351,13 +347,20 @@ omit [IsFiniteMeasure p] in
 theorem measure_act_ne_zero (a : Action) : p (act a) ≠ 0 := fun h₀ ↦
   measure_inShaft_inter_act_ne_zero h .A a (measure_mono_null inter_subset_right h₀)
 
+omit [IsFiniteMeasure p] in
+-- (20), (21)
+theorem expectedValue_block_eq (s : Shaft) :
+    expectedValue p μ_EVAL[ideals] (act (.block s)) = 5 := by
+  rw [expectedValue_block, h]
+  norm_num
+
 -- (22)
 theorem mem_ought_blockNeither :
     act .blockNeither ∈ ought p ideals (others .blockNeither) θ ↔ θ < 9 := by
-  rw [ought, mem_ofPred_eq, expectedValue_blockNeither (measure_act_ne_zero h _), forall_mem_others]
+  rw [mem_ought, expectedValue_blockNeither (measure_act_ne_zero h _), forall_mem_others]
   refine and_iff_left fun b hb ↦ ?_
   obtain s | _ := b
-  · rw [expectedValue_block, h]; norm_num
+  · rw [expectedValue_block_eq h]; norm_num
   · exact absurd rfl hb
 
 -- (26a)
@@ -366,18 +369,16 @@ theorem mem_must_blockNeither :
   rw [mem_must, expectedValue_blockNeither (measure_act_ne_zero h _), forall_mem_others, mem_Ico,
     and_comm]
   refine and_congr_left' ⟨fun H ↦ ?_, fun h5 b hb ↦ ?_⟩
-  · have := H (.block .A) (by simp)
-    rw [expectedValue_block, h] at this
-    linarith
+  · simpa [expectedValue_block_eq h] using H (.block .A) (by simp)
   · obtain s | _ := b
-    · rw [expectedValue_block, h]; linarith
+    · rwa [expectedValue_block_eq h]
     · exact absurd rfl hb
 
 -- (24), for (15b) and (15c)
 theorem mem_ought_block (s : Shaft) :
     act (.block s) ∈ ought p[|inShaft s] ideals (others (.block s)) θ ↔ θ < 10 := by
   have hE (a : Action) := expectedValue_cond_inShaft (measure_inShaft_inter_act_ne_zero h s a)
-  rw [ought, mem_ofPred_eq, forall_mem_others, hE]
+  rw [mem_ought, forall_mem_others, hE]
   refine (and_iff_left fun b hb ↦ ?_).trans (by simp [saved])
   rw [hE]
   obtain s' | _ := b
@@ -422,7 +423,7 @@ example : act .blockNeither ∈ must prior ideals (others .blockNeither) 7 :=
 -- fn. 17
 theorem expectedValue_prior_inShaft (s : Shaft) :
     expectedValue prior μ_EVAL[ideals] (inShaft s) = 19 / 3 := by
-  rw [expectedValue_congr (V' := fun w ↦ (saved w : ℝ)) .of_discrete fun w _ ↦
+  rw [expectedValue_congr_fun (V' := fun w ↦ (saved w : ℝ)) .of_discrete fun w _ ↦
     sum_indicator_ideals w, expectedValue_eq_sum]
   simp only [uniformOn_univ_real_singleton, ← Finset.mul_sum, ← Nat.cast_sum, Finset.sum_const,
     nsmul_eq_mul]
@@ -512,8 +513,8 @@ end Miners
 
 section Linda
 
-variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {p : Measure W} [IsFiniteMeasure p]
-  {R : Fin 2 → Set W} {teller feminist : Set W} {θ : ℝ}
+variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {p : Measure W} {R : Fin 2 → Set W}
+  {teller feminist : Set W} {θ : ℝ}
 
 -- (30), (31), (32), (33), (34)
 theorem mem_must_teller_inter_feminist
@@ -532,21 +533,21 @@ theorem modal_conjunction_fallacy
     (hθ : θ ∈ Ico (0.5 : ℝ) 1.5) :
     teller ∩ feminist ∈ must p R {teller} θ ∧ teller ∉ must p R {teller ∩ feminist} θ :=
   have h := (mem_must_teller_inter_feminist h₁ h₂ h₃ h₄).2 hθ
-  ⟨h, notMem_must_of_mem_must h rfl⟩
+  ⟨h, notMem_must_of_mem_must h (mem_singleton _)⟩
 
 end Linda
 
 open Modality in
--- Table 2: Kratzer's necessity holds of each conjunct of what it holds of
-theorem mem_necessity_of_inter (f g : Background W) (w : W) {φ ψ : Set W}
-    (h : φ ∩ ψ ∈ f.necessity g w) : φ ∈ f.necessity g w :=
-  (Filter.inter_mem_iff.1 h).1
+-- Table 2: Kratzer's necessity is closed under consequence
+theorem mem_necessity_of_subset {f g : Background W} {w : W} {φ ψ : Set W} (h : φ ⊆ ψ)
+    (hφ : φ ∈ f.necessity g w) : ψ ∈ f.necessity g w :=
+  Filter.mem_of_superset hφ h
 
--- Table 2: and so does a threshold on probability
-theorem mem_pos_must_of_inter [MeasurableSpace W] (P : Measure W) [IsFiniteMeasure P]
-    (θ : Lassiter2017.EpistemicItem → ℝ) {φ ψ : Set W}
-    (h : φ ∩ ψ ∈ Lassiter2017.pos P θ .must) : φ ∈ Lassiter2017.pos P θ .must :=
-  (show θ .must ≤ P.real (φ ∩ ψ) from h).trans (measureReal_mono inter_subset_left)
+-- Table 2: and so is a threshold on probability
+theorem mem_pos_must_of_subset [MeasurableSpace W] {P : Measure W} [IsFiniteMeasure P]
+    {θ : Lassiter2017.EpistemicItem → ℝ} {φ ψ : Set W} (h : φ ⊆ ψ)
+    (hφ : φ ∈ Lassiter2017.pos P θ .must) : ψ ∈ Lassiter2017.pos P θ .must :=
+  (show θ .must ≤ P.real φ from hφ).trans (measureReal_mono h)
 
 /-! A model of the likelihoods (30) and (31): fifty equiprobable people, forty of them bank
 tellers and ten of those feminists. -/
@@ -590,8 +591,8 @@ end Linda
 
 section Lawyers
 
-variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {p : Measure W} [IsFiniteMeasure p]
-  {R : Fin 2 → Set W} {engineer lawyer : Set W} {θ : ℝ}
+variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {p : Measure W} {R : Fin 2 → Set W}
+  {engineer lawyer : Set W} {θ : ℝ}
 
 -- (37), (38), (39), (40), (41)
 theorem mem_must_engineer
@@ -617,8 +618,6 @@ instance : MeasurableSpace Marriage := ⊤
 
 instance : DiscreteMeasurableSpace Marriage := ⟨fun _ ↦ trivial⟩
 
-instance : Nonempty Marriage := ⟨.pat⟩
-
 /-- The goal: Kim inherits, which takes being married. -/
 abbrev goal : Fin 1 → Set Marriage := fun _ ↦ {.nobody}ᶜ
 
@@ -641,7 +640,7 @@ theorem mem_must_polar {θ : ℝ} : marryPat ∈ must prior goal {marryPatᶜ} �
 
 -- (60b)
 theorem notMem_must_focus {θ : ℝ} : marryPat ∉ must prior goal {{.another}} θ :=
-  notMem_must_of_subset rfl ((uniformOn_ne_zero_iff finite_univ).2 ⟨.another, trivial, rfl⟩)
+  notMem_must_of_subset (mem_singleton _) (uniformOn_univ_singleton_ne_zero _)
     fun _ _ h ↦ by rintro rfl; cases h
 
 /-- The alternatives to the prejacent: its negation by default, and under focus on *Pat* the
