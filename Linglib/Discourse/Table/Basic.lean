@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Discourse.Bias
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Semantics.Questions.Inquisitive.Answerhood
 public import Mathlib.Data.List.Perm.Basic
@@ -48,6 +49,10 @@ common ground is one of the projected ones, the Table is left empty.
   the current one and decides every issue on the Table.
 * `Commitment.Table.exists_le_mem_projectedSet_iff`: the consistent common grounds that refine the
   current one and decide every issue on the Table are those that refine a projected one.
+* `Commitment.Table.bias_eq_one_of_mem_projectedSet_assert`,
+  `Commitment.Table.bias_ne_zero_of_mem_projectedSet_polarQuestion`: every common ground an
+  assertion projects is biased for its content, and every common ground a polar question projects
+  is biased one way or the other.
 * `Commitment.Table.isStable_settle_of_mem_projectedSet`: reaching a projected common ground
   empties the Table.
 * `Commitment.Table.commonGround_settle_mem_projectedSet_assert`: in a stable context, settling an
@@ -74,7 +79,9 @@ common ground is one of the projected ones, the Table is left empty.
   the commitment set.
 * A common ground is a filter of propositions, so a proposition follows from it when it belongs
   to the filter. Every necessary proposition then follows from every common ground, and the
-  trivial issue is always decided; a finer consequence relation is not represented.
+  trivial issue is always decided; a finer consequence relation is not represented. That a
+  proposition or its negation follows from a common ground is that the common ground has a
+  nonzero bias on it.
 * An item on the Table is the denotation of a sentence, without the sentence. A polar
   interrogative and its negative counterpart then place the same item on the Table, and the
   effects that depend on the form of the item are not represented.
@@ -169,6 +176,11 @@ theorem project_right_comm : project (project ps P) Q = project (project ps Q) P
 
 instance : LeftCommutative fun (P : Proposition (Set W)) (ps : Set (Filter W)) ↦ project ps P :=
   ⟨fun _ _ _ ↦ project_right_comm⟩
+
+/-- A common ground decides the polar issue on `p` exactly when it is biased on `p`. -/
+theorem decidedBy_polar_iff_bias_ne_zero : (polar p).DecidedBy f ↔ f.bias p ≠ 0 := by
+  rw [decidedBy_polar, Ne, Filter.bias_eq_zero_iff]
+  tauto
 
 theorem project_singleton_ofSet (h : f ⊓ 𝓟 p ≠ ⊥) : project {f} (ofSet p) = {f ⊓ 𝓟 p} := by
   rw [project, alt_ofSet, Set.image_singleton, Set.singleton_infs_singleton,
@@ -429,6 +441,17 @@ theorem mem_of_mem_projectedSet_assert (h : f ∈ (K.assert a p).projectedSet) :
 theorem mem_or_compl_mem_of_mem_projectedSet_polarQuestion
     (h : f ∈ (K.polarQuestion p).projectedSet) : p ∈ f ∨ pᶜ ∈ f :=
   decidedBy_polar.1 (decidedBy_of_mem_project h)
+
+/-- Every common ground an assertion projects is biased for its content. -/
+theorem bias_eq_one_of_mem_projectedSet_assert (h : f ∈ (K.assert a p).projectedSet) :
+    f.bias p = 1 :=
+  Filter.bias_eq_one_iff.2 (mem_of_mem_projectedSet_assert h)
+
+/-- The radical of a polar question is decided, for it or against it, in every common ground the
+question projects. -/
+theorem bias_ne_zero_of_mem_projectedSet_polarQuestion
+    (h : f ∈ (K.polarQuestion p).projectedSet) : f.bias p ≠ 0 :=
+  decidedBy_polar_iff_bias_ne_zero.1 (decidedBy_of_mem_project h)
 
 end
 

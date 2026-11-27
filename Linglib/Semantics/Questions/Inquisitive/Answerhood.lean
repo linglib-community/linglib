@@ -227,6 +227,18 @@ theorem DecidedBy.ker_mem (h : P.DecidedBy f) : f.ker ∈ P :=
   let ⟨q, hq, hf⟩ := h
   P.isLowerSet (Set.sInter_subset_of_mem hf) (mem_of_mem_alt hq)
 
+/-- A common ground that decides an issue contains an information state that resolves it. -/
+theorem DecidedBy.exists_mem (h : P.DecidedBy f) : ∃ s ∈ f, s ∈ P :=
+  let ⟨q, hq, hf⟩ := h
+  ⟨q, hf, mem_of_mem_alt hq⟩
+
+/-- A common ground decides a normal issue exactly when it contains an information state that
+resolves the issue. -/
+theorem decidedBy_iff_exists_mem (hP : P.IsNormal) : P.DecidedBy f ↔ ∃ s ∈ f, s ∈ P :=
+  ⟨DecidedBy.exists_mem, fun ⟨_, hs, hsP⟩ ↦
+    let ⟨q, hq, hsq⟩ := hP hsP
+    ⟨q, hq, mem_of_superset hs hsq⟩⟩
+
 theorem decidedBy_principal (hQ : Q.IsNormal) : Q.DecidedBy (𝓟 σ) ↔ σ ∈ Q :=
   (mem_iff_exists_alt_subset hQ).symm
 
