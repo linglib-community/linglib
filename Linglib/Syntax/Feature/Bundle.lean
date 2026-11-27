@@ -8,7 +8,11 @@ module
 public import Mathlib.Data.Finset.Pi
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.BoundedComplete
-public import Linglib.Morphology.Word.Features
+public import Linglib.Core.Order.Flat
+public import Linglib.Data.UD.Features
+public import Linglib.Syntax.Feature.Case.Basic
+public import Linglib.Syntax.Feature.Number.Basic
+public import Linglib.Syntax.Feature.Person.Defs
 
 /-!
 # Feature bundles
@@ -20,9 +24,7 @@ them, a person and a clusivity, so that a first person form with no clusivity is
 than an inclusive or an exclusive one. Bundles are ordered pointwise, the wholly unspecified
 bundle least, and they unify pointwise. The index of a bundle is its projection onto the
 φ-features and its concord its projection onto case, number and gender, and two elements agree
-in one of them when the projections of their bundles are compatible. A token's bundle is its
-features read along the inclusion of the dimensions in the token features, the person slot from
-the token's person and clusivity together.
+in one of them when the projections of their bundles are compatible.
 
 ## Main definitions
 
@@ -30,13 +32,12 @@ the token's person and clusivity together.
 * `Bundle`: a slot for each dimension.
 * `Bundle.index x`: the projection of `x` onto the φ-features.
 * `Bundle.concord x`: the projection of `x` onto case, number and gender.
-* `Bundle.ofFeatures f`: the bundle of the token features `f`.
+* `Bundle.of`: the bundle specifying the named values and nothing else.
 * `Bundle.personNumber p n`: the bundle valued `p` in person and `n` in number alone.
 
 ## Main results
 
 * `Bundle.coe_sup_coe_eq_top_iff`: two bundles fail to unify exactly when they are incompatible.
-* `Bundle.ofFeatures_mono`: more specific features give a more specific bundle.
 
 ## Implementation notes
 
@@ -54,9 +55,11 @@ Bundles are borne by pronouns and nominals as well as by agreement targets, and 
 by morphology, so the file stands with the feature inventories, below the agreement and the
 morphology directories. Its declarations keep the namespace `Agreement`.
 
-The slots hold the cross-linguistic values of the token features, so that bundles of different
-languages compare. A language-particular system, such as a set of noun classes, is not a
-bundle; `Syntax/Feature/Gender/AgreementClasses.lean` treats those over an arbitrary feature type.
+The slots hold cross-linguistic values, so that bundles of different languages compare: the
+person, number and case values of the comparative inventories, and for gender and definiteness
+the Universal Dependencies tags. A language-particular system, such as a set of noun classes, is
+not a bundle; `Syntax/Feature/Gender/AgreementClasses.lean` treats those over an arbitrary
+feature type. The bundle of a token's features is the matter of `Morphology/Word/Bundle.lean`.
 
 ## References
 
@@ -84,17 +87,14 @@ def Dimension.phi : Finset Dimension := {.person, .number, .gender}
 phrase covary ([wechsler-zlatic-2000]). -/
 def Dimension.concord : Finset Dimension := {.case, .number, .gender}
 
-/-- The token feature a dimension is. It is reducible, so that the values of a dimension reduce
-to those of its feature when coercions are sought. -/
-abbrev Dimension.toFeature : Dimension → Morphology.Feature
-  | .person => .person
-  | .number => .number
-  | .gender => .gender
-  | .case => .case
-  | .definiteness => .definiteness
-
-/-- The values of a dimension are those of the token feature it is. -/
-abbrev Dimension.Value (d : Dimension) : Type := d.toFeature.Value
+/-- The values of a dimension: the comparative inventories of person, number and case, and the
+Universal Dependencies tags of gender and definiteness. -/
+abbrev Dimension.Value : Dimension → Type
+  | .person => Person
+  | .number => Number
+  | .gender => UD.Gender
+  | .case => Case
+  | .definiteness => UD.Definite
 
 instance (d : Dimension) : DecidableEq d.Value := by cases d <;> exact inferInstance
 
@@ -207,6 +207,16 @@ def setClusivity (c : Clusivity) (b : Bundle) : Bundle :=
     (b.setClusivity c).clusivity = c :=
   rfl
 
+/-- The bundle specifying the named values and nothing else. -/
+def of (person : Option Person := none) (clusivity : Option Clusivity := none)
+    (number : Option Number := none) (gender : Option UD.Gender := none)
+    (case : Option Case := none) (definiteness : Option UD.Definite := none) : Bundle
+  | .person => (person, clusivity)
+  | .number => number
+  | .gender => gender
+  | .case => case
+  | .definiteness => definiteness
+
 /-- The bundle valued in person and number alone. -/
 def personNumber (p : Person) (n : Number) : Bundle := set .person p (set .number n ⊥)
 
@@ -233,41 +243,6 @@ def personNumber (p : Person) (n : Number) : Bundle := set .person p (set .numbe
 @[simp] theorem personNumber_definiteness (p : Person) (n : Number) :
     personNumber p n .definiteness = ⊥ :=
   rfl
-
-/-- The restriction of a token's features to the agreement dimensions reads them along
-`Dimension.toFeature`. -/
-def ofFeatures (f : Morphology.Features) : Bundle
-  | .person => (f .person, f .clusivity)
-  | .number => f .number
-  | .gender => f .gender
-  | .case => f .case
-  | .definiteness => f .definiteness
-
-@[simp] theorem ofFeatures_person (f : Morphology.Features) :
-    ofFeatures f .person = (f .person, f .clusivity) :=
-  rfl
-
-@[simp] theorem ofFeatures_number (f : Morphology.Features) : ofFeatures f .number = f .number :=
-  rfl
-
-@[simp] theorem ofFeatures_gender (f : Morphology.Features) : ofFeatures f .gender = f .gender :=
-  rfl
-
-@[simp] theorem ofFeatures_case (f : Morphology.Features) : ofFeatures f .case = f .case := rfl
-
-@[simp] theorem ofFeatures_definiteness (f : Morphology.Features) :
-    ofFeatures f .definiteness = f .definiteness :=
-  rfl
-
-/-- More specific features give a more specific bundle. -/
-theorem ofFeatures_mono : Monotone ofFeatures := fun _ _ h d ↦ by
-  cases d
-  · exact ⟨h .person, h .clusivity⟩
-  all_goals exact h _
-
-/-- `ofFeatures` as an order homomorphism. -/
-@[simps]
-def ofFeaturesHom : Morphology.Features →o Bundle := ⟨ofFeatures, ofFeatures_mono⟩
 
 instance : DecidableLE Bundle := fun x y ↦ inferInstanceAs (Decidable (∀ d, x d ≤ y d))
 

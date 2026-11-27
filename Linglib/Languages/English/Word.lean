@@ -15,6 +15,7 @@ particle and not a preposition.
 ## Main definitions
 
 * `English.Nouns.Noun.toWordSg`: the singular token of a noun.
+* `English.Verbs.Verb.Cell.features`: the token features of a cell of a verb.
 * `English.Verbs.Verb.toWord`: the token of a verb in a cell.
 * `English.Auxiliaries.toInf`: the infinitival marker *to*.
 
@@ -36,6 +37,16 @@ def Nouns.Noun.toWordSg (n : Nouns.Noun) : Word :=
   { form := n.form, cat := .NOUN
     features := Features.of (number := some .singular)
       (gender := n.referentGender.map ReferentGender.toUD) }
+
+/-- The token features of an inflectional cell of a verb. -/
+def Verbs.Verb.Cell.features : Verbs.Verb.Cell → Features
+  | .base => Features.of (verbForm := some .Inf)
+  | .thirdSg => Features.of (number := some .singular) (person := some .third)
+      (voice := some .Act) (verbForm := some .Fin) (tense := some .Pres)
+  | .plainPresent => Features.of (voice := some .Act) (verbForm := some .Fin) (tense := some .Pres)
+  | .past => Features.of (verbForm := some .Fin) (voice := some .Act) (tense := some .Past)
+  | .pastParticiple => Features.of (verbForm := some .Part)
+  | .presentParticiple => Features.of (verbForm := some .Part)
 
 /-- The token of a verb in a cell has the entry's form there and the cell's features. -/
 def Verbs.Verb.toWord (v : Verbs.Verb) (c : Verbs.Verb.Cell) : Word :=

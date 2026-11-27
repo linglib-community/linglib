@@ -19,9 +19,9 @@ public import Linglib.Syntax.Category.Pronoun.Reflexive
 The binding theory sorts nominal tokens into reflexive and reciprocal anaphors, pronominals and
 R-expressions, and reads the class off a token's features. This file states the class of the
 token of each kind of pronoun: a reflexive is a reflexive anaphor, a reciprocal a reciprocal
-anaphor and a personal pronoun a pronominal. Chomsky takes wh-phrases and quantifier expressions
-to be R-expressions, so the token of an interrogative or an indefinite is one where its word
-class is nominal, as *who* and *someone* are and *where* is not, and is never a pronominal.
+anaphor and a personal pronoun a pronominal. A wh-phrase or a quantifier expression is neither
+an anaphor nor a pronominal, so the token of an interrogative or an indefinite is classed as an
+R-expression where its word class is nominal, as *who* and *someone* are and *where* is not.
 
 A candidate antecedent of a pronoun's token is a nominal token that agrees with it in
 φ-features, a pro-form taking its antecedents from a fixed form-class.
@@ -73,7 +73,7 @@ theorem bindingClassOf_toWord {t : Option UD.PronType} (ht : t ≠ some .Rcp)
 
 /-- The token of an operator, a wh-phrase or a quantifier expression, classifies as an
 R-expression where its word class is nominal, and falls outside the binding theory where it is
-not, as a pro-adverb does ([chomsky-1981]). -/
+not, as a pro-adverb does. -/
 theorem bindingClassOf_toWord_of_isOperator {t : UD.PronType} (ht : Binding.IsOperator t)
     (c : UD.UPOS) :
     Binding.bindingClassOf (p.toWord (some t) none c) =
@@ -158,7 +158,7 @@ end InterrogativePronoun
 namespace IndefinitePronoun
 
 /-- An indefinite is a quantifier expression, so an R-expression where its word class is nominal,
-as *someone* is and *somewhere* is not, and is not a pronominal ([chomsky-1981]). -/
+as *someone* is and *somewhere* is not, and is not a pronominal. -/
 @[simp]
 theorem bindingClassOf_toWord (p : IndefinitePronoun) :
     Binding.bindingClassOf p.toWord =

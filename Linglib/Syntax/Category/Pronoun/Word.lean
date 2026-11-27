@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Syntax.Category.Pronoun.Demonstrative
 public import Linglib.Syntax.Category.Pronoun.Indefinite
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
@@ -25,8 +24,7 @@ of its paradigm cell.
 * `Pronoun.toWord`: the token of a pronoun, the pronoun type, reflexive marking and word class
   given.
 * `PersonalPronoun.toWord`, `ReflexivePronoun.toWord`, `ReciprocalPronoun.toWord`,
-  `DemonstrativePronoun.toWord`, `InterrogativePronoun.toWord`, `IndefinitePronoun.toWord`: the
-  token of each kind.
+  `InterrogativePronoun.toWord`, `IndefinitePronoun.toWord`: the token of each kind.
 
 ## Main results
 
@@ -63,10 +61,6 @@ def ReflexivePronoun.toWord (p : ReflexivePronoun) : Morphology.Word :=
 /-- A reciprocal's token is of UD pronoun type `Rcp`. -/
 def ReciprocalPronoun.toWord (p : ReciprocalPronoun) : Morphology.Word :=
   p.toPronoun.toWord (some .Rcp)
-
-/-- A demonstrative's token is of UD pronoun type `Dem`. -/
-def DemonstrativePronoun.toWord (d : DemonstrativePronoun) : Morphology.Word :=
-  d.toPronoun.toWord (some .Dem)
 
 /-- The token of a proform has its word class and the pronoun type `t` of its function. -/
 def ProForm.toWord (p : ProForm) (t : UD.PronType) : Morphology.Word :=

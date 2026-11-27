@@ -123,8 +123,7 @@ def case : Flat Case := Flat.finsetInf p.cases (↑)
 /-- The paradigm cell that the pronoun's person, clusivity, number and gender name: the
 agreement bundle bearing them and nothing else. -/
 def cell : Agreement.Bundle :=
-  .ofFeatures (.of (person := p.person) (clusivity := p.clusivity) (number := p.number)
-    (gender := p.gender))
+  .of (person := p.person) (clusivity := p.clusivity) (number := p.number) (gender := p.gender)
 
 /-! ### The pronouns of a table -/
 

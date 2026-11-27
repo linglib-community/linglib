@@ -99,8 +99,8 @@ variable {C : Type*} (person : C → Person) (clusivity : C → Option Clusivity
 clusivity, number and gender of each. -/
 def ofCells (s : Finset C) (f : String) : PersonalPronoun :=
   { toPronoun := .ofCells person clusivity number gender case s f,
-    cells := s.image fun c ↦ .ofFeatures (.of (person := some (person c))
-      (clusivity := clusivity c) (number := number c) (gender := gender c)) }
+    cells := s.image fun c ↦ .of (person := some (person c))
+      (clusivity := clusivity c) (number := number c) (gender := gender c) }
 
 /-- The personal pronoun `f` of a table, filling every cell the table gives it. -/
 def ofTable [Fintype C] (table : C → Finset String) (f : String) : PersonalPronoun :=
