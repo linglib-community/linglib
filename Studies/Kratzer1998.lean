@@ -338,17 +338,16 @@ theorem backwardShifted :
 /-- The language codes of the example rows name these varieties. -/
 def varieties : List (Glottocode × Variety) := [(.english, english), (.german, standardGerman)]
 
-/-- The rows name these tense forms. -/
-def forms : List (String × Tense.Form) :=
-  [("simple past", .simplePast), ("Präteritum", .simplePast), ("Perfekt", .presentPerfect)]
+/-- The tense form each printed form of the rows names. -/
+def tenseForm : Examples.Form → Tense.Form
+  | .simplePast => .simplePast
+  | .praeteritum => .simplePast
+  | .perfekt => .presentPerfect
 
 /-- In (40) a form is acceptable out of the blue iff it can describe a past event there. -/
 theorem rows_outOfTheBlue :
     ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
-      ∃ v ∈ r.byLanguage varieties, ∃ f ∈ (Examples.form r).map fun
-        | .simplePast => .simplePast
-        | .praeteritum => .simplePast
-        | .perfekt => .presentPerfect,
+      ∃ v ∈ r.byLanguage varieties, ∃ f ∈ (Examples.form r).map tenseForm,
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
@@ -358,16 +357,10 @@ theorem rows_realize :
       ((∃ ws ∈ English.Verbs.build.tenseForm (English.Auxiliaries.cell .third .singular) f,
           ' ' :: [' '].intercalate (ws.map String.toList) ++ [' '] <:+:
             Examples.ex40a.primaryText.toList) ↔
-        (Examples.form Examples.ex40a).map fun
-          | .simplePast => .simplePast
-          | .praeteritum => .simplePast
-          | .perfekt => .presentPerfect = some f)) ∧
+        (Examples.form Examples.ex40a).map tenseForm = some f)) ∧
     ∀ r ∈ [Examples.ex40b, Examples.ex40c], ∀ f ∈ German.tenseForms,
       ((∃ ws ∈ German.Verbs.bauen.principalParts.tenseForm f, ws ⊆ r.surfaceTokens) ↔
-        (Examples.form r).map fun
-          | .simplePast => .simplePast
-          | .praeteritum => .simplePast
-          | .perfekt => .presentPerfect = some f) := by
+        (Examples.form r).map tenseForm = some f) := by
   decide +kernel
 
 end Kratzer1998

@@ -135,23 +135,19 @@ theorem antonyms_negate :
 
 /-! ### Standard type -/
 
-/-- The paper's standard types by the inference tests, as positive standards. -/
-def standards : List (String × PositiveStandard) :=
-  [("total", .maxEndpoint), ("partial", .minEndpoint), ("relative", .contextual)]
+/-- The positive standard of each of the paper's standard types, by the inference tests. -/
+def positiveStandard : Examples.Standard → PositiveStandard
+  | .totalAdjective => .maxEndpoint
+  | .partialAdjective => .minEndpoint
+  | .relativeAdjective => .contextual
 
 theorem total_not_disjunctive :
-    ∀ x ∈ Examples.all, ∀ s ∈ (Examples.standard x).map fun
-      | .totalAdjective => .maxEndpoint
-      | .partialAdjective => .minEndpoint
-      | .relativeAdjective => .contextual, ∀ b ∈ binding? x,
+    ∀ x ∈ Examples.all, ∀ s ∈ (Examples.standard x).map positiveStandard, ∀ b ∈ binding? x,
       s = .maxEndpoint → b ≠ .disjunctive := by
   decide +kernel
 
 theorem partial_conjunctive_exists :
-    ∃ x ∈ Examples.all, (Examples.standard x).map fun
-      | .totalAdjective => .maxEndpoint
-      | .partialAdjective => .minEndpoint
-      | .relativeAdjective => .contextual = some .minEndpoint ∧
+    ∃ x ∈ Examples.all, (Examples.standard x).map positiveStandard = some .minEndpoint ∧
       binding? x = some .conjunctive ∧ predictedBinding .minEndpoint ≠ .conjunctive := by
   decide +kernel
 
