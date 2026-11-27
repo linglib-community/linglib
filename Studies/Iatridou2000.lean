@@ -214,11 +214,6 @@ counterfactual and stays outside the table. -/
 def cfTable : List (String × CounterfactualType) :=
   [("flv", .flv), ("presCF", .presCF), ("pastCF", .pastCF)]
 
-/-- The Aktionsarten as the rows name them. -/
-def aktionsartTable : List (String × Aktionsart) :=
-  [("telic", .telic), ("activity", .activity), ("individual-level stative", .ilStative),
-    ("stage-level stative", .slStative)]
-
 /-- The language of a row among those of Section 5. -/
 def aspectLanguage? (e : Datum) : Option AspectLanguage :=
   e.byLanguage [(.english, .english), (.modernGreek, .greek), (.french, .french)]
@@ -233,7 +228,11 @@ theorem layers_rows :
 
 /-- A row's counterfactual type with its predicate's Aktionsart. -/
 def reading? (e : Datum) : Option (CounterfactualType × Aktionsart) := do
-  pure (← e.parse? "cf_type" cfTable, ← e.parse? "aktionsart" aktionsartTable)
+  pure (← e.parse? "cf_type" cfTable, ← (Examples.aktionsart e).map fun
+    | .telic => .telic
+    | .activity => .activity
+    | .individualLevelStative => .ilStative
+    | .stageLevelStative => .slStative)
 
 -- Table 1
 theorem readings_rows :
@@ -241,8 +240,14 @@ theorem readings_rows :
 
 /-- A present-tense row's Aktionsart with its evaluation time. -/
 def evaluation? (e : Datum) : Option (Aktionsart × Evaluation) := do
-  pure (← e.parse? "aktionsart" aktionsartTable,
-    ← e.parse? "evaluation" [("future", Evaluation.future), ("now", .now)])
+  pure (← (Examples.aktionsart e).map fun
+    | .telic => .telic
+    | .activity => .activity
+    | .individualLevelStative => .ilStative
+    | .stageLevelStative => .slStative,
+    ← (Examples.evaluation e).map fun
+      | .future => Evaluation.future
+      | .now => .now)
 
 -- Table 2, (65), (67)
 theorem evaluation_rows :

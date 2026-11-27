@@ -1,338 +1,365 @@
-[
-  {
-    "id": "rudin2025b_ex6b_wonder",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(6b)"},
-    "language": "stan1293",
-    "primaryText": "Ayka wondered, “Polina likes her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "wonder"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "rising"],
-      ["volume", "neutral"]
-    ],
-    "comment": "The quoted clause is pronounced as its own intonational phrase with the rising tune of a rising declarative.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex7b_claim",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(7b)"},
-    "language": "stan1293",
-    "primaryText": "Ayka claimed, “Polina likes her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["verb", "claim"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "rising"],
-      ["volume", "neutral"]
-    ],
-    "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex8_whisper",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(8)"},
-    "language": "stan1293",
-    "primaryText": "Ayka whispered, “Polina likes her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "whisper"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "rising"],
-      ["volume", "whispered"]
-    ],
-    "comment": "The quoted clause is pronounced as a rising declarative, whispered. One of the manner-of-speech verbs listed in (8).",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex10_shout",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(10)"},
-    "language": "stan1293",
-    "primaryText": "Ayka shouted, “Does Polina like her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "shout"],
-      ["material", "sentence"],
-      ["mood", "interrogative"],
-      ["tune", "rising"],
-      ["volume", "loud"]
-    ],
-    "comment": "The quoted clause is a polar interrogative, shouted. One of the manner-of-speech verbs listed in (10).",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex12a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(12a)"},
-    "language": "stan1293",
-    "primaryText": "Then Polina asked me, “Are you married?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Ayka is talking to Bertrand about a conversation she had with Polina.",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "ask"],
-      ["material", "sentence"],
-      ["mood", "interrogative"],
-      ["tune", "rising"],
-      ["volume", "neutral"]
-    ],
-    "comment": "The indexical is interpreted relative to Polina's utterance.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex18a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(18a)"},
-    "language": "stan1293",
-    "primaryText": "Ayka said, “Polina likes her job.”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "say"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "falling"],
-      ["volume", "neutral"]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex37a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(37a)"},
-    "language": "stan1293",
-    "primaryText": "I asked Ayka how she felt about the faculty meeting, and she said, *emits guttural howl of frustration*",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "say"],
-      ["material", "inarticulate"],
-      ["volume", "neutral"]
-    ],
-    "comment": "Nonphonemic noise quoted under say.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex42a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(42a)"},
-    "language": "stan1293",
-    "primaryText": "Ayka said, *performs enthusiastic karate gestures*",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["verb", "say"],
-      ["material", "none"],
-      ["volume", "neutral"]
-    ],
-    "comment": "Marked # in the paper: a performance with no linguistic material.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex48",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(48)"},
-    "language": "stan1293",
-    "primaryText": "Ayka said, “Does Polina like her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "say"],
-      ["material", "sentence"],
-      ["mood", "interrogative"],
-      ["tune", "rising"],
-      ["volume", "neutral"]
-    ],
-    "comment": "Interpreted as reporting an asking, not the assertion of an answer.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex49",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(49)"},
-    "language": "stan1293",
-    "primaryText": "I asked Ayka for the wifi password, and she said, “x231&$8o.”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "say"],
-      ["material", "inarticulate"],
-      ["volume", "neutral"]
-    ],
-    "comment": "A string with no propositional content quoted under say.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex69a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(69a)"},
-    "language": "stan1293",
-    "primaryText": "Ayka yelled, “POLINA LIKES HER JOB!”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "yell"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "falling"],
-      ["volume", "loud"]
-    ],
-    "comment": "The quoted clause is shouted.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex69b",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(69b)"},
-    "language": "stan1293",
-    "primaryText": "Ayka yelled, [in a hoarse whisper] “Polina likes her job.”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["verb", "yell"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "falling"],
-      ["volume", "whispered"]
-    ],
-    "comment": "The quoted clause is whispered. Marked # in the paper.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex70a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(70a)"},
-    "language": "stan1293",
-    "primaryText": "Ayka whispered, “POLINA LIKES HER JOB.”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["verb", "whisper"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "falling"],
-      ["volume", "loud"]
-    ],
-    "comment": "The quoted clause is shouted. Marked # in the paper.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex70b",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(70b)"},
-    "language": "stan1293",
-    "primaryText": "Ayka whispered, [in a hoarse whisper] “Polina likes her job.”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "whisper"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "falling"],
-      ["volume", "whispered"]
-    ],
-    "comment": "The quoted clause is whispered.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex74a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(74a)"},
-    "language": "stan1293",
-    "primaryText": "Ayka said, “Polina likes her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "say"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "rising"],
-      ["volume", "neutral"]
-    ],
-    "comment": "The quoted clause is pronounced as a rising declarative. Interpreted as reporting an asking.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex75",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(75)"},
-    "language": "stan1293",
-    "primaryText": "Ayka yelled, “POLINA LIKES HER JOB?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "yell"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "rising"],
-      ["volume", "loud"]
-    ],
-    "comment": "The quoted clause is a shouted rising declarative.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex78a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(78a)"},
-    "language": "stan1293",
-    "primaryText": "Ayka asserted, “Polina likes her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      ["verb", "assert"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "rising"],
-      ["volume", "neutral"]
-    ],
-    "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper.",
-    "verified": "page-image"
-  },
-  {
-    "id": "rudin2025b_ex82a",
-    "source": {"bibkey": "rudin-2025b", "paperLabel": "(82a)"},
-    "language": "stan1293",
-    "primaryText": "Ayka asked, “Polina likes her job?”",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["verb", "ask"],
-      ["material", "sentence"],
-      ["mood", "declarative"],
-      ["tune", "rising"],
-      ["volume", "neutral"]
-    ],
-    "comment": "The quoted clause is pronounced as a rising declarative.",
-    "verified": "page-image"
-  }
-]
+{
+  "features": [
+    {
+      "key": "volume",
+      "lean": "volume",
+      "type": "Volume",
+      "doc": "The volume of the utterance.",
+      "levels": [
+        {
+          "name": "neutral",
+          "label": "neutral",
+          "doc": "neutral volume"
+        },
+        {
+          "name": "loud",
+          "label": "loud",
+          "doc": "loud"
+        },
+        {
+          "name": "whispered",
+          "label": "whispered",
+          "doc": "whispered"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "rudin2025b_ex6b_wonder",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(6b)"},
+      "language": "stan1293",
+      "primaryText": "Ayka wondered, “Polina likes her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "wonder"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "rising"],
+        ["volume", "neutral"]
+      ],
+      "comment": "The quoted clause is pronounced as its own intonational phrase with the rising tune of a rising declarative.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex7b_claim",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(7b)"},
+      "language": "stan1293",
+      "primaryText": "Ayka claimed, “Polina likes her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "paperFeatures": [
+        ["verb", "claim"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "rising"],
+        ["volume", "neutral"]
+      ],
+      "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex8_whisper",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(8)"},
+      "language": "stan1293",
+      "primaryText": "Ayka whispered, “Polina likes her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "whisper"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "rising"],
+        ["volume", "whispered"]
+      ],
+      "comment": "The quoted clause is pronounced as a rising declarative, whispered. One of the manner-of-speech verbs listed in (8).",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex10_shout",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(10)"},
+      "language": "stan1293",
+      "primaryText": "Ayka shouted, “Does Polina like her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "shout"],
+        ["material", "sentence"],
+        ["mood", "interrogative"],
+        ["tune", "rising"],
+        ["volume", "loud"]
+      ],
+      "comment": "The quoted clause is a polar interrogative, shouted. One of the manner-of-speech verbs listed in (10).",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex12a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(12a)"},
+      "language": "stan1293",
+      "primaryText": "Then Polina asked me, “Are you married?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "Ayka is talking to Bertrand about a conversation she had with Polina.",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "ask"],
+        ["material", "sentence"],
+        ["mood", "interrogative"],
+        ["tune", "rising"],
+        ["volume", "neutral"]
+      ],
+      "comment": "The indexical is interpreted relative to Polina's utterance.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex18a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(18a)"},
+      "language": "stan1293",
+      "primaryText": "Ayka said, “Polina likes her job.”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "say"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "falling"],
+        ["volume", "neutral"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex37a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(37a)"},
+      "language": "stan1293",
+      "primaryText": "I asked Ayka how she felt about the faculty meeting, and she said, *emits guttural howl of frustration*",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "say"],
+        ["material", "inarticulate"],
+        ["volume", "neutral"]
+      ],
+      "comment": "Nonphonemic noise quoted under say.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex42a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(42a)"},
+      "language": "stan1293",
+      "primaryText": "Ayka said, *performs enthusiastic karate gestures*",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "paperFeatures": [
+        ["verb", "say"],
+        ["material", "none"],
+        ["volume", "neutral"]
+      ],
+      "comment": "Marked # in the paper: a performance with no linguistic material.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex48",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(48)"},
+      "language": "stan1293",
+      "primaryText": "Ayka said, “Does Polina like her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "say"],
+        ["material", "sentence"],
+        ["mood", "interrogative"],
+        ["tune", "rising"],
+        ["volume", "neutral"]
+      ],
+      "comment": "Interpreted as reporting an asking, not the assertion of an answer.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex49",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(49)"},
+      "language": "stan1293",
+      "primaryText": "I asked Ayka for the wifi password, and she said, “x231&$8o.”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "say"],
+        ["material", "inarticulate"],
+        ["volume", "neutral"]
+      ],
+      "comment": "A string with no propositional content quoted under say.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex69a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(69a)"},
+      "language": "stan1293",
+      "primaryText": "Ayka yelled, “POLINA LIKES HER JOB!”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "yell"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "falling"],
+        ["volume", "loud"]
+      ],
+      "comment": "The quoted clause is shouted.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex69b",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(69b)"},
+      "language": "stan1293",
+      "primaryText": "Ayka yelled, [in a hoarse whisper] “Polina likes her job.”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "paperFeatures": [
+        ["verb", "yell"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "falling"],
+        ["volume", "whispered"]
+      ],
+      "comment": "The quoted clause is whispered. Marked # in the paper.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex70a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(70a)"},
+      "language": "stan1293",
+      "primaryText": "Ayka whispered, “POLINA LIKES HER JOB.”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "paperFeatures": [
+        ["verb", "whisper"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "falling"],
+        ["volume", "loud"]
+      ],
+      "comment": "The quoted clause is shouted. Marked # in the paper.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex70b",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(70b)"},
+      "language": "stan1293",
+      "primaryText": "Ayka whispered, [in a hoarse whisper] “Polina likes her job.”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "whisper"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "falling"],
+        ["volume", "whispered"]
+      ],
+      "comment": "The quoted clause is whispered.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex74a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(74a)"},
+      "language": "stan1293",
+      "primaryText": "Ayka said, “Polina likes her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "say"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "rising"],
+        ["volume", "neutral"]
+      ],
+      "comment": "The quoted clause is pronounced as a rising declarative. Interpreted as reporting an asking.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex75",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(75)"},
+      "language": "stan1293",
+      "primaryText": "Ayka yelled, “POLINA LIKES HER JOB?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "yell"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "rising"],
+        ["volume", "loud"]
+      ],
+      "comment": "The quoted clause is a shouted rising declarative.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex78a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(78a)"},
+      "language": "stan1293",
+      "primaryText": "Ayka asserted, “Polina likes her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "unacceptable",
+      "paperFeatures": [
+        ["verb", "assert"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "rising"],
+        ["volume", "neutral"]
+      ],
+      "comment": "The quoted clause is pronounced as a rising declarative. Marked # in the paper.",
+      "verified": "page-image"
+    },
+    {
+      "id": "rudin2025b_ex82a",
+      "source": {"bibkey": "rudin-2025b", "paperLabel": "(82a)"},
+      "language": "stan1293",
+      "primaryText": "Ayka asked, “Polina likes her job?”",
+      "glossedTokens": [],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "paperFeatures": [
+        ["verb", "ask"],
+        ["material", "sentence"],
+        ["mood", "declarative"],
+        ["tune", "rising"],
+        ["volume", "neutral"]
+      ],
+      "comment": "The quoted clause is pronounced as a rising declarative.",
+      "verified": "page-image"
+    }
+  ]
+}

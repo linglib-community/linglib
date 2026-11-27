@@ -37,6 +37,24 @@
           "doc": "the antecedent of a conditional"
         }
       ]
+    },
+    {
+      "key": "force",
+      "lean": "force",
+      "type": "Force",
+      "doc": "The modal force of the context.",
+      "levels": [
+        {
+          "name": "possibility",
+          "label": "possibility",
+          "doc": "a possibility claim"
+        },
+        {
+          "name": "necessity",
+          "label": "necessity",
+          "doc": "a necessity claim"
+        }
+      ]
     }
   ],
   "examples": [

@@ -140,12 +140,18 @@ def standards : List (String × PositiveStandard) :=
   [("total", .maxEndpoint), ("partial", .minEndpoint), ("relative", .contextual)]
 
 theorem total_not_disjunctive :
-    ∀ x ∈ Examples.all, ∀ s ∈ x.parse? "standard" standards, ∀ b ∈ binding? x,
+    ∀ x ∈ Examples.all, ∀ s ∈ (Examples.standard x).map fun
+      | .totalAdjective => .maxEndpoint
+      | .partialAdjective => .minEndpoint
+      | .relativeAdjective => .contextual, ∀ b ∈ binding? x,
       s = .maxEndpoint → b ≠ .disjunctive := by
   decide +kernel
 
 theorem partial_conjunctive_exists :
-    ∃ x ∈ Examples.all, x.parse? "standard" standards = some .minEndpoint ∧
+    ∃ x ∈ Examples.all, (Examples.standard x).map fun
+      | .totalAdjective => .maxEndpoint
+      | .partialAdjective => .minEndpoint
+      | .relativeAdjective => .contextual = some .minEndpoint ∧
       binding? x = some .conjunctive ∧ predictedBinding .minEndpoint ≠ .conjunctive := by
   decide +kernel
 

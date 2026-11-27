@@ -350,8 +350,10 @@ inductive Level
 
 /-- The subject a row reports its agreement registering. -/
 def level? (r : Datum) : Option Level :=
-  r.parse? "agreesWith" [("surface subject", .surface), ("semantic subject", .semantic),
-    ("intermediate subject", .intermediate)]
+  (Examples.agreementController r).map fun
+    | .surface => .surface
+    | .semantic => .semantic
+    | .intermediate => .intermediate
 
 /-- The level of a single registration is the surface subject, the semantic subject, or
 neither. -/
@@ -371,8 +373,10 @@ theorem rows_agreement :
 
 /-- The dependency a row's translation records. -/
 def links? (r : Datum) : Option (Arg × Arg) :=
-  r.parse? "links" [("agent-patient", (.agent, .patient)), ("causer-patient", (.causer, .patient)),
-    ("causer-agent", (.causer, .agent))]
+  (Examples.links r).map fun
+    | .agentPatient => (.agent, .patient)
+    | .causerPatient => (.causer, .patient)
+    | .causerAgent => (.causer, .agent)
 
 /-- Reciprocal formation links the root's agent and patient when it applies before the
 causative, and the causer to the patient (Quechua) or the agent (Bemba) when after. -/
@@ -383,7 +387,9 @@ theorem rows_links :
 
 /-- The surface subject a row reports. -/
 def surfaceSubject? (r : Datum) : Option Arg :=
-  r.parse? "surfaceSubject" [("applied object", .applied), ("patient", .patient)]
+  (Examples.surfaceSubject r).map fun
+    | .appliedObject => .applied
+    | .patient => .patient
 
 /-- A passive of an applicative is acceptable exactly when some run of the affix order makes
 the reported argument the subject: the applied object everywhere, the patient only in

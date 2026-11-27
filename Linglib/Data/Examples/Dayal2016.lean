@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Dayal2016` — typed example data
@@ -510,5 +512,19 @@ def ex66a_none : Datum :=
     paperFeatures := [("section", "2.4"), ("whNumber", "plural"), ("situation", "none")] }
 
 def all : List Datum := [ex33a, ex33b, ex33c, ex34a, ex39a, ex39b, ex41a_42a, ex41a_42b, ex41b_42a, ex41b_42b, ex41c_42a, ex41c_42b, ex47a, ex47b, ex51a_singular, ex51a_plural, ex53a, ex53c, ex54a, ex54b, ex55a, ex55b, ex56a, ex56b, ex57a, ex57b, ex58a, ex58b, ex59a, ex59b, ex61a, ex61b, ex65a_one, ex65a_two, ex65a_none, ex66a_two, ex66a_one, ex66a_none]
+
+/-- The number of the interrogative phrase. -/
+inductive WhNumber where
+  /-- singular: singular -/
+  | singular
+  /-- plural: plural -/
+  | plural
+  /-- neutral: unmarked for number -/
+  | neutral
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `whNumber`. -/
+def whNumber (e : Datum) : Option WhNumber :=
+  e.parse? "whNumber" [("singular", .singular), ("plural", .plural), ("neutral", .neutral)]
 
 end Dayal2016.Examples

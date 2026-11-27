@@ -286,9 +286,6 @@ def verbs : List (String × Verb) :=
   [("say", .say), ("assert", .assert), ("claim", .claim), ("ask", .ask), ("wonder", .wonder),
     ("yell", .yell), ("shout", .shout), ("whisper", .whisper)]
 
-def volumes : List (String × Volume) :=
-  [("neutral", .neutral), ("loud", .loud), ("whispered", .whispered)]
-
 /-- `moods` gives the denotation of a quoted sentence of each mood on its radical: a declarative
 denotes the radical, an interrogative the polar question on it. -/
 def moods : List (String × (Set W → Proposition (Set W))) :=
@@ -297,7 +294,10 @@ def moods : List (String × (Set W → Proposition (Set W))) :=
 /-- `performance? x` is the quoted performance of the row `x`, its sentence radical a fixed
 contingent proposition. -/
 def performance? (x : Datum) : Option (Performance Bool) := do
-  let volume ← x.parse? "volume" volumes
+  let volume ← (Examples.volume x).map fun
+    | .neutral => .neutral
+    | .loud => .loud
+    | .whispered => .whispered
   let material ← match x.feature? "material" with
     | some "none" => some .none
     | some "inarticulate" => some .inarticulate

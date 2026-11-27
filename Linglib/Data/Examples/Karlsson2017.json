@@ -1,4 +1,98 @@
 {
+  "features": [
+    {
+      "key": "aspect",
+      "lean": "aspect",
+      "type": "Aspect",
+      "doc": "Whether the action is resultative.",
+      "levels": [
+        {
+          "name": "resultative",
+          "label": "resultative",
+          "doc": "resultative"
+        },
+        {
+          "name": "irresultative",
+          "label": "irresultative",
+          "doc": "irresultative"
+        }
+      ]
+    },
+    {
+      "key": "quantity",
+      "lean": "quantity",
+      "type": "Quantity",
+      "doc": "The quantity of the object.",
+      "levels": [
+        {
+          "name": "definite",
+          "label": "definite",
+          "doc": "a definite quantity"
+        },
+        {
+          "name": "indefinite",
+          "label": "indefinite",
+          "doc": "an indefinite quantity"
+        }
+      ]
+    },
+    {
+      "key": "nominal",
+      "lean": "nominal",
+      "type": "Nominal",
+      "doc": "The kind of nominal the object is.",
+      "levels": [
+        {
+          "name": "personalPronoun",
+          "label": "personalPronoun",
+          "doc": "a personal pronoun"
+        },
+        {
+          "name": "numeral",
+          "label": "numeral",
+          "doc": "a numeral"
+        },
+        {
+          "name": "other",
+          "label": "other",
+          "doc": "any other nominal"
+        }
+      ]
+    },
+    {
+      "key": "clause",
+      "lean": "clauseType",
+      "type": "ClauseType",
+      "doc": "The type of clause.",
+      "levels": [
+        {
+          "name": "finite",
+          "label": "finite",
+          "doc": "a finite active clause"
+        },
+        {
+          "name": "imperative",
+          "label": "imperative",
+          "doc": "an imperative"
+        },
+        {
+          "name": "passive",
+          "label": "passive",
+          "doc": "a passive"
+        },
+        {
+          "name": "obligation",
+          "label": "obligation",
+          "doc": "an obligation construction"
+        },
+        {
+          "name": "infinitival",
+          "label": "infinitival",
+          "doc": "an infinitival"
+        }
+      ]
+    }
+  ],
   "spans": {
     "labels": {
       "type": "SpanLabel",

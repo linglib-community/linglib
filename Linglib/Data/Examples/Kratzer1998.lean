@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Kratzer1998` — typed example data
@@ -301,5 +303,19 @@ def ex42c : Datum :=
     paperFeatures := [] }
 
 def all : List Datum := [ex01, ex02, ex03, ex05, ex29, ex30, ex32a, ex33a, ex34a, ex35a, ex36a, ex36b, ex40a, ex40b, ex40c, ex41a, ex41b, ex41c, ex42a, ex42b, ex42c]
+
+/-- The tense form of the sentence. -/
+inductive Form where
+  /-- simple past: the English simple past -/
+  | simplePast
+  /-- Präteritum: the German Präteritum -/
+  | praeteritum
+  /-- Perfekt: the German Perfekt -/
+  | perfekt
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `form`. -/
+def form (e : Datum) : Option Form :=
+  e.parse? "form" [("simple past", .simplePast), ("Präteritum", .praeteritum), ("Perfekt", .perfekt)]
 
 end Kratzer1998.Examples

@@ -345,7 +345,10 @@ def forms : List (String × Tense.Form) :=
 /-- In (40) a form is acceptable out of the blue iff it can describe a past event there. -/
 theorem rows_outOfTheBlue :
     ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
-      ∃ v ∈ r.byLanguage varieties, ∃ f ∈ r.parse? "form" forms,
+      ∃ v ∈ r.byLanguage varieties, ∃ f ∈ (Examples.form r).map fun
+        | .simplePast => .simplePast
+        | .praeteritum => .simplePast
+        | .perfekt => .presentPerfect,
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
@@ -355,10 +358,16 @@ theorem rows_realize :
       ((∃ ws ∈ English.Verbs.build.tenseForm (English.Auxiliaries.cell .third .singular) f,
           ' ' :: [' '].intercalate (ws.map String.toList) ++ [' '] <:+:
             Examples.ex40a.primaryText.toList) ↔
-        Examples.ex40a.parse? "form" forms = some f)) ∧
+        (Examples.form Examples.ex40a).map fun
+          | .simplePast => .simplePast
+          | .praeteritum => .simplePast
+          | .perfekt => .presentPerfect = some f)) ∧
     ∀ r ∈ [Examples.ex40b, Examples.ex40c], ∀ f ∈ German.tenseForms,
       ((∃ ws ∈ German.Verbs.bauen.principalParts.tenseForm f, ws ⊆ r.surfaceTokens) ↔
-        r.parse? "form" forms = some f) := by
+        (Examples.form r).map fun
+          | .simplePast => .simplePast
+          | .praeteritum => .simplePast
+          | .perfekt => .presentPerfect = some f) := by
   decide +kernel
 
 end Kratzer1998

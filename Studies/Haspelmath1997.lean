@@ -589,24 +589,35 @@ def paradigm? (l : Glottocode) : Option (List Series) :=
     (.finnish, finnish), (.korean, korean), (.hungarian, hungarian), (.georgian, georgian),
     (.huaylasAncashQuechua, quechua), (.swahili, swahili)]
 
-/-- The functions by the names the example rows give them. -/
-def functionTable : List (String × HaspelmathFunction) :=
-  [("specificKnown", .specificKnown), ("specificUnknown", .specificUnknown),
-    ("irrealis", .irrealis), ("question", .question), ("conditional", .conditional),
-    ("indirectNeg", .indirectNeg), ("directNeg", .directNeg), ("comparative", .comparative),
-    ("freeChoice", .freeChoice)]
-
 /-- The region the figure of an example's language draws for a series. -/
 def region? (e : Datum) (label : String) : Option (Finset HaspelmathFunction) :=
   (paradigm? e.language).bind fun p ↦ (p.find? (·.name = label)).map (·.functions)
 
 /-- The figure draws the series over the function the example illustrates. -/
 def Covers (e : Datum) (label : String) : Prop :=
-  ∃ f ∈ e.parse? "function" functionTable, ∃ r ∈ region? e label, f ∈ r
+  ∃ f ∈ (Examples.function e).map fun
+    | .specificKnown => .specificKnown
+    | .specificUnknown => .specificUnknown
+    | .irrealis => .irrealis
+    | .question => .question
+    | .conditional => .conditional
+    | .indirectNeg => .indirectNeg
+    | .directNeg => .directNeg
+    | .comparative => .comparative
+    | .freeChoice => .freeChoice, ∃ r ∈ region? e label, f ∈ r
 
 /-- The figure leaves the function the example illustrates outside the series. -/
 def Excludes (e : Datum) (label : String) : Prop :=
-  ∃ f ∈ e.parse? "function" functionTable, ∃ r ∈ region? e label, f ∉ r
+  ∃ f ∈ (Examples.function e).map fun
+    | .specificKnown => .specificKnown
+    | .specificUnknown => .specificUnknown
+    | .irrealis => .irrealis
+    | .question => .question
+    | .conditional => .conditional
+    | .indirectNeg => .indirectNeg
+    | .directNeg => .directNeg
+    | .comparative => .comparative
+    | .freeChoice => .freeChoice, ∃ r ∈ region? e label, f ∉ r
 
 instance (e : Datum) (label : String) : Decidable (Covers e label) :=
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -721,6 +722,63 @@ def sg_house_inf : Datum :=
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "other"), ("number", "singular"), ("clause", "infinitival")] }
 
 def all : List Datum := [neg1, neg2, neg3, neg4, ex_2a_read_part, ex_2a_read_tot, ex_2a_drive_part, ex_2a_drive_tot, ex_2a_shoot_part, ex_2a_shoot_tot, ex_2b_love, ex_2b_interest, ex_2b_fear, ex_3_icecream_part, ex_3_icecream_tot, ex_3_beer_part, ex_3_beer_tot, ex_3_people_part, ex_3_people_tot, ex_3_guests_part, ex_3_guests_tot, tot_message, tot_milk, tot_car_imp, tot_computers, tot_cars, acc_took, acc_take_imp, acc_taken, acc_whom, pl_articles, pl_children_imp, pl_children_pass, num_articles, num_children_imp, num_children_pass, sg_camera, sg_child, sg_window, sg_paper_imp, sg_book_pass, sg_dog_pass, sg_book_must, sg_house_inf]
+
+/-- Whether the action is resultative. -/
+inductive Aspect where
+  /-- resultative: resultative -/
+  | resultative
+  /-- irresultative: irresultative -/
+  | irresultative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `aspect`. -/
+def aspect (e : Datum) : Option Aspect :=
+  e.parse? "aspect" [("resultative", .resultative), ("irresultative", .irresultative)]
+
+/-- The quantity of the object. -/
+inductive Quantity where
+  /-- definite: a definite quantity -/
+  | definite
+  /-- indefinite: an indefinite quantity -/
+  | indefinite
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `quantity`. -/
+def quantity (e : Datum) : Option Quantity :=
+  e.parse? "quantity" [("definite", .definite), ("indefinite", .indefinite)]
+
+/-- The kind of nominal the object is. -/
+inductive Nominal where
+  /-- personalPronoun: a personal pronoun -/
+  | personalPronoun
+  /-- numeral: a numeral -/
+  | numeral
+  /-- other: any other nominal -/
+  | other
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `nominal`. -/
+def nominal (e : Datum) : Option Nominal :=
+  e.parse? "nominal" [("personalPronoun", .personalPronoun), ("numeral", .numeral), ("other", .other)]
+
+/-- The type of clause. -/
+inductive ClauseType where
+  /-- finite: a finite active clause -/
+  | finite
+  /-- imperative: an imperative -/
+  | imperative
+  /-- passive: a passive -/
+  | passive
+  /-- obligation: an obligation construction -/
+  | obligation
+  /-- infinitival: an infinitival -/
+  | infinitival
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `clause`. -/
+def clauseType (e : Datum) : Option ClauseType :=
+  e.parse? "clause" [("finite", .finite), ("imperative", .imperative), ("passive", .passive),
+    ("obligation", .obligation), ("infinitival", .infinitival)]
 
 /-- The labels of the spans the rows mark. -/
 inductive SpanLabel where

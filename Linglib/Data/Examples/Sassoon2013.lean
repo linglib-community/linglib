@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `Sassoon2013` — typed example data
@@ -250,5 +252,19 @@ def worse : Datum :=
     paperFeatures := [("conj", "20"), ("disj", "32"), ("polarity", "140"), ("positive", "false"), ("totality", "2"), ("standard", "partial"), ("base", "bad")] }
 
 def all : List Datum := [healthy, normal, typical, similar, identical, good, familiar, intelligent, healthier, better, sick, abnormal, atypical, dissimilar, different, bad, unfamiliar, worse]
+
+/-- The type of standard of the adjective. -/
+inductive Standard where
+  /-- total: a total adjective -/
+  | totalAdjective
+  /-- partial: a partial adjective -/
+  | partialAdjective
+  /-- relative: a relative adjective -/
+  | relativeAdjective
+  deriving DecidableEq, Repr, Fintype
+
+/-- The value a row records under `standard`. -/
+def standard (e : Datum) : Option Standard :=
+  e.parse? "standard" [("total", .totalAdjective), ("partial", .partialAdjective), ("relative", .relativeAdjective)]
 
 end Sassoon2013.Examples
