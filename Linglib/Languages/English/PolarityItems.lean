@@ -24,15 +24,12 @@ and *ever* in `Studies/Chierchia2013.lean` and `Studies/KadmonLandman1993.lean`,
 
 ## Main definitions
 
-* `English.PolarityItems.weakNPIs`, `English.PolarityItems.strongNPIs`,
-  `English.PolarityItems.invertedNPIs`, `English.PolarityItems.allFCIs`,
-  `English.PolarityItems.canonicalPPIs`, `English.PolarityItems.invertedPPIs`: the classes.
-* `English.PolarityItems.allPolarityItems`: the lexicon.
+* `English.PolarityItems.items`: the entries.
 
 ## Implementation notes
 
-A positive polarity item whose class van der Wouden does not settle carries the weakest
-anti-licensor, anti-morphic strength, which every positive polarity item has by his (169).
+An entry records the contexts in which a cited source attests or excludes the item, and no class.
+The classes named above are those of the sources, and the studies that test them state them.
 
 ## References
 
@@ -211,42 +208,13 @@ for a song.* -/
 def forASong : PolarityItem :=
   { form := "for a song" }
 
-/-! ### Lexicon access -/
+/-! ### The entries -/
 
-/-- The weak NPIs. -/
-def weakNPIs : List PolarityItem :=
-  [any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever]
-
-/-- The strong NPIs. -/
-def strongNPIs : List PolarityItem :=
-  [liftAFinger, budgeAnInch, inYears, until_, either]
-
-/-- The maximizer NPIs. -/
-def invertedNPIs : List PolarityItem :=
-  [wildHorses, allTheTeaInChina, aTenFootPole, inAMillionYears]
-
-/-- All NPIs (weak + strong + maximizer). -/
-def allNPIs : List PolarityItem := weakNPIs ++ strongNPIs ++ invertedNPIs
-
-/-- The FCIs. -/
-def allFCIs : List PolarityItem :=
-  [any, whatever, whoever, whichever]
-
-/-- The plain PPIs. -/
-def canonicalPPIs : List PolarityItem :=
-  [someone, already, too, somewhat, rather, tonsOf, awfully]
-
-/-- The minimizer PPIs. -/
-def invertedPPIs : List PolarityItem :=
-  [atTheDropOfAHat, inAJiffy, forAPittance, forASong]
-
-/-- All PPIs. -/
-def allPPIs : List PolarityItem :=
-  canonicalPPIs ++ invertedPPIs
-
-/-- The full lexicon. -/
-def allPolarityItems : List PolarityItem :=
-  weakNPIs ++ strongNPIs ++ invertedNPIs ++
-  [whatever, whoever, whichever] ++ allPPIs
+/-- The polarity items. -/
+def items : List PolarityItem :=
+  [any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever, liftAFinger, budgeAnInch,
+    inYears, until_, either, whatever, whoever, whichever, someone, already, too, somewhat,
+    rather, tonsOf, awfully, wildHorses, allTheTeaInChina, aTenFootPole, inAMillionYears,
+    atTheDropOfAHat, inAJiffy, forAPittance, forASong]
 
 end English.PolarityItems

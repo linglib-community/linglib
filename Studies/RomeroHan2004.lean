@@ -301,15 +301,9 @@ def items (e : Datum) : List PolarityItem.Class :=
 def entries (e : Datum) : List PolarityItem :=
   (e.spans.filterMap Examples.lexeme?).map (·.entry)
 
-/-- The polarity items of the English language file that the paper's questions test. -/
-def inventory : List PolarityItem :=
-  English.PolarityItems.allNPIs ++ English.PolarityItems.canonicalPPIs
-
 -- every lexeme a row names is a polarity item of the English language file
-theorem entry_mem_inventory (l : Examples.Lexeme) : l.entry ∈ inventory := by
-  cases l <;> simp [Examples.Lexeme.entry, inventory, English.PolarityItems.allNPIs,
-    English.PolarityItems.weakNPIs, English.PolarityItems.strongNPIs,
-    English.PolarityItems.canonicalPPIs]
+theorem entry_mem_items (l : Examples.Lexeme) : l.entry ∈ English.PolarityItems.items := by
+  cases l <;> simp [Examples.Lexeme.entry, English.PolarityItems.items]
 
 -- every span that names a lexeme is one word, printed as its entry is written
 theorem span_printed :
@@ -319,7 +313,7 @@ theorem span_printed :
 
 -- no word of an English question that is written as a polarity item goes unmarked
 theorem exists_mem_items_of_written :
-    ∀ e ∈ all, e.language = .english → ∀ i ∈ inventory,
+    ∀ e ∈ all, e.language = .english → ∀ i ∈ English.PolarityItems.items,
       i.form.toList ∈ Datum.wordsOf e.primaryText → ∃ j ∈ entries e, j.form = i.form := by
   decide
 
