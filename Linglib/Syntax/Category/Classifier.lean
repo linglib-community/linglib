@@ -17,7 +17,7 @@ This file defines the lexical entry of a classifier.
 
 ## Main definitions
 
-* `Classifier`: the lexical entry, a morph with its spelling in a native script and its gloss.
+* `Classifier`: the lexical entry, a morph with its spelling in a native script.
 
 ## Implementation notes
 
@@ -38,11 +38,8 @@ Two classifiers of one language can share a form, as Japanese *-ken* 軒 for bui
 open Morphology (Morph)
 
 /-- A classifier lexical entry records its morph, which gives its attachment kind and its form (a
-romanization where the language has a native script), its spelling in that script, and its
-gloss. -/
+romanization where the language has a native script), and its spelling in that script. -/
 structure Classifier extends Morph where
   /-- The spelling in the native script. -/
   script : Option String := none
-  /-- The gloss. -/
-  gloss : String := "CL"
   deriving DecidableEq, Repr
