@@ -41,7 +41,6 @@ def know : Verb where
   past := "knew"
   pastPart := "known"
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  complementSig := some .mono
   attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
@@ -104,7 +103,6 @@ def believe : Verb where
   gradability := some { dimension := .confidence }
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
-  complementSig := some .mono
 
 /-- "think" — doxastic attitude verb -/
 def think : Verb where
@@ -114,7 +112,6 @@ def think : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
-  complementSig := some .mono
 
 /-- "doubt" — doxastic attitude verb, the apparent antonym of *believe*, measuring certainty
 towards the negative pole ([koev-2026] (17), fn. 7). Its complement is downward entailing, as its
@@ -126,7 +123,6 @@ def doubt : Verb where
   gradability := some { dimension := .confidence, polarity := .negative }
   opaqueContext := true
   attitude := some (.doxastic .doxastic)
-  complementSig := some .anti
 
 /-! ### Preferential Attitude -/
 

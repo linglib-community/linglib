@@ -2,8 +2,7 @@ module
 
 public import Mathlib.Data.PFun
 public import Mathlib.Data.Set.Image
-public import Linglib.Semantics.Questions.Inquisitive.Generate
-
+public import Linglib.Logic.Inquisitive.Generate
 /-!
 # Questions and co-propositionality
 

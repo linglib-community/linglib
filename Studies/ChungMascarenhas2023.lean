@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Core.Probability.WeightOfEvidence
-public import Linglib.Semantics.Attitudes.Preference.ExpectedValue
+public import Linglib.Semantics.Embedding.Preference.ExpectedValue
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Data.Examples.ChungMascarenhas2023
 public import Linglib.Data.Examples.Languages

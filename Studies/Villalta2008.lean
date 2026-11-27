@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Preference.Conditional
+public import Linglib.Semantics.Embedding.Preference.Conditional
 public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Semantics.Degree.CresswellDegree
 public import Linglib.Semantics.Degree.Superlative

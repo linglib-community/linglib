@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Distributivity
+public import Linglib.Semantics.Embedding.Distributivity
 public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Data.Examples.Belnap1982
 public import Studies.Karttunen1977

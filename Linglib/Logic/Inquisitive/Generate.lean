@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Inquisitive.Lattice
+public import Linglib.Logic.Inquisitive.Lattice
 public import Mathlib.Order.CompactlyGenerated.Basic
 import Linglib.Core.Order.UpperLower.Closure
 

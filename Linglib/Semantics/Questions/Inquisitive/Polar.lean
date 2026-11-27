@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Inquisitive.Generate
+public import Linglib.Logic.Inquisitive.Generate
 public import Linglib.Semantics.Negation.Polarity
 
 /-!
