@@ -1,47 +1,62 @@
 module
 
-public import Linglib.Semantics.Reference.Context.Basic
 public import Linglib.Data.Examples.SchlenkerEtAl2026
+public import Linglib.Semantics.Reference.Monster
+public import Studies.Kaplan1989
+public import Mathlib.Algebra.Torsor.Defs
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.Interval.Set.Defs
 
 /-!
 # Schlenker, Lamberton & Lamberton (2026): Traveling Shots in Language
 
-This file formalizes the paper's extension of Iconological Semantics to dynamic viewpoints. In
-[schlenker-lamberton-2024] a classifier predicate has an iconic component evaluated by projecting
-its argument onto signing space from the viewpoint a variable denotes, and a dynamic classifier,
-one that moves in signing space, is projected moment by moment along its movement (the paper's
-(27)). The paper's problem is relative motion: in ASL a classifier for a static object, a tree or a
-pole, can move past the signer to show the object passing a moving character, the traveling shot
-of film. With projection from static viewpoints a still object projects to a still classifier, so
-such readings are unavailable (`DynProj.eq_of_isStatic`); once a viewpoint is a function from times
-and worlds to static viewpoints (29), the movement of the classifier is information about the
-movement of the viewpoint (`DynProj.viewpoint_ne`), the character's path in the elicited paradigms
-of `Data/Examples/SchlenkerEtAl2026`.
+In Iconological Semantics a classifier predicate has an iconic component: its argument must
+project, from a viewpoint, to the position the classifier has in signing space, and a classifier
+that moves is matched moment by moment against the positions its argument projects to over a
+stretch of time. Schlenker, Lamberton and Lamberton study ASL classifiers for objects that do not
+move, a tree or a pole, moving past the signer to show the object passing a moving character, the
+traveling shot of film.
 
-The paper leaves two analyses open. On Analysis I any viewpoint variable may denote a dynamic
-viewpoint. On Analysis II only the context-bound variable `π*`, which denotes the dynamic
-viewpoint of the context's agent (33), may, and Role Shift, analyzed as overt context shift (34),
-abstracts over the agent, time and world of the context (`roleShift`), so that a role-shifted
-classifier is projected from the character's moving viewpoint (`roleShift_classifierIcon_iff`).
-Under the restrictive theory that free variables are static, a traveling shot therefore needs
-Role Shift (`Restrictive.eq_of_free`), and under Role Shift the classifier's movement is the
-character's (`roleShift_viewpoint_ne`). How dynamic viewpoints enter [davidson-2015]'s
-demonstrational analysis of Role Shift, which has no viewpoints, is left open by the paper.
+A viewpoint is here a correspondence between positions in the world and positions in signing
+space at each time and world, and it is static when the correspondence is the same throughout.
+From a static viewpoint an object that stays where it is projects to a classifier that does not
+move, so the readings need viewpoints that move, and from a moving viewpoint the movement of the
+classifier is information about the movement of the viewpoint. Because a viewpoint is a
+correspondence, a classifier held still for an object that moves carries the same information, as
+when the viewpoint follows a vehicle.
+
+The paper leaves two analyses open. On the first, any viewpoint variable may denote a moving
+viewpoint. On the second, only the variable bound by the context may: it denotes the viewpoint of
+the context's agent, and Role Shift, which evaluates its clause at the context of a character at
+the time and world of evaluation, makes a classifier carrying that variable project from the
+character's viewpoint, while a classifier with a free variable is unaffected. Role Shift is a shift
+of the context, a monster wherever it replaces the agent, and the context-bound variable is an
+indexical. If free variables denote static viewpoints only, a traveling shot needs Role Shift.
 
 ## Implementation notes
 
-* A viewpoint is any type: the paper's viewpoints carry a Cartesian frame of reference and
-  scaling factors, and projection is any function from an object, a static viewpoint, a time and a
-  world to a position in signing space, so the geometry of projection is not modeled. The scaling
-  of classifier time to evaluation time in (27) is an arbitrary clock from the moments of the
-  movement to times, started at the time of evaluation. An object is still when its projection
-  from any fixed viewpoint does not change over time.
-* Role Shift (34) evaluates its clause at the paper's context triple, here the context with its
-  agent, time and world replaced and its addressee and position kept.
-* The elicited paradigms are recorded as rows with the mean judgment on the seven-point scale;
-  the paper's inferences about the character's path from the side on which the classifier passes
-  are not modeled, since they require the geometry.
+* The paper's static viewpoint is a Cartesian frame of reference with a spatial scaling factor,
+  and an object projects to a classifier when its coordinates in that frame are the scaled
+  coordinates of the classifier in the signer's frame. Here it is any bijection between positions
+  in the world and positions in signing space, and a position stands for a center with an
+  orientation. Nothing below uses the geometry beyond injectivity.
+* A dynamic classifier is a function from the reals to positions in signing space, read on the
+  interval of its duration. Durations are real numbers and times are a torsor over them.
+* Meanings are characters whose index is a time and a world, and the assignment is fixed, so a
+  free viewpoint variable is a constant character. Role Shift abstracts over an individual, a time
+  and a world; the time and the world are the index of the shifted character. It replaces the
+  agent, time and world of the context and keeps its addressee and position, which the paper's
+  contexts do not have.
+
+## TODO
+
+* The inferences about the character's path, from the side on which the classifier passes the
+  signer, need the geometry of frames of reference. So do the degraded examples in which a verb
+  displays a path the classifier's side conflicts with. The elicited paradigms of
+  `Data/Examples/SchlenkerEtAl2026` record the side and the mean judgments; no theorem here reads
+  them.
+* How dynamic viewpoints enter the demonstrational analysis of Role Shift, which has no viewpoints,
+  is left open by the paper.
 
 ## References
 
@@ -54,115 +69,140 @@ demonstrational analysis of Role Shift, which has no viewpoints, is left open by
 
 namespace SchlenkerEtAl2026
 
-open SpeechAct
+open SpeechAct Character Set
 
-variable {W E P T V S ι : Type*}
+variable {W E P T X S α : Type*} [AddTorsor ℝ T]
 
-/-! ### Projection from dynamic viewpoints (§7) -/
+/-! ### Projection from a viewpoint -/
 
-/-- (29): a dynamic viewpoint is a function from times and worlds to the static viewpoints of
-[schlenker-lamberton-2024]; the standard viewpoints are the constant ones. -/
-def IsStatic (vp : T → W → V) : Prop := ∃ v, vp = fun _ _ ↦ v
+/-- A viewpoint gives, at each time and world, a correspondence between positions in the world
+and positions in signing space, together with a temporal scaling factor. -/
+structure Viewpoint (X S T W : Type*) where
+  /-- The correspondence between positions at a time and a world. -/
+  frame : T × W → X ≃ S
+  /-- The factor from the time of the classifier's movement to the time of what it depicts. -/
+  timeScale : ℝ
 
-/-- (29): projection from a viewpoint that may move. `proj d v t w` is the position in signing
-space to which the object `d` projects from the static viewpoint `v` at `t` in `w`; from a dynamic
-viewpoint, `d` projects at `t` in `w` from the viewpoint's value there. -/
-def projAt (proj : E → V → T → W → S) (d : E) (vp : T → W → V) (t : T) (w : W) : S :=
-  proj d (vp t w) t w
+variable {pos : E → T × W → X} {π : Viewpoint X S T W} {d : E} {t : T} {w : W} {δ δ₁ δ₂ : ℝ}
+  {cl : ℝ → S}
 
-/-- (27), (32): an object projects to a dynamic classifier, a function `cl` from the moments of
-its movement to positions in signing space, when at each moment, sent to a time of evaluation by
-the classifier's clock, the object projects to the classifier's position there. -/
-def DynProj (proj : E → V → T → W → S) (d : E) (vp : T → W → V) (w : W) (clock : ι → T)
-    (cl : ι → S) : Prop :=
-  ∀ i, projAt proj d vp (clock i) w = cl i
+/-- (29): the position in signing space to which the object `d` projects from the viewpoint `π`
+at a time and a world, where `pos d` gives the position of `d` in the world. -/
+def proj (pos : E → T × W → X) (π : Viewpoint X S T W) (d : E) (i : T × W) : S :=
+  π.frame i (pos d i)
 
-/-- An object is still in `w` when its projection from any fixed viewpoint does not change over
-time. -/
-def IsStill (proj : E → V → T → W → S) (d : E) (w : W) : Prop :=
-  ∀ (v : V) (t t' : T), proj d v t w = proj d v t' w
+/-- (27), (32): an object projects to a dynamic classifier `cl` of duration `δ` when at each
+moment `δ'` of the classifier's movement the object projects to the classifier's position, at the
+time `δ'` scaled by the viewpoint's factor after the time of evaluation. -/
+def DynProj (pos : E → T × W → X) (π : Viewpoint X S T W) (d : E) (i : T × W) (δ : ℝ)
+    (cl : ℝ → S) : Prop :=
+  ∀ δ' ∈ Icc 0 δ, proj pos π d ((π.timeScale * δ') +ᵥ i.1, i.2) = cl δ'
 
-variable {proj : E → V → T → W → S} {d : E} {w : W} {clock : ι → T} {cl : ι → S}
-  {vp : T → W → V}
+/-- An object is still in a world when its position there does not change over time. -/
+def IsStill (pos : E → T × W → X) (d : E) (w : W) : Prop :=
+  ∀ t t' : T, pos d (t, w) = pos d (t', w)
 
-theorem DynProj.eq_of_isStill (h : DynProj proj d vp w clock cl) (hd : IsStill proj d w) {i j : ι}
-    (hv : vp (clock i) w = vp (clock j) w) : cl i = cl j := by
-  rw [← h i, ← h j, projAt, projAt, hv]
-  exact hd _ _ _
+/-- (32): if a still object projects to a classifier that moves, the viewpoint differs between the
+times the two positions of the classifier depict. -/
+theorem DynProj.frame_ne (h : DynProj pos π d (t, w) δ cl) (hd : IsStill pos d w)
+    (h₁ : δ₁ ∈ Icc 0 δ) (h₂ : δ₂ ∈ Icc 0 δ) (hne : cl δ₁ ≠ cl δ₂) :
+    π.frame ((π.timeScale * δ₁) +ᵥ t, w) ≠ π.frame ((π.timeScale * δ₂) +ᵥ t, w) :=
+  fun heq ↦ hne <| by rw [← h δ₁ h₁, ← h δ₂ h₂, proj, proj, heq, hd]
 
-theorem DynProj.viewpoint_ne (h : DynProj proj d vp w clock cl) (hd : IsStill proj d w) {i j : ι}
-    (hij : cl i ≠ cl j) : vp (clock i) w ≠ vp (clock j) w :=
-  mt (h.eq_of_isStill hd) hij
+/-- From a static viewpoint a still object projects to a classifier that does not move. -/
+theorem DynProj.eq_of_isConst (h : DynProj pos π d (t, w) δ cl) (hd : IsStill pos d w)
+    (hπ : Function.IsConst π.frame) (h₁ : δ₁ ∈ Icc 0 δ) (h₂ : δ₂ ∈ Icc 0 δ) : cl δ₁ = cl δ₂ :=
+  not_not.1 fun hne ↦ h.frame_ne hd h₁ h₂ hne (hπ _ _)
 
-theorem DynProj.eq_of_isStatic (h : DynProj proj d vp w clock cl) (hd : IsStill proj d w)
-    (hs : IsStatic vp) (i j : ι) : cl i = cl j := by
-  obtain ⟨v, rfl⟩ := hs
-  exact h.eq_of_isStill hd rfl
+-- §7, on two classifiers: a classifier held still for an object that moves
+theorem DynProj.frame_ne_of_pos_ne (h : DynProj pos π d (t, w) δ cl) (h₁ : δ₁ ∈ Icc 0 δ)
+    (h₂ : δ₂ ∈ Icc 0 δ) (hcl : cl δ₁ = cl δ₂)
+    (hne : pos d ((π.timeScale * δ₁) +ᵥ t, w) ≠ pos d ((π.timeScale * δ₂) +ᵥ t, w)) :
+    π.frame ((π.timeScale * δ₁) +ᵥ t, w) ≠ π.frame ((π.timeScale * δ₂) +ᵥ t, w) :=
+  fun heq ↦ hne <| (π.frame _).injective <| by
+    have := (h δ₁ h₁).trans (hcl.trans (h δ₂ h₂).symm)
+    rwa [proj, proj, heq] at this
 
-/-! ### Viewpoint variables and Role Shift (§8) -/
+/-! ### Viewpoint variables and classifiers -/
 
-/-- A viewpoint variable: the free variables `π_i`, whose values come from the assignment, and
-the context-bound variable `π*`, introduced by Role Shift. -/
-inductive ViewpointVar where
-  | free (i : ℕ)
-  | contextBound
-  deriving DecidableEq
+/-- (33b): the context-bound viewpoint variable `π*` denotes the viewpoint of the agent of the
+context, where `vp x` is the viewpoint of the individual `x`. A free viewpoint variable (33a)
+denotes its value under the assignment at every context, a constant character. -/
+def piStar (vp : E → Viewpoint X S T W) :
+    Character (Context W E P T) (T × W) (Viewpoint X S T W) :=
+  dthat fun c ↦ vp c.agent
 
-/-- (33): a free viewpoint variable denotes its value under the assignment `s`; the context-bound
-variable `π*` denotes the dynamic viewpoint of the context's agent. -/
-def ViewpointVar.denote (s : ℕ → T → W → V) (agentVP : E → T → W → V) (c : Context W E P T) :
-    ViewpointVar → T → W → V
-  | .free i => s i
-  | .contextBound => agentVP c.agent
+/-- (25a), (31): a dynamic classifier with lexical component `lex` and viewpoint term `π` holds of
+an object that satisfies `lex` and projects to the classifier from the viewpoint `π` denotes. -/
+def classifier (pos : E → T × W → X) (lex : T × W → E → Prop)
+    (π : Character (Context W E P T) (T × W) (Viewpoint X S T W)) (δ : ℝ) (cl : ℝ → S) :
+    Character (Context W E P T) (T × W) (E → Prop) :=
+  fun c i x ↦ lex i x ∧ DynProj pos (π c i) x i δ cl
 
-/-- The restrictive theory of §8: every free viewpoint variable denotes a static viewpoint. -/
-def Restrictive (s : ℕ → T → W → V) : Prop := ∀ i, IsStatic (s i)
+/-! ### Role Shift -/
 
-/-- (34): Role Shift abstracts over the agent, time and world of the context, evaluating its
-clause at the shifted context and at that time and world. -/
-def roleShift (IP : Context W E P T → T → W → Prop) (c : Context W E P T) (x : E) (t : T)
-    (w : W) : Prop :=
-  IP { c with agent := x, time := t, world := w } t w
+/-- (34): Role Shift evaluates its clause at the context of the individual `x` at the time and
+world of evaluation. -/
+def roleShift (x : E) :
+    Character (Context W E P T) (T × W) α → Character (Context W E P T) (T × W) α :=
+  shiftBy fun i c ↦ { c with agent := x, time := i.1, world := i.2 }
 
-/-- (31), (36): the iconic component of a dynamic classifier with viewpoint variable `π`: its
-argument projects to the classifier from the viewpoint `π` denotes, along the clock started at
-the time of evaluation. -/
-def classifierIcon (s : ℕ → T → W → V) (agentVP : E → T → W → V) (π : ViewpointVar)
-    (proj : E → V → T → W → S) (d : E) (clock : T → ι → T) (cl : ι → S) (c : Context W E P T)
-    (t : T) (w : W) : Prop :=
-  DynProj proj d (π.denote s agentVP c) w (clock t) cl
+variable {x : E} {c : Context W E P T} {i : T × W} {lex : T × W → E → Prop}
+  {vp : E → Viewpoint X S T W}
 
-variable {s : ℕ → T → W → V} {agentVP : E → T → W → V} {clock' : T → ι → T}
+omit [AddTorsor ℝ T] in
+-- (35): under Role Shift the first person denotes the character
+theorem roleShift_I (Q : T × W → E → Prop) :
+    roleShift x (fun c i ↦ Q i (Kaplan1989.I c i)) c i = Q i x := rfl
 
-/-- (37c): under Role Shift a classifier with the context-bound variable is projected from the
-character's dynamic viewpoint at the shifted time and world. -/
-theorem roleShift_classifierIcon_iff (c : Context W E P T) (x : E) (t : T) (w : W) :
-    roleShift (classifierIcon s agentVP .contextBound proj d clock' cl) c x t w ↔
-      DynProj proj d (agentVP x) w (clock' t) cl := by
-  simp [roleShift, classifierIcon, ViewpointVar.denote]
+omit [AddTorsor ℝ T] in
+/-- Role Shift is a monster where it replaces the agent of the context. -/
+theorem isMonster_roleShift [Nontrivial α] (h : c.agent ≠ x) :
+    IsMonster (roleShift x : Character (Context W E P T) (T × W) α → _) :=
+  isMonster_shiftBy_of_ne (v := (c.time, c.world)) (c := c)
+    fun e ↦ h (congrArg Context.agent e).symm
 
-theorem Restrictive.eq_of_free (hs : Restrictive s) (hd : IsStill proj d w) (c : Context W E P T)
-    {i : ℕ} (h : DynProj proj d ((ViewpointVar.free i).denote s agentVP c) w clock cl)
-    (j k : ι) : cl j = cl k :=
-  h.eq_of_isStatic hd (hs i) j k
+/-- (36b): under Role Shift a classifier with the context-bound viewpoint variable projects from
+the viewpoint of the character. -/
+theorem roleShift_classifier_piStar :
+    roleShift x (classifier pos lex (piStar vp) δ cl) c i d ↔
+      lex i d ∧ DynProj pos (vp x) d i δ cl := .rfl
 
-theorem roleShift_viewpoint_ne (c : Context W E P T) (x : E) (t : T) (hd : IsStill proj d w)
-    (h : roleShift (classifierIcon s agentVP .contextBound proj d clock' cl) c x t w) {i j : ι}
-    (hij : cl i ≠ cl j) : agentVP x (clock' t i) w ≠ agentVP x (clock' t j) w :=
-  ((roleShift_classifierIcon_iff c x t w).1 h).viewpoint_ne hd hij
+-- a classifier with a free viewpoint variable is unaffected by Role Shift
+theorem roleShift_classifier_const :
+    roleShift x (classifier pos lex (.const π) δ cl) c i d ↔ lex i d ∧ DynProj pos π d i δ cl :=
+  .rfl
+
+-- §8.1, the restrictive theory: with a static free variable a still object's classifier is still
+theorem classifier_const_eq_of_isConst (hπ : Function.IsConst π.frame)
+    (h : classifier pos lex (.const π) δ cl c (t, w) d) (hd : IsStill pos d w)
+    (h₁ : δ₁ ∈ Icc 0 δ) (h₂ : δ₂ ∈ Icc 0 δ) : cl δ₁ = cl δ₂ :=
+  h.2.eq_of_isConst hd hπ h₁ h₂
+
+-- (37d): under Role Shift the movement of a still object's classifier is the character's
+theorem roleShift_frame_ne (h : roleShift x (classifier pos lex (piStar vp) δ cl) c (t, w) d)
+    (hd : IsStill pos d w) (h₁ : δ₁ ∈ Icc 0 δ) (h₂ : δ₂ ∈ Icc 0 δ) (hne : cl δ₁ ≠ cl δ₂) :
+    (vp x).frame (((vp x).timeScale * δ₁) +ᵥ t, w) ≠
+      (vp x).frame (((vp x).timeScale * δ₂) +ᵥ t, w) :=
+  (roleShift_classifier_piStar.1 h).2.frame_ne hd h₁ h₂ hne
 
 /-- The paper's illustration of (32): the tree classifier of (30) moves from the front of signing
-space to the signer's forehead in one second with temporal scaling factor 100, so if the tree
-does not move, Ann's viewpoint at the time of evaluation differs from her viewpoint a hundred
-seconds later. -/
-example {proj : E → V → ℝ → W → S} {tree ann : E} {w : W} {agentVP : E → ℝ → W → V}
-    {s : ℕ → ℝ → W → V} {cl : ℝ → S} {front back : S} (hne : front ≠ back)
-    (h₀ : cl 0 = front) (h₁ : cl 1 = back) (hd : IsStill proj tree w) (c : Context W E P ℝ)
-    (t : ℝ)
-    (h : roleShift (classifierIcon s agentVP .contextBound proj tree (fun t τ ↦ t + 100 * τ) cl)
-      c ann t w) :
-    agentVP ann t w ≠ agentVP ann (t + 100) w := by
-  have := roleShift_viewpoint_ne c ann t hd h (i := 0) (j := 1) (h₀ ▸ h₁ ▸ hne)
-  simpa using this
+space to the signer's forehead in one second, so if the tree does not move and the temporal
+scaling factor is 100, Ann's viewpoint a hundred seconds after the time of evaluation differs from
+her viewpoint then. -/
+example {tree ann : E} {front back : S} (hne : front ≠ back) (h₀ : cl 0 = front)
+    (h₁ : cl 1 = back) (hτ : (vp ann).timeScale = 100) (hd : IsStill pos tree w)
+    (h : roleShift ann (classifier pos lex (piStar vp) 1 cl) c (t, w) tree) :
+    (vp ann).frame (t, w) ≠ (vp ann).frame ((100 : ℝ) +ᵥ t, w) := by
+  have := roleShift_frame_ne h hd (δ₁ := 0) (δ₂ := 1) (by simp) (by simp) (h₀ ▸ h₁ ▸ hne)
+  simpa [hτ] using this
+
+/-- A traveling shot has a model: on the real line a still object projects, under Role Shift, to a
+classifier that moves, from the viewpoint of a character whose frame is translated as time
+passes. -/
+example : roleShift () (classifier (fun _ _ ↦ (0 : ℝ)) (fun _ _ ↦ True)
+    (piStar fun _ ↦ ⟨fun i ↦ Equiv.addRight i.1, 1⟩) 1 id)
+    (⟨(), (), (), (0 : ℝ), ()⟩ : Context Unit Unit Unit ℝ) (0, ()) () :=
+  ⟨trivial, fun δ' _ ↦ by simp [proj, piStar]⟩
 
 end SchlenkerEtAl2026

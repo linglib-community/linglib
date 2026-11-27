@@ -39,6 +39,13 @@ is a priori (`Character.IsNecessary.isAPriori`).
 * `Character.diag`: the diagonal along the index of the context.
 * `Character.IsAPriori`, `Character.IsNecessaryAt`, `Character.IsNecessary`
 
+## Implementation notes
+
+A character and a content are the functions that represent them in Kaplan's formal system. Two
+expressions with the same value at every context and world have one character here, so a
+difference of linguistic meaning finer than that, which structured characters and structured
+propositions are meant to capture, is not represented.
+
 ## References
 
 * [kaplan-1989]
@@ -49,8 +56,8 @@ is a priori (`Character.IsNecessary.isAPriori`).
 @[expose] public section
 
 
-/-- A Kaplanian character is the linguistic meaning of an expression, assigning to each context a
-content, an intension from worlds to extensions. -/
+/-- The character of an expression, its linguistic meaning, is represented by the function that
+assigns to each context a content, an intension from worlds to extensions. -/
 abbrev Character (C W E : Type*) := C → W → E
 
 namespace Character
