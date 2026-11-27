@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Cartography
+public import Linglib.Syntax.Cartography.Clause
 
 /-!
 # Cinque (1999): the order of clausal functional heads

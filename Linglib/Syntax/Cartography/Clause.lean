@@ -6,39 +6,35 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.OrdConnected
+public import Linglib.Syntax.Spine.Label
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The hierarchy of clausal functional heads
 
-Cinque matches the order of adverb classes against the order of the clausal functional heads that
-morphology and scope reveal, and finds the two aligned one to one: each adverb class is the
-specifier of one head. The result is his universal hierarchy of clausal functional projections, a
-linear order of heads from the speech-act mood at the top to the lower completive aspect at the
-bottom. `Cartography.Head` is that order, its constructors listed bottom-up, each with the adverb
-class Cinque pairs with it, and `Cartography.Head.family` reads off the kind of head his label
-names: a mood, a modality, a tense, an aspect or Voice.
+This file defines the clausal functional heads of Cinque's universal hierarchy and their order.
+Cinque matches the order of adverb classes against the order of the functional heads that
+morphology and scope reveal, and pairs each adverb class with one head, as its specifier. The heads
+are listed from the lower completive aspect at the bottom to the speech-act mood at the top, each
+with its adverb class. A head is below another if it is merged lower.
 
-A clause that projects up to a head contains every head below it, so the heads of a clause of size
-`h` are the lower set `Set.Iic h`, and the heads in a clause of size `b` but not in one of size `a`
-form the interval `Set.Ioc a b` (`Set.Iic_sdiff_Iic`). A later proposal that adds heads to
-Cinque's refines the order: its hierarchy receives an order embedding of `Cartography.Head`, and a
-head it places immediately above or below one of Cinque's covers it or is covered by it.
-Cinque's own kinds of head are not intervals of the hierarchy: moods, modalities, tenses and
-aspects interleave.
+The hierarchy is the spine that contains every head. The heads below a head on that spine are the
+heads lower in the order, so the clause truncated at a head contains exactly those. The kinds of
+head that the labels name, mood, modality, tense, aspect and Voice, are not intervals of the
+hierarchy: the anterior tense and the volitional modality lie among the aspects.
 
 ## Main definitions
 
-* `Cartography.Head`: the heads of the universal hierarchy, with its linear order.
-* `Cartography.Head.family`: the kind of head, `Cartography.Family`.
-* `Cartography.Head.hierarchy`: the heads bottom-up, as a list.
+* `Cartography.Head`: the heads of the hierarchy, with their linear order.
+* `Cartography.Family`, `Cartography.Head.family`: the kind of a head.
+* `Cartography.Head.hierarchy`: the spine of all the heads.
 
-## Main statements
+## Main results
 
-* `Cartography.Head.mem_hierarchy`, `Cartography.Head.pairwise_hierarchy`: the list holds every
-  head once, in order.
-* `Cartography.Head.not_isContiguous_family`: the kinds of head are not intervals of it.
+* `Cartography.Head.mem_below_hierarchy_iff`: the heads below a head on the hierarchy are the heads
+  lower in the order.
+* `Cartography.Head.not_isContiguous_family`: the kinds of head are not intervals of the hierarchy.
 
 ## Implementation notes
 
@@ -146,12 +142,18 @@ def family : Head → Family
   | moodIrrealis | moodEvidential | moodEvaluative | moodSpeechAct => .mood
   | _ => .aspect
 
-/-- The heads, bottom-up. -/
-def hierarchy : List Head := (List.range 30).map Head.ofNat
+/-- The **hierarchy** is the spine of all the heads, from the lowest to the highest. -/
+def hierarchy : Spine Head := ⟨(List.range 30).map Head.ofNat⟩
 
 theorem mem_hierarchy (h : Head) : h ∈ hierarchy := by cases h <;> decide
 
-theorem pairwise_hierarchy : hierarchy.Pairwise (· < ·) := by decide
+theorem pairwise_hierarchy : hierarchy.heads.Pairwise (· < ·) := by decide
+
+/-- The heads below a head on the hierarchy are the heads lower in the order. -/
+theorem mem_below_hierarchy_iff {c h : Head} : c ∈ hierarchy.below h ↔ c < h :=
+  ⟨Spine.rel_of_mem_below pairwise_hierarchy (mem_hierarchy h), fun hc ↦
+    (Spine.mem_below_or_rel (r := (· ≤ ·)) (pairwise_hierarchy.imp le_of_lt) (mem_hierarchy h)
+      (mem_hierarchy c)).resolve_right hc.not_ge⟩
 
 /-- No order on the kinds of head is coarsened by the hierarchy
 (`isContiguous_iff_exists_monotone`): the anterior tense and the volitional modality sit among the
