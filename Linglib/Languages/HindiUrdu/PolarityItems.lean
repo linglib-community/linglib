@@ -30,31 +30,26 @@ open PolarityItem
 /-- *koii bhii* 'anyone', a negative polarity and free choice item. -/
 def koiiBhii : PolarityItem :=
   { form := Indefinites.koiiBhii.form
-  , licensor := some .weak
   , freeChoice := true }
 
 /-- *ek bhii* 'even one', a negative polarity and free choice item. -/
 def ekBhii : PolarityItem :=
   { form := "ek bhii"
-  , licensor := some .weak
   , freeChoice := true }
 
 /-- *kuch bhii* 'anything, any (mass)', a negative polarity and free choice item. -/
 def kuchBhii : PolarityItem :=
   { form := (Indefinites.bhii Indefinites.kuch).form
-  , licensor := some .weak
   , freeChoice := true }
 
 /-- *zaraa bhii* 'even a little', a negative polarity and free choice item. -/
 def zaraaBhii : PolarityItem :=
   { form := "zaraa bhii"
-  , licensor := some .weak
   , freeChoice := true }
 
 /-- *kabhii bhii* 'ever, anytime', a negative polarity and free choice item. -/
 def kabhiiBhii : PolarityItem :=
   { form := (Indefinites.bhii Indefinites.kabhii).form
-  , licensor := some .weak
   , freeChoice := true }
 
 end HindiUrdu.PolarityItems

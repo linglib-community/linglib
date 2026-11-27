@@ -27,9 +27,6 @@ open PolarityItem
     non-specific span (A.37). -/
 def piPis : PolarityItem :=
   { form := Indefinites.piPis.form
-  , licensor := some .weak
   , freeChoice := true }
-
-/-! ### Verification -/
 
 end Quechua.PolarityItems

@@ -41,8 +41,7 @@ open PolarityItem
     apart by the scope diagnostics of [shimoyama-2011]). The affirmative
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
 def dareMo : PolarityItem :=
-  { form := Indefinites.dareMo.form
-  , licensor := some .antiMorphic }
+  { form := Indefinites.dareMo.form }
 
 /-! ### FCI -/
 

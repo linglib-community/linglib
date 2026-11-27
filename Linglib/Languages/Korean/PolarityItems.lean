@@ -26,11 +26,9 @@ namespace Korean.PolarityItems
 open PolarityItem
 
 /-- *nwukwu-to* 'anybody', 'nobody', the interrogative with the additive particle, used under
-indirect and direct negation and in comparatives ([haspelmath-1997] Fig. A.39, (A292)–(A294)), so
-needing an anti-additive context. -/
+indirect and direct negation and in comparatives ([haspelmath-1997] Fig. A.39, (A292)–(A294)). -/
 def nwukwuTo : PolarityItem :=
-  { form := Indefinites.nwukwuTo.form
-  , licensor := some .antiAdditive }
+  { form := Indefinites.nwukwuTo.form }
 
 /-- *nwukwu-na* 'anybody', the free-choice item ([haspelmath-1997] (A291)); *-na* is not an
 additive particle. -/

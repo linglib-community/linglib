@@ -34,16 +34,14 @@ through direct negation ([haspelmath-1997] Fig. A.36): in questions, *Shéi xǐh
 anyone like him?' (A266a), and degraded under direct negation, *?Tā bù xǐhuan shéi* (A267c, after
 [li-1992] p. 150), where the emphatic series is used. -/
 def shei : PolarityItem :=
-  { form := Indefinites.shei.form
-  , licensor := some .weak }
+  { form := Indefinites.shei.form }
 
 /-- *shénme* (什么 'what', non-interrogative), with *shéi*'s span and perfect under direct negation,
 *Tā bù xǐhuan shénme* 'He does not like anything' (A267b); also in the irrealis imperative *Chī
 diǎn shénme zài zǒu ba!* 'Please eat a little something before you leave' (A264, [li-1992] p. 152)
 and in conditionals (A266b). -/
 def shenme : PolarityItem :=
-  { form := Indefinites.shenme.form
-  , licensor := some .weak }
+  { form := Indefinites.shenme.form }
 
 /-! ### The emphatic dōu~yě series -/
 
@@ -56,8 +54,7 @@ def shenme : PolarityItem :=
     and [haspelmath-1997] (p. 309) leaves open whether the negated uses are
     indefinites or wide-scope universals. -/
 def sheiDou : PolarityItem :=
-  { form := Indefinites.sheiDou.form
-  , licensor := some .antiMorphic }
+  { form := Indefinites.sheiDou.form }
 
 /-! ### The free-choice determiner -/
 
@@ -69,7 +66,6 @@ def sheiDou : PolarityItem :=
     ([haspelmath-1997] A.36.2). -/
 def renhe : PolarityItem :=
   { form := Indefinites.renhe.form
-  , licensor := some .weak
   , freeChoice := true }
 
 end Mandarin.PolarityItems

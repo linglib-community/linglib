@@ -25,8 +25,7 @@ Nespor), nowadays used only in negative sentences (Maiden and Robustelli).
 
 An entry lists the contexts in which Maiden and Robustelli print the word, and
 `Studies/MaidenRobustelli2007.lean` checks each listed context against an example. *Neanche* is
-attested only with a negation. *Pur con* has no example row and keeps a stored strength, the
-weak one.
+attested only with a negation. *Pur con* has no example row, so its entry lists no context.
 
 ## References
 
@@ -106,8 +105,7 @@ tutta la fantasia del mondo* against *\*Puoi immaginarlo, …*. Elsewhere *pure*
 polarity sensitive, *Si è pure offerta di allevare lei il bastardo* 'She even offered to bring the
 bastard up herself'. -/
 def pur : PolarityItem :=
-  { form := "pur con"
-  , licensor := some .weak }
+  { form := "pur con" }
 
 /-- *affatto* 'at all', now used only in negative sentences, *Non sono affatto sparito* 'I
 haven't disappeared at all'; its non-negative use 'quite', *Affatto bello gli sembrò lo

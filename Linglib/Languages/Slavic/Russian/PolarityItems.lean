@@ -8,14 +8,11 @@ public import Linglib.Semantics.PolarityItem.Basic
 
 This file gives the Russian indefinite polarity items, typed by `PolarityItem`, the person row
 taking its forms from `Russian.Indefinites`, after
-Haspelmath's map of the Russian series: the *-libo* series spans the functions of a weak
-negative polarity item, questions, conditionals, comparatives and indirect negation; the *ni-*
+Haspelmath's map of the Russian series: the *-libo* series spans questions, conditionals,
+comparatives and indirect negation; the *ni-*
 series occupies direct negation as negative concord items, which co-occur with clausemate verbal
 negation *ne*, as Zeijlstra and Giannakidou describe them; and *kto ugodno* is a free-choice
 item.
-
-The concord items carry `licensor := some .antiMorphic`, so a context licenses them exactly when
-its licenser is anti-morphic, which among the named contexts is clausemate *ne* alone.
 
 ## References
 
@@ -32,31 +29,27 @@ open PolarityItem
 
 /-! ### The *-libo* series -/
 
-/-- *kto-libo* (кто-либо) 'anyone', a weak negative polarity item, licensed in questions,
-conditionals, comparatives and under indirect negation. -/
+/-- *kto-libo* (кто-либо) 'anyone', used in questions, conditionals, comparatives and under
+indirect negation. -/
 def ktoLibo : PolarityItem :=
-  { form := Indefinites.ktoLibo.form
-  , licensor := some .weak }
+  { form := Indefinites.ktoLibo.form }
 
 /-! ### The *ni-* series -/
 
 /-- *nikto* (никто) 'nobody', a negative concord item that requires clausemate negation, *nikto
 ne prišël* 'nobody came'. -/
 def nikto : PolarityItem :=
-  { form := Indefinites.nikto.form
-  , licensor := some .antiMorphic }
+  { form := Indefinites.nikto.form }
 
 /-- *ničego* (ничего) 'nothing', the non-human negative concord item, *ničego ne videl* '(he) saw
 nothing'. -/
 def nichego : PolarityItem :=
-  { form := "ničego"
-  , licensor := some .antiMorphic }
+  { form := "ničego" }
 
 /-- *nikogda* (никогда) 'never', the temporal negative concord item, *nikogda ne prixodil* '(he)
 never came'. -/
 def nikogda : PolarityItem :=
-  { form := (Indefinites.ni Pronouns.kogda).form
-  , licensor := some .antiMorphic }
+  { form := (Indefinites.ni Pronouns.kogda).form }
 
 /-! ### Free choice -/
 
