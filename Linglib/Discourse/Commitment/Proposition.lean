@@ -16,8 +16,7 @@ The *performative update* by `k`'s commitment to `φ` removes from `O k` the pai
 world is outside `φ`. After the update `k ⊢[O] φ` holds at every world.
 
 When commitments do not vary from world to world they are given by a commitment set `P k` for
-each holder, and `k ⊢[O] φ` then holds at every world or at none. An *index* pairs a fact with a
-commitment set for each holder, and the indices form a model in which commitments do vary.
+each holder, and `k ⊢[O] φ` then holds at every world or at none.
 
 ## Main definitions
 
@@ -26,7 +25,6 @@ commitment set for each holder, and the indices form a model in which commitment
   `φ`.
 * `ofSets P`: the relations in which every world is related by `k` to exactly the worlds in
   `P k`.
-* `Index κ F`: a fact in `F` together with a nonempty commitment set for each holder.
 
 ## Main results
 
@@ -152,39 +150,5 @@ theorem ofSets_commitmentSet_insert (K : State κ W) (k : κ) (φ : Set W) :
   · rw [State.commitmentSet_insert_of_ne h]
     ext
     simp [h]
-
-/-! ### Indices -/
-
-/-- An **index** is a fact together with a nonempty commitment set for each holder. -/
-structure Index (κ F : Type*) where
-  /-- The fact at the index. -/
-  fact : F
-  /-- The facts compatible with what `k` is committed to. -/
-  commitmentSet : κ → Set F
-  commitmentSet_nonempty : ∀ k, (commitmentSet k).Nonempty
-
-namespace Index
-
-variable {F : Type*}
-
-/-- The **accessibility** of `k` relates an index to the indices with the same commitment sets whose
-fact belongs to the commitment set of `k`. -/
-def access : κ → SetRel (Index κ F) (Index κ F) :=
-  fun k ↦ {p | p.2.fact ∈ p.1.commitmentSet k ∧ p.2.commitmentSet = p.1.commitmentSet}
-
-instance : IsSerial (access (F := F) k) where
-  serial w := ⟨⟨(w.commitmentSet_nonempty k).some, w.commitmentSet, w.commitmentSet_nonempty⟩,
-    (w.commitmentSet_nonempty k).some_mem, rfl⟩
-
-instance : IsK45Frame (access (F := F) k) where
-  trans _ _ _ h₁ h₂ := ⟨h₁.2 ▸ h₂.1, h₂.2.trans h₁.2⟩
-  eucl _ _ _ h₁ h₂ := ⟨h₁.2 ▸ h₂.1, h₂.2.trans h₁.2.symm⟩
-
-theorem committed_access_preimage (φ : Set F) :
-    (k ⊢[access] (fact ⁻¹' φ)) = {w : Index κ F | w.commitmentSet k ⊆ φ} :=
-  Set.ext fun w ↦ ⟨fun h x hx ↦ h (b := ⟨x, w.commitmentSet, w.commitmentSet_nonempty⟩) ⟨hx, rfl⟩,
-    fun h _ hv ↦ h hv.1⟩
-
-end Index
 
 end Commitment
