@@ -29,13 +29,9 @@ a predicate that fails only the converse inference, from the question to an answ
 
 ## Implementation notes
 
-The entry of a predicate records its valence and nothing of its distributivity. A meaning is a
-denotation of an entry when it compares degrees on declaratives and presupposes what the entry's
-valence does, so that distributivity is a property of the meaning.
-
-A class 1 predicate compares degrees on declaratives and relates the holder to a question by a
-parameter, since the article characterizes the class only as a relation to the question not
-reducible to one to any answer.
+The entry of a predicate records its valence and nothing of its distributivity, which is a
+property of the meaning: the presupposition is a function of the valence, and the results on
+distributivity are stated of any assertion that compares degrees on declaratives.
 
 Rows carry the article's truth values where it gives them and its acceptability marks otherwise.
 A row marks its predicate by a span that names the language file entry. The four rows that test
@@ -97,12 +93,6 @@ def presupposition : Polarity → Family W E D
   | .positive => thresholdSignificance
   | .negative => fun _ _ C _ Q _ ↦ (Q ∩ C).Nonempty
 
-/-- An assertion `V` with a presupposition `π` is a denotation of the entry `e` when `V` compares
-degrees on declaratives and `π` is the presupposition of the valence the entry records. -/
-structure Denotes (e : Clause.Embedding) (V π : Family W E D) : Prop where
-  comparesDegrees : ComparesDegrees V
-  presupposition_eq : ∀ v ∈ e.attitude.bind Attitude.valence, π = presupposition v
-
 omit [LinearOrder D] in
 theorem TrueWhereDefined.isLAnalytic {V π : Family W E D} (h : TrueWhereDefined V π) :
     IsLAnalytic V π :=
@@ -148,17 +138,14 @@ theorem not_isLAnalytic_of_isClausallyDistributive [Nontrivial D] [Inhabited E] 
   exact lt_irrefl a ((hV ..).1 hp).2
 
 /-- A clausally distributive predicate is L-analytic with a question, and so antirogative, exactly
-when its entry records positive valence. -/
-theorem Denotes.isLAnalytic_iff [Nontrivial D] [Inhabited E] [Inhabited W] {e : Clause.Embedding}
-    {V π : Family W E D} {v : Polarity} (h : Denotes e V π)
-    (hv : v ∈ e.attitude.bind Attitude.valence)
-    (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C)) :
-    IsLAnalytic V π ↔ v = .positive := by
-  obtain rfl := h.presupposition_eq v hv
+when it has the presupposition of positive valence. -/
+theorem isLAnalytic_presupposition_iff [Nontrivial D] [Inhabited E] [Inhabited W]
+    {V : Family W E D} (hV : ComparesDegrees V)
+    (hd : ∀ μ θ C, IsClausallyDistributive Set.univ (V μ θ C)) (v : Polarity) :
+    IsLAnalytic V (presupposition v) ↔ v = .positive := by
   cases v
-  · exact iff_of_true
-      (trueWhereDefined_of_isClausallyDistributive h.comparesDegrees hd).isLAnalytic rfl
-  · exact iff_of_false (not_isLAnalytic_of_isClausallyDistributive h.comparesDegrees hd) nofun
+  · exact iff_of_true (trueWhereDefined_of_isClausallyDistributive hV hd).isLAnalytic rfl
+  · exact iff_of_false (not_isLAnalytic_of_isClausallyDistributive hV hd) nofun
 
 /-- A class 1 predicate compares degrees on declaratives, as (23) and (26) require, and relates its
 subject to a question by a relation `R` that does not consult the degrees. -/
@@ -304,6 +291,7 @@ def Examples.Lexeme.class? (l : Lexeme) : Option PredicateClass :=
       | .positive => .distributivePositive
       | .negative => .distributiveNegative
 
+-- the valence of a predicate's class is the valence its entry records
 theorem Examples.Lexeme.valence?_eq_of_mem_class? {l : Lexeme} {c : PredicateClass}
     (h : c ∈ l.class?) : l.valence? = some c.valence := by
   obtain ⟨v, hv, rfl⟩ := Option.map_eq_some_iff.1 h
@@ -311,19 +299,6 @@ theorem Examples.Lexeme.valence?_eq_of_mem_class? {l : Lexeme} {c : PredicateCla
   split_ifs
   · rfl
   · cases v <;> rfl
-
--- the meaning Table 2 gives a predicate's class is a denotation of the predicate's entry
-theorem Examples.Lexeme.denotes_semantics {D : Type*} [LinearOrder D]
-    (R : E → Set (Set W) → W → Prop) {l : Lexeme} {c : PredicateClass} (h : c ∈ l.class?) :
-    Denotes (D := D) l.entry.toEmbedding (semantics R c) (presupposition c.valence) where
-  comparesDegrees := by
-    cases c
-    exacts [comparesDegrees_relational R, comparesDegrees_degreeComparison,
-      comparesDegrees_degreeComparison]
-  presupposition_eq v hv := by
-    obtain rfl : c.valence = v :=
-      Option.some.inj ((Lexeme.valence?_eq_of_mem_class? h).symm.trans hv)
-    rfl
 
 /-- The polarity of the valence the article gives a veridical preferential. -/
 def Examples.Valence.polarity : Valence → Polarity
