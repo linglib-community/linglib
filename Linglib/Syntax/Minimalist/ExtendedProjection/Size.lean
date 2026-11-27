@@ -13,10 +13,10 @@ public import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 How much of a clause does a complement contain? Wurmbrand sorts infinitival complements by the
 structure they project: a bare vP under a restructuring verb, a TP under a propositional attitude
 and a modal projection for a future infinitive, beside the full CP of a finite clause. A complement
-is measured by its highest head, its **size**, and one size is at most another when its highest
-head is at most the other's in the order of the categories. Two sizes whose heads are level, as
-tense and negation are, are each at most the other without being equal, and two sizes that no
-source relates, a nominalized clause and a CP, are incomparable.
+is measured by its highest head, its **size**, and one size is **no larger than** another when its
+highest head is no higher than the other's in the order of the categories. Two sizes whose heads
+are level, as tense and negation are, are each no larger than the other without being equal, and
+two sizes that no source relates, a nominalized clause and a CP, are incomparable.
 
 The **size of a spine** is its highest head. A spine whose heads all occur on an extended projection
 is no larger than it. The standard clauses are the vP, the TP and the CP, and their sizes ascend as
@@ -52,8 +52,8 @@ namespace ComplementSize
 
 variable {a b : ComplementSize}
 
-/-- One complement size is at most another, written `a ≤ b`, when its highest head is at most the
-other's. -/
+/-- One complement size is **no larger than** another, written `a ≤ b`, when its highest head is no
+higher than the other's. -/
 instance : Preorder ComplementSize := Preorder.lift highestHead
 
 instance : DecidableLE ComplementSize := fun a b ↦
@@ -98,7 +98,8 @@ theorem vP_le_tP : vP ≤ tP := by decide
 
 theorem tP_le_cP : tP ≤ cP := by decide
 
-theorem cP_isExtendedProjection : cP.IsExtendedProjection := by decide +kernel
+theorem cP_isExtendedProjection : cP.IsExtendedProjection Cat.family (· ≤ ·) := by
+  decide +kernel
 
 /-!
 ### The size of a spine
@@ -118,13 +119,15 @@ private theorem le_getLastD {l : List Cat} (hp : l.Pairwise (· ≤ ·)) (hc : c
     exact hp.2.2 c hc _ (List.mem_singleton_self _)
   · exact le_rfl
 
-/-- In an extended projection every head is at most the highest one. -/
-theorem IsExtendedProjection.le_size (hs : s.IsExtendedProjection) (hc : c ∈ s) :
+/-- In an extended projection, no head is higher than the one at the top of the spine. -/
+theorem IsExtendedProjection.le_size (hs : s.IsExtendedProjection Cat.family (· ≤ ·))
+    (hc : c ∈ s) :
     c ≤ s.size.highestHead :=
   le_getLastD hs.pairwise hc
 
 /-- A nonempty spine whose heads an extended projection projects is no larger than it. -/
-theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection) (hs : s.heads ≠ []) :
+theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection Cat.family (· ≤ ·))
+    (hs : s.heads ≠ []) :
     s.size ≤ t.size := by
   obtain ⟨l, c, hlc⟩ := (List.eq_nil_or_concat s.heads).resolve_left hs
   show s.heads.getLastD .V ≤ t.size.highestHead
