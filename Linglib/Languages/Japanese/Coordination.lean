@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Japanese.Morphs
 public import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -37,11 +38,11 @@ def to_ : Coordinator :=
 /-- *mo* 'and', enclitic on each conjunct, also the additive particle `Japanese.FocusParticles.mo`
 and the universal particle of the indeterminates, `Japanese.Determiners.dareMo`. -/
 def mo : Coordinator :=
-  { morph := .encl "mo", gloss := "and", role := .conjunctive }
+  { morph := Morphs.mo, gloss := "and", role := .conjunctive }
 
 /-- *ka* 'or', enclitic, also the question particle and the existential particle of the
 indeterminates, `Japanese.Determiners.dareKa`. -/
 def ka : Coordinator :=
-  { morph := .encl "ka", gloss := "or; question; some", role := .disjunctive }
+  { morph := Morphs.ka, gloss := "or; question; some", role := .disjunctive }
 
 end Japanese.Coordination

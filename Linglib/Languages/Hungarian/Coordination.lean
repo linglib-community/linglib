@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Hungarian.Morphs
 public import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -36,7 +37,7 @@ def es : Coordinator :=
 /-- *is*, after each coordinand 'both … and', also the additive particle
 `Hungarian.FocusParticles.is_`. -/
 def is_ : Coordinator :=
-  { morph := .free "is", gloss := "and", role := .conjunctive }
+  { morph := Morphs.is_, gloss := "and", role := .conjunctive }
 
 /-- *vagy* 'or'. -/
 def vagy : Coordinator :=

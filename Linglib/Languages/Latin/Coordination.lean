@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Latin.Morphs
 public import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -38,7 +39,7 @@ def et : Coordinator :=
 /-- *-que* 'and', enclitic in the second coordinand, also the particle of *quisque* 'each',
 `Latin.Determiners.quisque`. -/
 def que : Coordinator :=
-  { morph := .encl "que", gloss := "and", role := .conjunctive }
+  { morph := Morphs.que, gloss := "and", role := .conjunctive }
 
 /-- *atque*, before consonants *ac*, 'and also'. -/
 def atque : Coordinator :=

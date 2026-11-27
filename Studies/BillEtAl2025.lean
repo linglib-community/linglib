@@ -147,8 +147,8 @@ def additiveParticle : Language → AdditiveParticle
   | .georgian => Georgian.FocusParticles.c
   | .hungarian => Hungarian.FocusParticles.is_
 
-theorem exponent_isAlsoAdditive_iff (l : Language) (h : Head) :
-    (exponent l h).IsAlsoAdditive (additiveParticle l) ↔ h ≠ .j := by
+theorem exponent_morph_eq_additiveParticle_iff (l : Language) (h : Head) :
+    (exponent l h).morph = (additiveParticle l).morph ↔ h ≠ .j := by
   revert l h; decide
 
 -- §4, (iii)

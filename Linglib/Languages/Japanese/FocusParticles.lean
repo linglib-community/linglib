@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Japanese.Morphs
 public import Linglib.Syntax.Category.Particle.Additive
 
 /-!
@@ -25,6 +26,6 @@ The additive particle *mo* 'also, too' is an enclitic on the phrase it adds, *Ma
 namespace Japanese.FocusParticles
 
 /-- *mo* 'also, too', enclitic on the phrase it adds. -/
-def mo : AdditiveParticle := { morph := .encl "mo", side := .after }
+def mo : AdditiveParticle := { morph := Morphs.mo, side := .after }
 
 end Japanese.FocusParticles

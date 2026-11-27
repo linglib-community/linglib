@@ -1,8 +1,7 @@
 module
 
-public import Linglib.Languages.Japanese.Coordination
 public import Linglib.Languages.Japanese.Pronouns
-public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Japanese indefinite pronouns
@@ -10,14 +9,15 @@ public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
 Japanese builds its indefinite series on the indeterminate pronouns with a particle: *-ka*
 (*dare-ka* 'someone'), *-mo* (*dare-mo* 'nobody' with clausemate negation, and without negation the
 universal 'everyone') and *-demo* (*dare-demo* 'anyone'). A member of a series is its marker applied
-to an indeterminate of `Japanese.Pronouns`, which derives its form and category; the particles *ka*
-and *mo* are the coordinators of `Japanese.Coordination`. The members are those of Haspelmath's
+to an indeterminate of `Japanese.Pronouns`, which derives its form and category. The *-mo* series
+is the unaccented one of negative contexts, which Shimoyama sets apart from the accented
+universal *dare-mo* 'everyone' of `Languages/Japanese/Determiners.lean`. The members are those of Haspelmath's
 table, in the Hepburn spelling of the interrogatives where he writes *itu*, *doo* and *ikutu*.
 
 ## References
 
 * [haspelmath-1997]
-* [kratzer-shimoyama-2002]
+* [shimoyama-2006]
 -/
 
 @[expose] public section
@@ -28,14 +28,13 @@ open Pronouns
 
 /-! ### The markers -/
 
-/-- The *-ka* marker puts the particle `Japanese.Coordination.ka` after the indeterminate: the
-member is the indeterminate quantifier of the two. -/
-def ka (p : ProForm) : IndefinitePronoun :=
-  (IndeterminateQuantifier.mk p Coordination.ka none).toIndefinite
+/-- The *-ka* marker puts *-ka* after the indeterminate. -/
+def ka : ProForm → IndefinitePronoun :=
+  IndefinitePronoun.ofProForm (· ++ "-ka")
 
-/-- The *-mo* marker puts the particle `Japanese.Coordination.mo` after the indeterminate. -/
-def mo (p : ProForm) : IndefinitePronoun :=
-  (IndeterminateQuantifier.mk p Coordination.mo none).toIndefinite
+/-- The *-mo* marker puts *-mo* after the indeterminate. -/
+def mo : ProForm → IndefinitePronoun :=
+  IndefinitePronoun.ofProForm (· ++ "-mo")
 
 /-- The *-demo* marker puts *-demo* after the indeterminate. -/
 def demo : ProForm → IndefinitePronoun :=

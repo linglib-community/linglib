@@ -8,7 +8,6 @@ module
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Syntax.Feature.Case.Function
-public import Linglib.Syntax.Category.Particle.Additive
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -31,15 +30,14 @@ operation on the set of coordinands that its semantic type fixes, is `Coordinato
   of the plain construction.
 * `Coordinator.IsAlsoComitative`: the coordinator's form is a form of a comitative marker, 'and'
   is 'with'.
-* `Coordinator.IsAlsoAdditive`: the coordinator's form is that of an additive particle, 'and' is
-  'too'.
 
 ## Implementation notes
 
 * The other uses of a coordinator's form are relations to entries of other categories, not fields:
   a comitative use to a comitative marker of the language, an adposition or a case with its
-  exponents, an additive use to an `AdditiveParticle`, and a quantifier use to an
-  `IndeterminateQuantifier` of the language whose particle is the coordinator.
+  exponents, and an additive or a quantifier use to an additive particle or an indeterminate
+  quantifier of the language whose morph is the coordinator's. Whether the coordinator and the
+  particle are one item is for the accounts to say.
 * Analyses that divide the conjunctive coordinators further, such as the two conjunction heads
   of Mitrović and Sauerland, classify the entries in their own studies.
 
@@ -118,14 +116,6 @@ def IsAlsoComitative (ms : List Morphology.Morph) (fs : Finset Case.Function) : 
 instance (ms : List Morphology.Morph) (fs : Finset Case.Function) :
     Decidable (c.IsAlsoComitative ms fs) :=
   inferInstanceAs (Decidable (_ ∧ _))
-
-/-- A coordinator is also additive when its morph is that of an additive particle `a`, so that
-'and' is 'too', the identity of the two that [haspelmath-1997] notes and on which
-[mitrovic-sauerland-2016] build. -/
-def IsAlsoAdditive (a : AdditiveParticle) : Prop := c.morph = a.morph
-
-instance (a : AdditiveParticle) : Decidable (c.IsAlsoAdditive a) :=
-  inferInstanceAs (Decidable (_ = _))
 
 /-! ### Patterns -/
 

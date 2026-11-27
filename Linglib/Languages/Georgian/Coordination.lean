@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Georgian.Morphs
 public import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -36,7 +37,7 @@ def da : Coordinator :=
 /-- *-c* 'and', enclitic on each coordinand, also the additive particle
 `Georgian.FocusParticles.c`. -/
 def c : Coordinator :=
-  { morph := .encl "c", gloss := "and", role := .conjunctive }
+  { morph := Morphs.c, gloss := "and", role := .conjunctive }
 
 /-- *an* 'or'. -/
 def an : Coordinator :=

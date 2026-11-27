@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Georgian.Morphs
 public import Linglib.Syntax.Category.Particle.Additive
 
 /-!
@@ -23,6 +24,6 @@ is then the coordinator `Georgian.Coordination.c`.
 namespace Georgian.FocusParticles
 
 /-- *-c* 'too, also', *-ca* after a consonant, enclitic on the phrase it adds. -/
-def c : AdditiveParticle := { morph := .encl "c", side := .after }
+def c : AdditiveParticle := { morph := Morphs.c, side := .after }
 
 end Georgian.FocusParticles

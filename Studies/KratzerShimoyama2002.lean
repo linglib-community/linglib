@@ -42,12 +42,10 @@ negation, which the series lacks (`irgendein_haspelmath`).
 
 Hamblin functional application is mathlib's `Set.seq`, and singleton denotations are
 `{f}`; the four sentential operators return singleton sets, as in the paper, so that closure
-is idle on an already closed set. The existential and universal operators are what the
-coordinators *ka* and *mo* denote on the set of alternatives (`opExists_eq_denote_ka`,
-`opForall_eq_denote_mo`), and on individual alternatives they give the readings of the
-indeterminate quantifiers in `Languages/Japanese/Determiners.lean` (`denote_image_eq_reading`),
-an identification of *ka* and *mo* with the coordinators that the language file makes and the paper
-does not. The modal semantics is stated for an accessibility relation
+is idle on an already closed set. On the individual alternatives of *dare* the existential and
+universal quantifiers give the readings the language file records for *dare-ka* and *dare-mo*.
+The paper takes *ka* and *mo* for these quantifiers and says nothing of their use as
+coordinators. The modal semantics is stated for an accessibility relation
 on any type of worlds, and the free-choice computations are the paper's three tables with
 the derived implicature as a hypothesis. The Beck-effect paradigm and its scrambled
 counterpart are example rows, keyed by the intervener's interpretable feature, and so is the
@@ -114,27 +112,6 @@ theorem opForall_image (P : E → W → Prop) (A : Set E) :
     opForall (P '' A) = {fun w ↦ ∀ x ∈ A, P x w} := by
   simp [opForall]
 
-theorem opExists_eq_denote_ka (A : Set (W → Prop)) :
-    opExists A = {Japanese.Coordination.ka.denote A} := by
-  rw [opExists, Coordinator.denote_of_disjunctive rfl]; congr 1; ext w; simp [sSup_apply]
-
-theorem opForall_eq_denote_mo (A : Set (W → Prop)) :
-    opForall A = {Japanese.Coordination.mo.denote A} := by
-  rw [opForall, Coordinator.denote_of_conjunctive rfl]; congr 1; ext w; simp [sInf_apply]
-
-theorem opNeg_eq_denote {c : Coordinator} (hc : c.role = .negative) (A : Set (W → Prop)) :
-    opNeg A = {c.denote A} := by
-  rw [opNeg, Coordinator.denote_of_negative hc]; congr 1; ext w; simp [sSup_apply]
-
-/-- An indeterminate's particle applied to a predicate's propositions over a set of individuals
-gives the indeterminate quantifier's reading (§2). -/
-theorem denote_image_eq_reading [Fintype E] (q : IndeterminateQuantifier)
-    (P : E → W → Prop) (A : Set E) :
-    q.particle.denote (P '' A) = fun w ↦ q.reading E A {x | P x w} := by
-  funext w
-  rw [Coordinator.denote_apply, Set.image_image]
-  rfl
-
 end Composition
 
 /-! ### *Dare(-ga) nemutta* (§2) -/
@@ -166,6 +143,26 @@ theorem dare_mo (w : W) :
     opForall (Set.seq (nemutta slept) (alternatives sort Japanese.Pronouns.dare w)) =
       {fun w' ↦ ∀ x, sort .person x w → slept x w'} := by
   rw [nemutta, seq_singleton, opForall_image]; rfl
+
+open scoped Denotes in
+-- §2: [∃] over the individual alternatives of *dare* is the reading recorded for *dare-ka*
+theorem dare_ka_reading [Finite E] (w w' : W) {d : Quantifier.Det.Family}
+    (h : d ∈ ⟦Japanese.Determiners.dareKa.toQuantifier⟧) :
+    d E (alternatives sort Japanese.Pronouns.dare w) {x | slept x w'} ↔
+      ∃ x, sort .person x w ∧ slept x w' := by
+  rw [Japanese.Determiners.denote_dareKa] at h
+  obtain rfl : d = _ := h
+  exact ⟨fun ⟨x, hx, hs⟩ ↦ ⟨x, hx, hs⟩, fun ⟨x, hx, hs⟩ ↦ ⟨x, hx, hs⟩⟩
+
+open scoped Denotes in
+-- §2: [∀] over the individual alternatives of *dare* is the reading recorded for *dare-mo*
+theorem dare_mo_reading [Finite E] (w w' : W) {d : Quantifier.Det.Family}
+    (h : d ∈ ⟦Japanese.Determiners.dareMo.toQuantifier⟧) :
+    d E (alternatives sort Japanese.Pronouns.dare w) {x | slept x w'} ↔
+      ∀ x, sort .person x w → slept x w' := by
+  rw [Japanese.Determiners.denote_dareMo] at h
+  obtain rfl : d = _ := h
+  exact ⟨fun h x hx ↦ h hx, fun h x hx ↦ h x hx⟩
 
 end Derivation
 
@@ -277,8 +274,8 @@ open scoped Denotes in
 -- §9
 theorem japanese_same_base.{u} :
     Japanese.Determiners.dareKa.indeterminate = Japanese.Determiners.dareMo.indeterminate ∧
-      (⟦Japanese.Determiners.dareKa⟧ : Set Quantifier.Det.Family.{u}) ≠
-        ⟦Japanese.Determiners.dareMo⟧ := by
+      (⟦Japanese.Determiners.dareKa.toQuantifier⟧ : Set Quantifier.Det.Family.{u}) ≠
+        ⟦Japanese.Determiners.dareMo.toQuantifier⟧ := by
   refine ⟨rfl, ?_⟩
   rw [Japanese.Determiners.denote_dareKa, Japanese.Determiners.denote_dareMo]
   exact fun h ↦ Quantifier.Det.Family.some_ne_every (Set.singleton_eq_singleton_iff.1 h)
