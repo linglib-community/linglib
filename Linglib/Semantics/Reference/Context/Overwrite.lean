@@ -14,30 +14,56 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Overwriting coordinates of a context
 
-A context is the function from its coordinates to their values (`Context.equivPi`), and
-`overwrite s c i` is `c` with its coordinates in `s` taken from `i`, `Finset.piecewise` through that
-equivalence: the operation by which a shifty operator replaces coordinates of the context with those
-of an index of the same type. An indexical depends, in the sense of `DependsOn`, on one coordinate;
-after a sequence of overwrites it reads the context of the last overwrite that took that coordinate.
+This file defines the operation that overwrites coordinates of a context and the shifty operators
+built from it. A context has five coordinates: the agent, the addressee, the world, the time and
+the position. Let `s` be a set of coordinates and let `c` and `i` be contexts. The context
+`overwrite s c i` has the coordinates in `s` from `i` and the other coordinates from `c`.
+
+For example, `overwrite {agent} c i` is the context `c` with the agent of `i`. The first person
+reads the agent, so it has there the value it has at `i`. The word *here* reads the position, so
+it has there the value it has at `c`.
+
+Let a character have contexts as its indices. The shifty operator for `s` sends a character `χ` to
+the character whose value at a context `c` and an index `i` is the value of `χ` at `overwrite s c i`
+and `i`. Under an attitude verb that quantifies over indices, it makes the indexicals that read a
+coordinate in `s` denote what the reported context provides.
 
 ## Main definitions
 
-* `Context.Coord`, `Context.equivPi`: the coordinates of a context, and the context as a function
-  on them.
-* `Context.overwrite s c i`: `c` with the coordinates in `s` taken from `i`.
-* `Context.Coord.ofRole`: the coordinate holding a discourse role.
-* `Context.localDepth ss k`: the position of the last of the overwrites `ss` that takes `k`.
-* `shiftyOp s`: the shifty operator, evaluating its argument at the context overwritten from the
-  index, the shift by `fun i c ↦ overwrite s c i`.
+* `Context.Coord`: the type of the five coordinates of a context.
+* `Context.equivPi`: the bijection between contexts and functions that assign a value to each
+  coordinate.
+* `Context.overwrite s c i`: the context with the coordinates in `s` from `i` and the other
+  coordinates from `c`.
+* `Context.Coord.ofRole r`: the coordinate that holds the discourse role `r`.
+* `Context.localDepth ss k`: the position, counting from one, of the last set in the list `ss`
+  that contains the coordinate `k`, or `0` if no set contains it.
+* `Character.shiftyOp s χ`: the character `fun c i ↦ χ (overwrite s c i) i`.
 
 ## Main results
 
-* `overwrite_overwrite`: overwriting `s` and then `t` from the same context overwrites `s ∪ t`.
-* `apply_overwrite_of_subset`, `apply_overwrite_of_disjoint`: an expression reads the overwriting
-  context when its coordinates are overwritten, the original one when none is.
-* `apply_foldl_overwrite`: Local Determination.
-* `shiftyOp_shiftyOp`, `diag_shiftyOp`: stacked shifty operators compose to the one overwriting
-  the union of their coordinates, and unembedded a shifty operator is vacuous.
+* `Context.overwrite_overwrite`: overwriting `s` and then `t` from the same context is
+  overwriting `s ∪ t`.
+* `Context.apply_overwrite_of_subset`: a function that depends only on coordinates in `t` has the
+  same value at `overwrite t c i` as at `i`.
+* `Context.apply_overwrite_of_disjoint`: a function that depends on no coordinate in `t` has the
+  same value at `overwrite t c i` as at `c`.
+* `Context.apply_foldl_overwrite`: after a list of overwrites, a function that depends only on
+  the coordinate `k` has the value it has at the context of the last overwrite whose set contains
+  `k`. This is Local Determination.
+* `Character.shiftyOp_shiftyOp`: the shifty operator for `s` followed by the one for `t` is the
+  shifty operator for `t ∪ s`.
+* `Character.diag_shiftyOp`: a shifty operator does not change the diagonal of a character along
+  the identity.
+
+## Implementation notes
+
+The operation `overwrite` is `Finset.piecewise` on functions of the coordinates, carried to
+contexts by `Context.equivPi`. A function on contexts depends only on a set `s` of coordinates if
+its composition with the inverse of `Context.equivPi` satisfies `DependsOn` for `s`.
+
+The four type parameters of a context are in one universe, since one function gives the type of
+values of each coordinate.
 
 ## References
 
@@ -53,7 +79,8 @@ namespace SpeechAct.Context
 
 variable {W E P T : Type u} {α : Type*}
 
-/-- The coordinates of a context. -/
+/-- A **coordinate** of a context is one of its five components: the agent, the addressee, the
+world, the time and the position. -/
 inductive Coord
   | agent
   | addressee
@@ -62,14 +89,15 @@ inductive Coord
   | position
   deriving DecidableEq, Fintype
 
-/-- The values a coordinate takes. -/
+/-- The **carrier** of a coordinate is the type of the values the coordinate takes. -/
 abbrev Coord.Carrier (W E P T : Type u) : Coord → Type u
   | .agent | .addressee => E
   | .world => W
   | .time => T
   | .position => P
 
-/-- A context is the function from its coordinates to their values. -/
+/-- The bijection between contexts and functions that assign to each coordinate a value in its
+carrier. -/
 def equivPi : Context W E P T ≃ Π k, Coord.Carrier W E P T k where
   toFun c
     | .agent => c.agent
@@ -81,7 +109,8 @@ def equivPi : Context W E P T ≃ Π k, Coord.Carrier W E P T k where
   left_inv _ := rfl
   right_inv x := funext fun k ↦ by cases k <;> rfl
 
-/-- The context `c` with the coordinates in `s` overwritten by those of `i`. -/
+/-- The context `overwrite s c i` has the coordinates in `s` from the context `i` and the other
+coordinates from the context `c`. We say that `c` is **overwritten** on `s` from `i`. -/
 def overwrite (s : Finset Coord) (c i : Context W E P T) : Context W E P T :=
   equivPi.symm (s.piecewise (equivPi i) (equivPi c))
 
@@ -114,7 +143,7 @@ variable (s t : Finset Coord) (c i : Context W E P T)
 
 @[simp] theorem overwrite_self : overwrite s i i = i := by simp [overwrite, Finset.piecewise_same]
 
-/-- Overwriting `s` and then `t` from the same context overwrites `s ∪ t`. -/
+/-- Overwriting on `s` and then on `t` from the same context is overwriting on `s ∪ t`. -/
 theorem overwrite_overwrite : overwrite t (overwrite s c i) i = overwrite (s ∪ t) c i := by
   refine equivPi.injective (funext fun k ↦ ?_)
   simp only [equivPi_overwrite, Finset.piecewise, Finset.mem_union]
@@ -124,15 +153,16 @@ end overwrite
 
 /-! ### The coordinates of the discourse roles -/
 
-/-- The coordinate holding a discourse role, the agent coordinate for the speaker and the
-addressee coordinate for the addressee. -/
+/-- The **coordinate of a discourse role** is the agent coordinate for the speaker role and the
+addressee coordinate for the addressee role. -/
 def Coord.ofRole : SpeechAct.Role ↪ Coord where
   toFun
     | .speaker => .agent
     | .addressee => .addressee
   inj' a b h := by cases a <;> cases b <;> first | rfl | cases h
 
-/-- Overwriting replaces the holder of a role exactly when it takes the role's coordinate. -/
+/-- The holder of a role at `overwrite s c i` is the holder at `i` if `s` contains the coordinate
+of the role, and the holder at `c` otherwise. -/
 theorem holder_overwrite (s : Finset Coord) (c i : Context W E P T) (r : SpeechAct.Role) :
     (overwrite s c i).holder r = if Coord.ofRole r ∈ s then i.holder r else c.holder r := by
   cases r <;> rfl
@@ -145,24 +175,24 @@ theorem dependsOn_agent :
 
 variable {f : Context W E P T → α} {s : Set Coord} {t : Finset Coord}
 
-/-- An expression reading only the coordinates `s` reads the overwriting context when they are all
-overwritten. -/
+/-- A function that depends only on the coordinates in `s` has the same value at
+`overwrite t c i` as at `i` if `s ⊆ t`. -/
 theorem apply_overwrite_of_subset (hf : DependsOn (f ∘ equivPi.symm) s) (h : s ⊆ t)
     (c i : Context W E P T) : f (overwrite t c i) = f i := by
   simpa only [Function.comp_apply, Equiv.symm_apply_apply] using
     hf (x := equivPi (overwrite t c i)) (y := equivPi i)
       fun k hk ↦ by simp [Finset.piecewise_eq_of_mem _ _ _ (h hk)]
 
-/-- An expression reading only the coordinates `s` reads the original context when none of them is
-overwritten. -/
+/-- A function that depends only on the coordinates in `s` has the same value at
+`overwrite t c i` as at `c` if `s` and `t` are disjoint. -/
 theorem apply_overwrite_of_disjoint (hf : DependsOn (f ∘ equivPi.symm) s) (h : Disjoint s t)
     (c i : Context W E P T) : f (overwrite t c i) = f c := by
   simpa only [Function.comp_apply, Equiv.symm_apply_apply] using
     hf (x := equivPi (overwrite t c i)) (y := equivPi c)
       fun k hk ↦ by simp [Finset.piecewise_eq_of_notMem _ _ _ (Set.disjoint_left.1 h hk)]
 
-/-- Overwriting from a context that agrees with the original on what an expression reads leaves
-the expression's value unchanged. -/
+/-- A function that depends only on one coordinate has the same value at `overwrite t c i` as at
+`c` if it has the same value at `i` as at `c`. -/
 theorem apply_overwrite_of_apply_eq {k : Coord} (hf : DependsOn (f ∘ equivPi.symm) {k})
     {c i : Context W E P T} (h : f i = f c) : f (overwrite t c i) = f c := by
   by_cases hk : k ∈ t
@@ -171,8 +201,8 @@ theorem apply_overwrite_of_apply_eq {k : Coord} (hf : DependsOn (f ∘ equivPi.s
 
 /-! ### Local Determination -/
 
-/-- The position, counting from one, of the last of the overwrites `ss` that takes the coordinate
-`k`, or `0` if none does. -/
+/-- The **local depth** of a coordinate `k` in a list `ss` of sets of coordinates is the position,
+counting from one, of the last set in `ss` that contains `k`, or `0` if no set contains it. -/
 def localDepth (ss : List (Finset Coord)) (k : Coord) : ℕ :=
   ss.zipIdx.foldl (fun d p ↦ if k ∈ p.1 then p.2 + 1 else d) 0
 
@@ -190,9 +220,10 @@ theorem localDepth_le_length (ss : List (Finset Coord)) (k : Coord) :
     rw [localDepth_append_singleton, List.length_append, List.length_singleton]
     split_ifs <;> omega
 
-/-- Local Determination: after overwrites by the pairs `ops`, outermost first, an expression
-reading only the coordinate `k` reads the context of the last pair that overwrites `k`, the last of
-the first `localDepth` overwriting contexts, or the original context if none does. -/
+/-- **Local Determination**: let `ops` be a list of pairs of a set of coordinates and a context,
+and overwrite a context `c` by each pair in turn. A function that depends only on the coordinate
+`k` has, at the result, the value it has at the context of the last pair whose set contains `k`,
+or at `c` if no set contains `k`. -/
 theorem apply_foldl_overwrite {k : Coord} (hf : DependsOn (f ∘ equivPi.symm) {k})
     (c : Context W E P T) (ops : List (Finset Coord × Context W E P T)) :
     f (ops.foldl (fun c p ↦ overwrite p.1 c p.2) c) =
@@ -218,8 +249,9 @@ open SpeechAct Context
 
 variable {W E P T : Type u} {α : Type*}
 
-/-- The shifty operator overwriting the coordinates `s` of the context with those of the index,
-`⟦OP α⟧^{c,i} = ⟦α⟧^{overwrite s c i, i}` ([anand-nevins-2004], [deal-2020]). -/
+/-- The **shifty operator** for a set `s` of coordinates sends a character `χ` to the character
+whose value at a context `c` and an index `i` is the value of `χ` at `overwrite s c i` and `i`
+([anand-nevins-2004], [deal-2020]). -/
 def shiftyOp (s : Finset Coord) :
     Character (Context W E P T) (Context W E P T) α →
       Character (Context W E P T) (Context W E P T) α :=
@@ -232,12 +264,13 @@ variable (s t : Finset Coord) (χ : Character (Context W E P T) (Context W E P T
 
 @[simp] theorem shiftyOp_empty : shiftyOp ∅ χ = χ := by ext; simp
 
-/-- Stacked shifty operators compose to the one overwriting the union of their coordinates. -/
+/-- The shifty operator for `s` followed by the shifty operator for `t` is the shifty operator for
+`t ∪ s`. -/
 @[simp] theorem shiftyOp_shiftyOp : shiftyOp t (shiftyOp s χ) = shiftyOp (t ∪ s) χ := by
   ext; simp [overwrite_overwrite]
 
-/-- Unembedded, a shifty operator is vacuous: at a context taken as its own index, it has the
-value of its complement. -/
+/-- A shifty operator does not change the diagonal of a character along the identity: a sentence
+that is not embedded has the same value with the operator as without it. -/
 theorem diag_shiftyOp : (shiftyOp s χ).diag id = χ.diag id := by
   ext; simp
 

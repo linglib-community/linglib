@@ -14,30 +14,46 @@ public import Mathlib.Logic.Function.DependsOn
 /-!
 # Monsters
 
-An operator on characters is *intensional* when it operates on content: the content it yields at
-a context depends only on the content of its argument at that context. The modal and temporal
-operators are intensional, and so are *now* and *actually*, whose effect on a content varies with
-the context. A *monster* is an operator that is not intensional, one that operates on character.
-Kaplan's thesis is that English has none.
+This file defines intensional operators and monsters. Let `O` be an operator on characters, that
+is, a function from characters to characters. The operator `O` is intensional if, for every
+context `c`, the content of `O χ` at `c` depends only on the content of `χ` at `c`. A monster is
+an operator that is not intensional.
 
-A family `τ` of transformations of the context, one for each index, shifts a character `χ` to the
-character whose value at a context `c` and an index `v` is the value of `χ` at `τ v c` and `v`.
-Such families form a monoid under composition at each index, and shifting by a product is
-shifting by each factor in turn. The shifty operators of `Context/Overwrite.lean` are shifts.
+This file also defines shifts. Let `τ` be a family of transformations of the context, one for
+each index. The shift of a character `χ` by `τ` has, at a context `c` and an index `v`, the value
+of `χ` at `τ v c` and `v`. Such families form a monoid under composition at each index.
+
+For example, let `τ v` replace the agent of each context by Ann. The sentence *I am hungry*,
+shifted by `τ`, says at every context that Ann is hungry. This shift is a monster if some context
+has an agent other than Ann and the values include two distinct ones.
 
 ## Main definitions
 
 * `Character.IsIntensional O`: for every context `c`, the content `O χ c` depends only on `χ c`.
 * `Character.IsMonster O`: `O` is not intensional.
 * `Character.shiftBy τ χ`: the character `fun c v ↦ χ (τ v c) v`.
-* `Character.shiftByHom`: shifting as a monoid homomorphism from the opposite of the families.
+* `Character.shiftByHom`: `shiftBy` as a monoid homomorphism from the opposite of the monoid of
+  families.
+* `Character.shift σ`: the shift by the family that is `σ` at every index.
 
 ## Main results
 
-* `Character.isIntensional_iff_exists`: an operator is intensional iff it is given, at each
-  context, by a function from contents to contents.
-* `Character.isMonster_shiftBy_iff`: over values that can differ, shifting by `τ` is a monster iff
-  `τ ≠ 1`.
+* `Character.isIntensional_iff_exists`: `O` is intensional if and only if `O χ c = o c (χ c)` for
+  some function `o` and all `χ` and `c`.
+* `Character.IsIntensional.comp`: a composition of intensional operators is intensional.
+* `Character.shiftBy_mul`: the shift by `τ₁ * τ₂` is the shift by `τ₁` followed by the shift by
+  `τ₂`.
+* `Character.isMonster_shiftBy_iff`: if the values include two distinct ones, the shift by `τ` is
+  a monster if and only if `τ ≠ 1`.
+
+## Implementation notes
+
+The term *intensional* is Kaplan's, who also calls these operators on content. An intensional
+operator may act differently at different contexts, as *now* and *actually* do. Kaplan's thesis is
+that every operator of English is intensional.
+
+A monster is defined as the negation of an intensional operator, so that the lemmas are stated
+for the positive property.
 
 ## References
 
@@ -59,13 +75,13 @@ section Intensional
 
 variable {O : Character C V α → Character C V β}
 
-/-- An operator on characters is intensional, an operator on content, when the content it yields
-at a context depends only on the content of its argument there. The dependence may vary with the
-context, as it does for *now* and *actually*. -/
+/-- An operator `O` on characters is **intensional** if, for every context `c`, the content of
+`O χ` at `c` depends only on the content of `χ` at `c`. -/
 def IsIntensional (O : Character C V α → Character C V β) : Prop :=
   ∀ c, DependsOn (fun χ : Character C V α ↦ O χ c) {c}
 
-/-- An operator given at each context by a function from contents to contents is intensional. -/
+/-- An operator that is given at each context by a function from contents to contents is
+intensional. -/
 theorem IsIntensional.of_apply {o : C → (V → α) → (V → β)} (h : ∀ χ c, O χ c = o c (χ c)) :
     IsIntensional O :=
   fun c χ₁ χ₂ hχ ↦ by simp only [h, hχ c rfl]
@@ -84,8 +100,7 @@ theorem IsIntensional.comp {O' : Character C V β → Character C V γ} (h' : Is
     obtain rfl : c' = c := hc'
     exact h c' hχ
 
-/-- An operator on characters is a monster when it is not intensional: what it yields at a context
-is not determined by the content of its argument there ([kaplan-1989]). -/
+/-- An operator on characters is a **monster** if it is not intensional ([kaplan-1989]). -/
 def IsMonster (O : Character C V α → Character C V β) : Prop := ¬ IsIntensional O
 
 theorem not_isMonster : ¬ IsMonster O ↔ IsIntensional O := not_not
@@ -96,8 +111,8 @@ end Intensional
 
 section Shift
 
-/-- The character `χ` shifted by the family `τ` of transformations of the context: its value at
-a context `c` and an index `v` is the value of `χ` at the context `τ v c` and the index `v`. -/
+/-- The **shift** of a character `χ` by a family `τ` of transformations of the context is the
+character whose value at a context `c` and an index `v` is the value of `χ` at `τ v c` and `v`. -/
 def shiftBy (τ : V → Function.End C) (χ : Character C V α) : Character C V α :=
   fun c v ↦ χ (τ v c) v
 
@@ -106,12 +121,13 @@ def shiftBy (τ : V → Function.End C) (χ : Character C V α) : Character C V 
 
 @[simp] theorem shiftBy_one (χ : Character C V α) : shiftBy (1 : V → Function.End C) χ = χ := rfl
 
-/-- Shifting by a product of families is shifting by the first and then by the second. -/
+/-- The shift by a product of two families is the shift by the first followed by the shift by the
+second. -/
 theorem shiftBy_mul (τ₁ τ₂ : V → Function.End C) (χ : Character C V α) :
     shiftBy (τ₁ * τ₂) χ = shiftBy τ₂ (shiftBy τ₁ χ) := rfl
 
-/-- Shifting as a monoid homomorphism: the families of transformations of the context act on
-characters by precomposition, which reverses the order of composition. -/
+/-- The map `shiftBy` is a monoid homomorphism from the opposite of the monoid of families of
+transformations of the context to the monoid of operators on characters. -/
 def shiftByHom : (V → Function.End C)ᵐᵒᵖ →* Function.End (Character C V α) where
   toFun τ := shiftBy τ.unop
   map_one' := rfl
@@ -120,13 +136,13 @@ def shiftByHom : (V → Function.End C)ᵐᵒᵖ →* Function.End (Character C 
 @[simp] theorem shiftByHom_apply (τ : (V → Function.End C)ᵐᵒᵖ) (χ : Character C V α) :
     shiftByHom τ χ = shiftBy τ.unop χ := rfl
 
-/-- A shift moves some context iff it is not the identity. -/
+/-- A transformation of the context is not the identity if and only if it moves some context. -/
 theorem _root_.Function.End.ne_one_iff_exists_smul_ne (σ : Function.End C) :
     σ ≠ 1 ↔ ∃ c : C, σ • c ≠ c :=
   show (σ : C → C) ≠ id ↔ _ from Function.ne_iff
 
-/-- Over values that can differ, shifting by a family that moves some context at some index is a
-monster. -/
+/-- If the values include two distinct ones, the shift by a family that moves some context at some
+index is a monster. -/
 theorem isMonster_shiftBy_of_ne [Nontrivial α] {τ : V → Function.End C} {v : V} {c : C}
     (h : τ v c ≠ c) : IsMonster (shiftBy τ : Character C V α → Character C V α) := fun hO ↦ by
   classical
@@ -136,8 +152,8 @@ theorem isMonster_shiftBy_of_ne [Nontrivial α] {τ : V → Function.End C} {v :
     rw [Set.mem_singleton_iff.1 hc', Function.update_of_ne h.symm]
   exact hab (by simpa using congrFun (hO c hχ) v)
 
-/-- Over values that can differ, shifting by a family of transformations of the context is a
-monster iff the family is not the identity. -/
+/-- If the values include two distinct ones, the shift by a family `τ` is a monster if and only if
+`τ` is not the identity. -/
 theorem isMonster_shiftBy_iff [Nontrivial α] (τ : V → Function.End C) :
     IsMonster (shiftBy τ : Character C V α → Character C V α) ↔ τ ≠ 1 := by
   refine ⟨fun h hτ ↦ h (hτ ▸ isIntensional_id), fun h ↦ ?_⟩
@@ -145,15 +161,15 @@ theorem isMonster_shiftBy_iff [Nontrivial α] (τ : V → Function.End C) :
   obtain ⟨c, hc⟩ := (Function.End.ne_one_iff_exists_smul_ne _).1 hv
   exact isMonster_shiftBy_of_ne hc
 
-/-- The operator that evaluates a character at the shifted context, the same shift at every
-index. -/
+/-- The **constant shift** by a transformation `σ` of the context is the shift by the family that
+is `σ` at every index. -/
 def shift (σ : Function.End C) : Character C V α → Character C V α := shiftBy fun _ ↦ σ
 
 @[simp] theorem shift_apply (σ : Function.End C) (χ : Character C V α) (c : C) :
     shift σ χ c = χ (σ • c) := rfl
 
-/-- Over contents that can differ, a shift operator is a monster iff the shift moves some
-context. -/
+/-- If the contents include two distinct ones, the constant shift by `σ` is a monster if and only
+if `σ` is not the identity. -/
 theorem isMonster_shift_iff [Nontrivial (V → α)] (σ : Function.End C) :
     IsMonster (shift σ : Character C V α → Character C V α) ↔ σ ≠ 1 := by
   have := Function.nontrivial_of_nontrivial V α
