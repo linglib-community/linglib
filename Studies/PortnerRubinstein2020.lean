@@ -204,17 +204,17 @@ def coding : Grammatical → Clause.ComplementType
 
 -- The Spanish entries record the moods the analysis predicts.
 theorem spanish_fragment :
-    (coding m ∈ Spanish.Verbs.creer.codings ↔ (spanish m B.believe).isSome) ∧
-      (coding m ∈ Spanish.Verbs.querer.codings ↔ (spanish m B.want).isSome) ∧
-      (coding m ∈ Spanish.Verbs.esperar.codings ↔ (spanish m B.hope).isSome) := by
+    (coding m ∈ Spanish.Verbs.creer.valency.codings ↔ (spanish m B.believe).isSome) ∧
+      (coding m ∈ Spanish.Verbs.querer.valency.codings ↔ (spanish m B.want).isSome) ∧
+      (coding m ∈ Spanish.Verbs.esperar.valency.codings ↔ (spanish m B.hope).isSome) := by
   rw [(spanish_takes B m).1, (spanish_takes B m).2.1, (spanish_takes B m).2.2]
   cases m <;> decide
 
 -- The French entries record the moods the analysis predicts.
 theorem french_fragment :
-    (coding m ∈ French.Verbs.croire.codings ↔ (french m B.believe).isSome) ∧
-      (coding m ∈ French.Verbs.vouloir.codings ↔ (french m B.want).isSome) ∧
-      (coding m ∈ French.Verbs.esperer.codings ↔ (french m B.hope).isSome) := by
+    (coding m ∈ French.Verbs.croire.valency.codings ↔ (french m B.believe).isSome) ∧
+      (coding m ∈ French.Verbs.vouloir.valency.codings ↔ (french m B.want).isSome) ∧
+      (coding m ∈ French.Verbs.esperer.valency.codings ↔ (french m B.hope).isSome) := by
   rw [(french_takes B m).1, (french_takes B m).2.1, (french_takes B m).2.2]
   cases m <;> decide
 

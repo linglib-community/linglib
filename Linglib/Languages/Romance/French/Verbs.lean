@@ -396,7 +396,6 @@ def vouloir : Verb where
   morphs := [.root "vouloir"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *espérer* 'hope' takes a *que* clause in the indicative and an infinitive under subject
@@ -406,14 +405,12 @@ def esperer : Verb where
   morphs := [.root "espérer"]
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *croire* 'believe' takes a *que* clause in the indicative. -/
 def croire : Verb where
   morphs := [.root "croire"]
   valency := .ofFrames [ArgumentFrame.finiteClause]
-  opaqueContext := true
   attitude := some (.doxastic .doxastic)
 
 /-- `allVerbs` lists the entries. -/

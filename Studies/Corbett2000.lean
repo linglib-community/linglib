@@ -19,6 +19,7 @@ public import Linglib.Data.Examples.Corbett2000
 public import Linglib.Data.Statistics.Corbett2000
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
+public import Linglib.Morphology.Word.Bundle
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages
 

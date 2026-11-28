@@ -11,7 +11,7 @@ public import Linglib.Core.Order.Flat.Finset
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Morphology.Inflection.Paradigm.Morphome
-public import Linglib.Morphology.Word.Agree
+public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Syntax.Feature.Case.Basic
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Syntax.Feature.Person.Defs
@@ -23,10 +23,9 @@ This file defines the pronoun as a lexical object: a surface form with the perso
 gender and cases every pronoun kind shares. The kinds extend it, each in its own file: the
 personal, logophoric, reflexive, reciprocal and demonstrative pronouns, and the proforms with
 their interrogative and indefinite kinds. A pronoun has no denotation or pronoun type of its
-own; the kind supplies them, and the token of a pronoun takes the pronoun type and the reflexive
-marking as arguments. Its person, clusivity and number are labels: the referential categories
-they cover are in `Syntax/Category/Pronoun/Reference.lean`, and the binding class of the token
-in `Syntax/Binding/Pronoun.lean`.
+own; the kind supplies them. Its person, clusivity and number are labels: the referential
+categories they cover are in `Syntax/Category/Pronoun/Reference.lean`, and its token is in
+`Syntax/Category/Pronoun/Word.lean`.
 
 ## Main definitions
 
@@ -38,8 +37,6 @@ in `Syntax/Binding/Pronoun.lean`.
 * `Pronoun.cell`: the paradigm cell that a pronoun's person, clusivity, number and gender
   name.
 * `Pronoun.ofTable table f`: the pronoun of the form `f`, filling every cell the table gives it.
-* `Pronoun.toWord p`: the pronoun as a token, with the pronoun type and reflexive marking of
-  its kind.
 
 ## References
 
@@ -126,8 +123,7 @@ def case : Flat Case := Flat.finsetInf p.cases (↑)
 /-- The paradigm cell that the pronoun's person, clusivity, number and gender name: the
 agreement bundle bearing them and nothing else. -/
 def cell : Agreement.Bundle :=
-  .ofFeatures (.of (person := p.person) (clusivity := p.clusivity) (number := p.number)
-    (gender := p.gender))
+  .of (person := p.person) (clusivity := p.clusivity) (number := p.number) (gender := p.gender)
 
 /-! ### The pronouns of a table -/
 
@@ -157,17 +153,5 @@ def ofTable [Fintype C] (table : C → Finset String) (f : String) : Pronoun :=
   ofCells person clusivity number gender case (Morphology.formCellsOf table f) f
 
 end Table
-
-/-! ### The pronoun as a token -/
-
-/-- The token of a pronoun is a word with its agreement features, and with the pronoun type,
-reflexive marking and word class its kind supplies: a `PRON` unless the kind says otherwise, as
-for a pro-adverb. -/
-def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
-    (cat : UD.UPOS := .PRON) : Morphology.Word :=
-  { form := p.form, cat := cat,
-    features := .of (person := p.person) (clusivity := p.clusivity) (number := p.number)
-      (gender := p.gender)
-      (case := p.case) (reflex := reflex) (pronType := pronType) }
 
 end Pronoun

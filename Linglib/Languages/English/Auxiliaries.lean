@@ -3,7 +3,7 @@ module
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Languages.English.Nouns
-public import Linglib.Morphology.Word.Basic
+public import Linglib.Morphology.Word.Features
 public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Semantics.Modality.Typology
 public import Linglib.Syntax.Agreement.Target
@@ -56,7 +56,7 @@ preposition.
 
 @[expose] public section
 
-open Morphology (Word Features)
+open Morphology (Features)
 open _root_.Agreement (Dimension Target)
 open Function
 
@@ -422,11 +422,5 @@ def negatives : List Auxiliary := contractions.map (·.2)
 /-- The first negative form of an auxiliary, if it has one. -/
 def negative (a : Auxiliary) : Option Auxiliary :=
   (contractions.find? (·.1 == a)).map (·.2)
-
-/-! ### The infinitival marker -/
-
-/-- The infinitival marker *to*, UD `PART`, distinct from the preposition `English.Adpositions.to_`:
-*John managed to sleep*. -/
-def toInf : Word := Word.mk' "to" .PART
 
 end English.Auxiliaries

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Classifier.Basic
+public import Linglib.Syntax.Category.Classifier
 public import Mathlib.Data.Finset.Insert
 
 /-!

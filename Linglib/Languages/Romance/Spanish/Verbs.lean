@@ -327,7 +327,6 @@ def encontrar : Verb where
 def creer : Verb where
   morphs := [.root "creer"]
   valency := .ofFrames [ArgumentFrame.finiteClause]
-  opaqueContext := true
   attitude := some (.doxastic .doxastic)
 
 /-- *querer* 'want' takes a *que* clause in the subjunctive, with disjoint reference, and an
@@ -336,7 +335,6 @@ def querer : Verb where
   morphs := [.root "querer"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *esperar* 'hope' takes a *que* clause in the subjunctive and an infinitive under subject
@@ -346,7 +344,6 @@ def esperar : Verb where
   morphs := [.root "esperar"]
   valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *temer* 'fear' takes a constituent question in the indicative; with a polar question it is
@@ -355,7 +352,6 @@ def temer : Verb where
   morphs := [.root "temer"]
   valency := .ofFrame
     ⟨some .nominal, [.clausal { coding := {.indicative}, types := {.constituent} }]⟩
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-- *preocupar* 'worry' has a dative experiencer and a clausal subject, a *que* clause in the
@@ -365,7 +361,6 @@ def preocupar : Verb where
   valency := .ofFrames
     [⟨some (.clausal { coding := {.subjunctive}, types := {.declarative} }), [.nominal]⟩,
      ⟨some (.clausal { coding := {.indicative}, types := {.constituent} }), [.nominal]⟩]
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-- The causative *hacer* 'make' takes an infinitive under object control and a *que* clause in
@@ -384,6 +379,5 @@ def convencer : Verb where
     [⟨some .nominal,
         [.nominal, .clausal { coding := {.subjunctive}, types := {.declarative} }]⟩,
      ⟨some .nominal, [.nominal, .clausal { coding := {.indicative}, types := {.declarative} }]⟩]
-  opaqueContext := true
 
 end Spanish.Verbs

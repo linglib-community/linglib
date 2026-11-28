@@ -41,8 +41,7 @@ open PolarityItem
     apart by the scope diagnostics of [shimoyama-2011]). The affirmative
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
 def dareMo : PolarityItem :=
-  { form := Indefinites.dareMo.form
-  , licensor := some .antiMorphic }
+  { form := Indefinites.dareMo.form }
 
 /-! ### FCI -/
 
@@ -50,7 +49,6 @@ def dareMo : PolarityItem :=
     wh + demo (built on the additive/'even' particle *mo*); free choice and
     concessive-conditional uses ([kratzer-shimoyama-2002]). -/
 def dareDemo : PolarityItem :=
-  { form := Indefinites.dareDemo.form
-  , freeChoice := true }
+  { form := Indefinites.dareDemo.form }
 
 end Japanese.PolarityItems

@@ -169,7 +169,7 @@ namespace Site
 
 /-- The subject of the clause is not expressed and is controlled from outside it. -/
 def IsControlled : Site → Prop
-  | complement v => ∃ fr ∈ v.valency.frames, ∃ pos ∈ fr.complements, pos.selection.subject = {.null}
+  | complement v => ∃ pos ∈ v.valency.complements, pos.selection.subject = {.null}
   | subordinate c => c.subject = {.null}
   | _ => False
 

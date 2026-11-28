@@ -7,7 +7,7 @@ public import Linglib.Semantics.Questions.Inquisitive.Entailment
 # The value of a question
 
 This file measures how useful a question is to someone who has a decision to make, following
-[van-rooy-2003].
+[van-rooy-2003b].
 
 A decision problem consists of a prior `μ` over worlds and a utility `U w a` for each action `a` in
 each world `w`. Its value is the best expected utility of an action, `decisionValue U μ`. Learning a
@@ -46,7 +46,7 @@ information they rest on does.
 
 ## References
 
-* [van-rooy-2003]
+* [van-rooy-2003b]
 * [blackwell-1953]
 * [raiffa-schlaifer-1961]
 * [groenendijk-stokhof-1984]

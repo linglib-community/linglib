@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Category.Classifier.Basic
+public import Linglib.Syntax.Category.Classifier
 public import Linglib.Syntax.Category.Coordinator
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Syntax.Category.Pronoun.Indefinite

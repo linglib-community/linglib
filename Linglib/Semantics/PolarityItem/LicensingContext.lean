@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Exhaustification.Basic
+public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
 public import Linglib.Semantics.Embedding.NegRaising.Basic
 public import Linglib.Semantics.Embedding.Preference.BestWorlds
@@ -37,19 +38,24 @@ the stronger *no* and *at most n − 1*, which is the determiner exhaustificatio
 non-trivially, and not merely by being constant. Focus *only*, adversatives, superlatives,
 conditional antecedents, and temporal *since* are downward entailing only modulo their
 presuppositions. The modals, imperatives, generics, and free relatives are modal licensers, and
-questions license by relevance. A study may state the theory of a licenser of its own. The named
-constructions are the shared inventory that lexical entries cite.
+a question licenses no item. A positive assertion places the identity over the item. A study may
+state the theory of a licenser of its own. The named constructions are the shared inventory that
+lexical entries cite.
 
 ## Main declarations
 
-* `PolarityItem.LicensingContext`: the named constructions.
 * `PolarityItem.LicensingContext.licenser`, `PolarityItem.LicensingContext.haspelmath`: the
-  operator that a construction places over the item, and the function of Haspelmath's map that
-  the construction realizes.
+  operator that a construction other than a question places over the item, and the function of
+  Haspelmath's map that the construction realizes.
 * `Quantifier.Det.exhaustified`: a determiner exhaustified against its scale-mates.
+* `PolarityItem.LicensingContext.profile`: the strengths that a construction carries and holds,
+  as a table, with `PolarityItem.LicensingContext.profile_eq` that it is the profile of the
+  licenser.
+* `PolarityItem.Class.region`, `PolarityItem.Compatible`: the contexts in which a class is
+  predicted to be possible, and an entry whose contexts agree with that prediction.
 * `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
   `not_holds_exhaustified_few`, …: the certificates of the licenser of each context, from which
-  the decidability instances compute what it carries and holds.
+  its profile is proved.
 
 ## Implementation notes
 
@@ -89,7 +95,7 @@ constructions are the shared inventory that lexical entries cite.
 * [meier-2003]
 * [chierchia-2006]
 * [kadmon-landman-1993]
-* [van-rooy-2003-npi]
+* [van-rooy-2003a]
 * [haspelmath-1997]
 * [gajewski-2007]
 -/
@@ -136,73 +142,6 @@ namespace PolarityItem
 
 open NaturalLogic Presupposition Quantifier Quantifier.Det Tense Indefinite
 
-/-- A licensing context is a construction that can host a polarity item. Its effect on the item is
-the licenser that it places over the position of the item (`LicensingContext.licenser`), and its
-typological position is the function of [haspelmath-1997]'s implicational map that it realizes
-(`LicensingContext.haspelmath`). Distinct constructions can share a licenser, as the necessity
-modal, the imperative, the generic, and the free relative do. -/
-inductive LicensingContext where
-  /-- Clausal negation, as in *not*, which is complementation over predicates. -/
-  | negation
-  /-- A negative quantifier, as in *nobody*, over a restrictor that is true of something. -/
-  | nobody
-  /-- *Few* NP, in the proportional reading of the English language file, which lies below the
-  stronger
-  *no* on its scale. -/
-  | few
-  /-- *At most n* NP, which lies below the stronger *at most n − 1* on its scale. -/
-  | atMost
-  /-- The restrictor of a universal, as in *everyone who*, over a scope that is false of
-  something. -/
-  | universalRestrictor
-  /-- The restrictor of a negative quantifier, as in *no one who*, over a scope that is true of
-  something. -/
-  | noRestrictor
-  /-- A *without*-phrase, in which the matrix predicate holds without the predicate of the
-  phrase. -/
-  | withoutClause
-  /-- A *before*-clause, in Anscombe's universal reading of *before*. -/
-  | beforeClause
-  /-- A clausal comparative, as in *taller than S*, which places the individual above every degree
-  of the clause. -/
-  | clausalComparative
-  /-- *Too* ADJ *to* VP, which places the individual above every degree at which the infinitive
-  holds. -/
-  | tooTo
-  /-- A verb of doubting, as in *I doubt that*, whose subject does not believe the complement. -/
-  | doubtVerb
-  /-- A verb of denying, as in *she denied that*, whose subject asserts the negation of the
-  complement. -/
-  | denyVerb
-  /-- Negation over a neg-raising attitude in a superordinate clause, as in *I don't think that*.
-  The attitude presupposes the excluded middle, so its negation is true where the attitude holds
-  of the negated complement ([gajewski-2007]). -/
-  | superordinateNegation
-  /-- The scope of focus *only*, in von Fintel's analysis. -/
-  | onlyFocus
-  /-- An adversative predicate, as in *sorry*, *surprised*, and *regret*. -/
-  | adversative
-  /-- A superlative, in its comparison class. -/
-  | superlative
-  /-- The antecedent of a conditional, analysed as the modal-horizon counterfactual. -/
-  | conditionalAntecedent
-  /-- Temporal *since*, as in *it's been five years since*. -/
-  | sinceTemporal
-  /-- A question. -/
-  | question
-  /-- A possibility modal. -/
-  | modalPossibility
-  /-- A necessity modal. -/
-  | modalNecessity
-  /-- An imperative, read as a necessity over what is commanded. -/
-  | imperative
-  /-- A generic sentence, read as a necessity over normal worlds. -/
-  | generic
-  /-- A free relative, as in *whatever* and *whoever*, read as a necessity over its
-  alternatives. -/
-  | freeRelative
-  deriving DecidableEq, Fintype, Repr
-
 /-- The function of [haspelmath-1997]'s implicational map that a construction realizes, if any.
 The necessity modal and the imperative are irrealis non-specific environments. The book finds
 free-choice items unacceptable under necessity, in contrast to possibility, and acceptable in
@@ -212,11 +151,11 @@ def LicensingContext.haspelmath : LicensingContext → Option HaspelmathFunction
   | withoutClause | doubtVerb | denyVerb | superordinateNegation => some .indirectNeg
   | clausalComparative => some .comparative
   | conditionalAntecedent => some .conditional
-  | question => some .question
+  | polarQuestion | constituentQuestion => some .question
   | modalNecessity | imperative => some .irrealis
   | modalPossibility | generic | freeRelative => some .freeChoice
-  | nobody | few | atMost | universalRestrictor | noRestrictor | beforeClause | tooTo | onlyFocus
-  | adversative | superlative | sinceTemporal => none
+  | positiveAssertion | nobody | few | atMost | universalRestrictor | noRestrictor | beforeClause
+  | tooTo | onlyFocus | adversative | superlative | sinceTemporal => none
 
 namespace LicensingContext
 
@@ -374,42 +313,52 @@ abbrev exceedsFamily : Licenser.OperatorFamily :=
 /-- Necessity over a frame. -/
 abbrev necessityFamily : Licenser.ModalFamily := ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.core⟩
 
-/-- The licenser a construction places over the position of a polarity item. -/
-noncomputable def licenser : LicensingContext → Licenser
-  | negation => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ compl⟩
-  | nobody => .classical ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.no p.A⟩
-  | few => .scalar ⟨⟨FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.few p.A⟩,
+/-- A construction places an operator over the position of a polarity item, unless it is a
+question. -/
+def HasLicenser : LicensingContext → Prop
+  | polarQuestion | constituentQuestion => False
+  | _ => True
+
+instance : DecidablePred HasLicenser := fun c ↦ by
+  cases c <;> first | exact isTrue trivial | exact isFalse id
+
+/-- The licenser that a construction places over the position of a polarity item. -/
+noncomputable def licenser : (c : LicensingContext) → (_ : c.HasLicenser := by decide) → Licenser
+  | negation, _ => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ compl⟩
+  | nobody, _ => .classical ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.no p.A⟩
+  | few, _ => .scalar ⟨⟨FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.few p.A⟩,
       fun p ↦ Det.exhaustified Det.few {Det.no} p.A⟩
-  | atMost => .scalar
+  | atMost, _ => .scalar
       ⟨⟨BoundedPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.atMost p.n p.A⟩,
         fun p ↦ Det.exhaustified (Det.atMost p.n) {Det.atMost (p.n - 1)} p.A⟩
-  | universalRestrictor => .classical
+  | universalRestrictor, _ => .classical
       ⟨NonuniversalPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.every R p.A⟩
-  | noRestrictor => .classical
+  | noRestrictor, _ => .classical
       ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.no R p.A⟩
-  | withoutClause => .classical
+  | withoutClause, _ => .classical
       ⟨Predicate, fun p ↦ Set p.ι, fun p ↦ Set p.ι, fun p V ↦ p.A \ V⟩
-  | beforeClause => .classical
+  | beforeClause, _ => .classical
       ⟨MainClause, fun p ↦ NonemptyInterval p.T → Prop, fun _ ↦ Prop, fun p ↦ beforeEver p.A⟩
-  | clausalComparative | tooTo => .classical exceedsFamily
-  | doubtVerb => .classical
+  | clausalComparative, _ | tooTo, _ => .classical exceedsFamily
+  | doubtVerb, _ => .classical
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
-  | denyVerb => .classical
+  | denyVerb, _ => .classical
       ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
-  | superordinateNegation => .strawson
+  | superordinateNegation, _ => .strawson
       ⟨Bases, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ NegRaising.negation p.R p.H⟩
-  | onlyFocus => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
+  | onlyFocus, _ => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
       fun p P ↦ Focus.only (· = ·) Set.univ P p.x⟩
-  | adversative => .strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
+  | adversative, _ => .strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
       fun p ↦ Desire.BestWorlds.regret p.dox p.base p.g⟩
-  | superlative => .strawson ⟨Superlative, fun p ↦ p.W → Set p.α, fun p ↦ p.W,
+  | superlative, _ => .strawson ⟨Superlative, fun p ↦ p.W → Set p.α, fun p ↦ p.W,
       fun p C ↦ trivalentSuperlative p.μ C p.x⟩
-  | conditionalAntecedent => .strawson ⟨Horizon, fun p ↦ Set p.W, fun p ↦ p.I,
+  | conditionalAntecedent, _ => .strawson ⟨Horizon, fun p ↦ Set p.W, fun p ↦ p.I,
       fun p P ↦ Conditional.horizonCounterfactual p.horizon P p.q⟩
-  | sinceTemporal => .strawson ⟨Ago, fun p ↦ Set p.T, fun p ↦ p.T, fun p ↦ since p.ago⟩
-  | question => .question
-  | modalPossibility => .modal ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.preimage⟩
-  | modalNecessity | imperative | generic | freeRelative => .modal necessityFamily
+  | sinceTemporal, _ => .strawson ⟨Ago, fun p ↦ Set p.T, fun p ↦ p.T, fun p ↦ since p.ago⟩
+  | positiveAssertion, _ => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ id⟩
+  | polarQuestion, h | constituentQuestion, h => h.elim
+  | modalPossibility, _ => .modal ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.preimage⟩
+  | modalNecessity, _ | imperative, _ | generic, _ | freeRelative, _ => .modal necessityFamily
 
 /-! ### Classical licensers
 
@@ -755,111 +704,185 @@ theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .an
     have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
     simp [Set.subset_def, SetRel.preimage] at this
 
-/-! ### Deciding the licensers of the named contexts -/
+/-- The identity is not downward entailing. -/
+theorem not_holds_anti_positiveAssertion : ¬ positiveAssertion.licenser.Holds .anti := fun h ↦
+  ProjectivitySignature.holdsFor_anti_iff.1 (h Unit) (bot_le (a := ⊤)) () trivial
 
-instance (c : LicensingContext) : DecidablePred c.licenser.Carries := fun _ ↦
-  match c with
-  | negation => isTrue (carries_classical_iff.2 ⟨holds_negation _, not_isStrawsonUE_negation⟩)
-  | nobody =>
-    decidable_of_iff' _ (carries_classical_iff_le not_isStrawsonUE_nobody fun _ ↦ holds_nobody_iff)
-  | few => decidable_of_iff' _ (carries_iff_eq_weak
-      (isStrawsonDE_of_holds_anti (holds_few_iff.2 le_rfl)) not_isStrawsonUE_few
-      not_holds_exhaustified_few)
-  | atMost => decidable_of_iff' _ (carries_iff_eq_weak
-      (isStrawsonDE_of_holds_anti (holds_atMost_iff.2 le_rfl)) not_isStrawsonUE_atMost
-      not_holds_exhaustified_atMost)
-  | universalRestrictor => decidable_of_iff' _ (carries_classical_iff_le
-      not_isStrawsonUE_universalRestrictor fun _ ↦ holds_universalRestrictor_iff)
-  | noRestrictor => decidable_of_iff' _ (carries_classical_iff_le
-      not_isStrawsonUE_noRestrictor fun _ ↦ holds_noRestrictor_iff)
-  | withoutClause => decidable_of_iff' _ (carries_classical_iff_le
-      not_isStrawsonUE_withoutClause fun _ ↦ holds_withoutClause_iff)
-  | beforeClause => decidable_of_iff' _ (carries_classical_iff_le
-      not_isStrawsonUE_beforeClause fun _ ↦ holds_beforeClause_iff)
-  | clausalComparative | tooTo => decidable_of_iff' _ (carries_classical_iff_le
-      not_isStrawsonUE_exceedsFamily fun _ ↦ holds_exceedsFamily_iff)
-  | doubtVerb => decidable_of_iff' _ (carries_classical_iff_le
-      not_isStrawsonUE_doubtVerb fun _ ↦ holds_doubtVerb_iff)
-  | denyVerb => decidable_of_iff' _ (carries_classical_iff_le
-      not_isStrawsonUE_denyVerb fun _ ↦ holds_denyVerb_iff)
-  | superordinateNegation => decidable_of_iff' _ (carries_iff_le
-      (isStrawsonDE_of_holds_anti (holds_superordinateNegation_iff.2 bot_le))
-      not_isStrawsonUE_superordinateNegation fun _ ↦ holds_superordinateNegation_iff)
-  | onlyFocus => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_onlyFocus
-      not_isStrawsonUE_onlyFocus not_holds_onlyFocus)
-  | adversative => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_adversative
-      not_isStrawsonUE_adversative not_holds_adversative)
-  | superlative => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_superlative
-      not_isStrawsonUE_superlative not_holds_superlative)
-  | conditionalAntecedent => decidable_of_iff' _ (carries_iff_eq_weak
-      isStrawsonDE_conditionalAntecedent not_isStrawsonUE_conditionalAntecedent
-      not_holds_conditionalAntecedent)
-  | sinceTemporal => decidable_of_iff' _ (carries_iff_eq_weak isStrawsonDE_sinceTemporal
-      not_isStrawsonUE_sinceTemporal not_holds_sinceTemporal)
-  | question => isFalse fun h ↦ h.weak.1
-  | modalPossibility => isFalse fun h ↦ h.weak.2 isStrawsonUE_modalPossibility
-  | modalNecessity | imperative | generic | freeRelative =>
-    isFalse fun h ↦ h.weak.2 isStrawsonUE_necessityFamily
+/-! ### The profiles of the contexts
 
-instance (c : LicensingContext) (s : Negation.Strength) :
-    Decidable (c.licenser.Holds s.toProjectivitySignature) :=
-  match c with
-  | negation => isTrue (holds_negation s)
-  | nobody => decidable_of_iff' _ holds_nobody_iff
-  | few => decidable_of_iff' _ holds_few_iff
-  | atMost => decidable_of_iff' _ holds_atMost_iff
-  | universalRestrictor => decidable_of_iff' _ holds_universalRestrictor_iff
-  | noRestrictor => decidable_of_iff' _ holds_noRestrictor_iff
-  | withoutClause => decidable_of_iff' _ holds_withoutClause_iff
-  | beforeClause => decidable_of_iff' _ holds_beforeClause_iff
-  | clausalComparative | tooTo => decidable_of_iff' _ holds_exceedsFamily_iff
-  | doubtVerb => decidable_of_iff' _ holds_doubtVerb_iff
-  | denyVerb => decidable_of_iff' _ holds_denyVerb_iff
-  | superordinateNegation => decidable_of_iff' _ holds_superordinateNegation_iff
-  | onlyFocus => isFalse (not_holds_toProjectivitySignature not_holds_onlyFocus)
-  | adversative => isFalse (not_holds_toProjectivitySignature not_holds_adversative)
-  | superlative => isFalse (not_holds_toProjectivitySignature not_holds_superlative)
-  | conditionalAntecedent =>
-    isFalse (not_holds_toProjectivitySignature not_holds_conditionalAntecedent)
-  | sinceTemporal => isFalse (not_holds_toProjectivitySignature not_holds_sinceTemporal)
-  | question => isFalse id
-  | modalPossibility => isFalse (not_holds_toProjectivitySignature not_holds_anti_modalPossibility)
-  | modalNecessity | imperative | generic | freeRelative =>
-    isFalse (not_holds_toProjectivitySignature not_holds_anti_necessityFamily)
+The profile of a context is a table. It is the profile of the licenser of the context, so a claim
+about what a context licenses is decided on the table and rests on the theorems above. A question
+has no profile. -/
 
-instance (c : LicensingContext) : Decidable c.licenser.LicensesFreeChoice :=
-  match c with
-  | modalPossibility => isTrue licensesFreeChoice_modalPossibility
-  | modalNecessity | imperative | generic | freeRelative =>
-    isTrue licensesFreeChoice_necessityFamily
-  | negation | nobody | few | atMost | universalRestrictor | noRestrictor | withoutClause
-  | beforeClause | clausalComparative | tooTo | doubtVerb | denyVerb | superordinateNegation
-  | onlyFocus | adversative | superlative
-  | conditionalAntecedent | sinceTemporal | question => isFalse id
+/-- What the strengths of negation say of a construction: the greatest strength it carries, the
+greatest strength it holds outright, and whether it licenses free choice. A question has no
+profile. -/
+def profile : LicensingContext → Option Profile
+  | negation => some ⟨ofStrength .antiMorphic, ofStrength .antiMorphic, false⟩
+  | nobody | universalRestrictor | noRestrictor | withoutClause | beforeClause
+  | clausalComparative | tooTo | denyVerb | superordinateNegation =>
+    some ⟨ofStrength .antiAdditive, ofStrength .antiAdditive, false⟩
+  | few | atMost | doubtVerb => some ⟨ofStrength .weak, ofStrength .weak, false⟩
+  | onlyFocus | adversative | superlative | conditionalAntecedent | sinceTemporal =>
+    some ⟨ofStrength .weak, ⊥, false⟩
+  | modalPossibility | modalNecessity | imperative | generic | freeRelative => some ⟨⊥, ⊥, true⟩
+  | positiveAssertion => some ⟨⊥, ⊥, false⟩
+  | polarQuestion | constituentQuestion => none
 
-instance (c : LicensingContext) : Decidable c.licenser.LicensesByRelevance :=
-  match c with
-  | question => isTrue licensesByRelevance_question
-  | negation | nobody | few | atMost | universalRestrictor | noRestrictor | withoutClause
-  | beforeClause | clausalComparative | tooTo | doubtVerb | denyVerb | superordinateNegation
-  | onlyFocus | adversative | superlative
-  | conditionalAntecedent | sinceTemporal | modalPossibility | modalNecessity | imperative
-  | generic | freeRelative => isFalse id
+private theorem profile_eq_of {L : Licenser} {a b : WithBot (WithTop Negation.Strength)}
+    {fc : Bool} (hc : L.carried = a) (hh : L.held = b) (hf : L.LicensesFreeChoice ↔ fc = true) :
+    some (⟨a, b, fc⟩ : Profile) = some L.profile :=
+  congrArg some (Licenser.profile_eq_mk hc hh hf).symm
 
-/-! ### Deciding licensing at the named contexts
+private theorem carried_of_holds_iff {F : Licenser.OperatorFamily} {s₀ : Negation.Strength}
+    (hn : ¬ (classical F).IsStrawsonUE)
+    (h : ∀ {s : Negation.Strength}, (classical F).Holds s.toProjectivitySignature ↔ s ≤ s₀) :
+    (classical F).carried = ofStrength s₀ :=
+  carried_eq_coe fun _ ↦ carries_classical_iff_le hn fun _ ↦ h
 
-The instances are indexed by the context rather than by its licenser, so that a computable
-definition that decides an item against a named context does not compute the licenser. -/
+private theorem carried_of_eq_weak {L : Licenser} (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
+    (h : ¬ L.exhaustified.Holds .anti) : L.carried = ofStrength .weak :=
+  carried_eq_coe fun _ ↦ (carries_iff_eq_weak hde hn h).trans Negation.Strength.le_weak_iff.symm
 
-instance (c : LicensingContext) : DecidablePred c.licenser.Licenses :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+private theorem held_strawson_eq_bot {L : Licenser} (h : ¬ L.Holds .anti) : L.held = ⊥ :=
+  held_eq_bot fun _ ↦ not_holds_toProjectivitySignature h
 
-instance (c : LicensingContext) : DecidablePred c.licenser.AntiLicenses :=
-  fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+private theorem not_fc {b : Prop} (h : ¬ b) : b ↔ false = true := iff_of_false h Bool.false_ne_true
 
-instance (c : LicensingContext) : DecidablePred c.licenser.Admits :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+/-- The profile of a context is the profile of its licenser. -/
+theorem profile_eq :
+    ∀ (c : LicensingContext) (h : c.HasLicenser), c.profile = some (c.licenser h).profile
+  | negation, _ => profile_eq_of
+      (carried_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antiMorphic, fun _ ↦
+        carries_classical_iff.2 ⟨holds_negation _, not_isStrawsonUE_negation⟩⟩)
+      (held_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antiMorphic, fun _ ↦ holds_negation s⟩) (not_fc id)
+  | nobody, _ => profile_eq_of (carried_of_holds_iff not_isStrawsonUE_nobody holds_nobody_iff)
+      (held_eq_coe fun _ ↦ holds_nobody_iff) (not_fc id)
+  | universalRestrictor, _ => profile_eq_of
+      (carried_of_holds_iff not_isStrawsonUE_universalRestrictor holds_universalRestrictor_iff)
+      (held_eq_coe fun _ ↦ holds_universalRestrictor_iff) (not_fc id)
+  | noRestrictor, _ => profile_eq_of
+      (carried_of_holds_iff not_isStrawsonUE_noRestrictor holds_noRestrictor_iff)
+      (held_eq_coe fun _ ↦ holds_noRestrictor_iff) (not_fc id)
+  | withoutClause, _ => profile_eq_of
+      (carried_of_holds_iff not_isStrawsonUE_withoutClause holds_withoutClause_iff)
+      (held_eq_coe fun _ ↦ holds_withoutClause_iff) (not_fc id)
+  | beforeClause, _ => profile_eq_of
+      (carried_of_holds_iff not_isStrawsonUE_beforeClause holds_beforeClause_iff)
+      (held_eq_coe fun _ ↦ holds_beforeClause_iff) (not_fc id)
+  | clausalComparative, _ | tooTo, _ => profile_eq_of
+      (carried_of_holds_iff not_isStrawsonUE_exceedsFamily holds_exceedsFamily_iff)
+      (held_eq_coe fun _ ↦ holds_exceedsFamily_iff) (not_fc id)
+  | denyVerb, _ => profile_eq_of
+      (carried_of_holds_iff not_isStrawsonUE_denyVerb holds_denyVerb_iff)
+      (held_eq_coe fun _ ↦ holds_denyVerb_iff) (not_fc id)
+  | superordinateNegation, _ => profile_eq_of
+      (carried_eq_coe fun _ ↦ carries_iff_le
+        (isStrawsonDE_of_holds_anti (holds_superordinateNegation_iff.2 bot_le))
+        not_isStrawsonUE_superordinateNegation fun _ ↦ holds_superordinateNegation_iff)
+      (held_eq_coe fun _ ↦ holds_superordinateNegation_iff) (not_fc id)
+  | few, _ => profile_eq_of
+      (carried_of_eq_weak (isStrawsonDE_of_holds_anti (holds_few_iff.2 le_rfl))
+        not_isStrawsonUE_few not_holds_exhaustified_few)
+      (held_eq_coe fun _ ↦ holds_few_iff) (not_fc id)
+  | atMost, _ => profile_eq_of
+      (carried_of_eq_weak (isStrawsonDE_of_holds_anti (holds_atMost_iff.2 le_rfl))
+        not_isStrawsonUE_atMost not_holds_exhaustified_atMost)
+      (held_eq_coe fun _ ↦ holds_atMost_iff) (not_fc id)
+  | doubtVerb, _ => profile_eq_of
+      (carried_of_holds_iff not_isStrawsonUE_doubtVerb holds_doubtVerb_iff)
+      (held_eq_coe fun _ ↦ holds_doubtVerb_iff) (not_fc id)
+  | onlyFocus, _ => profile_eq_of
+      (carried_of_eq_weak isStrawsonDE_onlyFocus not_isStrawsonUE_onlyFocus not_holds_onlyFocus)
+      (held_strawson_eq_bot not_holds_onlyFocus) (not_fc id)
+  | adversative, _ => profile_eq_of
+      (carried_of_eq_weak isStrawsonDE_adversative not_isStrawsonUE_adversative
+        not_holds_adversative)
+      (held_strawson_eq_bot not_holds_adversative) (not_fc id)
+  | superlative, _ => profile_eq_of
+      (carried_of_eq_weak isStrawsonDE_superlative not_isStrawsonUE_superlative
+        not_holds_superlative)
+      (held_strawson_eq_bot not_holds_superlative) (not_fc id)
+  | conditionalAntecedent, _ => profile_eq_of
+      (carried_of_eq_weak isStrawsonDE_conditionalAntecedent
+        not_isStrawsonUE_conditionalAntecedent not_holds_conditionalAntecedent)
+      (held_strawson_eq_bot not_holds_conditionalAntecedent) (not_fc id)
+  | sinceTemporal, _ => profile_eq_of
+      (carried_of_eq_weak isStrawsonDE_sinceTemporal not_isStrawsonUE_sinceTemporal
+        not_holds_sinceTemporal)
+      (held_strawson_eq_bot not_holds_sinceTemporal) (not_fc id)
+  | modalPossibility, _ => profile_eq_of
+      (carried_eq_bot fun _ h ↦ h.weak.2 isStrawsonUE_modalPossibility)
+      (held_strawson_eq_bot not_holds_anti_modalPossibility)
+      (iff_of_true licensesFreeChoice_modalPossibility rfl)
+  | modalNecessity, _ | imperative, _ | generic, _ | freeRelative, _ => profile_eq_of
+      (carried_eq_bot fun _ h ↦ h.weak.2 isStrawsonUE_necessityFamily)
+      (held_strawson_eq_bot not_holds_anti_necessityFamily)
+      (iff_of_true licensesFreeChoice_necessityFamily rfl)
+  | positiveAssertion, _ => profile_eq_of
+      (carried_eq_bot fun _ h ↦ h.weak.2 fun _ ↦ monotone_id)
+      (held_strawson_eq_bot not_holds_anti_positiveAssertion) (not_fc id)
+
+/-! ### Licensing at the named contexts -/
+
+variable (c : LicensingContext) (k : Class)
+
+/-- A context **licenses** a class when it has a profile that licenses the class. -/
+def Licenses : Prop := ∃ p ∈ c.profile, p.Licenses k
+
+/-- A context **anti-licenses** a class when it has a profile that anti-licenses the class. -/
+def AntiLicenses : Prop := ∃ p ∈ c.profile, p.AntiLicenses k
+
+/-- A context **admits** a class when it has a profile that admits the class. -/
+def Admits : Prop := ∃ p ∈ c.profile, p.Admits k
+
+instance : Decidable (c.Licenses k) := inferInstanceAs (Decidable (∃ p ∈ _, _))
+
+instance : Decidable (c.AntiLicenses k) := inferInstanceAs (Decidable (∃ p ∈ _, _))
+
+instance : Decidable (c.Admits k) := inferInstanceAs (Decidable (∃ p ∈ _, _))
+
+variable {c k}
+
+theorem licenses_iff (h : c.HasLicenser) : c.Licenses k ↔ (c.licenser h).Licenses k := by
+  simp [Licenses, profile_eq c h, Licenser.profile_licenses_iff]
+
+theorem antiLicenses_iff (h : c.HasLicenser) :
+    c.AntiLicenses k ↔ (c.licenser h).AntiLicenses k := by
+  simp [AntiLicenses, profile_eq c h, Licenser.profile_antiLicenses_iff]
+
+theorem admits_iff (h : c.HasLicenser) : c.Admits k ↔ (c.licenser h).Admits k := by
+  simp [Admits, profile_eq c h, Licenser.profile_admits_iff]
+
+/-- A context licenses a class of negative polarity items that are not free choice items exactly
+when its licenser carries the strength that the class requires. -/
+theorem licenses_npi_iff (h : c.HasLicenser) {s : Negation.Strength} :
+    c.Licenses (.npi s) ↔ (c.licenser h).Carries s :=
+  (licenses_iff h).trans (Licenser.licenses_npi_iff.trans (or_iff_left (by simp)))
+
+/-- A question licenses no class. -/
+theorem not_licenses_of_not_hasLicenser (h : ¬ c.HasLicenser) : ¬ c.Licenses k := by
+  cases c <;> first | exact absurd trivial h | simp [Licenses, profile]
+
+/-- The contexts that the strengths of negation rank: all but the questions. -/
+def ranked : Finset LicensingContext := Finset.univ.filter HasLicenser
 
 end LicensingContext
+
+/-! ### The classes with which an entry is compatible -/
+
+/-- The contexts in which the strengths of negation predict a class to be possible: those whose
+profile admits the class. A question has no profile and lies in no region. -/
+def Class.region (k : Class) : Finset LicensingContext := Finset.univ.filter (·.Admits k)
+
+/-- An entry and a class are **compatible** when the region of the class contains every ranked
+context in which the sources attest the item and no context from which they exclude it. The two
+agree wherever both say something: an entry on which the sources are silent is compatible with
+every class, and an entry may be compatible with several classes or with none. -/
+def Compatible (e : PolarityItem) (k : Class) : Prop :=
+  e.attested ∩ LicensingContext.ranked ⊆ k.region ∧ Disjoint e.excluded k.region
+
+instance (e : PolarityItem) (k : Class) : Decidable (e.Compatible k) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end PolarityItem

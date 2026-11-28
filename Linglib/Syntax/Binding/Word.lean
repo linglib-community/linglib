@@ -13,7 +13,8 @@ public import Linglib.Morphology.Word.Basic
 
 The binding class of a word is read off its morphology and category: reflexive marking makes a
 reflexive, the reciprocal pronoun type a reciprocal, any other pronoun that is not an operator a
-pronominal, and an operator or a noun an R-expression.
+pronominal, and an operator or a noun an R-expression. The operators are classed with the nouns
+as neither anaphors nor pronominals.
 
 ## Main definitions
 
@@ -30,8 +31,7 @@ pronominal, and an operator or a noun an R-expression.
 namespace Binding
 
 /-- A pronoun type is an operator's when it is interrogative, relative, indefinite, negative or
-total: the types of the wh-phrases and quantifier expressions, which [chomsky-1981] takes to be
-R-expressions. -/
+total: the types of the wh-phrases and quantifier expressions, [chomsky-1981]'s operators. -/
 def IsOperator (t : UD.PronType) : Prop := t = .Int ∨ t = .Rel ∨ t = .Ind ∨ t = .Neg ∨ t = .Tot
 
 instance : DecidablePred IsOperator :=

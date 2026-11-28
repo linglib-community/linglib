@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.SuccPred.LinearLocallyFinite
 public import Linglib.Semantics.Degree.Marginality.Hom
 public import Linglib.Semantics.Degree.Marginality.Hyperreal
+public import Linglib.Semantics.Degree.Sorites
 public import Studies.Itzhaki2021
 public import Mathlib.Analysis.Real.Hyperreal
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
@@ -13,7 +14,7 @@ public import Mathlib.Order.CountableDenseLinearOrder
 
 Dinis and Jacinto's ML theory is [eleven axioms](##IsMLModel) on marginally and largely smaller than
 along a strict weak order. It has [no model on the naturals or the
-reals](##instIsEmptyMarginalScale), but the hyperreals are one, with [infinitesimal differences
+reals](##not_isML), but the hyperreals are one, with [infinitesimal differences
 marginal](##Hyperreal.infinitesimalScale). A countable model whose blocks have [finite
 intervals](##finitelyMarginal_iff) [maps homomorphically](##exists_isHom_lex_rat_int) into
 rational-indexed blocks of integer-indexed locations, [uniquely up to
@@ -23,15 +24,20 @@ series of marginal steps](##not_transGen_marginallyLT) reaches them from the not
 
 ## Implementation notes
 
-* The project's ML scales are those of [dinis-jacinto-2026], over a linear order with marginally
-  smaller than primitive, and the results after the axioms are stated for them; a homomorphism
-  then preserves and reflects smaller than and marginally smaller than, and is injective.
+* A marginal scale is an equivalence with order-connected classes on a linear order, and the
+  scales of the theory are those with `MarginalScale.IsML`, the hypothesis of the results that
+  need a large difference or its decomposition. A homomorphism preserves and reflects smaller
+  than and marginally smaller than, and is injective.
 * The nonstandard models are `Hyperreal.infinitesimalScale` and `Hyperreal.finiteScale` on
   mathlib's hyperreals. The finite-difference reading of Dean and Itzhaki (§5, §6), stated for
   nonstandard integers, is taken on the hyperreals.
 
 ## TODO
 
+* The paper's models are over a strict weak order, in which indiscernible elements need not be
+  equal, and its representation and uniqueness theorems are for those. They are proved here for
+  models over a linear order; the general statements follow by passing to the quotient by
+  indiscernibility, which is not carried out.
 * The arithmetical model `ℑ1` of §3.2 and the model `ℜ` with an initial block of §4.3 need a
   nonstandard model of arithmetic, which mathlib lacks.
 
@@ -56,58 +62,116 @@ variable {α : Type*} [LinearOrder α] {ml : MarginalScale α} {x y : α}
 /-- The eleven axioms of §2 on marginally and largely smaller than, `M` and `L`, along a strict
 weak order `R`, both relations primitive. -/
 structure IsMLModel {β : Type*} (R M L : β → β → Prop) : Prop where
+  /-- The underlying order is a strict weak order. -/
   isStrictWeakOrder : IsStrictWeakOrder β R
+  /-- Axiom 2.1: some difference is large. -/
   exists_l : ∃ x y, L x y
+  /-- Axiom 2.2: marginally smaller implies smaller. -/
   r_of_m : ∀ ⦃x y⦄, M x y → R x y
+  /-- Axiom 2.3: largely smaller implies smaller. -/
   r_of_l : ∀ ⦃x y⦄, L x y → R x y
+  /-- Axiom 2.4: marginally smaller than is transitive. -/
   m_trans : ∀ ⦃x y z⦄, M x y → M y z → M x z
+  /-- Axiom 2.5: a marginal difference is not large. -/
   not_l_of_m : ∀ ⦃x y⦄, M x y → ¬ L x y
+  /-- Axiom 2.6: marginal differences are irrelevant to large ones. -/
   irrelevance : ∀ ⦃x y⦄ z, M x y → (L z y → L z x) ∧ (L x z → L y z)
+  /-- Axiom 2.7: whatever is smaller than something largely smaller than `z` is largely smaller
+  than `z`. -/
   l_of_r_of_l : ∀ ⦃x y z⦄, R x y → L y z → L x z
+  /-- Axiom 2.8: whatever is largely smaller than something smaller than `z` is largely smaller
+  than `z`. -/
   l_of_l_of_r : ∀ ⦃x y z⦄, L x y → R y z → L x z
+  /-- Axiom 2.9: a difference is marginal or large. -/
   m_or_l_of_r : ∀ ⦃x y⦄, R x y → M x y ∨ L x y
+  /-- Axiom 2.10, Decomposition: a large difference is a marginal step followed by a large
+  difference, and a large difference followed by a marginal step. -/
   decomposition : ∀ ⦃x y⦄, L x y → (∃ z, M x z ∧ L z y) ∧ ∃ w, M w y ∧ L x w
+  /-- Axiom 2.11: whatever lies between two marginally different elements is marginally
+  different from both. -/
   m_bounded : ∀ ⦃x y z⦄, M x z → R x y → R y z → M x y ∧ M y z
 
 theorem IsMLModel.l_iff {M L : α → α → Prop} (h : IsMLModel (· < ·) M L) :
     L x y ↔ x < y ∧ ¬ M x y := by
   grind [h.r_of_l, h.not_l_of_m, h.m_or_l_of_r]
 
+-- a marginal scale satisfying ML theory is a model of the eleven axioms
+theorem _root_.MarginalScale.IsML.isMLModel (hml : ml.IsML) :
+    IsMLModel (· < ·) ml.MarginallyLT ml.LargelyLT where
+  isStrictWeakOrder :=
+    haveI : IsOrderConnected α (· < ·) :=
+      ⟨fun a b _ h ↦ (lt_or_ge a b).imp_right fun h' ↦ h'.trans_lt h⟩
+    isStrictWeakOrder_of_isOrderConnected
+  exists_l := hml.exists_largelyLT
+  r_of_m _ _ h := h.lt
+  r_of_l _ _ h := h.lt
+  m_trans _ _ _ := MarginallyLT.trans
+  not_l_of_m _ _ h := h.not_largelyLT
+  irrelevance _ _ z h := h.irrelevance z
+  l_of_r_of_l _ _ _ := LargelyLT.of_lt_of_largelyLT
+  l_of_l_of_r _ _ _ := LargelyLT.trans_lt
+  m_or_l_of_r _ _ := marginallyLT_or_largelyLT_of_lt
+  decomposition _ _ h :=
+    ⟨hml.exists_marginallyLT_largelyLT h, (hml.exists_largelyLT_marginallyLT h).imp fun _ ↦ .symm⟩
+  m_bounded _ _ _ := MarginallyLT.bounded
+
+/-- Over a linear order, the models of the eleven axioms are the marginal scales that satisfy ML
+theory, with their relations of being marginally and largely smaller. -/
+theorem isMLModel_iff {M L : α → α → Prop} : IsMLModel (· < ·) M L ↔
+    ∃ ml : MarginalScale α, ml.IsML ∧ ml.MarginallyLT = M ∧ ml.LargelyLT = L := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · have hL : ∀ x y, L x y ↔ x < y ∧ ¬ M x y := fun _ _ ↦ h.l_iff
+    have hirr : ∀ ⦃x y⦄ z, M x y →
+        (z < y ∧ ¬ M z y → z < x ∧ ¬ M z x) ∧ (x < z ∧ ¬ M x z → y < z ∧ ¬ M y z) :=
+      fun x y z hxy ↦ by simpa only [hL] using h.irrelevance z hxy
+    have hM : (ofMarginallyLT M h.r_of_m hirr).MarginallyLT = M :=
+      funext₂ fun _ _ ↦ propext (ofMarginallyLT_marginallyLT_iff ..)
+    have hLL : (ofMarginallyLT M h.r_of_m hirr).LargelyLT = L :=
+      funext₂ fun x y ↦ propext <| by rw [LargelyLT, hM, hL]
+    refine ⟨_, ⟨?_, ?_, ?_⟩, hM, hLL⟩
+    · rw [hLL]; exact h.exists_l
+    · rw [hLL, hM]; exact fun x y hxy ↦ (h.decomposition hxy).1
+    · rw [hLL, hM]; exact fun x y hxy ↦ (h.decomposition hxy).2.imp fun _ ↦ .symm
+  · rintro ⟨ml, hml, rfl, rfl⟩
+    exact hml.isMLModel
+
 /-- No conditionally complete linear order carries an ML scale (Theorem 2.12). The supremum of
 the degrees above `x` and largely below `y` would lie in the block of `y`, and a degree marginally
 below it would be a smaller upper bound. -/
-instance instIsEmptyMarginalScale {α : Type*} [ConditionallyCompleteLinearOrder α] :
-    IsEmpty (MarginalScale α) := by
-  refine ⟨fun ml ↦ ?_⟩
-  obtain ⟨x, y, hxy⟩ := ml.exists_largelyLT
+theorem not_isML {α : Type*} [ConditionallyCompleteLinearOrder α] (ml : MarginalScale α) :
+    ¬ ml.IsML := fun hml ↦ by
+  obtain ⟨x, y, hxy⟩ := hml.exists_largelyLT
   set S := {z | x < z ∧ ml.LargelyLT z y}
-  obtain ⟨z₀, hxz₀, hz₀y⟩ := hxy.exists_marginallyLT_largelyLT
+  obtain ⟨z₀, hxz₀, hz₀y⟩ := hml.exists_marginallyLT_largelyLT hxy
   have hS : S.Nonempty := ⟨z₀, hxz₀.lt, hz₀y⟩
   have hb : BddAbove S := ⟨y, fun z hz ↦ hz.2.lt.le⟩
   have hxl : x < sSup S := hxz₀.lt.trans_le (le_csSup hb ⟨hxz₀.lt, hz₀y⟩)
   have hly : ml.AtMostMarginal (sSup S) y := atMostMarginal_iff_incompRel.2
     ⟨fun h ↦ by
-      obtain ⟨w, hlw, hwy⟩ := h.exists_marginallyLT_largelyLT
+      obtain ⟨w, hlw, hwy⟩ := hml.exists_marginallyLT_largelyLT h
       exact (le_csSup hb ⟨hxl.trans hlw.lt, hwy⟩).not_gt hlw.lt,
     fun h ↦ (csSup_le hS fun z hz ↦ hz.2.lt.le).not_gt h.lt⟩
-  obtain ⟨w, -, hwl⟩ := (hly.largelyLT_congr_right.2 hxy).exists_largelyLT_marginallyLT
+  obtain ⟨w, -, hwl⟩ := hml.exists_largelyLT_marginallyLT (hly.largelyLT_congr_right.2 hxy)
   exact (csSup_le hS fun a ha ↦ (hwl.atMostMarginal.largelyLT_congr_right.2
     (hly.largelyLT_congr_right.2 ha.2)).lt.le).not_gt hwl.lt
 
 -- p. 521
-theorem infinite_of_marginalScale (ml : MarginalScale α) : Infinite α :=
-  let ⟨_, _, h⟩ := ml.exists_largelyLT
-  Set.infinite_univ_iff.1 ((LargelyLT.infinite_Ioo h).mono (Set.subset_univ _))
+theorem infinite_of_isML (hml : ml.IsML) : Infinite α :=
+  let ⟨_, _, h⟩ := hml.exists_largelyLT
+  Set.infinite_univ_iff.1 ((hml.infinite_Ioo h).mono (Set.subset_univ _))
 
-example : IsEmpty (MarginalScale ℕ) := inferInstance
+example (ml : MarginalScale ℕ) : ¬ ml.IsML := not_isML ml
 
-example : IsEmpty (MarginalScale ℝ) := inferInstance
+example (ml : MarginalScale ℝ) : ¬ ml.IsML := not_isML ml
 
 /-! ### Nonstandard models -/
 
 open ArchimedeanClass Hyperreal
 
 -- Theorem 3.1: the model `ℑ2` is `Hyperreal.infinitesimalScale`.
+example : IsMLModel (· < ·) infinitesimalScale.MarginallyLT infinitesimalScale.LargelyLT :=
+  isML_infinitesimalScale.isMLModel
+
 example : infinitesimalScale.MarginallyLT 0 ε ∧ infinitesimalScale.LargelyLT 0 1 :=
   ⟨infinitesimalScale_marginallyLT_iff.2 ⟨epsilon_pos, by simp [archimedeanClassMk_epsilon_pos]⟩,
     zero_lt_one, fun h ↦ by simpa using (infinitesimalScale_marginallyLT_iff.1 h).2⟩
@@ -118,6 +182,9 @@ example : finiteScale.MarginallyLT 0 1 ∧ finiteScale.LargelyLT 0 ω :=
     fun h ↦ (finiteScale_marginallyLT_iff.1 h).2.not_gt (by simp [archimedeanClassMk_omega_neg])⟩
 
 /-! ### Representation -/
+
+-- Definition 4.3: the representative model satisfies the theory
+example : (lex ℚ ℤ).IsML := isML_lex
 
 -- Definition 4.3: the blocks of the representative model are its rational coordinates.
 example : (lex ℚ ℤ).toBlock (toLex (0, 5)) = (lex ℚ ℤ).toBlock (toLex (0, -3)) ∧
@@ -131,11 +198,11 @@ def MarginalSucc (x y : α) : Prop :=
   ml.MarginallyLT x y ∧ ∀ z, ml.MarginallyLT x z → ¬ ml.MarginallyLT z y
 
 -- A weakly marginal successor is a successor: no large difference is a covering.
-theorem marginalSucc_iff_covBy : MarginalSucc ml x y ↔ x ⋖ y := by
+theorem marginalSucc_iff_covBy (hml : ml.IsML) : MarginalSucc ml x y ↔ x ⋖ y := by
   refine ⟨fun h ↦ ⟨h.1.lt, fun z hxz hzy ↦ h.2 z (h.1.bounded hxz hzy).1 (h.1.bounded hxz hzy).2⟩,
     fun h ↦ ⟨(marginallyLT_or_largelyLT_of_lt h.lt).resolve_right fun hl ↦ ?_,
       fun z hxz hzy ↦ h.2 hxz.lt hzy.lt⟩⟩
-  obtain ⟨z, hxz, hzy⟩ := hl.exists_marginallyLT_largelyLT
+  obtain ⟨z, hxz, hzy⟩ := hml.exists_marginallyLT_largelyLT hl
   exact h.2 hxz.lt hzy.lt
 
 variable (ml) in
@@ -144,9 +211,9 @@ lead from any degree to any marginally greater one. -/
 def FinitelyMarginal : Prop :=
   ∀ ⦃x y⦄, ml.MarginallyLT x y → Relation.TransGen (MarginalSucc ml) x y
 
-theorem finitelyMarginal_iff :
+theorem finitelyMarginal_iff (hml : ml.IsML) :
     FinitelyMarginal ml ↔ ∀ ⦃x y⦄, ml.AtMostMarginal x y → (Set.Icc x y).Finite := by
-  have hs : MarginalSucc ml = (· ⋖ ·) := funext₂ fun _ _ ↦ propext marginalSucc_iff_covBy
+  have hs : MarginalSucc ml = (· ⋖ ·) := funext₂ fun _ _ ↦ propext (marginalSucc_iff_covBy hml)
   rw [FinitelyMarginal, hs]
   refine ⟨fun hf x y h ↦ ?_, fun hf x y h ↦ (hf h.atMostMarginal).transGen_covBy h.lt⟩
   rcases atMostMarginal_iff.1 h with rfl | h | h
@@ -156,19 +223,20 @@ theorem finitelyMarginal_iff :
 
 /-- The degrees of a block of a finitely marginal scale are a locally finite order. -/
 @[instance_reducible]
-noncomputable def FinitelyMarginal.locallyFiniteOrder (hf : FinitelyMarginal ml) (q : ml.Block) :
+noncomputable def FinitelyMarginal.locallyFiniteOrder (hml : ml.IsML) (hf : FinitelyMarginal ml)
+    (q : ml.Block) :
     LocallyFiniteOrder {x // ml.toBlock x = q} :=
-  .ofFiniteIcc fun a b ↦ (finitelyMarginal_iff.1 hf
+  .ofFiniteIcc fun a b ↦ ((finitelyMarginal_iff hml).1 hf
     (toBlock_eq_toBlock.1 (a.2.trans b.2.symm))).preimage Subtype.val_injective.injOn
 
 /-- Theorem 4.7: every countable, finitely marginal ML scale maps homomorphically into the
 representative model. Its blocks, a countable linear order, embed in the rationals, and the
 degrees of each block, a locally finite linear order, embed in the integers. -/
-theorem exists_isHom_lex_rat_int [Countable α] (hf : FinitelyMarginal ml) :
+theorem exists_isHom_lex_rat_int [Countable α] (hml : ml.IsML) (hf : FinitelyMarginal ml) :
     ∃ f : α → ℚ ×ₗ ℤ, ml.IsHom (lex ℚ ℤ) f := by
   obtain ⟨e⟩ := Order.embedding_from_countable_to_dense ml.Block ℚ
   have g (q : ml.Block) : Nonempty ({x // ml.toBlock x = q} ↪o ℤ) :=
-    let := hf.locallyFiniteOrder q
+    let := hf.locallyFiniteOrder hml q
     nonempty_orderEmbedding_int _
   exact ⟨_, isHom_toLex e fun q ↦ (g q).some⟩
 
@@ -191,8 +259,6 @@ def CautiouslyMonotone (X : Set (β ×ₗ γ)) (τ : β ×ₗ γ → β ×ₗ γ
   ∃ (f : β → β) (g : β → γ → γ), StrictMonoOn f ((fun p ↦ (ofLex p).1) '' X) ∧
     (∀ a, StrictMonoOn (g a) {b | toLex (a, b) ∈ X}) ∧
     ∀ p ∈ X, τ p = toLex (f (ofLex p).1, g (ofLex p).1 (ofLex p).2)
-
-variable [Nontrivial β] [Nonempty γ] [NoMaxOrder γ] [NoMinOrder γ]
 
 -- Theorem 4.9 (i)
 theorem IsHom.comp_cautiouslyMonotone {h : α → β ×ₗ γ} (hh : ml.IsHom (lex β γ) h)
@@ -261,13 +327,17 @@ theorem Bald.tolerance :
   ⟨fun hx h ↦ (bald_congr h.atMostMarginal).not.1 hx,
     fun hx h ↦ (bald_congr h.atMostMarginal).2 hx⟩
 
+-- The premises of the Sorites hold of the not bald along at most marginal differences.
+theorem sorites_not_bald (hx : ¬ Bald ml e x) : Sorites (¬ Bald ml e ·) ml.AtMostMarginal x e :=
+  ⟨hx, fun _ _ hy h ↦ (bald_congr h).not.1 hy, not_not_intro (bald_of_le le_rfl)⟩
+
 /-- No finite chain of marginal steps leads from someone not bald to the last member, so a
 series in which each member is marginally balder than the one before satisfies the premises of
 the Sorites only if it is infinite. -/
 theorem not_transGen_marginallyLT (hx : ¬ Bald ml e x) :
-    ¬ Relation.TransGen ml.MarginallyLT x e := fun h ↦ by
-  rw [Relation.transGen_eq_self] at h
-  exact h.not_largelyLT (not_not.1 hx)
+    ¬ Relation.TransGen ml.MarginallyLT x e := fun h ↦
+  (sorites_not_bald hx).not_reflTransGen <|
+    h.to_reflTransGen.lift id fun _ _ ↦ MarginallyLT.atMostMarginal
 
 example :
     ¬ Bald (lex ℚ ℤ) (toLex (1, 0)) (toLex (0, 0)) ∧ Bald (lex ℚ ℤ) (toLex (1, 0)) (toLex (1, 0)) :=
@@ -277,25 +347,17 @@ end Sorites
 
 /-! ### Itzhaki's nonstandard heuristics -/
 
-theorem infinitesimalScale_atMostMarginal_iff_infinitesimallyClose {x y : ℝ*} :
-    infinitesimalScale.AtMostMarginal x y ↔ Itzhaki2021.InfinitesimallyClose x y := by
-  rw [infinitesimalScale_atMostMarginal_iff, Itzhaki2021.InfinitesimallyClose,
-    Itzhaki2021.mem_infinitesimals, mk_sub_comm]
-
-/-- Under Itzhaki's qualitative size, being a heap is the baldness of §5 on the finite scale (§6).
--/
+-- §6 reads Itzhaki's account with finite differences marginal and states it for *bald*; on his
+-- qualitative size of pluralities, being a heap is the baldness of §5 in that scale
 theorem heap_iff_bald {De : Type*} {heap known : De → Prop} [DecidablePred heap]
     [DecidablePred known] {size : De → ℕ} {H : ℝ*} (hH : mk H < 0) (hpos : 0 < H) {e x : De}
     (he : heap e) : heap x ↔ Bald finiteScale (Itzhaki2021.qualSize heap known size H e)
       (Itzhaki2021.qualSize heap known size H x) := by
-  rw [Bald, ← Itzhaki2021.infinitelyLess_iff_largelyLT]
-  refine ⟨fun hx h ↦ h.2 (Itzhaki2021.finitelyClose_qualSize hx he),
+  refine ⟨fun hx h ↦ h.not_atMostMarginal (Itzhaki2021.atMostMarginal_qualSize hx he),
     fun h ↦ by_contra fun hx ↦ h ?_⟩
-  rw [Itzhaki2021.qualSize_of_not_heap hx]
-  refine ⟨Itzhaki2021.natCast_lt_qualSize hH hpos he _, fun hf ↦ ?_⟩
-  have hq := Itzhaki2021.finites.sub_mem
-    (Itzhaki2021.mem_finites.2 (mk_natCast_nonneg (size x))) hf
-  rw [sub_sub_cancel, Itzhaki2021.mem_finites] at hq
-  exact hq.not_gt (Itzhaki2021.mk_qualSize_neg hH he)
+  rw [Itzhaki2021.qualSize_of_not_heap hx, finiteScale_largelyLT_iff]
+  have hq := Itzhaki2021.mk_qualSize_neg (known := known) (size := size) hH he
+  exact ⟨Itzhaki2021.natCast_lt_qualSize hH hpos he _,
+    (mk_sub_eq_mk_left (hq.trans_le (mk_natCast_nonneg _))).symm ▸ hq⟩
 
 end DinisJacinto2025

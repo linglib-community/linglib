@@ -26,7 +26,8 @@ is included in `p` or in its complement.
 
 ## Implementation notes
 
-* A body of information is a `Filter`, as the common ground is in `Discourse/CommonGround.lean`.
+* A body of information is a `Filter`, as is the common ground of Farkas and Bruce's context
+  structure.
   An information state `σ` is the principal filter `𝓟 σ`, and the worlds an agent considers
   possible at `w` are the state `{v | w ~[R] v}`. The inconsistent body `⊥` supports everything;
   the definition gives it the bias `1`, and the lemmas about `-1` assume `F.NeBot`.
@@ -38,7 +39,7 @@ is included in `p` or in its complement.
   through `Inquisitive.Proposition.mem_polar`, whose right-hand side is that of
   `bias_principal_ne_zero_iff`: a state is biased exactly when it resolves the question.
 * An account on which evidence raises the probability of a proposition without entailing it maps
-  its own contexts to signs, as `Studies/Zheng2025.lean` does.
+  its own contexts to signs.
 * The file is in `Discourse/` because the bias is of a body of information in the context. What a
   question form requires of a context, the bias values and profiles of [sudo-2013], is in
   `Semantics/Questions/Bias.lean`.

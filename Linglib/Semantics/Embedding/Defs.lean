@@ -60,17 +60,15 @@ open NaturalLogic (ImplicationSignature)
 
 namespace Clause.Embedding
 
-/-- The reading of a predicate on one frame overrides the predicate's attitude, factivity and
-opacity there, `none` leaving the predicate's own, and records the sort of the frame's complement.
-Buryat *hanaxa* 'think' has two ([bondarenko-2022] §4.4.3). -/
+/-- The reading of a predicate on one frame overrides the predicate's attitude and factivity
+there, `none` leaving the predicate's own, and records the sort of the frame's complement.
+Buryat *hanaxa* 'think' has one for its nominalized frame ([bondarenko-2022] §4.4.3). -/
 structure Reading where
   /-- The reading applies to every frame of the predicate at most this one, in the order on
   `ArgumentFrame`. -/
   frame : ArgumentFrame
   /-- Frame-conditioned attitude override. -/
   attitude : Option Attitude := none
-  /-- Frame-conditioned opacity override. -/
-  opaqueContext : Option Bool := none
   /-- Frame-conditioned factivity override. -/
   factivity : Option Presupposition.Factivity := none
   /-- The semantic sort of the complement on this frame ([wurmbrand-lohninger-2023]). -/
@@ -90,8 +88,6 @@ structure Embedding where
   of the complement it implies in a positive and in a negative context; `⊥` for a predicate that
   implies nothing. -/
   implicative : ImplicationSignature := ⊥
-  /-- Does the predicate create an opaque context for its complement? -/
-  opaqueContext : Bool := false
   /-- The attitude the predicate expresses, doxastic or preferential, if it is an attitude
   predicate. -/
   attitude : Option Attitude := none
@@ -130,7 +126,6 @@ that reading gives one, and the predicate's own otherwise. -/
 def on (e : Embedding) (fr : ArgumentFrame) : Embedding where
   factivity := ((e.reading? fr).bind (·.factivity)).or e.factivity
   implicative := e.implicative
-  opaqueContext := ((e.reading? fr).bind (·.opaqueContext)).getD e.opaqueContext
   attitude := ((e.reading? fr).bind (·.attitude)).or e.attitude
   readings := []
 

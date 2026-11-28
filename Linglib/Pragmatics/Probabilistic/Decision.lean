@@ -23,7 +23,7 @@ included](##RSA.actionSpeaker_apply_singleton_ne_zero).
 * [sumers-etal-2024]
 * [harding-gerstenberg-icard-2025]
 * [brochhagen-franke-van-rooij-2018]
-* [van-rooy-2003]
+* [van-rooy-2003b]
 * [qing-franke-2015]
 -/
 

@@ -1,21 +1,15 @@
 module
 
-public import Linglib.Semantics.Reference.NominalMapping
+public import Linglib.Semantics.Reference.CovertShift
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Reference.Kind
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Languages.Mandarin.Nouns
 public import Linglib.Languages.Mandarin.Determiners
-public import Linglib.Languages.Japanese.Nouns
 public import Linglib.Languages.Japanese.Determiners
-public import Linglib.Languages.Romance.French.Nouns
 public import Linglib.Languages.Romance.French.Determiners
-public import Linglib.Languages.Romance.Italian.Nouns
 public import Linglib.Languages.Romance.Italian.Determiners
-public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Determiners
-public import Linglib.Languages.Slavic.Russian.Nouns
 public import Linglib.Languages.Slavic.Russian.Determiners
 public import Linglib.Data.Examples.Chierchia1998
 public import Linglib.Data.Examples.Languages
@@ -24,86 +18,92 @@ public import Studies.Carlson1977
 /-!
 # Chierchia (1998): Reference to kinds across languages
 
-The Nominal Mapping Parameter of [chierchia-1998] sets whether the nouns of a language denote
-kinds, so that they are arguments, properties, so that they are predicates, or either. A kind is
-an individual concept whose value at a situation is the sum of its instances. The operator ∪,
-`Kind.up`, takes that value to the set of its parts, and ∩, `Kind.down`, takes the extension of a
-property to its largest member. The plural `PL t` of a set `t` of atoms is the set of individuals
-outside `t` whose atoms are all in `t`.
+A kind is an individual concept whose value at a situation is the sum of its instances. The
+operator ∪ takes that value to the set of its parts, and ∩ takes the extension of a property to
+its largest member, where the resulting concept is a kind. The plural of a set of atoms holds of
+the individuals outside the set whose atoms are all in it. The Nominal Mapping Parameter sets
+whether the nouns of a language denote kinds, so that they are arguments, properties, so that
+they are predicates, or either.
 
 Where nouns denote kinds, the extension of a noun is ∪ of its kind. That set is closed downward,
-and in an atomic domain its plural is empty (`PL_up`), while the plural of the atoms is every
-other individual (`mem_PL_isMin`). The plural of a set of atoms is its closure under sums less
-the atoms (`PL_eq_supClosure_diff`), so its largest member is their sum
-(`isLUB_of_isGreatest_PL`). The sampled languages whose language files count nouns through
-classifiers are the ones whose nouns denote kinds (`hasClassifiers_iff`). Such a language admits
-every bare nominal as an argument, and one whose nouns denote properties admits none unless it
-has a null determiner, which a governing head licenses. A language with both settings admits a
-bare nominal where ∩ is defined for it or where no determiner lexicalizes the definite or the
-existential shift: with its two articles English admits a bare singular exactly where ∩ is
-defined (`english_licensesBare_singular_iff`), which it is not for a singular property, and
-Russian, with no article, admits every bare nominal (`russian_licensesBare`).
-`Language.AdmitsBare` puts these together, and the judgments of the paper's examples with a bare
-argument are the ones it gives (`bare_rows`), where ∩ is defined or not for the extension each
-class of noun has in a model of two atoms (`down_extension_mem_kinds_iff`).
+so it has no plural in an atomic domain, and it is a set of atoms only where the value of the
+kind is an atom, so that a numeral finds no atoms to count without a classifier. Such a language
+admits every bare nominal as an argument, and one whose nouns denote properties admits none
+unless it has a null determiner, which a governing head licenses. A language with both settings
+admits a bare nominal where ∩ is defined for it or where no determiner lexicalizes the definite
+or the existential shift. With its two articles English admits a bare singular exactly where ∩
+is defined, which it is not for a singular property, and Russian, with no article, admits every
+bare nominal.
 
-An English bare plural is shifted by ∩ where ∩ is defined for it and by ∃ otherwise
-(`english_plural_shift_iff`). The first is the name of a kind and the second a quantifier, an
-`Argument`. Raised over an operator, a kind leaves a trace that is a kind, so it has the reading
-it has in place (`Argument.raise_kind`), while the quantifier has a second reading. A predicate
-of objects holds of a kind iff the kind's value is in the predicate's upper closure
-(`Argument.apply_kind_iff`).
+An English bare plural is shifted by ∩ where ∩ is defined for it and by ∃ otherwise. The first
+is the name of a kind and the second a quantifier. A predicate of objects applies to a kind by
+existential quantification over its instances. Raised over an operator, a kind leaves a trace
+that is a kind, so it has the reading it has in place, while the quantifier has a second
+reading. In a generic sentence the instances of the kind are in the restriction of the generic
+operator.
 
-Carlson's predication of a state of a kind is the existential over the instances of its concept
-(`carlson_mem_image_iff`), so a state passes from a kind to any kind whose instances include its
-own (`carlson_119`). A generic sentence with a bare plural (`dogsBark`, `computersRoute`) entails
-the existential one wherever the kind has a normal instance (`some_up_of_mem_dogsBark`).
+## Main definitions
+
+* `Chierchia1998.PL`: the plural of a set of atoms.
+* `Chierchia1998.NominalMapping`, `Chierchia1998.NominalMapping.LicensesBare`: a setting of the
+  parameter, and the bare nominals a language with that setting and given determiners admits.
+* `Chierchia1998.Language.AdmitsBare`: the bare nominals a sampled language admits, with its null
+  determiner where it has one.
+* `Chierchia1998.Argument`: a kind or a quantifier, with its readings in place and raised.
+* `Chierchia1998.dogsBark`, `Chierchia1998.computersRoute`: two generic sentences with bare
+  plurals.
 
 ## Implementation notes
 
-Each language's blocking is derived from its language file's determiner inventory by
-`Determiner.Inventory.Blocks`, and whether it has classifiers from its language file's common nouns
-(`Language.nouns`): a Mandarin or Japanese noun records the classifiers that count it, and a noun
-of the other languages is a `ClassifiedNoun` over no classifiers. The paper has every noun of a
-kind-denoting language counted through a classifier, while the language files attest classifiers
-rather than that: Mandarin counts the measure noun *tiān* bare (`exists_isBareCount_mandarin`).
+The atomicity of the domain enters as hypotheses, since the individuals have no null element:
+every individual has an atom as a part, and an individual is part of whatever its atoms are part
+of. Link's nonempty sets of atoms meet both. The identification of the plural with the closure
+under sums less the atoms takes two more: an atom that is part of a sum is part of a summand,
+which holds in Link's model, and every individual is a finite sum of atoms, which holds there
+only of the finite individuals.
 
-`PL_up` takes the atomicity of the domain as two hypotheses, that every individual has an atom
-as a part and that an individual is part of whatever its atoms are part of, since the
-individuals have no null element; Link's nonempty sets of atoms meet both
-(`PL_up_individual`). `PL_eq_supClosure_diff` takes two more: an atom that is part of a sum is
-part of a summand, which holds in Link's model (`isMin_le_sup_individual`), and every individual
-is a finite sum of atoms, which holds there only of the finite individuals.
-
-The set `K` of kinds is a parameter, primitive as in the paper, and its property that no kind
-has a singular instance in every situation is a hypothesis, read with the paper's "(when
-defined)": no kind is singular in every situation where it has a value. The paper restricts
-kinds further to concepts that identify classes of objects with a sufficiently regular function
-or behavior, which is not formalized. A weaker condition, that no kind be necessarily
+The set of kinds is a parameter, and its property that no kind has a singular instance in every
+situation is a hypothesis, read as: no kind is singular in every situation where it has a value.
+The restriction of kinds to concepts that identify classes of objects with a sufficiently regular
+function or behavior is not formalized. A weaker condition, that no kind be necessarily
 instantiated by one individual, would not exclude ∩ of a singular property with no instance in
-some situation (the first `example` of the kind-formation section). The identity ∪∩P = P ∪ AT_P
-for a plural P is stated with AT_P, "the set that generates P under PL", read as the atoms
-beneath members of P (`up_down_PL`): read as the singular property itself, it fails at a
-situation with exactly one instance, where the plural has no member.
+some situation. The identity ∪∩P = P ∪ AT_P for a plural P is stated with AT_P the atoms beneath
+members of P: read as the singular property itself, it fails at a situation with exactly one
+instance, where the plural has no member.
 
-`Language.AdmitsBare` licenses the null determiner under government alone, leaving out
-licensing by focus, and under it chooses a shift as a language with both settings does. A
-predicate of kinds needs ∩ where nouns can be predicates. A mass noun, and a noun of a language
-without number, is given `Number.general`, which no article of the language files selects. The
-kinds of the model in which the examples are checked are all the concepts that the condition on
-kinds allows, so there every plural and mass extension has a kind; the paper's plurals without
-one, such as *parts of that machine*, are not among the rows.
-`bare_rows` leaves out the Russian singular generic *sobaka obycnoe zyvotnoe*, which the paper
-sets with the generic definite singular. The Italian example with a bare plural object is
-entered as acceptable, as the paper's text describes it.
+A sampled language's setting of the parameter and whether it has a null determiner are the
+paper's, and its blocking is derived from the determiner inventory of its language file. The null
+determiner is licensed under government alone, and under it a shift is chosen as in a language
+with both settings. A predicate of kinds needs ∩ where nouns can be predicates. A mass noun, and
+a noun of a language without number, has general number, which no article of the language files
+selects. The kinds of the model in which the examples are checked are all the concepts that the
+condition on kinds allows, so there every plural and mass extension has a kind. The Italian
+example with a bare plural object beside the starred subject is entered as acceptable, as the
+text describes it.
 
-Carlson's instance relation is part-of in the model `lawn`, so a kind is an instance of itself.
-The generic operator is the conditional over the normal cases of a `Genericity.Normality`.
+Carlson's instance relation is part-of in the model of his comparison, so a kind is an instance
+of itself. The generic operator is the conditional over the normal cases of a normality order.
+
+## TODO
+
+* The paper predicts that no numeral combines with a noun directly in a language whose nouns
+  denote kinds. The Mandarin and Japanese noun entries are not checked against it; the Mandarin
+  file enters the measure noun *tiān* 'day' as counted without a classifier.
+* The examples with numerals and classifiers or measure phrases, in Mandarin and Russian, are
+  entered and no theorem reads them.
+* Licensing of the null determiner by focus, and its failure under an individual-level predicate,
+  as in *Leo odia gatti*, where the object is governed and the sentence is out, are not modelled.
+  The Italian examples from the section on Romance beyond the two on government are not entered.
+* The Russian singular generic *sobaka obycnoe zyvotnoe* is acceptable and has the features of
+  the starred singular with *vymerli*; the mass reading of the generic definite singular, with
+  which the paper sets it, is not formalized.
+* The plurals without a kind, such as *parts of that machine*, are not among the rows.
 
 ## References
 
 * [chierchia-1998]
 * [carlson-1977]
+* [link-1983]
 -/
 
 @[expose] public section
@@ -112,6 +112,75 @@ namespace Chierchia1998
 
 open Genericity
 open Examples (Example)
+
+/-! ### The Nominal Mapping Parameter -/
+
+/-- A noun denotes a kind, of type e, or a property, of type ⟨e,t⟩. -/
+inductive NominalDenotation where
+  | kind
+  | property
+  deriving DecidableEq, Repr, Fintype
+
+/-- A setting of the Nominal Mapping Parameter is the set of denotation types a language's nouns
+can take. The language is [+arg] when `.kind` is in the setting and [+pred] when `.property` is;
+the empty setting, [−arg, −pred], leaves nouns nothing to denote. -/
+def NominalMapping := Finset NominalDenotation
+
+namespace NominalMapping
+
+instance : Membership NominalDenotation NominalMapping :=
+  inferInstanceAs (Membership NominalDenotation (Finset NominalDenotation))
+
+instance : DecidableEq NominalMapping := inferInstanceAs (DecidableEq (Finset NominalDenotation))
+
+instance (d : NominalDenotation) (m : NominalMapping) : Decidable (d ∈ m) :=
+  Finset.decidableMem d m
+
+/-- [+arg, −pred]: nouns denote kinds. -/
+def argOnly : NominalMapping := ({.kind} : Finset NominalDenotation)
+
+/-- [+arg, +pred]: nouns denote kinds or properties. -/
+def argAndPred : NominalMapping := ({.kind, .property} : Finset NominalDenotation)
+
+/-- [−arg, +pred]: nouns denote properties. -/
+def predOnly : NominalMapping := ({.property} : Finset NominalDenotation)
+
+@[simp] theorem mem_argOnly {d : NominalDenotation} : d ∈ argOnly ↔ d = .kind := by
+  cases d <;> decide
+
+@[simp] theorem mem_argAndPred {d : NominalDenotation} : d ∈ argAndPred := by cases d <;> decide
+
+@[simp] theorem mem_predOnly {d : NominalDenotation} : d ∈ predOnly ↔ d = .property := by
+  cases d <;> decide
+
+/-- A language with the setting `m` and the determiners `ds` admits as an argument a bare
+nominal of number `num` for which ∩ is defined just when `down` holds: it must be [+arg], and if
+it is also [+pred], so that its nouns are predicates, ∩ must be defined for the nominal or ι or ∃
+must be unblocked for its number. -/
+def LicensesBare (m : NominalMapping) (ds : Determiner.Inventory) (num : Number) (down : Prop) :
+    Prop :=
+  .kind ∈ m ∧ (.property ∉ m ∨ down ∨ ¬ ds.Blocks num .iota ∨ ¬ ds.Blocks num .exists)
+
+instance (m : NominalMapping) (ds : Determiner.Inventory) (num : Number) (down : Prop)
+    [Decidable down] : Decidable (m.LicensesBare ds num down) := by
+  unfold LicensesBare; infer_instance
+
+variable {ds : Determiner.Inventory} {num : Number} {down : Prop}
+
+-- (20i): a language whose nouns denote kinds admits every bare nominal, whatever its determiners.
+theorem argOnly_licensesBare : argOnly.LicensesBare ds num down := by simp [LicensesBare]
+
+-- A language whose nouns denote properties admits no bare nominal, whatever its determiners.
+theorem not_predOnly_licensesBare : ¬ predOnly.LicensesBare ds num down := by
+  simp [LicensesBare]
+
+-- With ι and ∃ blocked, a [+arg, +pred] language admits exactly the bare nominals ∩ is defined
+-- for.
+theorem argAndPred_licensesBare_iff (hι : ds.Blocks num .iota) (hex : ds.Blocks num .exists) :
+    argAndPred.LicensesBare ds num down ↔ down := by
+  simp [LicensesBare, hι, hex]
+
+end NominalMapping
 
 /-- The sample covers six of the languages the paper discusses. -/
 inductive Language where
@@ -135,21 +204,6 @@ def determiners : Language → Determiner.Inventory
   | english => English.Determiners.inventory
   | russian => Russian.Determiners.inventory
 
-/-- The type of the classifiers of the fragment of `l`, empty for a language without
-classifiers. -/
-abbrev ClassifierType : Language → Type
-  | mandarin | japanese => Classifier
-  | french | italian | english | russian => Empty
-
-/-- `nouns l` is the list of common nouns of the fragment of `l`. -/
-def nouns : (l : Language) → List (ClassifiedNoun l.ClassifierType)
-  | mandarin => Mandarin.Nouns.nouns.map (·.toClassifiedNoun)
-  | japanese => Japanese.Nouns.nouns.map (·.toClassifiedNoun)
-  | french => French.Nouns.nouns.map (·.toClassifiedNoun)
-  | italian => Italian.Nouns.nouns.map (·.toClassifiedNoun)
-  | english => English.Nouns.nouns.map (·.toClassifiedNoun)
-  | russian => Russian.Nouns.nouns.map (·.toClassifiedNoun)
-
 /-- The Glottocode of each sampled language. -/
 def glottocode : Language → Glottocode
   | mandarin => .mandarinChinese
@@ -159,9 +213,6 @@ def glottocode : Language → Glottocode
   | english => .english
   | russian => .russian
 
-/-- The language has classifiers: some common noun of its language file is counted through one. -/
-def HasClassifiers (l : Language) : Prop := ∃ n ∈ l.nouns, n.classifiers.Nonempty
-
 /-- Italian has a phonologically null determiner, and the other sampled languages none. -/
 def HasNullD (l : Language) : Prop := l = italian
 
@@ -170,21 +221,6 @@ instance : DecidablePred HasNullD := fun _ ↦ inferInstanceAs (Decidable (_ = _
 end Language
 
 open Chierchia1998.Language
-
-/-- The languages of the sample with classifiers are exactly the [+arg, −pred] ones. -/
-theorem hasClassifiers_iff (l : Language) : l.HasClassifiers ↔ l.nominalMapping = .argOnly := by
-  cases l
-  · exact iff_of_true ⟨Mandarin.Nouns.ren.toClassifiedNoun,
-      List.mem_map_of_mem (by simp [Mandarin.Nouns.nouns]), Mandarin.Classifiers.ge,
-      by simp [Mandarin.Nouns.ren]⟩ rfl
-  · exact iff_of_true ⟨Japanese.Nouns.inu.toClassifiedNoun,
-      List.mem_map_of_mem (by simp [Japanese.Nouns.nouns]), Japanese.Classifiers.hiki,
-      by simp [Japanese.Nouns.inu]⟩ rfl
-  all_goals exact iff_of_false (fun ⟨_, _, c, _⟩ ↦ c.elim) (by decide)
-
-theorem exists_isBareCount_mandarin : ∃ n ∈ Language.mandarin.nouns, n.IsBareCount :=
-  ⟨Mandarin.Nouns.tian.toClassifiedNoun, List.mem_map_of_mem (by simp [Mandarin.Nouns.nouns]),
-    by simp [Mandarin.Nouns.tian, ClassifiedNoun.IsBareCount]⟩
 
 /-! ### Plurals and mass nouns
 
@@ -231,6 +267,14 @@ theorem PL_up_individual {α : Type*} (k : Part (Individual α)) : PL (Kind.up k
       ⟨.atom a, Set.singleton_subset_iff.2 ha, Individual.isMin_atom a⟩)
     (fun _ _ h a ha ↦ Set.singleton_subset_iff.1 <|
       h (.atom a) (Set.singleton_subset_iff.2 ha) (Individual.isMin_atom a)) k
+
+/-- No kind's extension is a set of atoms in every situation, so a noun that denotes a kind gives
+a numeral no atoms to count and is counted through a classifier. -/
+theorem exists_not_forall_isMin_up {S : Type*} {K : Set (S → Part E)}
+    (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, IsMin d) {k : S → Part E} (hk : k ∈ K) :
+    ∃ s, ¬ ∀ x ∈ Kind.up (k s), IsMin x := by
+  by_contra h
+  exact hK k hk fun s d hd ↦ not_not.1 (not_exists.1 h s) d ⟨d, hd, le_rfl⟩
 
 -- (17c), with AT_P the atoms beneath the pluralities.
 theorem up_down_PL (ht : ∀ x ∈ t, IsMin x) (hdef : (PL t).Nonempty → (Kind.down (PL t)).Dom) :
@@ -304,10 +348,9 @@ end SumClosure
 /-! ### Kind formation
 
 ∩ takes a property to the individual concept that picks out the largest member of its extension
-at each situation, where that concept is a kind, (16), and is undefined otherwise; ∪ takes a kind
-to the parts of its value, (15). These are `Kind.down` and `Kind.up`. A kind cannot have a singular
-instance in every situation where it has one (p. 351), so ∩ is undefined for a singular property,
-which is true of atoms only (`Kind.down_comp_notMem_of_isMin`). -/
+at each situation, where that concept is a kind, and is undefined otherwise; ∪ takes a kind to
+the parts of its value. A kind cannot have a singular instance in every situation where it has
+one, so ∩ is undefined for a singular property, which is true of atoms only. -/
 
 section KindFormation
 
@@ -365,11 +408,11 @@ end KindFormation
 
 /-! ### Carlson's realization relation
 
-[carlson-1977] predicates a state of a kind as an existential over the stages that realize it,
-and takes every stage of a kind to be a stage of one of its instances. When Carlson's instances of
-a kind are the parts of its value, the instances of the concept, that existential is derived kind
-predication (31c), and the inheritance of states from a kind to any kind containing its instances,
-Carlson's (119), is the monotonicity of the existential in its restrictor. -/
+Carlson predicates a state of a kind as an existential over the stages that realize it, and
+takes every stage of a kind to be a stage of one of its instances. When his instances of a kind
+are the parts of its value, the instances of the concept, that existential is derived kind
+predication, and the inheritance of states from a kind to any kind containing its instances is
+the monotonicity of the existential in its restrictor. -/
 
 section Carlson
 
@@ -431,29 +474,8 @@ end Carlson
 /-! ### Bare arguments and type-shift blocking
 
 The determiner inventory of each sampled language decides by the Blocking Principle which
-covert shifts it blocks, and with the mapping which bare nominals it admits as arguments
-(`NominalMapping.LicensesBare`), given whether ∩ is defined for the nominal. -/
-
--- A [+arg, −pred] language of the sample has no articles and so blocks neither ι nor ∃.
-theorem argOnly_blocks_nothing :
-    ∀ l : Language, l.nominalMapping = .argOnly →
-      ¬ l.determiners.Lexicalizes .iota ∧ ¬ l.determiners.Lexicalizes .exists := by
-  decide
-
-theorem argOnly_licensesBare (num : Number) (down : Prop) :
-    (nominalMapping .mandarin).LicensesBare (determiners .mandarin) num down ∧
-      (nominalMapping .japanese).LicensesBare (determiners .japanese) num down := by
-  simp [NominalMapping.LicensesBare, nominalMapping]
-
--- The [−arg, +pred] languages of the sample have a definite article and so block ι.
-theorem predOnly_blocks_iota :
-    ∀ l : Language, l.nominalMapping = .predOnly → l.determiners.Lexicalizes .iota := by
-  decide
-
-theorem predOnly_not_licensesBare (num : Number) (down : Prop) :
-    ¬ (nominalMapping .french).LicensesBare (determiners .french) num down ∧
-      ¬ (nominalMapping .italian).LicensesBare (determiners .italian) num down := by
-  simp [NominalMapping.LicensesBare, nominalMapping]
+covert shifts it blocks, and with the mapping which bare nominals it admits as arguments, given
+whether ∩ is defined for the nominal. -/
 
 -- English, [+arg, +pred] with *the* blocking ι and *a* blocking ∃ for singulars, admits a bare
 -- singular exactly where kind formation is defined for it.

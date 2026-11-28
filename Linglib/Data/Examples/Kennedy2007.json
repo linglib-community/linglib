@@ -1,0 +1,1582 @@
+{
+  "features": [
+    {
+      "key": "modifier",
+      "lean": "modifier",
+      "type": "Modifier",
+      "doc": "The degree modifiers the paper uses to probe for an endpoint.",
+      "levels": [
+        {
+          "name": "perfectly",
+          "label": "perfectly",
+          "doc": "picks out a maximal degree"
+        },
+        {
+          "name": "slightly",
+          "label": "slightly",
+          "doc": "picks out a minimal degree"
+        }
+      ]
+    }
+  ],
+  "spans": {
+    "labels": {
+      "type": "SpanLabel",
+      "doc": "The labels of the spans the rows mark.",
+      "levels": [
+        {
+          "name": "adjective",
+          "label": "adjective",
+          "doc": "the adjective under test"
+        }
+      ]
+    },
+    "lexemes": {
+      "type": "Lexeme",
+      "doc": "The adjectives under test that the English adjectives file has.",
+      "levels": [
+        {
+          "name": "tall",
+          "label": "tall",
+          "doc": "English tall"
+        },
+        {
+          "name": "deep",
+          "label": "deep",
+          "doc": "English deep"
+        },
+        {
+          "name": "expensive",
+          "label": "expensive",
+          "doc": "English expensive"
+        },
+        {
+          "name": "short",
+          "label": "short",
+          "doc": "English short"
+        },
+        {
+          "name": "shallow",
+          "label": "shallow",
+          "doc": "English shallow"
+        },
+        {
+          "name": "bent",
+          "label": "bent",
+          "doc": "English bent"
+        },
+        {
+          "name": "dirty",
+          "label": "dirty",
+          "doc": "English dirty"
+        },
+        {
+          "name": "straight",
+          "label": "straight",
+          "doc": "English straight"
+        },
+        {
+          "name": "flat",
+          "label": "flat",
+          "doc": "English flat"
+        },
+        {
+          "name": "clean",
+          "label": "clean",
+          "doc": "English clean"
+        },
+        {
+          "name": "certain",
+          "label": "certain",
+          "doc": "English certain"
+        },
+        {
+          "name": "safe",
+          "label": "safe",
+          "doc": "English safe"
+        },
+        {
+          "name": "pure",
+          "label": "pure",
+          "doc": "English pure"
+        },
+        {
+          "name": "uncertain",
+          "label": "uncertain",
+          "doc": "English uncertain"
+        },
+        {
+          "name": "dangerous",
+          "label": "dangerous",
+          "doc": "English dangerous"
+        },
+        {
+          "name": "full",
+          "label": "full",
+          "doc": "English full"
+        },
+        {
+          "name": "openAdj",
+          "label": "open",
+          "doc": "English open"
+        },
+        {
+          "name": "empty",
+          "label": "empty",
+          "doc": "English empty"
+        },
+        {
+          "name": "closed",
+          "label": "closed",
+          "doc": "English closed"
+        }
+      ]
+    }
+  },
+  "index": {
+    "type": "Example",
+    "doc": "The modifier judgments of (62)–(65), one per modifier and adjective."
+  },
+  "examples": [
+    {
+      "id": "kennedy2007_62a_perfectly_tall",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly tall",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["tall", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "tall"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62a_slightly_tall",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "slightly tall",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["tall", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "tall"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62a_perfectly_deep",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly deep",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["deep", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "deep"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62a_slightly_deep",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "slightly deep",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["deep", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "deep"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62a_perfectly_expensive",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly expensive",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["expensive", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "expensive"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62a_slightly_expensive",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "slightly expensive",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["expensive", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "expensive"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62a_perfectly_likely",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly likely",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["likely", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62a_slightly_likely",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62a)"},
+      "language": "stan1293",
+      "primaryText": "slightly likely",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["likely", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_perfectly_short",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly short",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["short", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "short"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_slightly_short",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "slightly short",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["short", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "short"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_perfectly_shallow",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly shallow",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["shallow", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "shallow"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_slightly_shallow",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "slightly shallow",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["shallow", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "shallow"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_perfectly_inexpensive",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly inexpensive",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["inexpensive", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_slightly_inexpensive",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "slightly inexpensive",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["inexpensive", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_perfectly_unlikely",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly unlikely",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["unlikely", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_62b_slightly_unlikely",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(62b)"},
+      "language": "stan1293",
+      "primaryText": "slightly unlikely",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["unlikely", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_perfectly_bent",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly bent",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["bent", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "bent"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_slightly_bent",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "slightly bent",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["bent", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "bent"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_perfectly_bumpy",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly bumpy",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["bumpy", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_slightly_bumpy",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "slightly bumpy",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["bumpy", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_perfectly_dirty",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly dirty",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["dirty", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "dirty"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_slightly_dirty",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "slightly dirty",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["dirty", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "dirty"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_perfectly_worried",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly worried",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["worried", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63a_slightly_worried",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63a)"},
+      "language": "stan1293",
+      "primaryText": "slightly worried",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["worried", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_perfectly_straight",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly straight",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["straight", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "straight"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_slightly_straight",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "slightly straight",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["straight", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "straight"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_perfectly_flat",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly flat",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["flat", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "flat"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_slightly_flat",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "slightly flat",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["flat", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "flat"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_perfectly_clean",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly clean",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["clean", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "clean"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_slightly_clean",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "slightly clean",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["clean", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "clean"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_perfectly_unworried",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly unworried",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["unworried", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_63b_slightly_unworried",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(63b)"},
+      "language": "stan1293",
+      "primaryText": "slightly unworried",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["unworried", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_perfectly_certain",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly certain",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["certain", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "certain"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_slightly_certain",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "slightly certain",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["certain", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "certain"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_perfectly_safe",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly safe",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["safe", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "safe"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_slightly_safe",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "slightly safe",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["safe", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "safe"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_perfectly_pure",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly pure",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["pure", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "pure"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_slightly_pure",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "slightly pure",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["pure", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "pure"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_perfectly_accurate",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly accurate",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["accurate", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64a_slightly_accurate",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64a)"},
+      "language": "stan1293",
+      "primaryText": "slightly accurate",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["accurate", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_perfectly_uncertain",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly uncertain",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["uncertain", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "uncertain"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_slightly_uncertain",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "slightly uncertain",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["uncertain", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "uncertain"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_perfectly_dangerous",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly dangerous",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["dangerous", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "dangerous"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_slightly_dangerous",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "slightly dangerous",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["dangerous", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "dangerous"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_perfectly_impure",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly impure",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["impure", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_slightly_impure",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "slightly impure",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["impure", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_perfectly_inaccurate",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly inaccurate",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["inaccurate", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "questionable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_64b_slightly_inaccurate",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(64b)"},
+      "language": "stan1293",
+      "primaryText": "slightly inaccurate",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["inaccurate", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65a_perfectly_full",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly full",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["full", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "full"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65a_slightly_full",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65a)"},
+      "language": "stan1293",
+      "primaryText": "slightly full",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["full", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "full"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65a_perfectly_open",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly open",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["open", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "open"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65a_slightly_open",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65a)"},
+      "language": "stan1293",
+      "primaryText": "slightly open",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["open", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "open"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65a_perfectly_opaque",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65a)"},
+      "language": "stan1293",
+      "primaryText": "perfectly opaque",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["opaque", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65a_slightly_opaque",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65a)"},
+      "language": "stan1293",
+      "primaryText": "slightly opaque",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["opaque", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65b_perfectly_empty",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly empty",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["empty", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "empty"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65b_slightly_empty",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65b)"},
+      "language": "stan1293",
+      "primaryText": "slightly empty",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["empty", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "empty"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65b_perfectly_closed",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly closed",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["closed", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "closed"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65b_slightly_closed",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65b)"},
+      "language": "stan1293",
+      "primaryText": "slightly closed",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["closed", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective", "lexeme": "closed"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65b_perfectly_transparent",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65b)"},
+      "language": "stan1293",
+      "primaryText": "perfectly transparent",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["perfectly", ""], ["transparent", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "perfectly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    },
+    {
+      "id": "kennedy2007_65b_slightly_transparent",
+      "source": {"bibkey": "kennedy-2007", "paperLabel": "(65b)"},
+      "language": "stan1293",
+      "primaryText": "slightly transparent",
+      "discourseSegments": [],
+      "glossedTokens": [
+        ["slightly", ""], ["transparent", ""]
+      ],
+      "translation": "",
+      "context": "",
+      "judgment": "acceptable",
+      "contrasts": [],
+      "readings": [],
+      "spans": [
+        {"start": 1, "length": 1, "label": "adjective"}
+      ],
+      "paperFeatures": [
+        ["section", "4.2"],
+        ["modifier", "slightly"]
+      ],
+      "comment": "",
+      "verified": "page-image"
+    }
+  ]
+}

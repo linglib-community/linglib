@@ -17,8 +17,7 @@ position takes a complementizer when its selection takes the complementizer's
 (`Clause.Selection.Takes`): some clause is admitted by both, and both restrict a common respect.
 A frame takes a complementizer when some complement does. A complement whose subject is
 unpronounced takes no complementizer requiring a pronounced one, as *for* requires an overt
-accusative subject. A predicate takes a complementizer when one of its frames does, whatever its
-word class; the case of a verb is in `Syntax/Category/Verb/Takes.lean`.
+accusative subject. The selection of a valency is in `Syntax/Category/Verb/Takes.lean`.
 
 Selection is by these three respects alone, so two complementizers with the same selection are
 taken by the same positions; a lexical restriction beyond them, as of Bulgarian *deto* to some
@@ -29,8 +28,6 @@ emotive factives, is a list the language file records.
 * `ArgumentFrame.Position.Takes`: a position takes a complementizer.
 * `ArgumentFrame.Takes`: a frame takes a complementizer.
 * `ArgumentFrame.typedBy`: the frame whose one complement is the clause a complementizer types.
-* `ArgumentFrame.AnyTakes`, `ArgumentFrame.typers`: a predicate with given frames takes a
-  complementizer, and the complementizers of an inventory it takes.
 
 ## Main results
 
@@ -127,34 +124,5 @@ def typedBy (z : Complementizer) (s : Finset Clause.EmbeddedSubject := Finset.un
   ⟨some .nominal, [.typedBy z s]⟩
 
 @[simp] theorem complements_typedBy : (typedBy z s).complements = [.typedBy z s] := rfl
-
-/-! ### The frames of a predicate -/
-
-variable {frs frs' : List ArgumentFrame} {inv : List Complementizer}
-
-/-- A predicate with the frames `frs` takes `z` when some frame does. The predicate may be of any
-word class: a verb, or an adjective or a noun that takes a clause. -/
-def AnyTakes (frs : List ArgumentFrame) (z : Complementizer) : Prop := ∃ fr ∈ frs, fr.Takes z
-
-instance : Decidable (AnyTakes frs z) := inferInstanceAs (Decidable (∃ fr ∈ frs, _))
-
-/-- Taking is monotone in the frames. -/
-theorem AnyTakes.mono (hsub : frs ⊆ frs') (h : AnyTakes frs z) : AnyTakes frs' z :=
-  h.imp fun _ ⟨hf, ht⟩ ↦ ⟨hsub hf, ht⟩
-
-/-- A predicate taking a complementizer has a frame with a clausal complement. -/
-theorem AnyTakes.exists_hasClausal (h : AnyTakes frs z) : ∃ fr ∈ frs, fr.HasClausal :=
-  h.imp fun _ ⟨hf, ht⟩ ↦ ⟨hf, ht.hasClausal⟩
-
-/-- No predicate takes a complementizer restricting nothing. -/
-theorem not_anyTakes_of_eq_top (hz : z.toSelection = ⊤) : ¬ AnyTakes frs z :=
-  fun ⟨_, _, h⟩ ↦ not_takes_of_eq_top hz h
-
-/-- The complementizers of an inventory that a predicate with the frames `frs` takes. -/
-def typers (frs : List ArgumentFrame) (inv : List Complementizer) : List Complementizer :=
-  inv.filter (AnyTakes frs ·)
-
-@[simp] theorem mem_typers : z ∈ typers frs inv ↔ z ∈ inv ∧ AnyTakes frs z := by
-  simp [typers]
 
 end ArgumentFrame

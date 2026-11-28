@@ -87,8 +87,8 @@ open Data.WALS
 /-- The value of a verb's clausal complements on the map of [cristofaro-2013], for a verb of
 utterance: balanced, deranked or either, by the complement types its frames restrict them to. -/
 def Verb.utteranceComplement (v : Verb) : Option F128A.UtteranceComplementType :=
-  F128A.UtteranceComplementType.ofProps (∃ c ∈ v.codings, c.IsBalanced)
-    (∃ c ∈ v.codings, ¬ c.IsBalanced)
+  F128A.UtteranceComplementType.ofProps (∃ c ∈ v.valency.codings, c.IsBalanced)
+    (∃ c ∈ v.valency.codings, ¬ c.IsBalanced)
 
 /-- Some complement of the verb is controlled by its subject, whose own subject is then left
 implicit. -/
@@ -103,5 +103,5 @@ instance (v : Verb) : Decidable v.HasSubjectControl :=
 controlled complement and no finite one, and expressed, by person marking on the complement's
 verb at least, when it has a finite complement and no controlled one. -/
 def Verb.wantComplementSubject (v : Verb) : Option F124A.WantComplementSubject :=
-  if v.HasSubjectControl ∧ (∃ c ∈ v.codings, c.IsFinite) then none
-  else F124A.WantComplementSubject.ofProps v.HasSubjectControl (∃ c ∈ v.codings, c.IsFinite)
+  if v.HasSubjectControl ∧ (∃ c ∈ v.valency.codings, c.IsFinite) then none
+  else F124A.WantComplementSubject.ofProps v.HasSubjectControl (∃ c ∈ v.valency.codings, c.IsFinite)

@@ -204,28 +204,24 @@ def verbinden : Verb :=
 def hoffen : Verb :=
   { Verb.ofStem (weak "hoffen") with
     valency := .ofFrame ArgumentFrame.finiteClause
-    opaqueContext := true
     attitude := some (.preferential .positive) }
 
 /-- *wünschen* 'wish' is a positive preferential attitude verb. -/
 def wuenschen : Verb :=
   { Verb.ofStem (weak "wünschen") with
     valency := .ofFrame ArgumentFrame.finiteClause
-    opaqueContext := true
     attitude := some (.preferential .positive) }
 
 /-- *fürchten* 'fear' is a negative preferential attitude verb. -/
 def fuerchten : Verb :=
   { Verb.ofStem (weak "fürchten") with
     valency := .ofFrame ArgumentFrame.finiteClause
-    opaqueContext := true
     attitude := some (.preferential .negative) }
 
 /-- *befürchten* 'be afraid of' is formed on *fürchten* with the inseparable *be-*. -/
 def befuerchten : Verb :=
   { Verb.ofStem (fuerchten.stem.inseparable "be") with
     valency := .ofFrame ArgumentFrame.finiteClause
-    opaqueContext := true
     attitude := some (.preferential .negative) }
 
 /-- *sorgen* 'worry' is used reflexively, *sich sorgen*, and is based on uncertainty. -/
@@ -234,7 +230,6 @@ def sorgen : Verb :=
     -- a reflexive verb, which forms no passive ([durrell-2011] §15.2)
     valency := .ofFrame ArgumentFrame.finiteClause
     voices := [(werdenPassive ArgumentFrame.finiteClause, .excluded)]
-    opaqueContext := true
     attitude := some (.preferential .negative) }
 
 /-! ### Occasion verbs
@@ -370,7 +365,6 @@ def vergessen : Verb :=
       { infinitive := "vergessen", present := "vergisst", past := "vergaß",
         participle := "vergessen", prefixGe := false } with
     valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause],
-      opaqueContext := true
     objects := [.acc] }
 
 /-- *erwarten* 'expect' is formed on *warten* with the inseparable *er-*, and takes a noun phrase
@@ -378,7 +372,6 @@ or a *dass*-clause. -/
 def erwarten : Verb :=
   { Verb.ofStem ((weak "warten").inseparable "er") with
     valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause],
-      opaqueContext := true
     objects := [.acc] }
 
 /-- *beschließen* 'decide' is formed on *schließen* with the inseparable *be-*, and takes a noun

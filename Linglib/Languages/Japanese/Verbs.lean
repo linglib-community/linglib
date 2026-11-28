@@ -35,7 +35,6 @@ def tanoshimi : Verb where
   morphs := [.root "tanoshimi"]
   script := some "楽しみ"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- 恐れ *osore* 'fear', a negative preference. -/
@@ -43,7 +42,6 @@ def osore : Verb where
   morphs := [.root "osore"]
   script := some "恐れ"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-- 期待 *kitai* 'expect, hope', a positive preference. -/
@@ -51,7 +49,6 @@ def kitai : Verb where
   morphs := [.root "kitai"]
   script := some "期待"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- 望む *nozomu* 'hope', a positive preference. -/
@@ -59,7 +56,6 @@ def nozomu : Verb where
   morphs := [.root "nozomu"]
   script := some "望む"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- 心配 *shinpai* 'worry', a negative preference. -/
@@ -67,7 +63,6 @@ def shinpai : Verb where
   morphs := [.root "shinpai"]
   script := some "心配"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-! ### Departure verbs -/

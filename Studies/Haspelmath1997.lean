@@ -291,14 +291,14 @@ open PolarityItem LicensingContext
 
 theorem carries_antiMorphic_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
-    c.licenser.Carries .antiMorphic ↔ c.haspelmath = some .directNeg := by
+    c.Licenses (.npi .antiMorphic) ↔ c.haspelmath = some .directNeg := by
   revert c; decide
 
 /-- Among the licensing contexts realizing a negation function, anti-additivity holds of every
 licenser but *doubt*'s, not believing the complement, which is only downward entailing. -/
 theorem carries_antiAdditive_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
-    c.licenser.Carries .antiAdditive ↔ c ≠ .doubtVerb := by
+    c.Licenses (.npi .antiAdditive) ↔ c ≠ .doubtVerb := by
   revert c; decide
 
 end Licensing
@@ -638,90 +638,101 @@ theorem ungrammatical_excludes :
       ∀ l ∈ e.features "series", Excludes e l := by
   decide +kernel
 
-/-! ### The regions against the licensing theory
+/-! ### The regions against the strength classes
 
-A figure records the functions in which a series is possible. For a polarity-sensitive series,
-these are the functions in which the licensing theory of `Semantics/PolarityItem` should admit its
-members. The theory admits an item in a function when some named context that realizes the
-function admits the item. An item belongs to the series whose members include its form. -/
+A figure records the functions in which a series is possible. A class of polarity items is
+possible in the functions that some named context realizes whose profile admits the class. Each
+series is compared with the region of the class to which its member belongs. An item belongs to
+the series whose members include its form. -/
 
 section LicensingTheory
 
 open PolarityItem
 
-/-- The functions in which the licensing theory admits an item, namely those functions for which
-some named context realizing the function admits the item. -/
-def theoryRegion (e : PolarityItem) : Finset HaspelmathFunction :=
-  Finset.univ.filter fun f ↦ ∃ c : LicensingContext, c.haspelmath = some f ∧ c.licenser.Admits e
+/-- The functions in which a class of items is possible, namely those functions that some
+context in the region of the class realizes. -/
+def classRegion (k : PolarityItem.Class) : Finset HaspelmathFunction :=
+  Finset.univ.filter fun f ↦ ∃ c ∈ k.region, c.haspelmath = some f
 
 /-- The region of the series of a paradigm whose members include the form of an item. -/
 def regionOf (ss : List Series) (e : PolarityItem) : Option (Finset HaspelmathFunction) :=
   (ss.find? fun s ↦ ∃ p ∈ s.members, p.form = e.form).map (·.functions)
 
--- The theory reproduces the regions of the negative concord series, of Korean *-to* once it
--- requires an anti-additive context, and of the general series of Quechua and Hindi.
-theorem regionOf_eq_theoryRegion :
-    ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki), (mandarin, Mandarin.PolarityItems.sheiDou),
-      (russian, Russian.PolarityItems.nikto), (korean, Korean.PolarityItems.nwukwuTo),
-      (quechua, Quechua.PolarityItems.piPis), (hindi, HindiUrdu.PolarityItems.koiiBhii),
-      (hindi, HindiUrdu.PolarityItems.kuchBhii), (french, French.PolarityItems.personne),
-      (french, French.PolarityItems.rien), (french, French.PolarityItems.jamais)],
-      regionOf p.1 p.2 = some (theoryRegion p.2) := by
+-- The regions of the negative concord series are that of the anti-morphic class, and the region
+-- of Korean *-to* is that of the anti-additive class.
+theorem regionOf_eq_classRegion :
+    ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki, Negation.Strength.antiMorphic),
+      (mandarin, Mandarin.PolarityItems.sheiDou, .antiMorphic),
+      (russian, Russian.PolarityItems.nikto, .antiMorphic),
+      (korean, Korean.PolarityItems.nwukwuTo, .antiAdditive)],
+      regionOf p.1 p.2.1 = some (classRegion (.npi p.2.2)) := by
   decide +kernel
 
--- The free-choice route admits every free-choice item under necessity, which realizes the irrealis
--- function, where the book finds free-choice series unacceptable. For these items this is the only
--- difference between the two regions.
-theorem regionOf_eq_theoryRegion_sdiff_irrealis :
-    ∀ p ∈ [(english, English.PolarityItems.any), (japanese, Japanese.PolarityItems.dareDemo),
-      (korean, Korean.PolarityItems.nwukwuNa), (russian, Russian.PolarityItems.ktoUgodno)],
-      .irrealis ∈ theoryRegion p.2 ∧
-        regionOf p.1 p.2 = some (theoryRegion p.2 \ {.irrealis}) := by
+-- A question places no operator over an item, so no class is possible in the question function.
+-- The general series of Quechua and Hindi and the French negative series have the region of the
+-- weak class, with free choice for the first two, together with the question function.
+theorem regionOf_eq_classRegion_union_question :
+    ∀ p ∈ [(quechua, Quechua.PolarityItems.piPis, true),
+      (hindi, HindiUrdu.PolarityItems.koiiBhii, true),
+      (hindi, HindiUrdu.PolarityItems.kuchBhii, true),
+      (french, French.PolarityItems.personne, false), (french, French.PolarityItems.rien, false),
+      (french, French.PolarityItems.jamais, false)],
+      regionOf p.1 p.2.1 = some (classRegion (.npi .weak p.2.2) ∪ {.question}) := by
   decide +kernel
 
--- The weak class admits an item in every downward-entailing context and in questions. The
--- book, however, excludes some of these series from direct negation, which the negative series
--- take (Hungarian *sem-*, Russian *ni-*, and German *kein*), and others from questions,
--- conditionals, or comparatives. The weak class does not admit a weak negative polarity item in
--- the irrealis function, where Russian *-libo* and the Mandarin bare interrogatives occur, and it
--- admits no item in the specific functions, which no named context realizes.
-theorem regionOf_eq_theoryRegion_sdiff_union :
+-- A free-choice class is possible under necessity, which realizes the irrealis function, where
+-- the book finds free-choice series unacceptable. For these items this is the only difference
+-- between the two regions, the question function of *any* aside.
+theorem regionOf_eq_classRegion_sdiff_irrealis :
+    (∀ p ∈ [(japanese, Japanese.PolarityItems.dareDemo), (korean, Korean.PolarityItems.nwukwuNa),
+      (russian, Russian.PolarityItems.ktoUgodno)],
+      regionOf p.1 p.2 = some (classRegion .fci \ {.irrealis})) ∧
+    .irrealis ∈ classRegion .fci ∧
+      regionOf english English.PolarityItems.any =
+        some (classRegion (.npi .weak true) \ {.irrealis} ∪ {.question}) := by
+  decide +kernel
+
+-- The weak class is possible in every downward-entailing context. The book, however, excludes
+-- some of these series from direct negation, which the negative series take (Hungarian *sem-*,
+-- Russian *ni-*, and German *kein*), and others from conditionals or comparatives. The weak class
+-- is not possible in the question function, where six of these series occur, nor in the irrealis
+-- function, where Russian *-libo* and the Mandarin bare interrogatives occur, and no class is
+-- possible in the specific functions, which no named context realizes.
+theorem regionOf_eq_classRegion_sdiff_union :
     regionOf hungarian Hungarian.PolarityItems.akárki =
-        some (theoryRegion Hungarian.PolarityItems.akárki \ {.irrealis, .question, .directNeg}) ∧
+        some (classRegion (.npi .weak true) \ {.irrealis, .directNeg}) ∧
     regionOf hungarian Hungarian.PolarityItems.bárki =
-        some (theoryRegion Hungarian.PolarityItems.bárki \ {.irrealis, .question, .directNeg}) ∧
+        some (classRegion (.npi .weak true) \ {.irrealis, .directNeg}) ∧
     regionOf mandarin Mandarin.PolarityItems.renhe =
-        some (theoryRegion Mandarin.PolarityItems.renhe \ {.irrealis, .question, .conditional}) ∧
+        some (classRegion (.npi .weak true) \ {.irrealis, .conditional}) ∧
     regionOf finnish Finnish.PolarityItems.kukaan =
-        some (theoryRegion Finnish.PolarityItems.kukaan \ {.conditional}) ∧
+        some (classRegion (.npi .weak) \ {.conditional} ∪ {.question}) ∧
     regionOf italian Italian.PolarityItems.nessuno =
-        some (theoryRegion Italian.PolarityItems.nessuno \ {.conditional, .comparative}) ∧
+        some (classRegion (.npi .weak) \ {.conditional, .comparative} ∪ {.question}) ∧
     regionOf russian Russian.PolarityItems.ktoLibo =
-        some (theoryRegion Russian.PolarityItems.ktoLibo \ {.directNeg} ∪ {.irrealis}) ∧
+        some (classRegion (.npi .weak) \ {.directNeg} ∪ {.irrealis, .question}) ∧
     regionOf mandarin Mandarin.PolarityItems.shei =
-        some (theoryRegion Mandarin.PolarityItems.shei \ {.comparative} ∪ {.irrealis}) ∧
+        some (classRegion (.npi .weak) \ {.comparative} ∪ {.irrealis, .question}) ∧
     regionOf mandarin Mandarin.PolarityItems.shenme =
-        some (theoryRegion Mandarin.PolarityItems.shenme \ {.comparative} ∪ {.irrealis}) ∧
+        some (classRegion (.npi .weak) \ {.comparative} ∪ {.irrealis, .question}) ∧
     regionOf german German.PolarityItems.irgendein =
-        some (theoryRegion German.PolarityItems.irgendein \ {.directNeg} ∪ {.specificUnknown}) := by
+        some (classRegion (.npi .weak true) \ {.directNeg} ∪ {.specificUnknown, .question}) := by
   decide +kernel
 
 -- In the sources of the language file, Japanese *dare-mo* is a strict negative concord item
--- licensed by
--- clausemate negation. The book, however, also draws *-mo* over indirect negation and the
--- comparative, with *omow-ana-i* 'not think' (A286).
+-- licensed by clausemate negation. The book, however, also draws *-mo* over indirect negation and
+-- the comparative, with *omow-ana-i* 'not think' (A286).
 theorem dareMo_region :
     regionOf japanese Japanese.PolarityItems.dareMo =
-      some (theoryRegion Japanese.PolarityItems.dareMo ∪ {.indirectNeg, .comparative}) := by
+      some (classRegion (.npi .antiMorphic) ∪ {.indirectNeg, .comparative}) := by
   decide +kernel
 
--- The free-choice route admits Finnish *hyvänsä* under necessity, where the book has no free-choice
--- series. It does not admit *hyvänsä* in conditionals, where the book has it as the emphatic
--- alternative to *joku* (A209), nor in the standard of an equative comparison (A214).
+-- A free-choice class is possible under necessity, where the book has no free-choice series for
+-- Finnish *hyvänsä*. It is not possible in conditionals, where the book has *hyvänsä* as the
+-- emphatic alternative to *joku* (A209), nor in the standard of an equative comparison (A214).
 theorem kukaHyvänsä_region :
     regionOf finnish Finnish.PolarityItems.kukaHyvänsä =
-      some (theoryRegion Finnish.PolarityItems.kukaHyvänsä \ {.irrealis} ∪
-        {.conditional, .comparative}) := by
+      some (classRegion .fci \ {.irrealis} ∪ {.conditional, .comparative}) := by
   decide +kernel
 
 end LicensingTheory

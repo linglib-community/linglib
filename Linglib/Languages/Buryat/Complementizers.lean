@@ -80,8 +80,8 @@ def nominalizedFrame : ArgumentFrame :=
 /-- *hanaxa* 'think', translated 'remember' with a nominalized complement (§4.4.3): one verb,
 whose nominalized complement carries a presupposition that the event it describes started
 before the thinking ([bondarenko-2020] (2), (21)). It quantifies over doxastic alternatives
-on every frame, and its `readings` record the alternation, opaque on the bare CP and transparent
-on the nominalized frame. The nominalized frame is factive: the head θTh that introduces its
+on every frame: a bare CP gives the content of the thought and a nominalized clause what the
+thought is about. The nominalized frame is factive: the head θTh that introduces its
 argument, not the verb, contributes the presupposition. Its class `.full` is our mapping of
 [bondarenko-2020]'s projection data: the inference survives a question (14) and negation (15),
 and a speaker ignorant of it cannot use the sentence (3). -/
@@ -89,9 +89,7 @@ def hanaxa : Verb where
   morphs := [.root "hanaxa"]
   valency := .ofFrames [ArgumentFrame.finiteClause, nominalizedFrame]
   attitude := some (.doxastic .doxastic)
-  readings := [
-    { frame := ArgumentFrame.finiteClause, opaqueContext := some true },
-    { frame := nominalizedFrame, opaqueContext := some false, factivity := some .full }]
+  readings := [{ frame := nominalizedFrame, factivity := some .full }]
 
 /-- *mɘdɘxɘ* 'know' — factive in both frames (ex. 36); embeds polar
 questions (ex. 3). -/

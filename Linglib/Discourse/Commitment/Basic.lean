@@ -6,55 +6,46 @@ public import Mathlib.Data.Set.Lattice.Bounded
 /-!
 # Commitment states
 
-A public commitment is a participant's undertaking to act as if a proposition holds, in the
-tradition of Hamblin and Brandom. A commitment state relates holders to the propositions they are
-committed to. The holders are whatever a framework distinguishes commitments by, such as the
-participants, as for Gunlogson and for Farkas and Bruce, or a participant together with the
-attitude the commitment is to, belief or preference, as for Condoravdi and Lauer. A holder's
-commitment set is the set of worlds its commitments leave open, and adding a commitment narrows it
-by the content. A commitment as a proposition, which a common ground can contain without
-containing its content, is the notation `k ⊢[O] φ` of `Commitment/Proposition.lean`.
+A *commitment state* records what each holder is publicly committed to. It is a relation between
+holders and propositions. A holder is whatever distinguishes one commitment from another: a
+participant of the conversation, or a participant together with an attitude such as belief or
+preference.
+
+The *commitment set* of a holder is the set of worlds at which every proposition the holder is
+committed to is true. Committing a holder to `φ` intersects the holder's commitment set with `φ`
+and leaves the commitment sets of the other holders unchanged.
 
 ## Main definitions
 
-* `Commitment.State κ W`: a commitment state, a relation from holders to propositions.
-* `Commitment.Force`: the attitude a commitment is to.
-* `Commitment.State.contents`: the propositions a holder is committed to.
-* `Commitment.State.commitmentSet`: the worlds a holder's commitments leave open, Gunlogson's
-  commitment set.
-* `Commitment.State.jointContents`: the propositions every holder is committed to.
+* `State κ W`: a commitment state with holders `κ` and worlds `W`.
+* `State.contents K k`: the propositions `k` is committed to in `K`.
+* `State.commitmentSet K k`: the worlds that belong to every member of `K.contents k`.
+* `State.Sincere K M w`: every holder `k` holds at `w`, under the attitude `M k`, each proposition
+  in `K.contents k`.
 
 ## Main results
 
-* `Commitment.State.commitmentSet_insert_self`, `Commitment.State.commitmentSet_insert_of_ne`:
-  adding a commitment narrows its holder's commitment set by its content and leaves the other
-  holders' alone.
-* `Commitment.State.commitmentSet_subset_of_mem_jointContents`: what every holder is committed to
-  holds throughout every commitment set.
+* `State.commitmentSet_insert_self`: committing `k` to `φ` intersects the commitment set of `k`
+  with `φ`.
+* `State.commitmentSet_insert_of_ne`: committing `k` to `φ` does not change the commitment set of
+  another holder.
 
 ## References
 
-* [C. L. Hamblin, *Fallacies* (1970)][hamblin-1970]
-* [R. Brandom, *Making It Explicit* (1994)][brandom-1994]
-* [C. Gunlogson, *True to Form: Rising and Falling Declaratives as Questions in English*
-  (2001)][gunlogson-2001]
-* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
-  (2010)][farkas-bruce-2010]
-* [C. Condoravdi and S. Lauer, *Imperatives: Meaning and illocutionary force*
-  (2012)][condoravdi-lauer-2012]
+* [hamblin-1970]
+* [brandom-1994]
+* [gunlogson-2001]
+* [farkas-bruce-2010]
+* [condoravdi-lauer-2012]
+* [van-der-leer-2026]
 -/
 
 @[expose] public section
 
 namespace Commitment
 
-/-- The attitude a commitment is to, belief or preference. -/
-inductive Force
-  | doxastic
-  | preferential
-  deriving DecidableEq, Repr
-
-/-- A commitment state relates holders to the propositions they are committed to. -/
+/-- A **commitment state** is a relation between holders and the propositions they are committed to.
+-/
 abbrev State (κ W : Type*) := SetRel κ (Set W)
 
 namespace State
@@ -63,15 +54,12 @@ open scoped SetRel
 
 variable {κ W : Type*} (K : State κ W) (k : κ)
 
-/-- The contents of `k` in `K` are the propositions `k` is committed to. -/
+/-- The **contents** of `k` in `K` are the propositions `k` is committed to in `K`. -/
 def contents : Set (Set W) := {p | k ~[K] p}
 
-/-- The commitment set of `k` in `K` is the set of worlds compatible with `k`'s commitments
-([gunlogson-2001]'s `cs_k`). -/
+/-- The **commitment set** of `k` in `K` is the set of worlds that belong to every proposition `k`
+is committed to in `K` ([gunlogson-2001]). -/
 def commitmentSet : Set W := ⋂₀ K.contents k
-
-/-- The joint contents of `K` are the propositions every holder is committed to. -/
-def jointContents : Set (Set W) := ⋂ k, K.contents k
 
 variable {K k} {L : State κ W} {k' : κ} {p φ : Set W}
 
@@ -109,11 +97,13 @@ theorem commitmentSet_insert_of_ne (h : k' ≠ k) :
   rw [commitmentSet, contents_insert_of_ne h]
   rfl
 
-theorem mem_jointContents : p ∈ K.jointContents ↔ ∀ k, k ~[K] p := Set.mem_iInter
+/-! ### Sincerity -/
 
-theorem commitmentSet_subset_of_mem_jointContents (h : p ∈ K.jointContents) (k : κ) :
-    K.commitmentSet k ⊆ p :=
-  commitmentSet_subset (mem_jointContents.1 h k)
+/-- A commitment state `K` is **sincere** at `w` with respect to the attitudes `M` when every holder
+`k` holds at `w`, under the attitude `M k`, each proposition `k` is committed to. -/
+def Sincere (K : State κ W) (M : κ → W → Set (Set W)) (w : W) : Prop :=
+  ∀ k p, k ~[K] p → p ∈ M k w
+
 
 end State
 

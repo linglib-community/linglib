@@ -14,9 +14,8 @@ the comparative *plus* 'more'. The first three are members of the *personne*-ser
 particle *ne*, as in *Je ne vois rien* 'I cannot see anything', and it is also used under indirect
 negation, in comparatives, and in rhetorical questions and conditionals. French is a non-strict
 negative concord language, and its negator *ne* is optional both before and after the negative
-word, as van der Auwera and Van Alsenoy describe. The negative words therefore carry the weak
-licensor that Spanish and Italian negative words carry. Clausal negation is treated in the sibling
-file `Negation.lean`.
+word, as van der Auwera and Van Alsenoy describe. Clausal negation is treated in the sibling file
+`Negation.lean`.
 
 ## References
 
@@ -32,22 +31,18 @@ open PolarityItem
 
 /-- *personne* 'nobody, anybody', a member of the *personne*-series of [haspelmath-1997]. -/
 def personne : PolarityItem :=
-  { form := Indefinites.personne.form
-  , licensor := some .weak }
+  { form := Indefinites.personne.form }
 
 /-- *rien* 'nothing, anything', a member of the *personne*-series of [haspelmath-1997]. -/
 def rien : PolarityItem :=
-  { form := Indefinites.rien.form
-  , licensor := some .weak }
+  { form := Indefinites.rien.form }
 
 /-- *jamais* 'never, ever', a member of the *personne*-series of [haspelmath-1997]. -/
 def jamais : PolarityItem :=
-  { form := Indefinites.jamais.form
-  , licensor := some .weak }
+  { form := Indefinites.jamais.form }
 
 /-- *plus* 'no more, no longer', which is the comparative *plus* 'more' with *ne*. -/
 def plus : PolarityItem :=
-  { form := "plus"
-  , licensor := some .weak }
+  { form := "plus" }
 
 end French.PolarityItems

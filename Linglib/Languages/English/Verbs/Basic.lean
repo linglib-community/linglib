@@ -5,7 +5,6 @@ public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Data.VerbClasses.Levin1993.Index
 public import Linglib.Syntax.Clause.Complementation
-public import Linglib.Morphology.Word.Basic
 public import Linglib.Languages.English.Inflection
 public import Linglib.Languages.English.Adpositions
 public import Linglib.Languages.English.Verbs.Infinitive
@@ -45,8 +44,7 @@ open ArgumentStructure Aspect Data.VerbClasses
 
 /-! ### Voice -/
 
-/-- The passive of a frame, marked by the auxiliary *be* with the past participle,
-`Verb.passiveParticiple`. -/
+/-- The passive of a frame, marked by the auxiliary *be* with the past participle. -/
 def passive (fr : ArgumentFrame := .np) : Voice := (Voice.passive fr).marked [.free "be"]
 
 /-! ### The entry type -/
@@ -216,7 +214,7 @@ def kick : Verb where
 
 /-- The conative *at* of *eat at* marks no value, so *eat* selects no spatial phrase, while the
 *on* of *kick him on the shin* locates the contact on a surface. -/
-example : ¬ eat.TakesSpatial ∧ kick.TakesSpatial := by decide
+example : ¬ eat.valency.TakesSpatial ∧ kick.valency.TakesSpatial := by decide
 
 /-- "aim" — with an *at*-phrase, and transitive with one -/
 def aim : Verb where
@@ -438,27 +436,5 @@ def sweep_instr : Verb where
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .instrumental), [0, 1, 3])]
     [some wipeInstrument.subjectProfile, none, none]
   senseTag := .instrumental
-
-/-! ### Words -/
-
-/-- The morphosyntactic features of an inflectional cell. -/
-def Verb.Cell.features : Verb.Cell → Features
-  | .base => Features.of (verbForm := some .Inf)
-  | .thirdSg => Features.of (number := some .singular) (person := some .third)
-      (voice := some .Act) (verbForm := some .Fin) (tense := some .Pres)
-  | .plainPresent => Features.of (voice := some .Act) (verbForm := some .Fin) (tense := some .Pres)
-  | .past => Features.of (verbForm := some .Fin) (voice := some .Act) (tense := some .Past)
-  | .pastParticiple => Features.of (verbForm := some .Part)
-  | .presentParticiple => Features.of (verbForm := some .Part)
-
-/-- The entry's form in a cell as a `Word`, with the cell's features. -/
-def Verb.toWord (v : Verb) (c : Verb.Cell) : Word :=
-  { form := v.realize c, cat := .VERB, features := c.features }
-
-/-- The past participle in passive voice, the same form as `toWord .pastParticiple` marked
-passive. -/
-def Verb.passiveParticiple (v : Verb) : Word :=
-  { form := v.realize .pastParticiple, cat := .VERB,
-    features := Features.of (verbForm := some .Part) (voice := some .Pass) }
 
 end English.Verbs
