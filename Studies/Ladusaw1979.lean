@@ -62,21 +62,21 @@ open PolarityItem NaturalLogic Quantifier Quantifier.Det LicensingContext Licens
 
 /-- An environment is downward entailing when every operator it places over the item reverses
 entailment, the inclusion of its arguments. -/
-def IsDownwardEntailing (L : Licenser) : Prop := L.Holds .anti
+def IsDownwardEntailing (L : Licenser) : Prop := L.Holds .weak
 
 /-- An environment is upward entailing when every operator it places over the item preserves
 entailment. -/
-def IsUpwardEntailing (L : Licenser) : Prop := L.Holds .mono
+def IsUpwardEntailing (L : Licenser) : Prop := L.IsStrawsonUE
 
 -- (37), p. 145
 theorem isDownwardEntailing_classical_iff {F : OperatorFamily} :
     IsDownwardEntailing (.classical F) ↔ ∀ p, Antitone (F.op p) :=
-  forall_congr' fun _ ↦ ProjectivitySignature.holdsFor_anti_iff
+  Iff.rfl
 
 -- (39), p. 146
 theorem isUpwardEntailing_classical_iff {F : OperatorFamily} :
     IsUpwardEntailing (.classical F) ↔ ∀ p, Monotone (F.op p) :=
-  forall_congr' fun _ ↦ ProjectivitySignature.holdsFor_mono_iff
+  Iff.rfl
 
 /-- The other clause of a conditional, over worlds. -/
 structure OtherClause where
@@ -95,8 +95,7 @@ def materialConsequent : Licenser :=
 
 -- (128), p. 167
 theorem isDownwardEntailing_materialAntecedent : IsDownwardEntailing materialAntecedent :=
-  fun _ ↦ ProjectivitySignature.holdsFor_anti_iff.mpr fun _ _ h ↦ Set.union_subset_union_left _
-    (Set.compl_subset_compl.mpr h)
+  fun _ _ _ h ↦ Set.union_subset_union_left _ (Set.compl_subset_compl.mpr h)
 
 -- (129), p. 167
 theorem isUpwardEntailing_materialConsequent : IsUpwardEntailing materialConsequent :=
@@ -124,7 +123,7 @@ theorem isDownwardEntailing_of_mem_environments : ∀ c ∈ environments, IsDown
 
 theorem licenses_of_isDownwardEntailing {L : Licenser}
     (hc : IsDownwardEntailing L) (hn : ¬ L.IsStrawsonUE) : L.Licenses (.npi .weak) :=
-  licenses_npi_iff.2 (.inl ⟨isStrawsonDE_of_holds_anti hc, hn⟩)
+  licenses_npi_iff.2 (.inl ⟨isStrawsonDE_of_holds_weak hc, hn⟩)
 
 theorem isDownwardEntailing_of_licenses {F : OperatorFamily}
     (h : (Licenser.classical F).Licenses (.npi .weak)) : IsDownwardEntailing (.classical F) := by

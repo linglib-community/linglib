@@ -88,7 +88,7 @@ one of its logical forms admits its polarity items and is felicitous in its cont
 namespace RomeroHan2004
 
 open scoped ModalLogic SetRel
-open NaturalLogic PolarityItem
+open PolarityItem
 open Inquisitive.Proposition (polar polar_smul)
 
 variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)

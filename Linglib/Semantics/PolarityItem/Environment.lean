@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.ProjectivitySignature
+public import Linglib.Semantics.Negation.Strength.ProjectivitySignature
 public import Linglib.Semantics.Alternatives.WithAlternatives
 public import Linglib.Semantics.PolarityItem.Basic
 public import Linglib.Semantics.PolarityItem.Licenser
@@ -218,7 +218,7 @@ end Comp
 
 section Carries
 
-variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P]
+variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P]
   (e : Environment σ P) {s : Negation.Strength}
 
 /-- An environment of positive sign carries no strength of negation. -/
@@ -231,7 +231,8 @@ theorem carries_of_le_negationStrength
     (hs : (s : WithBot Negation.Strength) ≤ e.signature.negationStrength) (hne : e ⊥ ≠ e ⊤) :
     (Licenser.ofOperator e).Carries s := by
   have hf := e.holdsFor.of_le (ProjectivitySignature.coe_le_negationStrength_iff.1 hs)
-  refine Licenser.carries_ofOperator_iff.2 ⟨hf, fun hm ↦ hne (le_antisymm (hm bot_le) ?_)⟩
+  refine Licenser.carries_ofOperator_iff.2
+    ⟨.of_toProjectivitySignature hf, fun hm ↦ hne (le_antisymm (hm bot_le) ?_)⟩
   exact ProjectivitySignature.holdsFor_anti_iff.1
     (hf.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
     bot_le
@@ -311,25 +312,25 @@ end Path
 
 namespace Environment
 
-variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P]
+variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P]
   (e : Environment σ P) {s : Negation.Strength}
 
 /-- An environment of negative sign holds weak strength outright. -/
 theorem holds_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) :
-    (Licenser.ofOperator e).Holds Negation.Strength.weak.toProjectivitySignature :=
-  fun _ ↦ ProjectivitySignature.holdsFor_anti_iff.2 (e.antitone_of_sign_eq_neg_one h)
+    (Licenser.ofOperator e).Holds .weak :=
+  fun _ ↦ e.antitone_of_sign_eq_neg_one h
 
 /-- A non-constant environment of positive sign holds no strength outright. -/
 theorem not_holds_of_sign_eq_one (h : e.signature.sign = 1) (hne : e ⊥ ≠ e ⊤) :
-    ¬ (Licenser.ofOperator e).Holds s.toProjectivitySignature :=
-  Licenser.not_holds_toProjectivitySignature fun ha ↦ hne <| le_antisymm
-    (e.monotone_of_sign_eq_one h bot_le) (ProjectivitySignature.holdsFor_anti_iff.1 (ha ⟨⟩) bot_le)
+    ¬ (Licenser.ofOperator e).Holds s :=
+  Licenser.not_holds_of_not_holds_weak fun ha ↦ hne <| le_antisymm
+    (e.monotone_of_sign_eq_one h bot_le) (ha ⟨⟩ bot_le)
 
 end Environment
 
 namespace Path
 
-variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] (p : Path σ P)
+variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P] (p : Path σ P)
   {s : Negation.Strength} {π : Class}
 
 /-- The licensing condition, which requires that some domain admit the item. -/
@@ -349,7 +350,7 @@ theorem not_licenses_npi {fc : Bool}
 the strength that blocks it. -/
 theorem not_licenses_ppi
     (h : ∀ t ∈ p.layers.tails,
-      (Licenser.ofOperator (p.environment t)).Holds s.toProjectivitySignature) :
+      (Licenser.ofOperator (p.environment t)).Holds s) :
     ¬p.Licenses (.ppi s) := fun ⟨t, ht, ha⟩ ↦ Licenser.admits_ppi_iff.1 ha (h t ht)
 
 end Path

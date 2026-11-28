@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Natural.ProjectivitySignature
+public import Linglib.Semantics.Negation.Strength.ProjectivitySignature
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Logic.Trivalent.Connectives
 public import Linglib.Semantics.Genericity.Normality
@@ -94,7 +94,7 @@ restrictions. -/
 K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (L : PolarityItem.Licenser)
     (hDE : IsDownwardEntailing L) : L.LicensesByStrengthening :=
-  Licenser.licensesByStrengthening_iff.2 (Licenser.isStrawsonDE_of_holds_anti hDE)
+  Licenser.licensesByStrengthening_iff.2 (Licenser.isStrawsonDE_of_holds_weak hDE)
 
 /-! ### Adversative predicates: *sorry* vs *glad*
 

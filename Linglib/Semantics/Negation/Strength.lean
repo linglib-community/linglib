@@ -26,14 +26,14 @@ of form a lower set, and anti-additive when that lower set is also closed under 
 ## Main definitions
 
 * `Negation.Strength`: the three strengths, a chain.
-* `Negation.Strength.HoldsFor`: a map has a strength.
+* `Negation.HasStrength`: a map has a strength.
 
 ## Main results
 
-* `Negation.Strength.HoldsFor.of_le`: a map of a strength has every weaker strength.
-* `Negation.Strength.le_iff_forall_holdsFor`: one strength is below another exactly when every map
+* `Negation.HasStrength.of_le`: a map of a strength has every weaker strength.
+* `Negation.Strength.le_iff_forall_hasStrength`: one strength is below another exactly when every map
   of the second has the first.
-* `Negation.Strength.holdsFor_antiAdditive_iff`: a truth-valued map is anti-additive exactly when
+* `Negation.hasStrength_antiAdditive_iff_supClosed`: a truth-valued map is anti-additive exactly when
   the elements it holds of form a lower set closed under joins.
 
 ## Implementation notes
@@ -91,33 +91,38 @@ instance : BoundedOrder Strength where
 
 @[simp] theorem le_weak_iff {s : Strength} : s ≤ weak ↔ s = weak := le_bot_iff
 
+end Strength
+
+open Strength
+
 /-! ### The maps of a strength -/
 
-section HoldsFor
+section HasStrength
 
 variable {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β] {s t : Strength} {f : α → β}
 
 /-- A map has a strength of negation: it is monotone decreasing, anti-additive, or antimorphic
 ([zwarts-1998]'s (91), (107) and (114)). -/
-def HoldsFor : Strength → (α → β) → Prop
-  | weak, f => Antitone f
-  | antiAdditive, f => ∀ x y, f (x ⊔ y) = f x ⊓ f y
-  | antiMorphic, f => (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ
+def HasStrength (f : α → β) : Strength → Prop
+  | weak => Antitone f
+  | antiAdditive => ∀ x y, f (x ⊔ y) = f x ⊓ f y
+  | antiMorphic => (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ
 
-@[simp] theorem holdsFor_weak : weak.HoldsFor f ↔ Antitone f := Iff.rfl
+@[simp] theorem hasStrength_weak : HasStrength f weak ↔ Antitone f := Iff.rfl
 
-@[simp] theorem holdsFor_antiAdditive : antiAdditive.HoldsFor f ↔ ∀ x y, f (x ⊔ y) = f x ⊓ f y :=
+@[simp] theorem hasStrength_antiAdditive :
+    HasStrength f antiAdditive ↔ ∀ x y, f (x ⊔ y) = f x ⊓ f y :=
   Iff.rfl
 
-@[simp] theorem holdsFor_antiMorphic :
-    antiMorphic.HoldsFor f ↔ (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ :=
+@[simp] theorem hasStrength_antiMorphic :
+    HasStrength f antiMorphic ↔ (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ :=
   Iff.rfl
 
 private theorem antitone_of_map_sup (h : ∀ x y, f (x ⊔ y) = f x ⊓ f y) : Antitone f :=
   Monotone.of_map_sup (β := βᵒᵈ) h
 
 /-- A map of a strength has every weaker strength. -/
-theorem HoldsFor.of_le (h : t.HoldsFor f) (hst : s ≤ t) : s.HoldsFor f := by
+theorem HasStrength.of_le (h : HasStrength f t) (hst : s ≤ t) : HasStrength f s := by
   cases s <;> cases t
   · exact h
   · exact antitone_of_map_sup h
@@ -129,9 +134,17 @@ theorem HoldsFor.of_le (h : t.HoldsFor f) (hst : s ≤ t) : s.HoldsFor f := by
   · exact absurd hst (by decide)
   · exact h
 
+/-- An antimorphic map sends `⊤` to `⊥`. -/
+theorem HasStrength.map_top (h : HasStrength f antiMorphic) : f ⊤ = ⊥ := by
+  rw [← sup_compl_eq_top (x := ⊥), h.1, h.2, inf_compl_self]
+
+/-- An antimorphic map sends `⊥` to `⊤`. -/
+theorem HasStrength.map_bot (h : HasStrength f antiMorphic) : f ⊥ = ⊤ := by
+  rw [← compl_top, h.2, h.map_top, compl_bot]
+
 /-- One strength is below another exactly when every map of the second has the first. -/
-theorem le_iff_forall_holdsFor :
-    s ≤ t ↔ ∀ f : Set Bool → Prop, t.HoldsFor f → s.HoldsFor f := by
+theorem Strength.le_iff_forall_hasStrength :
+    s ≤ t ↔ ∀ f : Set Bool → Prop, HasStrength f t → HasStrength f s := by
   refine ⟨fun h f hf ↦ hf.of_le h, fun h ↦ ?_⟩
   have hT : ({true} : Set Bool) ≠ Set.univ := fun h ↦ by simpa using Set.ext_iff.1 h false
   have hF : ({false} : Set Bool) ≠ Set.univ := fun h ↦ by simpa using Set.ext_iff.1 h true
@@ -161,7 +174,7 @@ theorem le_iff_forall_holdsFor :
   · exact absurd (h (fun S : Set Bool ↦ S = ∅) a2).2 h2
   · exact le_rfl
 
-end HoldsFor
+end HasStrength
 
 /-! ### Truth-valued maps -/
 
@@ -171,20 +184,69 @@ variable {α : Type*} [BooleanAlgebra α] {f : α → Prop}
 
 /-- A truth-valued map is monotone decreasing exactly when the elements it holds of form a lower
 set. -/
-theorem holdsFor_weak_iff_isLowerSet : weak.HoldsFor f ↔ IsLowerSet {x | f x} :=
+theorem hasStrength_weak_iff_isLowerSet : HasStrength f weak ↔ IsLowerSet {x | f x} :=
   ⟨fun h _ _ hyx hx ↦ h hyx hx, fun h _ _ hxy hy ↦ h hxy hy⟩
 
 /-- A truth-valued map is anti-additive exactly when the elements it holds of form a lower set
 closed under joins, [zwarts-1998]'s quasi-ideal. -/
-theorem holdsFor_antiAdditive_iff :
-    antiAdditive.HoldsFor f ↔ IsLowerSet {x | f x} ∧ SupClosed {x | f x} :=
-  ⟨fun h ↦ ⟨holdsFor_weak_iff_isLowerSet.1 (HoldsFor.of_le h (by decide)),
+theorem hasStrength_antiAdditive_iff_supClosed :
+    HasStrength f antiAdditive ↔ IsLowerSet {x | f x} ∧ SupClosed {x | f x} :=
+  ⟨fun h ↦ ⟨hasStrength_weak_iff_isLowerSet.1 (HasStrength.of_le h (by decide)),
       fun x hx y hy ↦ (eq_iff_iff.1 (h x y)).2 ⟨hx, hy⟩⟩,
     fun ⟨hl, hs⟩ x y ↦ propext
       ⟨fun hxy ↦ ⟨hl le_sup_left hxy, hl le_sup_right hxy⟩, fun ⟨hx, hy⟩ ↦ hs hx hy⟩⟩
 
 end TruthValued
 
-end Strength
+/-! ### Composites with negation
+
+A map that preserves meets, applied after complement, is anti-additive, and it is antimorphic
+only if it also commutes with complement. Complement applied after a monotone map is monotone
+decreasing, and it is anti-additive only if the map preserves joins. -/
+
+section Composite
+
+variable {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β] {f g : α → β}
+
+private theorem map_sup_of_map_inf_of_map_compl (hg : ∀ x y, g (x ⊓ y) = g x ⊓ g y)
+    (hc : ∀ x, g xᶜ = (g x)ᶜ) (x y : α) : g (x ⊔ y) = g x ⊔ g y := by
+  rw [← compl_compl (x ⊔ y), hc, compl_sup, hg, hc, hc, ← compl_sup, compl_compl]
+
+variable {ι : Type*} {α β : ι → Type*} [∀ i, BooleanAlgebra (α i)] [∀ i, BooleanAlgebra (β i)]
+  {s : Strength} {f g : ∀ i, α i → β i}
+
+/-- Maps that preserve meets, applied after complement, not all of them commuting with complement,
+have exactly the strengths up to anti-additive. -/
+theorem forall_hasStrength_iff_le_antiAdditive (hfg : ∀ i, f i = g i ∘ compl)
+    (hg : ∀ i x y, g i (x ⊓ y) = g i x ⊓ g i y) (hn : ∃ i, ¬∀ x, f i xᶜ = (f i x)ᶜ) :
+    (∀ i, HasStrength (f i) s) ↔ s ≤ antiAdditive := by
+  have haa : ∀ i x y, f i (x ⊔ y) = f i x ⊓ f i y := fun i x y ↦ by
+    simp only [hfg, Function.comp_apply, compl_sup, hg]
+  cases s
+  · exact iff_of_true (fun i ↦ HasStrength.of_le (t := antiAdditive) (haa i) (by decide)) (by decide)
+  · exact iff_of_true haa le_rfl
+  · exact iff_of_false (fun h ↦ hn.elim fun i hi ↦ hi (h i).2) (by decide)
+
+/-- Maps that preserve meets and not all of them joins, applied after complement, have exactly the
+strengths up to anti-additive. -/
+theorem forall_hasStrength_iff_le_antiAdditive_of_not_map_sup (hfg : ∀ i, f i = g i ∘ compl)
+    (hg : ∀ i x y, g i (x ⊓ y) = g i x ⊓ g i y)
+    (hn : ∃ i, ¬∀ x y, g i (x ⊔ y) = g i x ⊔ g i y) :
+    (∀ i, HasStrength (f i) s) ↔ s ≤ antiAdditive :=
+  forall_hasStrength_iff_le_antiAdditive hfg hg <| hn.imp fun i hi hc ↦
+    hi (map_sup_of_map_inf_of_map_compl (hg i) fun x ↦ by simpa [hfg] using hc xᶜ)
+
+/-- Complement applied after monotone maps, not all of them preserving joins, has exactly weak
+strength. -/
+theorem forall_hasStrength_iff_le_weak (hfg : ∀ i, f i = compl ∘ g i) (hg : ∀ i, Monotone (g i))
+    (hn : ∃ i, ¬∀ x y, g i (x ⊔ y) = g i x ⊔ g i y) : (∀ i, HasStrength (f i) s) ↔ s ≤ weak := by
+  have key : ∀ i, (∀ x y, f i (x ⊔ y) = f i x ⊓ f i y) → ∀ x y, g i (x ⊔ y) = g i x ⊔ g i y :=
+    fun i h x y ↦ compl_injective (by simpa [hfg] using h x y)
+  cases s
+  · exact iff_of_true (fun i ↦ hfg i ▸ fun _ _ hab ↦ compl_le_compl (hg i hab)) le_rfl
+  · exact iff_of_false (fun h ↦ hn.elim fun i hi ↦ hi (key i (h i))) (by decide)
+  · exact iff_of_false (fun h ↦ hn.elim fun i hi ↦ hi (key i (h i).1)) (by decide)
+
+end Composite
 
 end Negation

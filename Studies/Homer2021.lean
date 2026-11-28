@@ -390,9 +390,8 @@ noncomputable def notOr : Path (Quantifier (Fin 2)) (Set World) :=
 
 theorem not_holds_notAnd {t : List Layer}
     (ht : t ∈ notAnd.layers.tails) {s : Negation.Strength} :
-    ¬(Licenser.ofOperator (notAnd.environment t)).Holds s.toProjectivitySignature := fun hh ↦ by
-  have ha := ProjectivitySignature.holdsFor_anti_iff.1
-    ((hh ⟨⟩).of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
+    ¬(Licenser.ofOperator (notAnd.environment t)).Holds s := fun hh ↦ by
+  have ha : Antitone _ := Negation.HasStrength.of_le (s := .weak) (hh ⟨⟩) bot_le
   simp [notAnd] at ht
   rcases ht with rfl | rfl <;> exact not_antitone_notConn_conj (by simpa [notAnd,
     Function.End.one_def] using ha)
@@ -534,25 +533,20 @@ end LF
 
 section Acceptability
 
-variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] {f : σ → P}
+variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P] {f : σ → P}
 
 theorem acceptable_any_iff :
     (Licenser.ofOperator f).Admits anyItem ↔ Antitone f ∧ ¬Monotone f :=
-  Licenser.admits_npi_iff.trans <| Licenser.carries_ofOperator_iff.trans <|
-    and_congr_left' ProjectivitySignature.holdsFor_anti_iff
+  Licenser.admits_npi_iff.trans Licenser.carries_ofOperator_iff
 
 -- (43): *some* is acceptable in a constituent exactly when the constituent is not downward
 -- entailing with respect to it
 theorem acceptable_someItem_iff : (Licenser.ofOperator f).Admits someItem ↔ ¬Antitone f :=
-  Licenser.admits_ppi_iff.trans <| not_congr
-    ⟨fun h ↦ ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨⟩),
-      fun h _ ↦ ProjectivitySignature.holdsFor_anti_iff.2 h⟩
+  Licenser.admits_ppi_iff.trans <| not_congr ⟨fun h ↦ h ⟨⟩, fun h _ ↦ h⟩
 
-omit [BoundedOrder P] in
 theorem not_antitone_of_monotone (h : Monotone f) (hne : f ⊥ ≠ f ⊤) : ¬Antitone f :=
   fun ha ↦ hne (le_antisymm (h bot_le) (ha bot_le))
 
-omit [BoundedOrder P] in
 theorem not_monotone_of_antitone (h : Antitone f) (hne : f ⊥ ≠ f ⊤) : ¬Monotone f := fun hm ↦
   hne (le_antisymm (hm bot_le) (h bot_le))
 
@@ -914,7 +908,7 @@ theorem licensed_notSureSubjObj_someone :
       1 3 := Licenser.admits_ppi_iff.2 fun h ↦
     not_isAntiAdditive_notSureSubjObj_env (obj := anyItem)
       (subj := someoneItem)
-      (ProjectivitySignature.holdsFor_antiAdd_iff.1 (h ⟨⟩)).1
+      (h ⟨⟩)
   intro i
   refine ⟨3, .intro (by fin_cases i <;> decide) (by decide) (by fin_cases i <;> assumption)
     fun i' hi' _ ↦ .acceptable ?_⟩

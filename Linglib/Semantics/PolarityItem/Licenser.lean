@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Negation.Strength.ProjectivitySignature
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 public import Linglib.Semantics.PolarityItem.Class
@@ -39,7 +38,7 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 * `PolarityItem.Licenser.exhaustified`: the meaning of a licenser above the exhaustivity operator,
   with its direct implicature added.
 * `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsStrawsonDE`,
-  `PolarityItem.Licenser.IsStrawsonUE`: a signature that a licenser holds outright, and downward
+  `PolarityItem.Licenser.IsStrawsonUE`: a strength that a licenser holds outright, and downward
   and upward entailment modulo presupposition.
 * `PolarityItem.Licenser.Carries`: a strength of negation that a licenser carries. Von Fintel
   requires the plain meaning to be downward entailing modulo presupposition, and Bylinina and
@@ -64,11 +63,10 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
   *regret* rescue a positive polarity item instead of blocking it.
 * Gajewski requires only that the exhaustified meaning be downward entailing. Zwarts's strengths
   are retained here, and they agree with Gajewski's condition at the endpoints of the scale.
-* The unit conditions of `ProjectivitySignature.HoldsFor` do not exclude constant maps. A constant
-  map is downward entailing, and a constantly false map is anti-additive. The requirement that
-  weak strength not be upward entailing as well excludes them, since a map that is monotone in
-  both directions modulo presupposition takes a single value at comparable arguments where it is
-  defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
+* A constant map is downward entailing, and a constantly true map is anti-additive. The
+  requirement that weak strength not be upward entailing as well excludes them, since a map that
+  is monotone in both directions modulo presupposition takes a single value at comparable
+  arguments where it is defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
 * A question is not a licenser. It is downward entailing only in the domain of a wh-phrase, and
   whether it hosts an item does not follow the strength that the item requires. Van Rooy ties the
   use of an item in a question to the expectations of the questioner, through the entropy of the
@@ -93,7 +91,7 @@ every positive polarity item](##PolarityItem.Licenser.antiLicenses_iff_isPPI).
 
 namespace PolarityItem
 
-open NaturalLogic Presupposition Exhaustification
+open Presupposition Exhaustification
 
 namespace Licenser
 
@@ -105,19 +103,14 @@ structure OperatorFamily where
   Dom : Param → Type
   /-- The lattice of the result. -/
   Cod : Param → Type
-  /-- The domain is a lattice. -/
-  [latDom : ∀ p, Lattice (Dom p)]
-  /-- The domain is bounded. -/
-  [bndDom : ∀ p, BoundedOrder (Dom p)]
-  /-- The codomain is a lattice. -/
-  [latCod : ∀ p, Lattice (Cod p)]
-  /-- The codomain is bounded. -/
-  [bndCod : ∀ p, BoundedOrder (Cod p)]
+  /-- The domain is a Boolean algebra. -/
+  [boolDom : ∀ p, BooleanAlgebra (Dom p)]
+  /-- The codomain is a Boolean algebra. -/
+  [boolCod : ∀ p, BooleanAlgebra (Cod p)]
   /-- The operator at each parameter. -/
   op : ∀ p, Dom p → Cod p
 
-attribute [instance] OperatorFamily.latDom OperatorFamily.bndDom OperatorFamily.latCod
-  OperatorFamily.bndCod
+attribute [instance] OperatorFamily.boolDom OperatorFamily.boolCod
 
 /-- A family of operators into trivalent propositions, indexed by what a construction leaves
 open. -/
@@ -128,14 +121,12 @@ structure PresupposingFamily where
   Dom : Param → Type
   /-- The worlds of the trivalent propositions. -/
   W : Param → Type
-  /-- The domain is a lattice. -/
-  [latDom : ∀ p, Lattice (Dom p)]
-  /-- The domain is bounded. -/
-  [bndDom : ∀ p, BoundedOrder (Dom p)]
+  /-- The domain is a Boolean algebra. -/
+  [boolDom : ∀ p, BooleanAlgebra (Dom p)]
   /-- The operator at each parameter. -/
   op : ∀ p, Dom p → W p → Trivalent
 
-attribute [instance] PresupposingFamily.latDom PresupposingFamily.bndDom
+attribute [instance] PresupposingFamily.boolDom
 
 /-- A family of modal operators over worlds, indexed by what a construction leaves open. -/
 structure ModalFamily where
@@ -171,13 +162,13 @@ def exhaustified : Licenser → Licenser
   | .scalar F => .classical { F.toOperatorFamily with op := F.exhaustified }
   | L => L
 
-/-- A licenser *holds* a signature outright when every operator in its family does. An operator
-into trivalent propositions holds the signature on its truth set, and a scalar operator holds it
-on its plain meaning. -/
-def Holds : Licenser → ProjectivitySignature → Prop
-  | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
-  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ Trivalent.posExt (F.op p x)
-  | .modal F, σ => ∀ p, σ.HoldsFor (F.op p)
+/-- A licenser *holds* a strength of negation outright when every operator in its family has it.
+An operator into trivalent propositions holds the strength on its truth set, and a scalar operator
+holds it on its plain meaning. -/
+def Holds : Licenser → Negation.Strength → Prop
+  | .classical F, s | .scalar ⟨F, _⟩, s => ∀ p, Negation.HasStrength (F.op p) s
+  | .strawson F, s => ∀ p, Negation.HasStrength (fun x ↦ Trivalent.posExt (F.op p x)) s
+  | .modal F, s => ∀ p, Negation.HasStrength (F.op p) s
 
 /-- A licenser is Strawson downward entailing when every operator in its family is downward
 entailing modulo its presupposition. -/
@@ -200,28 +191,23 @@ licenser carries a stronger strength when, in addition, its exhaustified meaning
 strength outright. -/
 def Carries (L : Licenser) : Negation.Strength → Prop
   | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
-  | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toProjectivitySignature
+  | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s
 
 section OfOperator
 
-variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] {f : σ → P}
-  {s : Negation.Strength}
+variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P] {f : σ → P} {s : Negation.Strength}
 
 /-- The classical licenser of a single operator over the position of a polarity item. -/
 def ofOperator (f : σ → P) : Licenser :=
   .classical { Param := PUnit, Dom := fun _ ↦ σ, Cod := fun _ ↦ P, op := fun _ ↦ f }
 
-/-- A single operator carries a strength of negation exactly when it is in the function class of
-the strength and is not upward entailing. -/
-theorem carries_ofOperator_iff :
-    (ofOperator f).Carries s ↔ s.toProjectivitySignature.HoldsFor f ∧ ¬Monotone f := by
-  have ha (h : s.toProjectivitySignature.HoldsFor f) : Antitone f :=
-    ProjectivitySignature.holdsFor_anti_iff.1
-      (h.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
+/-- A single operator carries a strength of negation exactly when it has the strength and is not
+upward entailing. -/
+theorem carries_ofOperator_iff : (ofOperator f).Carries s ↔ Negation.HasStrength f s ∧ ¬Monotone f := by
+  have ha (h : Negation.HasStrength f s) : Antitone f := h.of_le (s := .weak) bot_le
   cases s <;>
     simp only [ofOperator, Carries, IsStrawsonDE, IsStrawsonUE, exhaustified, Holds]
-  · exact ⟨fun h ↦ ⟨ProjectivitySignature.holdsFor_anti_iff.2 (h.1 ⟨⟩), fun hm ↦ h.2 fun _ ↦ hm⟩,
-      fun h ↦ ⟨fun _ ↦ ProjectivitySignature.holdsFor_anti_iff.1 h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩⟩
+  · exact ⟨fun h ↦ ⟨h.1 ⟨⟩, fun hm ↦ h.2 fun _ ↦ hm⟩, fun h ↦ ⟨fun _ ↦ h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩⟩
   all_goals exact ⟨fun h ↦ ⟨h.2 ⟨⟩, fun hm ↦ h.1.2 fun _ ↦ hm⟩,
     fun h ↦ ⟨⟨fun _ ↦ ha h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩, fun _ ↦ h.1⟩⟩
 
@@ -246,25 +232,19 @@ def LicensesFreeChoice : Licenser → Prop
       (antiExh (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
   | .classical _ | .scalar _ | .strawson _ => False
 
-variable {L : Licenser} {σ τ : ProjectivitySignature} {s t : Negation.Strength}
+variable {L : Licenser} {s t : Negation.Strength}
 
-theorem Holds.of_le (h : L.Holds σ) (hστ : σ ≤ τ) : L.Holds τ := by
+theorem Holds.of_le (h : L.Holds t) (hst : s ≤ t) : L.Holds s := by
   cases L with
-  | classical F | strawson F | modal F => exact fun p ↦ (h p).of_le hστ
-  | scalar F => exact fun p ↦ (h p).of_le hστ
+  | classical F | strawson F | modal F => exact fun p ↦ (h p).of_le hst
+  | scalar F => exact fun p ↦ (h p).of_le hst
 
-theorem Holds.toProjectivitySignature_of_le (h : L.Holds t.toProjectivitySignature) (hst : s ≤ t) :
-    L.Holds s.toProjectivitySignature :=
-  h.of_le (Negation.Strength.toProjectivitySignature_antitone hst)
-
-theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
+theorem isStrawsonDE_of_holds_weak (h : L.Holds .weak) : L.IsStrawsonDE := by
   cases L with
-  | classical F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
-  | scalar F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
-  | strawson F =>
-    exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posExt
-      (ProjectivitySignature.holdsFor_anti_iff.mp (h p))
-  | modal F => exact fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mp (h p)
+  | classical F => exact fun p ↦ h p
+  | scalar F => exact fun p ↦ h p
+  | strawson F => exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posExt (h p)
+  | modal F => exact fun p ↦ h p
 
 /-- Widening the domain strengthens under every operator of a licenser exactly when the licenser
 is downward entailing modulo presupposition. -/
@@ -286,10 +266,10 @@ theorem Carries.of_le (h : L.Carries s) (hts : t ≤ s) : L.Carries t := by
   | antiAdditive | antiMorphic =>
     cases s with
     | weak => exact absurd hts (by decide)
-    | antiAdditive | antiMorphic => exact ⟨h.1, h.2.toProjectivitySignature_of_le hts⟩
+    | antiAdditive | antiMorphic => exact ⟨h.1, h.2.of_le hts⟩
 
 theorem carries_iff_of_ne_weak (hs : s ≠ .weak) :
-    L.Carries s ↔ L.Carries .weak ∧ L.exhaustified.Holds s.toProjectivitySignature := by
+    L.Carries s ↔ L.Carries .weak ∧ L.exhaustified.Holds s := by
   cases s with
   | weak => exact absurd rfl hs
   | antiAdditive | antiMorphic => exact Iff.rfl
@@ -297,66 +277,59 @@ theorem carries_iff_of_ne_weak (hs : s ≠ .weak) :
 /-- A classical licenser carries a strength exactly when it holds that strength outright and is
 non-trivial. -/
 theorem carries_classical_iff {F : OperatorFamily} :
-    (classical F).Carries s ↔
-      (classical F).Holds s.toProjectivitySignature ∧ ¬ (classical F).IsStrawsonUE := by
+    (classical F).Carries s ↔ (classical F).Holds s ∧ ¬ (classical F).IsStrawsonUE := by
   cases s with
-  | weak => exact and_congr_left' (forall_congr' fun _ ↦
-    ProjectivitySignature.holdsFor_anti_iff.symm)
+  | weak => exact Iff.rfl
   | antiAdditive | antiMorphic =>
     exact ⟨fun h ↦ ⟨h.2, h.1.2⟩, fun h ↦
-      ⟨⟨isStrawsonDE_of_holds_anti (h.1.toProjectivitySignature_of_le (s := .weak) (by decide)),
-        h.2⟩, h.1⟩⟩
+      ⟨⟨isStrawsonDE_of_holds_weak (h.1.of_le (s := .weak) (by decide)), h.2⟩, h.1⟩⟩
 
 /-- A non-trivial classical licenser that holds exactly the strengths up to `s₀` carries exactly
 those strengths. -/
 theorem carries_classical_iff_le {F : OperatorFamily} {s₀ : Negation.Strength}
     (hn : ¬ (classical F).IsStrawsonUE)
-    (h : ∀ s, (classical F).Holds s.toProjectivitySignature ↔ s ≤ s₀) :
+    (h : ∀ s, (classical F).Holds s ↔ s ≤ s₀) :
     (classical F).Carries s ↔ s ≤ s₀ := by
   rw [carries_classical_iff, h, and_iff_left hn]
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition and holds exactly the
 strengths up to `s₀` once exhaustified carries exactly those strengths. -/
 theorem carries_iff_le {s₀ : Negation.Strength} (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
-    (h : ∀ s, L.exhaustified.Holds s.toProjectivitySignature ↔ s ≤ s₀) : L.Carries s ↔ s ≤ s₀ := by
+    (h : ∀ s, L.exhaustified.Holds s ↔ s ≤ s₀) : L.Carries s ↔ s ≤ s₀ := by
   cases s with
   | weak => exact iff_of_true ⟨hde, hn⟩ (Negation.Strength.weak_le _)
   | antiAdditive | antiMorphic => exact (and_iff_right ⟨hde, hn⟩).trans (h _)
 
 /-- A presupposing licenser carries anti-additive strength when its truth sets are anti-additive
-and empty at the trivial argument, and one of its operators is not upward entailing. -/
+and one of its operators is not upward entailing. -/
 theorem carries_strawson_antiAdditive {F : PresupposingFamily}
     (h : ∀ p, IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x))
-    (ht : ∀ p, Trivalent.posExt (F.op p ⊤) = ⊥)
     (hn : ∃ p, ¬ Presupposition.IsStrawsonUE (F.op p)) : (strawson F).Carries .antiAdditive :=
-  have hh : (strawson F).Holds .antiAdd := fun p ↦
-    ProjectivitySignature.holdsFor_antiAdd_iff.2 ⟨h p, ht p⟩
-  ⟨⟨isStrawsonDE_of_holds_anti (hh.of_le (by decide)), fun hu ↦ hn.elim fun p hp ↦ hp (hu p)⟩, hh⟩
+  have hh : (strawson F).Holds .antiAdditive := fun p ↦ h p
+  ⟨⟨isStrawsonDE_of_holds_weak (hh.of_le (by decide)), fun hu ↦ hn.elim fun p hp ↦ hp (hu p)⟩, hh⟩
 
 theorem not_carries_strawson_antiAdditive {F : PresupposingFamily}
     (h : ∃ p, ¬ IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x)) :
     ¬ (strawson F).Carries .antiAdditive :=
-  fun hc ↦ h.elim fun p hp ↦ hp (ProjectivitySignature.holdsFor_antiAdd_iff.1 (hc.2 p)).1
+  fun hc ↦ h.elim fun p hp ↦ hp (hc.2 p)
 
-theorem holds_toProjectivitySignature_iff {s₀ : Negation.Strength}
-    (h : L.Holds s₀.toProjectivitySignature)
-    (hn : ∀ s, s₀ < s → ¬ L.Holds s.toProjectivitySignature) :
-    L.Holds s.toProjectivitySignature ↔ s ≤ s₀ :=
-  ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.toProjectivitySignature_of_le hs⟩
+/-- A licenser that holds a strength and none above it holds exactly the strengths up to it. -/
+theorem holds_iff_le {s₀ : Negation.Strength} (h : L.Holds s₀)
+    (hn : ∀ s, s₀ < s → ¬ L.Holds s) : L.Holds s ↔ s ≤ s₀ :=
+  ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.of_le hs⟩
 
-theorem not_holds_toProjectivitySignature (h : ¬ L.Holds .anti) :
-    ¬ L.Holds s.toProjectivitySignature := fun hs ↦
-  h (hs.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
+theorem not_holds_of_not_holds_weak (h : ¬ L.Holds .weak) : ¬ L.Holds s := fun hs ↦
+  h (hs.of_le bot_le)
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition, but not downward
 entailing outright once its direct implicature is added, carries exactly weak strength
 ([gajewski-2011]). -/
 theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
-    (h : ¬ L.exhaustified.Holds .anti) : L.Carries s ↔ s = .weak := by
+    (h : ¬ L.exhaustified.Holds .weak) : L.Carries s ↔ s = .weak := by
   cases s with
   | weak => exact iff_of_true ⟨hde, hn⟩ rfl
   | antiAdditive | antiMorphic =>
-    exact iff_of_false (fun hc ↦ not_holds_toProjectivitySignature h hc.2) (by decide)
+    exact iff_of_false (fun hc ↦ not_holds_of_not_holds_weak h hc.2) (by decide)
 
 /-! ### The strengths a licenser carries and holds
 
@@ -375,7 +348,7 @@ noncomputable def carried (L : Licenser) : WithBot (WithTop Negation.Strength) :
 open scoped Classical in
 /-- The greatest strength of negation that a licenser holds outright, or `⊥` if it holds none. -/
 noncomputable def held (L : Licenser) : WithBot (WithTop Negation.Strength) :=
-  (Finset.univ.filter fun s : Negation.Strength ↦ L.Holds s.toProjectivitySignature).sup
+  (Finset.univ.filter fun s : Negation.Strength ↦ L.Holds s).sup
     fun s ↦ ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength))
 
 private theorem coe_le_sup_filter_iff {P : Negation.Strength → Prop} [DecidablePred P]
@@ -402,10 +375,10 @@ theorem coe_le_carried_iff :
 
 theorem coe_le_held_iff :
     ((s : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength)) ≤ L.held ↔
-      L.Holds s.toProjectivitySignature := by
+      L.Holds s := by
   classical
   unfold held
-  exact coe_le_sup_filter_iff fun _ _ h hts ↦ Holds.toProjectivitySignature_of_le h hts
+  exact coe_le_sup_filter_iff fun _ _ h hts ↦ h.of_le hts
 
 theorem carried_lt_top : L.carried < ⊤ := by
   classical
@@ -446,7 +419,7 @@ theorem carried_eq_bot (h : ∀ s, ¬ L.Carries s) : L.carried = ⊥ := by
   · exact absurd (coe_le_carried_iff.1 ht.ge) (h t)
 
 /-- A licenser that holds exactly the strengths up to `s₀` holds `s₀` as its greatest. -/
-theorem held_eq_coe (h : ∀ s, L.Holds s.toProjectivitySignature ↔ s ≤ s₀) :
+theorem held_eq_coe (h : ∀ s, L.Holds s ↔ s ≤ s₀) :
     L.held = ((s₀ : WithTop Negation.Strength) : WithBot (WithTop Negation.Strength)) := by
   refine le_antisymm ?_ (coe_le_held_iff.2 ((h s₀).2 le_rfl))
   obtain hb | ⟨t, ht⟩ := eq_bot_or_eq_ofStrength_of_lt_top (held_lt_top : L.held < ⊤)
@@ -454,7 +427,7 @@ theorem held_eq_coe (h : ∀ s, L.Holds s.toProjectivitySignature ↔ s ≤ s₀
   · rw [ht]
     exact WithBot.coe_le_coe.2 (WithTop.coe_le_coe.2 ((h t).1 (coe_le_held_iff.1 ht.ge)))
 
-theorem held_eq_bot (h : ∀ s : Negation.Strength, ¬ L.Holds s.toProjectivitySignature) :
+theorem held_eq_bot (h : ∀ s : Negation.Strength, ¬ L.Holds s) :
     L.held = ⊥ := by
   obtain hb | ⟨t, ht⟩ := eq_bot_or_eq_ofStrength_of_lt_top (held_lt_top : L.held < ⊤)
   · exact hb
@@ -502,7 +475,7 @@ theorem licenses_npi_iff :
     L.Licenses (.npi s fc) ↔ L.Carries s ∨ L.LicensesFreeChoice ∧ fc = true := by
   simp [Licenses, Class.npi, coe_le_carried_iff]
 
-theorem antiLicenses_ppi_iff : L.AntiLicenses (.ppi s) ↔ L.Holds s.toProjectivitySignature :=
+theorem antiLicenses_ppi_iff : L.AntiLicenses (.ppi s) ↔ L.Holds s :=
   coe_le_held_iff
 
 theorem not_antiLicenses_of_blocker_eq_top (h : k.blocker = ⊤) : ¬ L.AntiLicenses k := by
@@ -517,7 +490,7 @@ theorem admits_npi_iff : L.Admits (.npi s) ↔ L.Carries s :=
 
 /-- A class of positive polarity items is admitted exactly by the licensers that do not hold the
 strength that blocks it. -/
-theorem admits_ppi_iff : L.Admits (.ppi s) ↔ ¬ L.Holds s.toProjectivitySignature :=
+theorem admits_ppi_iff : L.Admits (.ppi s) ↔ ¬ L.Holds s :=
   ⟨fun h hH ↦ h.2 (antiLicenses_ppi_iff.2 hH),
     fun h ↦ ⟨.inl bot_le, fun ha ↦ h (antiLicenses_ppi_iff.1 ha)⟩⟩
 
@@ -548,7 +521,7 @@ theorem admits_iff_carried_mem_Ico (hn : ¬ (classical F).IsStrawsonUE) :
 
 /-- An antimorphic context blocks every positive polarity class, which is [vanderwouden-1997]'s
 (169). -/
-theorem antiLicenses_iff_isPPI (h : L.Holds .antiAddMult) : L.AntiLicenses k ↔ k.IsPPI :=
+theorem antiLicenses_iff_isPPI (h : L.Holds .antiMorphic) : L.AntiLicenses k ↔ k.IsPPI :=
   ⟨fun ha ↦ ha.trans_lt held_lt_top, fun hk ↦
     (le_ofStrength_antiMorphic hk).trans (coe_le_held_iff.2 h)⟩
 

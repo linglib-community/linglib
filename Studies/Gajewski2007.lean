@@ -348,11 +348,6 @@ noncomputable def Environment.licenser : Environment → Licenser
 
 theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAdditive :=
   Licenser.carries_strawson_antiAdditive (fun p ↦ isAntiAdditive_posExt_noOneNR p.O p.B)
-    (fun p ↦ by
-      obtain ⟨x, hx⟩ := p.nonempty
-      exact Set.eq_empty_of_forall_notMem fun w hw ↦ by
-        rw [posExt_noOneNR] at hw
-        simpa using Set.mem_iInter₂.1 hw x hx)
     ⟨⟨Unit, Unit, .univ, fun _ ↦ .univ, ⟨(), trivial⟩⟩,
       not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
         (by simp [noOneNR, box_eq_false_iff, Box]) (by simp [noOneNR, box, Box])⟩
@@ -360,7 +355,6 @@ theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAddi
 theorem carries_notThinkWant : Environment.notThinkWant.licenser.Carries .antiAdditive :=
   Licenser.carries_strawson_antiAdditive
     (fun p ↦ isAntiAdditive_posExt_notStack_self p.upper p.lower p.beliefs)
-    (fun p ↦ by simp [posExt_notStack_self])
     ⟨⟨Unit, .univ, .univ, .univ⟩, not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
       (by simp [notStack, box, Box]) (by simp [notStack, box, Box])⟩
 
