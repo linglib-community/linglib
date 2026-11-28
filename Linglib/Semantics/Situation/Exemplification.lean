@@ -32,6 +32,8 @@ proposition `p`.
   iff every part of `x` is in `p` or `x` is a minimal member of `p`.
 * `Situation.closure_setOf_exemplifies`: in a well-founded order, a closed set is the closure of
   its exemplifiers.
+* `Situation.setOf_exemplifies_eq`: the exemplifiers of a proposition are the situations all of
+  whose parts are in it together with its minimal members.
 * `Situation.minimal_mem_iff_maximal_isIrreducible`: the minimal members of a closed set are the
   generic points of its irreducible components.
 
@@ -41,12 +43,16 @@ The characterization `Situation.exemplifies_iff` is the definition of [kratzer-2
 conjunctive form of [deigan-2020] and [bondarenko-2022] is `Situation.exemplifies_iff_mem_and`.
 Both need a partial order: in a preorder an isolated point need not be minimal.
 
+Of the two sets whose union is the exemplifiers of a proposition, the first is homogeneous, closed
+under parthood, and the second quantized, an antichain. Their union need be neither.
+
 The set is the first argument, as the predicate is the first argument of `Minimal`, so that
 `Exemplifies p` is the predicate of exemplifying `p`.
 
 ## References
 
 * [kratzer-2012]
+* [kratzer-2023]
 * [deigan-2020]
 * [bondarenko-2022]
 -/
@@ -141,6 +147,23 @@ theorem dependsOn_exemplifies_Iic (x : α) : Set.DependsOn (Exemplifies · x) (I
 theorem not_exemplifies_of_lt (hy : y < x) (hyp : y ∈ p) (hz : z ≤ x) (hzp : z ∉ p) :
     ¬ Exemplifies p x :=
   fun h ↦ (exemplifies_iff.1 h).elim (fun hs ↦ hzp (hs hz)) fun hm ↦ hm.not_prop_of_lt hy hyp
+
+/-! ### Homogeneous and quantized exemplifiers -/
+
+omit [TopologicalSpace α] [Topology.IsLowerSet α] in
+/-- The situations all of whose parts are in `p` are closed under parthood. -/
+theorem isLowerSet_setOf_Iic_subset (p : Set α) : IsLowerSet {x | Iic x ⊆ p} :=
+  fun _ _ hyx hx ↦ (Iic_subset_Iic.2 hyx).trans hx
+
+/-- A part of a situation all of whose parts are in `p` exemplifies `p`. -/
+theorem exemplifies_of_Iic_subset (h : Iic x ⊆ p) (hyx : y ≤ x) : Exemplifies p y :=
+  exemplifies_iff.2 (.inl ((Iic_subset_Iic.2 hyx).trans h))
+
+/-- The exemplifiers of a proposition are the situations all of whose parts are in it, which are
+closed under parthood, together with its minimal members, no one of which is part of another. -/
+theorem setOf_exemplifies_eq :
+    {x | Exemplifies p x} = {x | Iic x ⊆ p} ∪ {x | Minimal (· ∈ p) x} :=
+  Set.ext fun _ ↦ exemplifies_iff
 
 /-! ### Closures -/
 

@@ -26,7 +26,8 @@ proposition by another in a situation, and `Exemplification.lean` the situations
 proposition, those that contain nothing that does not contribute to its truth. `World.lean` has
 the world of a situation, where each situation is part of exactly one world, and truth at a world
 for worlds given from outside the order. `Index.lean` has the world and the time of a situation
-as an index of evaluation.
+as an index of evaluation, and `Event.lean` the events of a kind as the situations that exemplify
+a proposition.
 
 ## Main definitions
 
