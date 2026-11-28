@@ -59,13 +59,13 @@ theorem basic_scalar {φ ψ : Set W} (h : ¬ φ ⊆ ψ) {w : W} :
   obtain ⟨w₀, hw₀, hw₀ψ⟩ := Set.not_subset.1 h
   have hM : IsMinimalCover {φ, ψ} φ {w₀} :=
     .singleton hw₀ (by rintro q (rfl | rfl) hq; exacts [le_rfl, absurd hq hw₀ψ])
-  have hII : {q ∈ ({φ, ψ} : Set (Set W)) | IsInnocentlyIncludable {φ, ψ} φ q ∧ q ≠ φ} = ∅ := by
+  have hII : {q ∈ ({φ, ψ} : Set (Set W)) | q ∈ II {φ, ψ} φ ∧ q ≠ φ} = ∅ := by
     refine Set.eq_empty_of_forall_notMem fun q ⟨hq, hIIq, hne⟩ ↦ ?_
-    obtain ⟨-, v, rfl, hv⟩ := (hM.isInnocentlyIncludable_iff ⟨w₀, hw₀, by simp⟩).1 hIIq
+    obtain ⟨-, v, rfl, hv⟩ := (hM.mem_II_iff ⟨w₀, hw₀, by simp⟩).1 hIIq
     rcases hq with rfl | rfl
     exacts [hne rfl, hw₀ψ hv]
   rw [pexIEII_ne_undefined_iff_of_inter_eq_empty hII]
-  grind [hM.isInnocentlyExcludable_iff]
+  grind [hM.mem_IE_iff]
 
 /-! ### `pex^{IE+II}` on `◇(p ∨ q)`, §2.2 -/
 
@@ -92,8 +92,8 @@ variable (hF : FreeChoiceWitnesses R a b)
 include hF
 
 -- (12d)
-theorem isInnocentlyIncludable_fcAlts_ne_iff {q : Set W} :
-    IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ∧ q ≠ R.preimage (a ∪ b) ↔
+theorem mem_II_fcAlts_ne_iff {q : Set W} :
+    q ∈ II (fcAlts R a b) (R.preimage (a ∪ b)) ∧ q ≠ R.preimage (a ∪ b) ↔
       q = R.preimage a ∨ q = R.preimage b := by
   obtain ⟨w₁, hw₁a, hw₁b⟩ := hF.only_left
   obtain ⟨w₂, hw₂b, hw₂a⟩ := hF.only_right
@@ -101,17 +101,17 @@ theorem isInnocentlyIncludable_fcAlts_ne_iff {q : Set W} :
     hw₂a (he ▸ preimage_mono Set.subset_union_right hw₂b)
   have hb : R.preimage b ≠ R.preimage (a ∪ b) := fun he ↦
     hw₁b (he ▸ preimage_mono Set.subset_union_left hw₁a)
-  rw [isInnocentlyIncludable_fcAlts_iff hF]
+  rw [mem_II_fcAlts_iff hF]
   refine ⟨fun ⟨h, hne⟩ ↦ h.resolve_left hne, fun h ↦ ⟨.inr h, ?_⟩⟩
   rcases h with rfl | rfl
   exacts [ha, hb]
 
 private theorem relevant_fcAlts :
     {q ∈ ({R.preimage (a ∪ b), R.preimage a, R.preimage b} : Set (Set W)) |
-      IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ∧ q ≠ R.preimage (a ∪ b)} =
+      q ∈ II (fcAlts R a b) (R.preimage (a ∪ b)) ∧ q ≠ R.preimage (a ∪ b)} =
         {R.preimage a, R.preimage b} := by
   ext q
-  rw [Set.mem_sep_iff, isInnocentlyIncludable_fcAlts_ne_iff hF]
+  rw [Set.mem_sep_iff, mem_II_fcAlts_ne_iff hF]
   exact ⟨And.right, fun h ↦ ⟨.inr h, h⟩⟩
 
 -- (14), (12c)
@@ -119,7 +119,7 @@ theorem pexPossOr_ne_undefined_iff :
     pexPossOr R a b w ≠ .undefined ↔ (w ∈ R.preimage a ↔ w ∈ R.preimage b) := by
   refine pexIEII_ne_undefined_iff.trans <| (and_iff_right fun ψ hψ hR ↦ ?_).trans
     (by rw [relevant_fcAlts hF, homogeneous_pair])
-  obtain rfl := (isInnocentlyExcludable_fcAlts_iff hF).1 hψ
+  obtain rfl := (mem_IE_fcAlts_iff hF).1 hψ
   obtain ⟨w₀, ⟨hw₀a, hw₀b⟩, hw₀⟩ := hF.not_both
   grind [preimage_mono Set.subset_union_left hw₀a]
 
@@ -127,13 +127,13 @@ theorem pexPossOr_ne_undefined_iff :
 between `◇a ∧ ◇b` and `◇a ∨ ◇b`. -/
 theorem free_choice : pexPossOr R a b w = .true ↔ w ∈ R.preimage a ∧ w ∈ R.preimage b := by
   have hl : ⋂₀ {q ∈ ({R.preimage (a ∪ b), R.preimage a, R.preimage b} : Set (Set W)) |
-      IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ∧ q ≠ R.preimage (a ∪ b)} ⊆
+      q ∈ II (fcAlts R a b) (R.preimage (a ∪ b)) ∧ q ≠ R.preimage (a ∪ b)} ⊆
         R.preimage (a ∪ b) := by
     rw [relevant_fcAlts hF, Set.sInter_pair, preimage_union]
     exact inf_le_sup
   have hu : R.preimage (a ∪ b) ⊆
       ⋃₀ {q ∈ ({R.preimage (a ∪ b), R.preimage a, R.preimage b} : Set (Set W)) |
-        IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ∧ q ≠ R.preimage (a ∪ b)} := by
+        q ∈ II (fcAlts R a b) (R.preimage (a ∪ b)) ∧ q ≠ R.preimage (a ∪ b)} := by
     rw [relevant_fcAlts hF, Set.sUnion_pair, preimage_union]
   rw [pexPossOr, pexIEII_eq_true_iff_forall_mem hl hu, ← pexPossOr, pexPossOr_ne_undefined_iff hF,
     relevant_fcAlts hF]
@@ -178,14 +178,14 @@ theorem gapExt_pexPossOr_nonempty : (Trivalent.gapExt (pexPossOr R a b)).Nonempt
 theorem pex_and_exh_agree :
     pexIEII (fcAlts R a b) (R.preimage (a ∪ b)) (fcAlts R a b) w = .true ↔
       w ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) := by
-  have hII : {q ∈ fcAlts R a b | IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ∧
+  have hII : {q ∈ fcAlts R a b | q ∈ II (fcAlts R a b) (R.preimage (a ∪ b)) ∧
       q ≠ R.preimage (a ∪ b)} = {R.preimage a, R.preimage b} := by
     ext q
-    rw [Set.mem_sep_iff, isInnocentlyIncludable_fcAlts_ne_iff hF]
+    rw [Set.mem_sep_iff, mem_II_fcAlts_ne_iff hF]
     exact ⟨And.right, fun h ↦ ⟨by rcases h with rfl | rfl <;> simp [fcAlts], h⟩⟩
   have hc : R.preimage (a ∩ b) ∈ fcAlts R a b := by simp [fcAlts]
   rw [freeChoice hF, pexIEII_eq_true_iff, pexIEII_ne_undefined_iff, hII, homogeneous_pair]
-  grind [isInnocentlyExcludable_fcAlts_iff hF, preimage_union]
+  grind [mem_IE_fcAlts_iff hF, preimage_union]
 
 end FreeChoice
 
@@ -247,9 +247,9 @@ theorem exhIEII_necAlts (h : (R.core (T ∩ B)).Nonempty) :
     exhIEII (necAlts R T B) (R.core (T ∩ B)) = R.core (T ∩ B) :=
   exhIEII_eq_self_of_forall_subset (fun _ ↦ subset_of_mem_necAlts) h
 
-theorem not_isInnocentlyExcludable_necAlts (h : (R.core (T ∩ B)).Nonempty) (q : Set W) :
-    ¬ IsInnocentlyExcludable (necAlts R T B) (R.core (T ∩ B)) q := fun hq ↦
-  not_isInnocentlyExcludable_of_phi_subset
+theorem notMem_IE_necAlts (h : (R.core (T ∩ B)).Nonempty) (q : Set W) :
+    ¬ q ∈ IE (necAlts R T B) (R.core (T ∩ B)) := fun hq ↦
+  notMem_IE_of_phi_subset
     (((Set.finite_singleton _).insert _).insert _ |>.insert _) h (subset_of_mem_necAlts hq.1) hq
 
 variable (h₁ : ∃ w ∈ R.core T, w ∉ R.core B) (h₂ : ∃ w ∈ R.core B, w ∉ R.core T)
@@ -257,16 +257,16 @@ variable (h₁ : ∃ w ∈ R.core T, w ∉ R.core B) (h₂ : ∃ w ∈ R.core B,
 include h₁ h₂ h
 
 -- (20)
-theorem isInnocentlyIncludable_necAlts_ne_iff {q : Set W} :
-    IsInnocentlyIncludable (necAlts R T B) (R.core (T ∩ B)) q ∧ q ≠ R.core (T ∩ B) ↔
+theorem mem_II_necAlts_ne_iff {q : Set W} :
+    q ∈ II (necAlts R T B) (R.core (T ∩ B)) ∧ q ≠ R.core (T ∩ B) ↔
       q = R.core T ∨ q = R.core B ∨ q = R.core (T ∪ B) := by
   obtain ⟨w₀, hw₀⟩ := id h
   have hcell : w₀ ∈ cell (necAlts R T B) (R.core (T ∩ B)) :=
-    ⟨hw₀, fun q hq ↦ absurd hq (not_isInnocentlyExcludable_necAlts h q),
+    ⟨hw₀, fun q hq ↦ absurd hq (notMem_IE_necAlts h q),
       fun r hr _ ↦ subset_of_mem_necAlts hr hw₀⟩
-  have hII (q : Set W) : IsInnocentlyIncludable (necAlts R T B) (R.core (T ∩ B)) q ↔
+  have hII (q : Set W) : q ∈ II (necAlts R T B) (R.core (T ∩ B)) ↔
       q ∈ necAlts R T B :=
-    ⟨And.left, fun hq ↦ isInnocentlyIncludable_of_mem_cell hq hcell (subset_of_mem_necAlts hq hw₀)⟩
+    ⟨And.left, fun hq ↦ mem_II_of_mem_cell hq hcell (subset_of_mem_necAlts hq hw₀)⟩
   obtain ⟨wT, hwT, hwTB⟩ := h₁
   obtain ⟨wB, hwB, hwBT⟩ := h₂
   have hT : R.core T ≠ R.core (T ∩ B) := fun he ↦
@@ -283,13 +283,13 @@ theorem isInnocentlyIncludable_necAlts_ne_iff {q : Set W} :
 
 private theorem relevant_necAlts :
     {q ∈ ({R.core (T ∩ B), R.core T, R.core B} : Set (Set W)) |
-      IsInnocentlyIncludable (necAlts R T B) (R.core (T ∩ B)) q ∧ q ≠ R.core (T ∩ B)} =
+      q ∈ II (necAlts R T B) (R.core (T ∩ B)) ∧ q ≠ R.core (T ∩ B)} =
         {R.core T, R.core B} := by
   have hne : R.core (T ∪ B) ≠ R.core (T ∩ B) := fun he ↦ by
     obtain ⟨wT, hwT, hwTB⟩ := h₁
     exact hwTB (core_mono Set.inter_subset_right (he ▸ core_mono Set.subset_union_left hwT))
   ext q
-  rw [Set.mem_sep_iff, isInnocentlyIncludable_necAlts_ne_iff h₁ h₂ h]
+  rw [Set.mem_sep_iff, mem_II_necAlts_ne_iff h₁ h₂ h]
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
   grind
 
@@ -297,7 +297,7 @@ private theorem relevant_necAlts :
 theorem pexNecAnd_ne_undefined_iff :
     pexNecAnd R T B w ≠ .undefined ↔ (w ∈ R.core T ↔ w ∈ R.core B) :=
   pexIEII_ne_undefined_iff.trans <|
-    (and_iff_right fun ψ hψ _ ↦ absurd hψ (not_isInnocentlyExcludable_necAlts h ψ)).trans
+    (and_iff_right fun ψ hψ _ ↦ absurd hψ (notMem_IE_necAlts h ψ)).trans
       (by rw [relevant_necAlts h₁ h₂ h, homogeneous_pair])
 
 /-- `pex^{IE+II}[□(T ∧ B)]` is false, and its negation true, exactly where negative free choice
@@ -305,11 +305,11 @@ holds (20). -/
 theorem negative_free_choice_under_negation :
     pexNecAnd R T B w = .false ↔ w ∉ R.core T ∧ w ∉ R.core B := by
   have hl : ⋂₀ {q ∈ ({R.core (T ∩ B), R.core T, R.core B} : Set (Set W)) |
-      IsInnocentlyIncludable (necAlts R T B) (R.core (T ∩ B)) q ∧ q ≠ R.core (T ∩ B)} ⊆
+      q ∈ II (necAlts R T B) (R.core (T ∩ B)) ∧ q ≠ R.core (T ∩ B)} ⊆
         R.core (T ∩ B) := by
     rw [relevant_necAlts h₁ h₂ h, Set.sInter_pair, core_inter]
   have hu : R.core (T ∩ B) ⊆ ⋃₀ {q ∈ ({R.core (T ∩ B), R.core T, R.core B} : Set (Set W)) |
-      IsInnocentlyIncludable (necAlts R T B) (R.core (T ∩ B)) q ∧ q ≠ R.core (T ∩ B)} := by
+      q ∈ II (necAlts R T B) (R.core (T ∩ B)) ∧ q ≠ R.core (T ∩ B)} := by
     rw [relevant_necAlts h₁ h₂ h, Set.sUnion_pair, core_inter]
     exact inf_le_sup
   rw [pexNecAnd, pexIEII_eq_false_iff_forall_notMem hl hu, ← pexNecAnd,

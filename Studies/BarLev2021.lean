@@ -119,7 +119,7 @@ theorem not_of_notMem_biUnion {w : W} (hw : w ∉ ⋃ b ∈ x, atom P b) {a : At
 theorem not_forall_of_mem_exhIEII_insert_iInter (h : Separating x (atom P)) (h2 : 2 ≤ x.card)
     {w : W} (hw : w ∈ exhIEII (insert (⋂ a ∈ x, atom P a) (supClosure (atom P '' ↑x)))
       (⋃ b ∈ x, atom P b)) : ¬ ∀ a ∈ x, P a w :=
-  fun hall ↦ hw.2.1 _ (isInnocentlyExcludable_iInter_of_insert h.single h2)
+  fun hall ↦ hw.2.1 _ (mem_IE_iInter_of_insert h.single h2)
     (Set.mem_iInter₂.2 fun a ha ↦ hall a ha)
 
 /-! ### Gappiness -/

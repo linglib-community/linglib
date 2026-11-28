@@ -16,7 +16,7 @@ innocently excludable members of a domain `A`, which on Fox and Katzir's theory 
 relevant formal alternatives; relevance being closed under negation and conjunction, [such a
 restriction is a set satisfying the three conditions](##isDomain_iff_exists) of `IsDomain`. A
 domain holding one of two symmetric alternatives holds the other whenever it is a formal
-alternative, so [no inference against either arises](##IsDomain.not_isInnocentlyExcludable).
+alternative, so [no inference against either arises](##IsDomain.notMem_IE).
 The puzzle is that *Bill went for a run and didn't smoke; John only went for a run* does license
 the inference that John smoked, although successive substitution [derives the symmetric *run and
 smoked*](##ranAndSmoked_mem_substitutionAlternatives), while *Bill ate exactly three cookies;
@@ -112,10 +112,10 @@ theorem IsDomain.mem_of_isSymmetric (hA : IsDomain F S A) (h : IsSymmetric S S�
 /-- No domain licenses the inference against one of two symmetric formal alternatives, as with
 *exactly three* in (41), *children and no twins* in (44) and *passed some and failed some* in
 (47). -/
-theorem IsDomain.not_isInnocentlyExcludable (hA : IsDomain F S A) (hfin : A.Finite)
+theorem IsDomain.notMem_IE (hA : IsDomain F S A) (hfin : A.Finite)
     (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ F) (hne : S₁.Nonempty) :
-    ¬ IsInnocentlyExcludable A S S₁ :=
-  not_isInnocentlyExcludable_of_subset_union _ _ hfin h₁ (hA.mem_of_isSymmetric h h₁ h₂)
+    ¬ S₁ ∈ IE A S :=
+  notMem_IE_of_subset_union _ _ hfin h₁ (hA.mem_of_isSymmetric h h₁ h₂)
     h.union.symm.subset (h.symm.sdiff_eq.symm ▸ hne)
 
 -- (43), (46)

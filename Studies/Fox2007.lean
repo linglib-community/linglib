@@ -121,15 +121,15 @@ variable (C) (p : Set W)
 /-- The anti-exhaustivity reading asserts the exhaustified prejacent and denies the
 exhaustification of every other alternative that is not innocently excludable. -/
 def anEx : Set W :=
-  exhIE C p ∩ ⋂ q ∈ (C \ {q | IsInnocentlyExcludable C p q}) \ {p}, (exhIE C q)ᶜ
+  exhIE C p ∩ ⋂ q ∈ (C \ IE C p) \ {p}, (exhIE C q)ᶜ
 
 theorem anEx_eq : anEx C p = exhIE C p ∩ ⋂ q ∈ C \ {p}, (exhIE C q)ᶜ := by
   ext u
   simp only [anEx, mem_inter_iff, mem_iInter₂, mem_sdiff, mem_singleton_iff, mem_ofPred_eq,
     mem_compl_iff]
   refine and_congr_right fun hu ↦ ⟨fun h q hq ↦ ?_, fun h q hq ↦ h q ⟨hq.1.1, hq.2⟩⟩
-  by_cases hIE : IsInnocentlyExcludable C p q
-  · exact hIE.exhIE_subset_compl_exhIE hu
+  by_cases hIE : q ∈ IE C p
+  · exact (exhIE_subset_compl_exhIE_of_mem_IE hIE) hu
   · exact h q ⟨⟨hq.1, hIE⟩, hq.2⟩
 
 theorem anEx_insert {C₀ : Set (Set W)} (hp : p ∉ C₀) :
@@ -211,9 +211,9 @@ theorem disjoint_exhMW : Disjoint (exhMW {w, s, n, e} w) (s ∩ n) := by
   rw [h.exhMW_eq]
   exact Set.disjoint_left.2 fun u hu hu' ↦ hu.elim (fun h' ↦ h'.2 hu'.2) fun h' ↦ h'.2 hu'.1
 
-theorem isInnocentlyExcludable_iff {q : Set W} (hq : q ∈ ({w, s, n, e} : Set (Set W))) :
-    IsInnocentlyExcludable {w, s, n, e} w q ↔ q = e := by
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ hq, h.exhMW_eq]
+theorem mem_IE_iff {q : Set W} (hq : q ∈ ({w, s, n, e} : Set (Set W))) :
+    q ∈ IE {w, s, n, e} w ↔ q = e := by
+  rw [mem_IE_iff_exhMW_subset_compl _ _ _ hq, h.exhMW_eq]
   obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, ⟨b, hbn, hbs⟩⟩ := h
   have ha : a ∈ symmDiff s n := Or.inl ⟨has, han⟩
   have hb : b ∈ symmDiff s n := Or.inr ⟨hbn, hbs⟩
@@ -226,7 +226,7 @@ theorem isInnocentlyExcludable_iff {q : Set W} (hq : q ∈ ({w, s, n, e} : Set (
     exacts [hun (hn hue), hus (hs hue)]
 
 theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
-  rw [exhIE_eq_of_iff _ _ fun q hq ↦ h.isInnocentlyExcludable_iff hq]
+  rw [exhIE_eq_of_iff _ _ fun q hq ↦ h.mem_IE_iff hq]
   ext u
   exact ⟨fun ⟨hu, h'⟩ ↦ ⟨hu, h' e (by simp) rfl⟩, fun ⟨hu, hue⟩ ↦ ⟨hu, fun _ _ hq ↦ hq ▸ hue⟩⟩
 
@@ -272,12 +272,12 @@ theorem exhIter_two_eq_of_eq_inter (he : e = s ∩ n) :
   obtain ⟨-, -, -, ⟨a, has, han⟩, ⟨b, hbn, hbs⟩⟩ := h
   refine (exhIE_eq_self_iff _ _).2 fun q hq ↦ ?_
   rcases id hq.1 with rfl | rfl | rfl | rfl
-  · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨a, Or.inl ⟨has, han⟩⟩
+  · exact (notMem_IE_of_phi_subset (toFinite _) ⟨a, Or.inl ⟨has, han⟩⟩
       subset_rfl hq).elim
-  · refine absurd hq (not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp)
+  · refine absurd hq (notMem_IE_of_subset_union _ _ (toFinite _) (by simp)
       (q := n \ s) (by simp) (fun u hu ↦ hu) ?_)
     exact ⟨a, Or.inl ⟨has, han⟩, fun h' ↦ h'.2 has⟩
-  · refine absurd hq (not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp)
+  · refine absurd hq (notMem_IE_of_subset_union _ _ (toFinite _) (by simp)
       (q := s \ n) (by simp) (fun u hu ↦ hu.symm) ?_)
     exact ⟨b, Or.inr ⟨hbn, hbs⟩, fun h' ↦ h'.2 hbn⟩
   · exact Set.disjoint_left.2 fun u hu hu' ↦ hu.elim (fun h' ↦ h'.2 hu'.2) fun h' ↦ h'.2 hu'.1
@@ -756,8 +756,8 @@ theorem isSauerlandExcludable_iff_isSecondaryImplicature (hC : ∀ r ∈ C, r �
 
 /-- Over finitely many alternatives and a consistent prejacent, an alternative in every maximal
 consistent exclusion (61) passes the test (57). -/
-theorem isSauerlandExcludable_of_isInnocentlyExcludable (hC : C.Finite) (hp : p.Nonempty)
-    (h : IsInnocentlyExcludable C p q) : IsSauerlandExcludable C p q := by
+theorem isSauerlandExcludable_of_mem_IE (hC : C.Finite) (hp : p.Nonempty)
+    (h : q ∈ IE C p) : IsSauerlandExcludable C p q := by
   have extend (X : Set (Set W)) (hX : IsConsistentExclusion C p X) :
       (p \ ⋃₀ insert q X).Nonempty :=
     let ⟨M, hXM, hM⟩ := Set.Finite.exists_le_maximal (s := {X | IsConsistentExclusion C p X})
@@ -782,10 +782,10 @@ open Question Inquisitive Inquisitive.Proposition
 variable {ι : Type*} {a : ι → Set W} (ha : Irredundant a)
 include ha
 
-theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
+theorem mem_IE_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
     (hij : i ≠ j) :
-    IsInnocentlyExcludable (infClosure (range a)) (⋃ i, a i) (⋂ k ∈ S, a k) := by
-  refine .of_forall_maximal (mem_infClosure_range.2 ⟨S, ⟨i, hi⟩, rfl⟩) fun X hX ↦ ?_
+    (⋂ k ∈ S, a k) ∈ IE (infClosure (range a)) (⋃ i, a i) := by
+  refine mem_IE_of_forall_maximal (mem_infClosure_range.2 ⟨S, ⟨i, hi⟩, rfl⟩) fun X hX ↦ ?_
   obtain ⟨v, hv, hvX⟩ := hX.1.2
   by_cases hvS : v ∈ ⋂ k ∈ S, a k
   · obtain ⟨u, hui, hu⟩ := ha i
@@ -798,11 +798,11 @@ theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (h
       exact mem_iInter₂.1 hvS k hi
   · exact ⟨v, hv, fun ⟨c, hc, hvc⟩ ↦ hc.elim (fun h ↦ hvS (h ▸ hvc)) fun h ↦ hvX ⟨c, h, hvc⟩⟩
 
-theorem not_isInnocentlyExcludable_atom (i : ι) :
-    ¬ IsInnocentlyExcludable (infClosure (range a)) (⋃ i, a i) (a i) := by
+theorem notMem_IE_atom (i : ι) :
+    ¬ (a i) ∈ IE (infClosure (range a)) (⋃ i, a i) := by
   obtain ⟨u, hui, hu⟩ := ha i
   have hmem (k : ι) : a k ∈ infClosure (range a) := subset_infClosure (mem_range_self k)
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem i)]
+  rw [mem_IE_iff_exhMW_subset_compl _ _ _ (hmem i)]
   refine fun h ↦ h ⟨mem_iUnion.2 ⟨i, hui⟩, ?_⟩ hui
   intro v hv hvu
   obtain ⟨k, hkv⟩ := mem_iUnion.1 hv
@@ -826,7 +826,7 @@ theorem exhIE_infClosure_range [Fintype ι] [DecidableEq ι] :
   · rintro ⟨⟨i, hi⟩, h⟩
     refine ⟨i, hi, fun j hj ↦ by_contra fun hji ↦
       h (⋂ k ∈ ({i, j} : Finset ι), a k) ?_ (mem_iInter₂.2 fun m hm ↦ ?_)⟩
-    · exact isInnocentlyExcludable_conj ha (S := {i, j}) (Finset.mem_insert_self i _)
+    · exact mem_IE_conj ha (S := {i, j}) (Finset.mem_insert_self i _)
         (Finset.mem_insert_of_mem (Finset.mem_singleton_self j)) fun h' ↦ hji h'.symm
     · rcases Finset.mem_insert.1 hm with h1 | h1
       · rw [h1]
@@ -840,7 +840,7 @@ theorem exhIE_infClosure_range [Fintype ι] [DecidableEq ι] :
     · obtain ⟨j, hj⟩ := hS
       have : S = {i} := Finset.eq_singleton_iff_unique_mem.2 ⟨hSi j hj ▸ hj, hSi⟩
       rw [this, Finset.set_biInter_singleton] at hc
-      exact not_isInnocentlyExcludable_atom ha i hc
+      exact notMem_IE_atom ha i hc
     · obtain ⟨j, hj⟩ := not_forall.1 hSi
       obtain ⟨hjS, hji⟩ := Classical.not_imp.1 hj
       exact hji (huniq j (mem_iInter₂.1 huc j hjS))

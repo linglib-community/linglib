@@ -144,8 +144,8 @@ section NoExclusion
 variable (hA : A ⊆ supClosure (p '' I)) (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i)
 include hA hI hall
 
-theorem cell_nonempty_of_forall_not_isInnocentlyExcludable
-    (hIE : ∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q) : (cell A (⋃ i ∈ I, p i)).Nonempty :=
+theorem cell_nonempty_of_forall_notMem_IE
+    (hIE : ∀ q, ¬ q ∈ IE A (⋃ i ∈ I, p i)) : (cell A (⋃ i ∈ I, p i)).Nonempty :=
   let ⟨w, hw⟩ := hall
   let ⟨i, hi⟩ := hI
   ⟨w, Set.mem_biUnion hi (hw i hi), fun q hq ↦ absurd hq (hIE q),
@@ -153,10 +153,10 @@ theorem cell_nonempty_of_forall_not_isInnocentlyExcludable
 
 /-- When no alternative among the disjunctions is innocently excludable, exhaustification
 asserts them all. -/
-theorem exhIEII_eq_inter_sInter (hIE : ∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q) :
+theorem exhIEII_eq_inter_sInter (hIE : ∀ q, ¬ q ∈ IE A (⋃ i ∈ I, p i)) :
     exhIEII A (⋃ i ∈ I, p i) = (⋃ i ∈ I, p i) ∩ ⋂₀ A := by
   rw [exhIEII_eq_cell_of_cell_nonempty _ _
-    (cell_nonempty_of_forall_not_isInnocentlyExcludable hA hI hall hIE)]
+    (cell_nonempty_of_forall_notMem_IE hA hI hall hIE)]
   ext w
   exact and_congr_right fun _ ↦ ⟨fun h ↦ Set.mem_sInter.2 fun r hr ↦ h.2 r hr (hIE r),
     fun h ↦ ⟨fun q hq ↦ absurd hq (hIE q), fun r hr _ ↦ Set.mem_sInter.1 h r hr⟩⟩
@@ -165,7 +165,7 @@ theorem exhIEII_eq_inter_sInter (hIE : ∀ q, ¬ IsInnocentlyExcludable A (⋃ i
 exactly when none of them is innocently excludable. -/
 theorem iInter_subset_exhIEII_iff :
     ⋂ i ∈ I, p i ⊆ exhIEII A (⋃ i ∈ I, p i) ↔
-      ∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q := by
+      ∀ q, ¬ q ∈ IE A (⋃ i ∈ I, p i) := by
   refine ⟨fun h q hq ↦ ?_, fun hIE ↦ ?_⟩
   · obtain ⟨w, hw⟩ := hall
     exact (h (Set.mem_iInter₂.2 hw)).2.1 q hq (mem_of_mem_supClosure_image hw (hA hq.1))
@@ -181,12 +181,12 @@ variable (hA : A ⊆ supClosure (p '' I))
   (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
 include hA hsplit hsep
 
-theorem not_isInnocentlyExcludable_of_subset_supClosure (q : Set World) :
-    ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q := by
+theorem notMem_IE_of_subset_supClosure (q : Set World) :
+    ¬ q ∈ IE A (⋃ i ∈ I, p i) := by
   intro hq
   obtain ⟨S, ⟨i, hi⟩, hS, rfl⟩ := Set.mem_supClosure_image.1 (hA hq.1)
   obtain ⟨w, hw⟩ := hsep i (hS hi)
-  exact (isInnocentlyExcludable_iff_exhMW_subset_compl A _ _ hq.1).1 hq
+  exact (mem_IE_iff_exhMW_subset_compl A _ _ hq.1).1 hq
     (isMinimal_of_single (hS hi) (fun q hq _ ↦
       let ⟨S, _, hS, h⟩ := Set.mem_supClosure_image.1 (hA hq); ⟨S, hS, h.symm⟩)
       (hsplit i (hS hi)) hw)
@@ -194,34 +194,34 @@ theorem not_isInnocentlyExcludable_of_subset_supClosure (q : Set World) :
 
 theorem cell_nonempty_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
     (cell A (⋃ i ∈ I, p i)).Nonempty :=
-  cell_nonempty_of_forall_not_isInnocentlyExcludable hA hI hall
-    (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep)
+  cell_nonempty_of_forall_notMem_IE hA hI hall
+    (notMem_IE_of_subset_supClosure hA hsplit hsep)
 
-theorem isInnocentlyIncludable_iff_of_subset_supClosure (hI : I.Nonempty)
+theorem mem_II_iff_of_subset_supClosure (hI : I.Nonempty)
     (hall : ∃ w, ∀ i ∈ I, w ∈ p i) {q : Set World} :
-    IsInnocentlyIncludable A (⋃ i ∈ I, p i) q ↔ q ∈ A := by
-  rw [isInnocentlyIncludable_iff_of_cell_nonempty
+    q ∈ II A (⋃ i ∈ I, p i) ↔ q ∈ A := by
+  rw [mem_II_iff_of_cell_nonempty
     (cell_nonempty_of_subset_supClosure hA hsplit hsep hI hall)]
-  exact and_iff_left (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q)
+  exact and_iff_left (notMem_IE_of_subset_supClosure hA hsplit hsep q)
 
 end Family
 
 /-- Two sets of sub-disjunctions that each make nothing innocently excludable make nothing
 innocently excludable together. -/
-theorem not_isInnocentlyExcludable_union {A B : Set (Set World)}
+theorem notMem_IE_union {A B : Set (Set World)}
     (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hA : A ⊆ supClosure (p '' I))
-    (hB : B ⊆ supClosure (p '' I)) (hIEA : ∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q)
-    (hIEB : ∀ q, ¬ IsInnocentlyExcludable B (⋃ i ∈ I, p i) q) (q : Set World) :
-    ¬ IsInnocentlyExcludable (A ∪ B) (⋃ i ∈ I, p i) q := by
+    (hB : B ⊆ supClosure (p '' I)) (hIEA : ∀ q, ¬ q ∈ IE A (⋃ i ∈ I, p i))
+    (hIEB : ∀ q, ¬ q ∈ IE B (⋃ i ∈ I, p i)) (q : Set World) :
+    ¬ q ∈ IE (A ∪ B) (⋃ i ∈ I, p i) := by
   have key : ∀ {A B : Set (Set World)}, A ⊆ supClosure (p '' I) → B ⊆ supClosure (p '' I) →
-      (∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q) → q ∈ A →
-      ¬ IsInnocentlyExcludable (A ∪ B) (⋃ i ∈ I, p i) q := by
+      (∀ q, ¬ q ∈ IE A (⋃ i ∈ I, p i)) → q ∈ A →
+      ¬ q ∈ IE (A ∪ B) (⋃ i ∈ I, p i) := by
     intro A B hA hB hIEA hqA hq
     have hfin : (A ∪ B).Finite :=
       (I.finite_toSet.image p).supClosure.subset (Set.union_subset hA hB)
-    have hmw := (isInnocentlyExcludable_iff_exhMW_subset_compl (A ∪ B) _ q hq.1).1 hq
+    have hmw := (mem_IE_iff_exhMW_subset_compl (A ∪ B) _ q hq.1).1 hq
     have hnot := hIEA q
-    rw [isInnocentlyExcludable_iff_exhMW_subset_compl A _ q hqA, Set.not_subset] at hnot
+    rw [mem_IE_iff_exhMW_subset_compl A _ q hqA, Set.not_subset] at hnot
     obtain ⟨u₁, hu₁, hu₁q⟩ := hnot
     obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 (hA hqA)
     obtain ⟨i, hi, hu₁i⟩ := Set.mem_iUnion₂.1 (not_not.1 hu₁q)
@@ -344,13 +344,13 @@ end Minterm
 
 /-- A disjunction is innocently excludable against a sub-disjunction of separated disjuncts
 exactly when the two share no disjunct. -/
-theorem isInnocentlyExcludable_supClosure_biUnion_iff {T : Finset ι} (hTI : T ⊆ I)
+theorem mem_IE_supClosure_biUnion_iff {T : Finset ι} (hTI : T ⊆ I)
     (hsingle : ∀ i ∈ T, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) {S : Finset ι} (hS : S ⊆ I)
     (hSne : S.Nonempty) :
-    IsInnocentlyExcludable (supClosure (p '' I)) (⋃ i ∈ T, p i) (⋃ i ∈ S, p i) ↔ Disjoint S T := by
+    (⋃ i ∈ S, p i) ∈ IE (supClosure (p '' I)) (⋃ i ∈ T, p i) ↔ Disjoint S T := by
   have hmem (R : Finset ι) (hR : R ⊆ I) (hne : R.Nonempty) : ⋃ i ∈ R, p i ∈ supClosure (p '' I) :=
     Set.mem_supClosure_image.2 ⟨R, hne, hR, rfl⟩
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem S hS hSne), Finset.disjoint_left]
+  rw [mem_IE_iff_exhMW_subset_compl _ _ _ (hmem S hS hSne), Finset.disjoint_left]
   refine ⟨fun h i hiS hiT ↦ ?_, fun h u hu huq ↦ ?_⟩
   · obtain ⟨w, hw⟩ := hsingle i hiT
     refine h ⟨Set.mem_biUnion hiT ((hw i (hTI hiT)).2 rfl), fun v hv hle q ⟨hq, hwq⟩ ↦ ⟨hq, ?_⟩⟩
@@ -382,11 +382,11 @@ theorem exhIEII_supClosure_biUnion {T : Finset ι} (hTI : T ⊆ I) (hne : T.None
     ext w
     refine ⟨fun ⟨_, hIE, hII⟩ i hi ↦ ⟨fun hwi ↦ ?_, fun hiT ↦ ?_⟩, fun hw ↦ ⟨?_, ?_, ?_⟩⟩
     · by_contra hiT
-      refine hIE _ ((isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle (S := {i})
+      refine hIE _ ((mem_IE_supClosure_biUnion_iff hTI hsingle (S := {i})
         (by simpa using hi) (by simp)).2 (by simpa using hiT)) (by simpa using hwi)
     · have := hII (⋃ j ∈ ({i} : Finset ι), p j)
         (Set.mem_supClosure_image.2 ⟨{i}, by simp, by simpa using hi, rfl⟩) fun h ↦ by
-          have := (isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle (S := {i})
+          have := (mem_IE_supClosure_biUnion_iff hTI hsingle (S := {i})
             (by simpa using hi) (by simp)).1 h
           simp_all
       simpa using this
@@ -396,11 +396,11 @@ theorem exhIEII_supClosure_biUnion {T : Finset ι} (hTI : T ⊆ I) (hne : T.None
       obtain ⟨S, hSne, hS, rfl⟩ := Set.mem_supClosure_image.1 hq.1
       obtain ⟨j, hj, hwj⟩ := Set.mem_iUnion₂.1 hwq
       exact Finset.disjoint_left.1
-        ((isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle hS hSne).1 hq) hj
+        ((mem_IE_supClosure_biUnion_iff hTI hsingle hS hSne).1 hq) hj
         ((hw j (hS hj)).1 hwj)
     · intro r hr hnr
       obtain ⟨S, hSne, hS, rfl⟩ := Set.mem_supClosure_image.1 hr
-      rw [isInnocentlyExcludable_supClosure_biUnion_iff hTI hsingle hS hSne,
+      rw [mem_IE_supClosure_biUnion_iff hTI hsingle hS hSne,
         Finset.not_disjoint_iff] at hnr
       obtain ⟨j, hjS, hjT⟩ := hnr
       exact Set.mem_biUnion hjS ((hw j (hS hjS)).2 hjT)
@@ -432,7 +432,7 @@ excludable. -/
 theorem exhIE_image (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) :
     exhIE (p '' ↑I) (⋃ i ∈ I, p i) = ⋃ i ∈ I, p i :=
   Set.Subset.antisymm (exhIE_subset _ _) fun _ hw ↦ ⟨hw, fun q hq ↦ absurd hq
-    (not_isInnocentlyExcludable_of_subset_supClosure subset_supClosure hsplit_image hsep q)⟩
+    (notMem_IE_of_subset_supClosure subset_supClosure hsplit_image hsep q)⟩
 
 /-- Exhaustifying a disjunction of separated disjuncts against the disjuncts alone gives their
 conjunction. -/
@@ -440,7 +440,7 @@ theorem exhIEII_image (h : Separating I p) (hI : I.Nonempty) :
     exhIEII (p '' ↑I) (⋃ i ∈ I, p i) = ⋂ i ∈ I, p i := by
   obtain ⟨i, hi⟩ := hI
   rw [exhIEII_eq_inter_sInter subset_supClosure ⟨i, hi⟩ h.all
-      (not_isInnocentlyExcludable_of_subset_supClosure subset_supClosure hsplit_image h.single),
+      (notMem_IE_of_subset_supClosure subset_supClosure hsplit_image h.single),
     Set.sInter_image]
   simp only [Finset.mem_coe]
   exact Set.inter_eq_right.2 fun w hw ↦ Set.mem_biUnion hi (Set.mem_iInter₂.1 hw i hi)
@@ -552,7 +552,7 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] (h : Separating I p) {m : ℕ} (
       obtain ⟨i, hi⟩ := Finset.card_pos.1 hpos
       exact Set.mem_biUnion (Finset.mem_filter.1 hi).1 (Finset.mem_filter.1 hi).2
   rw [exhIEII_eq_inter_sInter (subDisjsOfCard_subset_supClosure hI hm) hI hall
-    (not_isInnocentlyExcludable_of_subset_supClosure (subDisjsOfCard_subset_supClosure hI hm)
+    (notMem_IE_of_subset_supClosure (subDisjsOfCard_subset_supClosure hI hm)
       (hsplit_subDisjsOfCard hm hmI) hsep)]
   ext w
   simp only [Set.mem_inter_iff, Set.mem_sInter, Set.mem_ofPred_eq]
@@ -575,11 +575,10 @@ end Count
 
 /-- Once the conjunction of the disjuncts joins their closure under disjunction, it is innocently
 excludable. -/
-theorem isInnocentlyExcludable_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
+theorem mem_IE_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
     (h2 : 2 ≤ I.card) :
-    IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (supClosure (p '' I))) (⋃ i ∈ I, p i)
-      (⋂ i ∈ I, p i) := by
-  refine (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Set.mem_insert _ _)).2 ?_
+    (⋂ i ∈ I, p i) ∈ IE (insert (⋂ i ∈ I, p i) (supClosure (p '' I))) (⋃ i ∈ I, p i) := by
+  refine (mem_IE_iff_exhMW_subset_compl _ _ _ (Set.mem_insert _ _)).2 ?_
   intro w ⟨hw, hmin⟩
   obtain ⟨i, hi, hwi⟩ := Set.mem_iUnion₂.1 hw
   obtain ⟨j, hj, hji⟩ := Finset.exists_mem_ne (by omega : 1 < I.card) i

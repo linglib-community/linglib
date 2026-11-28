@@ -103,16 +103,16 @@ theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ �
   have hM := isMinimalCover_pair hcov (c := d₁ ∩ d₂)
     ⟨⟨hw₁, hw₁₁⟩, fun h ↦ hw₁' (h.elim id And.right)⟩
     ⟨⟨hw₂, hw₂₂⟩, fun h ↦ hw₂' (h.elim id And.left)⟩
-  have hIE : ∀ q, IsInnocentlyExcludable {φ, d₁, d₂, d₁ ∩ d₂} φ q ↔ q = d₁ ∩ d₂ := by
+  have hIE : ∀ q, q ∈ IE {φ, d₁, d₂, d₁ ∩ d₂} φ ↔ q = d₁ ∩ d₂ := by
     intro q
     constructor
     · intro hq
-      have := (hM.isInnocentlyExcludable_iff hq.1).1 hq
+      have := (hM.mem_IE_iff hq.1).1 hq
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq] at this
       rcases hq.1 with rfl | rfl | rfl | rfl
       exacts [absurd hw₁ this.1, absurd hw₁₁ this.1, absurd hw₂₂ this.2, rfl]
     · rintro rfl
-      exact (hM.isInnocentlyExcludable_iff (by simp)).2 (by simp [hw₁', hw₂'])
+      exact (hM.mem_IE_iff (by simp)).2 (by simp [hw₁', hw₂'])
   have hMI : ∀ d ∈ ({d₁, d₂} : Set (Set World)), ∀ w ∈ φ ∩ d, w ∉ d₁ ∩ d₂ →
       Maximal (IsConsistentInclusion {φ, d₁, d₂, d₁ ∩ d₂} φ) {φ, d} := by
     intro d hd w ⟨hw, hwd⟩ hw'
@@ -157,9 +157,9 @@ theorem cell_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d
   simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁', hw₂']
   tauto
 
-theorem isInnocentlyIncludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
+theorem mem_II_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) {r : Set World} :
-    IsInnocentlyIncludable {φ, d₁, d₂, c} φ r ↔ r = φ ∨ r = d₁ ∨ r = d₂ := by
+    r ∈ II {φ, d₁, d₂, c} φ ↔ r = φ ∨ r = d₁ ∨ r = d₂ := by
   obtain ⟨w₁, hw₁⟩ := h₁
   obtain ⟨w₂, hw₂⟩ := h₂
   obtain ⟨w₀, ⟨⟨hw₀, hw₀₁⟩, hw₀₂⟩, hw₀c⟩ := h
@@ -167,7 +167,7 @@ theorem isInnocentlyIncludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : �
   obtain ⟨⟨hw₁, hw₁₁⟩, hw₁'⟩ := hw₁
   obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := hw₂
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
-  rw [hM.isInnocentlyIncludable_iff ⟨w₀, hw₀, by
+  rw [hM.mem_II_iff ⟨w₀, hw₀, by
     simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁'.1, hw₁'.2, hw₂'.1, hw₂'.2, hw₀, hw₀₁, hw₀₂, hw₀c]⟩]
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left]
   constructor
@@ -178,9 +178,9 @@ theorem isInnocentlyIncludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : �
     · exact absurd h (not_or.2 ⟨hw₁'.2, hw₂'.2⟩)
   · rintro (rfl | rfl | rfl) <;> simp [hw₁, hw₂, hw₁₁, hw₂₂]
 
-theorem isInnocentlyExcludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
+theorem mem_IE_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) {q : Set World} :
-    IsInnocentlyExcludable {φ, d₁, d₂, c} φ q ↔ q = c := by
+    q ∈ IE {φ, d₁, d₂, c} φ ↔ q = c := by
   obtain ⟨w₁, hw₁⟩ := h₁
   obtain ⟨w₂, hw₂⟩ := h₂
   have hM := isMinimalCover_pair hcov hw₁ hw₂
@@ -188,12 +188,12 @@ theorem isInnocentlyExcludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : �
   obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := hw₂
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
   refine ⟨fun hq ↦ ?_, ?_⟩
-  · have := (hM.isInnocentlyExcludable_iff hq.1).1 hq
+  · have := (hM.mem_IE_iff hq.1).1 hq
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq] at this
     rcases hq.1 with rfl | rfl | rfl | rfl
     exacts [absurd hw₁ this.1, absurd hw₁₁ this.1, absurd hw₂₂ this.2, rfl]
   · rintro rfl
-    exact (hM.isInnocentlyExcludable_iff (by simp)).2 (by simp [hw₁'.2, hw₂'.2])
+    exact (hM.mem_IE_iff (by simp)).2 (by simp [hw₁'.2, hw₂'.2])
 
 end Pair
 
@@ -358,16 +358,16 @@ theorem freeChoice : exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) =
 
 /-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
 alternatives. -/
-theorem isInnocentlyIncludable_fcAlts_iff {q : Set W} :
-    IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔
+theorem mem_II_fcAlts_iff {q : Set W} :
+    q ∈ II (fcAlts R a b) (R.preimage (a ∪ b)) ↔
       q = R.preimage (a ∪ b) ∨ q = R.preimage a ∨ q = R.preimage b :=
-  isInnocentlyIncludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
+  mem_II_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
     hF.exists_both
 
 /-- The only excludable alternative of `◇(a ∨ b)` is the conjunctive one. -/
-theorem isInnocentlyExcludable_fcAlts_iff {q : Set W} :
-    IsInnocentlyExcludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔ q = R.preimage (a ∩ b) :=
-  isInnocentlyExcludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
+theorem mem_IE_fcAlts_iff {q : Set W} :
+    q ∈ IE (fcAlts R a b) (R.preimage (a ∪ b)) ↔ q = R.preimage (a ∩ b) :=
+  mem_IE_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
 
 end FreeChoice
 
@@ -395,8 +395,8 @@ open Classical in
 /-- `only` presupposes the innocently includable alternatives and asserts that the innocently
 excludable ones are false (32). -/
 noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → Trivalent :=
-  Trivalent.condEvent (fun w ↦ ∀ r, IsInnocentlyIncludable ALT φ r → w ∈ r)
-    (fun w ↦ ∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q)
+  Trivalent.condEvent (fun w ↦ ∀ r, r ∈ II ALT φ → w ∈ r)
+    (fun w ↦ ∀ q, q ∈ IE ALT φ → w ∉ q)
 
 /-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
 theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
@@ -405,14 +405,14 @@ theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
       R.preimage a ∩ R.preimage b := by
   ext w
   simp only [Trivalent.mem_compl_gapExt, ne_eq, only, Trivalent.condEvent_eq_undefined_iff, not_not,
-    isInnocentlyIncludable_fcAlts_iff hF, forall_eq_or_imp, forall_eq]
+    mem_II_fcAlts_iff hF, forall_eq_or_imp, forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
 /-- Where the prejacent is the only includable alternative and exactly the non-entailed ones are
 excludable, `only` agrees with the exclusive entry (29b) on the entailment scale. -/
 theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
-    (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q)
-    (hII : ∀ r, IsInnocentlyIncludable ALT φ r ↔ r = φ) :
+    (hIE : ∀ q, q ∈ IE ALT φ ↔ q ∈ ALT ∧ ¬ φ ⊆ q)
+    (hII : ∀ r, r ∈ II ALT φ ↔ r = φ) :
     Trivalent.posExt (only ALT φ) =
       Trivalent.posExt (Focus.only (· ⊆ ·) ALT id φ) := by
   rw [Focus.posExt_only_subset hφ]

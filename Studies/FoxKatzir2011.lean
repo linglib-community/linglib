@@ -101,9 +101,9 @@ theorem dominated_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ 
     (fun hs ↦ let ⟨_, hw⟩ := hne₁; disjoint_left.1 h.disjoint hw (hs hw))
     (fun hs ↦ let ⟨_, hw⟩ := hne₂; disjoint_left.1 h.disjoint (hs hw) hw)
 
-theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
-    (hne₁ : S₁.Nonempty) : ¬ IsInnocentlyExcludable {S, S₁, S₂} S S₁ :=
-  not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp) (by simp)
+theorem notMem_IE_of_isSymmetric (h : IsSymmetric S S₁ S₂)
+    (hne₁ : S₁.Nonempty) : ¬ S₁ ∈ IE {S, S₁, S₂} S :=
+  notMem_IE_of_subset_union _ _ (toFinite _) (by simp) (by simp)
     h.union.symm.subset (h.symm.sdiff_eq.symm ▸ hne₁)
 
 theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)

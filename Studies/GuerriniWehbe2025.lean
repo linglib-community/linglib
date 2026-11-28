@@ -90,17 +90,17 @@ noncomputable abbrev pexPlural (R : Set (Set W)) : W → Trivalent :=
 theorem pexPlural_ne_undefined_iff (h : Separating (x ∩ D) (atom P)) (hne : (x ∩ D).Nonempty) :
     pexPlural D x P R w ≠ .undefined ↔
       Homogeneous (supClosure (atom P '' ↑(x ∩ D)) \ {(⋃ b ∈ x ∩ D, atom P b)} ∩ R) w := by
-  have hset : {a ∈ R | IsInnocentlyIncludable (supClosure (atom P '' ↑(x ∩ D)))
-      (⋃ b ∈ x ∩ D, atom P b) a ∧ a ≠ ⋃ b ∈ x ∩ D, atom P b} =
+  have hset : {a ∈ R | a ∈ II (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) ∧
+        a ≠ ⋃ b ∈ x ∩ D, atom P b} =
         supClosure (atom P '' ↑(x ∩ D)) \ {⋃ b ∈ x ∩ D, atom P b} ∩ R := by
     ext a
-    rw [Set.mem_sep_iff, isInnocentlyIncludable_iff_of_subset_supClosure (p := atom P) le_rfl
+    rw [Set.mem_sep_iff, mem_II_iff_of_subset_supClosure (p := atom P) le_rfl
       hsplit_supClosure h.single hne h.all]
     simp only [Set.mem_inter_iff, Set.mem_sdiff, Set.mem_singleton_iff]
     tauto
   rw [pexIEII_ne_undefined_iff, hset]
   exact and_iff_right fun ψ hψ ↦
-    absurd hψ (not_isInnocentlyExcludable_of_subset_supClosure le_rfl hsplit_supClosure h.single ψ)
+    absurd hψ (notMem_IE_of_subset_supClosure le_rfl hsplit_supClosure h.single ψ)
 
 /-- In (20), after accommodation, a plural predication is universal as long as no alternative for
 a single atom is pruned. -/

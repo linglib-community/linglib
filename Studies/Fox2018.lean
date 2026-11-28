@@ -195,7 +195,7 @@ theorem cell_eq_strongAnswer {p : Set W} (hp : p ∈ H) {w : W} (hw : w ∈ cell
   rw [mem_strongAnswer]
   constructor
   · intro hv q hq
-    by_cases hIE : IsInnocentlyExcludable H p q
+    by_cases hIE : q ∈ IE H p
     · exact ⟨fun hwq ↦ (hw.2.1 q hIE hwq).elim, fun hvq ↦ (hv.2.1 q hIE hvq).elim⟩
     · exact ⟨fun _ ↦ hv.2.2 q hq hIE, fun _ ↦ hw.2.2 q hq hIE⟩
   · intro hv
@@ -209,7 +209,7 @@ theorem qpm_cell_iff_partitionsBy {A : Set W} : QPM (cell H) H A ↔ PartitionsB
 
 theorem cell_diamond {w s n e : Set W} (h : Fox2007.IsDiamond w s n e) :
     cell {w, s, n, e} w = (s ∩ n) \ e := by
-  rw [cell_eq_of_iff _ _ fun q hq ↦ h.isInnocentlyExcludable_iff hq]
+  rw [cell_eq_of_iff _ _ fun q hq ↦ h.mem_IE_iff hq]
   have hne : ∀ q ∈ ({w, s, n} : Set (Set W)), q ≠ e := by
     obtain ⟨rfl, hs, hn, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
     rintro q (rfl | rfl | rfl) hqe
@@ -324,16 +324,16 @@ theorem biUnion_subset_biUnion_iff {S T : Finset ι} : (⋃ i ∈ S, a i) ⊆ (�
     obtain ⟨i, hi, hvi⟩ := mem_iUnion₂.1 hv
     exact mem_biUnion (h hi) hvi
 
-theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.Nonempty) :
-    IsInnocentlyExcludable (infClosure (range a)) (⋂ i ∈ T, a i) (⋂ i ∈ S, a i) ↔ ¬ S ⊆ T := by
+theorem mem_IE_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.Nonempty) :
+    (⋂ i ∈ S, a i) ∈ IE (infClosure (range a)) (⋂ i ∈ T, a i) ↔ ¬ S ⊆ T := by
   obtain ⟨w₀, hw₀⟩ := hrich T
   have hw₀T : w₀ ∈ (⋂ i ∈ T, a i) := mem_biInter_iff_subset.2 (by rw [hw₀])
   constructor
-  · exact fun hIE hST ↦ not_isInnocentlyExcludable_of_phi_subset (finite_range a).infClosure
+  · exact fun hIE hST ↦ notMem_IE_of_phi_subset (finite_range a).infClosure
       ⟨w₀, hw₀T⟩
       ((biInter_subset_biInter_iff hrich).2 hST) hIE
   · intro hST
-    refine .of_forall_subset_or_notMem (mem_infClosure_range.2 ⟨_, hS, rfl⟩) hw₀T ?_ ?_
+    refine mem_IE_of_forall_subset_or_notMem (mem_infClosure_range.2 ⟨_, hS, rfl⟩) hw₀T ?_ ?_
     · rw [mem_biInter_iff_subset, hw₀]
       exact fun h ↦ hST (Finset.coe_subset.1 h)
     · rintro _ hq
@@ -374,9 +374,9 @@ theorem mem_exhMW_supClosure_range_iff {T : Finset ι} {u : W} :
     rw [hu, Finset.coe_singleton]
     exact singleton_subset_iff.2 hj
 
-theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
-    IsInnocentlyExcludable (supClosure (range a)) (⋃ i ∈ T, a i) (⋃ i ∈ S, a i) ↔ Disjoint S T := by
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (mem_supClosure_range.2 ⟨_, hS, rfl⟩),
+theorem mem_IE_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
+    (⋃ i ∈ S, a i) ∈ IE (supClosure (range a)) (⋃ i ∈ T, a i) ↔ Disjoint S T := by
+  rw [mem_IE_iff_exhMW_subset_compl _ _ _ (mem_supClosure_range.2 ⟨_, hS, rfl⟩),
     Finset.disjoint_left]
   constructor
   · intro h i hiS hiT
@@ -395,7 +395,7 @@ theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
 theorem cell_biInter [Fintype ι] (T : Finset ι) :
     cell (infClosure (range a)) (⋂ i ∈ T, a i) = atomCell a T := by
   rw [infClosure_range_eq_image, cell_image_eq (P := fun S ↦ ¬ S ⊆ T) _ fun S hS ↦ by
-    rw [← infClosure_range_eq_image]; exact isInnocentlyExcludable_conj_iff hrich hS]
+    rw [← infClosure_range_eq_image]; exact mem_IE_conj_iff hrich hS]
   ext x
   simp only [mem_ofPred_eq, mem_biInter_iff_subset, not_not, mem_atomCell]
   constructor
@@ -410,7 +410,7 @@ theorem cell_biInter [Fintype ι] (T : Finset ι) :
 theorem cell_biUnion {T : Finset ι} (hT : T.Nonempty) :
     cell (supClosure (range a)) (⋃ i ∈ T, a i) = atomCell a T := by
   rw [supClosure_range_eq_image, cell_image_eq (P := fun S ↦ Disjoint S T) _ fun S hS ↦ by
-    rw [← supClosure_range_eq_image]; exact isInnocentlyExcludable_disj_iff hrich hS]
+    rw [← supClosure_range_eq_image]; exact mem_IE_disj_iff hrich hS]
   ext x
   simp only [mem_ofPred_eq, mem_iUnion, exists_prop, Finset.not_disjoint_iff, mem_atomCell]
   constructor

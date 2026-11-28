@@ -141,7 +141,7 @@ theorem IsRelevance.relevant (hR : IsRelevance Wck φ R) (h : ψ ∩ Wck = φ �
 
 /-- When an excludable alternative is contextually equivalent to the utterance, the strengthened
 meaning (42) contradicts common knowledge for every relevance property (45). -/
-theorem disjoint_exhR (hR : IsRelevance Wck φ R) (hψ : IsInnocentlyExcludable ALT φ ψ)
+theorem disjoint_exhR (hR : IsRelevance Wck φ R) (hψ : ψ ∈ IE ALT φ)
     (h : ψ ∩ Wck = φ ∩ Wck) : Disjoint (exhR R ALT φ) Wck := by
   refine disjoint_left.2 fun x hx hck ↦ hx.2 ψ hψ (hR.relevant h) ?_
   have : x ∈ ψ ∩ Wck := h ▸ ⟨hx.1, hck⟩

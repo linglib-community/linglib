@@ -128,7 +128,7 @@ theorem iInter_mem_prunedReadings (h : Separating I p) (hne : I.Nonempty) :
 theorem isWeakeningRestriction_iff (h : Separating I p) (hne : I.Nonempty)
     {A : Set (Set World)} :
     IsWeakeningRestriction (supClosure (p '' I)) A (⋃ i ∈ I, p i) ↔
-      A ⊆ supClosure (p '' I) ∧ ∀ q, ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q :=
+      A ⊆ supClosure (p '' I) ∧ ∀ q, ¬ q ∈ IE A (⋃ i ∈ I, p i) :=
   and_congr_right fun hA ↦ by
     rw [exhIEII_supClosure h hne, iInter_subset_exhIEII_iff hA hne h.all]
 
@@ -149,7 +149,7 @@ include hB
 theorem IsWeakeningRestriction.union :
     IsWeakeningRestriction (supClosure (p '' I)) (A ∪ B) (⋃ i ∈ I, p i) :=
   (isWeakeningRestriction_iff h hne).2 ⟨Set.union_subset hA.1 hB.1,
-    not_isInnocentlyExcludable_union h.single hA.1 hB.1
+    notMem_IE_union h.single hA.1 hB.1
       ((isWeakeningRestriction_iff h hne).1 hA).2 ((isWeakeningRestriction_iff h hne).1 hB).2⟩
 
 theorem exhIEII_union :
@@ -198,7 +198,7 @@ theorem isPrunedReading_iff_exists_isLicensedPruning (h : Separating I p) (hne :
 exhaustification asserts every alternative it keeps. -/
 theorem mem_prunedReadings_iff (h : Separating I p) (hne : I.Nonempty) {r : Set World} :
     r ∈ prunedReadings (supClosure (p '' I)) (⋃ i ∈ I, p i) ↔ ∃ C ⊆ supClosure (p '' I),
-      (∀ q, ¬ IsInnocentlyExcludable C (⋃ i ∈ I, p i) q) ∧
+      (∀ q, ¬ q ∈ IE C (⋃ i ∈ I, p i)) ∧
         (⋃ i ∈ I, p i) ∩ ⋂₀ C = r := by
   simp only [prunedReadings, IsWeakeningRestriction, Set.mem_image, Set.mem_ofPred_eq,
     exhIEII_supClosure h hne, and_assoc]
@@ -239,7 +239,7 @@ theorem infClosure_diff_subset_prunedReadings (h : Separating I p) (hne : I.None
   refine (mem_prunedReadings_iff h hne).2 ⟨_, Set.sep_subset _ _, fun q hIE ↦ ?_, hrC⟩
   have hfin := (I.finite_toSet.image (p)).supClosure.subset
     (fun _ hq ↦ hq.1 : {q ∈ supClosure (p '' I) | r ⊆ q} ⊆ _)
-  have hmw := (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ q hIE.1).1 hIE
+  have hmw := (mem_IE_iff_exhMW_subset_compl _ _ q hIE.1).1 hIE
   obtain ⟨hqS, hrq⟩ := hIE.1
   obtain ⟨s, -, hsx, rfl⟩ := Set.mem_supClosure_image.1 hqS
   have hmin : ∀ q' ∈ {q ∈ supClosure (p '' I) | r ⊆ q},
@@ -296,7 +296,7 @@ theorem eq_biUnion_of_mem_prunedReadings_of_mem_supClosure [DecidableEq ι]
         ((hv k (hs₀x hk)).2 (Finset.mem_filter.2 ⟨hs₀x hk, hks⟩))))
       (Set.inter_subset_right.trans (Set.sInter_subset_of_mem hq₀))
   have hnIE := hIE (⋃ k ∈ s₀, p k)
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl C _ _ hq₀, Set.not_subset] at hnIE
+  rw [mem_IE_iff_exhMW_subset_compl C _ _ hq₀, Set.not_subset] at hnIE
   obtain ⟨u, hu, huq⟩ := hnIE
   exact hvq₀ (hu.2 hvφ (fun q hq ↦ ⟨hq.1, Set.mem_sInter.1
     (hs₀ ▸ not_not.1 huq : u ∈ (⋃ i ∈ I, p i) ∩ ⋂₀ C).2 q hq.1⟩) ⟨hq₀, not_not.1 huq⟩).2

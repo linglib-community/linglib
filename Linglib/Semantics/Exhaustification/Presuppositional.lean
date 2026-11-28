@@ -108,14 +108,14 @@ noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Se
     World → Trivalent :=
   Trivalent.condEvent
     (· ∈ excludesIE ALT φ Rc ∩
-      {w | Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w})
+      {w | Homogeneous {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ} w})
     (· ∈ φ)
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
 theorem pexIEII_ne_undefined_iff :
     pexIEII ALT φ Rc w ≠ .undefined ↔ w ∈ excludesIE ALT φ Rc ∧
-      Homogeneous {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} w := by
+      Homogeneous {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ} w := by
   simp [pexIEII]
 
 theorem pexIEII_eq_true_iff :
@@ -129,32 +129,32 @@ theorem pexIEII_eq_false_iff :
 /-- A prejacent between the meet and the join of its relevant includable alternatives is true
 under `pex` exactly where the presupposition holds and all of them are true. -/
 theorem pexIEII_eq_true_iff_forall_mem
-    (hl : ⋂₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} ⊆ φ)
-    (hu : φ ⊆ ⋃₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}) :
+    (hl : ⋂₀ {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ} ⊆ φ)
+    (hu : φ ⊆ ⋃₀ {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ}) :
     pexIEII ALT φ Rc w = .true ↔ pexIEII ALT φ Rc w ≠ .undefined ∧
-      ∀ α ∈ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}, w ∈ α :=
+      ∀ α ∈ {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ}, w ∈ α :=
   pexIEII_eq_true_iff.trans <|
     and_congr_right fun h ↦ (pexIEII_ne_undefined_iff.1 h).2.mem_iff hl hu
 
 /-- A prejacent between the meet and the join of its relevant includable alternatives is false
 under `pex` exactly where the presupposition holds and all of them are false. -/
 theorem pexIEII_eq_false_iff_forall_notMem
-    (hl : ⋂₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} ⊆ φ)
-    (hu : φ ⊆ ⋃₀ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}) :
+    (hl : ⋂₀ {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ} ⊆ φ)
+    (hu : φ ⊆ ⋃₀ {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ}) :
     pexIEII ALT φ Rc w = .false ↔ pexIEII ALT φ Rc w ≠ .undefined ∧
-      ∀ α ∈ {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ}, w ∉ α :=
+      ∀ α ∈ {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ}, w ∉ α :=
   pexIEII_eq_false_iff.trans <| and_congr_right fun h ↦
     (pexIEII_ne_undefined_iff.1 h).2.notMem_iff hl hu
 
 theorem pexIEII_ne_undefined_iff_of_inter_eq_empty
-    (h : {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} = ∅) :
+    (h : {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ} = ∅) :
     pexIEII ALT φ Rc w ≠ .undefined ↔ w ∈ excludesIE ALT φ Rc := by
   simp [pexIEII_ne_undefined_iff, h]
 
 /-- Without relevant includable alternatives, `pex^{IE+II}` is `pex^{IE}` when the relevant
 excludable alternatives entail the prejacent: where the prejacent is false, so are they. -/
-theorem pexIEII_eq_pexIE (h : {a ∈ Rc | IsInnocentlyIncludable ALT φ a ∧ a ≠ φ} = ∅)
-    (hIE : ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ψ ⊆ φ) :
+theorem pexIEII_eq_pexIE (h : {a ∈ Rc | a ∈ II ALT φ ∧ a ≠ φ} = ∅)
+    (hIE : ∀ ψ, ψ ∈ IE ALT φ → ψ ∈ Rc → ψ ⊆ φ) :
     pexIEII ALT φ Rc = pexIE ALT φ Rc := by
   funext w
   refine Trivalent.eq_of_eq_true_iff_of_eq_false_iff ?_ ?_
