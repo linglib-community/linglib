@@ -22,8 +22,9 @@ relative to that constituent or in the clause. A particle that goes with a claus
 
 ## TODO
 
-* Record an exclusive or additive particle with the focus operator it denotes, as
-  `AdditiveParticle` does, and a focus marker with the focus strategy it realizes.
+* The additive focus particles have a record of their own, with a morph and the side of the
+  phrase on which the particle stands, where this one has a string and a position class. The two
+  should share the form and the placement.
 
 ## References
 

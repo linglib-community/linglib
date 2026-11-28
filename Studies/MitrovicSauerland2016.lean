@@ -6,7 +6,10 @@ public import Linglib.Semantics.Coordinator
 public import Linglib.Data.Examples.MitrovicSauerland2016
 public import Linglib.Languages.English.Coordination
 public import Linglib.Languages.English.FocusParticles
+public import Linglib.Languages.Japanese.Coordination
 public import Linglib.Languages.Japanese.Determiners
+public import Linglib.Languages.Latin.Coordination
+public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Languages.Japanese.FocusParticles
 public import Linglib.Languages.Hungarian.Coordination
 public import Linglib.Languages.Hungarian.FocusParticles
@@ -33,8 +36,9 @@ have the additive and quantificational uses of Japanese *mo*.
   (23)–(29) with fn. 9, and (33).
 * The J coordinators with language file entries are English *and*, Japanese *to*, the verbal
   conjunction of Table 1, and Hungarian *és*; the μ coordinators are Japanese *mo*, Hungarian *is*
-  and Latin *-que*. A coordinator's additive use is `Coordinator.IsAlsoAdditive` against the
-  additive particles of its language in the Fragments.
+  and Latin *-que*. A coordinator has an additive or a quantificational
+  use when an additive particle or the particle of an indeterminate quantifier of its language
+  has its morph.
 
 ## TODO
 
@@ -107,23 +111,19 @@ theorem muPrime_team :
       ({0} ⊔ {1} : Finset (Fin 3)) ≠ Finset.univ ∧ ({0} : Finset (Fin 3)) ≠ Finset.univ :=
   ⟨⟨muPrime_of_le (by decide) rfl, muPrime_of_le (by decide) rfl⟩, by decide, by decide⟩
 
-/-- An indeterminate quantifier whose particle is conjunctive denotes μ, (15). -/
-theorem mu_of_conjunctive_particle {q : IndeterminateQuantifier}
-    (hq : q.particle.role = .conjunctive) {α : Type} [Fintype α] {d : Det.Family}
-    (h : d ∈ ⟦q⟧) : d α = Det.every := by
-  obtain rfl : d = q.reading := h
-  rw [IndeterminateQuantifier.reading_of_conjunctive hq]
-  rfl
-
--- (1a)
+-- (1a), (15): the reading recorded for *dare-mo* is μ, the subset relation
 theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : Det.Family}
-    (h : d ∈ ⟦Japanese.Determiners.dareMo⟧) : d α = Det.every :=
-  mu_of_conjunctive_particle rfl h
+    (h : d ∈ ⟦Japanese.Determiners.dareMo.toQuantifier⟧) : d α = Det.every := by
+  rw [Japanese.Determiners.denote_dareMo] at h
+  obtain rfl : d = _ := h
+  rfl
 
 -- (40)
 theorem quisque_denotes_mu {α : Type} [Fintype α] {d : Det.Family}
-    (h : d ∈ ⟦Latin.Determiners.quisque⟧) : d α = Det.every :=
-  mu_of_conjunctive_particle rfl h
+    (h : d ∈ ⟦Latin.Determiners.quisque.toQuantifier⟧) : d α = Det.every := by
+  rw [Latin.Determiners.denote_quisque] at h
+  obtain rfl : d = _ := h
+  rfl
 
 /-! ### Exponence, §3.1 -/
 
@@ -191,12 +191,12 @@ theorem coordinators_conjunctive :
 /-- Every μ coordinator has a use outside conjunction, as an additive particle or as the particle
 of an indeterminate quantifier. -/
 theorem mu_has_other_use : ∀ c ∈ muCoordinators,
-    (∃ a ∈ additiveParticles, c.IsAlsoAdditive a) ∨ ∃ q ∈ quantifiers, q.particle = c := by
+    (∃ a ∈ additiveParticles, c.morph = a.morph) ∨ ∃ q ∈ quantifiers, q.particle = c.morph := by
   decide
 
 /-- No J coordinator has an additive or a quantificational use. -/
 theorem j_has_no_other_use : ∀ c ∈ jCoordinators,
-    (∀ a ∈ additiveParticles, ¬ c.IsAlsoAdditive a) ∧ ∀ q ∈ quantifiers, q.particle ≠ c := by
+    (∀ a ∈ additiveParticles, c.morph ≠ a.morph) ∧ ∀ q ∈ quantifiers, q.particle ≠ c.morph := by
   decide
 
 end MitrovicSauerland2016

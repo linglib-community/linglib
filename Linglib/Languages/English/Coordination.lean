@@ -28,19 +28,19 @@ namespace English.Coordination
 
 /-- *and*. -/
 def and_ : Coordinator :=
-  { morph := .free "and", gloss := "and", role := .conjunctive }
+  { morph := .free "and", role := .conjunctive }
 
 /-- *or*. -/
 def or_ : Coordinator :=
-  { morph := .free "or", gloss := "or", role := .disjunctive }
+  { morph := .free "or", role := .disjunctive }
 
 /-- *but*. -/
 def but_ : Coordinator :=
-  { morph := .free "but", gloss := "but", role := .adversative }
+  { morph := .free "but", role := .adversative }
 
 /-- *nor*. -/
 def nor_ : Coordinator :=
-  { morph := .free "nor", gloss := "nor", role := .negative }
+  { morph := .free "nor", role := .negative }
 
 /-- *both … and*. -/
 def bothAnd : Coordinator.Correlative := ⟨[.free "both"], [and_.morph], and_⟩

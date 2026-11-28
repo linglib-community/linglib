@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Georgian.Morphs
 public import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -31,19 +32,19 @@ namespace Georgian.Coordination
 
 /-- *da* 'and'. -/
 def da : Coordinator :=
-  { morph := .free "da", gloss := "and", role := .conjunctive }
+  { morph := .free "da", role := .conjunctive }
 
 /-- *-c* 'and', enclitic on each coordinand, also the additive particle
 `Georgian.FocusParticles.c`. -/
 def c : Coordinator :=
-  { morph := .encl "c", gloss := "and", role := .conjunctive }
+  { morph := Morphs.c, role := .conjunctive }
 
 /-- *an* 'or'. -/
 def an : Coordinator :=
-  { morph := .free "an", gloss := "or", role := .disjunctive }
+  { morph := .free "an", role := .disjunctive }
 
 /-- *magram* 'but'. -/
 def magram : Coordinator :=
-  { morph := .free "magram", gloss := "but", role := .adversative }
+  { morph := .free "magram", role := .adversative }
 
 end Georgian.Coordination

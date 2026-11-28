@@ -8,18 +8,27 @@ module
 public import Linglib.Morphology.Morph
 
 /-!
-# Additive particles
+# Additive focus particles
 
-An additive particle is a focus particle meaning 'also, too', English *too* in *Mary is well too*.
-Such particles often also mean 'and': Japanese *mo* is 'too' after one phrase and 'and' after each
-of two conjuncts, and Haspelmath counts the additive particle among the two main sources of
-conjunction. This file defines the lexical record of an additive particle, whose meaning is
-`Focus.additive`; a coordinator whose form is that of an additive particle is
-`Coordinator.IsAlsoAdditive`.
+An additive focus particle is a particle meaning 'also, too' that goes with a focused phrase, as
+Japanese *mo* does in *Mary mo genki desu* 'Also Mary is well'. It stands before its phrase, as
+English *also* does, or after it, as English *too* and Japanese *mo* do. Such particles often also
+mean 'and' or 'even', and on an interrogative pronoun they form indefinites, Japanese *nani-mo*
+'nothing'. In Haspelmath's account of coordination a construction with an additive focus
+particle, 'A, also B' or 'A, B too', is one of the two main diachronic sources of conjunction, and
+the coordinator that results stands by the second coordinand on the particle's side.
 
 ## Main definitions
 
-* `AdditiveParticle`: the form and gloss of an additive particle.
+* `AdditiveParticle`: the form of an additive focus particle and the side of its phrase on which
+  it stands.
+
+## Implementation notes
+
+* The record holds no denotation. In one family of accounts the particle presupposes that an
+  alternative to its phrase satisfies the predicate; Mitrović and Sauerland take the additive
+  inference to be an implicature of a conjunction head.
+* The side is stored for a clitic too, whose morph already has it.
 
 ## References
 
@@ -30,10 +39,10 @@ conjunction. This file defines the lexical record of an additive particle, whose
 
 @[expose] public section
 
-/-- An additive particle of a language is a focus particle meaning 'also, too'. -/
+/-- An additive focus particle of a language, meaning 'also, too'. -/
 structure AdditiveParticle where
   /-- The form, a free word or a clitic. -/
   morph : Morphology.Morph
-  /-- The gloss. -/
-  gloss : String
+  /-- The side of the phrase it adds on which the particle stands. -/
+  side : Morphology.Morph.Side
   deriving DecidableEq, Repr
