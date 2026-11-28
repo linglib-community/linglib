@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.PositiveStandard
 public import Mathlib.Algebra.Order.Group.PosPart
+public import Mathlib.Order.Interval.Set.ProjIcc
 public import Studies.HayKennedyLevin1999
 
 /-!
@@ -111,14 +112,17 @@ variable {α δ T : Type*} [LinearOrder δ] {m : α → T → δ} {x : α} {i f 
 -- (27)
 theorem preimage_measureOfChange_Ioi_bot :
     measureOfChange m x i ⁻¹' Set.Ioi ⊥ = m x ⁻¹' Set.Ioi (m x i) :=
-  preimage_projIci_comp_Ioi_bot
+  Set.ext fun _ ↦ show ⊥ < projIci (m x i) _ ↔ m x i < _ from
+    bot_lt_iff_ne_bot.trans (projIci_eq_self.not.trans not_le)
 
 variable [OrderTop δ]
 
 -- (27), §7.3.3
 theorem preimage_measureOfChange_Ici_top (h : m x i ≠ ⊤) :
-    measureOfChange m x i ⁻¹' Set.Ici ⊤ = m x ⁻¹' Set.Ici ⊤ :=
-  preimage_projIci_comp_Ici_top h
+    measureOfChange m x i ⁻¹' Set.Ici ⊤ = m x ⁻¹' Set.Ici ⊤ := by
+  ext t
+  simp only [measureOfChange, Set.mem_preimage, Function.comp_apply, Set.mem_Ici, top_le_iff,
+    Subtype.ext_iff, coe_projIci, Ici.coe_top, max_eq_top, h, false_or]
 
 -- §7.3.3
 theorem preimage_measureOfChange_Ici_top_subset (h : m x i ≠ ⊤) :

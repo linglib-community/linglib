@@ -2,17 +2,26 @@ module
 
 public import Linglib.Syntax.Category.Adjective.Basic
 public import Linglib.Languages.English.Adjectives
+public import Linglib.Data.Examples.Kennedy2007
 
 /-!
 # Kennedy (2007): Vagueness and Grammar
 
-Kennedy separates relative gradable adjectives (*tall*, *long*), whose positive form compares
-with a contextual standard, from absolute ones, whose standard is an endpoint of the scale: the
-minimum (*wet*, *bent*) or the maximum (*full*, *dry*). The positive form is
-`⟦pos⟧ = λg λx. g(x) ≥ s(g)` (27), with the standard `s` fixed by the scale rather than by a
-comparison class, and Interpretive Economy (66) derives it from the scale structure. This file
-checks the diagnostics of Section 3.2 that separate the positive forms at the three standards,
-the preimages of `Set.Ioi θ`, `Set.Ioi ⊥` and `Set.Ici ⊤` under the measure.
+A relative gradable adjective such as *tall* compares with a standard the context supplies, and
+an absolute one with an endpoint of its scale: the minimum for *wet* and *bent*, the maximum for
+*full* and *dry*. The positive form of a measure `μ` at these standards is the preimage of
+`Set.Ioi θ`, of `Set.Ioi ⊥` and of `Set.Ici ⊤`. The file derives from them the contrasts between
+relative and absolute adjectives in definite descriptions, the Sorites argument, comparatives and
+antonym pairs, checks the judgments on *perfectly* and *slightly* against the scales of the
+English adjectives, and states what Interpretive Economy admits on those scales.
+
+## Implementation notes
+
+The rows are the thirty adjectives of the modifier paradigm with each of the two modifiers.
+Nineteen of the adjectives have an entry in the English adjectives file and are marked with it;
+the prediction is read off the scale of the entry. The paper measures *bent* and *dirty* towards
+the positive pole of a lower-closed scale, and the language file measures *straight* and *clean*
+towards the positive pole of the dual scale, which gives each adjective the same endpoints.
 
 ## References
 
@@ -30,8 +39,7 @@ variable {Entity D : Type*} [LinearOrder D]
 
 /-! ### Definite descriptions (§3.2, (53)–(54)) -/
 
-/-- *The long one* succeeds because two objects of different length can always be told apart by
-a contextual standard. -/
+-- (53)
 theorem definite_relative (μ : Entity → D) {a b : Entity} (h : μ b < μ a) :
     ∃ θ, a ∈ μ ⁻¹' Set.Ioi θ ∧ b ∉ μ ⁻¹' Set.Ioi θ :=
   ⟨μ b, h, lt_irrefl _⟩
@@ -44,13 +52,12 @@ theorem definite_maximum [OrderTop D] (μ : Entity → D) (a b : Entity) :
 
 /-! ### The Sorites second premise (§3.2, (57)–(58)) -/
 
-/-- A theater with one fewer occupied seat than a full one is not full (57), since any degree
-below the maximum fails a maximum standard. -/
+-- (57)
 theorem sorites_maximum [OrderTop D] {μ : Entity → D} {x : Entity} (h : μ x < ⊤) :
     x ∉ μ ⁻¹' Set.Ici ⊤ :=
   h.not_ge
 
-/-- A rod with no bend is not bent (58), since exactly the minimum fails a minimum standard. -/
+-- (58)
 theorem sorites_minimum [OrderBot D] (μ : Entity → D) (x : Entity) :
     x ∉ μ ⁻¹' Set.Ioi ⊥ ↔ μ x = ⊥ := by
   simp
@@ -69,66 +76,83 @@ theorem antonyms_isCompl [OrderBot D] (μ : Entity → D) :
 
 /-! ### Comparatives (§3.2, (49)–(52)) -/
 
-/-- *The floor is wetter than the countertop* entails *the floor is wet* (49): the comparative is
-the positive form at the countertop's degree, a stronger standard than the minimum. -/
+-- (49)
 theorem wet_of_wetter [OrderBot D] (μ : Entity → D) (b : Entity) :
     μ ⁻¹' Set.Ioi (μ b) ⊆ μ ⁻¹' Set.Ioi ⊥ :=
   Set.preimage_mono (Set.Ioi_subset_Ioi bot_le)
 
-/-- *The floor is drier than the countertop* entails *the countertop is not dry* (50). -/
+-- (50)
 theorem not_dry_of_drier [OrderTop D] {μ : Entity → D} {a b : Entity} (h : μ b < μ a) :
     b ∉ μ ⁻¹' Set.Ici ⊤ :=
   sorites_maximum (h.trans_le le_top)
 
-/-- *Rod A is longer than rod B* entails neither that A is long nor that it is not (51). -/
+-- (51)
 theorem long_undetermined_of_longer (μ : Entity → D) {a b : Entity} (h : μ b < μ a) :
     (∃ θ, a ∈ μ ⁻¹' Set.Ioi θ) ∧ ∃ θ, a ∉ μ ⁻¹' Set.Ioi θ :=
   ⟨⟨μ b, h⟩, μ a, lt_irrefl _⟩
 
-/-! ### Degree modifiers (§3.2, (61)) -/
+/-! ### Degree modifiers (§4.2, (62)–(65)) -/
 
-/-- The A_pos row of table (61) says whether a maximizer or minimizer is acceptable with the
-positive member of an antonym pair, by the pair's scale type. -/
-def table61Pos : Boundedness → EndpointModifier → Bool
-  | .open_, _ => false
-  | .lowerClosed, .maximizer => false
-  | .lowerClosed, .minimizer => true
-  | .upperClosed, .maximizer => true
-  | .upperClosed, .minimizer => false
-  | .closed, _ => true
+/-- The adjective of the English adjectives file that a lexeme of the rows is. -/
+def Examples.Lexeme.entry : Examples.Lexeme → Adjective
+  | .tall => English.Adjectives.tall
+  | .deep => English.Adjectives.deep
+  | .expensive => English.Adjectives.expensive
+  | .short => English.Adjectives.short
+  | .shallow => English.Adjectives.shallow
+  | .bent => English.Adjectives.bent
+  | .dirty => English.Adjectives.dirty
+  | .straight => English.Adjectives.straight
+  | .flat => English.Adjectives.flat
+  | .clean => English.Adjectives.clean
+  | .certain => English.Adjectives.certain
+  | .safe => English.Adjectives.safe
+  | .pure => English.Adjectives.pure_
+  | .uncertain => English.Adjectives.uncertain
+  | .dangerous => English.Adjectives.dangerous
+  | .full => English.Adjectives.full
+  | .openAdj => English.Adjectives.open_
+  | .empty => English.Adjectives.empty
+  | .closed => English.Adjectives.closed_
 
-/-- The A_neg row of table (61) says the same for the negative member. -/
-def table61Neg : Boundedness → EndpointModifier → Bool
-  | .open_, _ => false
-  | .lowerClosed, .maximizer => true
-  | .lowerClosed, .minimizer => false
-  | .upperClosed, .maximizer => false
-  | .upperClosed, .minimizer => true
-  | .closed, _ => true
+/-- *Perfectly* picks out a maximal degree and *slightly* a minimal one. -/
+def Examples.Modifier.endpoint : Examples.Modifier → EndpointModifier
+  | .perfectly => .maximizer
+  | .slightly => .minimizer
 
-/-- `table61` is table (61) as printed, indexed by the member of the pair. -/
-def table61 (p : Polarity) (b : Boundedness) (m : EndpointModifier) : Bool :=
-  if p = .positive then table61Pos b m else table61Neg b m
+/-- The adjective entry and the endpoint modifier a row tests. -/
+def test? (e : Datum) : Option (Adjective × EndpointModifier) := do
+  let p ← e.spans.find? (Examples.label? · = some .adjective)
+  let l ← Examples.lexeme? p
+  let m ← Examples.modifier e
+  pure (l.entry, m.endpoint)
 
-/-- Every cell of (61) is the endpoint structure of the adjective's own scale. -/
-theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : EndpointModifier) :
-    table61 p b m = true ↔ (p • b).Licenses m := by
-  cases p <;> cases b <;> cases m <;> decide
+/-- A modifier is predicted acceptable with an adjective whose scale has the endpoint it picks
+out. -/
+def predicted (t : Adjective × EndpointModifier) : Judgment.Band :=
+  .ofProp (∃ b ∈ t.1.boundedness, b.Licenses t.2)
 
-open English.Adjectives in
--- (61)
-theorem fragment_pairs_table61 :
-    (∀ a ∈ [full, empty, dry, straight], ∃ b ∈ a.boundedness, b.Licenses .maximizer) ∧
-    (∀ a ∈ [wet, bent], ∃ b ∈ a.boundedness, b.Licenses .minimizer) ∧
-    (∀ a ∈ [wet, bent, tall], ∃ b ∈ a.boundedness, ¬ b.Licenses .maximizer) ∧
-    ∀ a ∈ [dry, short], ∃ b ∈ a.boundedness, ¬ b.Licenses .minimizer := by
+-- every lexeme of the rows is an entry of the English adjectives file
+theorem entry_mem_allEntries :
+    ∀ l : Examples.Lexeme, ∃ a ∈ English.Adjectives.allEntries, a = l.entry := by
+  decide
+
+-- every span that names a lexeme is printed as its entry is written
+theorem printed :
+    ∀ e ∈ Examples.all, ∀ p ∈ e.spans, ∀ l ∈ Examples.lexeme? p,
+      (p.words e).map (·.word) = [l.entry.form.toList] := by
+  decide
+
+/-- The judgments on *perfectly* and *slightly* with the nineteen adjectives that have an entry are
+those the scales of the entries predict. -/
+theorem modifiers_check : Datum.Checks test? predicted Examples.all 38 := by
   decide
 
 /-! ### Interpretive Economy (§4.2–§4.3) -/
 
-theorem open_requires_comparison_class :
-    Boundedness.IsRelative .open_ := by
-  decide
+-- §4.2
+theorem open_requires_comparison_class : Boundedness.IsRelative .open_ :=
+  Boundedness.isRelative_iff.2 rfl
 
 open English.Adjectives in
 /-- *Bent* and *straight* could take a relative standard, but their scale fixes the transition

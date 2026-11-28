@@ -165,6 +165,13 @@ theorem monotone_standard (hθ : ⊥ < θ) (hθθ' : θ ≤ θ') : Monotone (sta
     | exact UpperSet.Ioi_le_Ici (hθ.trans_le hθθ')
     | exact (UpperSet.Ici_strictMono D).monotone hθθ'
 
+/-- `ModalForce.standard` as an order homomorphism from the forces to the standards. -/
+def standardHom (hθ : ⊥ < θ) (hθθ' : θ ≤ θ') : ModalForce →o UpperSet D :=
+  ⟨standard θ θ', monotone_standard hθ hθθ'⟩
+
+@[simp] theorem coe_standardHom (hθ : ⊥ < θ) (hθθ' : θ ≤ θ') :
+    ⇑(standardHom hθ hθθ') = standard θ θ' := rfl
+
 /-- On a dense scale with thresholds strictly in order, the strength order of the forces is
 exactly the order of their standards. -/
 theorem strictMono_standard [DenselyOrdered D] (hθ : ⊥ < θ) (hθθ' : θ < θ') :
