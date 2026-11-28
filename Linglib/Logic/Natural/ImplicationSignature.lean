@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Core.Order.Flat
-public import Linglib.Logic.Natural.Relation
 
 /-!
 # Implication signatures
@@ -14,32 +13,14 @@ gives the polarity of the complement that each context implies, if any: *manage*
 `+/◦`, *refuse* `−/◦`, *hesitate* `◦/+`, and *want* `◦/◦`. Each slot is a flat value with `◦` as
 `⊥`, so signatures are ordered by how much they imply.
 
-Each implication is an atomic constraint of natural logic between the claim and its complement,
-and a signature implies more exactly when it constrains more. The constraints of a signature are
-those of one of the seven relations unless both slots imply the same polarity; a factive `+/+` or
-a counterfactive `−/−` settles the complement whatever the claim.
-
 ## Main definitions
 
 * `ImplicationSignature`: the polarity of the complement implied in a positive and in a negative
   context.
-* `ImplicationSignature.constraints`: the atomic constraints a signature imposes between a claim
-  and its complement.
-
-## Main results
-
-* `holds_ofPolarities_iff`: over propositions, an implication is the entailment from the claim to
-  the complement, each taken with its polarity.
-* `constraints_subset_constraints`: a signature implies more exactly when it constrains more.
-* `exists_constraints_eq_iff`: the constraints of a signature are those of a relation exactly when
-  its slots do not imply the same polarity.
-* `forall_holds_constraints_factive_iff`, `forall_holds_constraints_counterfactive_iff`: a factive
-  or counterfactive signature settles the complement whatever the claim.
 
 ## References
 
 * [nairn-condoravdi-karttunen-2006]
-* [maccartney-manning-2009]
 -/
 
 @[expose] public section
@@ -91,78 +72,6 @@ instance : OrderBot ImplicationSignature where
 @[simp] theorem bot_positive : (⊥ : ImplicationSignature).positive = ⊥ := rfl
 
 @[simp] theorem bot_negative : (⊥ : ImplicationSignature).negative = ⊥ := rfl
-
-/-! ### Implications as constraints -/
-
-open Relation.Atom (ofPolarities ofPolarities_injective)
-
-/-- A context of polarity `m` implying the complement of polarity `q` constrains the claim and its
-complement by `Relation.Atom.ofPolarities m q`: over propositions, the claim of polarity `m` entails
-the complement of polarity `q`. -/
-theorem holds_ofPolarities_iff {W : Type*} {x y : Set W} :
-    (ofPolarities m q).Holds x y ↔ m • x ⊆ q • y := by
-  cases m <;> cases q
-  · exact Iff.rfl
-  · exact Set.subset_compl_iff_disjoint_right.symm
-  · exact codisjoint_iff.trans Set.compl_subset_iff_union.symm
-  · exact Set.compl_subset_compl.symm
-
-/-- The constraints a signature puts on a claim and its complement, one for each context in which
-it implies something. -/
-def constraints (s : ImplicationSignature) : Finset Relation.Atom :=
-  {a | ∃ m q : Polarity, s.implied m = q ∧ ofPolarities m q = a}
-
-theorem mem_constraints {a : Relation.Atom} :
-    a ∈ s.constraints ↔ ∃ m q : Polarity, s.implied m = q ∧ ofPolarities m q = a := by
-  simp [constraints]
-
-theorem ofPolarities_mem_constraints : ofPolarities m q ∈ s.constraints ↔ s.implied m = q := by
-  simp [mem_constraints, ofPolarities_injective.eq_iff]
-
-/-- A signature implies more than another exactly when it constrains more. -/
-theorem constraints_subset_constraints : s.constraints ⊆ t.constraints ↔ s ≤ t := by
-  refine ⟨fun h m ↦ ?_, fun h a ha ↦ ?_⟩
-  · cases hs : s.implied m with
-    | bot => exact bot_le
-    | coe q =>
-      exact Flat.coe_le_iff.2
-        (ofPolarities_mem_constraints.1 (h (ofPolarities_mem_constraints.2 hs)))
-  · obtain ⟨m, q, hs, rfl⟩ := mem_constraints.1 ha
-    exact ofPolarities_mem_constraints.2 (Flat.coe_le_iff.1 (hs ▸ h m))
-
-/-- The constraints of a signature are those of one of the seven relations exactly when its two
-slots do not imply the same polarity. -/
-theorem exists_constraints_eq_iff :
-    (∃ R : Relation, R.constraints = s.constraints) ↔ ∀ q : Polarity, s ≠ ⟨q, q⟩ := by
-  obtain ⟨_ | p, _ | n⟩ := s <;> (try cases p) <;> (try cases n) <;> decide
-
-section Factive
-
-variable {α : Type*} [Lattice α] [BoundedOrder α] {x y : α}
-
-/-- The constraints of the factive signature `+/+` hold of a claim and its complement exactly when
-the complement is `⊤`, whatever the claim. -/
-theorem forall_holds_constraints_factive_iff :
-    (∀ a ∈ (⟨↑Polarity.positive, ↑Polarity.positive⟩ : ImplicationSignature).constraints,
-      a.Holds x y) ↔ y = ⊤ := by
-  rw [show (⟨↑Polarity.positive, ↑Polarity.positive⟩ : ImplicationSignature).constraints =
-    {.le, .codisjoint} by decide]
-  simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq,
-    Relation.Atom.Holds]
-  exact ⟨fun h ↦ h.2.eq_top_of_ge h.1, fun h ↦ h ▸ ⟨le_top, codisjoint_top_right⟩⟩
-
-/-- The constraints of the counterfactive signature `−/−` hold of a claim and its complement
-exactly when the complement is `⊥`, whatever the claim. -/
-theorem forall_holds_constraints_counterfactive_iff :
-    (∀ a ∈ (⟨↑Polarity.negative, ↑Polarity.negative⟩ : ImplicationSignature).constraints,
-      a.Holds x y) ↔ y = ⊥ := by
-  rw [show (⟨↑Polarity.negative, ↑Polarity.negative⟩ : ImplicationSignature).constraints =
-    {.disjoint, .ge} by decide]
-  simp only [Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq,
-    Relation.Atom.Holds]
-  exact ⟨fun h ↦ h.1.eq_bot_of_ge h.2, fun h ↦ h ▸ ⟨disjoint_bot_right, bot_le⟩⟩
-
-end Factive
 
 end ImplicationSignature
 

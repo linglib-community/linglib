@@ -8,8 +8,9 @@ public import Mathlib.Algebra.Group.Units.Hom
 public import Mathlib.Algebra.GroupWithZero.Hom
 public import Mathlib.Basic.Sign.Defs
 public import Linglib.Core.Order.AntiAdditive
-public import Linglib.Logic.Natural.Relation
-public import Linglib.Semantics.Negation.Polarity
+public import Mathlib.Algebra.GroupWithZero.Defs
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Hom.Basic
 
 /-!
 # Projectivity signatures
@@ -33,7 +34,6 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 * `ProjectivitySignature.HoldsFor`: `σ.HoldsFor f` says that `f` has every property `σ` asserts.
 * `ProjectivitySignature.compose`: composition of signatures, the multiplication of the monoid.
 * `signHom`: the sign of a signature, as a homomorphism of monoids with zero.
-* `unitsEquiv`: the invertible signatures are the two polarities.
 
 ## Main results
 
@@ -52,7 +52,7 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 * MacCartney and Manning introduce projectivity as the generalization of monotonicity from
   inclusion to the exclusion relations, and a projectivity signature as a map from relations to
   relations that says how a function projects each relation. The nine signatures here are Icard's:
-  each names a class of maps, and it determines such a map, its row of the projection table.
+  each names a class of maps. The relations and their projection are not formalized.
 * Icard states the definitions for maps between Boolean lattices. Only the bounded lattice
   structure is used here.
 * An additive map is a homomorphism of what Icard calls ∨-1-semilattices, a join-semilattice with
@@ -76,6 +76,26 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 @[expose] public section
 
 namespace NaturalLogic
+
+/-- Chaining two partial operations gives the same results in either bracketing when the operations
+agree pointwise. -/
+theorem exists_bind_comm {α β γ δ ζ ε : Type*} {f : α → β → Option γ}
+    {g : γ → δ → Option ε} {f' : β → δ → Option ζ} {g' : α → ζ → Option ε}
+    (h : ∀ a b d, (f a b).bind (g · d) = (f' b d).bind (g' a ·))
+    {s : α → Prop} {t : β → Prop} {u : δ → Prop} {e : ε} :
+    (∃ c, (∃ a, s a ∧ ∃ b, t b ∧ f a b = some c) ∧ ∃ d, u d ∧ g c d = some e) ↔
+      ∃ a, s a ∧ ∃ z, (∃ b, t b ∧ ∃ d, u d ∧ f' b d = some z) ∧ g' a z = some e := by
+  constructor
+  · rintro ⟨c, ⟨a, ha, b, hb, hab⟩, d, hd, hcd⟩
+    have := h a b d
+    rw [hab, Option.bind_some, hcd] at this
+    obtain ⟨z, hz, hze⟩ := Option.bind_eq_some_iff.1 this.symm
+    exact ⟨a, ha, z, ⟨b, hb, d, hd, hz⟩, hze⟩
+  · rintro ⟨a, ha, z, ⟨b, hb, d, hd, hbd⟩, hze⟩
+    have := h a b d
+    rw [hbd, Option.bind_some, hze] at this
+    obtain ⟨c, hc, hce⟩ := Option.bind_eq_some_iff.1 this
+    exact ⟨c, ⟨a, ha, b, hb, hc⟩, d, hd, hce⟩
 
 /-! ### Projectivity signatures -/
 
@@ -278,37 +298,6 @@ instance : NoZeroDivisors ProjectivitySignature where
 /-- A composite is `•` only when a factor is. -/
 @[simp] theorem mul_eq_top {φ ψ : ProjectivitySignature} : φ * ψ = ⊤ ↔ φ = ⊤ ∨ ψ = ⊤ :=
   mul_eq_zero
-
-/-- A polarity as a signature, the positive one the morphism signature `⊕` and the negative one
-the anti-morphism `⊖`. -/
-def ofPolarity : Polarity →* ProjectivitySignature := Polarity.lift ⟨.antiAddMult, rfl⟩
-
-@[simp] theorem ofPolarity_positive : ofPolarity .positive = addMult := rfl
-
-@[simp] theorem ofPolarity_negative : ofPolarity .negative = antiAddMult := rfl
-
-@[simp] theorem sign_ofPolarity (p : Polarity) : (ofPolarity p).sign = p := by
-  cases p <;> decide
-
-theorem isUnit_iff {σ : ProjectivitySignature} : IsUnit σ ↔ σ ∈ Set.range ofPolarity := by
-  rw [isUnit_iff_exists, Set.mem_range]
-  revert σ
-  decide
-
-/-- The invertible signatures are the two polarities. -/
-def unitsEquiv : Polarity ≃* ProjectivitySignatureˣ where
-  toFun := ofPolarity.toHomUnits
-  invFun u := if u.val.sign = 1 then .positive else .negative
-  left_inv p := by cases p <;> rfl
-  right_inv u := Units.ext <| by
-    obtain ⟨p, hp⟩ := isUnit_iff.1 u.isUnit
-    change ofPolarity (if u.val.sign = 1 then .positive else .negative) = u.val
-    rw [← hp]
-    cases p <;> rfl
-  map_mul' := map_mul _
-
-@[simp] theorem val_unitsEquiv (p : Polarity) :
-    (unitsEquiv p : ProjectivitySignature) = ofPolarity p := rfl
 
 /-! ### The function class of a signature -/
 

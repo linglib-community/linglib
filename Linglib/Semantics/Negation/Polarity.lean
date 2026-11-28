@@ -10,38 +10,31 @@ public import Mathlib.GroupTheory.GroupAction.Defs
 public import Mathlib.Order.BooleanAlgebra.Set
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Logic.Trivalent.Connectives
 
 /-!
 # Polarity
 
 This file defines the polarity of an expression, positive or negative. The two polarities form a
 group of order two with the positive polarity as its identity, so a homomorphism out of them is
-given by an element whose square is one. In this way the polarities act on the sets of a type and on
-propositions by complement, on an additive group by negation, and on signs and three-valued truth
-values by their negations. The orbit of a proposition is the pair of its polarity alternatives. A
-polarity also gives a function between preorders a direction: the positive polarity directs the
-monotone functions and the negative polarity the antitone ones.
+given by an element whose square is one. In this way the polarities act on the sets of a type by
+complement and on signs by negation. The orbit of a proposition is the pair of its polarity
+alternatives.
 
 ## Main definitions
 
 * `Polarity.lift`: the equivalence between the elements of a monoid whose square is one and the
   homomorphisms out of the polarities.
-* `Polarity.MonoBy`: a function is directed by the positive polarity when it is monotone and by the
-  negative polarity when it is antitone.
+* `Polarity.unitsEquiv`: the polarities are the units of `ℤ`.
 
 ## Main results
 
 * `Polarity.orbit_eq_pair_compl`: the orbit of a set under the polarities is the set and its
   complement.
-* `Polarity.MonoBy.comp`: the composition of a function directed by `s` with one directed by `t` is
-  directed by `s * t`.
 
 ## Implementation notes
 
 A polarity coerces into `SignType`, whose third value records the absence of a direction, as for
-a non-monotone context. The action on an additive group goes through `ℤˣ`, so that on a function
-space it is pointwise by definition.
+a non-monotone context.
 
 ## References
 
@@ -187,11 +180,6 @@ instance decidableMemSMul (p : Polarity) (s : Set α) [DecidablePred (· ∈ s)]
   | .positive => fun a ↦ inferInstanceAs (Decidable (a ∈ s))
   | .negative => fun a ↦ inferInstanceAs (Decidable (a ∉ s))
 
-/-- The polarity of a sentence acts on truth values, the negative polarity negating. -/
-instance : MulAction Polarity Prop := .ofEndHom complHom
-
-@[simp] theorem negative_smul_prop (p : Prop) : negative • p = ¬ p := rfl
-
 /-- Over a nonempty type the action on propositions is free, since no proposition is its own
 complement. -/
 instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=
@@ -204,64 +192,13 @@ instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=
 theorem orbit_eq_pair_compl (p : Set α) : MulAction.orbit Polarity p = {p, pᶜ} :=
   orbit_eq_pair p
 
-/-- A polarity acts on an additive group through the units of `ℤ`, the negative polarity
-negating. -/
-instance [AddCommGroup α] : MulAction Polarity α :=
-  MulAction.compHom α unitsEquiv.toMonoidHom
-
-@[simp] theorem negative_smul [AddCommGroup α] (x : α) : negative • x = -x :=
-  show ((-1 : ℤˣ) : ℤ) • x = -x by simp
-
 /-- A polarity acts on signs, the negative polarity reversing the sign. -/
 instance : MulAction Polarity SignType := .ofEndHom (lift ⟨Neg.neg, neg_involutive.comp_self⟩)
 
 @[simp] theorem negative_smul_signType (a : SignType) : negative • a = -a := rfl
 
-/-- A polarity acts on truth values, and so pointwise on trivalent propositions, the negative
-polarity acting as Kleene negation. -/
-instance : MulAction Polarity Trivalent :=
-  .ofEndHom (lift ⟨compl,
-    (show Function.Involutive (compl : Trivalent → Trivalent) from
-      Trivalent.compl_compl).comp_self⟩)
-
-@[simp] theorem negative_smul_trivalent (a : Trivalent) : negative • a = aᶜ := rfl
-
 /-- The action on signs is multiplication by the sign of the polarity. -/
 theorem smul_signType (s : Polarity) (a : SignType) : s • a = s * a := by
   cases s <;> simp
-
-section Directed
-
-variable {α β γ : Type*} [Preorder α] [Preorder β] [Preorder γ]
-
-/-- A function directed by a polarity is strictly monotone under the positive polarity and
-strictly antitone under the negative one. -/
-def StrictMonoBy : Polarity → (α → β) → Prop
-  | positive, f => StrictMono f
-  | negative, f => StrictAnti f
-
-theorem StrictMonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.StrictMonoBy g)
-    (hf : t.StrictMonoBy f) : (s * t).StrictMonoBy (g ∘ f) := by
-  cases s <;> cases t
-  exacts [StrictMono.comp hg hf, StrictMono.comp_strictAnti hg hf,
-    StrictAnti.comp_strictMono hg hf, StrictAnti.comp hg hf]
-
-/-- A function directed by a polarity is monotone under the positive polarity and antitone under
-the negative one. -/
-def MonoBy : Polarity → (α → β) → Prop
-  | positive, f => Monotone f
-  | negative, f => Antitone f
-
-@[simp] theorem monoBy_positive {f : α → β} : positive.MonoBy f ↔ Monotone f := .rfl
-
-@[simp] theorem monoBy_negative {f : α → β} : negative.MonoBy f ↔ Antitone f := .rfl
-
-theorem MonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.MonoBy g)
-    (hf : t.MonoBy f) : (s * t).MonoBy (g ∘ f) := by
-  cases s <;> cases t
-  exacts [Monotone.comp (g := g) hg hf, Monotone.comp_antitone (g := g) hg hf,
-    Antitone.comp_monotone (g := g) hg hf, Antitone.comp (g := g) hg hf]
-
-end Directed
 
 end Polarity
