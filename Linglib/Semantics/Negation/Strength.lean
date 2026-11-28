@@ -8,6 +8,7 @@ module
 public import Mathlib.Order.BooleanAlgebra.Set
 public import Mathlib.Order.Hom.Lattice
 public import Mathlib.Order.Nat
+public import Mathlib.Order.PrimeIdeal
 public import Mathlib.Order.SupClosed
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
@@ -35,6 +36,9 @@ of form a lower set, and anti-additive when that lower set is also closed under 
   map of the second has the first.
 * `Negation.hasStrength_antiAdditive_iff_supClosed`: a truth-valued map is anti-additive exactly
   when the elements it holds of form a lower set closed under joins.
+* `Negation.hasStrength_antiAdditive_iff_isIdeal`,
+  `Negation.hasStrength_antimorphic_iff_exists_isPrime`: an anti-additive truth-valued map that holds of the least element is membership in an ideal,
+  and the antimorphic maps are membership in the prime ideals.
 
 ## Implementation notes
 
@@ -200,6 +204,36 @@ theorem hasStrength_antiAdditive_iff_supClosed :
       fun x hx y hy ↦ (eq_iff_iff.1 (h x y)).2 ⟨hx, hy⟩⟩,
     fun ⟨hl, hs⟩ x y ↦ propext
       ⟨fun hxy ↦ ⟨hl le_sup_left hxy, hl le_sup_right hxy⟩, fun ⟨hx, hy⟩ ↦ hs hx hy⟩⟩
+
+/-- An anti-additive truth-valued map that holds of the least element is membership in an
+ideal. -/
+theorem hasStrength_antiAdditive_iff_isIdeal (h0 : f ⊥) :
+    HasStrength f antiAdditive ↔ Order.IsIdeal {x | f x} := by
+  rw [hasStrength_antiAdditive_iff_supClosed]
+  refine ⟨fun ⟨hl, hs⟩ ↦
+      ⟨hl, ⟨⊥, h0⟩, fun x hx y hy ↦ ⟨x ⊔ y, hs hx hy, le_sup_left, le_sup_right⟩⟩,
+    fun h ↦ ⟨h.IsLowerSet, fun x hx y hy ↦ ?_⟩⟩
+  obtain ⟨z, hz, hxz, hyz⟩ := h.Directed x hx y hy
+  exact h.IsLowerSet (sup_le hxz hyz) hz
+
+/-- A truth-valued map is antimorphic exactly when it is membership in a prime ideal. -/
+theorem hasStrength_antimorphic_iff_exists_isPrime :
+    HasStrength f antimorphic ↔ ∃ I : Order.Ideal α, I.IsPrime ∧ ∀ x, f x ↔ x ∈ I := by
+  constructor
+  · intro h
+    have h0 : f ⊥ := by simpa using h.map_bot
+    have hI := (hasStrength_antiAdditive_iff_isIdeal h0).1 (h.of_le (by decide))
+    have : hI.toIdeal.IsProper := Order.Ideal.isProper_of_notMem (p := ⊤) <| by
+      show ¬f ⊤
+      simpa using h.map_top
+    refine ⟨hI.toIdeal, Order.Ideal.isPrime_of_mem_or_compl_mem fun {x} ↦ ?_, fun x ↦ Iff.rfl⟩
+    show f x ∨ f xᶜ
+    rw [h.2 x]
+    exact em _
+  · rintro ⟨I, hI, hf⟩
+    obtain rfl : f = (· ∈ I) := funext fun x ↦ propext (hf x)
+    exact ⟨fun x y ↦ propext Order.Ideal.sup_mem_iff, fun x ↦ propext
+      ⟨fun hc ↦ hI.toIsProper.notMem_of_compl_mem hc, fun hx ↦ hI.mem_or_compl_mem.resolve_left hx⟩⟩
 
 end TruthValued
 
