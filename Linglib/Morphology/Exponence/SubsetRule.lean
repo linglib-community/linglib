@@ -11,10 +11,10 @@ clause of the Subset Principle, so that where it applies is the principal filter
 Bundles live in any ordered type: a privative decomposition of a paradigm is a map into `Finset K`,
 and of a multidimensional paradigm a map into a product of such orders. Competition selects on a
 score strictly monotone in the specification, Halle's greatest number of features being the grade.
-Any such score [selects an Elsewhere winner](##realize_realizes), so counting refines Kiparsky's
-inclusion of contexts. Over a meet-semilattice with a least element, a triple $x, y, z$ escapes ABA
-under every antihomophonous rule set [exactly when](##forall_realize_eq_iff) $x \sqcap z \le y$ and
-$y$ lies below $x$ or $z$: $y$ sits on the path from $x$ down to $x \sqcap z$ and up to $z$.
+Any such score selects an Elsewhere winner, so counting refines Kiparsky's inclusion of contexts.
+Over a meet-semilattice with a least element, a triple $x, y, z$ escapes ABA under every
+antihomophonous rule set [exactly when](##forall_realize_eq_iff) $x \sqcap z \le y$ and $y$ lies
+below $x$ or $z$: $y$ sits on the path from $x$ down to $x \sqcap z$ and up to $z$.
 
 ## References
 
@@ -87,13 +87,6 @@ theorem applySet_ssubset_iff : applySet r ⊂ applySet s ↔ s.features < r.feat
 
 variable [DecidableLE P] {α : Type*} [LinearOrder α] {g : P → α}
   {v : RuleSet (SubsetRule P E)} {c : P} {φ : E}
-
-/-- A score strictly monotone in the specification selects an Elsewhere winner, so that counting
-features ([halle-1997]) refines the inclusion of contexts ([kiparsky-1973]). It decides between
-incomparable specifications as well, which is where the two come apart. -/
-theorem realize_realizes (hg : StrictMono g) (h : v.realize (g ∘ features) c = some φ) :
-    v.Realizes applySet c φ :=
-  RuleSet.realize_realizes (fun _ _ _ _ h ↦ hg (applySet_ssubset_iff.1 h)) h
 
 /-- An antihomophonous rule set realizes a contiguous paradigm along the order of bundles, whatever
 the score. -/

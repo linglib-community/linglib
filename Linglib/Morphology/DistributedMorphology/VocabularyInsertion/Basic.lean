@@ -266,10 +266,6 @@ theorem winner?_isElsewhereWinner (h : winner? items n = some i) :
   RuleSet.selectBy_isElsewhereWinner
     (fun _ _ _ _ h ↦ VocabularyItem.specificity_lt_of_applySet_ssubset h) h
 
-theorem subsetPrinciple_realizes (h : subsetPrinciple items n = some e) :
-    items.Realizes applySet n e :=
-  RuleSet.realize_realizes (fun _ _ _ _ h ↦ VocabularyItem.specificity_lt_of_applySet_ssubset h) h
-
 theorem winner?_eq_of_subset (hsub : n' ⊆ n) (h : winner? items n = some i) (hi : Applies i n') :
     winner? items n' = some i :=
   RuleSet.selectBy_eq_some_of_applies (fun _ _ hs ↦ VocabularyItem.applies_mono hs hsub) h hi

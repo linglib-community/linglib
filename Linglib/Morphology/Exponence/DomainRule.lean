@@ -3,7 +3,6 @@ module
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Disjoint
 public import Mathlib.Data.Fintype.Defs
-public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Domain rules
@@ -26,9 +25,6 @@ domain rules.
   when its domain is a union of the map's fibers.
 * `DomainRule.isChain_of_nested`: rules whose overlapping domains are nested satisfy Pāṇinian
   Determinism, their Elsewhere winners forming a chain.
-* `DomainRule.exists_not_isContiguous_realizeMinimal`: without Pāṇinian Determinism, minimal
-  selection over upper-set domains realizes ABA even with distinct exponents on distinct
-  rules.
 
 ## References
 
@@ -59,8 +55,6 @@ instance : ExponenceRule (DomainRule Ctx E) Ctx E := ⟨DomainRule.exponent, fun
 
 @[simp] theorem rule_exponent : ExponenceRule.exponent r = r.exponent := rfl
 
-theorem coe_dom : (r.dom : Set Ctx) = applySet r := rfl
-
 /-- A domain rule's applicability factors through `A` exactly when its domain is a union of
 fibers of `A`. -/
 theorem factorsThrough_applies_iff {V : Type*} {A : Ctx → V} :
@@ -83,25 +77,6 @@ instance : DecidableRel (Applies : DomainRule Ctx E → Ctx → Prop) :=
 instance [Fintype Ctx] {V : Type*} [DecidableEq V] (r : DomainRule Ctx E) (A : Ctx → V) :
     Decidable ((Applies r).FactorsThrough A) :=
   decidable_of_iff _ factorsThrough_applies_iff.symm
-
-/-- Without Pāṇinian Determinism, minimal selection realizes ABA. Over feature bundles ordered by
-inclusion, a rule `S` for feature `1`, a rule `R` for feature `0`, and a rule `T` for features
-`1` and `2` each apply on an upper set, and listed in that order they realize `R`, `S`, `R` on the
-chain `{0} ⊆ {0, 1} ⊆ {0, 1, 2}`: at `{0, 1}` the winners `S` and `R` are incomparable, and the
-list order picks `S`. -/
-theorem exists_not_isContiguous_realizeMinimal :
-    ∃ v : RuleSet (DomainRule (Finset (Fin 3)) String), v.Antihomophonous ∧
-      (∀ r ∈ v, IsUpperSet (r.dom : Set (Finset (Fin 3)))) ∧
-        ¬ IsContiguous (v.realizeMinimal (·.dom)) := by
-  let up (x : Finset (Fin 3)) : Finset (Finset (Fin 3)) := Finset.univ.filter (x ⊆ ·)
-  have hup (x) : IsUpperSet (up x : Set (Finset (Fin 3))) := fun a b hab ha ↦ by
-    simp only [up, Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
-    exact ha.trans hab
-  refine ⟨[⟨up {1}, "S"⟩, ⟨up {0}, "R"⟩, ⟨up {1, 2}, "T"⟩], by decide, ?_, fun h ↦ ?_⟩
-  · simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-    exact ⟨hup _, hup _, hup _⟩
-  · exact absurd (h (i := {0}) (j := {0, 1}) (k := {0, 1, 2}) (by decide) (by decide) (by decide))
-      (by decide)
 
 end DomainRule
 

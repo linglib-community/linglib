@@ -26,7 +26,6 @@ of basic stem choice.
   applicable rule strictly undercuts, and its exponent.
 * `RuleSet.realizeMinimalD`: the exponent of the minimal selection, or a fallback where
   no rule applies.
-* `RuleSet.HasMostSpecific`: some applicable rule is at least as specific as every other.
 
 ## Main results
 
@@ -44,10 +43,6 @@ of basic stem choice.
   patterns when distinct rules carry distinct exponents.
 * `RuleSet.selectBy_isElsewhereWinner`, `RuleSet.selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
-* `RuleSet.selectMinimal_append_singleton`: a rule appended to a rule set and no more specific
-  than its rules is selected only where none of them applies.
-* `RuleSet.HasMostSpecific.isChain`: where some applicable rule is most specific, the Elsewhere
-  winners form a chain, as Pāṇinian Determinism requires.
 * `RuleSet.selectMinimal_eq_some_of_applies`,
   `RuleSet.isContiguous_realizeMinimal_of_monotone`: under Pāṇinian Determinism minimal
   selection is consistent under contraction and realizes contiguous patterns.
@@ -89,39 +84,9 @@ theorem applicable_eq_filter (h : ∀ s ∈ v, Applies s c → Applies s c') :
   rw [applicable, applicable, List.filter_filter]
   exact List.filter_congr fun s hs ↦ by by_cases hc : Applies s c <;> simp [hc, h s hs]
 
-theorem applicable_filter (p : R → Bool) :
-    applicable (v.filter p) c = (v.applicable c).filter p := by
-  simp only [applicable, List.filter_filter, Bool.and_comm]
-
-/-! ### Elsewhere winners -/
+/-! ### Minimal selection -/
 
 variable {κ : Type*} [Preorder κ] {key : R → κ}
-
-instance [DecidableEq R] [DecidableRel (· ≤ · : κ → κ → Prop)] :
-    Decidable (v.IsElsewhereWinner key c r) :=
-  decidable_of_iff (r ∈ v ∧ Applies r c ∧ ∀ s ∈ v, Applies s c → key s ≤ key r → key r ≤ key s)
-    ⟨fun ⟨h₁, h₂, h₃⟩ ↦ ⟨⟨h₁, h₂⟩, fun s hs hle ↦ h₃ s hs.1 hs.2 hle⟩,
-      fun h ↦ ⟨h.1.1, h.1.2, fun _ hs ha hle ↦ h.2 ⟨hs, ha⟩ hle⟩⟩
-
-/-! ### Pāṇinian Determinism -/
-
-/-- Some rule of `v` applicable at `c` is at least as specific as every rule applicable there, as
-Stump's Pāṇinian Determinism requires of a rule block at every cell. -/
-def HasMostSpecific (v : RuleSet R) (key : R → κ) (c : Ctx) : Prop :=
-  ∃ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r ≤ key s
-
-instance [DecidableRel (· ≤ · : κ → κ → Prop)] : Decidable (v.HasMostSpecific key c) :=
-  inferInstanceAs (Decidable (∃ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r ≤ key s))
-
-/-- Where some applicable rule is most specific, the Elsewhere winners form a chain. -/
-theorem HasMostSpecific.isChain (h : v.HasMostSpecific key c) :
-    IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s} := by
-  obtain ⟨r, hr, hle⟩ := h
-  intro s (hs : v.IsElsewhereWinner key c s) t (ht : v.IsElsewhereWinner key c t) _
-  exact .inl ((hs.le_of_le (mem_applicable.mp hr) (hle s (mem_applicable.mpr hs.1))).trans
-    (hle t (mem_applicable.mpr ht.1)))
-
-/-! ### Order selection -/
 
 section Minimal
 
@@ -158,21 +123,6 @@ theorem selectMinimal_eq_none_iff :
 theorem selectMinimal_congr (h : v.applicable c = v.applicable c') :
     v.selectMinimal key c = v.selectMinimal key c' := by
   rw [selectMinimal, selectMinimal, h]
-
-/-- A rule appended to `v` that applies at `c` and is no more specific than any rule of `v` is
-selected only where no rule of `v` applies. -/
-theorem selectMinimal_append_singleton (hr : Applies r c) (hle : ∀ s ∈ v, key s ≤ key r) :
-    (v ++ [r]).selectMinimal key c = (v.selectMinimal key c).or (some r) := by
-  have happ : (v ++ [r]).applicable c = v.applicable c ++ [r] := by
-    simp [applicable, List.filter_append, hr]
-  have hfind : (v.applicable c).find? (fun s ↦ (v.applicable c ++ [r]).all
-      fun t ↦ decide (¬ key t < key s)) = v.selectMinimal key c :=
-    List.find?_congr fun s hs ↦ by
-      simp [not_lt_of_ge (hle s (mem_applicable.mp hs).1)]
-  rw [selectMinimal, happ, List.find?_append, hfind]
-  rcases h : v.selectMinimal key c with - | s
-  · simp [selectMinimal_eq_none_iff.mp h]
-  · rfl
 
 /-- A rule system sensitive only to what `A` sees selects the same rule in
 contexts that `A` identifies. -/
@@ -391,22 +341,6 @@ theorem isContiguous_realize_of_antitone (hv : v.Antihomophonous)
 
 end Contiguity
 
-/-! ### Loss of rules -/
-
-theorem selectBy_filter_of_mem {p : R → Bool} (h : v.selectBy f c = some r) (hp : p r) :
-    selectBy (v.filter p) f c = some r := by
-  rw [selectBy, applicable_filter]
-  exact List.argmax_filter_of_mem h hp
-
-theorem realize_filter_eq_some (hv : v.Antihomophonous) {p : R → Bool}
-    (h : v.realize f c = some φ) (h' : realize (v.filter p) f c' = some φ) :
-    realize (v.filter p) f c = some φ := by
-  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
-  obtain ⟨r', hr', he⟩ := Option.map_eq_some_iff.mp h'
-  have hm := List.mem_filter.mp (selectBy_mem hr')
-  obtain rfl := hv hm.1 (selectBy_mem hr) he
-  rw [realize, selectBy_filter_of_mem hr hm.2, Option.map_some]
-
 /-! ### Transport -/
 
 section Map
@@ -444,15 +378,6 @@ theorem realize_realizes
     (h : v.realize f c = some φ) : v.Realizes key c φ := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩
-
-/-- Where every exponent realized under the key reversing `f` is `φ`, selection by `f` returns `φ`,
-whatever the order of the rule set. -/
-theorem realize_eq_of_forall_realizes (hne : ∃ r ∈ v, Applies r c)
-    (h : ∀ ψ, v.Realizes (OrderDual.toDual ∘ f) c ψ → ψ = φ) : v.realize f c = some φ := by
-  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp (selectBy_isSome_iff (f := f).mpr hne)
-  have hψ : v.realize f c = some (exponent r) := by rw [realize, hr, Option.map_some]
-  rw [hψ, h _ (realize_realizes (key := OrderDual.toDual ∘ f)
-    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.1 h) hψ)]
 
 variable [DecidableRel (· < · : κ → κ → Prop)]
 

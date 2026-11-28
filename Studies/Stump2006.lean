@@ -9,6 +9,7 @@ public import Linglib.Languages.Slavic.Russian.Case
 public import Linglib.Languages.Slavic.Russian.Gender
 public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Logic.Function.DependsOn
