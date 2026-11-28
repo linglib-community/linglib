@@ -270,7 +270,7 @@ theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w =
     mem_atomCell]
 
 theorem satisfied_infClosure_range_subset_iff {u v : W} :
-    {q ∈ infClosure (range a) | u ∈ q} ⊆ {q ∈ infClosure (range a) | v ∈ q} ↔
+    satisfied (infClosure (range a)) u ⊆ satisfied (infClosure (range a)) v ↔
       atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
@@ -282,7 +282,7 @@ theorem satisfied_infClosure_range_subset_iff {u v : W} :
     exact mem_biInter_iff_subset.2 ((mem_biInter_iff_subset.1 hu).trans h)
 
 theorem satisfied_supClosure_range_subset_iff {u v : W} :
-    {q ∈ supClosure (range a) | u ∈ q} ⊆ {q ∈ supClosure (range a) | v ∈ q} ↔
+    satisfied (supClosure (range a)) u ⊆ satisfied (supClosure (range a)) v ↔
       atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
@@ -345,7 +345,7 @@ theorem mem_IE_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.Nonempty) :
         exact fun h ↦ hUT (Finset.coe_subset.1 h)
 
 theorem mem_exhMW_supClosure_range_iff {T : Finset ι} {u : W} :
-    u ∈ exhMW (supClosure (range a)) (⋃ i ∈ T, a i) ↔ ∃ i ∈ T, atoms u = ↑({i} : Finset ι) := by
+    u ∈ exhᵐʷ (supClosure (range a)) (⋃ i ∈ T, a i) ↔ ∃ i ∈ T, atoms u = ↑({i} : Finset ι) := by
   have hsing : ∀ {i : ι} {v : W}, atoms v = ↑({i} : Finset ι) → v ∈ a i := fun {i v} hv ↦ by
     refine mem_satisfied_iff.1 ?_
     rw [hv]

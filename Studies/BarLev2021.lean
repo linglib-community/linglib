@@ -11,8 +11,8 @@ public import Linglib.Data.Statistics.KrizChemla2015
 Bar-Lev derives homogeneity as an implicature. A plural definite means that some atom of the
 plurality has the property, and its alternatives are the disjunctions of the atomic predications,
 with no conjunction among them. Exhaustifying over all of them
-[gives the universal reading](##exhIEII_eq_universal); under negation
-[it is vacuous](##Exhaustification.exhIEII_compl_biUnion). Non-maximal readings come from pruning
+[gives the universal reading](##exhII_eq_universal); under negation
+[it is vacuous](##Exhaustification.exhII_compl_biUnion). Non-maximal readings come from pruning
 alternatives so that the result only weakens, which derives [the conjunctions of alternatives that
 are not themselves alternatives](##Exhaustification.prunedReadings_eq). The question selects the
 strongest of these it determines, [the result of a maximal pruning whose result is
@@ -26,7 +26,7 @@ predication is undefined](##gappy_iff_barePlural_eq_undefined).
 The prejacent and the alternatives are the disjunction of the atomic predications over the atoms
 of the plurality and its closure under disjunction, the form the paper adopts once the domain is
 assumed to hold every part of the plurality; the general theory of exhaustifying and pruning such
-a disjunction is `Exhaustification.exhIEII_supClosure` and `Exhaustification.prunedReadings`.
+a disjunction is `Exhaustification.exhII_supClosure` and `Exhaustification.prunedReadings`.
 `Gappy` ranges over all partitions and is context-free; that a context fixing the partition
 removes the gap is carried by `reading_80` and `reading_81`.
 
@@ -98,9 +98,9 @@ theorem prunedReadings_subset_readings (h : Separating x (atom P)) (hne : x.None
 
 /-- Exhaustifying `∃-PL` over its subdomain alternatives gives the universal reading, the
 maximality implicature. -/
-theorem exhIEII_eq_universal (h : Separating x (atom P)) (hne : x.Nonempty) :
-    exhIEII (supClosure (atom P '' ↑x)) (⋃ a ∈ x, atom P a) = {w | ∀ a ∈ x, P a w} := by
-  rw [exhIEII_supClosure h hne]
+theorem exhII_eq_universal (h : Separating x (atom P)) (hne : x.Nonempty) :
+    exhᴵᴱ⁺ᴵᴵ (supClosure (atom P '' ↑x)) (⋃ a ∈ x, atom P a) = {w | ∀ a ∈ x, P a w} := by
+  rw [exhII_supClosure h hne]
   ext w; simp [atom]
 
 -- (6a)
@@ -116,8 +116,8 @@ theorem not_of_notMem_biUnion {w : W} (hw : w ∉ ⋃ b ∈ x, atom P b) {a : At
   fun hPa ↦ hw (Set.mem_biUnion ha hPa)
 
 -- With a conjunctive alternative, as a floating quantifier would supply, no homogeneity.
-theorem not_forall_of_mem_exhIEII_insert_iInter (h : Separating x (atom P)) (h2 : 2 ≤ x.card)
-    {w : W} (hw : w ∈ exhIEII (insert (⋂ a ∈ x, atom P a) (supClosure (atom P '' ↑x)))
+theorem not_forall_of_mem_exhII_insert_iInter (h : Separating x (atom P)) (h2 : 2 ≤ x.card)
+    {w : W} (hw : w ∈ exhᴵᴱ⁺ᴵᴵ (insert (⋂ a ∈ x, atom P a) (supClosure (atom P '' ↑x)))
       (⋃ b ∈ x, atom P b)) : ¬ ∀ a ∈ x, P a w :=
   fun hall ↦ hw.2.1 _ (mem_IE_iInter_of_insert h.single h2)
     (Set.mem_iInter₂.2 fun a ha ↦ hall a ha)
@@ -142,7 +142,7 @@ theorem gappy_iff (h : Separating x (atom P)) (hne : x.Nonempty) (w : W) :
     push Not at hcon
     exact hwq' (iInter_subset_of_mem_prunedReadings h hne hq'.1.1 (Set.mem_iInter₂.2 hcon))
   · rintro ⟨⟨a, ha, hPa⟩, ⟨b, hb, hPb⟩⟩
-    have hne' := exhIEII_supClosure_nonempty h hne
+    have hne' := exhII_supClosure_nonempty h hne
     exact ⟨⟨_, _, isPrunedReading_polar hne' (self_mem_prunedReadings
         (biUnion_mem_supClosure hne) (h.biUnion_nonempty hne)), Set.mem_biUnion ha hPa⟩,
       ⟨_, _, isPrunedReading_polar hne' (iInter_mem_prunedReadings h hne),
@@ -160,10 +160,10 @@ theorem gappy_iff_barePlural_eq_undefined (h : Separating x (atom P)) (hne : x.N
 
 -- Trivalent plural predication is true where the exhaustified sentence is, and false where
 -- the unexhaustified one is.
-theorem barePlural_eq_true_iff_mem_exhIEII (h : Separating x (atom P)) (hne : x.Nonempty)
+theorem barePlural_eq_true_iff_mem_exhII (h : Separating x (atom P)) (hne : x.Nonempty)
     (w : W) : Homogeneity.barePlural P x w = .true ↔
-      w ∈ exhIEII (supClosure (atom P '' ↑x)) (⋃ b ∈ x, atom P b) := by
-  rw [exhIEII_supClosure h hne, Homogeneity.barePlural, Trivalent.supervaluation_eq_true_iff,
+      w ∈ exhᴵᴱ⁺ᴵᴵ (supClosure (atom P '' ↑x)) (⋃ b ∈ x, atom P b) := by
+  rw [exhII_supClosure h hne, Homogeneity.barePlural, Trivalent.supervaluation_eq_true_iff,
     Set.mem_iInter₂]
   rfl
 
@@ -175,9 +175,9 @@ theorem barePlural_eq_false_iff_notMem_biUnion (hne : x.Nonempty) (w : W) :
 -- At a gappy world the trivalent negation is still undefined, while the negative sentence with
 -- negation over `∃-PL`, exhaustified over any of its alternatives, is plainly false, where the
 -- accounts part.
-theorem compl_barePlural_eq_undefined_and_notMem_exhIEII_compl (h : Separating x (atom P))
+theorem compl_barePlural_eq_undefined_and_notMem_exhII_compl (h : Separating x (atom P))
     (hne : x.Nonempty) {w : W} (hw : Gappy x P w) (C : Set (Set W)) :
-    (Homogeneity.barePlural P x w)ᶜ = .undefined ∧ w ∉ exhIEII C (⋃ b ∈ x, atom P b)ᶜ := by
+    (Homogeneity.barePlural P x w)ᶜ = .undefined ∧ w ∉ exhᴵᴱ⁺ᴵᴵ C (⋃ b ∈ x, atom P b)ᶜ := by
   refine ⟨Trivalent.compl_eq_undefined_iff.2
     ((gappy_iff_barePlural_eq_undefined h hne w).1 hw), ?_⟩
   obtain ⟨a, ha, hPa⟩ := ((gappy_iff h hne w).1 hw).1
@@ -236,18 +236,18 @@ abbrev janeLaughed : Set (Finset Kid) := atom holds .jane
 -- (41a): *Kelly or Jane laughed*, whose alternatives include the conjunction, is strengthened
 -- to "not both".
 theorem disjunction_not_both :
-    exhIEII {kellyLaughed ∪ janeLaughed, kellyLaughed, janeLaughed, kellyLaughed ∩ janeLaughed}
+    exhᴵᴱ⁺ᴵᴵ {kellyLaughed ∪ janeLaughed, kellyLaughed, janeLaughed, kellyLaughed ∩ janeLaughed}
         (kellyLaughed ∪ janeLaughed) =
       (kellyLaughed ∪ janeLaughed) \ (kellyLaughed ∩ janeLaughed) :=
-  BarLevFox2020.exhIEII_pair_inter le_rfl
+  BarLevFox2020.exhII_pair_inter le_rfl
     ⟨{.kelly}, ⟨Or.inl (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
     ⟨{.jane}, ⟨Or.inr (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
 
 -- (41b): *The kids laughed*, whose alternatives are the subdomain alternatives alone, is
 -- strengthened to "both".
 theorem plural_both :
-    exhIEII (supClosure (atom holds '' pair)) (⋃ b ∈ pair, atom holds b) = {w | pair ⊆ w} :=
-  exhIEII_eq_universal (separating_holds pair) (by decide)
+    exhᴵᴱ⁺ᴵᴵ (supClosure (atom holds '' pair)) (⋃ b ∈ pair, atom holds b) = {w | pair ⊆ w} :=
+  exhII_eq_universal (separating_holds pair) (by decide)
 
 -- *Kelly laughed* is an alternative of *the kids laughed* and so not a reading of it.
 theorem kellyLaughed_notMem_prunedReadings :
@@ -326,11 +326,11 @@ theorem gappy_iff_krizChemla_gap :
 -- there in Experiments A1 and B1.
 theorem krizChemla_negation_residue :
     (∀ i ∈ items, i.embedding = .unembedded → i.condition = .gap → ∀ w : Finset Symbol,
-      i.cells = [w.card] → ∀ C, w ∉ exhIEII C (⋃ b ∈ Finset.univ, atom holds b)ᶜ) ∧
+      i.cells = [w.card] → ∀ C, w ∉ exhᴵᴱ⁺ᴵᴵ C (⋃ b ∈ Finset.univ, atom holds b)ᶜ) ∧
     ∀ t ∈ gapTests, t.embedding = .negation → t.found = .yes := by
   refine ⟨fun i hi he hc w hw C ↦ ?_, by decide⟩
   have hg := (gappy_iff_krizChemla_gap.1 i hi he w hw).2 hc
-  exact (compl_barePlural_eq_undefined_and_notMem_exhIEII_compl
+  exact (compl_barePlural_eq_undefined_and_notMem_exhII_compl
     (separating_holds _) ⟨0, by simp⟩ hg C).2
 
 end KrizChemla

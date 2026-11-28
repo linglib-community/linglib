@@ -302,7 +302,7 @@ theorem mem_IE_but_some (hF : Finset.univ.erase g ∈ F) :
   exact Finset.notMem_erase g u ((h ⟨ha, hgu⟩).2 (Finset.mem_singleton_self g))
 
 theorem exhIE_but_some_ne {a : α} (hag : a ≠ g) (hF : Finset.univ.erase g ∈ F) :
-    exhIE (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g}) ≠
+    exhᴵᴱ (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g}) ≠
       but Det.some Finset.univ {g} := by
   intro h
   have hw : ({g, a} : Finset α) ∈ but Det.some Finset.univ {g} :=
@@ -374,7 +374,7 @@ theorem table_1 :
 
 -- (107)–(110)
 theorem judgment_107 : Examples.ex_107.judgment = .unacceptable ∧
-    exhIE (but Quantifier.Det.some Finset.univ '' party)
+    exhᴵᴱ (but Quantifier.Det.some Finset.univ '' party)
         (but Quantifier.Det.some Finset.univ {gal}) ≠
       but Quantifier.Det.some Finset.univ {gal} :=
   ⟨rfl, exhIE_but_some_ne (a := tal) (by decide) ⟨tal, by decide⟩⟩

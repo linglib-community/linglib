@@ -517,7 +517,7 @@ theorem minterm_onTable (T : Finset α) :
 
 -- fn. 12
 theorem exhIE_onTable_every (S : Finset α) :
-    exhIE (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑S)) = {S} := by
+    exhᴵᴱ (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑S)) = {S} := by
   rw [← Set.image_univ, ← Finset.coe_univ, onTable_every,
     exhIE_image_biInter (Finset.subset_univ S) (by simp [minterm_onTable]), minterm_onTable]
 
@@ -542,7 +542,7 @@ theorem denote_mentioned (a : Account) (l : Language) (s : Sentence) :
 /-- An end state is accurate when it matches the exhaustified sentence: the mentioned objects are
 on the table, and every innocently excludable alternative naming one object is denied. -/
 def Accurate (st : EndState) : Prop :=
-  st ∈ exhIE (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑mentioned))
+  st ∈ exhᴵᴱ (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑mentioned))
 
 /-- The accurate end state has the mentioned objects and nothing else on the table. -/
 theorem accurate_iff {st : EndState} : Accurate st ↔ st = mentioned := by

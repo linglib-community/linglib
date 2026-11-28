@@ -22,6 +22,7 @@ Over finitely many worlds and an indexed family of alternatives, membership in `
 
 ## Main definitions
 
+* `Exhaustification.satisfied`: the alternatives true at a world.
 * `Exhaustification.excludes`: the worlds where every true alternative is entailed by the
   prejacent.
 * `Exhaustification.exh`: the prejacent with every alternative it does not entail denied.
@@ -67,6 +68,9 @@ section Exh
 
 variable {C C' : Set (Set W)} {p q : Set W} {w : W}
 
+/-- The alternatives in `C` that are true at `w`. -/
+abbrev satisfied (C : Set (Set W)) (w : W) : Set (Set W) := {a ∈ C | w ∈ a}
+
 /-- `excludes C p` holds at the worlds where every true alternative in `C` is entailed by
 `p`. -/
 def excludes (C : Set (Set W)) (p : Set W) : Set W := {w | ∀ q ∈ C, w ∈ q → p ⊆ q}
@@ -95,21 +99,21 @@ theorem exh_subset_compl (hq : q ∈ C) (h : ¬ p ⊆ q) : exh C p ⊆ qᶜ :=
 
 /-- A member of `C` is exhaustified where it is the least true member under entailment, the
 strongest alternative true there. -/
-theorem mem_exh_iff_isLeast_of_mem (hp : p ∈ C) : w ∈ exh C p ↔ IsLeast {q ∈ C | w ∈ q} p :=
+theorem mem_exh_iff_isLeast_of_mem (hp : p ∈ C) : w ∈ exh C p ↔ IsLeast (satisfied C w) p :=
   ⟨fun ⟨hw, h⟩ ↦ ⟨⟨hp, hw⟩, fun q ⟨hq, hwq⟩ ↦ h q hq hwq⟩,
     fun ⟨⟨_, hw⟩, h⟩ ↦ ⟨hw, fun _ hq hwq ↦ h ⟨hq, hwq⟩⟩⟩
 
 /-- A world is in the exclusion of `p` just in case its true alternatives are a lower bound of the
 sets of alternatives true at the worlds of `p`. -/
 theorem mem_excludes_iff_lowerBounds :
-    w ∈ excludes C p ↔ {a ∈ C | w ∈ a} ∈ lowerBounds ((fun v ↦ {a ∈ C | v ∈ a}) '' p) := by
+    w ∈ excludes C p ↔ satisfied C w ∈ lowerBounds (satisfied C '' p) := by
   simp only [mem_excludes, mem_lowerBounds, Set.forall_mem_image]
   exact ⟨fun h v hv a ha ↦ ⟨ha.1, h a ha.1 ha.2 hv⟩, fun h a ha hw v hv ↦ (h hv ⟨ha, hw⟩).2⟩
 
 /-- A world is exhaustified, for any prejacent, where it is a world of the prejacent whose set of
 true alternatives is the least among those of the prejacent's worlds. -/
 theorem mem_exh_iff_isLeast_image :
-    w ∈ exh C p ↔ w ∈ p ∧ IsLeast ((fun v ↦ {a ∈ C | v ∈ a}) '' p) {a ∈ C | w ∈ a} :=
+    w ∈ exh C p ↔ w ∈ p ∧ IsLeast (satisfied C '' p) (satisfied C w) :=
   ⟨fun h ↦ ⟨h.1, Set.mem_image_of_mem _ h.1, mem_excludes_iff_lowerBounds.1 h.2⟩,
     fun h ↦ ⟨h.1, mem_excludes_iff_lowerBounds.2 h.2.2⟩⟩
 
@@ -353,7 +357,7 @@ theorem mem_exh_inter_Iio : w ∈ exh (C ∩ Set.Iio p) p ↔ w ∈ p ∧ ∀ q 
 /-- Exhaustified against the strictly stronger alternatives only, a member of `C` holds where it
 is a minimal true member: true, with no true member strictly below it. -/
 theorem mem_exh_inter_Iio_iff_minimal (hp : p ∈ C) :
-    w ∈ exh (C ∩ Set.Iio p) p ↔ Minimal (· ∈ {q ∈ C | w ∈ q}) p :=
+    w ∈ exh (C ∩ Set.Iio p) p ↔ Minimal (· ∈ satisfied C w) p :=
   mem_exh_inter_Iio.trans <| Iff.trans
     ⟨fun ⟨hw, h⟩ ↦ ⟨⟨hp, hw⟩, fun _ hlt hy ↦ h _ hy.1 hlt hy.2⟩,
       fun ⟨hw, h⟩ ↦ ⟨hw.2, fun _ hq hlt hwq ↦ h hlt ⟨hq, hwq⟩⟩⟩
@@ -395,7 +399,7 @@ theorem dominated_union (h₁ : q₁ ∈ C) (h₂ : q₂ ∈ C) (h₁₂ : ¬ q�
 theorem exists_mem_subset_not_dominated (hC : C.Finite) (hq : q ∈ C) (hw : w ∈ q) :
     ∃ m ∈ C, ¬ Dominated C m ∧ w ∈ m ∧ m ⊆ q := by
   obtain ⟨m, hmq, hm⟩ := (hC.subset (Set.sep_subset C (w ∈ ·))).exists_le_minimal
-    (show q ∈ {m ∈ C | w ∈ m} from ⟨hq, hw⟩)
+    (show q ∈ satisfied C w from ⟨hq, hw⟩)
   refine ⟨m, hm.1.1, fun hd ↦ ?_, hm.1.2, hmq⟩
   obtain ⟨s, ⟨hs, hsm⟩, hws⟩ := hd hm.1.2
   exact hsm.2 (hm.2 ⟨hs, hws⟩ hsm.1)

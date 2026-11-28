@@ -89,7 +89,7 @@ strengthened meaning contradicts common knowledge `Wck`. By the Blindness Hypoth
 strengthened meaning is innocent exclusion (30) with logical entailment, computed over all worlds
 rather than over `Wck`. -/
 def Odd (Wck : Set W) (ALT : Set (Set W)) (φ : Set W) : Prop :=
-  Disjoint (exhIE ALT φ) Wck
+  Disjoint (exhᴵᴱ ALT φ) Wck
 
 private theorem disjoint_diff_iff {s t u : Set W} : Disjoint (s \ t) u ↔ s ∩ u ⊆ t := by
   simp only [disjoint_left, subset_def, mem_sdiff, mem_inter_iff, and_imp, not_imp_not]
@@ -100,7 +100,7 @@ theorem odd_pair_iff (h : (φ \ ψ).Nonempty) : Odd Wck {φ, ψ} φ ↔ φ ∩ W
 
 -- (53), (97), (109)
 theorem exhIE_insert_range {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i, ψP i).Nonempty) :
-    exhIE (insert φ (range ψP)) φ = φ \ ⋃ i, ψP i := by
+    exhᴵᴱ (insert φ (range ψP)) φ = φ \ ⋃ i, ψP i := by
   have hexh : exh (insert φ (range ψP)) φ = φ \ ⋃ i, ψP i := by
     obtain ⟨v, hvφ, hv⟩ := h
     ext x
@@ -116,7 +116,7 @@ theorem odd_insert_range_iff {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i,
 /-- Innocent exclusion relative to common knowledge (31b) leaves `φ` unstrengthened when its
 alternatives are contextually equivalent to it (34). -/
 theorem exhIE_image_inter {ALT : Set (Set W)} (hφ : φ ∈ ALT)
-    (h : ∀ a ∈ ALT, a ∩ Wck = φ ∩ Wck) : exhIE ((· ∩ Wck) '' ALT) (φ ∩ Wck) = φ ∩ Wck := by
+    (h : ∀ a ∈ ALT, a ∩ Wck = φ ∩ Wck) : exhᴵᴱ ((· ∩ Wck) '' ALT) (φ ∩ Wck) = φ ∩ Wck := by
   rw [eq_singleton_iff_unique_mem.2 ⟨mem_image_of_mem _ hφ, forall_mem_image.2 h⟩,
     exhIE_singleton_self]
 

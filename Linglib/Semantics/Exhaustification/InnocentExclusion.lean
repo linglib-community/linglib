@@ -15,7 +15,7 @@ A set of alternatives is a consistent exclusion when denying all of them is cons
 prejacent. An alternative is innocently excludable when it belongs to every maximal consistent
 exclusion, and `exhIE ALT φ` is the prejacent with the innocently excludable alternatives denied.
 The maximal consistent exclusions are the sets of alternatives false at a minimal world of the
-prejacent, so the three exhaustifications are nested, `exh ALT φ ⊆ exhMW ALT φ ⊆ exhIE ALT φ`, and
+prejacent, so the three exhaustifications are nested, `exh ALT φ ⊆ exhᵐʷ ALT φ ⊆ exhᴵᴱ ALT φ`, and
 they coincide when the first is consistent.
 
 ## Main definitions
@@ -69,11 +69,13 @@ excludable alternative. -/
 def exhIE : Set World :=
   {u ∈ φ | ∀ a, a ∈ IE ALT φ → u ∉ a}
 
+@[inherit_doc] scoped notation "exhᴵᴱ" => exhIE
+
 theorem mem_exhIE_iff {u : World} :
-    u ∈ exhIE ALT φ ↔ u ∈ φ ∧ ∀ a, a ∈ IE ALT φ → u ∉ a :=
+    u ∈ exhᴵᴱ ALT φ ↔ u ∈ φ ∧ ∀ a, a ∈ IE ALT φ → u ∉ a :=
   Iff.rfl
 
-theorem exhIE_subset : exhIE ALT φ ⊆ φ := fun _ h ↦ h.1
+theorem exhIE_subset : exhᴵᴱ ALT φ ⊆ φ := fun _ h ↦ h.1
 
 /-- The worlds where every innocently excludable alternative in the relevance set `Rc` is false,
 the innocent counterpart of `excludes`. -/
@@ -85,7 +87,7 @@ def excludesIE (Rc : Set (Set World)) : Set World :=
   Iff.rfl
 
 /-- Innocent exclusion asserts the prejacent and its exclusion over every alternative. -/
-theorem exhIE_eq_inter_excludesIE : exhIE ALT φ = φ ∩ excludesIE ALT φ univ :=
+theorem exhIE_eq_inter_excludesIE : exhᴵᴱ ALT φ = φ ∩ excludesIE ALT φ univ :=
   Set.ext fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦
     (imp_iff_right (mem_univ _)).symm
 
@@ -121,32 +123,32 @@ theorem mem_IE_of_full_exclusion_consistent {a : Set World} (ha : a ∈ ALT)
   mem_IE_of_forall_subset_or_notMem ha hw (hall a ha) fun b hb ↦ Or.inr (hall b hb)
 
 theorem exhIE_subset_compl_of_mem_IE {a : Set World}
-    (h : a ∈ IE ALT φ) : exhIE ALT φ ⊆ aᶜ :=
+    (h : a ∈ IE ALT φ) : exhᴵᴱ ALT φ ⊆ aᶜ :=
   fun _ hu ↦ hu.2 a h
 
 theorem exhIE_subset_compl_exhIE_of_mem_IE {a : Set World}
-    (h : a ∈ IE ALT φ) : exhIE ALT φ ⊆ (exhIE ALT a)ᶜ :=
+    (h : a ∈ IE ALT φ) : exhᴵᴱ ALT φ ⊆ (exhᴵᴱ ALT a)ᶜ :=
   (exhIE_subset_compl_of_mem_IE h).trans (compl_subset_compl.2 (exhIE_subset ALT a))
 
 /-! ### Maximal consistent exclusions and minimal worlds -/
 
 theorem mem_sdiff_satisfied {u : World} {b : Set World} :
-    b ∈ ALT \ {a ∈ ALT | u ∈ a} ↔ b ∈ ALT ∧ u ∉ b := by
+    b ∈ ALT \ satisfied ALT u ↔ b ∈ ALT ∧ u ∉ b := by
   simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_and]
   exact and_congr_right fun hb ↦ ⟨fun h ↦ h hb, fun h _ ↦ h⟩
 
 theorem isConsistentExclusion_sdiff_satisfied {u : World} (hu : u ∈ φ) :
-    IsConsistentExclusion ALT φ (ALT \ {a ∈ ALT | u ∈ a}) :=
+    IsConsistentExclusion ALT φ (ALT \ satisfied ALT u) :=
   ⟨Set.sdiff_subset, u, hu, fun ⟨_, hb, hub⟩ ↦ (mem_sdiff_satisfied.1 hb).2 hub⟩
 
 theorem IsConsistentExclusion.subset_sdiff_satisfied {X : Set (Set World)}
     (hX : IsConsistentExclusion ALT φ X) {u : World} (hu : u ∉ ⋃₀ X) :
-    X ⊆ ALT \ {a ∈ ALT | u ∈ a} :=
+    X ⊆ ALT \ satisfied ALT u :=
   fun b hb ↦ mem_sdiff_satisfied.2 ⟨hX.1 hb, fun hub ↦ hu ⟨b, hb, hub⟩⟩
 
 private theorem sdiff_satisfied_subset_iff {u v : World} :
-    ALT \ {a ∈ ALT | u ∈ a} ⊆ ALT \ {a ∈ ALT | v ∈ a} ↔
-      {a ∈ ALT | v ∈ a} ⊆ {a ∈ ALT | u ∈ a} := by
+    ALT \ satisfied ALT u ⊆ ALT \ satisfied ALT v ↔
+      satisfied ALT v ⊆ satisfied ALT u := by
   simp only [Set.subset_def, mem_sdiff_satisfied, Set.mem_ofPred_eq]
   exact ⟨fun h b ⟨hb, hvb⟩ ↦ ⟨hb, not_not.1 fun hub ↦ (h b ⟨hb, hub⟩).2 hvb⟩,
     fun h b ⟨hb, hub⟩ ↦ ⟨hb, fun hvb ↦ hub (h b ⟨hb, hvb⟩).2⟩⟩
@@ -154,8 +156,8 @@ private theorem sdiff_satisfied_subset_iff {u v : World} :
 /-- The alternatives false at a prejacent world form a maximal consistent exclusion iff the world
 is minimal. -/
 theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
-    Maximal (IsConsistentExclusion ALT φ) (ALT \ {a ∈ ALT | u ∈ a}) ↔
-      u ∈ exhMW ALT φ := by
+    Maximal (IsConsistentExclusion ALT φ) (ALT \ satisfied ALT u) ↔
+      u ∈ exhᵐʷ ALT φ := by
   refine ⟨fun hmax ↦ ⟨hu, fun v hv hvu ↦ sdiff_satisfied_subset_iff.1
     (hmax.2 (isConsistentExclusion_sdiff_satisfied hv) (sdiff_satisfied_subset_iff.2 hvu))⟩,
     fun hmin ↦ ⟨isConsistentExclusion_sdiff_satisfied hu, fun Y hY hXY ↦ ?_⟩⟩
@@ -167,7 +169,7 @@ theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
 /-- Every maximal consistent exclusion is the set of alternatives false at a minimal world. -/
 theorem Maximal.exists_eq_sdiff_satisfied {X : Set (Set World)}
     (hX : Maximal (IsConsistentExclusion ALT φ) X) :
-    ∃ u, u ∈ exhMW ALT φ ∧ X = ALT \ {a ∈ ALT | u ∈ a} := by
+    ∃ u, u ∈ exhᵐʷ ALT φ ∧ X = ALT \ satisfied ALT u := by
   obtain ⟨u, hu, huX⟩ := hX.1.2
   have hXu := hX.1.subset_sdiff_satisfied huX
   have heq := hXu.antisymm (hX.2 (isConsistentExclusion_sdiff_satisfied hu) hXu)
@@ -177,7 +179,7 @@ variable (ALT φ)
 
 /-- An alternative is innocently excludable iff it fails at every minimal world. -/
 theorem mem_IE_iff_exhMW_subset_compl (a : Set World) (ha : a ∈ ALT) :
-    a ∈ IE ALT φ ↔ exhMW ALT φ ⊆ aᶜ := by
+    a ∈ IE ALT φ ↔ exhᵐʷ ALT φ ⊆ aᶜ := by
   refine ⟨fun h u hu ↦ (mem_sdiff_satisfied.1 (h.2 _ ((maximal_sdiff_satisfied_iff hu.1).2 hu))).2,
     fun h ↦ ⟨ha, fun X hX ↦ ?_⟩⟩
   obtain ⟨u, hu, rfl⟩ := Maximal.exists_eq_sdiff_satisfied hX
@@ -196,63 +198,63 @@ theorem notMem_IE_of_phi_subset {ALT : Set (Set World)} {φ : Set World}
   huX ⟨a, ha.2 X hX, h hu⟩
 
 theorem mem_exhIE_of_forall_subset_or_notMem (hfin : ALT.Finite) {u : World} (hu : u ∈ φ)
-    (h : ∀ a ∈ ALT, φ ⊆ a ∨ u ∉ a) : u ∈ exhIE ALT φ :=
+    (h : ∀ a ∈ ALT, φ ⊆ a ∨ u ∉ a) : u ∈ exhᴵᴱ ALT φ :=
   ⟨hu, fun a ha ↦ (h a ha.1).resolve_left fun hs ↦
     notMem_IE_of_phi_subset hfin ⟨u, hu⟩ hs ha⟩
 
 theorem exhIE_eq_of_iff {P : Set World → Prop}
     (h : ∀ q ∈ ALT, q ∈ IE ALT φ ↔ P q) :
-    exhIE ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, P q → w ∉ q} := by
+    exhᴵᴱ ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, P q → w ∉ q} := by
   ext w
   exact and_congr_right fun _ ↦ ⟨fun h' q hq hP ↦ h' q ((h q hq).2 hP),
     fun h' q hq ↦ h' q hq.1 ((h q hq.1).1 hq)⟩
 
 /-- Innocent exclusion is exhaustification over the innocently excludable alternatives. -/
 theorem exhIE_eq_exh (hfin : ALT.Finite) :
-    exhIE ALT φ = exh (IE ALT φ) φ := by
+    exhᴵᴱ ALT φ = exh (IE ALT φ) φ := by
   ext u
   rw [mem_exhIE_iff, mem_exh]
   refine and_congr_right fun hu ↦ ⟨fun h a ha hua ↦ absurd hua (h a ha), fun h a ha hua ↦ ?_⟩
   exact notMem_IE_of_phi_subset hfin ⟨u, hu⟩ (h a ha hua) ha
 
 theorem exhIE_preimage_image {β : Type*} {f : World → β} (hφ : f ⁻¹' (f '' φ) = φ)
-    (hALT : ∀ a ∈ ALT, f ⁻¹' (f '' a) = a) : f ⁻¹' (f '' exhIE ALT φ) = exhIE ALT φ := by
+    (hALT : ∀ a ∈ ALT, f ⁻¹' (f '' a) = a) : f ⁻¹' (f '' exhᴵᴱ ALT φ) = exhᴵᴱ ALT φ := by
   refine (subset_preimage_image f _).antisymm' ?_
   rintro u ⟨v, hv, hvu⟩
   refine ⟨by rw [← hφ]; exact ⟨v, hv.1, hvu⟩, fun a ha hua ↦ hv.2 a ha ?_⟩
   rw [← hALT a ha.1]
   exact ⟨u, hua, hvu.symm⟩
 
-theorem exhIE_eq_self_iff : exhIE ALT φ = φ ↔ ∀ a, a ∈ IE ALT φ → Disjoint φ a :=
+theorem exhIE_eq_self_iff : exhᴵᴱ ALT φ = φ ↔ ∀ a, a ∈ IE ALT φ → Disjoint φ a :=
   ⟨fun h a ha ↦ disjoint_left.2 fun _ hw ↦ (h.ge hw).2 a ha,
     fun h ↦ (exhIE_subset ALT φ).antisymm fun _ hw ↦ ⟨hw, fun a ha ↦ disjoint_left.1 (h a ha) hw⟩⟩
 
-theorem exhIE_empty : exhIE ∅ φ = φ :=
+theorem exhIE_empty : exhᴵᴱ ∅ φ = φ :=
   (exhIE_eq_self_iff ∅ φ).2 fun _ h ↦ h.1.elim
 
 /-- Exhaustification is antitone in the innocently excludable alternatives, more of them giving a
 stronger result. -/
 theorem exhIE_subset_exhIE {ALT' : Set (Set World)}
     (h : ∀ q, q ∈ IE ALT' φ → q ∈ IE ALT φ) :
-    exhIE ALT φ ⊆ exhIE ALT' φ :=
+    exhᴵᴱ ALT φ ⊆ exhᴵᴱ ALT' φ :=
   fun _ hu ↦ ⟨hu.1, fun q hq ↦ hu.2 q (h q hq)⟩
 
 /-! ### Innocent exclusion and minimal worlds -/
 
-theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := fun _ hu ↦
+theorem exhMW_subset_exhIE : exhᵐʷ ALT φ ⊆ exhᴵᴱ ALT φ := fun _ hu ↦
   ⟨hu.1, fun a ha ↦ (mem_IE_iff_exhMW_subset_compl ALT φ a ha.1).1 ha hu⟩
 
-theorem exhIE_univ : exhIE univ φ = φ :=
+theorem exhIE_univ : exhᴵᴱ univ φ = φ :=
   (exhIE_subset _ _).antisymm (exhMW_univ.ge.trans (exhMW_subset_exhIE _ _))
 
-theorem exh_subset_exhIE : exh ALT φ ⊆ exhIE ALT φ :=
+theorem exh_subset_exhIE : exh ALT φ ⊆ exhᴵᴱ ALT φ :=
   (exh_subset_exhMW ALT φ).trans (exhMW_subset_exhIE ALT φ)
 
 /-- With a unique maximal consistent exclusion, innocent exclusion denies exactly its members. -/
 theorem exhIE_eq_sdiff_of_maximal_unique {X₀ : Set (Set World)}
     (h₀ : Maximal (IsConsistentExclusion ALT φ) X₀)
     (huniq : ∀ X, Maximal (IsConsistentExclusion ALT φ) X → X = X₀) :
-    exhIE ALT φ = φ \ ⋃₀ X₀ := by
+    exhᴵᴱ ALT φ = φ \ ⋃₀ X₀ := by
   ext u
   simp only [mem_exhIE_iff, Set.mem_sdiff, Set.mem_sUnion, not_exists, not_and]
   exact and_congr_right fun _ ↦ ⟨fun h a ha ↦ h a ⟨h₀.prop.1 ha, fun X hX ↦ huniq X hX ▸ ha⟩,
@@ -285,17 +287,17 @@ theorem excludesIE_eq_excludes (h : (exh ALT φ).Nonempty) (Rc : Set (Set World)
 
 /-- When the prejacent is consistent with the denial of every alternative it does not entail,
 innocent exclusion denies them all ([fox-2007]). -/
-theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhIE ALT φ = exh ALT φ := by
+theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhᴵᴱ ALT φ = exh ALT φ := by
   rw [exhIE_eq_inter_excludesIE, excludesIE_eq_excludes h, inter_univ]
   rfl
 
-theorem exhIE_eq_self_of_forall (h : ∀ a ∈ ALT, (φ ∩ a).Nonempty → φ ⊆ a) : exhIE ALT φ = φ :=
+theorem exhIE_eq_self_of_forall (h : ∀ a ∈ ALT, (φ ∩ a).Nonempty → φ ⊆ a) : exhᴵᴱ ALT φ = φ :=
   (exhIE_subset ALT φ).antisymm ((exh_eq_self_iff.2 h).ge.trans (exh_subset_exhIE ALT φ))
 
-theorem exhIE_singleton_self : exhIE {φ} φ = φ :=
+theorem exhIE_singleton_self : exhᴵᴱ {φ} φ = φ :=
   exhIE_eq_self_of_forall _ _ fun _ ha _ ↦ (mem_singleton_iff.1 ha).ge
 
-theorem exhIE_pair_sdiff {d : Set World} (hne : (φ \ d).Nonempty) : exhIE {φ, d} φ = φ \ d := by
+theorem exhIE_pair_sdiff {d : Set World} (hne : (φ \ d).Nonempty) : exhᴵᴱ {φ, d} φ = φ \ d := by
   have hexh : exh {φ, d} φ = φ \ d := by
     rw [exh_insert_of_subset subset_rfl,
       exh_singleton_of_not_subset fun h ↦ let ⟨_, hw, hwd⟩ := hne; hwd (h hw)]
@@ -313,7 +315,7 @@ variable {φ} in
 /-- Alternatives whose union covers the prejacent leave innocent exclusion vacuous, whether or not
 they partition it. -/
 theorem exhIE_eq_self_of_subset_union {p q : Set World} (hcov : φ ⊆ p ∪ q)
-    (hp : (φ \ p).Nonempty) (hq : (φ \ q).Nonempty) : exhIE {φ, p, q} φ = φ := by
+    (hp : (φ \ p).Nonempty) (hq : (φ \ q).Nonempty) : exhᴵᴱ {φ, p, q} φ = φ := by
   refine exhIE_eq_self_iff _ _ |>.2 fun a ha ↦ ?_
   have hfin : ({φ, p, q} : Set (Set World)).Finite := by simp
   rcases ha.1 with rfl | rfl | rfl
@@ -328,7 +330,7 @@ variable {ALT φ} in
 /-- Innocent exclusion is below no alternative strictly stronger than the prejacent: such an
 alternative fails at a prejacent world, hence at a minimal world, and minimal worlds survive. -/
 theorem exhIE_notMem_lowerClosure (hfin : ALT.Finite) :
-    exhIE ALT φ ∉ lowerClosure (ALT ∩ Iio φ) := by
+    exhᴵᴱ ALT φ ∉ lowerClosure (ALT ∩ Iio φ) := by
   rw [mem_lowerClosure]
   rintro ⟨q, ⟨hq, hqφ⟩, hsq⟩
   obtain ⟨w, hwφ, hwq⟩ := not_subset.1 hqφ.2
@@ -336,14 +338,14 @@ theorem exhIE_notMem_lowerClosure (hfin : ALT.Finite) :
   exact hwq (huw q hq (hsq (exhMW_subset_exhIE ALT φ hu)))
 
 theorem exhIE_eq_setOf_exhMW_subset_compl :
-    exhIE ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, exhMW ALT φ ⊆ aᶜ → u ∉ a} :=
+    exhᴵᴱ ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, exhᵐʷ ALT φ ⊆ aᶜ → u ∉ a} :=
   exhIE_eq_of_iff ALT φ (mem_IE_iff_exhMW_subset_compl ALT φ)
 
 /-- Innocent exclusion keeps exactly the minimal worlds iff every other world of the prejacent
 verifies an alternative false at all of them. -/
 theorem exhIE_eq_exhMW_iff :
-    exhIE ALT φ = exhMW ALT φ ↔
-      ∀ u ∈ φ, u ∉ exhMW ALT φ → ∃ a ∈ ALT, u ∈ a ∧ exhMW ALT φ ⊆ aᶜ := by
+    exhᴵᴱ ALT φ = exhᵐʷ ALT φ ↔
+      ∀ u ∈ φ, u ∉ exhᵐʷ ALT φ → ∃ a ∈ ALT, u ∈ a ∧ exhᵐʷ ALT φ ⊆ aᶜ := by
   rw [(exhMW_subset_exhIE ALT φ).ge_iff_eq'.symm, exhIE_eq_setOf_exhMW_subset_compl]
   refine ⟨fun h u hu hmin ↦ ?_, fun h u hu ↦ ?_⟩
   · by_contra hn
@@ -355,7 +357,7 @@ theorem exhIE_eq_exhMW_iff :
 variable {ALT φ} in
 /-- When denying every alternative is consistent with the prejacent, every alternative is
 innocently excludable. -/
-theorem exhIE_eq_sdiff_sUnion (h : (φ \ ⋃₀ ALT).Nonempty) : exhIE ALT φ = φ \ ⋃₀ ALT := by
+theorem exhIE_eq_sdiff_sUnion (h : (φ \ ⋃₀ ALT).Nonempty) : exhᴵᴱ ALT φ = φ \ ⋃₀ ALT := by
   obtain ⟨w, hw, hwA⟩ := h
   ext u
   refine ⟨fun ⟨hu, hn⟩ ↦ ⟨hu, fun ⟨a, ha, hua⟩ ↦ hn a
@@ -363,20 +365,20 @@ theorem exhIE_eq_sdiff_sUnion (h : (φ \ ⋃₀ ALT).Nonempty) : exhIE ALT φ = 
       hwA ⟨b, hb, hwb⟩⟩) hua⟩, fun ⟨hu, hn⟩ ↦ ⟨hu, fun a ha hua ↦ hn ⟨a, ha.1, hua⟩⟩⟩
 
 variable {φ} in
-theorem exhIE_singleton {a : Set World} (h : (φ \ a).Nonempty) : exhIE {a} φ = φ \ a := by
+theorem exhIE_singleton {a : Set World} (h : (φ \ a).Nonempty) : exhᴵᴱ {a} φ = φ \ a := by
   simpa using exhIE_eq_sdiff_sUnion (ALT := {a}) (by simpa using h)
 
 variable {ALT φ} in
 /-- Adding an alternative the prejacent entails changes no innocent exclusion, given a minimal
 world. -/
-theorem exhIE_insert_of_subset {a : Set World} (ha : φ ⊆ a) (hne : (exhMW ALT φ).Nonempty) :
-    exhIE (insert a ALT) φ = exhIE ALT φ := by
+theorem exhIE_insert_of_subset {a : Set World} (ha : φ ⊆ a) (hne : (exhᵐʷ ALT φ).Nonempty) :
+    exhᴵᴱ (insert a ALT) φ = exhᴵᴱ ALT φ := by
   have hsat {u v : World} (hv : v ∈ φ) :
-      {b ∈ (insert a ALT) | u ∈ b} ⊆ {b ∈ (insert a ALT) | v ∈ b} ↔
-        {a ∈ ALT | u ∈ a} ⊆ {a ∈ ALT | v ∈ a} :=
+      satisfied (insert a ALT) u ⊆ satisfied (insert a ALT) v ↔
+        satisfied ALT u ⊆ satisfied ALT v :=
     ⟨fun h c ⟨hc, huc⟩ ↦ ⟨hc, (h ⟨Or.inr hc, huc⟩).2⟩, fun h c ⟨hc, huc⟩ ↦
       ⟨hc, hc.elim (fun hca ↦ hca ▸ ha hv) fun hc ↦ (h ⟨hc, huc⟩).2⟩⟩
-  have hMW : exhMW (insert a ALT) φ = exhMW ALT φ := by
+  have hMW : exhᵐʷ (insert a ALT) φ = exhᵐʷ ALT φ := by
     ext u
     exact ⟨fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ (hsat hv).1 (h hv ((hsat hu).2 hvu))⟩,
       fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ (hsat hv).2 (h hv ((hsat hu).1 hvu))⟩⟩
@@ -399,7 +401,7 @@ theorem IsMinimalCover.mem_IE_iff (hM : IsMinimalCover ALT φ M) {a : Set World}
     exact h v hv (hvu.ge ⟨ha, hua⟩).2
 
 theorem IsMinimalCover.exhIE_eq (hM : IsMinimalCover ALT φ M) :
-    exhIE ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, (∀ v ∈ M, v ∉ a) → u ∉ a} :=
+    exhᴵᴱ ALT φ = {u | u ∈ φ ∧ ∀ a ∈ ALT, (∀ v ∈ M, v ∉ a) → u ∉ a} :=
   exhIE_eq_of_iff ALT φ fun _ ha ↦ hM.mem_IE_iff ha
 
 end MinimalCover
@@ -418,14 +420,14 @@ variable {ALT φ} {w : World}
 /-- Exhaustification is consistent iff the sets of alternatives the prejacent worlds verify have a
 least element. -/
 theorem exh_nonempty_iff :
-    (exh ALT φ).Nonempty ↔ ∃ P, IsLeast ((fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P := by
+    (exh ALT φ).Nonempty ↔ ∃ P, IsLeast (satisfied ALT '' φ) P := by
   refine ⟨fun ⟨w, hw⟩ ↦ ⟨_, (mem_exh_iff_isLeast_image.1 hw).2⟩, ?_⟩
   rintro ⟨P, ⟨w, hw, rfl⟩, hP⟩
   exact ⟨w, mem_exh_iff_isLeast_image.2 ⟨hw, ⟨w, hw, rfl⟩, hP⟩⟩
 
 theorem mem_IE_iff_forall_minimal {a : Set World} (ha : a ∈ ALT) :
     a ∈ IE ALT φ ↔
-      ∀ P, Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P → a ∉ P := by
+      ∀ P, Minimal (· ∈ (satisfied ALT) '' φ) P → a ∉ P := by
   rw [mem_IE_iff_exhMW_subset_compl _ _ _ ha]
   refine ⟨?_, fun h u hu hua ↦ h _ (mem_exhMW_iff_minimal.1 hu).2 ⟨ha, hua⟩⟩
   rintro h _ ⟨⟨u, hu, rfl⟩, hmin⟩ ⟨-, hua⟩
@@ -434,8 +436,8 @@ theorem mem_IE_iff_forall_minimal {a : Set World} (ha : a ∈ ALT) :
 /-- Innocent exclusion keeps the prejacent worlds verifying only alternatives that some minimal
 verified set contains. -/
 theorem mem_exhIE_iff_subset_sUnion :
-    w ∈ exhIE ALT φ ↔ w ∈ φ ∧ {a ∈ ALT | w ∈ a} ⊆
-      ⋃₀ {P | Minimal (· ∈ (fun w ↦ {a ∈ ALT | w ∈ a}) '' φ) P} := by
+    w ∈ exhᴵᴱ ALT φ ↔ w ∈ φ ∧ satisfied ALT w ⊆
+      ⋃₀ {P | Minimal (· ∈ (satisfied ALT) '' φ) P} := by
   rw [mem_exhIE_iff]
   refine and_congr_right fun _ ↦ ⟨fun h a ⟨ha, hwa⟩ ↦ ?_, fun h a ha hwa ↦ ?_⟩
   · by_contra hn
@@ -456,17 +458,17 @@ variable {ALT φ} [Fintype World] {ι : Type*} [Fintype ι] {f : ι → Set Worl
 /-- Over finitely many worlds and alternatives, innocent excludability of an alternative is
 decidable. -/
 instance (i : ι) : Decidable ((f i) ∈ IE (Set.range f) φ) :=
-  decidable_of_iff (∀ v, v ∈ exhMW (Set.range f) φ → v ∉ f i)
+  decidable_of_iff (∀ v, v ∈ exhᵐʷ (Set.range f) φ → v ∉ f i)
     (mem_IE_iff_exhMW_subset_compl _ φ _ (Set.mem_range_self i)).symm
 
 /-- Over finitely many worlds and alternatives, membership in innocent exclusion is decidable. -/
-instance : DecidablePred (· ∈ exhIE (Set.range f) φ) := fun u ↦
-  decidable_of_iff (u ∈ φ ∧ ∀ i, (∀ v, v ∈ exhMW (Set.range f) φ → v ∉ f i) → u ∉ f i) <| by
+instance : DecidablePred (· ∈ exhᴵᴱ (Set.range f) φ) := fun u ↦
+  decidable_of_iff (u ∈ φ ∧ ∀ i, (∀ v, v ∈ exhᵐʷ (Set.range f) φ → v ∉ f i) → u ∉ f i) <| by
     rw [exhIE_eq_setOf_exhMW_subset_compl]
     simp [Set.subset_def]
 
-instance {A : Set ι} [DecidablePred (· ∈ A)] : DecidablePred (· ∈ exhIE (f '' A) φ) := fun u ↦
-  decidable_of_iff (u ∈ φ ∧ ∀ i, i ∈ A → (∀ v, v ∈ exhMW (f '' A) φ → v ∉ f i) → u ∉ f i) <| by
+instance {A : Set ι} [DecidablePred (· ∈ A)] : DecidablePred (· ∈ exhᴵᴱ (f '' A) φ) := fun u ↦
+  decidable_of_iff (u ∈ φ ∧ ∀ i, i ∈ A → (∀ v, v ∈ exhᵐʷ (f '' A) φ → v ∉ f i) → u ∉ f i) <| by
     rw [exhIE_eq_setOf_exhMW_subset_compl]
     simp [Set.subset_def]
 

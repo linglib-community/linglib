@@ -158,7 +158,7 @@ theorem run_smoke_isDomain {w v : W} (hw : w ∉ run ∧ w ∈ smoke)
 /-- Exhaustifying *run* against *run ∧ ¬smoke* yields *run ∧ smoke*, the inference of (34), given
 a world in which someone runs and smokes. -/
 theorem exhIE_run_smoke {u : W} (hu : u ∈ run ∧ u ∈ smoke) :
-    exhIE {run, run ∩ smokeᶜ} run = run ∩ smoke := by
+    exhᴵᴱ {run, run ∩ smokeᶜ} run = run ∩ smoke := by
   rw [exhIE_pair_sdiff (φ := run) (d := run ∩ smokeᶜ) ⟨u, hu.1, fun h ↦ h.2 hu.2⟩]
   ext x
   simp only [mem_sdiff, mem_inter_iff, mem_compl_iff]

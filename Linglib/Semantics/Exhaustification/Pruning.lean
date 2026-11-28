@@ -53,29 +53,29 @@ variable {W : Type*} {F : Set (Set W)} {S q r : Set W}
 /-- A restriction `A` of the formal alternatives `F` weakens when exhaustifying the sentence over
 `A` is entailed by exhaustifying it over `F`. -/
 def IsWeakeningRestriction (F A : Set (Set W)) (S : Set W) : Prop :=
-  A ⊆ F ∧ exhIEII F S ⊆ exhIEII A S
+  A ⊆ F ∧ exhᴵᴱ⁺ᴵᴵ F S ⊆ exhᴵᴱ⁺ᴵᴵ A S
 
 /-- The readings pruning derives: the results of exhaustifying over a weakening restriction of
 the formal alternatives. -/
 def prunedReadings (F : Set (Set W)) (S : Set W) : Set (Set W) :=
-  (exhIEII · S) '' {A | IsWeakeningRestriction F A S}
+  (exhII · S) '' {A | IsWeakeningRestriction F A S}
 
 theorem subset_of_mem_prunedReadings (hr : r ∈ prunedReadings F S) : r ⊆ S := by
   obtain ⟨A, -, rfl⟩ := hr
   exact fun _ hw ↦ hw.1
 
-theorem exhIEII_subset_of_mem_prunedReadings (hr : r ∈ prunedReadings F S) :
-    exhIEII F S ⊆ r := by
+theorem exhII_subset_of_mem_prunedReadings (hr : r ∈ prunedReadings F S) :
+    exhᴵᴱ⁺ᴵᴵ F S ⊆ r := by
   obtain ⟨A, ⟨-, hA⟩, rfl⟩ := hr
   exact hA
 
-theorem exhIEII_mem_prunedReadings : exhIEII F S ∈ prunedReadings F S :=
+theorem exhII_mem_prunedReadings : exhᴵᴱ⁺ᴵᴵ F S ∈ prunedReadings F S :=
   ⟨F, ⟨subset_rfl, subset_rfl⟩, rfl⟩
 
 /-- Pruning everything but the sentence itself derives its unstrengthened reading. -/
 theorem self_mem_prunedReadings (hS : S ∈ F) (hsat : S.Nonempty) : S ∈ prunedReadings F S :=
-  ⟨{S}, ⟨Set.singleton_subset_iff.2 hS, (exhIEII_singleton hsat).symm ▸ fun _ hw ↦ hw.1⟩,
-    exhIEII_singleton hsat⟩
+  ⟨{S}, ⟨Set.singleton_subset_iff.2 hS, (exhII_singleton hsat).symm ▸ fun _ hw ↦ hw.1⟩,
+    exhII_singleton hsat⟩
 
 /-- The reading a partition selects is the strongest derived reading it determines. -/
 def IsPrunedReading (F : Set (Set W)) (S : Set W) (Q : Setoid W) (q : Set W) : Prop :=
@@ -88,22 +88,22 @@ theorem IsPrunedReading.unique {Q : Setoid W} (hq : IsPrunedReading F S Q q)
 /-- A derived reading that is the cell of a world verifying the unpruned reading is the one
 selected. -/
 theorem isPrunedReading_of_cell_eq {Q : Setoid W} (hq : q ∈ prunedReadings F S) {w : W}
-    (hw : w ∈ exhIEII F S) (hQ : Q.cell w = q) : IsPrunedReading F S Q q := by
+    (hw : w ∈ exhᴵᴱ⁺ᴵᴵ F S) (hQ : Q.cell w = q) : IsPrunedReading F S Q q := by
   subst hQ
   exact ⟨⟨hq, Setoid.determines_cell w⟩, fun _ hr ↦
-    hr.2.cell_subset (exhIEII_subset_of_mem_prunedReadings hr.1 hw)⟩
+    hr.2.cell_subset (exhII_subset_of_mem_prunedReadings hr.1 hw)⟩
 
 /-- Every derived reading is the one selected by the polar question whether it holds. -/
-theorem isPrunedReading_polar (hne : (exhIEII F S).Nonempty) (hq : q ∈ prunedReadings F S) :
+theorem isPrunedReading_polar (hne : (exhᴵᴱ⁺ᴵᴵ F S).Nonempty) (hq : q ∈ prunedReadings F S) :
     IsPrunedReading F S (Setoid.polar q) q :=
   let ⟨_, hw⟩ := hne
   isPrunedReading_of_cell_eq hq hw
-    (Setoid.polar_cell_of_mem (exhIEII_subset_of_mem_prunedReadings hq hw))
+    (Setoid.polar_cell_of_mem (exhII_subset_of_mem_prunedReadings hq hw))
 
 /-- A pruning is licensed by a question when it is a maximal weakening restriction of the formal
 alternatives whose result the question determines. -/
 def IsLicensedPruning (F : Set (Set W)) (S : Set W) (Q : Setoid W) (A : Set (Set W)) : Prop :=
-  Maximal (fun A ↦ IsWeakeningRestriction F A S ∧ Q.Determines (exhIEII A S)) A
+  Maximal (fun A ↦ IsWeakeningRestriction F A S ∧ Q.Determines (exhᴵᴱ⁺ᴵᴵ A S)) A
 
 end General
 
@@ -111,26 +111,26 @@ end General
 
 variable {World ι : Type*} {I : Finset ι} {p : ι → Set World}
 
-theorem exhIEII_supClosure_nonempty (h : Separating I p) (hne : I.Nonempty) :
-    (exhIEII (supClosure (p '' I)) (⋃ i ∈ I, p i)).Nonempty :=
+theorem exhII_supClosure_nonempty (h : Separating I p) (hne : I.Nonempty) :
+    (exhᴵᴱ⁺ᴵᴵ (supClosure (p '' I)) (⋃ i ∈ I, p i)).Nonempty :=
   let ⟨w, hw⟩ := h.all
-  ⟨w, exhIEII_supClosure h hne ▸ Set.mem_iInter₂.2 hw⟩
+  ⟨w, exhII_supClosure h hne ▸ Set.mem_iInter₂.2 hw⟩
 
 theorem iInter_subset_of_mem_prunedReadings (h : Separating I p) (hne : I.Nonempty)
     {r : Set World} (hr : r ∈ prunedReadings (supClosure (p '' I)) (⋃ i ∈ I, p i)) :
     ⋂ i ∈ I, p i ⊆ r :=
-  exhIEII_supClosure h hne ▸ exhIEII_subset_of_mem_prunedReadings hr
+  exhII_supClosure h hne ▸ exhII_subset_of_mem_prunedReadings hr
 
 theorem iInter_mem_prunedReadings (h : Separating I p) (hne : I.Nonempty) :
     ⋂ i ∈ I, p i ∈ prunedReadings (supClosure (p '' I)) (⋃ i ∈ I, p i) :=
-  exhIEII_supClosure h hne ▸ exhIEII_mem_prunedReadings
+  exhII_supClosure h hne ▸ exhII_mem_prunedReadings
 
 theorem isWeakeningRestriction_iff (h : Separating I p) (hne : I.Nonempty)
     {A : Set (Set World)} :
     IsWeakeningRestriction (supClosure (p '' I)) A (⋃ i ∈ I, p i) ↔
       A ⊆ supClosure (p '' I) ∧ ∀ q, ¬ q ∈ IE A (⋃ i ∈ I, p i) :=
   and_congr_right fun hA ↦ by
-    rw [exhIEII_supClosure h hne, iInter_subset_exhIEII_iff hA hne h.all]
+    rw [exhII_supClosure h hne, iInter_subset_exhII_iff hA hne h.all]
 
 section Weakening
 
@@ -139,9 +139,9 @@ variable {A B : Set (Set World)} (h : Separating I p) (hne : I.Nonempty)
   (hB : IsWeakeningRestriction (supClosure (p '' I)) B (⋃ i ∈ I, p i))
 include h hne hA
 
-theorem exhIEII_eq_of_isWeakeningRestriction :
-    exhIEII A (⋃ i ∈ I, p i) = (⋃ i ∈ I, p i) ∩ ⋂₀ A :=
-  exhIEII_eq_inter_sInter hA.1 hne h.all ((isWeakeningRestriction_iff h hne).1 hA).2
+theorem exhII_eq_of_isWeakeningRestriction :
+    exhᴵᴱ⁺ᴵᴵ A (⋃ i ∈ I, p i) = (⋃ i ∈ I, p i) ∩ ⋂₀ A :=
+  exhII_eq_inter_sInter hA.1 hne h.all ((isWeakeningRestriction_iff h hne).1 hA).2
 
 include hB
 
@@ -152,19 +152,19 @@ theorem IsWeakeningRestriction.union :
     notMem_IE_union h.single hA.1 hB.1
       ((isWeakeningRestriction_iff h hne).1 hA).2 ((isWeakeningRestriction_iff h hne).1 hB).2⟩
 
-theorem exhIEII_union :
-    exhIEII (A ∪ B) (⋃ i ∈ I, p i) = exhIEII A (⋃ i ∈ I, p i) ∩ exhIEII B (⋃ i ∈ I, p i) := by
-  rw [exhIEII_eq_of_isWeakeningRestriction h hne (hA.union h hne hB),
-    exhIEII_eq_of_isWeakeningRestriction h hne hA, exhIEII_eq_of_isWeakeningRestriction h hne hB,
+theorem exhII_union :
+    exhᴵᴱ⁺ᴵᴵ (A ∪ B) (⋃ i ∈ I, p i) = exhᴵᴱ⁺ᴵᴵ A (⋃ i ∈ I, p i) ∩ exhᴵᴱ⁺ᴵᴵ B (⋃ i ∈ I, p i) := by
+  rw [exhII_eq_of_isWeakeningRestriction h hne (hA.union h hne hB),
+    exhII_eq_of_isWeakeningRestriction h hne hA, exhII_eq_of_isWeakeningRestriction h hne hB,
     Set.sInter_union]
   ext w
   simp only [Set.mem_inter_iff]
   tauto
 
 /-- Among weakening restrictions, pruning less gives a stronger reading. -/
-theorem exhIEII_anti_of_isWeakeningRestriction (hAB : A ⊆ B) :
-    exhIEII B (⋃ i ∈ I, p i) ⊆ exhIEII A (⋃ i ∈ I, p i) := by
-  rw [exhIEII_eq_of_isWeakeningRestriction h hne hA, exhIEII_eq_of_isWeakeningRestriction h hne hB]
+theorem exhII_anti_of_isWeakeningRestriction (hAB : A ⊆ B) :
+    exhᴵᴱ⁺ᴵᴵ B (⋃ i ∈ I, p i) ⊆ exhᴵᴱ⁺ᴵᴵ A (⋃ i ∈ I, p i) := by
+  rw [exhII_eq_of_isWeakeningRestriction h hne hA, exhII_eq_of_isWeakeningRestriction h hne hB]
   exact Set.inter_subset_inter_right _ (Set.sInter_subset_sInter hAB)
 
 end Weakening
@@ -176,22 +176,22 @@ theorem isPrunedReading_iff_exists_isLicensedPruning (h : Separating I p) (hne :
     {Q : Setoid World} {q : Set World} :
     IsPrunedReading (supClosure (p '' I)) (⋃ i ∈ I, p i) Q q ↔
       ∃ C, IsLicensedPruning (supClosure (p '' I)) (⋃ i ∈ I, p i) Q C ∧
-        exhIEII C (⋃ i ∈ I, p i) = q := by
+        exhᴵᴱ⁺ᴵᴵ C (⋃ i ∈ I, p i) = q := by
   constructor
   · rintro ⟨⟨⟨C₀, hC₀, rfl⟩, hdet⟩, hleast⟩
     have hfin : {A | IsWeakeningRestriction (supClosure (p '' I)) A (⋃ i ∈ I, p i) ∧
-        Q.Determines (exhIEII A (⋃ i ∈ I, p i))}.Finite :=
+        Q.Determines (exhᴵᴱ⁺ᴵᴵ A (⋃ i ∈ I, p i))}.Finite :=
       (I.finite_toSet.image p).supClosure.finite_subsets.subset fun A hA ↦ hA.1.1
     obtain ⟨C, hC₀C, hC⟩ := hfin.exists_le_maximal ⟨hC₀, hdet⟩
     exact ⟨C, hC, Set.Subset.antisymm
-      (exhIEII_anti_of_isWeakeningRestriction h hne hC₀ hC.prop.1 hC₀C)
+      (exhII_anti_of_isWeakeningRestriction h hne hC₀ hC.prop.1 hC₀C)
       (hleast ⟨⟨C, hC.prop.1, rfl⟩, hC.prop.2⟩)⟩
   · rintro ⟨C, hC, rfl⟩
     refine ⟨⟨⟨C, hC.prop.1, rfl⟩, hC.prop.2⟩, ?_⟩
     rintro _ ⟨⟨C', hC', rfl⟩, hdet⟩
     have hU := hC.2 ⟨hC.prop.1.union h hne hC', by
-      rw [exhIEII_union h hne hC.prop.1 hC']; exact hC.prop.2.inter hdet⟩ Set.subset_union_left
-    exact exhIEII_anti_of_isWeakeningRestriction h hne hC' hC.prop.1
+      rw [exhII_union h hne hC.prop.1 hC']; exact hC.prop.2.inter hdet⟩ Set.subset_union_left
+    exact exhII_anti_of_isWeakeningRestriction h hne hC' hC.prop.1
       (Set.subset_union_right.trans hU)
 
 /-- A pruning only weakens exactly when it leaves nothing innocently excludable, and then
@@ -201,10 +201,10 @@ theorem mem_prunedReadings_iff (h : Separating I p) (hne : I.Nonempty) {r : Set 
       (∀ q, ¬ q ∈ IE C (⋃ i ∈ I, p i)) ∧
         (⋃ i ∈ I, p i) ∩ ⋂₀ C = r := by
   simp only [prunedReadings, IsWeakeningRestriction, Set.mem_image, Set.mem_ofPred_eq,
-    exhIEII_supClosure h hne, and_assoc]
+    exhII_supClosure h hne, and_assoc]
   refine exists_congr fun C ↦ and_congr_right fun hC ↦ ?_
-  rw [iInter_subset_exhIEII_iff hC hne h.all]
-  exact and_congr_right fun hIE ↦ by rw [exhIEII_eq_inter_sInter hC hne h.all hIE]
+  rw [iInter_subset_exhII_iff hC hne h.all]
+  exact and_congr_right fun hIE ↦ by rw [exhII_eq_inter_sInter hC hne h.all hIE]
 
 private theorem inter_sInter_mem_infClosure {S C : Set (Set World)} {φ : Set World} (hφ : φ ∈ S)
     (hfin : C.Finite) (hC : C ⊆ S) : φ ∩ ⋂₀ C ∈ infClosure S := by
@@ -325,17 +325,17 @@ theorem atLeastTrue_mem_prunedReadings (h : Separating I p) {k : ℕ} (hk : 0 < 
   have hm : I.card + 1 - k ≤ I.card := by omega
   have hC := subDisjsOfCard_subset_supClosure (p := p) hne
     (by omega : 0 < I.card + 1 - k)
-  have he := exhIEII_subDisjsOfCard h (by omega) hm
+  have he := exhII_subDisjsOfCard h (by omega) hm
   rw [show I.card + 1 - (I.card + 1 - k) = k by omega] at he
   refine ⟨_, ⟨hC, ?_⟩, he⟩
-  rw [he, exhIEII_supClosure h hne, ← atLeastTrue_card]
+  rw [he, exhII_supClosure h hne, ← atLeastTrue_card]
   exact atLeastTrue_antitone hkn
 
 theorem isPrunedReading_polar_atLeastTrue (h : Separating I p) {k : ℕ} (hk : 0 < k)
     (hkn : k ≤ I.card) :
     IsPrunedReading (supClosure (p '' I)) (⋃ i ∈ I, p i) (Setoid.polar (atLeastTrue I p k))
       (atLeastTrue I p k) :=
-  isPrunedReading_polar (exhIEII_supClosure_nonempty h (Finset.card_pos.1 (hk.trans_le hkn)))
+  isPrunedReading_polar (exhII_supClosure_nonempty h (Finset.card_pos.1 (hk.trans_le hkn)))
     (atLeastTrue_mem_prunedReadings h hk hkn)
 
 omit [DecidableEq ι] in

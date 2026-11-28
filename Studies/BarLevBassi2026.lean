@@ -146,7 +146,7 @@ variable (x P) in
 /-- The exhaustified pluralization of (60): each alternative is exhaustified against the
 subdomain alternatives of the whole domain. -/
 def exhPl (m : Mark) : WithAlternatives (Set W) :=
-  exhIEII (supClosure (atom P '' ↑x)) <$> existPl x P m
+  exhᴵᴱ⁺ᴵᴵ (supClosure (atom P '' ↑x)) <$> existPl x P m
 
 variable (x P) in
 /-- The clause under a marking of its heads. -/
@@ -175,14 +175,14 @@ theorem alternatives_exhPl_focused :
   constructor
   · rintro ⟨r, hr, rfl⟩
     obtain ⟨T, hne, hT, rfl⟩ := Set.mem_supClosure_image.1 hr
-    exact ⟨T, ⟨hT, hne⟩, (h.exhIEII_supClosure_biUnion hT hne).symm⟩
+    exact ⟨T, ⟨hT, hne⟩, (h.exhII_supClosure_biUnion hT hne).symm⟩
   · rintro ⟨T, ⟨hT, hne⟩, rfl⟩
-    exact ⟨_, Set.mem_supClosure_image.2 ⟨T, hne, hT, rfl⟩, h.exhIEII_supClosure_biUnion hT hne⟩
+    exact ⟨_, Set.mem_supClosure_image.2 ⟨T, hne, hT, rfl⟩, h.exhII_supClosure_biUnion hT hne⟩
 
 theorem alternatives_exhPl_unfeatured (hne : x.Nonempty) :
     (exhPl x P .unfeatured).alternatives = {⋂ a ∈ x, atom P a} := by
   ext q
-  simp [exhPl, existPl, h.exhIEII_supClosure_biUnion subset_rfl hne, minterm_self, eq_comm]
+  simp [exhPl, existPl, h.exhII_supClosure_biUnion subset_rfl hne, minterm_self, eq_comm]
 
 theorem iInter_mem_alternatives_exhPl (hne : x.Nonempty) (m : Mark) :
     (⋂ a ∈ x, atom P a) ∈ (exhPl x P m).alternatives := by
@@ -330,8 +330,8 @@ theorem judgments :
 /-! ### The presupposition of the question (§6)
 
 With the homogeneity inference computed above the polarity head, the polarity alternatives of the
-clause are the universal reading (`BarLev2021.exhIEII_eq_universal`) and, exhaustification being
-vacuous under negation (`Exhaustification.exhIEII_compl_biUnion`), the negated existential: the
+clause are the universal reading (`BarLev2021.exhII_eq_universal`) and, exhaustification being
+vacuous under negation (`Exhaustification.exhII_compl_biUnion`), the negated existential: the
 question (43a) behind *John is not married to his teammates*. It presupposes homogeneity, where
 the question whether all or not all presupposes nothing
 (`Question.presupposition_pair_compl`). -/

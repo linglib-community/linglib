@@ -102,11 +102,11 @@ theorem readings_k3_subset_lp : readings m .k3 σ ⊆ readings m .lp σ := fun _
 variable {ALT : U → Set (Set W)} {lit : U → Set W}
 
 theorem readings_pexIE_k3 :
-    readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) .k3 σ = exhIE (ALT σ) (lit σ) := by
+    readings (fun σ ↦ pexᴵᴱ (ALT σ) (lit σ) (ALT σ)) .k3 σ = exhᴵᴱ (ALT σ) (lit σ) := by
   have h1 (a : Trivalent) : .true ≤ a ↔ a = .true := by cases a <;> decide
   ext; simp [readings, h1, pexIE_eq_true_iff_mem_exhIE subset_rfl]
 
-theorem readings_pexIE_lp : readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) .lp σ = lit σ := by
+theorem readings_pexIE_lp : readings (fun σ ↦ pexᴵᴱ (ALT σ) (lit σ) (ALT σ)) .lp σ = lit σ := by
   ext; simp [readings, pexIE_eq_false_iff]
 
 /-- A sentence whose scalar items are read by `pex` is true by Strong Kleene exactly where each of
@@ -114,9 +114,9 @@ its bivalent variants is true, the variant reading each item at its own standard
 the operator at K3 (`readings_pexIE_k3`) and without it at LP (`readings_pexIE_lp`) (§5) ((21),
 (24)). -/
 theorem eval_strongKleene_pexIE_eq_true_iff [DecidableEq U] (φ : Propositional.Formula U) :
-    Propositional.Formula.eval .strongKleene (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ) w) φ = .true ↔
+    Propositional.Formula.eval .strongKleene (fun σ ↦ pexᴵᴱ (ALT σ) (lit σ) (ALT σ) w) φ = .true ↔
       ∀ ψ ∈ φ.bivalentVariants, Propositional.Formula.evalBool (fun x ↦
-        decide (w ∈ readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) x.2 x.1)) ψ = true := by
+        decide (w ∈ readings (fun σ ↦ pexᴵᴱ (ALT σ) (lit σ) (ALT σ)) x.2 x.1)) ψ = true := by
   rw [Propositional.Formula.eval_strongKleene_eq_supervaluation, Trivalent.supervaluation_eq_true_iff]
   rfl
 
@@ -412,29 +412,29 @@ def alternatives : Message → Set (Set World)
 
 /-- The `pex` meaning of a message. -/
 noncomputable def meaning (σ : Message) : World → Trivalent :=
-  pexIE (alternatives σ) (literal σ) (alternatives σ)
+  pexᴵᴱ (alternatives σ) (literal σ) (alternatives σ)
 
 theorem readings_lp_meaning (σ : Message) : readings meaning .lp σ = literal σ :=
   readings_pexIE_lp
 
 private theorem exhIE_singleton {σ : Message} (h : alternatives σ = {literal σ}) :
-    exhIE (alternatives σ) (literal σ) = literal σ := by
+    exhᴵᴱ (alternatives σ) (literal σ) = literal σ := by
   rw [h]
   exact exhIE_eq_self_of_forall _ _ fun a ha _ ↦ (Set.mem_singleton_iff.1 ha).ge
 
 theorem meaning_eq_true_iff {σ : Message} {w : World} :
-    meaning σ w = .true ↔ w ∈ exhIE (alternatives σ) (literal σ) :=
+    meaning σ w = .true ↔ w ∈ exhᴵᴱ (alternatives σ) (literal σ) :=
   pexIE_eq_true_iff_mem_exhIE subset_rfl
 
 theorem meaning_some_eq_true_iff {w : World} : meaning .some w = .true ↔ w = .justSome := by
   rw [meaning_eq_true_iff]
-  change w ∈ exhIE {literal .some, literal .all} (literal .some) ↔ _
+  change w ∈ exhᴵᴱ {literal .some, literal .all} (literal .some) ↔ _
   rw [exhIE_pair_sdiff (φ := literal .some) (d := literal .all) ⟨.justSome, by simp [literal]⟩]
   cases w <;> simp [literal]
 
 theorem meaning_notAll_eq_true_iff {w : World} : meaning .notAll w = .true ↔ w = .justSome := by
   rw [meaning_eq_true_iff]
-  change w ∈ exhIE {literal .notAll, literal .no} (literal .notAll) ↔ _
+  change w ∈ exhᴵᴱ {literal .notAll, literal .no} (literal .notAll) ↔ _
   rw [exhIE_pair_sdiff (φ := literal .notAll) (d := literal .no) ⟨.justSome, by simp [literal]⟩]
   cases w <;> simp [literal]
 
@@ -564,7 +564,7 @@ def alternatives (u : CremersWilcoxSpector2023.Message) : Set (Set World) :=
 
 /-- The `pex` meaning of a message. -/
 noncomputable def meaning (u : CremersWilcoxSpector2023.Message) : World → Trivalent :=
-  pexIE (alternatives u) (literal u) (alternatives u)
+  pexᴵᴱ (alternatives u) (literal u) (alternatives u)
 
 theorem readings_lp_meaning (u : CremersWilcoxSpector2023.Message) :
     readings meaning .lp u = literal u :=

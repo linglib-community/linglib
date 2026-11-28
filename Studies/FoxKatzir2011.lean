@@ -107,12 +107,12 @@ theorem notMem_IE_of_isSymmetric (h : IsSymmetric S S₁ S₂)
     h.union.symm.subset (h.symm.sdiff_eq.symm ▸ hne₁)
 
 theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)
-    (hne₂ : S₂.Nonempty) : exhIE {S, S₁, S₂} S = S :=
+    (hne₂ : S₂.Nonempty) : exhᴵᴱ {S, S₁, S₂} S = S :=
   exhIE_eq_self_of_subset_union h.union.symm.subset (h.sdiff_eq.symm ▸ hne₂)
     (h.symm.sdiff_eq.symm ▸ hne₁)
 
 theorem exhIE_pair_eq_sdiff (h : IsSymmetric S S₁ S₂) (hne₂ : S₂.Nonempty) :
-    exhIE {S, S₁} S = S₂ := by
+    exhᴵᴱ {S, S₁} S = S₂ := by
   rw [exhIE_pair_sdiff (φ := S) (d := S₁) (h.sdiff_eq.symm ▸ hne₂), h.sdiff_eq]
 
 end Symmetry

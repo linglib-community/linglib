@@ -64,18 +64,18 @@ variable (C : Set (Set W))
 every alternative; layer `0` is the prejacent itself. -/
 def exhIter : ℕ → Set W → Set W
   | 0 => id
-  | n + 1 => fun p ↦ exhIE (exhIter n '' C) (exhIter n p)
+  | n + 1 => fun p ↦ exhᴵᴱ (exhIter n '' C) (exhIter n p)
 
 @[simp] theorem exhIter_zero : exhIter C 0 = id := rfl
 
 theorem exhIter_succ (n : ℕ) (p : Set W) :
-    exhIter C (n + 1) p = exhIE (exhIter C n '' C) (exhIter C n p) := rfl
+    exhIter C (n + 1) p = exhᴵᴱ (exhIter C n '' C) (exhIter C n p) := rfl
 
-@[simp] theorem exhIter_one : exhIter C 1 = exhIE C := by
+@[simp] theorem exhIter_one : exhIter C 1 = exhᴵᴱ C := by
   ext1 p
   rw [exhIter_succ, exhIter_zero, image_id, id]
 
-theorem exhIter_two (p : Set W) : exhIter C 2 p = exhIE (exhIE C '' C) (exhIE C p) := by
+theorem exhIter_two (p : Set W) : exhIter C 2 p = exhᴵᴱ (exhᴵᴱ C '' C) (exhᴵᴱ C p) := by
   rw [exhIter_succ, exhIter_one]
 
 theorem exhIter_succ_subset (n : ℕ) (p : Set W) : exhIter C (n + 1) p ⊆ exhIter C n p :=
@@ -121,9 +121,9 @@ variable (C) (p : Set W)
 /-- The anti-exhaustivity reading asserts the exhaustified prejacent and denies the
 exhaustification of every other alternative that is not innocently excludable. -/
 def anEx : Set W :=
-  exhIE C p ∩ ⋂ q ∈ (C \ IE C p) \ {p}, (exhIE C q)ᶜ
+  exhᴵᴱ C p ∩ ⋂ q ∈ (C \ IE C p) \ {p}, (exhᴵᴱ C q)ᶜ
 
-theorem anEx_eq : anEx C p = exhIE C p ∩ ⋂ q ∈ C \ {p}, (exhIE C q)ᶜ := by
+theorem anEx_eq : anEx C p = exhᴵᴱ C p ∩ ⋂ q ∈ C \ {p}, (exhᴵᴱ C q)ᶜ := by
   ext u
   simp only [anEx, mem_inter_iff, mem_iInter₂, mem_sdiff, mem_singleton_iff, mem_ofPred_eq,
     mem_compl_iff]
@@ -133,7 +133,7 @@ theorem anEx_eq : anEx C p = exhIE C p ∩ ⋂ q ∈ C \ {p}, (exhIE C q)ᶜ := 
   · exact h q ⟨⟨hq.1, hIE⟩, hq.2⟩
 
 theorem anEx_insert {C₀ : Set (Set W)} (hp : p ∉ C₀) :
-    anEx (insert p C₀) p = exhIE (insert p C₀) p ∩ ⋂ q ∈ C₀, (exhIE (insert p C₀) q)ᶜ := by
+    anEx (insert p C₀) p = exhᴵᴱ (insert p C₀) p ∩ ⋂ q ∈ C₀, (exhᴵᴱ (insert p C₀) q)ᶜ := by
   rw [anEx_eq]
   congr 1
   ext u
@@ -141,7 +141,7 @@ theorem anEx_insert {C₀ : Set (Set W)} (hp : p ∉ C₀) :
   exact ⟨fun h q hq ↦ h q ⟨Or.inr hq, fun hqp ↦ hp (hqp ▸ hq)⟩,
     fun h q hq ↦ h q (hq.1.resolve_left hq.2)⟩
 
-theorem anEx_eq_exh (h : (anEx C p).Nonempty) : anEx C p = exh (exhIE C '' C) (exhIE C p) := by
+theorem anEx_eq_exh (h : (anEx C p).Nonempty) : anEx C p = exh (exhᴵᴱ C '' C) (exhᴵᴱ C p) := by
   rw [anEx_eq] at h ⊢
   obtain ⟨w, hw, hw'⟩ := h
   have hw'' := mem_iInter₂.1 hw'
@@ -189,7 +189,7 @@ theorem notMem : w ∉ ({s, n, e} : Set (Set W)) := by
   · exact han (h' ▸ Or.inl has)
   · exact han (hn (h' ▸ Or.inl has))
 
-theorem exhMW_eq : exhMW {w, s, n, e} w = symmDiff s n := by
+theorem exhMW_eq : exhᵐʷ {w, s, n, e} w = symmDiff s n := by
   obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, -⟩ := h
   ext u
   simp only [mem_exhMW, MinimalFor, ← Preorder.ofLowerSets_le_iff_subset]
@@ -207,7 +207,7 @@ theorem exhMW_eq : exhMW {w, s, n, e} w = symmDiff s n := by
 
 /-- Exhaustification by minimal worlds contradicts the conjunction of the middle alternatives,
 so on a diamond it can never yield free choice. -/
-theorem disjoint_exhMW : Disjoint (exhMW {w, s, n, e} w) (s ∩ n) := by
+theorem disjoint_exhMW : Disjoint (exhᵐʷ {w, s, n, e} w) (s ∩ n) := by
   rw [h.exhMW_eq]
   exact Set.disjoint_left.2 fun u hu hu' ↦ hu.elim (fun h' ↦ h'.2 hu'.2) fun h' ↦ h'.2 hu'.1
 
@@ -225,12 +225,12 @@ theorem mem_IE_iff {q : Set W} (hq : q ∈ ({w, s, n, e} : Set (Set W))) :
     rintro u (⟨-, hun⟩ | ⟨-, hus⟩) hue
     exacts [hun (hn hue), hus (hs hue)]
 
-theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
+theorem exhIE_w : exhᴵᴱ {w, s, n, e} w = w \ e := by
   rw [exhIE_eq_of_iff _ _ fun q hq ↦ h.mem_IE_iff hq]
   ext u
   exact ⟨fun ⟨hu, h'⟩ ↦ ⟨hu, h' e (by simp) rfl⟩, fun ⟨hu, hue⟩ ↦ ⟨hu, fun _ _ hq ↦ hq ▸ hue⟩⟩
 
-theorem exhIE_s : exhIE {w, s, n, e} s = s \ n := by
+theorem exhIE_s : exhᴵᴱ {w, s, n, e} s = s \ n := by
   obtain ⟨rfl, -, hn, ⟨a, has, han⟩, -⟩ := h
   have hsn : ¬ s ⊆ n := fun h ↦ han (h has)
   have hexh : exh {s ∪ n, s, n, e} s = s \ n := by
@@ -239,16 +239,16 @@ theorem exhIE_s : exhIE {w, s, n, e} s = s \ n := by
       sdiff_sdiff_left, sup_eq_right.2 hn]
   rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨a, has, han⟩), hexh]
 
-theorem exhIE_n : exhIE {w, s, n, e} n = n \ s := by
+theorem exhIE_n : exhᴵᴱ {w, s, n, e} n = n \ s := by
   simpa only [insert_comm n s] using h.symm.exhIE_s
 
-theorem exhIE_e : exhIE {w, s, n, e} e = e := by
+theorem exhIE_e : exhᴵᴱ {w, s, n, e} e = e := by
   refine exhIE_eq_self_of_forall _ _ fun q hq _ ↦ ?_
   obtain ⟨rfl, hs, hn, -, -⟩ := h
   rcases hq with rfl | rfl | rfl | rfl
   exacts [hs.trans subset_union_left, hs, hn, subset_rfl]
 
-theorem image_exhIE : exhIE {w, s, n, e} '' {w, s, n, e} = {w \ e, s \ n, n \ s, e} := by
+theorem image_exhIE : exhᴵᴱ {w, s, n, e} '' {w, s, n, e} = {w \ e, s \ n, n \ s, e} := by
   rw [image_insert_eq, image_insert_eq, image_pair, h.exhIE_w, h.exhIE_s, h.exhIE_n, h.exhIE_e]
 
 theorem anEx_w : anEx {w, s, n, e} w = (s ∩ n) \ e := by
@@ -285,7 +285,7 @@ theorem exhIter_two_eq_of_eq_inter (he : e = s ∩ n) :
 /-- The second layer adds nothing exactly when the strongest alternative is the conjunction of
 the middle ones. -/
 theorem exhIter_two_eq_iff :
-    exhIter {w, s, n, e} 2 w = exhIE {w, s, n, e} w ↔ e = s ∩ n := by
+    exhIter {w, s, n, e} 2 w = exhᴵᴱ {w, s, n, e} w ↔ e = s ∩ n := by
   refine ⟨fun hv ↦ by_contra fun hne ↦ ?_, fun he ↦ ?_⟩
   · have hne' : ((s ∩ n) \ e).Nonempty := sdiff_nonempty.2 fun hle ↦
       hne (subset_antisymm (subset_inter h.subset_left h.subset_right) hle)
@@ -326,7 +326,7 @@ theorem free_choice (hO : Monotone O) (hab : O (a ⊔ b) ⊆ O a ∪ O b)
 
 theorem exhIE_sauerlandAlt_of_not_subset (hO : Monotone O)
     (h : (O (a ⊔ b) \ (O a ∪ O b)).Nonempty) :
-    exhIE (sauerlandAlt O a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O a ∪ O b) := by
+    exhᴵᴱ (sauerlandAlt O a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O a ∪ O b) := by
   obtain ⟨u, hu, hu'⟩ := h
   have hexh : exh (sauerlandAlt O a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O a ∪ O b) := by
     ext v
@@ -370,7 +370,7 @@ variable (hO : Monotone O) (hO' : Monotone O')
 include hO hO'
 
 theorem exhIE_hornAlt_left (ha : (O a \ (O b ∪ O' (a ⊔ b))).Nonempty) :
-    exhIE (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
+    exhᴵᴱ (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
   obtain ⟨x, hx⟩ := ha
   have hexh : exh (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
     ext u
@@ -417,7 +417,7 @@ variable (ha : (O a \ (O b ∪ O' (a ⊔ b))).Nonempty) (hb : (O b \ (O a ∪ O'
 include ha hb
 
 theorem exhIE_hornAlt :
-    exhIE (hornAlt O O' a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
+    exhᴵᴱ (hornAlt O O' a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
   obtain ⟨x, hx⟩ := ha
   obtain ⟨y, hy⟩ := hb
   rw [(isMinimalCover_hornAlt hO hO' hab hx hy).exhIE_eq]
@@ -438,7 +438,7 @@ theorem exhIE_hornAlt :
 theorem free_choice_hornAlt (hfc : ((O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b))).Nonempty) :
     exhIter (hornAlt O O' a b) 2 (O (a ⊔ b)) = (O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
   have hl := exhIE_hornAlt_left hO hO' ha
-  have hr : exhIE (hornAlt O O' a b) (O b) = O b \ (O a ∪ O' (a ⊔ b)) := by
+  have hr : exhᴵᴱ (hornAlt O O' a b) (O b) = O b \ (O a ∪ O' (a ⊔ b)) := by
     rw [← hornAlt_comm, ← sup_comm b a]
     exact exhIE_hornAlt_left hO hO' (by rwa [sup_comm b a])
   obtain ⟨x, hx⟩ := ha
@@ -493,7 +493,7 @@ theorem exh_or (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
   · exact haq ((h q (by simp) hu) (Or.inl hap))
 
 theorem exclusive_or (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
-    exhIE {p ∪ q, p, q, p ∩ q} (p ∪ q) = symmDiff p q := by
+    exhᴵᴱ {p ∪ q, p, q, p ∩ q} (p ∪ q) = symmDiff p q := by
   rw [(isDiamond_or hp hq).exhIE_w]
   ext u
   simp only [mem_sdiff, mem_union, mem_inter_iff, Set.mem_symmDiff]
@@ -506,7 +506,7 @@ theorem exclusive_or_of_one_le (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) {
   have h := isDiamond_or hp hq
   rw [exhIter_eq_of_succ_eq ?_ hn (mem_insert _ _), exhIter_one, exclusive_or hp hq]
   have hvac : ∀ r, (∀ c ∈ ({(p ∪ q) \ (p ∩ q), p \ q, q \ p, p ∩ q} : Set (Set W)),
-      (exhIE {p ∪ q, p, q, p ∩ q} r ∩ c).Nonempty → exhIE {p ∪ q, p, q, p ∩ q} r ⊆ c) →
+      (exhᴵᴱ {p ∪ q, p, q, p ∩ q} r ∩ c).Nonempty → exhᴵᴱ {p ∪ q, p, q, p ∩ q} r ⊆ c) →
       exhIter {p ∪ q, p, q, p ∩ q} 2 r = exhIter {p ∪ q, p, q, p ∩ q} 1 r := fun r hr ↦ by
     rw [exhIter_two, h.image_exhIE, exhIter_one, exhIE_eq_self_of_forall _ _ hr]
   rintro r (rfl | rfl | rfl | rfl)
@@ -579,7 +579,7 @@ theorem free_choice_not_required
 /-- When `□(p ∨ q)` is consistent with denying `□p` and `□q`, exhaustification denies both,
 since a necessity modal does not distribute over disjunction. -/
 theorem required_implicatures (h : (R.core (p ∪ q) \ (R.core p ∪ R.core q)).Nonempty) :
-    exhIE {R.core (p ∪ q), R.core p, R.core q, R.core (p ∩ q)} (R.core (p ∪ q))
+    exhᴵᴱ {R.core (p ∪ q), R.core p, R.core q, R.core (p ∩ q)} (R.core (p ∪ q))
       = R.core (p ∪ q) \ (R.core p ∪ R.core q) :=
   exhIE_sauerlandAlt_of_not_subset SetRel.core_mono h
 
@@ -634,7 +634,7 @@ theorem conjunctive_free_choice
 /-- When `∀x (P x ∨ Q x)` is consistent with denying `∀x P x` and `∀x Q x`, exhaustification
 denies both, since a universal quantifier does not distribute over disjunction. -/
 theorem universal_implicatures (h : ((⋂ x, P x ∪ Q x) \ ((⋂ x, P x) ∪ ⋂ x, Q x)).Nonempty) :
-    exhIE {⋂ x, P x ∪ Q x, ⋂ x, P x, ⋂ x, Q x, ⋂ x, P x ∩ Q x} (⋂ x, P x ∪ Q x)
+    exhᴵᴱ {⋂ x, P x ∪ Q x, ⋂ x, P x, ⋂ x, Q x, ⋂ x, P x ∩ Q x} (⋂ x, P x ∪ Q x)
       = (⋂ x, P x ∪ Q x) \ ((⋂ x, P x) ∪ ⋂ x, Q x) :=
   exhIE_sauerlandAlt_of_not_subset (O := fun P : ι → Set W ↦ ⋂ x, P x)
     (fun _ _ h ↦ iInter_mono h) h
@@ -656,7 +656,7 @@ private theorem mem_singular {u : W} (hP : ∃! x, u ∈ P x) (hQ : ∀ x, u ∉
 
 theorem exhIE_singular (hP : ∃ u, (∃! x, u ∈ P x) ∧ ∀ x, u ∉ Q x)
     (hQ : ∃ u, (∃! x, u ∈ Q x) ∧ ∀ x, u ∉ P x) :
-    exhIE {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x,
+    exhᴵᴱ {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x,
         atLeastTwo (P ⊔ Q), atLeastTwo P, atLeastTwo Q, atLeastTwo (P ⊓ Q)} (⋃ x, P x ∪ Q x)
       = (⋃ x, P x ∪ Q x) \ ((⋃ x, P x ∩ Q x) ∪ atLeastTwo (P ⊔ Q)) := by
   obtain ⟨u, hu⟩ := hP
@@ -696,7 +696,7 @@ homework*, innocent exclusion denies *all of the homework* and the conjunction b
 reading*. -/
 theorem embedded_scalar_implicature (hah : ah ⊆ sh) (hsh : (sh \ (r ∪ ah)).Nonempty)
     (hr : (r \ sh).Nonempty) :
-    exhIE {r ∪ sh, r, sh, r ∩ sh, r ∪ ah, r, ah, r ∩ ah} (r ∪ sh) = (r ∪ sh) \ (ah ∪ (r ∩ sh)) := by
+    exhᴵᴱ {r ∪ sh, r, sh, r ∩ sh, r ∪ ah, r, ah, r ∩ ah} (r ∪ sh) = (r ∪ sh) \ (ah ∪ (r ∩ sh)) := by
   obtain ⟨x, hxs, hx⟩ := hsh
   obtain ⟨y, hyr, hys⟩ := hr
   have hM : IsMinimalCover {r ∪ sh, r, sh, r ∩ sh, r ∪ ah, r, ah, r ∩ ah} (r ∪ sh) {x, y} := by
@@ -819,7 +819,7 @@ theorem notMem_IE_atom (i : ι) :
 /-- Exhaustifying the existential answer against its Hamblin alternatives yields *exactly one*,
 provided each individual can be the sole witness. -/
 theorem exhIE_infClosure_range [Fintype ι] [DecidableEq ι] :
-    exhIE (infClosure (range a)) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
+    exhᴵᴱ (infClosure (range a)) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
   ext u
   rw [mem_exhIE_iff, mem_iUnion]
   constructor
