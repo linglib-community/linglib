@@ -209,13 +209,13 @@ def notThatImpossibleNot := sentence .negative (some .notThatImpossible)
 /-! ### The items -/
 
 /-- The class of *quoi que ce soit*, licensed by downward entailment. -/
-abbrev quoiQueCeSoit : PolarityItem.Class := .npi .weak
+abbrev quoiQueCeSoit : PolarityItem.Class := .npi .monotoneDecreasing
 
 /-- The class of *some*, blocked by downward entailment. -/
-abbrev someItem : PolarityItem.Class := .ppi .weak
+abbrev someItem : PolarityItem.Class := .ppi .monotoneDecreasing
 
 /-- The class of *any*, licensed by downward entailment. -/
-abbrev anyItem : PolarityItem.Class := .npi .weak
+abbrev anyItem : PolarityItem.Class := .npi .monotoneDecreasing
 
 /-- The class of *some* on which only anti-additivity blocks it, as in [szabolcsi-2004]. -/
 abbrev someoneItem : PolarityItem.Class := .ppi .antiAdditive
@@ -235,26 +235,28 @@ theorem not_licenses_notImpossible : ¬notImpossible.Licenses quoiQueCeSoit :=
 theorem licenses_impossibleNot : impossibleNot.Licenses quoiQueCeSoit :=
   ⟨[], by simp,
     Licenser.admits_npi_iff.2 <|
-      Environment.carries_weak_of_sign_eq_neg_one _ (by simp [impossibleNot]; decide)
+      Environment.carries_monotoneDecreasing_of_sign_eq_neg_one _ (by simp [impossibleNot]; decide)
         (by simp [impossibleNot])⟩
 
 theorem licenses_notImpossibleNot : notImpossibleNot.Licenses quoiQueCeSoit :=
   ⟨[], by simp,
     Licenser.admits_npi_iff.2 <|
-      Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notImpossibleNot]; decide)
+      Environment.carries_monotoneDecreasing_of_sign_eq_neg_one _
+        (by simp [notImpossibleNot]; decide)
         (by simp [notImpossibleNot])⟩
 
 theorem licenses_ifImpossible : ifImpossible.Licenses quoiQueCeSoit :=
   ⟨[impossible, 1, 1], by simp [ifImpossible],
     Licenser.admits_npi_iff.2 <|
-      Environment.carries_weak_of_sign_eq_neg_one _ (by simp [ifImpossible]; decide)
+      Environment.carries_monotoneDecreasing_of_sign_eq_neg_one _ (by simp [ifImpossible]; decide)
         (by simp [ifImpossible])⟩
 
 theorem not_licenses_clausemateNot : ¬clausemateNot.Licenses someItem :=
   clausemateNot.not_licenses_ppi fun t ht ↦ by
     simp [clausemateNot] at ht
     rcases ht with rfl | rfl <;>
-      exact Environment.holds_weak_of_sign_eq_neg_one _ (by simp [clausemateNot]; decide)
+      exact Environment.holds_monotoneDecreasing_of_sign_eq_neg_one _
+        (by simp [clausemateNot]; decide)
 
 theorem licenses_notClaim : notClaim.Licenses someItem :=
   ⟨[], by simp,
@@ -284,7 +286,8 @@ theorem not_licenses_notImpossibleNot_some : ¬notImpossibleNot.Licenses someIte
   notImpossibleNot.not_licenses_ppi fun t ht ↦ by
     simp [notImpossibleNot] at ht
     rcases ht with rfl | rfl | rfl | rfl | rfl <;>
-      exact Environment.holds_weak_of_sign_eq_neg_one _ (by simp [notImpossibleNot]; decide)
+      exact Environment.holds_monotoneDecreasing_of_sign_eq_neg_one _
+        (by simp [notImpossibleNot]; decide)
 
 theorem licenses_ifNot : ifNot.Licenses someItem :=
   ⟨[conditional consequent, 1], by simp [ifNot],
@@ -391,17 +394,18 @@ noncomputable def notOr : Path (Quantifier (Fin 2)) (Set World) :=
 theorem not_holds_notAnd {t : List Layer}
     (ht : t ∈ notAnd.layers.tails) {s : Negation.Strength} :
     ¬(Licenser.ofOperator (notAnd.environment t)).Holds s := fun hh ↦ by
-  have ha : Antitone _ := Negation.HasStrength.of_le (s := .weak) (hh ⟨⟩) bot_le
+  have ha : Antitone _ := Negation.HasStrength.of_le (s := .monotoneDecreasing) (hh ⟨⟩) bot_le
   simp [notAnd] at ht
   rcases ht with rfl | rfl <;> exact not_antitone_notConn_conj (by simpa [notAnd,
     Function.End.one_def] using ha)
 
 theorem carries_notOr {t : List Layer}
     (ht : t ∈ notOr.layers.tails) :
-    (Licenser.ofOperator (notOr.environment t)).Carries .weak := by
+    (Licenser.ofOperator (notOr.environment t)).Carries .monotoneDecreasing := by
   simp [notOr] at ht
   rcases ht with rfl | rfl <;>
-    refine Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notOr]; decide) ?_ <;>
+    refine Environment.carries_monotoneDecreasing_of_sign_eq_neg_one _
+      (by simp [notOr]; decide) ?_ <;>
     simp [notOr, notConn_disj_strong, wine_ne_univ]
 
 theorem not_licenses_notAnd : ¬notAnd.Licenses anyItem := by

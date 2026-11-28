@@ -94,7 +94,7 @@ restrictions. -/
 K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (L : PolarityItem.Licenser)
     (hDE : IsDownwardEntailing L) : L.LicensesByStrengthening :=
-  Licenser.licensesByStrengthening_iff.2 (Licenser.isStrawsonDE_of_holds_weak hDE)
+  Licenser.licensesByStrengthening_iff.2 (Licenser.isStrawsonDE_of_holds_monotoneDecreasing hDE)
 
 /-! ### Adversative predicates: *sorry* vs *glad*
 
@@ -497,7 +497,7 @@ strengthens, or it is read as settling for less under *glad*, or as a metalingui
 negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
-      (∃ c ∈ r.context, c.Licenses (.npi .weak true)) ∨
+      (∃ c ∈ r.context, c.Licenses (.npi .monotoneDecreasing true)) ∨
         r.localSignature.negationStrength ≠ ⊥ ∨ r.settleForLess = true ∨
           r.metalinguistic = true := by
   decide +kernel

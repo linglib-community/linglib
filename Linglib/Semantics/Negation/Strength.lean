@@ -15,10 +15,10 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Strengths of negation
 
-This file defines the strengths of negation a context can carry, Zwarts's hierarchy of weak,
-anti-additive and antimorphic contexts, which are van der Wouden's minimal, regular and classical
-negation. A map between Boolean algebras is *monotone decreasing* if it reverses the order,
-*anti-additive* if `f (x ⊔ y) = f x ⊓ f y`, and *antimorphic* if it is anti-additive and
+This file defines the strengths of negation a context can carry, Zwarts's hierarchy of monotone
+decreasing, anti-additive and antimorphic contexts, which are van der Wouden's minimal, regular and
+classical negation. A map between Boolean algebras is *monotone decreasing* if it reverses the
+order, *anti-additive* if `f (x ⊔ y) = f x ⊓ f y`, and *antimorphic* if it is anti-additive and
 `f xᶜ = (f x)ᶜ`, as clausal negation is. Each class contains the next, and the order on the three
 strengths is that inclusion. A truth-valued map is monotone decreasing when the elements it holds
 of form a lower set, and anti-additive when that lower set is also closed under joins.
@@ -31,10 +31,10 @@ of form a lower set, and anti-additive when that lower set is also closed under 
 ## Main results
 
 * `Negation.HasStrength.of_le`: a map of a strength has every weaker strength.
-* `Negation.Strength.le_iff_forall_hasStrength`: one strength is below another exactly when every map
-  of the second has the first.
-* `Negation.hasStrength_antiAdditive_iff_supClosed`: a truth-valued map is anti-additive exactly when
-  the elements it holds of form a lower set closed under joins.
+* `Negation.Strength.le_iff_forall_hasStrength`: one strength is below another exactly when every
+  map of the second has the first.
+* `Negation.hasStrength_antiAdditive_iff_supClosed`: a truth-valued map is anti-additive exactly
+  when the elements it holds of form a lower set closed under joins.
 
 ## Implementation notes
 
@@ -53,43 +53,46 @@ also commute with complement.
 
 namespace Negation
 
-/-- The three strengths of negation, `weak` plain downward entailment, `antiAdditive` adding the
-∨→∧ distributivity of *nobody*, and `antiMorphic` the ∧→∨ distributivity of clausal negation. -/
+/-- The three strengths of negation. A map is `monotoneDecreasing` if it reverses the order,
+`antiAdditive` if it also sends joins to meets, as *nobody* does, and `antimorphic` if it also
+commutes with complement, as clausal negation does. -/
 inductive Strength where
-  | weak
+  | monotoneDecreasing
   | antiAdditive
-  | antiMorphic
+  | antimorphic
   deriving DecidableEq, Repr, Fintype
 
 namespace Strength
 
-/-- Rank in the chain `weak < antiAdditive < antiMorphic`. -/
+/-- Rank in the chain `monotoneDecreasing < antiAdditive < antimorphic`. -/
 def toNat : Strength → ℕ
-  | .weak => 0
+  | .monotoneDecreasing => 0
   | .antiAdditive => 1
-  | .antiMorphic => 2
+  | .antimorphic => 2
 
 theorem toNat_injective : Function.Injective toNat := by decide
 
-/-- The Zwarts hierarchy as the linear order `weak < antiAdditive < antiMorphic`. -/
+/-- The Zwarts hierarchy as the linear order `monotoneDecreasing < antiAdditive < antimorphic`. -/
 instance : LinearOrder Strength :=
   LinearOrder.lift' toNat toNat_injective
 
 instance : BoundedOrder Strength where
-  bot := weak
+  bot := monotoneDecreasing
   bot_le := by decide
-  top := antiMorphic
+  top := antimorphic
   le_top := by decide
 
-@[simp] theorem bot_eq_weak : (⊥ : Strength) = weak := rfl
+@[simp] theorem bot_eq_monotoneDecreasing : (⊥ : Strength) = monotoneDecreasing := rfl
 
-@[simp] theorem top_eq_antiMorphic : (⊤ : Strength) = antiMorphic := rfl
+@[simp] theorem top_eq_antimorphic : (⊤ : Strength) = antimorphic := rfl
 
-@[simp] theorem weak_le (s : Strength) : weak ≤ s := bot_le
+@[simp] theorem monotoneDecreasing_le (s : Strength) : monotoneDecreasing ≤ s := bot_le
 
-@[simp] theorem le_antiMorphic (s : Strength) : s ≤ antiMorphic := le_top
+@[simp] theorem le_antimorphic (s : Strength) : s ≤ antimorphic := le_top
 
-@[simp] theorem le_weak_iff {s : Strength} : s ≤ weak ↔ s = weak := le_bot_iff
+@[simp] theorem le_monotoneDecreasing_iff {s : Strength} :
+    s ≤ monotoneDecreasing ↔ s = monotoneDecreasing :=
+  le_bot_iff
 
 end Strength
 
@@ -104,18 +107,19 @@ variable {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β] {s t : Strength
 /-- A map has a strength of negation: it is monotone decreasing, anti-additive, or antimorphic
 ([zwarts-1998]'s (91), (107) and (114)). -/
 def HasStrength (f : α → β) : Strength → Prop
-  | weak => Antitone f
+  | monotoneDecreasing => Antitone f
   | antiAdditive => ∀ x y, f (x ⊔ y) = f x ⊓ f y
-  | antiMorphic => (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ
+  | antimorphic => (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ
 
-@[simp] theorem hasStrength_weak : HasStrength f weak ↔ Antitone f := Iff.rfl
+@[simp] theorem hasStrength_monotoneDecreasing : HasStrength f monotoneDecreasing ↔ Antitone f :=
+  Iff.rfl
 
 @[simp] theorem hasStrength_antiAdditive :
     HasStrength f antiAdditive ↔ ∀ x y, f (x ⊔ y) = f x ⊓ f y :=
   Iff.rfl
 
-@[simp] theorem hasStrength_antiMorphic :
-    HasStrength f antiMorphic ↔ (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ :=
+@[simp] theorem hasStrength_antimorphic :
+    HasStrength f antimorphic ↔ (∀ x y, f (x ⊔ y) = f x ⊓ f y) ∧ ∀ x, f xᶜ = (f x)ᶜ :=
   Iff.rfl
 
 private theorem antitone_of_map_sup (h : ∀ x y, f (x ⊔ y) = f x ⊓ f y) : Antitone f :=
@@ -135,11 +139,11 @@ theorem HasStrength.of_le (h : HasStrength f t) (hst : s ≤ t) : HasStrength f 
   · exact h
 
 /-- An antimorphic map sends `⊤` to `⊥`. -/
-theorem HasStrength.map_top (h : HasStrength f antiMorphic) : f ⊤ = ⊥ := by
+theorem HasStrength.map_top (h : HasStrength f antimorphic) : f ⊤ = ⊥ := by
   rw [← sup_compl_eq_top (x := ⊥), h.1, h.2, inf_compl_self]
 
 /-- An antimorphic map sends `⊥` to `⊤`. -/
-theorem HasStrength.map_bot (h : HasStrength f antiMorphic) : f ⊥ = ⊤ := by
+theorem HasStrength.map_bot (h : HasStrength f antimorphic) : f ⊥ = ⊤ := by
   rw [← compl_top, h.2, h.map_top, compl_bot]
 
 /-- One strength is below another exactly when every map of the second has the first. -/
@@ -184,14 +188,15 @@ variable {α : Type*} [BooleanAlgebra α] {f : α → Prop}
 
 /-- A truth-valued map is monotone decreasing exactly when the elements it holds of form a lower
 set. -/
-theorem hasStrength_weak_iff_isLowerSet : HasStrength f weak ↔ IsLowerSet {x | f x} :=
+theorem hasStrength_monotoneDecreasing_iff_isLowerSet :
+    HasStrength f monotoneDecreasing ↔ IsLowerSet {x | f x} :=
   ⟨fun h _ _ hyx hx ↦ h hyx hx, fun h _ _ hxy hy ↦ h hxy hy⟩
 
 /-- A truth-valued map is anti-additive exactly when the elements it holds of form a lower set
 closed under joins, [zwarts-1998]'s quasi-ideal. -/
 theorem hasStrength_antiAdditive_iff_supClosed :
     HasStrength f antiAdditive ↔ IsLowerSet {x | f x} ∧ SupClosed {x | f x} :=
-  ⟨fun h ↦ ⟨hasStrength_weak_iff_isLowerSet.1 (HasStrength.of_le h (by decide)),
+  ⟨fun h ↦ ⟨hasStrength_monotoneDecreasing_iff_isLowerSet.1 (HasStrength.of_le h (by decide)),
       fun x hx y hy ↦ (eq_iff_iff.1 (h x y)).2 ⟨hx, hy⟩⟩,
     fun ⟨hl, hs⟩ x y ↦ propext
       ⟨fun hxy ↦ ⟨hl le_sup_left hxy, hl le_sup_right hxy⟩, fun ⟨hx, hy⟩ ↦ hs hx hy⟩⟩
@@ -223,7 +228,8 @@ theorem forall_hasStrength_iff_le_antiAdditive (hfg : ∀ i, f i = g i ∘ compl
   have haa : ∀ i x y, f i (x ⊔ y) = f i x ⊓ f i y := fun i x y ↦ by
     simp only [hfg, Function.comp_apply, compl_sup, hg]
   cases s
-  · exact iff_of_true (fun i ↦ HasStrength.of_le (t := antiAdditive) (haa i) (by decide)) (by decide)
+  · exact iff_of_true (fun i ↦ HasStrength.of_le (t := antiAdditive) (haa i) (by decide))
+      (by decide)
   · exact iff_of_true haa le_rfl
   · exact iff_of_false (fun h ↦ hn.elim fun i hi ↦ hi (h i).2) (by decide)
 
@@ -236,10 +242,11 @@ theorem forall_hasStrength_iff_le_antiAdditive_of_not_map_sup (hfg : ∀ i, f i 
   forall_hasStrength_iff_le_antiAdditive hfg hg <| hn.imp fun i hi hc ↦
     hi (map_sup_of_map_inf_of_map_compl (hg i) fun x ↦ by simpa [hfg] using hc xᶜ)
 
-/-- Complement applied after monotone maps, not all of them preserving joins, has exactly weak
-strength. -/
-theorem forall_hasStrength_iff_le_weak (hfg : ∀ i, f i = compl ∘ g i) (hg : ∀ i, Monotone (g i))
-    (hn : ∃ i, ¬∀ x y, g i (x ⊔ y) = g i x ⊔ g i y) : (∀ i, HasStrength (f i) s) ↔ s ≤ weak := by
+/-- Complement applied after monotone maps, not all of them preserving joins, is monotone
+decreasing and no stronger. -/
+theorem forall_hasStrength_iff_le_monotoneDecreasing (hfg : ∀ i, f i = compl ∘ g i)
+    (hg : ∀ i, Monotone (g i)) (hn : ∃ i, ¬∀ x y, g i (x ⊔ y) = g i x ⊔ g i y) :
+    (∀ i, HasStrength (f i) s) ↔ s ≤ monotoneDecreasing := by
   have key : ∀ i, (∀ x y, f i (x ⊔ y) = f i x ⊓ f i y) → ∀ x y, g i (x ⊔ y) = g i x ⊔ g i y :=
     fun i h x y ↦ compl_injective (by simpa [hfg] using h x y)
   cases s

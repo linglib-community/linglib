@@ -403,7 +403,7 @@ private theorem not_map_sup_every {ι : Type} {A : Set ι} {a b : ι} (ha : a �
 open Licenser Negation
 
 theorem holds_negation (s : Negation.Strength) : negation.licenser.Holds s :=
-  (show negation.licenser.Holds .antiMorphic from fun _ ↦
+  (show negation.licenser.Holds .antimorphic from fun _ ↦
     ⟨fun _ _ ↦ compl_sup, fun _ ↦ rfl⟩).of_le le_top
 
 theorem holds_nobody_iff {s : Negation.Strength} :
@@ -413,7 +413,7 @@ theorem holds_nobody_iff {s : Negation.Strength} :
     ⟨⟨⟨Bool, .univ⟩, Set.univ_nonempty⟩,
       not_map_sup_every (a := true) (b := false) trivial trivial (by decide)⟩
 
-theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s ↔ s ≤ .weak := by
+theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s ↔ s ≤ .monotoneDecreasing := by
   refine holds_iff_le (fun p ↦ scopeAntitone_few p.A) fun s hs h ↦ ?_
   have := (h.of_le (s := .antiAdditive) (by revert hs; cases s <;> decide))
     ⟨⟨Fin 3, Set.univ⟩⟩ {0} {1}
@@ -422,7 +422,8 @@ theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s ↔ s ≤ .
   rw [eq_iff_iff]
   decide
 
-theorem holds_atMost_iff {s : Negation.Strength} : atMost.licenser.Holds s ↔ s ≤ .weak := by
+theorem holds_atMost_iff {s : Negation.Strength} :
+    atMost.licenser.Holds s ↔ s ≤ .monotoneDecreasing := by
   refine holds_iff_le (fun p ↦ scopeAntitone_atMost p.n p.A) fun s hs h ↦ ?_
   have := (h.of_le (s := .antiAdditive) (by revert hs; cases s <;> decide))
     ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩ {true} {false}
@@ -460,7 +461,7 @@ theorem holds_withoutClause_iff {s : Negation.Strength} :
 theorem holds_beforeClause_iff {s : Negation.Strength} :
     beforeClause.licenser.Holds s ↔ s ≤ .antiAdditive := by
   refine holds_iff_le (fun p ↦ isAntiAdditive_beforeEver p.A) fun s hs h ↦ ?_
-  obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
+  obtain rfl : s = .antimorphic := by revert hs; cases s <;> decide
   have := (h ⟨ℕ, ⊥⟩).map_bot
   simp [beforeEver] at this
 
@@ -485,9 +486,11 @@ theorem holds_clausalComparative_iff {s : Negation.Strength} :
 theorem holds_tooTo_iff {s : Negation.Strength} : tooTo.licenser.Holds s ↔ s ≤ .antiAdditive :=
   holds_exceedsFamily_iff
 
-theorem holds_doubtVerb_iff {s : Negation.Strength} : doubtVerb.licenser.Holds s ↔ s ≤ .weak :=
-  forall_hasStrength_iff_le_weak (g := fun p : Accessibility ↦ fun P ↦ p.w ∈ p.R.core P)
-    (fun _ ↦ rfl) (fun _ ↦ monotone_mem_core) ⟨⟨Bool, .univ, true⟩, not_map_sup_mem_core⟩
+theorem holds_doubtVerb_iff {s : Negation.Strength} :
+    doubtVerb.licenser.Holds s ↔ s ≤ .monotoneDecreasing :=
+  forall_hasStrength_iff_le_monotoneDecreasing
+    (g := fun p : Accessibility ↦ fun P ↦ p.w ∈ p.R.core P) (fun _ ↦ rfl)
+    (fun _ ↦ monotone_mem_core) ⟨⟨Bool, .univ, true⟩, not_map_sup_mem_core⟩
 
 theorem holds_denyVerb_iff {s : Negation.Strength} :
     denyVerb.licenser.Holds s ↔ s ≤ .antiAdditive :=
@@ -500,7 +503,7 @@ false of every complement where the modal base is empty. -/
 theorem holds_superordinateNegation_iff {s : Negation.Strength} :
     superordinateNegation.licenser.Holds s ↔ s ≤ .antiAdditive :=
   holds_iff_le (fun p ↦ NegRaising.isAntiAdditive_posExt_negation p.R p.H) fun s hs h ↦ by
-    obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
+    obtain rfl : s = .antimorphic := by revert hs; cases s <;> decide
     have := (h ⟨Unit, ∅, ∅⟩).map_bot
     simpa [NegRaising.posExt_negation] using congrArg (() ∈ ·) this
 
@@ -584,7 +587,8 @@ theorem not_isStrawsonUE_sinceTemporal : ¬ sinceTemporal.licenser.IsStrawsonUE 
 Once *few* and *at most n* are exhaustified against their stronger scale-mates, they assert
 *some*, and so they are not downward entailing ([gajewski-2011]'s (45), (48)). -/
 
-theorem not_holds_exhaustified_few : ¬ few.licenser.exhaustified.Holds .weak := fun h ↦ by
+theorem not_holds_exhaustified_few :
+    ¬ few.licenser.exhaustified.Holds .monotoneDecreasing := fun h ↦ by
   have hA : ¬ Det.few (Set.univ : Set (Fin 3)) ≤ Det.no Set.univ := fun hle ↦
     absurd (hle {0} (by decide)) (by decide)
   have hanti : Antitone (Det.exhaustified Det.few {Det.no} (Set.univ : Set (Fin 3))) :=
@@ -594,7 +598,8 @@ theorem not_holds_exhaustified_few : ¬ few.licenser.exhaustified.Holds .weak :=
   rintro _ rfl hno
   exact absurd hno (by decide)
 
-theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .weak := fun h ↦ by
+theorem not_holds_exhaustified_atMost :
+    ¬ atMost.licenser.exhaustified.Holds .monotoneDecreasing := fun h ↦ by
   have hA : ¬ Det.atMost 1 (Set.univ : Set Bool) ≤ Det.atMost 0 Set.univ := fun hle ↦
     absurd (hle {true} (by decide)) (by decide)
   have hanti : Antitone (Det.exhaustified (Det.atMost 1) {Det.atMost 0} (Set.univ : Set Bool)) :=
@@ -610,34 +615,35 @@ theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .w
 theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦
   Focus.isStrawsonDE_only_eq p.x
 
-theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .weak := fun h ↦
+theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .monotoneDecreasing := fun h ↦
   Focus.not_antitone_posExt_only_eq
     ((h ⟨Bool, Unit, true⟩))
 
 theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
   Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g
 
-theorem not_holds_adversative : ¬ adversative.licenser.Holds .weak := fun h ↦
+theorem not_holds_adversative : ¬ adversative.licenser.Holds .monotoneDecreasing := fun h ↦
   Desire.BestWorlds.not_antitone_posExt_regret fun _ _ hab ↦
     h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {{false}}⟩ hab
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_trivalentSuperlative p.μ p.x
 
-theorem not_holds_superlative : ¬ superlative.licenser.Holds .weak := fun h ↦
+theorem not_holds_superlative : ¬ superlative.licenser.Holds .monotoneDecreasing := fun h ↦
   not_antitone_posExt_trivalentSuperlative ((h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
 
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=
   fun p ↦ Conditional.isStrawsonDE_horizonCounterfactual p.horizon p.q
 
-theorem not_holds_conditionalAntecedent : ¬ conditionalAntecedent.licenser.Holds .weak := fun h ↦
+theorem not_holds_conditionalAntecedent :
+    ¬ conditionalAntecedent.licenser.Holds .monotoneDecreasing := fun h ↦
   Conditional.not_antitone_posExt_horizonCounterfactual
     ((h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
 
 theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_since p.ago
 
-theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .weak := fun h ↦
+theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .monotoneDecreasing := fun h ↦
   not_antitone_posExt_since ((h ⟨ℤ, (· - 5)⟩))
 
 /-! ### Modal licensers and questions -/
@@ -674,20 +680,22 @@ theorem isStrawsonUE_modalPossibility : modalPossibility.licenser.IsStrawsonUE :
 
 /-- Necessity is not downward entailing, since it is the identity at a world that accesses
 itself. -/
-theorem not_holds_anti_necessityFamily : ¬ (Licenser.modal necessityFamily).Holds .weak :=
+theorem not_holds_anti_necessityFamily :
+    ¬ (Licenser.modal necessityFamily).Holds .monotoneDecreasing :=
   fun h ↦ by
     have := (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
     simp [Set.subset_def, SetRel.core] at this
 
 /-- Possibility is not downward entailing, since it is the identity at a world that accesses
 itself. -/
-theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .weak :=
+theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .monotoneDecreasing :=
   fun h ↦ by
     have := (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
     simp [Set.subset_def, SetRel.preimage] at this
 
 /-- The identity is not downward entailing. -/
-theorem not_holds_anti_positiveAssertion : ¬ positiveAssertion.licenser.Holds .weak := fun h ↦
+theorem not_holds_anti_positiveAssertion :
+    ¬ positiveAssertion.licenser.Holds .monotoneDecreasing := fun h ↦
   (h Unit) (bot_le (a := ⊤)) () trivial
 
 /-! ### The profiles of the contexts
@@ -700,13 +708,14 @@ has no profile. -/
 greatest strength it holds outright, and whether it licenses free choice. A question has no
 profile. -/
 def profile : LicensingContext → Option Profile
-  | negation => some ⟨ofStrength .antiMorphic, ofStrength .antiMorphic, false⟩
+  | negation => some ⟨ofStrength .antimorphic, ofStrength .antimorphic, false⟩
   | nobody | universalRestrictor | noRestrictor | withoutClause | beforeClause
   | clausalComparative | tooTo | denyVerb | superordinateNegation =>
     some ⟨ofStrength .antiAdditive, ofStrength .antiAdditive, false⟩
-  | few | atMost | doubtVerb => some ⟨ofStrength .weak, ofStrength .weak, false⟩
+  | few | atMost | doubtVerb =>
+    some ⟨ofStrength .monotoneDecreasing, ofStrength .monotoneDecreasing, false⟩
   | onlyFocus | adversative | superlative | conditionalAntecedent | sinceTemporal =>
-    some ⟨ofStrength .weak, ⊥, false⟩
+    some ⟨ofStrength .monotoneDecreasing, ⊥, false⟩
   | modalPossibility | modalNecessity | imperative | generic | freeRelative => some ⟨⊥, ⊥, true⟩
   | positiveAssertion => some ⟨⊥, ⊥, false⟩
   | polarQuestion | constituentQuestion => none
@@ -722,12 +731,15 @@ private theorem carried_of_holds_iff {F : Licenser.OperatorFamily} {s₀ : Negat
     (classical F).carried = ofStrength s₀ :=
   carried_eq_coe fun _ ↦ carries_classical_iff_le hn fun _ ↦ h
 
-private theorem carried_of_eq_weak {L : Licenser} (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
-    (h : ¬ L.exhaustified.Holds .weak) : L.carried = ofStrength .weak :=
-  carried_eq_coe fun _ ↦ (carries_iff_eq_weak hde hn h).trans Negation.Strength.le_weak_iff.symm
+private theorem carried_of_eq_monotoneDecreasing {L : Licenser} (hde : L.IsStrawsonDE)
+    (hn : ¬ L.IsStrawsonUE)
+    (h : ¬ L.exhaustified.Holds .monotoneDecreasing) : L.carried = ofStrength .monotoneDecreasing :=
+  carried_eq_coe fun _ ↦ (carries_iff_eq_monotoneDecreasing hde hn h).trans
+    Negation.Strength.le_monotoneDecreasing_iff.symm
 
-private theorem held_strawson_eq_bot {L : Licenser} (h : ¬ L.Holds .weak) : L.held = ⊥ :=
-  held_eq_bot fun _ ↦ not_holds_of_not_holds_weak h
+private theorem held_strawson_eq_bot {L : Licenser} (h : ¬ L.Holds .monotoneDecreasing) :
+    L.held = ⊥ :=
+  held_eq_bot fun _ ↦ not_holds_of_not_holds_monotoneDecreasing h
 
 private theorem not_fc {b : Prop} (h : ¬ b) : b ↔ false = true := iff_of_false h Bool.false_ne_true
 
@@ -735,9 +747,9 @@ private theorem not_fc {b : Prop} (h : ¬ b) : b ↔ false = true := iff_of_fals
 theorem profile_eq :
     ∀ (c : LicensingContext) (h : c.HasLicenser), c.profile = some (c.licenser h).profile
   | negation, _ => profile_eq_of
-      (carried_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antiMorphic, fun _ ↦
+      (carried_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antimorphic, fun _ ↦
         carries_classical_iff.2 ⟨holds_negation _, not_isStrawsonUE_negation⟩⟩)
-      (held_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antiMorphic, fun _ ↦ holds_negation s⟩) (not_fc id)
+      (held_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antimorphic, fun _ ↦ holds_negation s⟩) (not_fc id)
   | nobody, _ => profile_eq_of (carried_of_holds_iff not_isStrawsonUE_nobody holds_nobody_iff)
       (held_eq_coe fun _ ↦ holds_nobody_iff) (not_fc id)
   | universalRestrictor, _ => profile_eq_of
@@ -760,49 +772,52 @@ theorem profile_eq :
       (held_eq_coe fun _ ↦ holds_denyVerb_iff) (not_fc id)
   | superordinateNegation, _ => profile_eq_of
       (carried_eq_coe fun _ ↦ carries_iff_le
-        (isStrawsonDE_of_holds_weak (holds_superordinateNegation_iff.2 bot_le))
+        (isStrawsonDE_of_holds_monotoneDecreasing (holds_superordinateNegation_iff.2 bot_le))
         not_isStrawsonUE_superordinateNegation fun _ ↦ holds_superordinateNegation_iff)
       (held_eq_coe fun _ ↦ holds_superordinateNegation_iff) (not_fc id)
   | few, _ => profile_eq_of
-      (carried_of_eq_weak (isStrawsonDE_of_holds_weak (holds_few_iff.2 le_rfl))
+      (carried_of_eq_monotoneDecreasing
+        (isStrawsonDE_of_holds_monotoneDecreasing (holds_few_iff.2 le_rfl))
         not_isStrawsonUE_few not_holds_exhaustified_few)
       (held_eq_coe fun _ ↦ holds_few_iff) (not_fc id)
   | atMost, _ => profile_eq_of
-      (carried_of_eq_weak (isStrawsonDE_of_holds_weak (holds_atMost_iff.2 le_rfl))
+      (carried_of_eq_monotoneDecreasing
+        (isStrawsonDE_of_holds_monotoneDecreasing (holds_atMost_iff.2 le_rfl))
         not_isStrawsonUE_atMost not_holds_exhaustified_atMost)
       (held_eq_coe fun _ ↦ holds_atMost_iff) (not_fc id)
   | doubtVerb, _ => profile_eq_of
       (carried_of_holds_iff not_isStrawsonUE_doubtVerb holds_doubtVerb_iff)
       (held_eq_coe fun _ ↦ holds_doubtVerb_iff) (not_fc id)
   | onlyFocus, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_onlyFocus not_isStrawsonUE_onlyFocus not_holds_onlyFocus)
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_onlyFocus not_isStrawsonUE_onlyFocus
+        not_holds_onlyFocus)
       (held_strawson_eq_bot not_holds_onlyFocus) (not_fc id)
   | adversative, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_adversative not_isStrawsonUE_adversative
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_adversative not_isStrawsonUE_adversative
         not_holds_adversative)
       (held_strawson_eq_bot not_holds_adversative) (not_fc id)
   | superlative, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_superlative not_isStrawsonUE_superlative
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_superlative not_isStrawsonUE_superlative
         not_holds_superlative)
       (held_strawson_eq_bot not_holds_superlative) (not_fc id)
   | conditionalAntecedent, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_conditionalAntecedent
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_conditionalAntecedent
         not_isStrawsonUE_conditionalAntecedent not_holds_conditionalAntecedent)
       (held_strawson_eq_bot not_holds_conditionalAntecedent) (not_fc id)
   | sinceTemporal, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_sinceTemporal not_isStrawsonUE_sinceTemporal
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_sinceTemporal not_isStrawsonUE_sinceTemporal
         not_holds_sinceTemporal)
       (held_strawson_eq_bot not_holds_sinceTemporal) (not_fc id)
   | modalPossibility, _ => profile_eq_of
-      (carried_eq_bot fun _ h ↦ h.weak.2 isStrawsonUE_modalPossibility)
+      (carried_eq_bot fun _ h ↦ h.monotoneDecreasing.2 isStrawsonUE_modalPossibility)
       (held_strawson_eq_bot not_holds_anti_modalPossibility)
       (iff_of_true licensesFreeChoice_modalPossibility rfl)
   | modalNecessity, _ | imperative, _ | generic, _ | freeRelative, _ => profile_eq_of
-      (carried_eq_bot fun _ h ↦ h.weak.2 isStrawsonUE_necessityFamily)
+      (carried_eq_bot fun _ h ↦ h.monotoneDecreasing.2 isStrawsonUE_necessityFamily)
       (held_strawson_eq_bot not_holds_anti_necessityFamily)
       (iff_of_true licensesFreeChoice_necessityFamily rfl)
   | positiveAssertion, _ => profile_eq_of
-      (carried_eq_bot fun _ h ↦ h.weak.2 fun _ ↦ monotone_id)
+      (carried_eq_bot fun _ h ↦ h.monotoneDecreasing.2 fun _ ↦ monotone_id)
       (held_strawson_eq_bot not_holds_anti_positiveAssertion) (not_fc id)
 
 /-! ### Licensing at the named contexts -/

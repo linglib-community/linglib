@@ -205,7 +205,7 @@ inductive Feature where
   /-- The indefinite is in the scope of negation. -/
   | negation
   /-- The negation is anti-morphic. -/
-  | antiMorphic
+  | antimorphic
   deriving DecidableEq, Fintype, Repr
 
 namespace Feature
@@ -219,13 +219,13 @@ def marked : Feature → Finset HaspelmathFunction
   | scalarEndpoint => {.question, .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice}
   | scaleReversal => {.question, .conditional, .indirectNeg, .directNeg, .comparative}
   | negation => {.indirectNeg, .directNeg}
-  | antiMorphic => {.directNeg}
+  | antimorphic => {.directNeg}
 
 /-- A feature classifies every function, but the reversal of the scale classifies only the scalar
 endpoints and anti-morphicity only the negations. -/
 def domain : Feature → Finset HaspelmathFunction
   | scaleReversal => scalarEndpoint.marked
-  | antiMorphic => negation.marked
+  | antimorphic => negation.marked
   | _ => Finset.univ
 
 /-- The functions with the unmarked value of a feature. -/
@@ -289,9 +289,9 @@ section Licensing
 
 open PolarityItem LicensingContext
 
-theorem carries_antiMorphic_iff {c : LicensingContext}
+theorem carries_antimorphic_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
-    c.Licenses (.npi .antiMorphic) ↔ c.haspelmath = some .directNeg := by
+    c.Licenses (.npi .antimorphic) ↔ c.haspelmath = some .directNeg := by
   revert c; decide
 
 /-- Among the licensing contexts realizing a negation function, anti-additivity holds of every
@@ -661,9 +661,9 @@ def regionOf (ss : List Series) (e : PolarityItem) : Option (Finset HaspelmathFu
 -- The regions of the negative concord series are that of the anti-morphic class, and the region
 -- of Korean *-to* is that of the anti-additive class.
 theorem regionOf_eq_classRegion :
-    ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki, Negation.Strength.antiMorphic),
-      (mandarin, Mandarin.PolarityItems.sheiDou, .antiMorphic),
-      (russian, Russian.PolarityItems.nikto, .antiMorphic),
+    ∀ p ∈ [(hungarian, Hungarian.PolarityItems.senki, Negation.Strength.antimorphic),
+      (mandarin, Mandarin.PolarityItems.sheiDou, .antimorphic),
+      (russian, Russian.PolarityItems.nikto, .antimorphic),
       (korean, Korean.PolarityItems.nwukwuTo, .antiAdditive)],
       regionOf p.1 p.2.1 = some (classRegion (.npi p.2.2)) := by
   decide +kernel
@@ -677,7 +677,7 @@ theorem regionOf_eq_classRegion_union_question :
       (hindi, HindiUrdu.PolarityItems.kuchBhii, true),
       (french, French.PolarityItems.personne, false), (french, French.PolarityItems.rien, false),
       (french, French.PolarityItems.jamais, false)],
-      regionOf p.1 p.2.1 = some (classRegion (.npi .weak p.2.2) ∪ {.question}) := by
+      regionOf p.1 p.2.1 = some (classRegion (.npi .monotoneDecreasing p.2.2) ∪ {.question}) := by
   decide +kernel
 
 -- A free-choice class is possible under necessity, which realizes the irrealis function, where
@@ -689,7 +689,7 @@ theorem regionOf_eq_classRegion_sdiff_irrealis :
       regionOf p.1 p.2 = some (classRegion .fci \ {.irrealis})) ∧
     .irrealis ∈ classRegion .fci ∧
       regionOf english English.PolarityItems.any =
-        some (classRegion (.npi .weak true) \ {.irrealis} ∪ {.question}) := by
+        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis} ∪ {.question}) := by
   decide +kernel
 
 -- The weak class is possible in every downward-entailing context. The book, however, excludes
@@ -700,23 +700,24 @@ theorem regionOf_eq_classRegion_sdiff_irrealis :
 -- possible in the specific functions, which no named context realizes.
 theorem regionOf_eq_classRegion_sdiff_union :
     regionOf hungarian Hungarian.PolarityItems.akárki =
-        some (classRegion (.npi .weak true) \ {.irrealis, .directNeg}) ∧
+        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis, .directNeg}) ∧
     regionOf hungarian Hungarian.PolarityItems.bárki =
-        some (classRegion (.npi .weak true) \ {.irrealis, .directNeg}) ∧
+        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis, .directNeg}) ∧
     regionOf mandarin Mandarin.PolarityItems.renhe =
-        some (classRegion (.npi .weak true) \ {.irrealis, .conditional}) ∧
+        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis, .conditional}) ∧
     regionOf finnish Finnish.PolarityItems.kukaan =
-        some (classRegion (.npi .weak) \ {.conditional} ∪ {.question}) ∧
+        some (classRegion (.npi .monotoneDecreasing) \ {.conditional} ∪ {.question}) ∧
     regionOf italian Italian.PolarityItems.nessuno =
-        some (classRegion (.npi .weak) \ {.conditional, .comparative} ∪ {.question}) ∧
+        some (classRegion (.npi .monotoneDecreasing) \ {.conditional, .comparative} ∪ {.question}) ∧
     regionOf russian Russian.PolarityItems.ktoLibo =
-        some (classRegion (.npi .weak) \ {.directNeg} ∪ {.irrealis, .question}) ∧
+        some (classRegion (.npi .monotoneDecreasing) \ {.directNeg} ∪ {.irrealis, .question}) ∧
     regionOf mandarin Mandarin.PolarityItems.shei =
-        some (classRegion (.npi .weak) \ {.comparative} ∪ {.irrealis, .question}) ∧
+        some (classRegion (.npi .monotoneDecreasing) \ {.comparative} ∪ {.irrealis, .question}) ∧
     regionOf mandarin Mandarin.PolarityItems.shenme =
-        some (classRegion (.npi .weak) \ {.comparative} ∪ {.irrealis, .question}) ∧
+        some (classRegion (.npi .monotoneDecreasing) \ {.comparative} ∪ {.irrealis, .question}) ∧
     regionOf german German.PolarityItems.irgendein =
-        some (classRegion (.npi .weak true) \ {.directNeg} ∪ {.specificUnknown, .question}) := by
+        some (classRegion (.npi .monotoneDecreasing true) \ {.directNeg} ∪
+          {.specificUnknown, .question}) := by
   decide +kernel
 
 -- In the sources of the language file, Japanese *dare-mo* is a strict negative concord item
@@ -724,7 +725,7 @@ theorem regionOf_eq_classRegion_sdiff_union :
 -- the comparative, with *omow-ana-i* 'not think' (A286).
 theorem dareMo_region :
     regionOf japanese Japanese.PolarityItems.dareMo =
-      some (classRegion (.npi .antiMorphic) ∪ {.indirectNeg, .comparative}) := by
+      some (classRegion (.npi .antimorphic) ∪ {.indirectNeg, .comparative}) := by
   decide +kernel
 
 -- A free-choice class is possible under necessity, where the book has no free-choice series for

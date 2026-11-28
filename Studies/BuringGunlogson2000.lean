@@ -116,10 +116,10 @@ theorem outer_is_interrogative_only (d : Determiner) :
   cases d <;> decide
 
 /-- The class of the paper's negative polarity items, English *either* and German *brauchen*. -/
-abbrev npi : PolarityItem.Class := .npi .weak
+abbrev npi : PolarityItem.Class := .npi .monotoneDecreasing
 
 /-- The class of the paper's positive polarity item, English *too*, which negation blocks. -/
-abbrev ppi : PolarityItem.Class := .ppi .antiMorphic
+abbrev ppi : PolarityItem.Class := .ppi .antimorphic
 
 /-- A polar question as its two probes, a negative determiner and, optionally, the class of a
 polarity item. -/
@@ -168,7 +168,7 @@ theorem polarity_eq_positive_of_isPPI {d : Determiner} {k : PolarityItem.Class} 
   generalize d.polarity = s at ha ⊢
   cases s
   · rfl
-  · exact absurd (PolarityItem.le_ofStrength_antiMorphic hk) ha.2
+  · exact absurd (PolarityItem.le_ofStrength_antimorphic hk) ha.2
 
 -- (15): *brauchen* is out in a positive assertion and in a positive polar question and fine under
 -- *niemand*, which with its acceptability under *höchstens* is compatible with the weak class and

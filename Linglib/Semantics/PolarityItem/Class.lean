@@ -66,11 +66,11 @@ theorem eq_bot_or_eq_ofStrength_of_lt_top {x : WithBot (WithTop Strength)} (h : 
     | coe s => exact .inr ⟨s, rfl⟩
 
 /-- Anti-morphic strength is the greatest element below the top of the extended chain. -/
-theorem le_ofStrength_antiMorphic {x : WithBot (WithTop Strength)} (h : x < ⊤) :
-    x ≤ ofStrength .antiMorphic := by
+theorem le_ofStrength_antimorphic {x : WithBot (WithTop Strength)} (h : x < ⊤) :
+    x ≤ ofStrength .antimorphic := by
   obtain rfl | ⟨s, rfl⟩ := eq_bot_or_eq_ofStrength_of_lt_top h
   · exact bot_le
-  · exact WithBot.coe_le_coe.2 (WithTop.coe_le_coe.2 s.le_antiMorphic)
+  · exact WithBot.coe_le_coe.2 (WithTop.coe_le_coe.2 s.le_antimorphic)
 
 /-- A class of polarity items: the strength of negation that its members require, the strength
 that blocks them, and whether the generic contexts license them. -/

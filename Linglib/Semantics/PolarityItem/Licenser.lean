@@ -190,7 +190,7 @@ modulo presupposition. This is the condition that [von-fintel-1999], [gajewski-2
 licenser carries a stronger strength when, in addition, its exhaustified meaning holds that
 strength outright. -/
 def Carries (L : Licenser) : Negation.Strength → Prop
-  | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
+  | .monotoneDecreasing => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
   | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s
 
 section OfOperator
@@ -203,8 +203,9 @@ def ofOperator (f : σ → P) : Licenser :=
 
 /-- A single operator carries a strength of negation exactly when it has the strength and is not
 upward entailing. -/
-theorem carries_ofOperator_iff : (ofOperator f).Carries s ↔ Negation.HasStrength f s ∧ ¬Monotone f := by
-  have ha (h : Negation.HasStrength f s) : Antitone f := h.of_le (s := .weak) bot_le
+theorem carries_ofOperator_iff :
+    (ofOperator f).Carries s ↔ Negation.HasStrength f s ∧ ¬Monotone f := by
+  have ha (h : Negation.HasStrength f s) : Antitone f := h.of_le (s := .monotoneDecreasing) bot_le
   cases s <;>
     simp only [ofOperator, Carries, IsStrawsonDE, IsStrawsonUE, exhaustified, Holds]
   · exact ⟨fun h ↦ ⟨h.1 ⟨⟩, fun hm ↦ h.2 fun _ ↦ hm⟩, fun h ↦ ⟨fun _ ↦ h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩⟩
@@ -239,7 +240,8 @@ theorem Holds.of_le (h : L.Holds t) (hst : s ≤ t) : L.Holds s := by
   | classical F | strawson F | modal F => exact fun p ↦ (h p).of_le hst
   | scalar F => exact fun p ↦ (h p).of_le hst
 
-theorem isStrawsonDE_of_holds_weak (h : L.Holds .weak) : L.IsStrawsonDE := by
+theorem isStrawsonDE_of_holds_monotoneDecreasing (h : L.Holds .monotoneDecreasing) :
+    L.IsStrawsonDE := by
   cases L with
   | classical F => exact fun p ↦ h p
   | scalar F => exact fun p ↦ h p
@@ -255,34 +257,34 @@ theorem licensesByStrengthening_iff : L.LicensesByStrengthening ↔ L.IsStrawson
           simpa [sup_eq_left.2 hab] using h p _ id (Finset.subset_insert b {a}),
         fun h p _ _ _ _ hD ↦ h p (Finset.sup_mono hD)⟩
 
-theorem Carries.weak (h : L.Carries s) : L.Carries .weak := by
+theorem Carries.monotoneDecreasing (h : L.Carries s) : L.Carries .monotoneDecreasing := by
   cases s with
-  | weak => exact h
-  | antiAdditive | antiMorphic => exact h.1
+  | monotoneDecreasing => exact h
+  | antiAdditive | antimorphic => exact h.1
 
 theorem Carries.of_le (h : L.Carries s) (hts : t ≤ s) : L.Carries t := by
   cases t with
-  | weak => exact h.weak
-  | antiAdditive | antiMorphic =>
+  | monotoneDecreasing => exact h.monotoneDecreasing
+  | antiAdditive | antimorphic =>
     cases s with
-    | weak => exact absurd hts (by decide)
-    | antiAdditive | antiMorphic => exact ⟨h.1, h.2.of_le hts⟩
+    | monotoneDecreasing => exact absurd hts (by decide)
+    | antiAdditive | antimorphic => exact ⟨h.1, h.2.of_le hts⟩
 
-theorem carries_iff_of_ne_weak (hs : s ≠ .weak) :
-    L.Carries s ↔ L.Carries .weak ∧ L.exhaustified.Holds s := by
+theorem carries_iff_of_ne_monotoneDecreasing (hs : s ≠ .monotoneDecreasing) :
+    L.Carries s ↔ L.Carries .monotoneDecreasing ∧ L.exhaustified.Holds s := by
   cases s with
-  | weak => exact absurd rfl hs
-  | antiAdditive | antiMorphic => exact Iff.rfl
+  | monotoneDecreasing => exact absurd rfl hs
+  | antiAdditive | antimorphic => exact Iff.rfl
 
 /-- A classical licenser carries a strength exactly when it holds that strength outright and is
 non-trivial. -/
 theorem carries_classical_iff {F : OperatorFamily} :
     (classical F).Carries s ↔ (classical F).Holds s ∧ ¬ (classical F).IsStrawsonUE := by
   cases s with
-  | weak => exact Iff.rfl
-  | antiAdditive | antiMorphic =>
+  | monotoneDecreasing => exact Iff.rfl
+  | antiAdditive | antimorphic =>
     exact ⟨fun h ↦ ⟨h.2, h.1.2⟩, fun h ↦
-      ⟨⟨isStrawsonDE_of_holds_weak (h.1.of_le (s := .weak) (by decide)), h.2⟩, h.1⟩⟩
+      ⟨⟨isStrawsonDE_of_holds_monotoneDecreasing (h.1.of_le (by decide)), h.2⟩, h.1⟩⟩
 
 /-- A non-trivial classical licenser that holds exactly the strengths up to `s₀` carries exactly
 those strengths. -/
@@ -297,8 +299,8 @@ strengths up to `s₀` once exhaustified carries exactly those strengths. -/
 theorem carries_iff_le {s₀ : Negation.Strength} (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
     (h : ∀ s, L.exhaustified.Holds s ↔ s ≤ s₀) : L.Carries s ↔ s ≤ s₀ := by
   cases s with
-  | weak => exact iff_of_true ⟨hde, hn⟩ (Negation.Strength.weak_le _)
-  | antiAdditive | antiMorphic => exact (and_iff_right ⟨hde, hn⟩).trans (h _)
+  | monotoneDecreasing => exact iff_of_true ⟨hde, hn⟩ (Negation.Strength.monotoneDecreasing_le _)
+  | antiAdditive | antimorphic => exact (and_iff_right ⟨hde, hn⟩).trans (h _)
 
 /-- A presupposing licenser carries anti-additive strength when its truth sets are anti-additive
 and one of its operators is not upward entailing. -/
@@ -306,7 +308,8 @@ theorem carries_strawson_antiAdditive {F : PresupposingFamily}
     (h : ∀ p, IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x))
     (hn : ∃ p, ¬ Presupposition.IsStrawsonUE (F.op p)) : (strawson F).Carries .antiAdditive :=
   have hh : (strawson F).Holds .antiAdditive := fun p ↦ h p
-  ⟨⟨isStrawsonDE_of_holds_weak (hh.of_le (by decide)), fun hu ↦ hn.elim fun p hp ↦ hp (hu p)⟩, hh⟩
+  ⟨⟨isStrawsonDE_of_holds_monotoneDecreasing (hh.of_le (by decide)),
+    fun hu ↦ hn.elim fun p hp ↦ hp (hu p)⟩, hh⟩
 
 theorem not_carries_strawson_antiAdditive {F : PresupposingFamily}
     (h : ∃ p, ¬ IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x)) :
@@ -318,18 +321,19 @@ theorem holds_iff_le {s₀ : Negation.Strength} (h : L.Holds s₀)
     (hn : ∀ s, s₀ < s → ¬ L.Holds s) : L.Holds s ↔ s ≤ s₀ :=
   ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.of_le hs⟩
 
-theorem not_holds_of_not_holds_weak (h : ¬ L.Holds .weak) : ¬ L.Holds s := fun hs ↦
-  h (hs.of_le bot_le)
+theorem not_holds_of_not_holds_monotoneDecreasing (h : ¬ L.Holds .monotoneDecreasing) :
+    ¬ L.Holds s :=
+  fun hs ↦ h (hs.of_le bot_le)
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition, but not downward
 entailing outright once its direct implicature is added, carries exactly weak strength
 ([gajewski-2011]). -/
-theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
-    (h : ¬ L.exhaustified.Holds .weak) : L.Carries s ↔ s = .weak := by
+theorem carries_iff_eq_monotoneDecreasing (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
+    (h : ¬ L.exhaustified.Holds .monotoneDecreasing) : L.Carries s ↔ s = .monotoneDecreasing := by
   cases s with
-  | weak => exact iff_of_true ⟨hde, hn⟩ rfl
-  | antiAdditive | antiMorphic =>
-    exact iff_of_false (fun hc ↦ not_holds_of_not_holds_weak h hc.2) (by decide)
+  | monotoneDecreasing => exact iff_of_true ⟨hde, hn⟩ rfl
+  | antiAdditive | antimorphic =>
+    exact iff_of_false (fun hc ↦ not_holds_of_not_holds_monotoneDecreasing h hc.2) (by decide)
 
 /-! ### The strengths a licenser carries and holds
 
@@ -521,9 +525,9 @@ theorem admits_iff_carried_mem_Ico (hn : ¬ (classical F).IsStrawsonUE) :
 
 /-- An antimorphic context blocks every positive polarity class, which is [vanderwouden-1997]'s
 (169). -/
-theorem antiLicenses_iff_isPPI (h : L.Holds .antiMorphic) : L.AntiLicenses k ↔ k.IsPPI :=
+theorem antiLicenses_iff_isPPI (h : L.Holds .antimorphic) : L.AntiLicenses k ↔ k.IsPPI :=
   ⟨fun ha ↦ ha.trans_lt held_lt_top, fun hk ↦
-    (le_ofStrength_antiMorphic hk).trans (coe_le_held_iff.2 h)⟩
+    (le_ofStrength_antimorphic hk).trans (coe_le_held_iff.2 h)⟩
 
 end Licenser
 

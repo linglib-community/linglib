@@ -32,7 +32,7 @@ the anti-morphic signature are the monotone decreasing and the antimorphic maps.
   a strength exactly when its function class lies in the class of that strength.
 * `Negation.HasStrength.of_toProjectivitySignature`: a map in the function class of a
   strength has the strength.
-* `Negation.hasStrength_antiMorphic_iff_holdsFor`: the antimorphic maps are those of the
+* `Negation.hasStrength_antimorphic_iff_holdsFor`: the antimorphic maps are those of the
   anti-morphism signature.
 
 ## References
@@ -51,9 +51,9 @@ open NaturalLogic
 /-- The natural-logic signature whose function class a strength of negation is, an antitone, an
 anti-additive or an anti-morphic map with Icard's unit conditions. -/
 def toProjectivitySignature : Strength → ProjectivitySignature
-  | .weak => .anti
+  | .monotoneDecreasing => .anti
   | .antiAdditive => .antiAdd
-  | .antiMorphic => .antiAddMult
+  | .antimorphic => .antiAddMult
 
 end Negation.Strength
 
@@ -67,9 +67,9 @@ and anti-morphic when it is also anti-multiplicative. -/
 def negationStrength (φ : ProjectivitySignature) : WithBot Negation.Strength :=
   if .antitone ∉ φ.properties then ⊥
   else if .antiAdditive ∈ φ.properties then
-    if .antiMultiplicative ∈ φ.properties then Negation.Strength.antiMorphic
+    if .antiMultiplicative ∈ φ.properties then Negation.Strength.antimorphic
     else Negation.Strength.antiAdditive
-  else Negation.Strength.weak
+  else Negation.Strength.monotoneDecreasing
 
 /-- A signature realizes at least a strength exactly when its function class lies in the class of
 that strength: the strength it realizes is the greatest one whose class contains it. -/
@@ -128,12 +128,12 @@ theorem HasStrength.of_toProjectivitySignature {α β : Type*} [BooleanAlgebra �
     exact ⟨ha, (IsAntiAdditive.map_compl_iff ha).2 ⟨ht, hm, hb⟩⟩
 
 /-- The antimorphic maps are the maps in the function class of the anti-morphism signature. -/
-theorem hasStrength_antiMorphic_iff_holdsFor {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β]
+theorem hasStrength_antimorphic_iff_holdsFor {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β]
     {f : α → β} :
-    HasStrength f antiMorphic ↔ ProjectivitySignature.antiAddMult.HoldsFor f :=
+    HasStrength f antimorphic ↔ ProjectivitySignature.antiAddMult.HoldsFor f :=
   ⟨fun h ↦ ProjectivitySignature.holdsFor_antiAddMult_iff.2
       (have hc := (IsAntiAdditive.map_compl_iff (f := f) h.1).1 h.2
        ⟨⟨h.1, hc.1⟩, hc.2.1, hc.2.2⟩),
-    HasStrength.of_toProjectivitySignature (s := antiMorphic)⟩
+    HasStrength.of_toProjectivitySignature (s := antimorphic)⟩
 
 end Negation

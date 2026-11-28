@@ -290,7 +290,7 @@ theorem carries_notThink : Environment.notThink.licenser.Carries .antiAdditive :
     fun p P Q ↦ propext (Set.ext_iff.1 (dom_inter_core_compl_union p.R P Q) p.w)⟩
 
 theorem not_carries_notCertain : ¬ Environment.notCertain.licenser.Carries .antiAdditive :=
-  fun h ↦ (Negation.hasStrength_weak.1
+  fun h ↦ (Negation.hasStrength_monotoneDecreasing.1
     (Negation.HasStrength.of_le (h.2 ⟨Bool, .univ, true⟩) (by decide))
     (Set.empty_subset {true})
     ⟨fun hc ↦ absurd (hc (Set.mem_univ (true, false))) (by simp), true, rfl, trivial⟩).2.elim
@@ -309,7 +309,7 @@ theorem carries_named_iff (c : LicensingContext) :
   by_cases h : c.HasLicenser
   · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
   · rw [Environment.licenser, dif_neg h]
-    exact iff_of_false (fun hc ↦ hc.weak.2 fun _ ↦ monotone_id)
+    exact iff_of_false (fun hc ↦ hc.monotoneDecreasing.2 fun _ ↦ monotone_id)
       (LicensingContext.not_licenses_of_not_hasLicenser h)
 
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=

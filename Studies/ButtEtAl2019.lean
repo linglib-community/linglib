@@ -87,7 +87,7 @@ theorem contexts_linked :
 /-- The entries of *nadie*, *nada*, *ninguno*, and *nunca* are compatible with the class of weak
 negative polarity items. -/
 theorem compatible_weak :
-    ∀ e ∈ [nadie, nada, ninguno, nunca], e.Compatible (.npi .weak) := by
+    ∀ e ∈ [nadie, nada, ninguno, nunca], e.Compatible (.npi .monotoneDecreasing) := by
   decide +kernel
 
 /-- *Jamás* follows a superlative and cannot follow a comparison, so its entry is compatible with

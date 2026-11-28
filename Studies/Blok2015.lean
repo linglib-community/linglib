@@ -178,12 +178,13 @@ end Monotonicity
 
 theorem not_carries_scopeLicenser_upTo (r : Negation.Strength) :
     ¬ (scopeLicenser (upTo s n)).Carries r := fun h ↦
-  h.weak.2 fun p ↦ scopeMonotone_upTo p.A
+  h.monotoneDecreasing.2 fun p ↦ scopeMonotone_upTo p.A
 
 -- *at most 0* is *no*, which is anti-additive; with a positive bound the quantifier is monotone
 -- decreasing and no more
 theorem carries_scopeLicenser_atMost_iff {r : Negation.Strength} :
-    (scopeLicenser (atMost n)).Carries r ↔ r ≤ if n = 0 then .antiAdditive else .weak := by
+    (scopeLicenser (atMost n)).Carries r ↔
+      r ≤ if n = 0 then .antiAdditive else .monotoneDecreasing := by
   rw [scopeLicenser, Licenser.carries_classical_iff]
   have hue : ¬ (Licenser.classical ⟨LicensingContext.FinitePredicate, fun p ↦ Set p.ι,
       fun _ ↦ Prop, fun p ↦ (NumberTree.cardinal (⋃₀ atMost n)).toDet p.A⟩).IsStrawsonUE :=
@@ -197,14 +198,14 @@ theorem carries_scopeLicenser_atMost_iff {r : Negation.Strength} :
     rw [if_pos rfl]
     refine ⟨fun h ↦ ?_, fun hr ↦ Licenser.Holds.of_le (t := .antiAdditive) (fun p P Q ↦ ?_) hr⟩
     · by_contra hr
-      obtain rfl : r = .antiMorphic := by revert hr; cases r <;> decide
+      obtain rfl : r = .antimorphic := by revert hr; cases r <;> decide
       have := (h ⟨⟨Unit, ∅⟩⟩).map_top
       simp [toDet_sUnion_atMost, Det.atMost_apply] at this
     · simp only [toDet_sUnion_atMost]
       show ((p.A ∩ (P ∪ Q)).ncard ≤ 0) = ((p.A ∩ P).ncard ≤ 0 ∧ (p.A ∩ Q).ncard ≤ 0)
       simp only [Nat.le_zero, ncard_eq_zero (toFinite _), inter_union_distrib_left,
         union_empty_iff]
-  · rw [if_neg hn, Negation.Strength.le_weak_iff]
+  · rw [if_neg hn, Negation.Strength.le_monotoneDecreasing_iff]
     refine ⟨fun h ↦ ?_, ?_⟩
     · by_contra hr
       have := (h.of_le (s := .antiAdditive) (by revert hr; cases r <;> decide))
@@ -254,10 +255,11 @@ theorem mem_upperBounded {l : Glottocode} {w : Numerals.NumeralModifier}
 weak negative polarity item *hoeven*, while *tot n* asserts the upward entailing *at least s* and
 does not admit it (34). -/
 theorem admits_hoeven :
-    (scopeLicenser (raised Dutch.NumeralModifiers.maximaal s n)).Admits (.npi .weak) ∧
-      ¬ (scopeLicenser (raised Dutch.NumeralModifiers.tot s n)).Admits (.npi .weak) :=
-  ⟨Licenser.admits_npi_iff.2 (carries_scopeLicenser_atMost_iff.2 (Negation.Strength.weak_le _)),
-    fun h ↦ not_carries_scopeLicenser_upTo .weak (Licenser.admits_npi_iff.1 h)⟩
+    (scopeLicenser (raised Dutch.NumeralModifiers.maximaal s n)).Admits (.npi .monotoneDecreasing) ∧
+      ¬ (scopeLicenser (raised Dutch.NumeralModifiers.tot s n)).Admits (.npi .monotoneDecreasing) :=
+  ⟨Licenser.admits_npi_iff.2
+      (carries_scopeLicenser_atMost_iff.2 (Negation.Strength.monotoneDecreasing_le _)),
+    fun h ↦ not_carries_scopeLicenser_upTo .monotoneDecreasing (Licenser.admits_npi_iff.1 h)⟩
 
 /-! ### The judgments -/
 
@@ -330,7 +332,8 @@ def diagnostic? (e : Datum) : Option Diagnostic :=
   | some "range" => some .range
   | some "precise" => (e.nat? "precise").map .precise
   | some "npi" =>
-      (e.parse? "npi" [(Dutch.PolarityItems.hoeven.form, Negation.Strength.weak)]).map .npi
+      (e.parse? "npi"
+        [(Dutch.PolarityItems.hoeven.form, Negation.Strength.monotoneDecreasing)]).map .npi
   | _ => none
 
 /-- Every row is felicitous exactly when the account predicts it, for the modifier it names, read

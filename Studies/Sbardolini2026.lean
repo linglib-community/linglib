@@ -345,7 +345,8 @@ theorem restrictor_most [Nonempty W] :
 Ladusaw's condition licenses *any* in it ([ladusaw-1979]), but it carries no strength of negation
 and is SUM, so neither von Fintel's condition nor the Harmony hypothesis does. -/
 theorem tautology {E : Type} (A : Set E) :
-    Antitone (Det.atLeast 0 A) ∧ ¬ (Licenser.ofOperator (Det.atLeast 0 A)).Carries .weak ∧
+    Antitone (Det.atLeast 0 A) ∧
+      ¬ (Licenser.ofOperator (Det.atLeast 0 A)).Carries .monotoneDecreasing ∧
       IsSUM (scope (W := W) (Det.atLeast 0) A) :=
   ⟨fun _ _ _ _ ↦ Nat.zero_le _,
     fun h ↦ (Licenser.carries_ofOperator_iff.1 h).2 fun _ _ _ _ ↦ Nat.zero_le _,
@@ -355,7 +356,7 @@ theorem tautology {E : Type} (A : Set E) :
 -- entailing, and is SUM, so von Fintel's condition and the Harmony hypothesis alike exclude *any*
 -- under it.
 theorem necessity {W : Type} (R : SetRel W W) :
-    ¬ (Licenser.modal LicensingContext.necessityFamily).Carries .weak ∧
+    ¬ (Licenser.modal LicensingContext.necessityFamily).Carries .monotoneDecreasing ∧
       IsSUM (modal Det.every R) :=
   ⟨fun h ↦ h.2 LicensingContext.isStrawsonUE_necessityFamily,
     isSUM_modal_of_filtrating Det.filtrating_every R⟩

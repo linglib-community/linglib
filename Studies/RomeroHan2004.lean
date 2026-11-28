@@ -288,10 +288,10 @@ def _root_.RomeroHan2004.Examples.Lexeme.entry : Examples.Lexeme → PolarityIte
 /-- The class of a lexeme of the data: *too* and *already* are positive polarity items, and
 *either* and *yet* are negative polarity items. -/
 def _root_.RomeroHan2004.Examples.Lexeme.cls : Examples.Lexeme → PolarityItem.Class
-  | .too => .ppi .antiMorphic
+  | .too => .ppi .antimorphic
   | .either => .npi .antiAdditive
   | .already => .ppi .antiAdditive
-  | .yet => .npi .weak
+  | .yet => .npi .monotoneDecreasing
 
 /-- The polarity items of a row's question, by the classes of the lexemes its spans name. -/
 def items (e : Datum) : List PolarityItem.Class :=

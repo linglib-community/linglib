@@ -42,8 +42,8 @@ again in the domain after that.
 
 * `PolarityItem.Path.environment_cons`: the environment of each domain is the environment of the
   domain below it under a layer.
-* `PolarityItem.Environment.carries_weak_of_sign_eq_neg_one`: a non-constant environment of
-  negative sign carries weak strength.
+* `PolarityItem.Environment.carries_monotoneDecreasing_of_sign_eq_neg_one`: a non-constant
+  environment of negative sign carries weak strength.
 * `PolarityItem.Environment.not_carries_of_sign_eq_one`: an environment of positive sign carries
   no strength.
 
@@ -238,8 +238,9 @@ theorem carries_of_le_negationStrength
     bot_le
 
 /-- A non-constant environment of negative sign carries weak strength. -/
-theorem carries_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) (hne : e ⊥ ≠ e ⊤) :
-    (Licenser.ofOperator e).Carries .weak := by
+theorem carries_monotoneDecreasing_of_sign_eq_neg_one (h : e.signature.sign = -1)
+    (hne : e ⊥ ≠ e ⊤) :
+    (Licenser.ofOperator e).Carries .monotoneDecreasing := by
   obtain ⟨s', hs'⟩ :=
     WithBot.ne_bot_iff_exists.1 ((ProjectivitySignature.negationStrength_ne_bot_iff _).2 h)
   exact e.carries_of_le_negationStrength (hs' ▸ WithBot.coe_le_coe.2 bot_le) hne
@@ -316,14 +317,14 @@ variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P]
   (e : Environment σ P) {s : Negation.Strength}
 
 /-- An environment of negative sign holds weak strength outright. -/
-theorem holds_weak_of_sign_eq_neg_one (h : e.signature.sign = -1) :
-    (Licenser.ofOperator e).Holds .weak :=
+theorem holds_monotoneDecreasing_of_sign_eq_neg_one (h : e.signature.sign = -1) :
+    (Licenser.ofOperator e).Holds .monotoneDecreasing :=
   fun _ ↦ e.antitone_of_sign_eq_neg_one h
 
 /-- A non-constant environment of positive sign holds no strength outright. -/
 theorem not_holds_of_sign_eq_one (h : e.signature.sign = 1) (hne : e ⊥ ≠ e ⊤) :
     ¬ (Licenser.ofOperator e).Holds s :=
-  Licenser.not_holds_of_not_holds_weak fun ha ↦ hne <| le_antisymm
+  Licenser.not_holds_of_not_holds_monotoneDecreasing fun ha ↦ hne <| le_antisymm
     (e.monotone_of_sign_eq_one h bot_le) (ha ⟨⟩ bot_le)
 
 end Environment

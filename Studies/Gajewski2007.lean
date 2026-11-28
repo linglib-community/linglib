@@ -375,13 +375,13 @@ theorem carries_named_iff (c : LicensingContext) :
   by_cases h : c.HasLicenser
   · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
   · rw [Environment.licenser, dif_neg h]
-    exact iff_of_false (fun hc ↦ hc.weak.2 fun _ ↦ monotone_id)
+    exact iff_of_false (fun hc ↦ hc.monotoneDecreasing.2 fun _ ↦ monotone_id)
       (LicensingContext.not_licenses_of_not_hasLicenser h)
 
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with
   | .named c => decidable_of_iff _ (carries_named_iff c).symm
-  | .positive => isFalse fun h ↦ h.weak.2 fun _ ↦ monotone_id
+  | .positive => isFalse fun h ↦ h.monotoneDecreasing.2 fun _ ↦ monotone_id
   | .notSome => decidable_of_iff (LicensingContext.nobody.Licenses (.npi .antiAdditive))
       (LicensingContext.licenses_npi_iff (by decide))
   | .notEvery => decidable_of_iff (LicensingContext.doubtVerb.Licenses (.npi .antiAdditive))

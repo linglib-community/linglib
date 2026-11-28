@@ -311,7 +311,7 @@ def contextOf? (r : Datum) : Option LicensingContext :=
     | .negation => .negation
 
 /-- The class of *irgendein*: a weak negative polarity item that is a free choice item as well. -/
-abbrev irgendein : PolarityItem.Class := .npi .weak true
+abbrev irgendein : PolarityItem.Class := .npi .monotoneDecreasing true
 
 /-- The ranked contexts admit the class of *irgendein* exactly where the paper finds the item
 acceptable, (12), (13) and (16)–(18), inflectional negation (21) aside. The embedded question of

@@ -62,7 +62,7 @@ open PolarityItem NaturalLogic Quantifier Quantifier.Det LicensingContext Licens
 
 /-- An environment is downward entailing when every operator it places over the item reverses
 entailment, the inclusion of its arguments. -/
-def IsDownwardEntailing (L : Licenser) : Prop := L.Holds .weak
+def IsDownwardEntailing (L : Licenser) : Prop := L.Holds .monotoneDecreasing
 
 /-- An environment is upward entailing when every operator it places over the item preserves
 entailment. -/
@@ -113,20 +113,23 @@ noncomputable def environments : List Licenser :=
 theorem isDownwardEntailing_of_mem_environments : ∀ c ∈ environments, IsDownwardEntailing c := by
   simp only [environments, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
     forall_eq]
-  exact ⟨holds_negation .weak, (holds_nobody_iff (s := .weak)).2 (by decide),
-    (holds_withoutClause_iff (s := .weak)).2 (by decide),
-    (holds_universalRestrictor_iff (s := .weak)).2 (by decide), holds_few_iff.2 le_rfl,
+  exact ⟨holds_negation .monotoneDecreasing,
+    (holds_nobody_iff (s := .monotoneDecreasing)).2 (by decide),
+    (holds_withoutClause_iff (s := .monotoneDecreasing)).2 (by decide),
+    (holds_universalRestrictor_iff (s := .monotoneDecreasing)).2 (by decide),
+    holds_few_iff.2 le_rfl,
     holds_atMost_iff.2 le_rfl, isDownwardEntailing_materialAntecedent,
-    (holds_beforeClause_iff (s := .weak)).2 (by decide),
-    (holds_tooTo_iff (s := .weak)).2 (by decide),
-    (holds_clausalComparative_iff (s := .weak)).2 (by decide)⟩
+    (holds_beforeClause_iff (s := .monotoneDecreasing)).2 (by decide),
+    (holds_tooTo_iff (s := .monotoneDecreasing)).2 (by decide),
+    (holds_clausalComparative_iff (s := .monotoneDecreasing)).2 (by decide)⟩
 
 theorem licenses_of_isDownwardEntailing {L : Licenser}
-    (hc : IsDownwardEntailing L) (hn : ¬ L.IsStrawsonUE) : L.Licenses (.npi .weak) :=
-  licenses_npi_iff.2 (.inl ⟨isStrawsonDE_of_holds_weak hc, hn⟩)
+    (hc : IsDownwardEntailing L) (hn : ¬ L.IsStrawsonUE) : L.Licenses (.npi .monotoneDecreasing) :=
+  licenses_npi_iff.2 (.inl ⟨isStrawsonDE_of_holds_monotoneDecreasing hc, hn⟩)
 
 theorem isDownwardEntailing_of_licenses {F : OperatorFamily}
-    (h : (Licenser.classical F).Licenses (.npi .weak)) : IsDownwardEntailing (.classical F) := by
+    (h : (Licenser.classical F).Licenses (.npi .monotoneDecreasing)) :
+    IsDownwardEntailing (.classical F) := by
   obtain hr | ⟨⟨⟩, -⟩ := licenses_npi_iff.1 h
   exact isDownwardEntailing_classical_iff.mpr hr.1
 
@@ -134,12 +137,14 @@ theorem isDownwardEntailing_of_licenses {F : OperatorFamily}
 licenses the weak negative polarity items exactly when it is downward entailing, (40), p. 147. -/
 theorem licenses_iff_isDownwardEntailing {F : OperatorFamily}
     (hn : ¬ (Licenser.classical F).IsStrawsonUE) :
-    (Licenser.classical F).Licenses (.npi .weak) ↔ IsDownwardEntailing (.classical F) :=
+    (Licenser.classical F).Licenses (.npi .monotoneDecreasing) ↔
+      IsDownwardEntailing (.classical F) :=
   ⟨isDownwardEntailing_of_licenses, fun h ↦ licenses_of_isDownwardEntailing h hn⟩
 
 -- negation licenses the weak items, being downward and not upward entailing
-example : negation.licenser.Licenses (.npi .weak) :=
-  (licenses_iff_isDownwardEntailing not_isStrawsonUE_negation).2 (holds_negation .weak)
+example : negation.licenser.Licenses (.npi .monotoneDecreasing) :=
+  (licenses_iff_isDownwardEntailing not_isStrawsonUE_negation).2
+    (holds_negation .monotoneDecreasing)
 
 /-- A constant operator into truth values. -/
 abbrev constFamily : OperatorFamily := ⟨PUnit, fun _ ↦ Prop, fun _ ↦ Prop, fun _ _ ↦ True⟩
@@ -147,7 +152,7 @@ abbrev constFamily : OperatorFamily := ⟨PUnit, fun _ ↦ Prop, fun _ ↦ Prop,
 -- a constant operator is downward entailing, as Ladusaw's condition counts it, but it licenses
 -- nothing, being upward entailing as well
 example : IsDownwardEntailing (.classical constFamily) ∧
-    ¬ (Licenser.classical constFamily).Licenses (.npi .weak) := by
+    ¬ (Licenser.classical constFamily).Licenses (.npi .monotoneDecreasing) := by
   refine ⟨isDownwardEntailing_classical_iff.2 fun _ _ _ _ ↦ le_rfl, fun h ↦ ?_⟩
   obtain hr | ⟨⟨⟩, -⟩ := licenses_npi_iff.1 h
   exact hr.2 fun _ _ _ _ ↦ le_rfl
@@ -324,7 +329,7 @@ theorem isTrigger_iff (e : Expression) : e.IsTrigger ↔ e ∈ triggers := by
       (Expression.qnp d).IsTrigger ↔ Expression.qnp d ∈ triggers :=
     iff_of_false (fun ht ↦ hd ((isTrigger_qnp_iff d).1 ht)) h
   cases e with
-  | not => exact iff_of_true (holds_negation .weak) (by decide)
+  | not => exact iff_of_true (holds_negation .monotoneDecreasing) (by decide)
   | det d =>
     cases d with
     | someDet =>
@@ -366,10 +371,17 @@ theorem isTrigger_iff (e : Expression) : e.IsTrigger ↔ e ∈ triggers := by
         not_scopeAntitone_most (α := Fin 1) fun A ↦ h (Fin 1) A
     | fewDet =>
       exact iff_of_true ((isTrigger_qnp_iff _).2 fun _ _ A ↦ scopeAntitone_few A) (by decide)
-  | without => exact iff_of_true ((holds_withoutClause_iff (s := .weak)).2 (by decide)) (by decide)
-  | before => exact iff_of_true ((holds_beforeClause_iff (s := .weak)).2 (by decide)) (by decide)
-  | tooTo => exact iff_of_true ((holds_tooTo_iff (s := .weak)).2 (by decide)) (by decide)
-  | doubt => exact iff_of_true ((holds_doubtVerb_iff (s := .weak)).2 (by decide)) (by decide)
+  | without =>
+    exact iff_of_true ((holds_withoutClause_iff (s := .monotoneDecreasing)).2 (by decide))
+      (by decide)
+  | before =>
+    exact iff_of_true ((holds_beforeClause_iff (s := .monotoneDecreasing)).2 (by decide))
+      (by decide)
+  | tooTo =>
+    exact iff_of_true ((holds_tooTo_iff (s := .monotoneDecreasing)).2 (by decide)) (by decide)
+  | doubt =>
+    exact iff_of_true ((holds_doubtVerb_iff (s := .monotoneDecreasing)).2 (by decide))
+      (by decide)
   | antecedent => exact iff_of_true isDownwardEntailing_materialAntecedent (by decide)
   | onlyNP =>
     have hde : IsDownwardEntailing Ladusaw1979.onlyNP := isDownwardEntailing_classical_iff.2
@@ -413,7 +425,7 @@ abbrev wItem : PolarityItem.Class := .ppi .antiAdditive
 
 /-- The class of the fragment's negative polarity items, *any*, *ever* and *yet*, which weak
 strength licenses. -/
-abbrev nItem : PolarityItem.Class := .npi .weak
+abbrev nItem : PolarityItem.Class := .npi .monotoneDecreasing
 
 -- (139)–(141), p. 170: the fragment's positive polarity items are blocked by *no one* and not by
 -- *few* or *at most*.

@@ -39,7 +39,7 @@ the sentence does not entail
 [destroys that downward entailment](##strongApply_andNode_wroteTogether).
 The condition the substrate places on the environment of a weak item, downward and not upward
 entailment, is the first clause of the revised condition without the second, and
-[holds of an environment that the revised condition rejects](##carries_weak_not_licensingCondition).
+holds of an environment that the revised condition rejects.
 
 ## Implementation notes
 
@@ -573,8 +573,8 @@ def haveBlueEyesEnvironment : PolarityItem.Licenser :=
 /-- The environment of (26) meets the substrate's condition on a weak item, downward and not upward
 entailment, which is the first clause of the Revised NPI Licensing Condition without the second,
 though it fails the revised condition. -/
-theorem carries_weak_not_licensingCondition :
-    haveBlueEyesEnvironment.Carries .weak ∧ ¬LicensingCondition sentence26 boys := by
+theorem carries_monotoneDecreasing_not_licensingCondition :
+    haveBlueEyesEnvironment.Carries .monotoneDecreasing ∧ ¬LicensingCondition sentence26 boys := by
   refine ⟨⟨fun _ _ _ h ↦ compl_subset_compl.2 (monotone_andSome h), fun h ↦ ?_⟩,
     not_licensingCondition_sentence26⟩
   have hm := h PUnit.unit (bot_le : (⊥ : Finset (Fin 4)) ≤ boys)
