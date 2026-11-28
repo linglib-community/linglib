@@ -48,6 +48,8 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
 * `RuleSet.selectMinimal_eq_some_of_applies`,
   `RuleSet.isContiguous_realizeMinimal_of_monotone`: under Pāṇinian Determinism minimal
   selection is consistent under contraction and realizes contiguous patterns.
+* `RuleSet.realizeMinimal_eq_some_iff`: under Pāṇinian Determinism minimal selection over a
+  coherent rule set realizes exactly the exponents of the Elsewhere winners.
 * `RuleSet.realizeMinimal_eq_realize`: under Pāṇinian Determinism minimal selection realizes
   what selection on any score strictly reversing specificity realizes.
 * `RuleSet.selectMinimal_factorsThrough`, `RuleSet.realizeMinimal_factorsThrough`,
@@ -367,20 +369,29 @@ theorem realizeMinimal_congr (h : v.applicable c = v.applicable c') :
     v.realizeMinimal key c = v.realizeMinimal key c' :=
   congrArg (Option.map exponent) (selectMinimal_congr h)
 
+/-- Under Pāṇinian Determinism minimal selection over a coherent rule set realizes exactly what
+the Elsewhere winners carry, whatever the order of the rule set. -/
+theorem realizeMinimal_eq_some_iff (hv : v.Coherent key)
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s}) :
+    v.realizeMinimal key c = some φ ↔ v.Realizes key c φ := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+    exact ⟨r, selectMinimal_isElsewhereWinner hr, rfl⟩
+  · obtain ⟨r, hr, -⟩ := id h
+    obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp
+      (selectMinimal_isSome_iff (key := key).mpr ⟨r, hr.prop.1, hr.prop.2⟩)
+    rw [realizeMinimal, ht, Option.map_some,
+      Realizes.eq hv hc ⟨t, selectMinimal_isElsewhereWinner ht, rfl⟩ h]
+
 /-- Under Pāṇinian Determinism a coherent rule set realizes by minimal selection what it
 realizes by selection on any score strictly reversing specificity. -/
 theorem realizeMinimal_eq_realize (hv : v.Coherent key)
     (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
     (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r) :
     v.realizeMinimal key c = v.realize f c := by
-  rcases hs : v.selectBy f c with - | r
-  · rw [realize, hs, Option.map_none, realizeMinimal_eq_none_iff,
-      ← selectBy_eq_none_iff (f := f), hs]
-  · have hw := selectBy_isElsewhereWinner hf hs
-    obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp
-      (selectMinimal_isSome_iff (key := key).mpr ⟨r, hw.prop.1, hw.prop.2⟩)
-    rw [realize, hs, realizeMinimal, ht, Option.map_some, Option.map_some,
-      Realizes.eq hv hc ⟨t, selectMinimal_isElsewhereWinner ht, rfl⟩ ⟨r, hw, rfl⟩]
+  rcases hs : v.realize f c with - | φ
+  · rwa [realizeMinimal_eq_none_iff, ← realize_eq_none_iff (f := f)]
+  · exact (realizeMinimal_eq_some_iff hv hc).mpr (realize_realizes hf hs)
 
 /-! ### Contraction under Pāṇinian Determinism -/
 
@@ -468,6 +479,13 @@ theorem realizeMinimalD_eq_of_selectMinimal_eq_some (h : v.selectMinimal key c =
 theorem realizeMinimalD_eq_fallback_of_selectMinimal_eq_none (h : v.selectMinimal key c = none) :
     v.realizeMinimalD key fallback c = fallback c := by
   simp [realizeMinimalD, realizeMinimal, h]
+
+/-- Under Pāṇinian Determinism realization with a fallback over a coherent rule set returns the
+exponent of any Elsewhere winner, whatever the order of the rule set. -/
+theorem Realizes.realizeMinimalD_eq (hv : v.Coherent key)
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (h : v.Realizes key c φ) : v.realizeMinimalD key fallback c = φ := by
+  rw [realizeMinimalD, (realizeMinimal_eq_some_iff hv hc).mpr h, Option.getD_some]
 
 theorem realizeMinimalD_eq_fallback_or_mem : v.realizeMinimalD key fallback c = fallback c ∨
     ∃ r ∈ v, v.realizeMinimalD key fallback c = exponent r :=
