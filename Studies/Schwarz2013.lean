@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Syntax.Category.Determiner.Strength
+public import Linglib.Semantics.Reference.Strength
 public import Linglib.Languages.German.Determiners
 public import Linglib.Languages.Fering.Determiners
 public import Linglib.Languages.Akan.Determiners
