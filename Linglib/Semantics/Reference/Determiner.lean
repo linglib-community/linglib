@@ -34,6 +34,8 @@ participants gives the personal pronoun's person
 ## Main declarations
 
 * `DemonstrativeDeterminer.denote`: the demonstrative's `Definite`.
+* `Person.ValuedFeature.preimage_participants_plus`: the referents a demonstrative with the plus
+  value of a person feature is anchored on are those a pronoun with the feature is defined of.
 * `Article.quantifiers`, `Determiner.Entry.DenotesQuantifier`: the quantifiers an article
   denotes, those of its definite readings and the existential of an indefinite one, and a
   determiner denoting a given quantifier.
@@ -97,6 +99,23 @@ noncomputable def _root_.SpeechAct.Context.near {P T : Type} [PartialOrder E] (c
     (c : Context W E P T) (χ : SetRel E E) (S : Set (Finset Role)) :
     (c.near χ).image S = χ.image (c.participants ⁻¹' S) := by
   rw [SpeechAct.Context.near, SetRel.image_comp, c.image_inv_graph_participants]
+
+/-- The referents whose participants have the plus value of a person feature are the referents
+the feature is defined of: a demonstrative with the value is anchored on the domain a pronoun
+with the feature presupposes. -/
+theorem _root_.Person.ValuedFeature.preimage_participants_plus {W E P T : Type*} [PartialOrder E]
+    (c : Context W E P T) (f : Person.Feature) :
+    c.participants ⁻¹' ((⟨f, .plus⟩ : Person.ValuedFeature).participantSets : Set (Finset Role)) =
+      Person.Feature.dom c f := by
+  ext x; simp [Person.ValuedFeature.Holds, Person.mem_dom_feature_iff]
+
+/-- The referents whose participants have the minus value of a person feature are those the
+feature is not defined of. -/
+theorem _root_.Person.ValuedFeature.preimage_participants_minus {W E P T : Type*} [PartialOrder E]
+    (c : Context W E P T) (f : Person.Feature) :
+    c.participants ⁻¹' ((⟨f, .minus⟩ : Person.ValuedFeature).participantSets : Set (Finset Role)) =
+      (Person.Feature.dom c f)ᶜ := by
+  ext x; simp [Person.ValuedFeature.Holds, Person.mem_dom_feature_iff]
 
 variable (N : SetRel (Finset Role) E)
 

@@ -358,9 +358,10 @@ theorem english_demonstratives_author_bipartition :
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
     (c : SpeechAct.Context W E P T) :
     c.participants ⁻¹' English.Determiners.this.participantSets = Person.dom c (some .first) := by
-  rw [participantSets_this]
-  exact Set.ext fun _ ↦ (Person.participants_mem_participantSets_first c _).trans
-    (Person.mem_dom_first c _).symm
+  rw [show English.Determiners.this.participantSets =
+    (⟨.speaker, .plus⟩ : Person.ValuedFeature).participantSets from rfl,
+    Person.ValuedFeature.preimage_participants_plus]
+  ext x; simp
 
 namespace SpatialModel
 
