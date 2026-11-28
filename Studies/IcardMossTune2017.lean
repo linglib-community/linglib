@@ -5,29 +5,48 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Order.BoundedOrder.Basic
-public import Mathlib.Order.Lattice
+public import Mathlib.CategoryTheory.Category.Preorder
+public import Mathlib.Order.Category.Preord
 public import Mathlib.Basic.Sign.Defs
-public import Mathlib.CategoryTheory.ConcreteCategory.Bundled
-public import Mathlib.Order.Hom.Basic
 
 /-!
-# Icard, Moss and Tune (2017): a monotonicity calculus
+# Marked types and their domains in the monotonicity calculus
 
-Icard, Moss and Tune type the monotonicity calculus by simple types over base types whose arrows
-are marked monotone (`+`), antitone (`−`) or unmarked (`·`). Markings compose as signs multiply
-and are compared by information, `·` lying above both `+` and `−`, and types are ordered by
-subtyping, contravariantly in domains and covariantly in codomains and markings. A marked type
-denotes a preordered domain, a `+`-arrow the monotone maps, a `−`-arrow the antitone maps and an
-unmarked arrow all maps, and each subtyping is an order-preserving coercion,
-[functorial](##IcardMossTune2017.Ty.castLE_castLE) in the subtyping order.
+The monotonicity calculus of Icard, Moss and Tune is typed by simple types over a set of base types
+in which every arrow carries a marking: `+` for monotone functions, `−` for antitone functions and
+`·` for functions about which nothing is known. A marking is a sign, `+` being `1`, `−` being `-1`
+and `·` being `0`. The marking `m` lies below `m'` in the information order, `m ⊑ m'`, when
+`m = m'` or `m' = ·`, and the types are ordered by the least relation `≼` such that
+`σ →ᵐ τ ≼ σ' →ᵐ' τ'` whenever `σ' ≼ σ`, `τ ≼ τ'` and `m ⊑ m'`.
+
+Given a preorder for each base type, the domain of `σ →ᵐ τ` is the set of functions from the domain
+of `σ` to the domain of `τ` that are monotone when `m = +` and antitone when `m = −`, ordered
+pointwise. For `σ ≼ τ` there is a monotone coercion from the domain of `σ` to the domain of `τ`,
+sending a function `k` in the domain of `σ →ᵐ τ` to `π ∘ k ∘ π'` for the coercions `π` and `π'`
+of the codomains and the domains. The coercions are the identity along `σ ≼ σ` and compose, so the
+domains form a functor from the types to the preorders.
+
+## Main definitions
+
+* `IcardMossTune2017.MonoBy`: a function is monotone under the marking `+`, antitone under `−`,
+  and arbitrary under `·`.
+* `IcardMossTune2017.Ty`: the marked types, with the subtyping order.
+* `IcardMossTune2017.Ty.Dom`: the domain of a type over preorders for the base types.
+* `IcardMossTune2017.Ty.castLE`: the coercion along a subtyping.
+* `IcardMossTune2017.Ty.domFunctor`: the domains and coercions as a functor to preorders.
+
+## Implementation notes
+
+Markings are `SignType`, so that the composition of markings is the multiplication of signs. The
+information order is a relation of its own, since `SignType` carries the order `-1 < 0 < 1`.
 
 ## TODO
 
-* The calculus itself, its terms and their typing, and the completeness theorem the paper is
-  named for, rest on these types and domains.
-* The information order on markings is the dual of the flat order on `Flat Polarity`, `·` being
-  `⊥`; `MarkingLE` and `markingSup` could be read off it.
+* The terms of the calculus and their typing, the valence of a variable occurrence, and the
+  theorem that a term in which a variable occurs only positively is monotone in that variable.
+* The join of two types that differ only in the markings along their codomains, and the erasure
+  of those markings, which the equivalence of terms is stated with.
+* The proof system and its completeness.
 
 ## References
 
@@ -40,10 +59,7 @@ namespace IcardMossTune2017
 
 /-! ### Markings -/
 
-/-! A monotonicity marking ([icard-moss-tune-2017] Definition 3.1) is a sign: `1` (`+`,
-monotone), `-1` (`−`, antitone) or `0` (`·`, no information), composing as signs multiply. -/
-
-/-- The information order on markings: `+ ⊑ ·` and `− ⊑ ·`. -/
+/-- The information order on markings: `m ⊑ m'` when `m = m'` or `m'` is `·`. -/
 def MarkingLE (m m' : SignType) : Prop := m = m' ∨ m' = 0
 
 instance : DecidableRel MarkingLE := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
@@ -59,19 +75,56 @@ theorem MarkingLE.antisymm {a b : SignType} (h₁ : MarkingLE a b) (h₂ : Marki
 
 theorem markingLE_zero (m : SignType) : MarkingLE m 0 := .inr rfl
 
-/-- The join in the information order: a marking with itself, `·` otherwise. -/
-def markingSup (m m' : SignType) : SignType := if m = m' then m else 0
+section MonoBy
 
-@[simp] theorem markingSup_self (m : SignType) : markingSup m m = m := by simp [markingSup]
+variable {α β γ δ : Type*} [Preorder α] [Preorder β] [Preorder γ] [Preorder δ] {m m' : SignType}
 
-theorem markingLE_markingSup_left (m m' : SignType) : MarkingLE m (markingSup m m') := by
-  revert m m'; decide
+/-- A function behaves as the marking `m` says when it is monotone for `m = +` and antitone for
+`m = −`; every function behaves as `·` says. -/
+def MonoBy : SignType → (α → β) → Prop
+  | .zero, _ => True
+  | .pos, f => Monotone f
+  | .neg, f => Antitone f
+
+@[simp] theorem monoBy_zero {f : α → β} : MonoBy 0 f := trivial
+
+@[simp] theorem monoBy_one {f : α → β} : MonoBy 1 f ↔ Monotone f := .rfl
+
+/-- The composition of a function that behaves as `m` with one that behaves as `m'` behaves as
+their product. -/
+theorem MonoBy.comp {g : β → γ} {f : α → β} (hg : MonoBy m g) (hf : MonoBy m' f) :
+    MonoBy (m * m') (g ∘ f) := by
+  cases m <;> cases m'
+  exacts [trivial, trivial, trivial, trivial, Antitone.comp (g := g) hg hf,
+    Antitone.comp_monotone (g := g) hg hf, trivial, Monotone.comp_antitone (g := g) hg hf,
+    Monotone.comp (g := g) hg hf]
+
+theorem MonoBy.mono {f : α → β} (h : MarkingLE m m') (hf : MonoBy m f) : MonoBy m' f := by
+  rcases h with rfl | rfl
+  exacts [hf, trivial]
+
+theorem MonoBy.conj {k : β → γ} {g : γ → δ} {f : α → β} (hk : MonoBy m k) (hg : Monotone g)
+    (hf : Monotone f) : MonoBy m (g ∘ k ∘ f) := by
+  simpa using (monoBy_one.2 hg).comp (hk.comp (monoBy_one.2 hf))
+
+/-- The marking `m` lies below `m'` in the information order exactly when every function that
+behaves as `m` says behaves as `m'` says. -/
+theorem markingLE_iff_forall_monoBy :
+    MarkingLE m m' ↔ ∀ f : Prop → Prop, MonoBy m f → MonoBy m' f := by
+  refine ⟨fun h _ ↦ .mono h, fun h ↦ ?_⟩
+  have hid : ¬Antitone (id : Prop → Prop) := fun h ↦ h (show False ≤ True from False.elim) trivial
+  have hnot : ¬Monotone Not := fun h ↦ h (show False ≤ True from False.elim) id trivial
+  have anti : Antitone Not := fun _ _ h hn ha ↦ hn (h ha)
+  cases m <;> cases m'
+  exacts [.inl rfl, absurd (h id trivial) hid, absurd (h Not trivial) hnot, .inr rfl, .inl rfl,
+    absurd (h Not anti) hnot, .inr rfl, absurd (h id monotone_id) hid, .inl rfl]
+
+end MonoBy
 
 /-! ### Marked types -/
 
-/-- Simple types over base types `B`, with marked arrows
-    ([icard-moss-tune-2017] Definition 3.1): `arr σ m τ` is the type of
-    `m`-behaved functions from `σ` to `τ`. -/
+/-- The simple types over the base types `B` with marked arrows: `arr σ m τ` is the type of the
+functions from `σ` to `τ` that behave as `m` says. -/
 inductive Ty (B : Type*) where
   | base : B → Ty B
   | arr : Ty B → SignType → Ty B → Ty B
@@ -81,10 +134,7 @@ namespace Ty
 
 variable {B : Type*}
 
-/-- The subtyping order ([icard-moss-tune-2017] Definition 3.2):
-    contravariant in domains, covariant in codomains and markings, so
-    that every `+`- or `−`-typed function can also be considered
-    `·`-typed. -/
+/-- The subtyping order, contravariant in domains and covariant in codomains and markings. -/
 protected inductive LE : Ty B → Ty B → Prop
   | base (b : B) : Ty.LE (.base b) (.base b)
   | arr {σ σ' τ τ' : Ty B} {m m' : SignType} :
@@ -97,9 +147,7 @@ protected theorem LE.refl : ∀ σ : Ty B, Ty.LE σ σ
   | .base b => .base b
   | .arr σ m τ => .arr (Ty.LE.refl σ) (Ty.LE.refl τ) (MarkingLE.refl m)
 
-protected theorem LE.trans :
-    ∀ {σ τ μ : Ty B}, Ty.LE σ τ → Ty.LE τ μ →
-      Ty.LE σ μ
+protected theorem LE.trans : ∀ {σ τ μ : Ty B}, Ty.LE σ τ → Ty.LE τ μ → Ty.LE σ μ
   | _, _, _, .base b, .base _ => .base b
   | _, _, _, .arr h₁ h₂ hm, .arr h₁' h₂' hm' =>
       .arr (h₁'.trans h₁) (h₂.trans h₂') (hm.trans hm')
@@ -116,80 +164,49 @@ instance : PartialOrder (Ty B) where
   le_antisymm _ _ := Ty.LE.antisymm
 
 @[simp] theorem base_le_base {b b' : B} : (Ty.base b : Ty B) ≤ .base b' ↔ b = b' :=
-  ⟨fun h => by cases h; rfl, fun h => h ▸ .base b⟩
+  ⟨fun h ↦ by cases h; rfl, fun h ↦ h ▸ .base b⟩
 
 @[simp] theorem not_base_le_arr {b : B} {σ τ : Ty B} {m : SignType} :
-    ¬ (Ty.base b : Ty B) ≤ .arr σ m τ := fun h => by cases h
+    ¬ (Ty.base b : Ty B) ≤ .arr σ m τ := fun h ↦ by cases h
 
 @[simp] theorem not_arr_le_base {b : B} {σ τ : Ty B} {m : SignType} :
-    ¬ (Ty.arr σ m τ : Ty B) ≤ .base b := fun h => by cases h
+    ¬ (Ty.arr σ m τ : Ty B) ≤ .base b := fun h ↦ by cases h
 
 @[simp] theorem arr_le_arr {σ σ' τ τ' : Ty B} {m m' : SignType} :
     (Ty.arr σ m τ : Ty B) ≤ .arr σ' m' τ' ↔ σ' ≤ σ ∧ τ ≤ τ' ∧ MarkingLE m m' :=
-  ⟨fun h => by cases h; exact ⟨‹_›, ‹_›, ‹_›⟩, fun ⟨h₁, h₂, hm⟩ => .arr h₁ h₂ hm⟩
+  ⟨fun h ↦ by cases h; exact ⟨‹_›, ‹_›, ‹_›⟩, fun ⟨h₁, h₂, hm⟩ ↦ .arr h₁ h₂ hm⟩
 
-set_option warn.classDefReducibility false in
-instance decidableLE [DecidableEq B] :
-    ∀ σ τ : Ty B, Decidable (σ ≤ τ)
-  | .base b, .base b' =>
-      if h : b = b' then .isTrue (h ▸ .base b)
-      else .isFalse fun hle => by cases hle; exact h rfl
-  | .base _, .arr .. => .isFalse fun hle => by cases hle
-  | .arr .., .base _ => .isFalse fun hle => by cases hle
-  | .arr σ m τ, .arr σ' m' τ' =>
-      match decidableLE σ' σ, decidableLE τ τ', (inferInstance : Decidable (MarkingLE m m')) with
-      | .isTrue h₁, .isTrue h₂, .isTrue hm => .isTrue (.arr h₁ h₂ hm)
-      | .isFalse h₁, _, _ => .isFalse fun hle => by cases hle; exact h₁ ‹_›
-      | _, .isFalse h₂, _ => .isFalse fun hle => by cases hle; exact h₂ ‹_›
-      | _, _, .isFalse hm => .isFalse fun hle => by cases hle; exact hm ‹_›
-  termination_by σ τ => sizeOf σ + sizeOf τ
+/-- Whether `σ` lies below, and whether it lies above, each type. -/
+def decidableLEAux [DecidableEq B] :
+    ∀ σ : Ty B, (∀ τ, Decidable (σ ≤ τ)) × (∀ τ, Decidable (τ ≤ σ))
+  | .base _ =>
+      (fun
+        | .base _ => decidable_of_iff _ base_le_base.symm
+        | .arr .. => .isFalse not_base_le_arr,
+       fun
+        | .base _ => decidable_of_iff _ base_le_base.symm
+        | .arr .. => .isFalse not_arr_le_base)
+  | .arr σ _ τ =>
+      (fun
+        | .base _ => .isFalse not_arr_le_base
+        | .arr σ' _ τ' =>
+            have := (decidableLEAux σ).2 σ'
+            have := (decidableLEAux τ).1 τ'
+            decidable_of_iff _ arr_le_arr.symm,
+       fun
+        | .base _ => .isFalse not_base_le_arr
+        | .arr σ' _ τ' =>
+            have := (decidableLEAux σ).1 σ'
+            have := (decidableLEAux τ).2 τ'
+            decidable_of_iff _ arr_le_arr.symm)
 
-/-! ### Compatibility join and marking erasure -/
-
-/-- The partial join of compatible types ([icard-moss-tune-2017]
-    Definition 3.3): defined when the two types share their unmarked
-    skeleton and their domains exactly, joining the markings along the
-    codomain spine. -/
-def sup? [DecidableEq B] : Ty B → Ty B → Option (Ty B)
-  | .base b, .base b' => if b = b' then some (.base b) else none
-  | .arr σ m τ, .arr σ' m' τ' =>
-      if σ = σ' then (sup? τ τ').map (.arr σ (markingSup m m')) else none
-  | _, _ => none
-
-@[simp] theorem sup?_self [DecidableEq B] :
-    ∀ σ : Ty B, sup? σ σ = some σ
-  | .base b => by simp [sup?]
-  | .arr σ m τ => by simp [sup?, sup?_self τ]
-
-theorem le_of_mem_sup?_left [DecidableEq B] :
-    ∀ {σ τ μ : Ty B}, sup? σ τ = some μ → σ ≤ μ
-  | .base b, .base b', _, h => by
-      rw [sup?] at h
-      split at h
-      · cases h; exact .base b
-      · exact absurd h (by simp)
-  | .arr σ m τ, .arr σ' m' τ', _, h => by
-      rw [sup?] at h
-      split at h
-      · rcases Option.map_eq_some_iff.mp h with ⟨κ, hκ, rfl⟩
-        exact .arr (Ty.LE.refl σ) (le_of_mem_sup?_left hκ) (markingLE_markingSup_left m m')
-      · exact absurd h (by simp)
-
-/-- Erase the markings along the codomain spine ([icard-moss-tune-2017]
-    Definition 3.3, their `σ̂`). -/
-def unmark : Ty B → Ty B
-  | .base b => .base b
-  | .arr σ _ τ => .arr σ 0 (unmark τ)
-
-theorem le_unmark : ∀ σ : Ty B, σ ≤ unmark σ
-  | .base b => .base b
-  | .arr σ m τ => .arr (Ty.LE.refl σ) (le_unmark τ) (markingLE_zero m)
+instance [DecidableEq B] : DecidableLE (Ty B) := fun σ τ ↦ (decidableLEAux σ).1 τ
 
 end Ty
 
-open CategoryTheory
+/-! ### Domains -/
 
-instance (D : Bundled Preorder) : Preorder D := D.str
+open CategoryTheory
 
 namespace Ty
 
@@ -197,111 +214,48 @@ universe u
 
 variable {B : Type*}
 
-/-- Interpret each marked type as a preordered domain over the base
-    assignment `Db` ([icard-moss-tune-2017] Definition 3.6): `+`-arrows
-    as the monotone maps, `−`-arrows as the antitone maps, unmarked
-    arrows as all maps, ordered pointwise. -/
-def Dom (Db : B → Bundled.{u} Preorder) : Ty B → Bundled.{u} Preorder
+/-- The domain of a type over the preorders `Db` of the base types: the domain of `arr σ m τ` is
+the functions from the domain of `σ` to the domain of `τ` that behave as `m` says, ordered
+pointwise. -/
+def Dom (Db : B → Preord.{u}) : Ty B → Preord.{u}
   | .base b => Db b
-  | .arr σ .pos τ => .of (Dom Db σ →o Dom Db τ)
-  | .arr σ .neg τ => .of ((Dom Db σ)ᵒᵈ →o Dom Db τ)
-  | .arr σ .zero τ => .of (Dom Db σ → Dom Db τ)
+  | .arr σ m τ => .of {f : Dom Db σ → Dom Db τ // MonoBy m f}
 
-variable {Db : B → Bundled.{u} Preorder}
+variable {Db : B → Preord.{u}} {σ₁ σ₂ τ₁ τ₂ : Ty B} {m₁ m₂ : SignType}
 
-/-- The coercion along subtyping ([icard-moss-tune-2017]
-    Definition 3.5): the identity on base types; on arrows, conjugation
-    by the inner coercions, forgetting the order-behaviour where the
-    marking weakens to `·`. -/
+/-- The coercion along a subtyping: the identity on a base type, and on an arrow type the map
+sending `k` to `π ∘ k ∘ π'` for the coercions `π` of the codomains and `π'` of the domains. -/
 def castLE : ∀ {σ τ : Ty B}, σ ≤ τ → (Dom Db σ →o Dom Db τ)
   | .base _, .base _, h => match base_le_base.mp h with | rfl => OrderHom.id
   | .base _, .arr .., h => absurd h not_base_le_arr
   | .arr .., .base _, h => absurd h not_arr_le_base
-  | .arr _ .pos _, .arr _ .neg _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr _ .neg _, .arr _ .pos _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr _ .zero _, .arr _ .pos _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr _ .zero _, .arr _ .neg _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr σ₁ .pos τ₁, .arr σ₂ .pos τ₂, h =>
+  | .arr σ₁ m₁ τ₁, .arr σ₂ m₂ τ₂, h =>
       have h' := arr_le_arr.mp h
-      { toFun := λ k => (castLE h'.2.1).comp (k.comp (castLE h'.1))
-        monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .neg τ₁, .arr σ₂ .neg τ₂, h =>
-      have h' := arr_le_arr.mp h
-      { toFun := λ k => (castLE h'.2.1).comp (k.comp (OrderHom.dual (castLE h'.1)))
-        monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .pos τ₁, .arr σ₂ .zero τ₂, h =>
-      have h' := arr_le_arr.mp h
-      show (Dom Db σ₁ →o Dom Db τ₁) →o (Dom Db σ₂ → Dom Db τ₂) from
-      { toFun := λ k a => castLE h'.2.1 (k (castLE h'.1 a))
-        monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .neg τ₁, .arr σ₂ .zero τ₂, h =>
-      have h' := arr_le_arr.mp h
-      show ((Dom Db σ₁)ᵒᵈ →o Dom Db τ₁) →o (Dom Db σ₂ → Dom Db τ₂) from
-      { toFun := λ k a => castLE h'.2.1 (k (OrderDual.toDual (castLE h'.1 a)))
-        monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .zero τ₁, .arr σ₂ .zero τ₂, h =>
-      have h' := arr_le_arr.mp h
-      show (Dom Db σ₁ → Dom Db τ₁) →o (Dom Db σ₂ → Dom Db τ₂) from
-      { toFun := λ k a => castLE h'.2.1 (k (castLE h'.1 a))
-        monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
+      show {f : Dom Db σ₁ → Dom Db τ₁ // MonoBy m₁ f} →o
+        {f : Dom Db σ₂ → Dom Db τ₂ // MonoBy m₂ f} from
+      { toFun k := ⟨castLE h'.2.1 ∘ k.val ∘ castLE h'.1,
+          (k.property.conj (castLE h'.2.1).monotone (castLE h'.1).monotone).mono h'.2.2⟩
+        monotone' _ _ hk _ := (castLE h'.2.1).monotone (hk _) }
   termination_by σ τ _ => sizeOf σ + sizeOf τ
-
-variable {σ₁ σ₂ τ₁ τ₂ : Ty B}
-
-/-! ### Application lemmas -/
 
 @[simp] theorem castLE_base {b : B} (h : (Ty.base b : Ty B) ≤ .base b) :
     castLE (Db := Db) h = OrderHom.id := by
   rw [castLE]
 
-@[simp] theorem castLE_one_one (h : (Ty.arr σ₁ 1 τ₁ : Ty B) ≤ .arr σ₂ 1 τ₂)
-    (k : Dom Db σ₁ →o Dom Db τ₁) :
-    castLE h k =
-      (castLE (arr_le_arr.mp h).2.1).comp (k.comp (castLE (arr_le_arr.mp h).1)) := by
+@[simp] theorem castLE_arr_apply (h : (Ty.arr σ₁ m₁ τ₁ : Ty B) ≤ .arr σ₂ m₂ τ₂)
+    (k : {f : Dom Db σ₁ → Dom Db τ₁ // MonoBy m₁ f}) (a : Dom Db σ₂) :
+    (castLE (Db := Db) h k : {f : Dom Db σ₂ → Dom Db τ₂ // MonoBy m₂ f}).val a =
+      castLE (arr_le_arr.mp h).2.1 (k.val (castLE (arr_le_arr.mp h).1 a)) := by
   rw [castLE]; rfl
 
-@[simp] theorem castLE_neg_one_neg_one (h : (Ty.arr σ₁ (-1) τ₁ : Ty B) ≤ .arr σ₂ (-1) τ₂)
-    (k : (Dom Db σ₁)ᵒᵈ →o Dom Db τ₁) :
-    castLE h k =
-      (castLE (arr_le_arr.mp h).2.1).comp
-        (k.comp (OrderHom.dual (castLE (arr_le_arr.mp h).1))) := by
-  rw [castLE]; rfl
-
-@[simp] theorem castLE_one_zero
-    (h : (Ty.arr σ₁ 1 τ₁ : Ty B) ≤ .arr σ₂ 0 τ₂)
-    (k : Dom Db σ₁ →o Dom Db τ₁) (a : Dom Db σ₂) :
-    (castLE h k : Dom Db σ₂ → Dom Db τ₂) a =
-      castLE (arr_le_arr.mp h).2.1 (k (castLE (arr_le_arr.mp h).1 a)) := by
-  rw [castLE]; rfl
-
-@[simp] theorem castLE_neg_one_zero
-    (h : (Ty.arr σ₁ (-1) τ₁ : Ty B) ≤ .arr σ₂ 0 τ₂)
-    (k : (Dom Db σ₁)ᵒᵈ →o Dom Db τ₁) (a : Dom Db σ₂) :
-    (castLE h k : Dom Db σ₂ → Dom Db τ₂) a =
-      castLE (arr_le_arr.mp h).2.1 (k (OrderDual.toDual (castLE (arr_le_arr.mp h).1 a))) := by
-  rw [castLE]; rfl
-
-@[simp] theorem castLE_zero_zero
-    (h : (Ty.arr σ₁ 0 τ₁ : Ty B) ≤ .arr σ₂ 0 τ₂)
-    (k : Dom Db σ₁ → Dom Db τ₁) (a : Dom Db σ₂) :
-    (castLE h k : Dom Db σ₂ → Dom Db τ₂) a =
-      castLE (arr_le_arr.mp h).2.1 (k (castLE (arr_le_arr.mp h).1 a)) := by
-  rw [castLE]; rfl
-
-/-! ### Functor laws -/
-
-/-- The coercion along `le_refl` is the identity. -/
-@[simp] theorem castLE_rfl : ∀ σ : Ty B, castLE (le_refl σ) = (OrderHom.id : Dom Db σ →o _)
+@[simp] theorem castLE_refl : ∀ σ : Ty B, castLE (le_refl σ) = (OrderHom.id : Dom Db σ →o _)
   | .base _ => castLE_base _
-  | .arr σ m τ => by
-      cases m <;> refine OrderHom.ext _ _ (funext λ k => ?_) <;>
-        first
-          | refine OrderHom.ext _ _ (funext λ a => ?_)
-          | funext a
-      all_goals simp [castLE_rfl σ, castLE_rfl τ]
+  | .arr σ m τ =>
+      OrderHom.ext _ _ <| funext fun k ↦ Subtype.ext <| funext fun a ↦ by
+        simp [castLE_refl σ, castLE_refl τ]
 
-/-- The coercions compose: casting along `h₁` then `h₂` is casting
-    along `h₁.trans h₂`. -/
+/-- The coercions compose: coercing along `σ ≤ τ` and then along `τ ≤ μ` is coercing along
+`σ ≤ μ`. -/
 theorem castLE_castLE :
     ∀ {σ τ μ : Ty B} (h₁ : σ ≤ τ) (h₂ : τ ≤ μ) (a : Dom Db σ),
       castLE h₂ (castLE h₁ a) = castLE (h₁.trans h₂) a
@@ -316,15 +270,35 @@ theorem castLE_castLE :
   | .arr σ₁ m₁ τ₁, .arr σ₂ m₂ τ₂, .arr σ₃ m₃ τ₃, h₁, h₂, k => by
       have l₁ := arr_le_arr.mp h₁
       have l₂ := arr_le_arr.mp h₂
-      cases m₁ <;> cases m₂ <;> cases m₃ <;>
-        first
-          | exact absurd l₁.2.2 (by decide)
-          | exact absurd l₂.2.2 (by decide)
-          | (first
-              | refine OrderHom.ext _ _ (funext λ a => ?_)
-              | funext a
-             simp [castLE_castLE l₂.1 l₁.1, castLE_castLE l₁.2.1 l₂.2.1])
+      refine Subtype.ext <| funext fun a ↦ ?_
+      simp [castLE_castLE l₂.1 l₁.1, castLE_castLE l₁.2.1 l₂.2.1]
   termination_by σ τ μ _ _ _ => sizeOf σ + sizeOf τ + sizeOf μ
+
+/-- The domains of the types and the coercions between them, as a functor from the subtyping order
+to the preorders. -/
+def domFunctor (Db : B → Preord.{u}) : Ty B ⥤ Preord.{u} where
+  obj := Dom Db
+  map f := Preord.ofHom (castLE f.le)
+  map_id σ := by ext a; simp
+  map_comp f g := by ext a; exact (castLE_castLE f.le g.le a).symm
+
+/-! ### Functions on one base type -/
+
+section Examples
+
+private abbrev r : Ty Unit := .base ()
+
+example : Ty.arr (.arr r 0 r) 1 r ≤ .arr (.arr r (-1) r) 0 r := by decide
+
+example : ¬Ty.arr r 0 r ≤ .arr r 1 r := by decide
+
+/-- The coercion from the monotone functions to all functions keeps the function. -/
+example {Db : Unit → Preord.{u}} (h : Ty.arr r 1 r ≤ .arr r 0 r)
+    (k : {f : Dom Db r → Dom Db r // MonoBy 1 f}) (a : Dom Db r) :
+    (castLE (Db := Db) h k : {f : Dom Db r → Dom Db r // MonoBy 0 f}).val a = k.val a := by
+  simp
+
+end Examples
 
 end Ty
 

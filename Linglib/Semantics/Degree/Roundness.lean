@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Nat.Log
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Concept
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
+public import Linglib.Core.Order.OfLowerSets.Defs
 public import Mathlib.Algebra.Group.Subgroup.ZPowers.Lemmas
 public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Algebra.Ring.Divisibility.Basic

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Filter
+public import Linglib.Core.Order.OfLowerSets.Filter
 public import Linglib.Semantics.Conditionals.Basic
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.Max

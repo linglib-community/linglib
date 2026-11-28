@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Minimals
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
+public import Linglib.Core.Order.OfLowerSets.Defs
 
 /-!
 # Minimal points of the ordering a family of sets induces

@@ -2,8 +2,8 @@ module
 
 public import Linglib.Semantics.Modality.Background
 public import Linglib.Core.Order.Filter.AtBotOn
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Minimals
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Filter
+public import Linglib.Core.Order.OfLowerSets.Minimals
+public import Linglib.Core.Order.OfLowerSets.Filter
 public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Logic.Modal.Definability
 
