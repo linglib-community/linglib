@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Natural.Marking
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Order.Hom.BoundedLattice
@@ -260,6 +261,11 @@ theorem sign_eq_neg_one_iff {φ : ProjectivitySignature} : φ.sign = -1 ↔ φ �
 @[simp] theorem sign_mul (φ ψ : ProjectivitySignature) : (φ * ψ).sign = φ.sign * ψ.sign := by
   revert φ ψ; decide
 
+/-- The sign of a signature is monotone from the refinement order to the information order on
+markings. -/
+theorem markingLE_sign {φ ψ : ProjectivitySignature} (h : φ ≤ ψ) : MarkingLE φ.sign ψ.sign := by
+  revert h; decide +revert
+
 /-- `sign` as a homomorphism of monoids with zero: the projectivity calculus composes its markings
 as the Monotonicity Calculus composes `+` and `−` ([icard-2012] p. 716). -/
 def signHom : ProjectivitySignature →*₀ SignType where
@@ -514,13 +520,21 @@ end Dual
 
 /-! #### Signs -/
 
+/-- A function in the class of a signature behaves as the sign of the signature says. -/
+theorem HoldsFor.monoBy_sign {σ : ProjectivitySignature} {f : α → β} (h : σ.HoldsFor f) :
+    MonoBy σ.sign f := by
+  generalize hs : σ.sign = s
+  cases s
+  exacts [trivial, holdsFor_anti_iff.1 (h.of_le (sign_eq_neg_one_iff.1 hs)),
+    holdsFor_mono_iff.1 (h.of_le (sign_eq_one_iff.1 hs))]
+
 theorem HoldsFor.monotone_of_sign_eq_one {σ : ProjectivitySignature} {f : α → β}
     (h : σ.HoldsFor f) (hs : σ.sign = 1) : Monotone f :=
-  holdsFor_mono_iff.1 (h.of_le (sign_eq_one_iff.1 hs))
+  monoBy_one.1 (hs ▸ h.monoBy_sign)
 
 theorem HoldsFor.antitone_of_sign_eq_neg_one {σ : ProjectivitySignature} {f : α → β}
     (h : σ.HoldsFor f) (hs : σ.sign = -1) : Antitone f :=
-  holdsFor_anti_iff.1 (h.of_le (sign_eq_neg_one_iff.1 hs))
+  monoBy_neg_one.1 (hs ▸ h.monoBy_sign)
 
 /-! #### Pointwise joins and meets
 

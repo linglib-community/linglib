@@ -7,7 +7,7 @@ module
 
 public import Mathlib.CategoryTheory.Category.Preorder
 public import Mathlib.Order.Category.Preord
-public import Linglib.Semantics.Negation.Polarity
+public import Linglib.Logic.Natural.Marking
 
 /-!
 # Marked types and their domains in the monotonicity calculus
@@ -28,19 +28,12 @@ domains form a functor from the types to the preorders.
 
 ## Main definitions
 
-* `IcardMossTune2017.MonoBy`: a function is monotone under the marking `+`, antitone under `−`,
-  and arbitrary under `·`.
 * `IcardMossTune2017.Ty`: the marked types, with the subtyping order.
 * `IcardMossTune2017.Ty.sup?`: the join of two types that differ only in the markings along their
   codomains.
 * `IcardMossTune2017.Ty.Dom`: the domain of a type over preorders for the base types.
 * `IcardMossTune2017.Ty.castLE`: the coercion along a subtyping.
 * `IcardMossTune2017.Ty.domFunctor`: the domains and coercions as a functor to preorders.
-
-## Implementation notes
-
-Markings are `SignType`, so that the composition of markings is the multiplication of signs. The
-information order is a relation of its own, since `SignType` carries the order `-1 < 0 < 1`.
 
 ## TODO
 
@@ -57,89 +50,7 @@ information order is a relation of its own, since `SignType` carries the order `
 
 namespace IcardMossTune2017
 
-/-! ### Markings -/
-
-/-- The information order on markings: `m ⊑ m'` when `m = m'` or `m'` is `·`. -/
-def MarkingLE (m m' : SignType) : Prop := m = m' ∨ m' = 0
-
-instance : DecidableRel MarkingLE := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
-
-theorem MarkingLE.refl (m : SignType) : MarkingLE m m := .inl rfl
-
-theorem MarkingLE.trans {a b c : SignType} (h₁ : MarkingLE a b) (h₂ : MarkingLE b c) :
-    MarkingLE a c := by
-  revert h₁ h₂; decide +revert
-
-theorem MarkingLE.antisymm {a b : SignType} (h₁ : MarkingLE a b) (h₂ : MarkingLE b a) : a = b := by
-  revert h₁ h₂; decide +revert
-
-theorem markingLE_zero (m : SignType) : MarkingLE m 0 := .inr rfl
-
-/-- The join in the information order: `m ∨ m = m`, and `m ∨ m' = ·` when `m ≠ m'`. -/
-def markingSup (m m' : SignType) : SignType := if m = m' then m else 0
-
-@[simp] theorem markingSup_self (m : SignType) : markingSup m m = m := by simp [markingSup]
-
-theorem markingLE_markingSup_left (m m' : SignType) : MarkingLE m (markingSup m m') := by
-  revert m m'; decide
-
-theorem markingLE_markingSup_right (m m' : SignType) : MarkingLE m' (markingSup m m') := by
-  revert m m'; decide
-
-theorem markingSup_le {a b c : SignType} (h₁ : MarkingLE a c) (h₂ : MarkingLE b c) :
-    MarkingLE (markingSup a b) c := by
-  revert h₁ h₂; decide +revert
-
-section MonoBy
-
-variable {α β γ δ : Type*} [Preorder α] [Preorder β] [Preorder γ] [Preorder δ] {m m' : SignType}
-
-/-- A function behaves as the marking `m` says when it is monotone for `m = +` and antitone for
-`m = −`; every function behaves as `·` says. -/
-def MonoBy : SignType → (α → β) → Prop
-  | .zero, _ => True
-  | .pos, f => Monotone f
-  | .neg, f => Antitone f
-
-@[simp] theorem monoBy_zero {f : α → β} : MonoBy 0 f := trivial
-
-@[simp] theorem monoBy_one {f : α → β} : MonoBy 1 f ↔ Monotone f := .rfl
-
-@[simp] theorem monoBy_neg_one {f : α → β} : MonoBy (-1) f ↔ Antitone f := .rfl
-
-@[simp] theorem monoBy_coe {s : Polarity} {f : α → β} : MonoBy (s : SignType) f ↔ s.MonoBy f := by
-  cases s <;> rfl
-
-/-- The composition of a function that behaves as `m` with one that behaves as `m'` behaves as
-their product. -/
-theorem MonoBy.comp {g : β → γ} {f : α → β} (hg : MonoBy m g) (hf : MonoBy m' f) :
-    MonoBy (m * m') (g ∘ f) := by
-  cases m <;> cases m'
-  exacts [trivial, trivial, trivial, trivial, Antitone.comp (g := g) hg hf,
-    Antitone.comp_monotone (g := g) hg hf, trivial, Monotone.comp_antitone (g := g) hg hf,
-    Monotone.comp (g := g) hg hf]
-
-theorem MonoBy.mono {f : α → β} (h : MarkingLE m m') (hf : MonoBy m f) : MonoBy m' f := by
-  rcases h with rfl | rfl
-  exacts [hf, trivial]
-
-theorem MonoBy.conj {k : β → γ} {g : γ → δ} {f : α → β} (hk : MonoBy m k) (hg : Monotone g)
-    (hf : Monotone f) : MonoBy m (g ∘ k ∘ f) := by
-  simpa using (monoBy_one.2 hg).comp (hk.comp (monoBy_one.2 hf))
-
-/-- The marking `m` lies below `m'` in the information order exactly when every function that
-behaves as `m` says behaves as `m'` says. -/
-theorem markingLE_iff_forall_monoBy :
-    MarkingLE m m' ↔ ∀ f : Prop → Prop, MonoBy m f → MonoBy m' f := by
-  refine ⟨fun h _ ↦ .mono h, fun h ↦ ?_⟩
-  have hid : ¬Antitone (id : Prop → Prop) := fun h ↦ h (show False ≤ True from False.elim) trivial
-  have hnot : ¬Monotone Not := fun h ↦ h (show False ≤ True from False.elim) id trivial
-  have anti : Antitone Not := fun _ _ h hn ha ↦ hn (h ha)
-  cases m <;> cases m'
-  exacts [.inl rfl, absurd (h id trivial) hid, absurd (h Not trivial) hnot, .inr rfl, .inl rfl,
-    absurd (h Not anti) hnot, .inr rfl, absurd (h id monotone_id) hid, .inl rfl]
-
-end MonoBy
+open NaturalLogic
 
 /-! ### Marked types -/
 
