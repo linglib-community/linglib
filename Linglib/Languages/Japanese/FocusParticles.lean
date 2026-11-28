@@ -1,12 +1,13 @@
 module
 
+public import Linglib.Languages.Japanese.Morphs
 public import Linglib.Syntax.Category.Particle.Additive
 
 /-!
 # Japanese focus particles
 
 The additive particle *mo* 'also, too' is an enclitic on the phrase it adds, *Mary-mo wakaru*
-'Mary understands too'. On each of two conjuncts it is the coordinator `Japanese.Coordination.mo`
+'Also Mary understands'. On each of two conjuncts it is the coordinator `Japanese.Coordination.mo`
 'and', and on an indeterminate pronoun the particle of the indeterminate quantifiers,
 *nani-mo* 'nothing'.
 
@@ -25,6 +26,6 @@ The additive particle *mo* 'also, too' is an enclitic on the phrase it adds, *Ma
 namespace Japanese.FocusParticles
 
 /-- *mo* 'also, too', enclitic on the phrase it adds. -/
-def mo : AdditiveParticle := { morph := .encl "mo", gloss := "also, too" }
+def mo : AdditiveParticle := { morph := Morphs.mo, side := .after }
 
 end Japanese.FocusParticles

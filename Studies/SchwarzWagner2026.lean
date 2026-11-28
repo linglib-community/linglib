@@ -172,7 +172,7 @@ theorem exists_isSymmetric_blocked : ∃ (F : Set (Set (Fin 4))) (p a b : Set (F
 
 -- (14)
 theorem exhIE_eq_self_of_mem {A G : Set (Set W)} {S : Set W} (hA : TrinhHaida2015.IsDomain G S A)
-    (hfin : A.Finite) (h : exhIE A S ∈ G) : exhIE A S = S := by
+    (hfin : A.Finite) (h : exhᴵᴱ A S ∈ G) : exhᴵᴱ A S = S := by
   refine (exhIE_subset A S).eq_of_not_ssubset fun hlt ↦ ?_
   exact exhIE_notMem_lowerClosure hfin (mem_lowerClosure.2
     ⟨_, ⟨hA.closed _ h (exhIE_mem_closure hfin hA.self_mem), hlt⟩, le_rfl⟩)
@@ -279,7 +279,7 @@ theorem not_blocked_I_sdiff_A (h : SquareRelations sq) (hne : ∀ t, sq.triangle
     (le_inf hle inf_le_right).trans h.contradAO.disjoint.le_bot
 
 theorem exhIE_I_eq_self {W : Type*} {sq : Square (Set W)} (h : SquareRelations sq)
-    (hne : ∀ t, sq.triangle t ≠ ⊥) : exhIE {sq.I, sq.A, sq.O} sq.I = sq.I := by
+    (hne : ∀ t, sq.triangle t ≠ ⊥) : exhᴵᴱ {sq.I, sq.A, sq.O} sq.I = sq.I := by
   have hcov : sq.I ⊆ sq.A ∪ sq.O := fun w _ ↦
     show w ∈ sq.A ⊔ sq.O from h.contradAO.sup_eq_top ▸ mem_univ w
   refine exhIE_eq_self_of_subset_union hcov ?_ ?_

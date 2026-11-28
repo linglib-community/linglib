@@ -147,8 +147,8 @@ def additiveParticle : Language → AdditiveParticle
   | .georgian => Georgian.FocusParticles.c
   | .hungarian => Hungarian.FocusParticles.is_
 
-theorem exponent_isAlsoAdditive_iff (l : Language) (h : Head) :
-    (exponent l h).IsAlsoAdditive (additiveParticle l) ↔ h ≠ .j := by
+theorem exponent_morph_eq_additiveParticle_iff (l : Language) (h : Head) :
+    (exponent l h).morph = (additiveParticle l).morph ↔ h ≠ .j := by
   revert l h; decide
 
 -- §4, (iii)
@@ -259,6 +259,11 @@ theorem card_pattern_le_one_iff {s : Sentence} : (∀ i, (s.pattern i).card ≤ 
 -- (2): the Georgian enclitic stands on the side `headPattern` gives μ
 theorem side?_exponent_georgian_mu (i : Fin 2) :
     (exponent .georgian (.mu i)).morph.kind.side? = some .after := rfl
+
+-- (1b) and (2b): the additive particle of each language stands on that side of its phrase
+theorem headPattern_mu_self (l : Language) (i : Fin 2) :
+    headPattern (.mu i) i = {(additiveParticle l).side} := by
+  revert l i; decide
 
 /-! ### Structures, accounts and their measures -/
 
@@ -517,7 +522,7 @@ theorem minterm_onTable (T : Finset α) :
 
 -- fn. 12
 theorem exhIE_onTable_every (S : Finset α) :
-    exhIE (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑S)) = {S} := by
+    exhᴵᴱ (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑S)) = {S} := by
   rw [← Set.image_univ, ← Finset.coe_univ, onTable_every,
     exhIE_image_biInter (Finset.subset_univ S) (by simp [minterm_onTable]), minterm_onTable]
 
@@ -542,7 +547,7 @@ theorem denote_mentioned (a : Account) (l : Language) (s : Sentence) :
 /-- An end state is accurate when it matches the exhaustified sentence: the mentioned objects are
 on the table, and every innocently excludable alternative naming one object is denied. -/
 def Accurate (st : EndState) : Prop :=
-  st ∈ exhIE (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑mentioned))
+  st ∈ exhᴵᴱ (Set.range fun o ↦ onTable (individual o)) (onTable (Det.every ↑mentioned))
 
 /-- The accurate end state has the mentioned objects and nothing else on the table. -/
 theorem accurate_iff {st : EndState} : Accurate st ↔ st = mentioned := by

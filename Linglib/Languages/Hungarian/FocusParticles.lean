@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Hungarian.Morphs
 public import Linglib.Syntax.Category.Particle.Additive
 
 /-!
@@ -22,6 +23,6 @@ too'. After each of two conjuncts it is the coordinator `Hungarian.Coordination.
 namespace Hungarian.FocusParticles
 
 /-- *is* 'also, too', after the phrase it adds. -/
-def is_ : AdditiveParticle := { morph := .free "is", gloss := "also, too" }
+def is_ : AdditiveParticle := { morph := Morphs.is_, side := .after }
 
 end Hungarian.FocusParticles

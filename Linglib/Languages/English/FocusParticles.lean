@@ -5,8 +5,8 @@ public import Linglib.Syntax.Category.Particle.Additive
 /-!
 # English focus particles
 
-English has the additive particles *too*, which follows the phrase it adds, *Mary is well too*,
-and *also*, which precedes it. Neither is the coordinator *and*, as Mitrović and Sauerland point
+English has the additive particles *too*, which follows the phrase it adds, and *also*, which
+precedes it. Neither is the coordinator *and*, as Mitrović and Sauerland point
 out, while in Haspelmath's account an additive particle of either kind is one source of a
 coordinator.
 
@@ -25,9 +25,9 @@ coordinator.
 namespace English.FocusParticles
 
 /-- *too* 'also', after the phrase it adds. -/
-def too : AdditiveParticle := { morph := .free "too", gloss := "too" }
+def too : AdditiveParticle := { morph := .free "too", side := .after }
 
 /-- *also*, before the phrase it adds. -/
-def also : AdditiveParticle := { morph := .free "also", gloss := "also" }
+def also : AdditiveParticle := { morph := .free "also", side := .before }
 
 end English.FocusParticles

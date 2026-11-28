@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Japanese.Morphs
 public import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -32,16 +33,16 @@ namespace Japanese.Coordination
 /-- *to* 'and', enclitic on the first conjunct, also the comitative postposition 'with',
 `Japanese.Adpositions.«to»`. -/
 def to_ : Coordinator :=
-  { morph := .encl "to", gloss := "and", role := .conjunctive }
+  { morph := .encl "to", role := .conjunctive }
 
 /-- *mo* 'and', enclitic on each conjunct, also the additive particle `Japanese.FocusParticles.mo`
 and the universal particle of the indeterminates, `Japanese.Determiners.dareMo`. -/
 def mo : Coordinator :=
-  { morph := .encl "mo", gloss := "and", role := .conjunctive }
+  { morph := Morphs.mo, role := .conjunctive }
 
 /-- *ka* 'or', enclitic, also the question particle and the existential particle of the
 indeterminates, `Japanese.Determiners.dareKa`. -/
 def ka : Coordinator :=
-  { morph := .encl "ka", gloss := "or; question; some", role := .disjunctive }
+  { morph := Morphs.ka, role := .disjunctive }
 
 end Japanese.Coordination

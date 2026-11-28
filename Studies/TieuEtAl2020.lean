@@ -127,14 +127,14 @@ theorem weak_sdiff_singular : weak \ singular = strong := by
 
 /-- Exhaustifying *one or more* against *exactly `m`* excludes `m`: the multiplicity inference
 when `m` is one, and the *not all* inference of *some of the `m` giraffes*. -/
-theorem exhIE_weak_singleton (m : ℕ) : exhIE {weak, {m}} weak = weak \ {m} :=
+theorem exhIE_weak_singleton (m : ℕ) : exhᴵᴱ {weak, {m}} weak = weak \ {m} :=
   exhIE_pair_sdiff (φ := weak) ⟨m + 1, mem_weak.2 (Nat.le_add_left 1 m), m.succ_ne_self⟩
 
-theorem exhIE_weak_singleton_one : exhIE {weak, {1}} weak = strong :=
+theorem exhIE_weak_singleton_one : exhᴵᴱ {weak, {1}} weak = strong :=
   (exhIE_weak_singleton 1).trans (singular_eq ▸ weak_sdiff_singular)
 
 -- (13)–(15)
-theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
+theorem exhIE_weak : exhᴵᴱ {weak, singular} weak = strong := by
   have h := Number.exhIE_inclusive English.Nouns.numberSystem
   have hs : {v | v ∈ English.Nouns.numberSystem ∧ v.IsDeterminate} = {Number.singular} := by
     ext v
@@ -143,17 +143,17 @@ theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
 
 -- (3), (4), (16), (17): in a downward-entailing environment the alternative is entailed
 theorem exhIE_of_antitone {W : Type*} {f : Set ℕ → Set W} (hf : Antitone f) {a : Set ℕ}
-    (ha : a ⊆ weak) : exhIE {f weak, f a} (f weak) = f weak :=
+    (ha : a ⊆ weak) : exhᴵᴱ {f weak, f a} (f weak) = f weak :=
   exhIE_eq_self_of_forall _ _ <| by
     rintro _ (rfl | rfl) -
     exacts [subset_rfl, hf ha]
 
 -- (16), (17)
-theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ :=
+theorem exhIE_compl_weak : exhᴵᴱ {weakᶜ, singularᶜ} weakᶜ = weakᶜ :=
   exhIE_of_antitone compl_anti singular_subset_weak
 
 -- (18)
-theorem one_mem_compl_exhIE_weak : 1 ∈ (exhIE {weak, singular} weak)ᶜ := by
+theorem one_mem_compl_exhIE_weak : 1 ∈ (exhᴵᴱ {weak, singular} weak)ᶜ := by
   rw [exhIE_weak]
   simp
 
@@ -258,13 +258,13 @@ theorem not_usable_compl_homogeneous_one :
 /-! ### Predictions -/
 
 theorem multiplicity_positive :
-    exhIE {weak, singular} weak = strong ∧ IsLeast {weak, strong} strong ∧
+    exhᴵᴱ {weak, singular} weak = strong ∧ IsLeast {weak, strong} strong ∧
       {n | homogeneous n = .true} = strong :=
   ⟨exhIE_weak, isLeast_of_monotone monotone_id,
     Set.ext fun _ ↦ homogeneous_eq_true_iff.trans mem_strong.symm⟩
 
 theorem multiplicity_negative :
-    exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsLeast {weakᶜ, strongᶜ} weakᶜ ∧
+    exhᴵᴱ {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsLeast {weakᶜ, strongᶜ} weakᶜ ∧
       {n | (homogeneous n)ᶜ = .true} = weakᶜ := by
   refine ⟨exhIE_compl_weak, isLeast_of_antitone compl_anti, Set.ext fun n ↦ ?_⟩
   rw [Set.mem_ofPred_eq, compl_eq_true_iff, homogeneous_eq_false_iff]
@@ -273,8 +273,8 @@ theorem multiplicity_negative :
 /-- Where Emily fed exactly one giraffe the implicature approach treats the positive and negative
 sentences asymmetrically, and the ambiguity and homogeneity approaches do not. -/
 theorem singular_context :
-    (1 ∈ weak ∧ 1 ∉ exhIE {weak, singular} weak ∧
-        1 ∉ exhIE {weakᶜ, singularᶜ} weakᶜ) ∧
+    (1 ∈ weak ∧ 1 ∉ exhᴵᴱ {weak, singular} weak ∧
+        1 ∉ exhᴵᴱ {weakᶜ, singularᶜ} weakᶜ) ∧
       (1 ∉ strong ∧ 1 ∉ weakᶜ) ∧
       (homogeneous 1 = .undefined ∧ (homogeneous 1)ᶜ = .undefined) := by
   rw [exhIE_weak, exhIE_compl_weak, compl_eq_undefined_iff, homogeneous_eq_undefined_iff]
@@ -303,14 +303,14 @@ theorem reading_iff (k : ℕ) :
     ∀ e ∈ Examples.all, ∀ i, Examples.inference e = some i → ∀ r,
       (Examples.polarity e = some .positive →
         (Examples.reading e r = some .acceptable →
-            paraphrase k r = exhIE {weak, alternative k i} weak) ∧
+            paraphrase k r = exhᴵᴱ {weak, alternative k i} weak) ∧
           (Examples.reading e r = some .unacceptable →
-            paraphrase k r ≠ exhIE {weak, alternative k i} weak)) ∧
+            paraphrase k r ≠ exhᴵᴱ {weak, alternative k i} weak)) ∧
       (Examples.polarity e = some .negative →
         (Examples.reading e r = some .acceptable →
-            paraphrase k r = exhIE {weakᶜ, (alternative k i)ᶜ} weakᶜ) ∧
+            paraphrase k r = exhᴵᴱ {weakᶜ, (alternative k i)ᶜ} weakᶜ) ∧
           (Examples.reading e r = some .unacceptable →
-            paraphrase k r ≠ exhIE {weakᶜ, (alternative k i)ᶜ} weakᶜ)) := by
+            paraphrase k r ≠ exhᴵᴱ {weakᶜ, (alternative k i)ᶜ} weakᶜ)) := by
   intro e he i hi r
   simp only [Examples.all, List.mem_cons, List.not_mem_nil, or_false] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
@@ -335,11 +335,11 @@ theorem reward_of_singular_context :
     ∀ e ∈ Examples.all, e.nat? "n_acted_on" = some 1 →
       (Examples.polarity e = some .positive →
         (Examples.reward e = some .intermediate →
-            1 ∈ weak ∧ 1 ∉ exhIE {weak, singular} weak) ∧
+            1 ∈ weak ∧ 1 ∉ exhᴵᴱ {weak, singular} weak) ∧
           (Examples.reward e = some .minimal → 1 ∉ weak)) ∧
       (Examples.polarity e = some .negative →
         (Examples.reward e = some .intermediate →
-            1 ∈ weakᶜ ∧ 1 ∉ exhIE {weakᶜ, singularᶜ} weakᶜ) ∧
+            1 ∈ weakᶜ ∧ 1 ∉ exhᴵᴱ {weakᶜ, singularᶜ} weakᶜ) ∧
           (Examples.reward e = some .minimal → 1 ∉ weakᶜ)) := by
   intro e he hn
   simp only [Examples.all, List.mem_cons, List.not_mem_nil, or_false] at he

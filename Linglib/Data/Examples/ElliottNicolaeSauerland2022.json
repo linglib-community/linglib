@@ -70,8 +70,76 @@
           "doc": "none or several do"
         }
       ]
+    },
+    {
+      "key": "rival",
+      "lean": "rival",
+      "type": "Rival",
+      "doc": "The type of the phrase in the form the row is contrasted with.",
+      "levels": [
+        {
+          "name": "singularComplex",
+          "label": "SCI",
+          "doc": "a singular complex interrogative"
+        },
+        {
+          "name": "singularBare",
+          "label": "SBI",
+          "doc": "a singular bare interrogative"
+        },
+        {
+          "name": "pluralBare",
+          "label": "PBI",
+          "doc": "a plural bare interrogative"
+        }
+      ]
+    },
+    {
+      "key": "antecedent",
+      "lean": "antecedent",
+      "type": "Antecedent",
+      "doc": "The number of a noun phrase in the context that the interrogative phrase picks up.",
+      "levels": [
+        {
+          "name": "plural",
+          "label": "plural",
+          "doc": "a plural noun phrase"
+        }
+      ]
     }
   ],
+  "readings": {
+    "lean": "reading",
+    "type": "Reading",
+    "doc": "The answers a question is judged with.",
+    "levels": [
+      {
+        "name": "singularAnswer",
+        "label": "singular answer",
+        "doc": "an answer naming one individual"
+      },
+      {
+        "name": "pluralAnswer",
+        "label": "plural answer",
+        "doc": "an answer naming several individuals"
+      },
+      {
+        "name": "twoGroupAnswer",
+        "label": "two-group answer",
+        "doc": "an answer naming two groups of which a collective predicate holds"
+      },
+      {
+        "name": "distributiveAnswer",
+        "label": "distributive answer",
+        "doc": "a plural answer understood of each individual"
+      },
+      {
+        "name": "collectiveAnswer",
+        "label": "collective answer",
+        "doc": "a plural answer understood of the group"
+      }
+    ]
+  },
   "examples": [
     {
       "id": "elliottnicolaesauerland2022_2",
@@ -433,8 +501,8 @@
       "readings": [],
       "paperFeatures": [
         ["context", "exactlyOne"],
-        ["form", "quien"],
-        ["rival", "quienes"]
+        ["type", "SBI"],
+        ["rival", "PBI"]
       ],
       "comment": "Repeated as (55a).",
       "verified": "page-image"
@@ -457,8 +525,8 @@
       "readings": [],
       "paperFeatures": [
         ["context", "atLeastOne"],
-        ["form", "quien"],
-        ["rival", "quienes"]
+        ["type", "SBI"],
+        ["rival", "PBI"]
       ],
       "comment": "Repeated as (55b) and (58).",
       "verified": "page-image"
@@ -483,8 +551,8 @@
       "paperFeatures": [
         ["context", "several"],
         ["antecedent", "plural"],
-        ["form", "quienes"],
-        ["rival", "quien"]
+        ["type", "PBI"],
+        ["rival", "SBI"]
       ],
       "comment": "Repeated as (56). The paper reports that an anonymous reviewer perceives no contrast.",
       "verified": "page-image"
@@ -509,8 +577,8 @@
       "readings": [],
       "paperFeatures": [
         ["context", "atLeastOne"],
-        ["form", "quePl"],
-        ["rival", "quienes"]
+        ["type", "PCI"],
+        ["rival", "PBI"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -533,8 +601,8 @@
       "readings": [],
       "paperFeatures": [
         ["context", "noExistence"],
-        ["form", "quien"],
-        ["rival", "quienes"]
+        ["type", "SBI"],
+        ["rival", "PBI"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -556,7 +624,7 @@
       "readings": [],
       "paperFeatures": [
         ["context", "atLeastOne"],
-        ["form", "quienes"]
+        ["type", "PBI"]
       ],
       "comment": "Reworded from Maldonado's example, which is marked #/?? there.",
       "verified": "page-image"
@@ -580,8 +648,8 @@
       "readings": [],
       "paperFeatures": [
         ["context", "atLeastOne"],
-        ["form", "quePl"],
-        ["rival", "queSg"]
+        ["type", "PCI"],
+        ["rival", "SCI"]
       ],
       "comment": "",
       "verified": "page-image"
@@ -604,8 +672,8 @@
       "readings": [],
       "paperFeatures": [
         ["context", "twoWhispering"],
-        ["form", "quien"],
-        ["rival", "quienes"]
+        ["type", "SBI"],
+        ["rival", "PBI"]
       ],
       "comment": "The paper leaves this unexplained; printed with the singular verb throughout.",
       "verified": "page-image"
@@ -630,8 +698,8 @@
       "readings": [],
       "paperFeatures": [
         ["context", "zeroOrSeveral"],
-        ["form", "quien"],
-        ["rival", "quienes"]
+        ["type", "SBI"],
+        ["rival", "PBI"]
       ],
       "comment": "Printed quénes for the plural.",
       "verified": "page-image"

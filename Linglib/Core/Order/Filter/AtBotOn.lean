@@ -23,8 +23,8 @@ within `s` if every point of `s` has a point of `s` ranked at or below it, all o
 
 * `Filter.atBotOn_neBot_iff`: the filter is nontrivial if and only if `s` is nonempty.
 * `Filter.atBotOn_id_univ`: on a nonempty codirected order, `atBotOn id univ = atBot`.
-* `Filter.atBotOn_eq_principal`: if every point of `s` lies above a minimal point of `s`, the
-  filter is the principal filter of the minimal points of `s`.
+* `Filter.atBotOn_eq_principal_iff`: the filter is the principal filter of the minimal points of
+  `s` exactly when every point of `s` lies above a minimal point of `s`.
 
 ## Implementation notes
 
@@ -138,6 +138,16 @@ theorem atBotOn_eq_principal (hlim : ∀ u ∈ s, ∃ v, MinimalFor (· ∈ s) f
     atBotOn f s = 𝓟 {x | MinimalFor (· ∈ s) f x} :=
   Filter.ext fun _ ↦ ⟨setOf_minimalFor_subset_of_mem_atBotOn,
     mem_atBotOn_of_setOf_minimalFor_subset hlim⟩
+
+/-- The filter is the principal filter of the minimal points exactly when every point of `s` lies
+above a minimal point of `s`. -/
+theorem atBotOn_eq_principal_iff :
+    atBotOn f s = 𝓟 {x | MinimalFor (· ∈ s) f x} ↔
+      ∀ u ∈ s, ∃ v, MinimalFor (· ∈ s) f v ∧ f v ≤ f u := by
+  refine ⟨fun h u hu ↦ ?_, atBotOn_eq_principal⟩
+  have hM : {x | MinimalFor (· ∈ s) f x} ∈ atBotOn f s := h ▸ mem_principal_self _
+  obtain ⟨v, hv, hvu, hall⟩ := mem_atBotOn.1 hM u hu
+  exact ⟨v, hall v hv le_rfl, hvu⟩
 
 theorem atBotOn_eq_principal_of_wellFoundedLT [WellFoundedLT β] :
     atBotOn f s = 𝓟 {x | MinimalFor (· ∈ s) f x} :=

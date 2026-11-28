@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Languages.Japanese.Morphs
 
 /-!
 # Japanese particles
@@ -39,9 +40,10 @@ namespace Japanese.Particles
 
 /-- *ka* — clause-typing Q-morpheme. Obligatory in subordinated
 interrogatives, optional in matrix (can be dropped). Marks CP as +WH.
-Licensed in quotation as well. -/
+Licensed in quotation as well. It does not occur by itself, and its form is that of the
+coordinator *ka* 'or' and of the particle of *dare-ka* 'someone'. -/
 def ka : Clause.Marker where
-  morphs := [.free "ka"]
+  morphs := [Morphs.ka]
   script := some "か"
   anchor := .clause {.final}
   distribution := fun (c, e) ↦ match c with

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Languages.Latin.Morphs
 public import Linglib.Syntax.Category.Coordinator
 
 /-!
@@ -33,31 +34,31 @@ namespace Latin.Coordination
 
 /-- *et* 'and'. -/
 def et : Coordinator :=
-  { morph := .free "et", gloss := "and", role := .conjunctive }
+  { morph := .free "et", role := .conjunctive }
 
 /-- *-que* 'and', enclitic in the second coordinand, also the particle of *quisque* 'each',
 `Latin.Determiners.quisque`. -/
 def que : Coordinator :=
-  { morph := .encl "que", gloss := "and", role := .conjunctive }
+  { morph := Morphs.que, role := .conjunctive }
 
 /-- *atque*, before consonants *ac*, 'and also'. -/
 def atque : Coordinator :=
-  { morph := .free "atque", gloss := "and also", role := .conjunctive }
+  { morph := .free "atque", role := .conjunctive }
 
 /-- *neque*, *nec* 'and not', repeated for 'neither … nor'. -/
 def neque : Coordinator :=
-  { morph := .free "neque", gloss := "and not, nor", role := .negative }
+  { morph := .free "neque", role := .negative }
 
 /-- *aut* 'or'. -/
 def aut : Coordinator :=
-  { morph := .free "aut", gloss := "or", role := .disjunctive }
+  { morph := .free "aut", role := .disjunctive }
 
 /-- *vel* 'or'. -/
 def vel : Coordinator :=
-  { morph := .free "vel", gloss := "or", role := .disjunctive }
+  { morph := .free "vel", role := .disjunctive }
 
 /-- *sed* 'but'. -/
 def sed : Coordinator :=
-  { morph := .free "sed", gloss := "but", role := .adversative }
+  { morph := .free "sed", role := .adversative }
 
 end Latin.Coordination

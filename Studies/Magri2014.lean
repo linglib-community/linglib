@@ -77,7 +77,7 @@ variable {W ι : Type*}
 /-- (18) with each item's own Horn-mates: the meaning of the item `i` exhaustified against the
 meanings of its Horn-mates. -/
 def exh (mates : ι → Finset ι) (m : ι → Set W) (i : ι) : Set W :=
-  exhIE (m '' mates i) (m i)
+  exhᴵᴱ (m '' mates i) (m i)
 
 /-- (19): the strengthened meaning is the iterated exhaustification of [spector-2007b], the outer
 operator denying the strengthened meanings of the Horn-mates. Two iterations suffice for every
@@ -95,7 +95,7 @@ instance (i : ι) : DecidablePred (· ∈ (compl ∘ m) i) := fun w ↦
 variable [Fintype W] [Fintype ι] [DecidableEq ι]
 
 instance (i : ι) : DecidablePred (· ∈ exh mates m i) :=
-  inferInstanceAs (DecidablePred (· ∈ exhIE (m '' mates i) (m i)))
+  inferInstanceAs (DecidablePred (· ∈ exhᴵᴱ (m '' mates i) (m i)))
 
 instance (i : ι) : DecidablePred (· ∈ strengthened mates m i) :=
   inferInstanceAs (DecidablePred (· ∈ exh mates (exh mates m) i))
@@ -173,7 +173,7 @@ theorem exh_primal_mystery : exh primalMates (primal wk st) .mystery = wk :=
 
 theorem exh_primal_weak (h : (wk \ st).Nonempty) :
     exh primalMates (primal wk st) .weak = wk \ st := by
-  show exhIE (primal wk st '' ↑({.mystery, .strong} : Finset Item)) wk = wk \ st
+  show exhᴵᴱ (primal wk st '' ↑({.mystery, .strong} : Finset Item)) wk = wk \ st
   rw [Finset.coe_insert, Finset.coe_singleton, Set.image_insert_eq, Set.image_singleton]
   exact (exhIE_insert_of_subset subset_rfl
     (exhMW_nonempty (Set.finite_singleton st) (h.mono Set.sdiff_subset))).trans (exhIE_singleton h)
@@ -184,14 +184,14 @@ theorem exh_primal_weak_of_subset (h : wk ⊆ st) : exh primalMates (primal wk s
 -- (53b), (37)
 theorem strengthened_primal_mystery (h₁ : (wk \ st).Nonempty) (h₂ : (wk ∩ st).Nonempty) :
     strengthened primalMates (primal wk st) .mystery = wk ∩ st := by
-  show exhIE (exh primalMates (primal wk st) '' ↑({.weak} : Finset Item))
+  show exhᴵᴱ (exh primalMates (primal wk st) '' ↑({.weak} : Finset Item))
     (exh primalMates (primal wk st) .mystery) = wk ∩ st
   rw [Finset.coe_singleton, Set.image_singleton, exh_primal_weak h₁, exh_primal_mystery,
     exhIE_singleton (by rwa [Set.sdiff_sdiff_right_self]), Set.sdiff_sdiff_right_self]
 
 theorem strengthened_primal_mystery_of_subset (h : wk ⊆ st) :
     strengthened primalMates (primal wk st) .mystery = wk := by
-  show exhIE (exh primalMates (primal wk st) '' ↑({.weak} : Finset Item))
+  show exhᴵᴱ (exh primalMates (primal wk st) '' ↑({.weak} : Finset Item))
     (exh primalMates (primal wk st) .mystery) = wk
   rw [Finset.coe_singleton, Set.image_singleton, exh_primal_weak_of_subset h, exh_primal_mystery]
   exact exhIE_singleton_self wk

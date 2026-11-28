@@ -30,7 +30,7 @@ thus a presupposition, and a plural definite is odd
 * A plurality is the domain of Bar-Lev's existential pluralization, the disjunction of its atoms,
   and the alternatives are his subdomain alternatives, the sub-disjunctions, all of which are
   innocently includable.
-* `pex` is `Exhaustification.pexIEII`, whose homogeneity presupposition ranges over the relevant
+* `pex` is `Exhaustification.pexII`, whose homogeneity presupposition ranges over the relevant
   includable alternatives other than the prejacent. The paper's statement for the plural ranges
   over every subdomain, the whole domain among them. The two agree wherever some relevant
   alternative is true when the prejacent is, as in every case here.
@@ -84,23 +84,23 @@ variable (D x P) in
 /-- A plural predication under `pex`, (19), asserts Bar-Lev's existential pluralization and
 presupposes that its relevant subdomain alternatives are homogeneous. -/
 noncomputable abbrev pexPlural (R : Set (Set W)) : W → Trivalent :=
-  pexIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) R
+  pexᴵᴱ⁺ᴵᴵ (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) R
 
 -- (19b)
 theorem pexPlural_ne_undefined_iff (h : Separating (x ∩ D) (atom P)) (hne : (x ∩ D).Nonempty) :
     pexPlural D x P R w ≠ .undefined ↔
       Homogeneous (supClosure (atom P '' ↑(x ∩ D)) \ {(⋃ b ∈ x ∩ D, atom P b)} ∩ R) w := by
-  have hset : {a ∈ R | IsInnocentlyIncludable (supClosure (atom P '' ↑(x ∩ D)))
-      (⋃ b ∈ x ∩ D, atom P b) a ∧ a ≠ ⋃ b ∈ x ∩ D, atom P b} =
+  have hset : {a ∈ R | a ∈ II (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) ∧
+        a ≠ ⋃ b ∈ x ∩ D, atom P b} =
         supClosure (atom P '' ↑(x ∩ D)) \ {⋃ b ∈ x ∩ D, atom P b} ∩ R := by
     ext a
-    rw [Set.mem_sep_iff, isInnocentlyIncludable_iff_of_subset_supClosure (p := atom P) le_rfl
+    rw [Set.mem_sep_iff, mem_II_iff_of_subset_supClosure (p := atom P) le_rfl
       hsplit_supClosure h.single hne h.all]
     simp only [Set.mem_inter_iff, Set.mem_sdiff, Set.mem_singleton_iff]
     tauto
-  rw [pexIEII_ne_undefined_iff, hset]
+  rw [pexII_ne_undefined_iff, hset]
   exact and_iff_right fun ψ hψ ↦
-    absurd hψ (not_isInnocentlyExcludable_of_subset_supClosure le_rfl hsplit_supClosure h.single ψ)
+    absurd hψ (notMem_IE_of_subset_supClosure le_rfl hsplit_supClosure h.single ψ)
 
 /-- In (20), after accommodation, a plural predication is universal as long as no alternative for
 a single atom is pruned. -/
@@ -117,7 +117,7 @@ theorem pexPlural_eq_true_iff (h : Separating (x ∩ D) (atom P)) (hcard : 1 < (
     have hin : wb ∈ ⋃ b ∈ x ∩ D, atom P b := Set.mem_biUnion hb ((hwb b hb).2 rfl)
     rw [← Set.mem_singleton_iff.1 heq] at hin
     exact hba ((hwb a ha).1 hin).symm
-  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff h hne]
+  rw [pexII_eq_true_iff, pexPlural_ne_undefined_iff h hne]
   constructor
   · rintro ⟨hhom | hhom, hw⟩
     · exact fun b hbx hbD ↦ hhom _ (hsing b (Finset.mem_inter.2 ⟨hbx, hbD⟩))
@@ -142,7 +142,7 @@ theorem pexPlural_eq_false_iff : pexPlural D x P R w = .false ↔ ∀ a ∈ x, a
     obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
     obtain ⟨c, hc, hPc⟩ := Set.mem_iUnion₂.1 hw
     exact hnone c (Finset.mem_inter.1 (hS hc)).1 (Finset.mem_inter.1 (hS hc)).2 hPc
-  rw [pexIEII_eq_false_iff, pexIEII_ne_undefined_iff]
+  rw [pexII_eq_false_iff, pexII_ne_undefined_iff]
   refine ⟨fun ⟨_, hna⟩ a hax haD hPa ↦ hna (Set.mem_biUnion (Finset.mem_inter.2 ⟨hax, haD⟩) hPa),
     fun hnone ↦ ⟨⟨fun ψ hψ _ ↦ hout hnone ψ hψ.1, .inr fun α hα ↦ hout hnone α hα.2.1.1⟩,
       fun hw ↦ ?_⟩⟩
@@ -166,7 +166,7 @@ theorem pexPlural_subDisjsOfCard_eq_true_iff (h : Separating (x ∩ D) (atom P))
     pexPlural D x P (subDisjsOfCard (x ∩ D) (atom P) m) w = .true ↔
       w ∈ atLeastTrue (x ∩ D) (atom P) ((x ∩ D).card + 1 - m) := by
   have hne : (x ∩ D).Nonempty := Finset.card_pos.1 (by omega)
-  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff h hne, mem_atLeastTrue]
+  rw [pexII_eq_true_iff, pexPlural_ne_undefined_iff h hne, mem_atLeastTrue]
   change _ ↔ (x ∩ D).card + 1 - m ≤ ((x ∩ D).filter (P · w)).card
   have key := forall_card_eq_exists_mem_iff (I := x ∩ D) (T := (x ∩ D).filter (P · w))
     (Finset.filter_subset _ _) (m := m)
@@ -246,7 +246,7 @@ theorem localAccommodation_pruned_eq_true_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ notSmiled
       (supClosure (Set.range (atom notSmiled)) \ {atom notSmiled 2}) w = .true ↔
         0 ∉ w ∧ 1 ∉ w := by
-  rw [pexIEII_eq_true_iff, pexPlural_ne_undefined_iff separating_not ⟨0, by simp⟩]
+  rw [pexII_eq_true_iff, pexPlural_ne_undefined_iff separating_not ⟨0, by simp⟩]
   have hne2 {T : Finset (Fin 3)} {a : Fin 3} (ha : a ∈ T) (ha2 : a ≠ 2) :
       ⋃ b ∈ T, atom notSmiled b ≠ atom notSmiled 2 := fun h ↦
     (h ▸ Set.mem_biUnion ha (by simpa [atom, notSmiled] using ha2) :
@@ -489,6 +489,6 @@ end Judgments
 theorem disjoint_preimage_negExt_pexPossOr {W : Type*} (R : SetRel W W) (a b : Set W) :
     Disjoint (R.preimage a) (Trivalent.negExt (DelPinalBassiSauerland2024.pexPossOr R a b)) :=
   Set.disjoint_left.2 fun _ hw hf ↦
-    (pexIEII_eq_false_iff.1 hf).2 (by rw [SetRel.preimage_union]; exact .inl hw)
+    (pexII_eq_false_iff.1 hf).2 (by rw [SetRel.preimage_union]; exact .inl hw)
 
 end GuerriniWehbe2025
