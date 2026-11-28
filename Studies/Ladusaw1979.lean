@@ -124,25 +124,24 @@ theorem isDownwardEntailing_of_mem_environments : ∀ c ∈ environments, IsDown
     (holds_clausalComparative_iff (s := .monotoneDecreasing)).2 (by decide)⟩
 
 theorem licenses_of_isDownwardEntailing {L : Licenser}
-    (hc : IsDownwardEntailing L) (hn : ¬ L.IsStrawsonUE) : L.Licenses (.npi .monotoneDecreasing) :=
-  licenses_npi_iff.2 (.inl ⟨isStrawsonDE_of_holds_monotoneDecreasing hc, hn⟩)
+    (hc : IsDownwardEntailing L) (hn : ¬ L.IsStrawsonUE) : L.Admits (.npi .monotoneDecreasing) :=
+  admits_npi_iff.2 ⟨isStrawsonDE_of_holds_monotoneDecreasing hc, hn⟩
 
 theorem isDownwardEntailing_of_licenses {F : OperatorFamily}
-    (h : (Licenser.classical F).Licenses (.npi .monotoneDecreasing)) :
-    IsDownwardEntailing (.classical F) := by
-  obtain hr | ⟨⟨⟩, -⟩ := licenses_npi_iff.1 h
-  exact isDownwardEntailing_classical_iff.mpr hr.1
+    (h : (Licenser.classical F).Admits (.npi .monotoneDecreasing)) :
+    IsDownwardEntailing (.classical F) :=
+  isDownwardEntailing_classical_iff.mpr (admits_npi_iff.1 h).1
 
 /-- A construction whose operators are functions between lattices, and not all upward entailing,
 licenses the weak negative polarity items exactly when it is downward entailing, (40), p. 147. -/
 theorem licenses_iff_isDownwardEntailing {F : OperatorFamily}
     (hn : ¬ (Licenser.classical F).IsStrawsonUE) :
-    (Licenser.classical F).Licenses (.npi .monotoneDecreasing) ↔
+    (Licenser.classical F).Admits (.npi .monotoneDecreasing) ↔
       IsDownwardEntailing (.classical F) :=
   ⟨isDownwardEntailing_of_licenses, fun h ↦ licenses_of_isDownwardEntailing h hn⟩
 
 -- negation licenses the weak items, being downward and not upward entailing
-example : negation.licenser.Licenses (.npi .monotoneDecreasing) :=
+example : negation.licenser.Admits (.npi .monotoneDecreasing) :=
   (licenses_iff_isDownwardEntailing not_isStrawsonUE_negation).2
     (holds_negation .monotoneDecreasing)
 
@@ -152,10 +151,9 @@ abbrev constFamily : OperatorFamily := ⟨PUnit, fun _ ↦ Prop, fun _ ↦ Prop,
 -- a constant operator is downward entailing, as Ladusaw's condition counts it, but it licenses
 -- nothing, being upward entailing as well
 example : IsDownwardEntailing (.classical constFamily) ∧
-    ¬ (Licenser.classical constFamily).Licenses (.npi .monotoneDecreasing) := by
-  refine ⟨isDownwardEntailing_classical_iff.2 fun _ _ _ _ ↦ le_rfl, fun h ↦ ?_⟩
-  obtain hr | ⟨⟨⟩, -⟩ := licenses_npi_iff.1 h
-  exact hr.2 fun _ _ _ _ ↦ le_rfl
+    ¬ (Licenser.classical constFamily).Admits (.npi .monotoneDecreasing) :=
+  ⟨isDownwardEntailing_classical_iff.2 fun _ _ _ _ ↦ le_rfl, fun h ↦
+    (admits_npi_iff.1 h).2 fun _ _ _ _ ↦ le_rfl⟩
 
 /-! ### The theorem about modifiers -/
 
@@ -421,16 +419,16 @@ theorem exists_trigger_not_negation : ∃ e : Expression, e.IsTrigger ∧ ¬ e.I
 
 /-- The class of the fragment's positive polarity items, *someone*, *already* and *rather*, which
 anti-additive strength blocks. -/
-abbrev wItem : PolarityItem.Class := .ppi .antiAdditive
+abbrev wItem : PolarityItem.Distribution := .ppi .antiAdditive
 
 /-- The class of the fragment's negative polarity items, *any*, *ever* and *yet*, which weak
 strength licenses. -/
-abbrev nItem : PolarityItem.Class := .npi .monotoneDecreasing
+abbrev nItem : PolarityItem.Distribution := .npi .monotoneDecreasing
 
 -- (139)–(141), p. 170: the fragment's positive polarity items are blocked by *no one* and not by
 -- *few* or *at most*.
-theorem antiLicenses_wItem :
-    nobody.AntiLicenses wItem ∧ ¬ few.AntiLicenses wItem ∧ ¬ atMost.AntiLicenses wItem := by
+theorem admits_wItem :
+    ¬ nobody.Admits wItem ∧ few.Admits wItem ∧ atMost.Admits wItem := by
   decide
 
 /-! ### The Inherent Scope Convention -/
@@ -445,7 +443,7 @@ inductive Order where
 expressions and clause boundaries over them. -/
 inductive Interp where
   /-- The meaning of a polarity item, by its class. -/
-  | item (k : PolarityItem.Class)
+  | item (k : PolarityItem.Distribution)
   /-- An expression taking a meaning in its scope. -/
   | scope (f : Expression) (o : Order) (s : Interp)
   /-- A meaning forming an S̄. -/
@@ -492,7 +490,7 @@ is the scope of a negation, (48B.ii). -/
 def Survives (i : Interp) : Prop := ¬ i.IsN ∧ i.Licit
 
 instance decidableNMate : DecidablePred NMate
-  | .item _ => inferInstanceAs (Decidable (_ < _))
+  | .item e => inferInstanceAs (Decidable e.IsNPI)
   | .scope _ _ s => @instDecidableAnd _ _ (decidableNMate s) inferInstance
   | .clause _ => inferInstanceAs (Decidable False)
   | .pair s t => @instDecidableOr _ _ (decidableNMate s) (decidableNMate t)
@@ -504,7 +502,7 @@ instance decidableNLow : DecidablePred NLow
   | .pair s t => @instDecidableOr _ _ (decidableNLow s) (decidableNLow t)
 
 instance decidableIsW : DecidablePred IsW
-  | .item _ => inferInstanceAs (Decidable (_ < _))
+  | .item e => inferInstanceAs (Decidable e.IsPPI)
   | .scope _ _ s => decidableIsW s
   | .clause _ => inferInstanceAs (Decidable False)
   | .pair s t => @instDecidableOr _ _ (decidableIsW s) (decidableIsW t)
@@ -544,7 +542,7 @@ example {W : Type*} : Monotone fun P : Set W ↦ Pᶜᶜ := fun _ _ h ↦ by sim
 
 theorem survives_iff_licenses (f : Expression) (hc : ∃ F, f.meaning = .classical F)
     (hn : ¬ f.meaning.IsStrawsonUE) :
-    (scope f .precedes (item nItem)).Survives ↔ f.meaning.Licenses nItem := by
+    (scope f .precedes (item nItem)).Survives ↔ f.meaning.Admits nItem := by
   obtain ⟨F, hF⟩ := hc
   have hN : nItem.IsNPI := by decide
   have hP : ¬ nItem.IsPPI := by decide
@@ -561,7 +559,7 @@ theorem survives_iff_licenses (f : Expression) (hc : ∃ F, f.meaning = .classic
 /-! ### The judgments -/
 
 /-- The polarity items of the rows, by their classes. -/
-def items : List (String × PolarityItem.Class) :=
+def items : List (String × PolarityItem.Distribution) :=
   [(any.form, nItem), (ever.form, nItem), (yet.form, nItem), (someone.form, wItem),
     (already.form, wItem), (rather.form, wItem)]
 

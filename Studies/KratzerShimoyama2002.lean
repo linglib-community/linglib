@@ -311,7 +311,7 @@ def contextOf? (r : Datum) : Option LicensingContext :=
     | .negation => .negation
 
 /-- The class of *irgendein*: a weak negative polarity item that is a free choice item as well. -/
-abbrev irgendein : PolarityItem.Class := .npi .monotoneDecreasing true
+abbrev irgendein : PolarityItem.Distribution := (.npi .monotoneDecreasing ⊔ .fci)
 
 /-- The ranked contexts admit the class of *irgendein* exactly where the paper finds the item
 acceptable, (12), (13) and (16)–(18), inflectional negation (21) aside. The embedded question of
@@ -333,7 +333,7 @@ theorem rows_irgendein_selective :
 /-- The licensing theory licenses *irgendein* under inflectional negation, yet (21) is
 ungrammatical, so selectivity rather than strength excludes it. -/
 theorem negation_licenses_irgendein :
-    LicensingContext.negation.Licenses irgendein ∧
+    LicensingContext.negation.Admits irgendein ∧
       Examples.ex21.judgment = .ungrammatical :=
   ⟨by decide, rfl⟩
 

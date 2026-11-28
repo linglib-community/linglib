@@ -190,13 +190,13 @@ inductive AnyInterpretation where
   | generic
   deriving DecidableEq, Repr
 
-/-- The interpretation of *any* in a licensing context is generic exactly when the profile of the
+/-- The interpretation of *any* in a licensing context is generic exactly when the
 context licenses free choice. -/
 def interpretationOf (c : LicensingContext) : AnyInterpretation :=
-  if ∃ p ∈ c.profile, p.freeChoice = true then .generic else .episodic
+  if c.LicensesFreeChoice then .generic else .episodic
 
 theorem interpretationOf_eq_generic_iff (c : LicensingContext) :
-    interpretationOf c = .generic ↔ ∃ p ∈ c.profile, p.freeChoice = true := by
+    interpretationOf c = .generic ↔ c.LicensesFreeChoice := by
   revert c; decide
 
 /-! ### Vague restrictions and precisifications
@@ -497,7 +497,7 @@ strengthens, or it is read as settling for less under *glad*, or as a metalingui
 negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
-      (∃ c ∈ r.context, c.Licenses (.npi .monotoneDecreasing true)) ∨
+      (∃ c ∈ r.context, c.Admits (.npi .monotoneDecreasing ⊔ .fci)) ∨
         r.localSignature.negationStrength ≠ ⊥ ∨ r.settleForLess = true ∨
           r.metalinguistic = true := by
   decide +kernel

@@ -91,9 +91,13 @@ theorem compatible_weak :
   decide +kernel
 
 /-- *Jamás* follows a superlative and cannot follow a comparison, so its entry is compatible with
-no class: a class that is possible after a superlative is possible after a comparison. -/
+none of the distributions that the strengths of negation generate: those of the negative polarity
+items, of the positive polarity items, of the items that are both, and of the free choice
+items. -/
 theorem jamás_comparative :
-    tempranoJamas.judgment = .ungrammatical ∧ ∀ k, ¬ jamás.Compatible k := by
+    tempranoJamas.judgment = .ungrammatical ∧ ¬ jamás.Compatible .fci ∧
+      ∀ s t : Negation.Strength, ¬ jamás.Compatible (.npi s) ∧ ¬ jamás.Compatible (.ppi s) ∧
+        ¬ jamás.Compatible (.npi s ⊓ .ppi t) ∧ ¬ jamás.Compatible (.npi s ⊔ .fci) := by
   decide +kernel
 
 end ButtEtAl2019

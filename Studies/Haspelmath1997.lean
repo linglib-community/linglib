@@ -291,14 +291,14 @@ open PolarityItem LicensingContext
 
 theorem carries_antimorphic_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
-    c.Licenses (.npi .antimorphic) ↔ c.haspelmath = some .directNeg := by
+    c.Admits (.npi .antimorphic) ↔ c.haspelmath = some .directNeg := by
   revert c; decide
 
 /-- Among the licensing contexts realizing a negation function, anti-additivity holds of every
 licenser but *doubt*'s, not believing the complement, which is only downward entailing. -/
 theorem carries_antiAdditive_iff {c : LicensingContext}
     (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
-    c.Licenses (.npi .antiAdditive) ↔ c ≠ .doubtVerb := by
+    c.Admits (.npi .antiAdditive) ↔ c ≠ .doubtVerb := by
   revert c; decide
 
 end Licensing
@@ -651,8 +651,8 @@ open PolarityItem
 
 /-- The functions in which a class of items is possible, namely those functions that some
 context in the region of the class realizes. -/
-def classRegion (k : PolarityItem.Class) : Finset HaspelmathFunction :=
-  Finset.univ.filter fun f ↦ ∃ c ∈ k.region, c.haspelmath = some f
+def classRegion (k : PolarityItem.Distribution) : Finset HaspelmathFunction :=
+  Finset.univ.filter fun f ↦ ∃ c ∈ Distribution.region k, c.haspelmath = some f
 
 /-- The region of the series of a paradigm whose members include the form of an item. -/
 def regionOf (ss : List Series) (e : PolarityItem) : Option (Finset HaspelmathFunction) :=
@@ -677,7 +677,9 @@ theorem regionOf_eq_classRegion_union_question :
       (hindi, HindiUrdu.PolarityItems.kuchBhii, true),
       (french, French.PolarityItems.personne, false), (french, French.PolarityItems.rien, false),
       (french, French.PolarityItems.jamais, false)],
-      regionOf p.1 p.2.1 = some (classRegion (.npi .monotoneDecreasing p.2.2) ∪ {.question}) := by
+      regionOf p.1 p.2.1 = some (classRegion
+        (if p.2.2 then .npi .monotoneDecreasing ⊔ .fci else .npi .monotoneDecreasing) ∪
+          {.question}) := by
   decide +kernel
 
 -- A free-choice class is possible under necessity, which realizes the irrealis function, where
@@ -689,7 +691,7 @@ theorem regionOf_eq_classRegion_sdiff_irrealis :
       regionOf p.1 p.2 = some (classRegion .fci \ {.irrealis})) ∧
     .irrealis ∈ classRegion .fci ∧
       regionOf english English.PolarityItems.any =
-        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis} ∪ {.question}) := by
+        some (classRegion (.npi .monotoneDecreasing ⊔ .fci) \ {.irrealis} ∪ {.question}) := by
   decide +kernel
 
 -- The weak class is possible in every downward-entailing context. The book, however, excludes
@@ -700,11 +702,11 @@ theorem regionOf_eq_classRegion_sdiff_irrealis :
 -- possible in the specific functions, which no named context realizes.
 theorem regionOf_eq_classRegion_sdiff_union :
     regionOf hungarian Hungarian.PolarityItems.akárki =
-        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis, .directNeg}) ∧
+        some (classRegion (.npi .monotoneDecreasing ⊔ .fci) \ {.irrealis, .directNeg}) ∧
     regionOf hungarian Hungarian.PolarityItems.bárki =
-        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis, .directNeg}) ∧
+        some (classRegion (.npi .monotoneDecreasing ⊔ .fci) \ {.irrealis, .directNeg}) ∧
     regionOf mandarin Mandarin.PolarityItems.renhe =
-        some (classRegion (.npi .monotoneDecreasing true) \ {.irrealis, .conditional}) ∧
+        some (classRegion (.npi .monotoneDecreasing ⊔ .fci) \ {.irrealis, .conditional}) ∧
     regionOf finnish Finnish.PolarityItems.kukaan =
         some (classRegion (.npi .monotoneDecreasing) \ {.conditional} ∪ {.question}) ∧
     regionOf italian Italian.PolarityItems.nessuno =
@@ -716,7 +718,7 @@ theorem regionOf_eq_classRegion_sdiff_union :
     regionOf mandarin Mandarin.PolarityItems.shenme =
         some (classRegion (.npi .monotoneDecreasing) \ {.comparative} ∪ {.irrealis, .question}) ∧
     regionOf german German.PolarityItems.irgendein =
-        some (classRegion (.npi .monotoneDecreasing true) \ {.directNeg} ∪
+        some (classRegion (.npi .monotoneDecreasing ⊔ .fci) \ {.directNeg} ∪
           {.specificUnknown, .question}) := by
   decide +kernel
 

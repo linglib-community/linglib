@@ -209,16 +209,16 @@ def notThatImpossibleNot := sentence .negative (some .notThatImpossible)
 /-! ### The items -/
 
 /-- The class of *quoi que ce soit*, licensed by downward entailment. -/
-abbrev quoiQueCeSoit : PolarityItem.Class := .npi .monotoneDecreasing
+abbrev quoiQueCeSoit : PolarityItem.Distribution := .npi .monotoneDecreasing
 
 /-- The class of *some*, blocked by downward entailment. -/
-abbrev someItem : PolarityItem.Class := .ppi .monotoneDecreasing
+abbrev someItem : PolarityItem.Distribution := .ppi .monotoneDecreasing
 
 /-- The class of *any*, licensed by downward entailment. -/
-abbrev anyItem : PolarityItem.Class := .npi .monotoneDecreasing
+abbrev anyItem : PolarityItem.Distribution := .npi .monotoneDecreasing
 
 /-- The class of *some* on which only anti-additivity blocks it, as in [szabolcsi-2004]. -/
-abbrev someoneItem : PolarityItem.Class := .ppi .antiAdditive
+abbrev someoneItem : PolarityItem.Distribution := .ppi .antiAdditive
 
 /-! ### Flip-flop -/
 
@@ -465,7 +465,7 @@ occurrences of *some* and *any* are: the item at each index, the constituents in
 acceptability is evaluated, numbered from the bottom, the lowest of them containing each item, and
 the meaning of each constituent as a function of the meanings of the items. -/
 structure LF (ι : Type) [DecidableEq ι] where
-  item : ι → PolarityItem.Class
+  item : ι → PolarityItem.Distribution
   height : ℕ
   position : ι → ℕ
   meaning : ℕ → (ι → Quantifier (Fin 2)) → Clause
@@ -604,7 +604,7 @@ theorem not_modalBase₂_subset_empty : ¬modalBase₂ ⊆ ∅ := fun h ↦
 
 /-- *It is impossible that `subj` stole `obj`*, the subject above its clause: the polarity phrase,
 TP and CP of the embedded clause, and the polarity phrase and TP of the matrix. -/
-def impossibleSubjObj (obj subj : PolarityItem.Class) : LF (Fin 2) where
+def impossibleSubjObj (obj subj : PolarityItem.Distribution) : LF (Fin 2) where
   item := ![obj, subj]
   height := 5
   position := ![0, 1]
@@ -643,7 +643,7 @@ def impossibleSomeoneNotAnything : LF (Fin 2) where
     | _, Q => impossible₂ (subject (Q 1) fun x ↦ (did₂ x (Q 0))ᶜ)
 
 /-- *I'm not sure that `subj` understood `obj`*, both items in the embedded polarity phrase. -/
-def notSureSubjObj (obj subj : PolarityItem.Class) : LF (Fin 2) where
+def notSureSubjObj (obj subj : PolarityItem.Distribution) : LF (Fin 2) where
   item := ![obj, subj]
   height := 5
   position := ![0, 0]
@@ -700,7 +700,7 @@ theorem subject_someOne_top : subject someOne ⊤ = ⊤ := by
 
 section ImpossibleSubjObj
 
-variable {obj subj : PolarityItem.Class}
+variable {obj subj : PolarityItem.Distribution}
 
 theorem monotone_impossibleSubjObj_env {i : Fin 2} {j : ℕ} (hj : j ≤ 2) :
     Monotone ((impossibleSubjObj obj subj).env i j) := by
@@ -840,7 +840,7 @@ theorem licensed_impossibleSomeoneNotAnything : impossibleSomeoneNotAnything.Lic
 
 section NotSureSubjObj
 
-variable {obj subj : PolarityItem.Class}
+variable {obj subj : PolarityItem.Distribution}
 
 theorem monotone_notSureSubjObj_env {i : Fin 2} {j : ℕ} (hj : j ≤ 2) :
     Monotone ((notSureSubjObj obj subj).env i j) := by
@@ -928,7 +928,7 @@ theorem downwardEntailment :
 /-! ### The judgments -/
 
 /-- The class of the item of a row. -/
-def itemClass : Examples.Item → PolarityItem.Class
+def itemClass : Examples.Item → PolarityItem.Distribution
   | .quoiQueCeSoit => quoiQueCeSoit
   | .any => anyItem
   | .some => someItem
@@ -980,12 +980,12 @@ theorem readCount_licensing : Datum.ReadCount licensing? Examples.all 16 := by
   decide +kernel
 
 /-- The class of a subject. -/
-def subjectClass : Examples.Subject → PolarityItem.Class
+def subjectClass : Examples.Subject → PolarityItem.Distribution
   | .someone => someItem
   | .anyone => anyItem
 
 /-- The class of an object. -/
-def objectClass : Examples.Object → PolarityItem.Class
+def objectClass : Examples.Object → PolarityItem.Distribution
   | .anything => anyItem
   | .something => someItem
 

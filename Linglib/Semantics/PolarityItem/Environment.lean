@@ -36,7 +36,7 @@ again in the domain after that.
 * `PolarityItem.Environment.comp`, `PolarityItem.Environment.id`: composition and the identity.
 * `PolarityItem.Environment.signatureHom`: the signature of a layer, as a monoid homomorphism.
 * `PolarityItem.Path`: the environment of the minimal domain of an item and the layers above it.
-* `PolarityItem.Path.Licenses`: some domain of the path admits a class of items.
+* `PolarityItem.Path.Licenses`: some domain of the path admits a distribution.
 
 ## Main results
 
@@ -332,23 +332,21 @@ end Environment
 namespace Path
 
 variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P] (p : Path σ P)
-  {s : Negation.Strength} {π : Class}
+  {s : Negation.Strength} {d : Distribution}
 
 /-- The licensing condition, which requires that some domain admit the item. -/
-def Licenses (π : Class) : Prop :=
-  ∃ t ∈ p.layers.tails, (Licenser.ofOperator (p.environment t)).Admits π
+def Licenses (d : Distribution) : Prop :=
+  ∃ t ∈ p.layers.tails, (Licenser.ofOperator (p.environment t)).Admits d
 
-/-- A class of negative polarity items is not licensed on a path along which every domain has
-positive sign. -/
-theorem not_licenses_npi {fc : Bool}
+/-- A negative polarity item is not licensed on a path along which every domain has positive
+sign. -/
+theorem not_licenses_npi
     (h : ∀ t ∈ p.layers.tails, (p.environment t).signature.sign = 1) :
-    ¬p.Licenses (.npi s fc) := by
-  rintro ⟨t, ht, ha⟩
-  obtain hc | ⟨⟨⟩, -⟩ := Licenser.licenses_npi_iff.1 ha.1
-  exact (p.environment t).not_carries_of_sign_eq_one (h t ht) hc
+    ¬p.Licenses (.npi s) := fun ⟨t, ht, ha⟩ ↦
+  (p.environment t).not_carries_of_sign_eq_one (h t ht) (Licenser.admits_npi_iff.1 ha)
 
-/-- A class of positive polarity items is not licensed on a path along which every domain holds
-the strength that blocks it. -/
+/-- A positive polarity item is not licensed on a path along which every domain holds the strength
+that blocks it. -/
 theorem not_licenses_ppi
     (h : ∀ t ∈ p.layers.tails,
       (Licenser.ofOperator (p.environment t)).Holds s) :

@@ -371,21 +371,21 @@ theorem not_carries_notWantThink : ¬ Environment.notWantThink.licenser.Carries 
     ⟨⟨Fin 8, desC, belA, belC⟩, not_isAntiAdditive_posExt_notStack⟩
 
 theorem carries_named_iff (c : LicensingContext) :
-    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Licenses (.npi .antiAdditive) := by
+    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Admits (.npi .antiAdditive) := by
   by_cases h : c.HasLicenser
-  · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
+  · rw [Environment.licenser, dif_pos h, LicensingContext.admits_npi_iff h]
   · rw [Environment.licenser, dif_neg h]
     exact iff_of_false (fun hc ↦ hc.monotoneDecreasing.2 fun _ ↦ monotone_id)
-      (LicensingContext.not_licenses_of_not_hasLicenser h)
+      (LicensingContext.not_admits_of_not_hasLicenser h)
 
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with
   | .named c => decidable_of_iff _ (carries_named_iff c).symm
   | .positive => isFalse fun h ↦ h.monotoneDecreasing.2 fun _ ↦ monotone_id
-  | .notSome => decidable_of_iff (LicensingContext.nobody.Licenses (.npi .antiAdditive))
-      (LicensingContext.licenses_npi_iff (by decide))
-  | .notEvery => decidable_of_iff (LicensingContext.doubtVerb.Licenses (.npi .antiAdditive))
-      (LicensingContext.licenses_npi_iff (by decide))
+  | .notSome => decidable_of_iff (LicensingContext.nobody.Admits (.npi .antiAdditive))
+      (LicensingContext.admits_npi_iff (by decide))
+  | .notEvery => decidable_of_iff (LicensingContext.doubtVerb.Admits (.npi .antiAdditive))
+      (LicensingContext.admits_npi_iff (by decide))
   | .notThinkStressed => isFalse not_carries_notThinkStressed
   | .notKnow => isFalse not_carries_notKnow
   | .noOneThinks => isTrue carries_noOneThinks

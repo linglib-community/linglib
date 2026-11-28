@@ -105,7 +105,7 @@ def Examples.Indefinite.word : Examples.Indefinite → QuantificationalDetermine
 
 /-- The polarity class of each indefinite: *žádný* is a negative concord item, which clausal
 negation licenses, and *nějaký* is a positive polarity item. -/
-def Examples.Indefinite.cls : Examples.Indefinite → PolarityItem.Class
+def Examples.Indefinite.cls : Examples.Indefinite → PolarityItem.Distribution
   | .nci => .npi .antimorphic
   | .ppi => .ppi .antimorphic
 

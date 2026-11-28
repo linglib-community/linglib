@@ -232,7 +232,7 @@ def Adverbial.connective : Adverbial → Option Tense.Connective
   | .to | .howLong | .forPhrase | .erst | .vasta => none
 
 /-- The polarity item a time expression is or doubles as. -/
-def Adverbial.polarityItem : Adverbial → Option PolarityItem.Class
+def Adverbial.polarityItem : Adverbial → Option PolarityItem.Distribution
   | .until => some (.npi .antiAdditive)
   | .erst | .vasta => some (.ppi .antimorphic)
   | _ => none

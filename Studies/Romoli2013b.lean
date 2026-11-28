@@ -305,12 +305,12 @@ theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAddi
     fun p ↦ Gajewski2007.isAntiAdditive_posExt_noOneNR p.O p.B⟩
 
 theorem carries_named_iff (c : LicensingContext) :
-    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Licenses (.npi .antiAdditive) := by
+    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Admits (.npi .antiAdditive) := by
   by_cases h : c.HasLicenser
-  · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
+  · rw [Environment.licenser, dif_pos h, LicensingContext.admits_npi_iff h]
   · rw [Environment.licenser, dif_neg h]
     exact iff_of_false (fun hc ↦ hc.monotoneDecreasing.2 fun _ ↦ monotone_id)
-      (LicensingContext.not_licenses_of_not_hasLicenser h)
+      (LicensingContext.not_admits_of_not_hasLicenser h)
 
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with

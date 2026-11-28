@@ -564,7 +564,7 @@ instance (pol r : Polarity) : Decidable (NahodouLicensed pol r) :=
 
 /-- The class of the indefinite of an example: *nějaký* is a positive polarity item, and *žádný*
 is a negative concord item, which clausal negation licenses. -/
-def Examples.Indefinite.cls : Examples.Indefinite → PolarityItem.Class
+def Examples.Indefinite.cls : Examples.Indefinite → PolarityItem.Distribution
   | .ppi => .ppi .antimorphic
   | .nci => .npi .antimorphic
 

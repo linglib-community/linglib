@@ -245,7 +245,7 @@ variable {W}
 
 /-- The clause under VERUM admits a class of polarity items exactly when its polarity does:
 positive polarity items when it is positive and negative polarity items when it is negative. -/
-theorem LF.admits_iff [Nonempty W] {k : PolarityItem.Class} :
+theorem LF.admits_iff [Nonempty W] {k : PolarityItem.Distribution} :
     (l.licenser W).Admits k ↔ l.inner.Admits k :=
   Licenser.admits_ofPolarity_iff
 
@@ -287,14 +287,14 @@ def _root_.RomeroHan2004.Examples.Lexeme.entry : Examples.Lexeme → PolarityIte
 
 /-- The class of a lexeme of the data: *too* and *already* are positive polarity items, and
 *either* and *yet* are negative polarity items. -/
-def _root_.RomeroHan2004.Examples.Lexeme.cls : Examples.Lexeme → PolarityItem.Class
+def _root_.RomeroHan2004.Examples.Lexeme.cls : Examples.Lexeme → PolarityItem.Distribution
   | .too => .ppi .antimorphic
   | .either => .npi .antiAdditive
   | .already => .ppi .antiAdditive
   | .yet => .npi .monotoneDecreasing
 
 /-- The polarity items of a row's question, by the classes of the lexemes its spans name. -/
-def items (e : Datum) : List PolarityItem.Class :=
+def items (e : Datum) : List PolarityItem.Distribution :=
   (e.spans.filterMap Examples.lexeme?).map (·.cls)
 
 /-- The entries of the polarity items of a row's question. -/
