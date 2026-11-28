@@ -47,6 +47,7 @@ familiarity, and Moroney classes a language by how its articles mark the two.
 
 * [durrell-2011]
 * [schwarz-2009]
+* [schwarz-2013]
 * [moroney-2021]
 * [diessel-2013b]
 -/
@@ -131,16 +132,18 @@ theorem faithful : Gender.Faithful fun g ↦ definite (.sg g) :=
 /-! ### The inventory -/
 
 /-- The definite article contracted with a preposition, as in *im* for *in dem*, expones the uses
-on which its referent is unique in the situation. -/
+on which its referent is unique in the situation, and bridging to a part of an antecedent, as from
+a fridge to *im Gemüsefach* 'in the crisper' ([schwarz-2013]). -/
 def contracted : Article :=
   { form := "im", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-    uses := {.immediateSituation, .largerSituation} }
+    uses := {.immediateSituation, .largerSituation, .bridging .partWhole} }
 
 /-- The non-contracted definite article, as *dem* in *in dem*, expones the uses on which it refers
-back to an antecedent. -/
+back to an antecedent, and bridging by a relation, as from a play to *an dem Autor* 'at the
+author' ([schwarz-2013]). -/
 def nonContracted : Article :=
   { form := definite (.sg .masc) .dat, definiteness := {.definite}, exponent := .dedicatedMorpheme,
-    uses := {.anaphoric} }
+    uses := {.anaphoric, .bridging .relational} }
 
 /-- The inventory lists the two definite articles, the contracted and the non-contracted form; the
 indefinite article; the demonstrative *dieser*, which no longer contrasts with *jener* and is

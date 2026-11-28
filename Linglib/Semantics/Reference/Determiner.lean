@@ -149,16 +149,6 @@ noncomputable instance : Denotes Article
       ((ℕ → E) → W → Set E) → ℕ → Set (Definite (ℕ → E) W E)) :=
   ⟨fun a _ _ _ ↦ a.denotations⟩
 
-/-- Each denotation of an article is the definite of a strength the article marks. -/
-theorem _root_.Article.denotations_realized [PartialOrder E] (a : Article) (idx : ℕ)
-    (nd : Definite (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
-    ∃ p : Strength,
-      Determiner.Inventory.Realizes [.article a] p.toKind ∧ nd = ofStrength p R idx := by
-  obtain ⟨p, hp, rfl⟩ := h
-  refine ⟨p, ?_, rfl⟩
-  rw [Determiner.Inventory.realizes_toKind, Determiner.Inventory.marks_singleton]
-  exact (Article.mem_strengths_iff_marks a p).mp hp
-
 /-! ### The possessive determiner's denotation -/
 
 /-- A possessive determiner denotes the possessive description, under which *my cat* is the unique
@@ -179,10 +169,6 @@ noncomputable instance : Denotes PossessiveDeterminer
 @[simp]
 theorem _root_.PossessiveDeterminer.denote_apply (p : PossessiveDeterminer) (g : ℕ → E) (w : W) :
     p.denote R possessor rel g w = possessive R possessor rel g w := rfl
-
-theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
-    Determiner.Inventory.Realizes [.possessive p] NominalKind.possessive :=
-  ⟨.possessive p, List.mem_singleton_self _, rfl⟩
 
 /-! ### The quantifiers of a determiner -/
 

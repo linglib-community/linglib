@@ -125,7 +125,7 @@ end Semantics
 /-- An inventory has an indexed form when it has an exponent of ι^x: an article that lexicalizes it
 or a demonstrative, whose meaning it is. -/
 def HasIndexedForm (inv : Inventory) : Prop :=
-  inv.Lexicalizes .iotaAnaphoric ∨ inv.Realizes .demonstrative
+  inv.Lexicalizes .iotaAnaphoric ∨ ∃ e ∈ inv, e.kind = .demonstrative
 
 instance (inv : Inventory) : Decidable (HasIndexedForm inv) := by
   unfold HasIndexedForm; infer_instance
@@ -156,15 +156,14 @@ presupposition of the use. -/
 def Licit (inv : Inventory) (u : Definite.Use) (continuing : Prop) : Option Entry → Prop
   | none => BareLicit inv u continuing
   | some (.demonstrative _) => u.strength = .familiarity
-  | some d => d.Marks u.strength
+  | some d => u.strength ∈ d.strengths
 
 instance (inv : Inventory) (u : Definite.Use) (continuing : Prop) [Decidable continuing] :
     DecidablePred (Licit inv u continuing)
   | none => inferInstanceAs (Decidable (BareLicit inv u continuing))
   | some (.demonstrative _) => inferInstanceAs (Decidable (_ = _))
-  | some (.article a) => inferInstanceAs (Decidable ((Entry.article a).Marks _))
-  | some (.quantifier q) => inferInstanceAs (Decidable ((Entry.quantifier q).Marks _))
-  | some (.possessive p) => inferInstanceAs (Decidable ((Entry.possessive p).Marks _))
+  | some (.article _) | some (.quantifier _) | some (.possessive _) =>
+    inferInstanceAs (Decidable (_ ∈ _))
 
 -- (23)
 theorem lexicalizes_iota_cantonese_not_mandarin :

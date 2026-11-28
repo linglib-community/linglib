@@ -34,6 +34,7 @@ a vowel sound, and the weak form of *the* varies in the same environment.
 * [harbour-2014]
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 * [schwarz-2009]
+* [hawkins-1978]
 * [moroney-2021]
 -/
 
@@ -113,10 +114,13 @@ def scale : List QuantificationalDeterminer := [none_, few, some_, half, most, a
 The articles and demonstratives are not quantifiers, since what they denote is definiteness and
 not a generalized quantifier. -/
 
-/-- *The* is the definite article, syncretic over both strengths of [schwarz-2009]. -/
+/-- *The* is the definite article, syncretic over both strengths of [schwarz-2009]: it has every
+use of [hawkins-1978], bridging to a part, as from a car to *the steering wheel*, and by a
+relation, as from a book to *the author*, included. -/
 def the : Article :=
   { form := "the", definiteness := {.definite}, exponent := .dedicatedMorpheme
-  , uses := {.immediateSituation, .largerSituation, .anaphoric} }
+  , uses := {.immediateSituation, .largerSituation, .anaphoric, .bridging .partWhole,
+      .bridging .relational} }
 
 /-- The weak form of *the*, /ðə/ before a consonant and /ði/ before a vowel, though some speakers
 use /ðə/ throughout ([huddleston-pullum-2002] ch. 18 §6.1, p. 1613). -/

@@ -22,11 +22,15 @@ surface without the article.
 
 namespace HaitianCreole.Determiners
 
-/-- The Haitian Creole determiner inventory is the single syncretic definite
-    *la*. -/
-def inventory : Determiner.Inventory :=
-  [ .article { form := "la", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-               uses := {.immediateSituation, .largerSituation, .anaphoric} } ]
+/-- The definite *la* has the situational and the anaphoric uses and both kinds of bridging, as
+from a book to *otè a* 'the author' and from a town to *meri a* 'the town hall'. -/
+def la : Article :=
+  { form := "la", definiteness := {.definite}, exponent := .dedicatedMorpheme,
+    uses := {.immediateSituation, .largerSituation, .anaphoric, .bridging .partWhole,
+      .bridging .relational} }
+
+/-- The determiners are the single syncretic definite *la*. -/
+def inventory : Determiner.Inventory := [.article la]
 
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 

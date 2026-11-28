@@ -20,8 +20,9 @@ weak definites as bare nominals (Akan *nó*, Mauritian Creole *la*), languages w
 articles (Lakhota *kiŋ* and *k'uŋ*, Hausa *-n* and *ɗîn*), and Haitian Creole *la*, a single article
 covering both use families that fits neither pattern. Each language's pattern, which strengths its
 inventory marks and whether one article marks both, is derived from its language file's
-`Determiners.inventory`, and the bridging split, part-whole bridging with the weak article and
-producer bridging with the strong one, is `Definite.Bridging.strength`. The Lakhota
+`Determiners.inventory`. The parallels extend to bridging: in German, Fering, Akan and the two
+creoles an article bridges to a part where it has the situational uses and by a relation, as
+from a product to its producer, where it is anaphoric. The Lakhota
 classification is tentative in the survey itself, whose footnote 16 concedes Ingham's anaphoric
 *kiŋ*; the project language file encodes that anaphoric use, under which *kiŋ* marks both strengths
 (`anaphoric_kin_syncretic`).
@@ -54,11 +55,19 @@ theorem german_fering_two_articles :
   ⟨⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
     ⟨Fering.Determiners.strengths_inventory, Fering.Determiners.not_isSyncretic_inventory⟩⟩
 
--- (16), (17), §3.2
-theorem bridging_split :
-    Definite.Bridging.strength .partWhole = .uniqueness ∧
-    Definite.Bridging.strength .relational = .familiarity :=
-  ⟨rfl, rfl⟩
+/-! ### Bridging (§3.2, §4.1, §4.3) -/
+
+/-- In German, Fering, Akan, Mauritian Creole and Haitian Creole an article has a use exactly when
+it marks the strength the use calls for, so part-whole bridging goes with the situational uses and
+relational bridging with the anaphoric use. The survey has no bridging example for Hausa and none
+it takes to be clear for the strong article of Lakhota. -/
+-- (16), (17), (23), (24), (28), (29), (41), (42)
+theorem mem_uses_iff_strength_mem_strengths :
+    ∀ ds ∈ [German.Determiners.inventory, Fering.Determiners.inventory,
+        Akan.Determiners.inventory, MauritianCreole.Determiners.inventory,
+        HaitianCreole.Determiners.inventory],
+      ∀ e ∈ ds, ∀ u, u ∈ e.uses ↔ u.strength ∈ e.strengths := by
+  decide
 
 /-! ### Languages with exclusively anaphoric articles (§4.1) -/
 
@@ -76,11 +85,11 @@ theorem hausa_two_articles :
   ⟨Hausa.Determiners.strengths_inventory, Hausa.Determiners.not_isSyncretic_inventory⟩
 
 /-- The tentative construal of Lakhota in §4.2.1 takes *kiŋ* as weak only, for globally and
-situationally unique referents ((30), (31)), and *k'uŋ* as the anaphoric strong article, 'the
-above-mentioned'. -/
+situationally unique referents ((30), (31)) and part-whole bridging (34), and *k'uŋ* as the
+anaphoric strong article, 'the above-mentioned'. -/
 def lakhotaWeakStrongConstrual : Determiner.Inventory :=
   [ .article { form := "kiŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-               uses := {.immediateSituation, .largerSituation} },
+               uses := {.immediateSituation, .largerSituation, .bridging .partWhole} },
     .article { form := "k'uŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} } ]
 

@@ -24,16 +24,19 @@ here.
 * [arkoh-matthewson-2013]
 * [owusu-2022]
 * [moroney-2021]
+* [schwarz-2013]
 -/
 
 @[expose] public section
 
 namespace Akan.Determiners
 
-/-- The definite *nó* marks a familiar referent. -/
+/-- The definite *nó* marks a familiar referent, one mentioned before or bridged by a relation, as
+from a dance to its trainer; a part of an antecedent takes a possessive instead
+([schwarz-2013]). -/
 def no : Article :=
   { form := "nó", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-    uses := {.anaphoric} }
+    uses := {.anaphoric, .bridging .relational} }
 
 /-- The indefinite *bí* is translated 'a certain'. -/
 def bi : Article :=

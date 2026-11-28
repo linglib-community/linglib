@@ -35,11 +35,13 @@ are not typed here.
 
 namespace Lakhota.Determiners
 
-/-- The Lakhota determiners are the general definite *kiŋ*, the
-    anaphoric-only definite *k'uŋ*, and the specific indefinite *waŋ*. -/
+/-- The Lakhota determiners are the general definite *kiŋ*, which also bridges to a part of an
+antecedent, as from a lake to its shore ([schwarz-2013]), the anaphoric-only definite *k'uŋ*, and
+the specific indefinite *waŋ*. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "kiŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-               uses := {.immediateSituation, .largerSituation, .anaphoric} },
+               uses := {.immediateSituation, .largerSituation, .anaphoric,
+                 .bridging .partWhole} },
     .article { form := "k'uŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} },
     .article { form := "waŋ", definiteness := {.nonSpecific, .specific},
