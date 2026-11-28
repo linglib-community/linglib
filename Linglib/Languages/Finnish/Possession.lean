@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Finnish.Phonology
-public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.Inflection.Paradigm.Agreement
 
 /-!
 # Finnish possessive endings

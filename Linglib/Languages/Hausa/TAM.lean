@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.Inflection.Paradigm.Agreement
 public import Mathlib.Data.Fintype.Basic
 
 /-!
