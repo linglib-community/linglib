@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Truthmaker.Formula
-public import Linglib.Semantics.Mereology.Exemplification
+public import Linglib.Semantics.Situation.Exemplification
 
 /-!
 # Deigan (2020): A plea for inexact truthmaking
@@ -11,7 +11,7 @@ if it guarantees the truth and may contain more. The states are ordered by parth
 lower set topology. Fine defines the inexact verifiers from the exact ones, as the states that
 contain an exact verifier: we define `inexact X`, the closures of the verifiers and of the
 falsifiers of a bilateral proposition `X`. Deigan defines the exact verifiers of a sentence letter
-from its inexact ones, as their exemplifiers in the sense of `Mereology.Exemplifies`: we define
+from its inexact ones, as their exemplifiers in the sense of `Situation.Exemplifies`: we define
 `exemplifiers X`. Negation, conjunction and disjunction are then Fine's.
 
 In a well-founded space of states, `inexact (exemplifiers (inexact X)) = inexact X`. If the
@@ -42,7 +42,7 @@ the sentences whose inexact verifiers are argued to contain no exact verifier.
 
 namespace Deigan2020
 
-open Mereology Truthmaker Topology
+open Situation Truthmaker Topology
 open scoped Bilattice
 open Bilattice.Product (mk)
 

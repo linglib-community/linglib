@@ -33,7 +33,7 @@ In a situation without proper parts lumping is joint truth.
 
 The situations are any preorder. That every situation is part of exactly one world is not assumed
 here. Exemplification of a proposition by a situation is in
-`Linglib/Semantics/Mereology/Exemplification.lean`.
+`Linglib/Semantics/Situation/Exemplification.lean`.
 
 ## References
 

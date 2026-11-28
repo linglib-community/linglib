@@ -10,7 +10,7 @@ public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Semantics.Composition.Interpret
 public import Linglib.Semantics.Composition.Rules
 public import Linglib.Semantics.Composition.Sorts
-public import Linglib.Semantics.Mereology.Exemplification
+public import Linglib.Semantics.Situation.Exemplification
 public import Linglib.Semantics.Modality.Content
 public import Mathlib.Order.Hom.Lattice
 
@@ -22,7 +22,7 @@ and a proposition is a set of situations. A partial function `cont` gives the pr
 of the individuals that have one, such as claims, rumours and beliefs. An embedded clause is a
 predicate of individuals built by two heads. The Cont head takes a proposition `p` to `cont.preimage
 {p}`, the individuals whose content is `p`. The Comp head takes a predicate `P` to the parts of the
-evaluation situation that exemplify `P`, in the sense of `Mereology.Exemplifies`. A Cont-CP has both
+evaluation situation that exemplify `P`, in the sense of `Situation.Exemplifies`. A Cont-CP has both
 heads and a Sit-CP has Comp alone.
 
 Content is fixed by equality, so clauses with different propositions hold of disjoint sets of
@@ -69,7 +69,7 @@ the exponents give for the heads of the clause and for what the clause combines 
   clause's predicate, where the thesis has a definite or an indefinite determiner.
 * The thesis holds that no situation exemplifies two propositions that both characterize a
   situation by what exists within it. This is shown in a model. In general what exemplifies two
-  sets exemplifies their intersection; see `Mereology.Exemplifies.inter`.
+  sets exemplifies their intersection; see `Situation.Exemplifies.inter`.
 * Buryat *hanaxa* quantifies over doxastic alternatives in both of its frames, which differ in
   factivity. Its nominalized reading, 'remember', is factive through the
   presupposition that the event its complement describes started before the thinking, which the
@@ -96,7 +96,7 @@ the exponents give for the heads of the clause and for what the clause combines 
 
 namespace Bondarenko2022
 
-open Mereology Buryat
+open Situation Buryat
 
 /-! ### Equality and subset content -/
 

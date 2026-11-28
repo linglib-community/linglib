@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Assignment
+public import Linglib.Logic.Modal.Index.Defs
 public import Linglib.Data.Examples.Ogihara1989
 public import Linglib.Data.Examples.Languages
 public import Linglib.Data.Examples.Readers
@@ -450,7 +451,7 @@ theorem rule_generates_metBuyer :
 /-! ### Interpretation -/
 
 /-- The index of evaluation is a world and an interval. -/
-abbrev Index (W T : Type*) [LE T] := W × NonemptyInterval T
+abbrev Index (W T : Type*) [LE T] := _root_.Index W (NonemptyInterval T)
 
 /-- The basic types: individuals, intervals and indices. -/
 inductive Atom
@@ -546,35 +547,35 @@ variable (M : Model E W T) (g : ℕ → E) {i : Index W T}
 /-- The past restricted to the reference interval `n`: a time before the evaluation time within
 that interval at which `p` holds. -/
 def past (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
-  fun i ↦ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
+  fun i ↦ ◇[IntervalAlgebra.toSetRel .precedes] (fun t ↦ t ≤ M.ref n ∧ p ⟨i.world, t⟩) i.time
 
 /-- The future restricted to the reference interval `n`. -/
 def fut (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
-  fun i ↦ ◇[IntervalAlgebra.toSetRel (.ofPosition ⟦future⟧)] (fun t ↦ t ≤ M.ref n ∧ p (i.1, t)) i.2
+  fun i ↦ ◇[IntervalAlgebra.toSetRel (.ofPosition ⟦future⟧)] (fun t ↦ t ≤ M.ref n ∧ p ⟨i.world, t⟩) i.time
 
 /-- The English present, $\exists t[\mathrm{NOW}(t) \wedge \mathrm{AT}(t, p)]$: `p` at the speech
 time, wherever it is evaluated. -/
-def now (p : Index W T → Prop) : Index W T → Prop := fun i ↦ p (i.1, M.speech)
+def now (p : Index W T → Prop) : Index W T → Prop := fun i ↦ p ⟨i.world, M.speech⟩
 
 variable {M}
 
 theorem past_iff {n : ℕ} {p : Index W T → Prop} :
-    M.past n p i ↔ ∃ t, t.Precedes i.2 ∧ t ≤ M.ref n ∧ p (i.1, t) := by
+    M.past n p i ↔ ∃ t, t.Precedes i.time ∧ t ≤ M.ref n ∧ p ⟨i.world, t⟩ := by
   simp [past, Diamond]
 
 theorem fut_iff {n : ℕ} {p : Index W T → Prop} :
-    M.fut n p i ↔ ∃ t, i.2.Precedes t ∧ t ≤ M.ref n ∧ p (i.1, t) := by
+    M.fut n p i ↔ ∃ t, i.time.Precedes t ∧ t ≤ M.ref n ∧ p ⟨i.world, t⟩ := by
   simp [fut, Diamond, Denotes.denote, Tense.denote]
 
 theorem past_eq {n : ℕ} {p : Index W T → Prop} :
-    M.past n p = fun i ↦ ∃ t, t.Precedes i.2 ∧ t ≤ M.ref n ∧ p (i.1, t) :=
+    M.past n p = fun i ↦ ∃ t, t.Precedes i.time ∧ t ≤ M.ref n ∧ p ⟨i.world, t⟩ :=
   funext fun _ ↦ propext past_iff
 
 theorem fut_eq {n : ℕ} {p : Index W T → Prop} :
-    M.fut n p = fun i ↦ ∃ t, i.2.Precedes t ∧ t ≤ M.ref n ∧ p (i.1, t) :=
+    M.fut n p = fun i ↦ ∃ t, i.time.Precedes t ∧ t ≤ M.ref n ∧ p ⟨i.world, t⟩ :=
   funext fun _ ↦ propext fut_iff
 
-theorem now_eq {p : Index W T → Prop} : M.now p = fun i ↦ p (i.1, M.speech) := rfl
+theorem now_eq {p : Index W T → Prop} : M.now p = fun i ↦ p ⟨i.world, M.speech⟩ := rfl
 
 variable (M)
 
@@ -583,10 +584,10 @@ describes (3d, 4b, with 5 and 14); *woll*, the perfect and *earlier* quantify ov
 own (3a, 3c, 16); a noun phrase is a quantifier (6b, 15, 8b) and a transitive verb takes one
 (10b); the complementizer closes its clause (9), as the relative pronoun does (12). -/
 def lex : Word → Σ a : Ty Atom, a.Dom (Dom E W T)
-  | .past n => ⟨prop ⇒ tensed, fun p t i ↦ t.Precedes i.2 ∧ t ≤ M.ref n ∧ p (i.1, t)⟩
-  | .pres => ⟨prop ⇒ tensed, fun p t i ↦ t = M.speech ∧ p (i.1, t)⟩
-  | .null | .ru => ⟨prop ⇒ tensed, fun p t i ↦ t = i.2 ∧ p (i.1, t)⟩
-  | .inf n => ⟨prop ⇒ tensed, fun p t i ↦ i.2.Precedes t ∧ t ≤ M.ref n ∧ p (i.1, t)⟩
+  | .past n => ⟨prop ⇒ tensed, fun p t i ↦ t.Precedes i.time ∧ t ≤ M.ref n ∧ p ⟨i.world, t⟩⟩
+  | .pres => ⟨prop ⇒ tensed, fun p t i ↦ t = M.speech ∧ p ⟨i.world, t⟩⟩
+  | .null | .ru => ⟨prop ⇒ tensed, fun p t i ↦ t = i.time ∧ p ⟨i.world, t⟩⟩
+  | .inf n => ⟨prop ⇒ tensed, fun p t i ↦ i.time.Precedes t ∧ t ≤ M.ref n ∧ p ⟨i.world, t⟩⟩
   | .woll n => ⟨prop ⇒ prop, M.fut n⟩
   | .perf n => ⟨prop ⇒ prop, M.past n⟩
   | .earlier n => ⟨predicate ⇒ predicate, fun P x ↦ M.past n (P x)⟩
@@ -626,7 +627,7 @@ a proposition speaks the truth at the index exactly when the proposition is true
 def Reliable : Prop := ∀ p x i, M.att .say p x i → (M.truth x i ↔ p i)
 
 /-- A predicate is stable when what it is true of does not vary with the time. -/
-def Stable (c : Pred) : Prop := ∀ x i t, M.pred c x i ↔ M.pred c x (i.1, t)
+def Stable (c : Pred) : Prop := ∀ x i t, M.pred c x i ↔ M.pred c x ⟨i.world, t⟩
 
 variable {M}
 
@@ -641,16 +642,16 @@ attribute [local simp] Holds meanings clause np untensed intrans complement aNou
 -- truth said something true at the index of the saying, which is all that the simultaneous reading
 -- amounts to
 theorem Reliable.simultaneous (hM : M.Reliable) (h : M.Holds g (saidIll .null) i) :
-    ∃ t, t.Precedes i.2 ∧ t ≤ M.ref 1 ∧
-      (M.truth (M.name .john) (i.1, t) → M.pred .ill (M.name .mary) (i.1, t)) := by
+    ∃ t, t.Precedes i.time ∧ t ≤ M.ref 1 ∧
+      (M.truth (M.name .john) ⟨i.world, t⟩ → M.pred .ill (M.name .mary) ⟨i.world, t⟩) := by
   obtain ⟨t, ht, hR, hs⟩ := past_iff.1 (by simpa using h :
     M.past 1 (M.att .say (M.pred .ill (M.name .mary)) (M.name .john)) i)
   exact ⟨t, ht, hR, (hM _ _ _ hs).1⟩
 
 -- (56) of chapter 2, the shifted reading the dissertation leaves to the reader
 theorem Reliable.shifted (hM : M.Reliable) (h : M.Holds g (saidIll (.past 2)) i) :
-    ∃ t, t.Precedes i.2 ∧ t ≤ M.ref 1 ∧ (M.truth (M.name .john) (i.1, t) →
-      ∃ t', t'.Precedes t ∧ t' ≤ M.ref 2 ∧ M.pred .ill (M.name .mary) (i.1, t')) := by
+    ∃ t, t.Precedes i.time ∧ t ≤ M.ref 1 ∧ (M.truth (M.name .john) ⟨i.world, t⟩ →
+      ∃ t', t'.Precedes t ∧ t' ≤ M.ref 2 ∧ M.pred .ill (M.name .mary) ⟨i.world, t'⟩) := by
   obtain ⟨t, ht, hR, hs⟩ := past_iff.1 (by simpa using h :
     M.past 1 (M.att .say (M.past 2 (M.pred .ill (M.name .mary))) (M.name .john)) i)
   exact ⟨t, ht, hR, fun hT ↦ past_iff.1 ((hM _ _ _ hs).1 hT)⟩
@@ -658,8 +659,8 @@ theorem Reliable.shifted (hM : M.Reliable) (h : M.Holds g (saidIll (.past 2)) i)
 -- (3'') of chapter 4, the wrong prediction of the first fragment: a past claim about the speech
 -- time, with no commitment about the time of the claim
 theorem Reliable.now (hM : M.Reliable) (h : M.Holds g (saidIll .pres) i) :
-    ∃ t, t.Precedes i.2 ∧ t ≤ M.ref 1 ∧
-      (M.truth (M.name .john) (i.1, t) → M.pred .ill (M.name .mary) (i.1, M.speech)) := by
+    ∃ t, t.Precedes i.time ∧ t ≤ M.ref 1 ∧
+      (M.truth (M.name .john) ⟨i.world, t⟩ → M.pred .ill (M.name .mary) ⟨i.world, M.speech⟩) := by
   obtain ⟨t, ht, hR, hs⟩ := past_iff.1 (by simpa using h :
     M.past 1 (M.att .say (M.now (M.pred .ill (M.name .mary))) (M.name .john)) i)
   exact ⟨t, ht, hR, (hM _ _ _ hs).1⟩
@@ -690,7 +691,7 @@ theorem holds_sawNarrow_past : M.Holds g (sawNarrow (.past 2)) i ↔
 strike speakers as independent readings. This needs a man at the speech time who was one at the
 past time, and a reference interval of the raised relative that contains the times the narrow
 readings find. -/
-theorem sawWide_of_sawNarrow (hman : ∀ x t, M.pred .man x (i.1, t) → M.pred .man x i)
+theorem sawWide_of_sawNarrow (hman : ∀ x t, M.pred .man x ⟨i.world, t⟩ → M.pred .man x i)
     (hR₁ : M.ref 1 ≤ M.ref 3) (hR₂ : M.ref 2 ≤ M.ref 3)
     (h : M.Holds g (sawNarrow .null) i ∨ M.Holds g (sawNarrow (.past 2)) i) :
     M.Holds g (sawWide (.past 3)) i := by
@@ -705,8 +706,8 @@ theorem sawWide_of_sawNarrow (hman : ∀ x t, M.pred .man x (i.1, t) → M.pred 
 
 -- p. 97: a laughing after the seeing comes from the wide scope reading alone
 theorem not_holds_sawNarrow_of_precedes {a b : NonemptyInterval T} (hab : a.Precedes b)
-    (hsee : ∀ i x, M.tv .see (M.name .john) x i → i.2 = a)
-    (hlaugh : ∀ i x, M.pred .laughing x i → i.2 = b) :
+    (hsee : ∀ i x, M.tv .see (M.name .john) x i → i.time = a)
+    (hlaugh : ∀ i x, M.pred .laughing x i → i.time = b) :
     ¬ M.Holds g (sawNarrow .null) i ∧ ¬ M.Holds g (sawNarrow (.past 2)) i := by
   simp only [holds_sawNarrow_null, holds_sawNarrow_past, past_iff]
   grind [NonemptyInterval.precedes_irrefl, NonemptyInterval.precedes_asymm]
@@ -731,10 +732,10 @@ theorem metWide_iff_metNarrow (hman : M.Stable .man) :
     fun ⟨t, ht, htR, x, ⟨hn, hf⟩, hm⟩ ↦ ⟨x, ⟨(hman x i t).2 hn, hf⟩, t, ht, htR, hm⟩⟩
 
 -- p. 116: of a man who is a man only at the meeting, (45) line 4 holds and (44) line 4 does not
-theorem metNarrow_not_metWide {a : NonemptyInterval T} {x : E} (ha : a.Precedes i.2)
-    (haR : a ≤ M.ref 2) (hman : M.pred .man x (i.1, a)) (hnow : ∀ y, ¬ M.pred .man y i)
-    (hf : M.now (M.fut 3 (M.pred .supporter x)) (i.1, a))
-    (hm : M.tv .meet (M.name .john) x (i.1, a)) :
+theorem metNarrow_not_metWide {a : NonemptyInterval T} {x : E} (ha : a.Precedes i.time)
+    (haR : a ≤ M.ref 2) (hman : M.pred .man x ⟨i.world, a⟩) (hnow : ∀ y, ¬ M.pred .man y i)
+    (hf : M.now (M.fut 3 (M.pred .supporter x)) ⟨i.world, a⟩)
+    (hm : M.tv .meet (M.name .john) x ⟨i.world, a⟩) :
     M.Holds g (metNarrow .pres) i ∧ ¬ M.Holds g metWide i := by
   rw [holds_metNarrow, holds_metWide, past_iff]
   exact ⟨⟨a, ha, haR, x, ⟨hman, hf⟩, hm⟩, fun ⟨y, ⟨hn, _⟩, _⟩ ↦ hnow y hn⟩
@@ -753,8 +754,8 @@ theorem holds_ru : (M.Holds g (sawNarrow .ru) i ↔ M.Holds g (sawNarrow .null) 
   simp
 
 -- p. 132: the undeleted *would* of (61) says nothing against a winning after the speech time
-theorem would_undeleted_any_future {a b : NonemptyInterval T} {x : E} (ha : a.Precedes i.2)
-    (haR : a ≤ M.ref 2) (hab : a.Precedes b) (hbR : b ≤ M.ref 3) (hw : M.pred .win x (i.1, b)) :
+theorem would_undeleted_any_future {a b : NonemptyInterval T} {x : E} (ha : a.Precedes i.time)
+    (haR : a ≤ M.ref 2) (hab : a.Precedes b) (hbR : b ≤ M.ref 3) (hw : M.pred .win x ⟨i.world, b⟩) :
     M.past 2 (M.fut 3 (M.pred .win x)) i :=
   past_iff.2 ⟨a, ha, haR, fut_iff.2 ⟨b, hab, hbR, hw⟩⟩
 
@@ -776,7 +777,7 @@ end Model
 -- `Word.cell` is what the translation says: a time in the cell at which the argument holds
 theorem position_mem_cell {M : Model E W T} {w : Word} {τ : (Index W T → Prop) → Index W T → Prop}
     {p : Index W T → Prop} {i : Index W T} (h : M.lex w = ⟨prop ⇒ prop, τ⟩) (hτ : τ p i) :
-    ∃ t, t.position i.2 ∈ w.cell ∧ p (i.1, t) := by
+    ∃ t, t.position i.time ∈ w.cell ∧ p ⟨i.world, t⟩ := by
   cases w <;> simp only [Model.lex, Sigma.mk.injEq, heq_eq_eq, true_and, reduceCtorEq, and_false,
     false_and, Ty.fn.injEq, Ty.base.injEq, and_true] at h <;> subst h
   case perf =>
@@ -790,7 +791,7 @@ theorem position_mem_cell {M : Model E W T} {w : Word} {τ : (Index W T → Prop
 theorem position_mem_cell_of_tense {M : Model E W T} {w : Word}
     {τ : (Index W T → Prop) → NonemptyInterval T → Index W T → Prop} {p : Index W T → Prop}
     {t : NonemptyInterval T} {i : Index W T} (h : M.lex w = ⟨prop ⇒ tensed, τ⟩) (hw : w ≠ .pres)
-    (hτ : τ p t i) : t.position i.2 ∈ w.cell ∧ p (i.1, t) := by
+    (hτ : τ p t i) : t.position i.time ∈ w.cell ∧ p ⟨i.world, t⟩ := by
   cases w <;> simp only [Model.lex, Sigma.mk.injEq, heq_eq_eq, true_and, reduceCtorEq, and_false,
     false_and, Ty.fn.injEq, Ty.base.injEq, and_true] at h <;> subst h
   case pres => exact absurd rfl hw
@@ -951,11 +952,11 @@ def tns (C D : PointAlgebra) (φ : W → NonemptyInterval T → NonemptyInterval
 would come to Austin* wrongly places the coming before the speech time, (126). -/
 theorem triple_index_precedes_speech {E : Type} {M : Model E W T} (hM : M.Reliable) {w : W}
     (h : tns ⟦Tense.past⟧ ⟦Tense.future⟧ᶜ (fun w t j ↦ M.att .say
-      (fun i ↦ tns ⟦Tense.past⟧ ⟦Tense.future⟧ (fun w t _ ↦ M.pred .come (M.name .mary) (w, t))
-        i.1 i.2 j)
-      (M.name .john) (w, t)) w M.speech M.speech) :
-    ∃ t, t.Precedes M.speech ∧ (M.truth (M.name .john) (w, t) →
-      ∃ t', t.Precedes t' ∧ t'.Precedes M.speech ∧ M.pred .come (M.name .mary) (w, t')) := by
+      (fun i ↦ tns ⟦Tense.past⟧ ⟦Tense.future⟧ (fun w t _ ↦ M.pred .come (M.name .mary) ⟨w, t⟩)
+        i.world i.time j)
+      (M.name .john) ⟨w, t⟩) w M.speech M.speech) :
+    ∃ t, t.Precedes M.speech ∧ (M.truth (M.name .john) ⟨w, t⟩ →
+      ∃ t', t.Precedes t' ∧ t'.Precedes M.speech ∧ M.pred .come (M.name .mary) ⟨w, t'⟩) := by
   obtain ⟨t, ht, -, hs⟩ := h
   refine ⟨t, by simpa [Denotes.denote, Tense.denote] using ht, fun hT ↦ ?_⟩
   obtain ⟨t', ht', hf, hc⟩ := (hM _ _ _ hs).1 hT
@@ -967,16 +968,16 @@ theorem triple_index_precedes_speech {E : Type} {M : Model E W T} (hM : M.Reliab
 theorem would_can_follow_speech {a b c : T} (hab : a < b) (hbc : b < c) :
     ∃ M : Model Unit Unit T, M.Reliable ∧
       M.Holds (fun _ ↦ ()) (report (.past 1) [] .john .say .null [.woll 3] .mary .come)
-        ((), M.speech) ∧
-      ∀ i x, M.pred .come x i → M.speech.Precedes i.2 := by
+        ⟨(), M.speech⟩ ∧
+      ∀ i x, M.pred .come x i → M.speech.Precedes i.time := by
   let M : Model Unit Unit T :=
     { speech := .pure b, ref := fun _ ↦ .pure a ⊔ .pure c, name := fun _ ↦ ()
-      pred := fun _ _ i ↦ i.2 = .pure c, tv := fun _ _ _ _ ↦ True
-      att := fun _ p _ i ↦ i.2 = .pure a ∧ p i, poss := fun _ _ _ ↦ True
+      pred := fun _ _ i ↦ i.time = .pure c, tv := fun _ _ _ _ ↦ True
+      att := fun _ p _ i ↦ i.time = .pure a ∧ p i, poss := fun _ _ _ ↦ True
       truth := fun _ _ ↦ True }
   refine ⟨M, fun _ _ _ h ↦ iff_of_true trivial h.2, ?_, ?_⟩
   · have hs : M.past 1 (M.att .say (M.fut 3 (M.pred .come (M.name .mary))) (M.name .john))
-        ((), M.speech) :=
+        ⟨(), M.speech⟩ :=
       Model.past_iff.2 ⟨.pure a, hab, le_sup_left, rfl,
         Model.fut_iff.2 ⟨.pure c, hab.trans hbc, le_sup_right, rfl⟩⟩
     simpa [Model.Holds, Model.meanings, report, clause, np, untensed, intrans, complement,
@@ -1003,13 +1004,13 @@ variable {E W Ev St T : Type*} [LinearOrder T]
 interval properly including the speech time and the time of the saying. -/
 def Hypothesis1 (att : (Index W T → Prop) → E → Index W T → Prop) (p : Index W T → Prop) (x : E)
     (σ R : NonemptyInterval T) (w : W) : Prop :=
-  ∃ t, t.Precedes σ ∧ t ≤ R ∧ att p x (w, t) ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ p (w, t')
+  ∃ t, t.Precedes σ ∧ t ≤ R ∧ att p x ⟨w, t⟩ ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ p ⟨w, t'⟩
 
 /-- Hypothesis 2, (20): the speaker said of an interval properly including the speech time and the
 time of the saying that the proposition is true at it. -/
 def Hypothesis2 (att : (Index W T → Prop) → E → Index W T → Prop) (p : Index W T → Prop) (x : E)
     (σ R : NonemptyInterval T) (w : W) : Prop :=
-  ∃ t, t.Precedes σ ∧ t ≤ R ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ att (fun i ↦ p (i.1, t')) x (w, t)
+  ∃ t, t.Precedes σ ∧ t ≤ R ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ att (fun i ↦ p ⟨i.world, t'⟩) x ⟨w, t⟩
 
 variable [TemporalTrace Ev T]
 
@@ -1018,7 +1019,7 @@ open Event (τ)
 /-- The proposition that a state obtains, (60b), and is of the kind `P`. A state occupies an
 interval in each world. -/
 def obtains (occ : St → W → NonemptyInterval T) (P : St → W → Prop) (s : St) : Index W T → Prop :=
-  fun i ↦ i.2 ≤ occ s i.1 ∧ P s i.1
+  fun i ↦ i.time ≤ occ s i.world ∧ P s i.world
 
 /-- (64'), the second fragment's translation of a present under a past: a state that obtains at the
 speech time and a past event of saying of that state that it obtains and is of the kind `P`, a
@@ -1031,7 +1032,7 @@ def DoubleAccess (occ : St → W → NonemptyInterval T) (say : Ev → E → (In
 proposition at the time. -/
 def attOf (say : Ev → E → (Index W T → Prop) → W → Prop) :
     (Index W T → Prop) → E → Index W T → Prop :=
-  fun p x i ↦ ∃ e, τ e = i.2 ∧ say e x p i.1
+  fun p x i ↦ ∃ e, τ e = i.time ∧ say e x p i.world
 
 variable {occ : St → W → NonemptyInterval T} {say : Ev → E → (Index W T → Prop) → W → Prop}
   {P : St → W → Prop} {x : E} {σ R : NonemptyInterval T} {w : W}
@@ -1042,7 +1043,7 @@ theorem doubleAccess_not_hypothesis1 {e₀ : Ev} {s₀ : St} (he : (τ e₀).Pre
     (hsaid : say e₀ x (obtains occ P s₀) w) (hlast : σ ≤ occ s₀ w)
     (hm : ¬ ∃ s, σ ≤ occ s w ∧ P s w) :
     DoubleAccess occ say P x σ R w ∧
-      ¬ Hypothesis1 (attOf say) (fun i ↦ ∃ s, i.2 ≤ occ s i.1 ∧ P s i.1) x σ R w := by
+      ¬ Hypothesis1 (attOf say) (fun i ↦ ∃ s, i.time ≤ occ s i.world ∧ P s i.world) x σ R w := by
   refine ⟨⟨s₀, hlast, e₀, he, heR, hsaid⟩, ?_⟩
   rintro ⟨t, -, -, -, t', hσ, -, s, hs, hP⟩
   exact hm ⟨s, hσ.le.trans hs, hP⟩
@@ -1084,7 +1085,7 @@ theorem DoubleAccess.exists_sup_le (hres : ∀ e s, say e x (obtains occ P s) w 
 
 -- (61)-(63), (49): with a factive verb the state is actual, so (63) entails the two conditions of
 -- (62''), one direction of what p. 325 calls virtually equivalent
-theorem factive_extended_now (hsay : ∀ e x p w, say e x p w → p (w, τ e))
+theorem factive_extended_now (hsay : ∀ e x p w, say e x p w → p ⟨w, τ e⟩)
     (h : DoubleAccess occ say P x σ R w) :
     ∃ (s : St) (e : Ev), (τ e).Precedes σ ∧ say e x (obtains occ P s) w ∧ P s w ∧
       ∃ t', σ < t' ∧ τ e ≤ t' ∧ t' ≤ occ s w := by
@@ -1096,13 +1097,13 @@ theorem factive_extended_now (hsay : ∀ e x p w, say e x p w → p (w, τ e))
 
 /-- The worlds consistent with the attitude a saying reports are not empty (p. 284). -/
 def Consistent (say : Ev → E → (Index W T → Prop) → W → Prop) : Prop :=
-  ∀ e x p w, say e x p w → ∃ w', p (w', τ e)
+  ∀ e x p w, say e x p w → ∃ w', p ⟨w', τ e⟩
 
 -- (67)-(69): given (69), the coming of *John said that Mary will come to Austin* follows the saying
 theorem future_double_access {P : Ev → W → Prop} {R₁ R₂ : NonemptyInterval T}
     (hsay : Consistent say)
     (h : ∃ e : Ev, σ.Precedes (τ e) ∧ τ e ≤ R₁ ∧ ∃ e' : Ev, (τ e').Precedes σ ∧ τ e' ≤ R₂ ∧
-      say e' x (fun i ↦ ∃ t, i.2.Precedes t ∧ t ≤ R₁ ∧ t = τ e ∧ P e i.1) w) :
+      say e' x (fun i ↦ ∃ t, i.time.Precedes t ∧ t ≤ R₁ ∧ t = τ e ∧ P e i.world) w) :
     ∃ e e' : Ev, (τ e').Precedes (τ e) := by
   obtain ⟨e, -, -, e', -, -, hsaid⟩ := h
   obtain ⟨_, t, het, -, rfl, -⟩ := hsay _ _ _ _ hsaid
@@ -1130,8 +1131,8 @@ theorem doubleAccess_report_iff {a b : T} (hab : a < b) {I : W → NonemptyInter
       (.pure b) (.pure a ⊔ .pure b) w ↔ .pure b ≤ I w := by
   constructor
   · rintro ⟨s, hs, e, -, -, -, hp⟩
-    have h0 : obtains (reportOcc b I) (reportKind c) s (c, I c) :=
-      (congrFun hp (c, I c)).mpr (by simp [obtains, reportOcc, reportKind])
+    have h0 : obtains (reportOcc b I) (reportKind c) s ⟨c, I c⟩ :=
+      (congrFun hp ⟨c, I c⟩).mpr (by simp [obtains, reportOcc, reportKind])
     obtain rfl : s = 0 := h0.2.1
     simpa [reportOcc] using hs
   · exact fun h ↦ ⟨0, by simpa [reportOcc] using h, .pure a, hab, le_sup_left, rfl, rfl⟩
