@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Hungarian.Indefinites
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Hungarian polarity items
@@ -15,12 +15,6 @@ universal negative polarity items. *akárki* and *bárki* 'anyone' are free-choi
 the two series mainly in the free-choice function, but also in comparatives, under indirect
 negation and, with an emphatic value, in conditionals, and stars both under direct negation and
 in questions.
-
-## Implementation notes
-
-A weak negative polarity item is licensed under clausal negation and in questions, so the licensing
-theory admits both free-choice series where Haspelmath stars them; `Studies/Haspelmath1997.lean`
-states the difference between the theory and his region.
 
 ## References
 
@@ -37,28 +31,19 @@ open PolarityItem
 
 /-- *senki* 'nobody', which needs clausemate negation. -/
 def senki : PolarityItem :=
-  { form := Indefinites.senki.form
-  , licensor := some .antiMorphic }
+  { form := Indefinites.senki.form }
 
 /-- *akárki* 'anyone', a free choice item, *Akár-ki tanul-hat-ott* 'Anybody could learn' (A200),
 whose series is also used in comparatives (A201), under negation in a higher clause (A202) and,
 emphatically, in conditionals (A203), but not under direct negation (A199a) or in questions (A204)
 ([haspelmath-1997] A.26.3). -/
 def akárki : PolarityItem :=
-  { form := Indefinites.akárki.form
-  , licensor := some .weak
-  , freeChoice := true }
+  { form := Indefinites.akárki.form }
 
 /-- *bárki* 'anyone', a free choice item whose series is used as the *akár*-series is, in
 comparatives (A201), under negation in a higher clause (A202) and in conditionals (A203), but not
 under direct negation (A199a) or in questions (A204) ([haspelmath-1997] A.26.3). -/
 def bárki : PolarityItem :=
-  { form := Indefinites.bárki.form
-  , licensor := some .weak
-  , freeChoice := true }
-
-theorem senki_licensing_characterized (c : LicensingContext) :
-    c.licenser.Licenses senki ↔ c.licenser.Carries .antiMorphic :=
-  Licenser.licenses_iff_carries rfl (by decide) (by decide)
+  { form := Indefinites.bárki.form }
 
 end Hungarian.PolarityItems

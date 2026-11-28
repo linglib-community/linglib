@@ -1,11 +1,13 @@
 module
 
 public import Linglib.Logic.Modal.Definability
-public import Linglib.Discourse.Commitment.Table
+public import Linglib.Discourse.Table.Basic
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Data.Examples.Rudin2025b
 public import Linglib.Data.Examples.Readers
 public import Linglib.Logic.Inquisitive.Declarative
+public import Linglib.Semantics.Questions.Inquisitive.Polar
+
 /-!
 # Rudin (2025): Embedded Intonation and Quotative Complements to Verbs of Speech
 
@@ -15,7 +17,7 @@ complement relates its denotation to the event by content instead. A verb of spe
 of events fixed by a meaning postulate over reenactments: an event is a saying exactly when every
 performance reenacting it produces linguistic material, so the extension of *say* is necessity
 along reenactment of that property, $\Box_{\mathrm{REENACT}}\,\mathrm{LINGMAT}$. A quotative
-report is then [consistent exactly when](##exists_report_iff) the performance has the verb's
+report is then consistent exactly when the performance has the verb's
 property: karate gestures under *say* and a whisper under *yell* are contradictions.
 
 Rising declaratives embed only as quotations, so their distribution under *ask* and *assert* shows
@@ -23,7 +25,7 @@ what their utterances do rather than what they denote. In Farkas and Bruce's Tab
 a sentence raises its denotation as an issue and, unless the tune is rising, commits the speaker to
 the denotation's informative content. An asking raises an issue without a commitment that resolves
 it, and an assertion commits the speaker to the single resolution of the issue it raises. A rising
-utterance is an asking and never an assertion [whatever it denotes](##report_rising_ask_assert),
+utterance is an asking and never an assertion whatever it denotes,
 so a quoted rising declarative is consistent under *ask* and contradictory under *assert* on the
 view that it denotes a proposition and on the view that it denotes a question alike.
 
@@ -38,7 +40,7 @@ view that it denotes a proposition and on the view that it denotes a question al
   interrogative as the polar question on it, with the radical a fixed contingent proposition.
 * The paper derives its three update tables, for falling and rising declaratives and rising polar
   interrogatives, from the update rule above, and here they are
-  [instances of the rule](##utter_ofSet_false). A state resolves an issue when it belongs to it,
+  instances of the rule. A state resolves an issue when it belongs to it,
   so the falling utterance of a denotation asks exactly when the denotation is inquisitive. That
   is not decidable, so the decision procedure for askings is classical in that case; the rows
   quote no falling utterance under *ask*.
@@ -117,36 +119,42 @@ instance : DecidablePred (Material.Linguistic (W := W)) := fun m ↦ by
 
 /-- Uttering a sentence that denotes `D` raises `D` as an issue and, unless the tune is rising,
 commits the speaker to the informative content of `D`. -/
-def utter (D : Proposition (Set W)) : Bool → Table SpeechAct.Role W → Table SpeechAct.Role W
+def utter (D : Proposition (Set W)) :
+    Bool → Table SpeechAct.Role W (Proposition (Set W)) →
+      Table SpeechAct.Role W (Proposition (Set W))
   | true, K => K.push D
   | false, K => (K.commit .speaker D.info).push D
 
 -- (83)
-theorem utter_ofSet_false (p : Set W) (K : Table SpeechAct.Role W) :
-    utter (ofSet p) false K = K.assert .speaker p := by
-  rw [utter, info_ofSet]
+theorem utter_ofSet_false (p : Set W) (K : Table SpeechAct.Role W (Proposition (Set W))) :
+    (utter (ofSet p) false K).map alt = (K.map alt).assert .speaker p := by
+  rw [utter, info_ofSet, Table.map_push, Table.map_commit, alt_ofSet]
   rfl
 
 -- (85)
-theorem utter_polar_true (p : Set W) (K : Table SpeechAct.Role W) :
-    utter (polar p) true K = K.polarQuestion p := rfl
+theorem utter_polar_true {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
+    (K : Table SpeechAct.Role W (Proposition (Set W))) :
+    (utter (polar p) true K).map alt = (K.map alt).polarQuestion p := by
+  rw [utter, Table.map_push, alt_polar_of_nontrivial hne hnu]
+  rfl
 
 /-- The context update of a performance is that of the sentence it utters, if any. -/
-def Performance.update : Performance W → Table SpeechAct.Role W → Table SpeechAct.Role W
+def Performance.update : Performance W →
+    Table SpeechAct.Role W (Proposition (Set W)) → Table SpeechAct.Role W (Proposition (Set W))
   | ⟨.utterance D rising, _⟩ => utter D rising
   | _ => id
 
 /-- A performance is an asking when in every context it raises an issue without committing its
 speaker to anything that resolves it. -/
 def Performance.Asking (u : Performance W) : Prop :=
-  ∀ K : Table SpeechAct.Role W, ∃ i, (u.update K).stack = i :: K.stack ∧
-    ∀ q ∈ (u.update K).discourseCommitments .speaker, q ∈ i → q ∈ K.discourseCommitments .speaker
+  ∀ K : Table SpeechAct.Role W (Proposition (Set W)), ∃ i, (u.update K).stack = i :: K.stack ∧
+    ∀ q ∈ (u.update K).commitments.contents .speaker, q ∈ i → q ∈ K.commitments.contents .speaker
 
 /-- A performance is an assertion when in every context it raises an issue with a single
 alternative and commits its speaker to that alternative. -/
 def Performance.Assertion (u : Performance W) : Prop :=
-  ∀ K : Table SpeechAct.Role W, ∃ q, (u.update K).stack = ofSet q :: K.stack ∧
-    q ∈ (u.update K).discourseCommitments .speaker
+  ∀ K : Table SpeechAct.Role W (Proposition (Set W)), ∃ q, (u.update K).stack = ofSet q :: K.stack ∧
+    q ∈ (u.update K).commitments.contents .speaker
 
 namespace Performance
 
@@ -170,8 +178,8 @@ theorem asking_utterance_iff :
         List.cons.injEq, and_true] at hi
       subst hi
       simpa using hq _ (by simp [update, utter]) hD
-    · simp only [update, utter, Table.discourseCommitments_push,
-        Table.discourseCommitments_commit_self, Set.mem_insert_iff] at hq
+    · simp only [update, utter, Table.commitments_push,
+        Table.commitments_commit, State.contents_insert_self, Set.mem_insert_iff] at hq
       refine hq.resolve_left ?_
       rintro rfl
       exact (h.resolve_left Bool.false_ne_true) hqD
@@ -197,8 +205,8 @@ theorem assertion_utterance_iff :
     refine ⟨fun h ↦ ⟨rfl, ?_⟩, fun ⟨_, h⟩ K ↦ ⟨D.info, by rw [← h]; rfl, by simp [update, utter]⟩⟩
     obtain ⟨q, hs, hq⟩ := h Table.empty
     simp only [update, utter, Table.stack_push, Table.stack_commit, Table.stack_empty,
-      List.cons.injEq, and_true, Table.discourseCommitments_push,
-      Table.discourseCommitments_commit_self, Table.discourseCommitments_empty,
+      List.cons.injEq, and_true, Table.commitments_push, Table.commitments_commit,
+      State.contents_insert_self, Table.commitments_empty, State.contents_empty,
       Set.mem_insert_iff, Set.mem_empty_iff_false, or_false] at hs hq
     exact hq ▸ hs
 

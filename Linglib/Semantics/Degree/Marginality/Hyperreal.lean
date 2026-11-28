@@ -35,15 +35,21 @@ variable {x y : ℝ*}
 /-- The hyperreals with infinitesimal differences marginal. -/
 noncomputable def infinitesimalScale : MarginalScale ℝ* :=
   ofAddSubgroup (ballAddSubgroup 0) (ordConnected_ballAddSubgroup 0)
+
+/-- The hyperreals with finite differences marginal. -/
+noncomputable def finiteScale : MarginalScale ℝ* :=
+  ofAddSubgroup (closedBallAddSubgroup 0) (ordConnected_closedBallAddSubgroup 0)
+
+theorem isML_infinitesimalScale : infinitesimalScale.IsML :=
+  isML_ofAddSubgroup
     (fun h ↦ epsilon_ne_zero <| AddSubgroup.mem_bot.1 <|
       h ▸ (mem_ballAddSubgroup_iff (by simp)).2 archimedeanClassMk_epsilon_pos)
     (fun h ↦ by
       have : (1 : ℝ*) ∈ ballAddSubgroup 0 := h ▸ AddSubgroup.mem_top _
       simp at this)
 
-/-- The hyperreals with finite differences marginal. -/
-noncomputable def finiteScale : MarginalScale ℝ* :=
-  ofAddSubgroup (closedBallAddSubgroup 0) (ordConnected_closedBallAddSubgroup 0)
+theorem isML_finiteScale : finiteScale.IsML :=
+  isML_ofAddSubgroup
     (fun h ↦ one_ne_zero <| AddSubgroup.mem_bot.1 <|
       h ▸ mem_closedBallAddSubgroup_iff.2 (by simp))
     (fun h ↦ by

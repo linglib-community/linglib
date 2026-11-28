@@ -140,7 +140,6 @@ Embick2010
 ErkHerbelot2024
 EvcenBaleBarner2026
 Faller2019
-FarkasBruce2010
 FarkasRoelofsen2017
 Ferreira2023
 FillmoreKayOConnor1988
@@ -199,7 +198,6 @@ IppolitoKissWilliams2025
 Istratkova2004
 ItoMester2009
 ItoMester2019
-Itzhaki2021
 Jablonska2004
 Jardine2019
 KadmonLandman1993
@@ -208,7 +206,6 @@ Kamp1975
 Karttunen1971a
 KayMichaelis2019
 KeenanComrie1977
-Kennedy2007
 Kennedy2015
 KeshetAbney2024
 Khoo2015
@@ -220,7 +217,6 @@ KonnellyCowper2020
 KonukEtAl2026
 Kratzer2012
 KratzerSelkirk2020
-Krifka2015
 Krifka2026
 KrizChemla2015
 KrizSpector2021

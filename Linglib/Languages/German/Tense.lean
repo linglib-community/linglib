@@ -108,7 +108,7 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
 
 /-- A directional phrase makes an intransitive verb take *sein* (§12.3.2c). -/
 theorem perfect_withPath_intransitive (v : Verb) {p : Locative}
-    (hv : v.TakesSpatial) (hp : p.mode.direction ≠ .place) :
+    (hv : v.valency.TakesSpatial) (hp : p.mode.direction ≠ .place) :
     perfectAuxiliary (v.withPath p) .intransitive = .be := by
   simp [perfectAuxiliary, _root_.Verb.direction_withPath hv hp, ArgumentFrame.intransitive,
     ArgumentFrame.HasNominal]
@@ -116,7 +116,7 @@ theorem perfect_withPath_intransitive (v : Verb) {p : Locative}
 /-- The verbs of manner of motion select a directional phrase: every entry that displaces its
 subject with no direction takes a spatial complement (§12.3.2c). -/
 theorem takesSpatial_of_direction_eq_place :
-    ∀ v ∈ Verbs.allVerbs, v.direction = some .place → v.TakesSpatial := by
+    ∀ v ∈ Verbs.allVerbs, v.direction = some .place → v.valency.TakesSpatial := by
   decide
 
 /-- The principal parts of a verb entry on a frame, its basic frame by default, are its stem

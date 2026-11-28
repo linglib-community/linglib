@@ -103,10 +103,11 @@ def Examples.Indefinite.word : Examples.Indefinite → QuantificationalDetermine
   | .nci => Czech.Determiners.zadny
   | .ppi => Czech.Determiners.nejaky
 
-/-- The polarity entry of each indefinite. -/
-def Examples.Indefinite.entry : Examples.Indefinite → PolarityItem
-  | .nci => Czech.PolarityItems.zadny
-  | .ppi => Czech.PolarityItems.nejaky
+/-- The polarity class of each indefinite: *žádný* is a negative concord item, which clausal
+negation licenses, and *nějaký* is a positive polarity item. -/
+def Examples.Indefinite.cls : Examples.Indefinite → PolarityItem.Class
+  | .nci => .npi .antiMorphic
+  | .ppi => .ppi .antiMorphic
 
 /-- Of the readings of *žádný*, exactly the indefinite one yields *no* under the one negation of the
 clause (p. 5). -/
@@ -117,12 +118,12 @@ theorem compl_eq_no_iff {d : Det.Family} (hd : d ∈ ⟦Examples.Indefinite.nci.
   all_goals simp [Det.Family.some_ne_no, Det.Family.some_ne_no.symm]
 
 -- the clause under each operator, as a licenser, admits an indefinite exactly when the reading does
-theorem admits_ofPolarity_entry_iff (W : Type) [Nonempty W] (i : Examples.Indefinite)
-    (n : Polarity) : (Licenser.ofPolarity W n).Admits i.entry ↔ n.Admits i.entry :=
-  Licenser.admits_ofPolarity_iff (by cases i <;> decide)
+theorem admits_ofPolarity_cls_iff (W : Type) [Nonempty W] (i : Examples.Indefinite)
+    (n : Polarity) : (Licenser.ofPolarity W n).Admits i.cls ↔ n.Admits i.cls :=
+  Licenser.admits_ofPolarity_iff
 
 theorem admits_ppi_iff_not_admits_nci (n : Polarity) :
-    n.Admits Examples.Indefinite.ppi.entry ↔ ¬ n.Admits Examples.Indefinite.nci.entry := by
+    n.Admits Examples.Indefinite.ppi.cls ↔ ¬ n.Admits Examples.Indefinite.nci.cls := by
   cases n <;> decide
 
 /-! ### Evidence and felicity -/
@@ -149,7 +150,7 @@ theorem orderEvidence_eq_image_distribution (wp : VerbPosition) :
 indefinite is felicitous: the evidence of some available reading that admits the indefinite,
 within what the word order admits. -/
 def evidence (wp : VerbPosition) (i : Examples.Indefinite) : BiasValue :=
-  {n ∈ wp.availableReadings | n.Admits i.entry}.biUnion readingEvidence ∩ orderEvidence wp
+  {n ∈ wp.availableReadings | n.Admits i.cls}.biUnion readingEvidence ∩ orderEvidence wp
 
 -- (14): FALSUM on a clause-initial verb is compatible with every evidence
 theorem evidence_v1_ppi : evidence .v1 .ppi = Finset.univ := by decide
@@ -173,7 +174,7 @@ theorem evidential_englishV1_ssubset_evidence_v1_ppi :
 licenses the particle and admits the indefinite, if there is one. -/
 def NahodouFelicitous (wp : VerbPosition) (pol : Polarity) (i : Option Examples.Indefinite) :
     Prop :=
-  ∃ n ∈ wp.availableReadings, NahodouLicensed pol n ∧ ∀ j ∈ i, n.Admits j.entry
+  ∃ n ∈ wp.availableReadings, NahodouLicensed pol n ∧ ∀ j ∈ i, n.Admits j.cls
 
 instance (wp : VerbPosition) (pol : Polarity) (i : Option Examples.Indefinite) :
     Decidable (NahodouFelicitous wp pol i) :=

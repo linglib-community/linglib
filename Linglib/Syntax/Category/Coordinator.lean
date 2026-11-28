@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Word.Basic
 public import Linglib.Syntax.Feature.Case.Function
 public import Mathlib.Data.Fin.VecNotation
 
@@ -99,10 +98,6 @@ structure Coordinator.Correlative where
 namespace Coordinator
 
 variable (c : Coordinator)
-
-/-- `c.toWord` is the coordinator as a word, of UD category `CCONJ`, its form in boundary
-notation. -/
-def toWord : Morphology.Word := { form := toString c.morph, cat := .CCONJ }
 
 /-- A coordinator is also comitative when its morph is one of the forms `ms` of a marker whose
 functions `fs` include the comitative, so that 'and' is 'with', [stassen-2000]'s lexical

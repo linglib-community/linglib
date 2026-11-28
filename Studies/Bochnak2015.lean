@@ -1,7 +1,9 @@
 module
 
 public import Linglib.Core.Order.IntervalOrder
+public import Linglib.Semantics.Degree.Sorites
 public import Linglib.Semantics.Delineation
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Comparable
 public import Mathlib.Tactic.Linarith
@@ -33,9 +35,15 @@ margin of error](##marginOrder_of_conjoinedComparison), van Rooij's semi-order.
   which describe the model and not the entries, as the paper's degree-free relative/absolute
   distinction requires.
 * The Similarity Constraint is a condition on a delineation for a relation of similarity, imposed
-  in every comparison class containing the similar pair; so imposed it is a tolerance condition,
-  which a class of many small steps meets only trivially. For the margin of error, similarity is
-  incomparability under the margin order, and the margin is real-valued as in measurement theory.
+  in the comparison class of the two similar entities alone: the context of (21), and the context
+  in which the paper evaluates an implicit comparison under the margin of error. In a larger
+  class further members can place one of a similar pair in the positive and the other in the
+  negative extension. Were the condition imposed on every pair of a larger class, it would be the
+  tolerance premise of a soritical argument along similarity within the class on a gapless
+  delineation, and a class containing every measure between two entities would admit no conjoined
+  comparison of them.
+* For the margin of error, similarity is incomparability under the margin order, and the margin
+  is real-valued as in measurement theory.
 * The library has interval orders, `IsIntervalOrder`, but no class of semi-orders, so
   semi-transitivity (58c) is a theorem of its own.
 
@@ -176,10 +184,10 @@ semi-order (58) and, with no margin, a strict weak order (59), the order of the 
 section CrispJudgment
 
 /-- The Similarity Constraint (20) on a delineation, for a relation `sim` of differing only to a
-very small degree: no comparison class containing two similar entities puts one in the positive
+very small degree: the comparison class of two similar entities does not put one in the positive
 and the other in the negative extension. -/
 def SimilarityConstraint (del : Delineation E) (sim : E → E → Prop) : Prop :=
-  ∀ C, ∀ x ∈ C, ∀ y ∈ C, sim x y → x ∈ del C → y ∉ del.neg C
+  ∀ x y, sim x y → x ∈ del {x, y} → y ∉ del.neg {x, y}
 
 variable (μ : E → ℝ) (ε : ℝ) {del : Delineation E} {C : Set E} {x y z : E}
 
@@ -194,29 +202,87 @@ variable {μ ε}
 
 -- (21)
 theorem not_conjoinedComparison_of_similar {sim : E → E → Prop} (h : SimilarityConstraint del sim)
-    (hx : x ∈ C) (hy : y ∈ C) (hs : sim x y) : ¬ ConjoinedComparison del C x y :=
-  fun hc ↦ h C x hx y hy hs hc.1 hc.2
+    (hs : sim x y) : ¬ ConjoinedComparison del {x, y} x y :=
+  fun hc ↦ h x y hs hc.1 hc.2
 
 /-- In a crisp-judgment context (21), where `x` exceeds `y` by no more than the margin of error,
-the English comparative holds while no conjoined comparison obeying the Similarity Constraint
-does. -/
+the English comparative holds while the conjoined comparison of the two, under the Similarity
+Constraint, does not. -/
 theorem crisp_judgment (hsim : SimilarityConstraint del (IncompRel (MarginOrder μ ε)))
-    (hx : x ∈ C) (hy : y ∈ C) (hlt : μ y < μ x) (hclose : μ x ≤ μ y + ε) :
-    Deg (μ y < ·) (GradablePredicate μ) x ∧ ¬ ConjoinedComparison del C x y :=
-  ⟨(deg_lt_iff μ).2 hlt, not_conjoinedComparison_of_similar hsim hx hy
+    (hlt : μ y < μ x) (hclose : μ x ≤ μ y + ε) :
+    Deg (μ y < ·) (GradablePredicate μ) x ∧ ¬ ConjoinedComparison del {x, y} x y :=
+  ⟨(deg_lt_iff μ).2 hlt, not_conjoinedComparison_of_similar hsim
     ⟨hclose.not_gt, fun h ↦ by unfold MarginOrder at h; linarith⟩⟩
 
 /-- Under the Similarity Constraint for the margin of error and the second Consistency Constraint
-for the measure, a conjoined comparison entails the margin-of-error order (60): its first entity
-exceeds the second by more than the margin. -/
+for the measure, a conjoined comparison of two entities in their own comparison class entails the
+margin-of-error order (60): the first exceeds the second by more than the margin. -/
 theorem marginOrder_of_conjoinedComparison (hε : 0 ≤ ε) (hs : del.IsSoundFor fun a b ↦ μ b < μ a)
-    (hsim : SimilarityConstraint del (IncompRel (MarginOrder μ ε))) (hx : x ∈ C) (hy : y ∈ C)
-    (h : ConjoinedComparison del C x y) : MarginOrder μ ε x y := by
+    (hsim : SimilarityConstraint del (IncompRel (MarginOrder μ ε)))
+    (h : ConjoinedComparison del {x, y} x y) : MarginOrder μ ε x y := by
   by_contra hn
-  refine not_conjoinedComparison_of_similar hsim hx hy ⟨hn, fun h' ↦ ?_⟩ h
+  refine not_conjoinedComparison_of_similar hsim ⟨hn, fun h' ↦ ?_⟩ h
   have := conjoinedComparison_entails hs h
   unfold MarginOrder at h'
   linarith
+
+variable (μ ε) in
+/-- The delineation of the margin of error puts in the positive extension of a class what exceeds
+some member by more than the margin. -/
+def marginDelineation : Delineation E :=
+  ofExtension fun C ↦ {x | ∃ y ∈ C, MarginOrder μ ε x y}
+
+-- the delineation of the margin of error meets the Similarity Constraint
+theorem similarityConstraint_marginDelineation (hε : 0 ≤ ε) :
+    SimilarityConstraint (marginDelineation μ ε) (IncompRel (MarginOrder μ ε)) := by
+  rintro x y hs ⟨z, rfl | rfl, hz⟩
+  · exact absurd hz (by unfold MarginOrder; linarith)
+  · exact absurd hz hs.1
+
+-- (60): its conjoined comparison of two entities is the margin-of-error order
+theorem conjoinedComparison_marginDelineation_iff (hε : 0 ≤ ε) :
+    ConjoinedComparison (marginDelineation μ ε) {x, y} x y ↔ MarginOrder μ ε x y := by
+  refine ⟨marginOrder_of_conjoinedComparison hε (fun C a b ⟨z, hzC, hz⟩ hb ↦ ?_)
+    (similarityConstraint_marginDelineation hε), fun h ↦ ⟨⟨y, by simp, h⟩, ?_⟩⟩
+  · exact lt_of_not_ge fun hab ↦ hb ⟨z, hzC, by unfold MarginOrder at hz ⊢; linarith⟩
+  · rintro ⟨z, rfl | rfl, hz⟩ <;> unfold MarginOrder at h hz <;> linarith
+
+-- the condition of (20) on every pair of a class makes a conjoined comparison a Sorites
+theorem ConjoinedComparison.sorites {sim : E → E → Prop} (hd : del.IsGapless)
+    (htol : ∀ a ∈ C, ∀ b ∈ C, sim a b → a ∈ del C → b ∉ del.neg C)
+    (h : ConjoinedComparison del C x y) :
+    Sorites (· ∈ del C) (fun a b ↦ a ∈ C ∧ b ∈ C ∧ sim a b) x y :=
+  ⟨h.1, fun a b ha ⟨haC, hbC, hs⟩ ↦ not_not.1 (mt hd.mem_neg_iff.2 (htol a haC b hbC hs ha)),
+    hd.mem_neg_iff.1 h.2⟩
+
+private theorem reflTransGen_incompRel_marginOrder {C : Set ℝ} (hε : 0 < ε) (n : ℕ) :
+    ∀ {x y : ℝ}, y ≤ x → x - y ≤ n * ε → Set.Icc y x ⊆ C → Relation.ReflTransGen
+      (fun a b ↦ a ∈ C ∧ b ∈ C ∧ IncompRel (MarginOrder id ε) a b) x y := by
+  have key (a b : ℝ) (h₁ : a ≤ b + ε) (h₂ : b ≤ a + ε) : IncompRel (MarginOrder id ε) a b :=
+    ⟨fun h ↦ by simp only [MarginOrder, id] at h; linarith,
+      fun h ↦ by simp only [MarginOrder, id] at h; linarith⟩
+  induction n with
+  | zero =>
+    intro x y hyx h _
+    obtain rfl : x = y := le_antisymm (by simpa using h) hyx
+    exact .refl
+  | succ n ih =>
+    intro x y hyx h hC
+    rcases le_total (x - y) ε with hle | hle
+    · exact .single ⟨hC ⟨hyx, le_rfl⟩, hC ⟨le_rfl, hyx⟩, key x y (by linarith) (by linarith)⟩
+    · have hx : x - ε ∈ Set.Icc y x := ⟨by linarith, by linarith⟩
+      refine .head ⟨hC ⟨hyx, le_rfl⟩, hC hx, key x (x - ε) (by linarith) (by linarith)⟩
+        (ih hx.1 (by push_cast at h; linarith) fun z hz ↦ hC ⟨hz.1, hz.2.trans hx.2⟩)
+
+-- with the condition of (20) on every pair of a class containing every measure between two
+-- entities, a gapless delineation of the reals admits no conjoined comparison of them
+theorem not_conjoinedComparison_of_Icc_subset {del : Delineation ℝ} {C : Set ℝ} {x y : ℝ}
+    (hd : del.IsGapless) (hε : 0 < ε)
+    (htol : ∀ a ∈ C, ∀ b ∈ C, IncompRel (MarginOrder id ε) a b → a ∈ del C → b ∉ del.neg C)
+    (hyx : y ≤ x) (hC : Set.Icc y x ⊆ C) : ¬ ConjoinedComparison del C x y := fun h ↦ by
+  obtain ⟨n, hn⟩ := exists_nat_ge ((x - y) / ε)
+  exact (h.sorites hd htol).not_reflTransGen
+    (reflTransGen_incompRel_marginOrder hε n hyx ((div_le_iff₀ hε).1 hn) hC)
 
 variable (μ) in
 -- (58a), (58b)

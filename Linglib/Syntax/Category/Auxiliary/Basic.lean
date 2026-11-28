@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Morphology.Word.Basic
+public import Linglib.Morphology.Word.Features
 public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Semantics.Evidentiality.Term
 public import Linglib.Semantics.Modality.Typology
@@ -30,7 +30,6 @@ evidentiality strategy.
 
 * `Auxiliary`: the entry.
 * `ModalAuxiliary`: the entry of an auxiliary that is a modal item.
-* `Auxiliary.toWord`: the `AUX` word it spells out.
 * `ModalAuxiliary.toEvidential`, `ModalAuxiliary.strategies`: the evidential extension of a
   modal auxiliary, and the strategies among a list of them.
 
@@ -52,7 +51,7 @@ evidential sense is a lexical means, neither an evidential nor a strategy.
 
 @[expose] public section
 
-open Morphology (Word Features)
+open Morphology (Features)
 open Modality (ModalItem)
 
 /-- An auxiliary: a word form in the cells it is entered for, with the features those cells
@@ -75,15 +74,6 @@ structure ModalAuxiliary extends Auxiliary, ModalItem where
 attribute [coe] ModalAuxiliary.toAuxiliary
 
 instance : CoeOut ModalAuxiliary Auxiliary := ⟨ModalAuxiliary.toAuxiliary⟩
-
-namespace Auxiliary
-
-/-- The `AUX` word an auxiliary spells out. -/
-def toWord (a : Auxiliary) : Word := { form := a.form, cat := .AUX, features := a.features }
-
-@[simp] theorem toWord_cat (a : Auxiliary) : a.toWord.cat = .AUX := rfl
-
-end Auxiliary
 
 namespace ModalAuxiliary
 

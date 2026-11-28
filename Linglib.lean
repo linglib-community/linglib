@@ -222,8 +222,6 @@ import Linglib.Data.WALS.Features.F121A
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Commitment.Frame
-import Linglib.Discourse.Commitment.Space
-import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.Basic
@@ -334,7 +332,6 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adposition.Basic
 import Linglib.Syntax.Category.Auxiliary.Basic
-import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Category.Determiner.Basic
@@ -360,7 +357,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Negation
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Tree.Basic
 import Linglib.Data.Examples.Svenonius2004

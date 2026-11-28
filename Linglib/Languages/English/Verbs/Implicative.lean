@@ -55,7 +55,6 @@ def persuade : Verb where
   morphs := [.root "persuade"]
   levin := none
   valency := .ofFrame toInfinitive.withObject (controller := some 1)
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- "promise" — subject control across an object, "promise X to VP". A desiderative attitude
@@ -72,7 +71,6 @@ def promise : Verb where
      (ArgumentFrame.np_pp (some Adpositions.to_) (some (.argument .R)), [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 1 {.def}, [0, 2, 1])]
     (controllers := [some 0, some 0])
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- "remember" — implicative with infinitival ("remember to call") -/

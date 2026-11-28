@@ -50,7 +50,7 @@ verb of manner of motion ([levin-hovav-1995] p. 185). A locative phrase, and a p
 does not select, an adjunct, leave the verb as it is: *correre* 'run' has a directed motion use
 in Italian but *nuotare* 'swim' has none ([sorace-2000] §4.3). -/
 def withPath (v : Verb) (p : Locative) : Verb :=
-  if p.mode.direction = .place ∨ ¬ v.TakesSpatial then v else
+  if p.mode.direction = .place ∨ ¬ v.valency.TakesSpatial then v else
     { v with direction := some p.mode.direction }
 
 section withPath
@@ -61,10 +61,10 @@ variable {v : Verb} {p : Locative}
     v.withPath p = v := by
   simp [withPath, h]
 
-@[simp] theorem withPath_of_not_takesSpatial (h : ¬ v.TakesSpatial) : v.withPath p = v := by
+@[simp] theorem withPath_of_not_takesSpatial (h : ¬ v.valency.TakesSpatial) : v.withPath p = v := by
   simp [withPath, h]
 
-@[simp] theorem direction_withPath (hv : v.TakesSpatial) (h : p.mode.direction ≠ .place) :
+@[simp] theorem direction_withPath (hv : v.valency.TakesSpatial) (h : p.mode.direction ≠ .place) :
     (v.withPath p).direction = some p.mode.direction := by
   simp [withPath, hv, h]
 

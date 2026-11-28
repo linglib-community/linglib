@@ -79,13 +79,13 @@ theorem infinitivalQuestion_takes :
     infinitivalQuestion.Takes whether ∧ ¬ infinitivalQuestion.Takes if_ := by
   decide
 
-theorem typers_know : Verbs.know.typers complementizers = [that, if_, whether] := by
+theorem typers_know : Verbs.know.valency.typers complementizers = [that, if_, whether] := by
   decide
 
-theorem typers_believe : Verbs.believe.typers complementizers = [that] := by
+theorem typers_believe : Verbs.believe.valency.typers complementizers = [that] := by
   decide
 
-theorem typers_wonder : Verbs.wonder.typers complementizers = [if_, whether] := by
+theorem typers_wonder : Verbs.wonder.valency.typers complementizers = [if_, whether] := by
   decide
 
 end English.Complementizers

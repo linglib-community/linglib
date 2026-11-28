@@ -24,7 +24,6 @@ analysis of its distribution, which studies pair with the series.
   builds on a proform.
 * `ProForm.IsQuexistential`: the proform is an interrogative and an indefinite of the language
   under one form.
-* `IndefinitePronoun.toWord`: its token, of UD pronoun type `Ind`.
 * `IndefinitePronoun.Series`: the members of a series, with the name it is cited by.
 * `IndefinitePronoun.Series.forms`: the series as a paradigm over the ontological categories.
 
@@ -56,10 +55,6 @@ def ofProForm (mark : String → String) (q : ProForm) : IndefinitePronoun :=
 *kto-nibud'* on *kto*. -/
 abbrev ofInterrogative (mark : String → String) (q : InterrogativePronoun) : IndefinitePronoun :=
   ofProForm mark q.toProForm
-
-/-- An indefinite's token is of UD pronoun type `Ind`. -/
-def toWord (p : IndefinitePronoun) : Morphology.Word := p.toProForm.toWord .Ind
-
 
 /-- A proform is a quexistential of a language when it is among its interrogatives and among its
 indefinites with no difference in spell-out, as Dutch *wat* is 'what' and 'something'

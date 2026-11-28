@@ -38,7 +38,6 @@ def qidai : Verb := {
   morphs := [.root "qīdài"]
   script := some "期待"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .positive) }
 
 /-- 担心 *dānxīn* 'worry' is a negative preferential attitude. -/
@@ -46,7 +45,6 @@ def danxin : Verb := {
   morphs := [.root "dānxīn"]
   script := some "担心"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .negative) }
 
 /-- 希望 *xīwàng* 'hope' is a positive preferential attitude that takes no questions. -/
@@ -54,7 +52,6 @@ def xiwang : Verb := {
   morphs := [.root "xīwàng"]
   script := some "希望"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .positive) }
 
 /-- 害怕 *hàipà* 'fear' is a negative preferential attitude that takes questions. -/
@@ -62,7 +59,6 @@ def haipa : Verb := {
   morphs := [.root "hàipà"]
   script := some "害怕"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .negative) }
 
 /-- 以为 *yǐwéi* 'be under the impression that' is a nonveridical doxastic attitude. -/
@@ -70,7 +66,6 @@ def yiwei : Verb := {
   morphs := [.root "yǐwéi"]
   script := some "以为"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.doxastic .doxastic) }
 
 /-- 认为 *rènwéi* 'think, hold the view that' is the neutral nonveridical doxastic verb. -/
@@ -78,7 +73,6 @@ def renwei : Verb := {
   morphs := [.root "rènwéi"]
   script := some "认为"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.doxastic .doxastic) }
 
 /-- 知道 *zhīdào* 'know', presupposing its complement and quantifying over the holder's epistemic
@@ -87,7 +81,6 @@ def zhidao : Verb := {
   morphs := [.root "zhīdào"]
   script := some "知道"
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  opaqueContext := true
   attitude := some (.doxastic .epistemic)
   factivity := some .semi }
 
@@ -96,7 +89,6 @@ def houhui : Verb := {
   morphs := [.root "hòuhuǐ"]
   script := some "后悔"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.preferential .negative)
   factivity := some .full }
 
@@ -119,52 +111,45 @@ def xiang : Verb := {
   morphs := [.root "xiǎng"]
   script := some "想"
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  opaqueContext := true
   attitude := some (.preferential .positive) }
 
 /-- 让 *ràng* 'let' is a manipulative verb with a nonfinite complement. -/
 def rang : Verb := {
   morphs := [.root "ràng"]
   script := some "让"
-  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
-  opaqueContext := false }
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1) }
 
 /-- 相信 *xiāngxìn* 'believe' is a nonveridical doxastic attitude with a finite complement. -/
 def xiangxin : Verb := {
   morphs := [.root "xiāngxìn"]
   script := some "相信"
   valency := .ofFrame ArgumentFrame.finiteClause
-  opaqueContext := true
   attitude := some (.doxastic .doxastic) }
 
 /-- 劝 *quàn* 'urge' is a manipulative verb with a nonfinite complement. -/
 def quan : Verb := {
   morphs := [.root "quàn"]
   script := some "劝"
-  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
-  opaqueContext := false }
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1) }
 
 /-- 逼 *bī* 'force' is a manipulative verb with a nonfinite complement. -/
 def bi : Verb := {
   morphs := [.root "bī"]
   script := some "逼"
-  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1)
-  opaqueContext := false }
+  valency := .ofFrame ArgumentFrame.infinitival.withObject (controller := some 1) }
 
 /-- 打算 *dǎsuàn* 'plan' is a desiderative verb with a nonfinite complement. -/
 def dasuan : Verb := {
   morphs := [.root "dǎsuàn"]
   script := some "打算"
   valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  opaqueContext := true
   attitude := some (.preferential .positive) }
 
 /-- 设法 *shèfǎ* 'try' is an achievement verb with a nonfinite complement. -/
 def shefa : Verb := {
   morphs := [.root "shèfǎ"]
   script := some "设法"
-  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0)
-  opaqueContext := false }
+  valency := .ofFrame ArgumentFrame.infinitival (controller := some 0) }
 
 /-- The verb inventory. -/
 def verbs : List Verb :=

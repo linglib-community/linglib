@@ -13,9 +13,11 @@ before the verb when they follow it. They also have the positive meanings 'anyon
 'ever' after comparisons, under expressions of doubt, denial, and impossibility, in questions that
 expect the answer 'no', and after *antes de*, *antes que*, and *sin*. However, *jamás* never
 follows a comparison. Each example is linked to the lexical entry it contains and to the named
-context in which it stands. The licensing theory [admits every acceptable
-example](##ButtEtAl2019.acceptable_admitted). It [also admits *jamás* after a
-comparison](##ButtEtAl2019.jamás_comparative), a restriction that no strength class expresses.
+context in which it stands, and [the entry lists that context as the example
+shows](##ButtEtAl2019.entries_agree). [The entries of four of the words are compatible with the
+class of weak negative polarity items](##ButtEtAl2019.compatible_weak). *Jamás* follows a
+superlative and not a comparison, and [its entry is compatible with no
+class](##ButtEtAl2019.jamás_comparative).
 
 ## Implementation notes
 
@@ -55,30 +57,43 @@ def links : List (Datum × Link) :=
     (haceMucho, ⟨nadie, .sinceTemporal⟩), (sinNadaNiNadie, ⟨nada, .withoutClause⟩),
     (sinNadaNiNadie, ⟨nadie, .withoutClause⟩), (seNego, ⟨nadie, .denyVerb⟩),
     (demasiado, ⟨nadie, .tooTo⟩), (pocos, ⟨nada, .few⟩), (horrible, ⟨nadie, .adversative⟩),
-    (preguntado, ⟨nada, .question⟩), (quienHaVisto, ⟨nadie, .question⟩),
-    (despedirme, ⟨nada, .question⟩), (despedirme, ⟨nadie, .question⟩),
-    (pensar, ⟨nada, .question⟩), (julia, ⟨nunca, .question⟩), (juliaJamas, ⟨jamás, .question⟩),
+    (preguntado, ⟨nada, .constituentQuestion⟩), (quienHaVisto, ⟨nadie, .constituentQuestion⟩),
+    (despedirme, ⟨nada, .constituentQuestion⟩), (despedirme, ⟨nadie, .constituentQuestion⟩),
+    (pensar, ⟨nada, .constituentQuestion⟩), (julia, ⟨nunca, .constituentQuestion⟩),
+    (juliaJamas, ⟨jamás, .constituentQuestion⟩),
     (sinNada, ⟨nada, .withoutClause⟩), (sinNadie, ⟨nadie, .withoutClause⟩),
     (antesQueNadie, ⟨nadie, .beforeClause⟩), (antesDe, ⟨nada, .beforeClause⟩),
     (insincero, ⟨ninguno, .conditionalAntecedent⟩), (noSaleNunca, ⟨nunca, .negation⟩),
-    (noSaleJamas, ⟨jamás, .negation⟩), (seVio, ⟨jamás, .question⟩)]
+    (noSaleJamas, ⟨jamás, .negation⟩), (seVio, ⟨jamás, .polarQuestion⟩)]
 
 -- The item of each link is a word of its example, so a link to the wrong item fails.
 theorem links_attested :
     ∀ p ∈ links, p.2.item.form.toList ∈ Datum.wordsOf p.1.primaryText := by
   decide +kernel
 
-/-- The licensing theory admits the item of every acceptable example in the context in which it
-stands. -/
-theorem acceptable_admitted :
-    ∀ p ∈ links, p.1.judgment = .acceptable → p.2.context.licenser.Admits p.2.item := by
+/-- The entry of each item lists the context of an acceptable example among those in which the
+item is attested, and the context of a starred example among those from which it is excluded. -/
+theorem entries_agree :
+    ∀ p ∈ links, (p.1.judgment = .acceptable → p.2.context ∈ p.2.item.attested) ∧
+      (p.1.judgment = .ungrammatical → p.2.context ∈ p.2.item.excluded) := by
   decide +kernel
 
-/-- *Jamás* cannot follow a comparison. The licensing theory nevertheless admits it there, since it
-admits every weak negative polarity item in an anti-additive context. -/
+-- Each context that an entry lists is the context of an example of the item.
+theorem contexts_linked :
+    ∀ e ∈ items, ∀ c ∈ e.attested ∪ e.excluded,
+      ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = c := by
+  decide +kernel
+
+/-- The entries of *nadie*, *nada*, *ninguno*, and *nunca* are compatible with the class of weak
+negative polarity items. -/
+theorem compatible_weak :
+    ∀ e ∈ [nadie, nada, ninguno, nunca], e.Compatible (.npi .weak) := by
+  decide +kernel
+
+/-- *Jamás* follows a superlative and cannot follow a comparison, so its entry is compatible with
+no class: a class that is possible after a superlative is possible after a comparison. -/
 theorem jamás_comparative :
-    tempranoJamas.judgment = .ungrammatical ∧
-      LicensingContext.clausalComparative.licenser.Admits jamás := by
-  decide
+    tempranoJamas.judgment = .ungrammatical ∧ ∀ k, ¬ jamás.Compatible k := by
+  decide +kernel
 
 end ButtEtAl2019

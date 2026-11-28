@@ -23,12 +23,15 @@ def ex_6 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Dhen vrexi sti Lisavona."
-    glossedTokens := []
+    glossedTokens := [("Dhen", "NEG1"), ("vrexi", "rains"), ("sti", "at.the"), ("Lisavona.", "Lisbon")]
+    glossedWords := [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['v', 'r', 'e', 'x', 'i'], ['r', 'a', 'i', 'n', 's'], [⟨['v', 'r', 'e', 'x', 'i'], ['r', 'a', 'i', 'n', 's'], none⟩]⟩, ⟨['s', 't', 'i'], ['a', 't', '.', 't', 'h', 'e'], [⟨['s', 't', 'i'], ['a', 't', '.', 't', 'h', 'e'], none⟩]⟩, ⟨['L', 'i', 's', 'a', 'v', 'o', 'n', 'a', '.'], ['L', 'i', 's', 'b', 'o', 'n'], [⟨['L', 'i', 's', 'a', 'v', 'o', 'n', 'a'], ['L', 'i', 's', 'b', 'o', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "dhen"), ("use", "negative"), ("mood", "indicative")] }
+    spans := [⟨0, 1, "negator", some "dhen"⟩]
+    paperFeatures := [("use", "negative"), ("mood", "indicative")] }
 
 def ex_8 : Datum :=
   { id := "tsiakmakis2025_8"
@@ -36,12 +39,15 @@ def ex_8 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Min pas sti Lisavona."
-    glossedTokens := []
+    glossedTokens := [("Min", "NEG2"), ("pas", "you.go"), ("sti", "at.the"), ("Lisavona.", "Lisbon")]
+    glossedWords := [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['p', 'a', 's'], ['y', 'o', 'u', '.', 'g', 'o'], [⟨['p', 'a', 's'], ['y', 'o', 'u', '.', 'g', 'o'], none⟩]⟩, ⟨['s', 't', 'i'], ['a', 't', '.', 't', 'h', 'e'], [⟨['s', 't', 'i'], ['a', 't', '.', 't', 'h', 'e'], none⟩]⟩, ⟨['L', 'i', 's', 'a', 'v', 'o', 'n', 'a', '.'], ['L', 'i', 's', 'b', 'o', 'n'], [⟨['L', 'i', 's', 'a', 'v', 'o', 'n', 'a'], ['L', 'i', 's', 'b', 'o', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min"), ("use", "negative"), ("host", "imperative")] }
+    spans := [⟨0, 1, "negator", some "min"⟩]
+    paperFeatures := [("use", "negative"), ("host", "imperative")] }
 
 def ex_14 : Datum :=
   { id := "tsiakmakis2025_14"
@@ -49,12 +55,15 @@ def ex_14 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Posus anthropus dhen kseyelase sta niata tu!"
-    glossedTokens := []
+    glossedTokens := [("Posus", "how.many"), ("anthropus", "men"), ("dhen", "NEG1"), ("kseyelase", "cheated"), ("sta", "in.the"), ("niata", "youth"), ("tu!", "his")]
+    glossedWords := [⟨['P', 'o', 's', 'u', 's'], ['h', 'o', 'w', '.', 'm', 'a', 'n', 'y'], [⟨['P', 'o', 's', 'u', 's'], ['h', 'o', 'w', '.', 'm', 'a', 'n', 'y'], none⟩]⟩, ⟨['a', 'n', 't', 'h', 'r', 'o', 'p', 'u', 's'], ['m', 'e', 'n'], [⟨['a', 'n', 't', 'h', 'r', 'o', 'p', 'u', 's'], ['m', 'e', 'n'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['k', 's', 'e', 'y', 'e', 'l', 'a', 's', 'e'], ['c', 'h', 'e', 'a', 't', 'e', 'd'], [⟨['k', 's', 'e', 'y', 'e', 'l', 'a', 's', 'e'], ['c', 'h', 'e', 'a', 't', 'e', 'd'], none⟩]⟩, ⟨['s', 't', 'a'], ['i', 'n', '.', 't', 'h', 'e'], [⟨['s', 't', 'a'], ['i', 'n', '.', 't', 'h', 'e'], none⟩]⟩, ⟨['n', 'i', 'a', 't', 'a'], ['y', 'o', 'u', 't', 'h'], [⟨['n', 'i', 'a', 't', 'a'], ['y', 'o', 'u', 't', 'h'], none⟩]⟩, ⟨['t', 'u', '!'], ['h', 'i', 's'], [⟨['t', 'u'], ['h', 'i', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "negative exclamative"), ("class", "apparent")] }
+    spans := [⟨2, 1, "negator", some "dhen"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "negative exclamative"), ("class", "apparent")] }
 
 def ex_15 : Datum :=
   { id := "tsiakmakis2025_15"
@@ -62,12 +71,15 @@ def ex_15 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Dhen ipie o Yanis kafe?"
-    glossedTokens := []
+    glossedTokens := [("Dhen", "NEG1"), ("ipie", "drank"), ("o", "the"), ("Yanis", "Yanis"), ("kafe?", "coffee")]
+    glossedWords := [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['D', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['i', 'p', 'i', 'e'], ['d', 'r', 'a', 'n', 'k'], [⟨['i', 'p', 'i', 'e'], ['d', 'r', 'a', 'n', 'k'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['Y', 'a', 'n', 'i', 's'], ['Y', 'a', 'n', 'i', 's'], [⟨['Y', 'a', 'n', 'i', 's'], ['Y', 'a', 'n', 'i', 's'], none⟩]⟩, ⟨['k', 'a', 'f', 'e', '?'], ['c', 'o', 'f', 'f', 'e', 'e'], [⟨['k', 'a', 'f', 'e'], ['c', 'o', 'f', 'f', 'e', 'e'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "preposed negation question"), ("class", "apparent")] }
+    spans := [⟨0, 1, "negator", some "dhen"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "preposed negation question"), ("class", "apparent")] }
 
 def ex_16 : Datum :=
   { id := "tsiakmakis2025_16"
@@ -75,12 +87,15 @@ def ex_16 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Sto kato kato, dhen ine xrisimi ke i vroxi?"
-    glossedTokens := []
+    glossedTokens := [("Sto", "at.the"), ("kato", "down"), ("kato,", "down"), ("dhen", "NEG1"), ("ine", "is"), ("xrisimi", "useful"), ("ke", "and"), ("i", "the"), ("vroxi?", "rain")]
+    glossedWords := [⟨['S', 't', 'o'], ['a', 't', '.', 't', 'h', 'e'], [⟨['S', 't', 'o'], ['a', 't', '.', 't', 'h', 'e'], none⟩]⟩, ⟨['k', 'a', 't', 'o'], ['d', 'o', 'w', 'n'], [⟨['k', 'a', 't', 'o'], ['d', 'o', 'w', 'n'], none⟩]⟩, ⟨['k', 'a', 't', 'o', ','], ['d', 'o', 'w', 'n'], [⟨['k', 'a', 't', 'o'], ['d', 'o', 'w', 'n'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['i', 'n', 'e'], ['i', 's'], [⟨['i', 'n', 'e'], ['i', 's'], none⟩]⟩, ⟨['x', 'r', 'i', 's', 'i', 'm', 'i'], ['u', 's', 'e', 'f', 'u', 'l'], [⟨['x', 'r', 'i', 's', 'i', 'm', 'i'], ['u', 's', 'e', 'f', 'u', 'l'], none⟩]⟩, ⟨['k', 'e'], ['a', 'n', 'd'], [⟨['k', 'e'], ['a', 'n', 'd'], none⟩]⟩, ⟨['i'], ['t', 'h', 'e'], [⟨['i'], ['t', 'h', 'e'], none⟩]⟩, ⟨['v', 'r', 'o', 'x', 'i', '?'], ['r', 'a', 'i', 'n'], [⟨['v', 'r', 'o', 'x', 'i'], ['r', 'a', 'i', 'n'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "rhetorical question"), ("class", "apparent")] }
+    spans := [⟨3, 1, "negator", some "dhen"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "rhetorical question"), ("class", "apparent")] }
 
 def ex_28 : Datum :=
   { id := "tsiakmakis2025_28"
@@ -88,12 +103,15 @@ def ex_28 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Q: Pxios dhen efaye to fayito tu? A: Se pxion dhen aresun ta yuvarlakia?"
-    glossedTokens := []
+    glossedTokens := [("Pxios", "who"), ("dhen", "NEG1"), ("efaye", "ate"), ("to", "the"), ("fayito", "food"), ("tu?", "his"), ("Se", "to"), ("pxion", "whom"), ("dhen", "NEG1"), ("aresun", "like"), ("ta", "the"), ("yuvarlakia?", "meatball.soup")]
+    glossedWords := [⟨['P', 'x', 'i', 'o', 's'], ['w', 'h', 'o'], [⟨['P', 'x', 'i', 'o', 's'], ['w', 'h', 'o'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], [⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], none⟩]⟩, ⟨['t', 'o'], ['t', 'h', 'e'], [⟨['t', 'o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['f', 'a', 'y', 'i', 't', 'o'], ['f', 'o', 'o', 'd'], [⟨['f', 'a', 'y', 'i', 't', 'o'], ['f', 'o', 'o', 'd'], none⟩]⟩, ⟨['t', 'u', '?'], ['h', 'i', 's'], [⟨['t', 'u'], ['h', 'i', 's'], none⟩]⟩, ⟨['S', 'e'], ['t', 'o'], [⟨['S', 'e'], ['t', 'o'], none⟩]⟩, ⟨['p', 'x', 'i', 'o', 'n'], ['w', 'h', 'o', 'm'], [⟨['p', 'x', 'i', 'o', 'n'], ['w', 'h', 'o', 'm'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['a', 'r', 'e', 's', 'u', 'n'], ['l', 'i', 'k', 'e'], [⟨['a', 'r', 'e', 's', 'u', 'n'], ['l', 'i', 'k', 'e'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a', '?'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], [⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := "It is shared knowledge that dad does not like meatball soup."
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "dhen"), ("use", "negative"), ("host", "rhetorical question")] }
+    spans := [⟨1, 1, "negator", some "dhen"⟩, ⟨8, 1, "negator", some "dhen"⟩]
+    paperFeatures := [("use", "negative"), ("host", "rhetorical question")] }
 
 def ex_38 : Datum :=
   { id := "tsiakmakis2025_38"
@@ -101,12 +119,15 @@ def ex_38 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Fovame min efaye ta yuvarlakia o babas."
-    glossedTokens := []
+    glossedTokens := [("Fovame", "I.fear"), ("min", "NEG2"), ("efaye", "ate"), ("ta", "the"), ("yuvarlakia", "meatball.soup"), ("o", "the"), ("babas.", "dad")]
+    glossedWords := [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], none⟩]⟩, ⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], [⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], [⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['b', 'a', 'b', 'a', 's', '.'], ['d', 'a', 'd'], [⟨['b', 'a', 'b', 'a', 's'], ['d', 'a', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("class", "proper")] }
+    spans := [⟨1, 1, "negator", some "min"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
 def ex_39 : Datum :=
   { id := "tsiakmakis2025_39"
@@ -114,12 +135,15 @@ def ex_39 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Fovame min dhen efaye ta yuvarlakia o babas."
-    glossedTokens := []
+    glossedTokens := [("Fovame", "I.fear"), ("min", "NEG2"), ("dhen", "NEG1"), ("efaye", "ate"), ("ta", "the"), ("yuvarlakia", "meatball.soup"), ("o", "the"), ("babas.", "dad")]
+    glossedWords := [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], none⟩]⟩, ⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], [⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], [⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['b', 'a', 'b', 'a', 's', '.'], ['d', 'a', 'd'], [⟨['b', 'a', 'b', 'a', 's'], ['d', 'a', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min dhen"), ("use", "expletive with canonical negation"), ("host", "fear-predicate complement"), ("class", "proper")] }
+    spans := [⟨1, 1, "negator", some "min"⟩, ⟨2, 1, "negator", some "dhen"⟩]
+    paperFeatures := [("use", "expletive with canonical negation"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
 def ex_40 : Datum :=
   { id := "tsiakmakis2025_40"
@@ -127,12 +151,15 @@ def ex_40 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Fovame min efaye TIPOTA o babas."
-    glossedTokens := []
+    glossedTokens := [("Fovame", "I.fear"), ("min", "NEG2"), ("efaye", "ate"), ("TIPOTA", "nothing"), ("o", "the"), ("babas.", "dad")]
+    glossedWords := [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], none⟩]⟩, ⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], [⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], none⟩]⟩, ⟨['T', 'I', 'P', 'O', 'T', 'A'], ['n', 'o', 't', 'h', 'i', 'n', 'g'], [⟨['T', 'I', 'P', 'O', 'T', 'A'], ['n', 'o', 't', 'h', 'i', 'n', 'g'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['b', 'a', 'b', 'a', 's', '.'], ['d', 'a', 'd'], [⟨['b', 'a', 'b', 'a', 's'], ['d', 'a', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "NCI licensing")] }
+    spans := [⟨1, 1, "negator", some "min"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "NCI licensing")] }
 
 def ex_44a : Datum :=
   { id := "tsiakmakis2025_44a"
@@ -140,12 +167,15 @@ def ex_44a : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Fovame o babas min efaye yuvarlakia."
-    glossedTokens := []
+    glossedTokens := [("Fovame", "I.fear"), ("o", "the"), ("babas", "dad"), ("min", "NEG2"), ("efaye", "ate"), ("yuvarlakia.", "meatball.soup")]
+    glossedWords := [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], [⟨['F', 'o', 'v', 'a', 'm', 'e'], ['I', '.', 'f', 'e', 'a', 'r'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['b', 'a', 'b', 'a', 's'], ['d', 'a', 'd'], [⟨['b', 'a', 'b', 'a', 's'], ['d', 'a', 'd'], none⟩]⟩, ⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['m', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], [⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], none⟩]⟩, ⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a', '.'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], [⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .ungrammatical
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "left-periphery merge")] }
+    spans := [⟨3, 1, "negator", some "min"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "left-periphery merge")] }
 
 def ex_45 : Datum :=
   { id := "tsiakmakis2025_45"
@@ -153,12 +183,15 @@ def ex_45 : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Min ksexaso kati, amesos na koroidepsis."
-    glossedTokens := []
+    glossedTokens := [("Min", "NEG2"), ("ksexaso", "I.forget"), ("kati,", "something"), ("amesos", "immediately"), ("na", "SUBJ"), ("koroidepsis.", "you.mock")]
+    glossedWords := [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['k', 's', 'e', 'x', 'a', 's', 'o'], ['I', '.', 'f', 'o', 'r', 'g', 'e', 't'], [⟨['k', 's', 'e', 'x', 'a', 's', 'o'], ['I', '.', 'f', 'o', 'r', 'g', 'e', 't'], none⟩]⟩, ⟨['k', 'a', 't', 'i', ','], ['s', 'o', 'm', 'e', 't', 'h', 'i', 'n', 'g'], [⟨['k', 'a', 't', 'i'], ['s', 'o', 'm', 'e', 't', 'h', 'i', 'n', 'g'], none⟩]⟩, ⟨['a', 'm', 'e', 's', 'o', 's'], ['i', 'm', 'm', 'e', 'd', 'i', 'a', 't', 'e', 'l', 'y'], [⟨['a', 'm', 'e', 's', 'o', 's'], ['i', 'm', 'm', 'e', 'd', 'i', 'a', 't', 'e', 'l', 'y'], none⟩]⟩, ⟨['n', 'a'], ['S', 'U', 'B', 'J'], [⟨['n', 'a'], ['S', 'U', 'B', 'J'], none⟩]⟩, ⟨['k', 'o', 'r', 'o', 'i', 'd', 'e', 'p', 's', 'i', 's', '.'], ['y', 'o', 'u', '.', 'm', 'o', 'c', 'k'], [⟨['k', 'o', 'r', 'o', 'i', 'd', 'e', 'p', 's', 'i', 's'], ['y', 'o', 'u', '.', 'm', 'o', 'c', 'k'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "conditional"), ("class", "proper")] }
+    spans := [⟨0, 1, "negator", some "min"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "conditional"), ("class", "proper")] }
 
 def ex_49b : Datum :=
   { id := "tsiakmakis2025_49b"
@@ -179,12 +212,15 @@ def ex_51a : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Min efaye ta yuvarlakia o babas?"
-    glossedTokens := []
+    glossedTokens := [("Min", "NEG2"), ("efaye", "ate"), ("ta", "the"), ("yuvarlakia", "meatball.soup"), ("o", "the"), ("babas?", "dad")]
+    glossedWords := [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], [⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], [⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['b', 'a', 'b', 'a', 's', '?'], ['d', 'a', 'd'], [⟨['b', 'a', 'b', 'a', 's'], ['d', 'a', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "polar question"), ("class", "proper")] }
+    spans := [⟨0, 1, "negator", some "min"⟩]
+    paperFeatures := [("use", "expletive"), ("host", "polar question"), ("class", "proper")] }
 
 def ex_53a : Datum :=
   { id := "tsiakmakis2025_53a"
@@ -192,12 +228,15 @@ def ex_53a : Datum :=
     reportedIn := none
     language := "mode1248"
     primaryText := "Min dhen efaye ta yuvarlakia o babas?"
-    glossedTokens := []
+    glossedTokens := [("Min", "NEG2"), ("dhen", "NEG1"), ("efaye", "ate"), ("ta", "the"), ("yuvarlakia", "meatball.soup"), ("o", "the"), ("babas?", "dad")]
+    glossedWords := [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], [⟨['M', 'i', 'n'], ['N', 'E', 'G', '2'], none⟩]⟩, ⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], [⟨['d', 'h', 'e', 'n'], ['N', 'E', 'G', '1'], none⟩]⟩, ⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], [⟨['e', 'f', 'a', 'y', 'e'], ['a', 't', 'e'], none⟩]⟩, ⟨['t', 'a'], ['t', 'h', 'e'], [⟨['t', 'a'], ['t', 'h', 'e'], none⟩]⟩, ⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], [⟨['y', 'u', 'v', 'a', 'r', 'l', 'a', 'k', 'i', 'a'], ['m', 'e', 'a', 't', 'b', 'a', 'l', 'l', '.', 's', 'o', 'u', 'p'], none⟩]⟩, ⟨['o'], ['t', 'h', 'e'], [⟨['o'], ['t', 'h', 'e'], none⟩]⟩, ⟨['b', 'a', 'b', 'a', 's', '?'], ['d', 'a', 'd'], [⟨['b', 'a', 'b', 'a', 's'], ['d', 'a', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
     context := ""
     judgment := .acceptable
     contrasts := []
     readings := []
-    paperFeatures := [("negator", "min dhen"), ("use", "expletive with canonical negation"), ("host", "polar question"), ("class", "proper")] }
+    spans := [⟨0, 1, "negator", some "min"⟩, ⟨1, 1, "negator", some "dhen"⟩]
+    paperFeatures := [("use", "expletive with canonical negation"), ("host", "polar question"), ("class", "proper")] }
 
 def ex_59 : Datum :=
   { id := "tsiakmakis2025_59"
@@ -428,5 +467,27 @@ inductive Use where
 def use (e : Datum) : Option Use :=
   e.parse? "use" [("negative", .negative), ("expletive", .expletive),
     ("expletive with canonical negation", .expletiveWithCanonical)]
+
+/-- The labels of the spans the rows mark. -/
+inductive SpanLabel where
+  /-- negator: a sentential negator of the Greek sentence -/
+  | negator
+  deriving DecidableEq, Repr, Fintype
+
+/-- The label of a span, where it is a declared one. -/
+def label? (p : Datum.Span) : Option SpanLabel :=
+  List.lookup p.label [("negator", .negator)]
+
+/-- The Greek sentential negators. -/
+inductive Lexeme where
+  /-- dhen: Greek dhen, glossed NEG1 -/
+  | dhen
+  /-- min: Greek min, glossed NEG2 -/
+  | min
+  deriving DecidableEq, Repr, Fintype
+
+/-- The lexeme a span is a form of, where it names a declared one. -/
+def lexeme? (p : Datum.Span) : Option Lexeme :=
+  p.lexeme.bind (List.lookup · [("dhen", .dhen), ("min", .min)])
 
 end Tsiakmakis2025.Examples

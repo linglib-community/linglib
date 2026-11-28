@@ -3,21 +3,21 @@ module
 public import Linglib.Data.Examples.Schema
 
 /-!
-# `VanRooy2003` — typed example data
+# `VanRooy2003b` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/VanRooy2003.json` by
+Auto-generated from `Linglib/Data/Examples/VanRooy2003b.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace VanRooy2003.Examples`.
+this module; declarations live in `namespace VanRooy2003b.Examples`.
 -/
 
 @[expose] public section
 
-namespace VanRooy2003.Examples
+namespace VanRooy2003b.Examples
 
 def ex_3 : Datum :=
-  { id := "vanrooy2003_3"
-    source := ⟨"van-rooy-2003", "(3)"⟩
+  { id := "vanrooy2003b_3"
+    source := ⟨"van-rooy-2003b", "(3)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Who is Muhammed Ali?"
@@ -29,8 +29,8 @@ def ex_3 : Datum :=
     paperFeatures := [("type", "identification question")] }
 
 def ex_12 : Datum :=
-  { id := "vanrooy2003_12"
-    source := ⟨"van-rooy-2003", "(12)"⟩
+  { id := "vanrooy2003b_12"
+    source := ⟨"van-rooy-2003b", "(12)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Where can I buy an Italian newspaper?"
@@ -42,8 +42,8 @@ def ex_12 : Datum :=
     paperFeatures := [("type", "mention-some"), ("regions", "{u,w},{v,w}")] }
 
 def ex_14 : Datum :=
-  { id := "vanrooy2003_14"
-    source := ⟨"van-rooy-2003", "(14)"⟩
+  { id := "vanrooy2003b_14"
+    source := ⟨"van-rooy-2003b", "(14)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Who, for example, came to the party?"
@@ -55,8 +55,8 @@ def ex_14 : Datum :=
     paperFeatures := [("type", "explicitly non-exhaustive")] }
 
 def ex_15 : Datum :=
-  { id := "vanrooy2003_15"
-    source := ⟨"van-rooy-2003", "(15)"⟩
+  { id := "vanrooy2003b_15"
+    source := ⟨"van-rooy-2003b", "(15)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "John knows where he can buy an Italian newspaper."
@@ -68,8 +68,8 @@ def ex_15 : Datum :=
     paperFeatures := [("type", "embedded mention-some")] }
 
 def ex_16 : Datum :=
-  { id := "vanrooy2003_16"
-    source := ⟨"van-rooy-2003", "(16)"⟩
+  { id := "vanrooy2003b_16"
+    source := ⟨"van-rooy-2003b", "(16)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Who will come to the concert?"
@@ -81,8 +81,8 @@ def ex_16 : Datum :=
     paperFeatures := [("type", "contextual domain")] }
 
 def ex_17 : Datum :=
-  { id := "vanrooy2003_17"
-    source := ⟨"van-rooy-2003", "(17)"⟩
+  { id := "vanrooy2003b_17"
+    source := ⟨"van-rooy-2003b", "(17)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Who dates Mary?"
@@ -94,8 +94,8 @@ def ex_17 : Datum :=
     paperFeatures := [("type", "contextual domain")] }
 
 def ex_18b : Datum :=
-  { id := "vanrooy2003_18b"
-    source := ⟨"van-rooy-2003", "(18b)"⟩
+  { id := "vanrooy2003b_18b"
+    source := ⟨"van-rooy-2003b", "(18b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "How many meters can you jump?"
@@ -107,8 +107,8 @@ def ex_18b : Datum :=
     paperFeatures := [("type", "degree question"), ("optimal value", "maximal")] }
 
 def ex_19 : Datum :=
-  { id := "vanrooy2003_19"
-    source := ⟨"van-rooy-2003", "(19)"⟩
+  { id := "vanrooy2003b_19"
+    source := ⟨"van-rooy-2003b", "(19)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "In how many seconds can you run the 100 meters?"
@@ -120,8 +120,8 @@ def ex_19 : Datum :=
     paperFeatures := [("type", "degree question"), ("optimal value", "minimal")] }
 
 def ex_20 : Datum :=
-  { id := "vanrooy2003_20"
-    source := ⟨"van-rooy-2003", "(20)"⟩
+  { id := "vanrooy2003b_20"
+    source := ⟨"van-rooy-2003b", "(20)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Where can I buy an Italian newspaper?"
@@ -133,8 +133,8 @@ def ex_20 : Datum :=
     paperFeatures := [("type", "mention-some")] }
 
 def ex_21 : Datum :=
-  { id := "vanrooy2003_21"
-    source := ⟨"van-rooy-2003", "(21)"⟩
+  { id := "vanrooy2003b_21"
+    source := ⟨"van-rooy-2003b", "(21)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Where do you live?"
@@ -146,8 +146,8 @@ def ex_21 : Datum :=
     paperFeatures := [("type", "granularity")] }
 
 def ex_22 : Datum :=
-  { id := "vanrooy2003_22"
-    source := ⟨"van-rooy-2003", "(22)"⟩
+  { id := "vanrooy2003b_22"
+    source := ⟨"van-rooy-2003b", "(22)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Who killed spiderman?"
@@ -159,8 +159,8 @@ def ex_22 : Datum :=
     paperFeatures := [("type", "conceptual cover")] }
 
 def ex_23 : Datum :=
-  { id := "vanrooy2003_23"
-    source := ⟨"van-rooy-2003", "(23)"⟩
+  { id := "vanrooy2003b_23"
+    source := ⟨"van-rooy-2003b", "(23)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Who is who?"
@@ -172,8 +172,8 @@ def ex_23 : Datum :=
     paperFeatures := [("type", "conceptual cover")] }
 
 def ex_24 : Datum :=
-  { id := "vanrooy2003_24"
-    source := ⟨"van-rooy-2003", "(24)"⟩
+  { id := "vanrooy2003b_24"
+    source := ⟨"van-rooy-2003b", "(24)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "How many meters can't you jump?"
@@ -185,8 +185,8 @@ def ex_24 : Datum :=
     paperFeatures := [("type", "degree question"), ("optimal value", "undefined"), ("felicity", "infelicitous")] }
 
 def ex_25 : Datum :=
-  { id := "vanrooy2003_25"
-    source := ⟨"van-rooy-2003", "(25)"⟩
+  { id := "vanrooy2003b_25"
+    source := ⟨"van-rooy-2003b", "(25)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "How tall can a polar bear be?"
@@ -198,8 +198,8 @@ def ex_25 : Datum :=
     paperFeatures := [("type", "degree question"), ("reading", "mention-some")] }
 
 def ex_26 : Datum :=
-  { id := "vanrooy2003_26"
-    source := ⟨"van-rooy-2003", "(26)"⟩
+  { id := "vanrooy2003b_26"
+    source := ⟨"van-rooy-2003b", "(26)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Which Beatles' autograph do you have?"
@@ -212,4 +212,4 @@ def ex_26 : Datum :=
 
 def all : List Datum := [ex_3, ex_12, ex_14, ex_15, ex_16, ex_17, ex_18b, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26]
 
-end VanRooy2003.Examples
+end VanRooy2003b.Examples

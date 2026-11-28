@@ -38,7 +38,6 @@ they are predicates the theories define on these fields.
 * `Verb`: the verb entry.
 * `Verb.form`: the citation form.
 * `Verb.changeScale`: the scale along which a degree achievement measures change.
-* `Verb.TakesClausal`: some frame of the verb has a clausal position.
 * `Verb.IsTrigger`: the verb triggers a presupposition by its complement or its phase.
 
 ## Implementation notes
@@ -156,58 +155,6 @@ def Verb.form (v : Verb) : String := Morph.surface v.morphs
 a verb of attitude, since the scale of *believe* measures its holder's attitude and no change. -/
 def Verb.changeScale (v : Verb) : Option Boundedness :=
   if v.attitude.isSome then none else v.gradability.map (·.boundedness)
-
-/-! ### Readers of the valency -/
-
-/-- Every frame of the verb is intransitive. -/
-def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.valency.frames, fr.IsIntransitive
-
-instance (v : Verb) : Decidable v.IsIntransitive :=
-  inferInstanceAs (Decidable (∀ fr ∈ v.valency.frames, _))
-
-/-- Some diathesis of the verb has a participant controlling its clausal complement. -/
-def Verb.HasController (v : Verb) : Prop := ∃ d ∈ v.valency.diatheses, d.controller.isSome
-
-instance (v : Verb) : Decidable v.HasController :=
-  inferInstanceAs (Decidable (∃ d ∈ v.valency.diatheses, _))
-
-/-- The [noonan-2007] complement types the verb's frames restrict a complement to. -/
-def Verb.codings (v : Verb) : Finset Clause.ComplementType :=
-  Finset.univ.filter fun c ↦ ∃ fr ∈ v.valency.frames, c ∈ fr.codings
-
-/-- Some frame of the verb selects the sentence type `t`. -/
-def Verb.TakesType (v : Verb) (t : Clause.SentenceType) : Prop :=
-  ∃ fr ∈ v.valency.frames, fr.hasType t
-
-instance (v : Verb) (t : Clause.SentenceType) : Decidable (v.TakesType t) :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
-
-/-- The verb selects some interrogative sentence type, as the responsives and rogatives
-*know*, *wonder* and *ask* do. -/
-def Verb.TakesQuestion (v : Verb) : Prop := ∃ t, t.IsInterrogative ∧ v.TakesType t
-
-instance (v : Verb) : Decidable v.TakesQuestion := inferInstanceAs (Decidable (∃ _t, _ ∧ _))
-
-/-- Some frame of the verb has a clausal position, so the verb selects a CP or
-    reduced clause ([schwarzer-2026]'s CP-selecting verbs). -/
-def Verb.TakesClausal (v : Verb) : Prop := ∃ fr ∈ v.valency.frames, fr.HasClausal
-
-instance (v : Verb) : Decidable v.TakesClausal :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
-
-/-- Some frame of the verb has a spatial adpositional position, so the verb selects a locative or
-    directional phrase as a complement. -/
-def Verb.TakesSpatial (v : Verb) : Prop :=
-  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.relation = {.spatial}
-
-instance (v : Verb) : Decidable v.TakesSpatial :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
-
-/-- Some frame of the verb has a nominal position, so the verb selects a DP. -/
-def Verb.TakesNominal (v : Verb) : Prop := ∃ fr ∈ v.valency.frames, fr.HasNominal
-
-instance (v : Verb) : Decidable v.TakesNominal :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
 
 /-- The verb triggers a presupposition when what it does with its complement does
 (`Clause.Embedding.IsTrigger`) or when it is phasal, presupposing the prior state

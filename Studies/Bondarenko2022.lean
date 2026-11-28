@@ -71,7 +71,7 @@ the exponents give for the heads of the clause and for what the clause combines 
   situation by what exists within it. This is shown in a model. In general what exemplifies two
   sets exemplifies their intersection; see `Mereology.Exemplifies.inter`.
 * Buryat *hanaxa* quantifies over doxastic alternatives in both of its frames, which differ in
-  opacity and factivity. Its nominalized reading, 'remember', is factive through the
+  factivity. Its nominalized reading, 'remember', is factive through the
   presupposition that the event its complement describes started before the thinking, which the
   language file records on the nominalized frame.
 
@@ -533,15 +533,15 @@ theorem hanaxa_typers :
         ¬ ArgumentFrame.finiteClause.Takes (buryat.comp .nominal)) ∧
       (nominalizedFrame.Takes (buryat.comp .nominal) ∧
         ¬ nominalizedFrame.Takes (buryat.comp .verbal)) ∧
-      hanaxa.typers complementizers = [aasha, zha] := by
+      hanaxa.valency.typers complementizers = [aasha, zha] := by
   decide
 
-/-- *hanaxa* is veridical and transparent with a nominalized complement, and neither with a bare
-one (§4.4.3). -/
+/-- *hanaxa* has the same attitude with either complement, and is veridical with a nominalized
+one and not with a bare one (§4.4.3). -/
 theorem hanaxa_isVeridical_nominalized :
-    ((hanaxa.on nominalizedFrame).IsVeridical ∧ ¬ (hanaxa.on nominalizedFrame).opaqueContext) ∧
-      ¬ (hanaxa.on ArgumentFrame.finiteClause).IsVeridical ∧
-        (hanaxa.on ArgumentFrame.finiteClause).opaqueContext := by
+    (hanaxa.on nominalizedFrame).attitude = (hanaxa.on ArgumentFrame.finiteClause).attitude ∧
+      (hanaxa.on nominalizedFrame).IsVeridical ∧
+        ¬ (hanaxa.on ArgumentFrame.finiteClause).IsVeridical := by
   decide
 
 end Bondarenko2022

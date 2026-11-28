@@ -66,7 +66,6 @@ def kork : Verb where
   morphs := [.root "kork"]
   rootSegments := [k, o, r, k]
   valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-- *um-* 'hope', a positive preference. -/
@@ -74,7 +73,6 @@ def um : Verb where
   morphs := [.root "um"]
   rootSegments := [u, m]
   valency := .ofFrame ArgumentFrame.gerund
-  opaqueContext := true
   attitude := some (.preferential .positive)
 
 /-- *endişelen-* 'worry', a negative preference. -/
@@ -82,7 +80,6 @@ def endişelen : Verb where
   morphs := [.root "endişelen"]
   rootSegments := [e, n, d, i, ş, e, l, e, n]
   valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
-  opaqueContext := true
   attitude := some (.preferential .negative)
 
 /-! ### Motion -/

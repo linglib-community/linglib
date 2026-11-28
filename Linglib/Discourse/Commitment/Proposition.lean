@@ -5,43 +5,41 @@ public import Linglib.Logic.Modal.Systems
 public import Linglib.Discourse.Commitment.Basic
 
 /-!
-# Commitment propositions
+# Commitment as a proposition
 
-In Krifka's account a commitment is itself a proposition, so `k⊢φ` holds at the worlds where `k`
-vouches for `φ`. Over an accessibility `O k` for each holder `k` it is the core of `φ`, the worlds
-all of whose `O k`-successors are `φ`-worlds. It is closed under consequence and conjunction, its
-complement is the refusal `¬k⊢φ`, and a common ground can contain it without containing `φ`.
-Asserting `φ` is the performative update that makes `k⊢φ` hold everywhere. Public commitment sets
-give the accessibilities that do not depend on the world, and a commitment state of
-`Commitment.Basic` projects onto them. Indices that pair a fact with every holder's commitment set
-are the canonical model in which commitments vary from world to world.
+Let `O k` be an accessibility relation on worlds for each holder `k`, relating a world `w` to the
+worlds compatible with what `k` is committed to at `w`. The proposition that `k` is committed to
+`φ`, written `k ⊢[O] φ`, is the set of worlds all of whose `O k`-successors are in `φ`. Since it
+is a proposition, a common ground can contain `k ⊢[O] φ` without containing `φ`.
+
+The *performative update* by `k`'s commitment to `φ` removes from `O k` the pairs whose second
+world is outside `φ`. After the update `k ⊢[O] φ` holds at every world.
+
+When commitments do not vary from world to world they are given by a commitment set `P k` for
+each holder, and `k ⊢[O] φ` then holds at every world or at none.
 
 ## Main definitions
 
-* `k ⊢[O] φ`: the commitment proposition `k⊢φ`, the core of `φ` along `O k`.
-* `Commitment.perform O k φ`: the performative update by `k`'s commitment to `φ`.
-* `Commitment.ofSets P`: the accessibility of the public commitment sets `P`.
-* `Commitment.Index κ F`: a fact with a non-empty commitment set for each holder, with its
-  accessibility `Commitment.Index.access`.
+* `k ⊢[O] φ`: the worlds all of whose `O k`-successors are in `φ`.
+* `perform O k φ`: the relations `O`, with `O k` restricted to the pairs whose second world is in
+  `φ`.
+* `ofSets P`: the relations in which every world is related by `k` to exactly the worlds in
+  `P k`.
 
 ## Main results
 
-* `Commitment.committed_perform`: after the performative update by `φ`, `k⊢ψ` holds where
-  `k⊢(φ → ψ)` held, so `k⊢φ` holds everywhere.
-* `Commitment.disjoint_committed_compl`: a holder whose commitments are consistent is not
-  committed to both `φ` and `¬φ`, so `k⊢¬φ` entails the refusal `¬k⊢φ`.
-* `Commitment.committed_ofSets`: a public commitment holds everywhere or nowhere.
-* `Commitment.ofSets_commitmentSet_insert`: adding a commitment to a commitment state is the
-  performative update of its commitment sets.
+* `committed_perform`: `k ⊢[perform O k φ] ψ = k ⊢[O] (φᶜ ∪ ψ)`.
+* `disjoint_committed_compl`: if `O k` is serial, then `k ⊢[O] φ` and `k ⊢[O] φᶜ` are disjoint.
+* `committed_ofSets`: `k ⊢[ofSets P] φ` holds at every world if `P k ⊆ φ` and at none otherwise.
+* `ofSets_commitmentSet_insert`: adding a commitment to a commitment state is the performative
+  update of the relations given by its commitment sets.
 
 ## References
 
-* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
-  and Question Tags* (2015)][krifka-2015]
-* [M. Krifka, *Performative updates and the modeling of speech acts* (2024)][krifka-2024a]
-* [T. van der Leer, *Commitments, beliefs and expectations in conversation*
-  (2026)][van-der-leer-2026]
-* [T. Yamada, *Dynamic Logic of Propositional Commitments* (2012)][yamada-2012]
+* [krifka-2015]
+* [krifka-2024a]
+* [van-der-leer-2026]
+* [yamada-2012]
 -/
 
 @[expose] public section
@@ -53,13 +51,13 @@ open scoped SetRel
 
 variable {κ W : Type*} (O : κ → SetRel W W) (k : κ) (φ ψ : Set W)
 
-/-- The proposition `k⊢φ` holds at the worlds all of whose `O k`-successors are `φ`-worlds, where
-`k` is committed to `φ`: the core of `φ` along `O k`. -/
+/-- `k ⊢[O] φ` is the proposition that `k` is **committed** to `φ`: the set of worlds all of whose
+`O k`-successors are in `φ`. -/
 scoped notation:50 k:51 " ⊢[" O "] " φ:51 => SetRel.core (O k) φ
 
-/-- The performative update by `k`'s commitment to `φ` keeps the `φ`-successors of `O k` and
-leaves every other accessibility unchanged ([yamada-2012]'s update by an act of asserting,
-[van-der-leer-2026] Definition 4). -/
+/-- The **performative update** of `O` by `k`'s commitment to `φ` restricts `O k` to the pairs whose
+second world is in `φ` and leaves the other relations unchanged ([yamada-2012]'s update by an act of
+asserting, [van-der-leer-2026] Definition 4). -/
 def perform : κ → SetRel W W := fun k' ↦ {p | p ∈ O k' ∧ (k' = k → p.2 ∈ φ)}
 
 variable {O k φ ψ} {k' : κ}
@@ -78,8 +76,9 @@ theorem perform_subset (k' : κ) : perform O k φ k' ⊆ O k' := fun _ h ↦ h.1
 theorem perform_of_ne (h : k' ≠ k) : perform O k φ k' = O k' :=
   Set.ext fun _ ↦ ⟨And.left, fun hp ↦ ⟨hp, (absurd · h)⟩⟩
 
-/-- After the performative update by `φ`, `k⊢ψ` holds where `k⊢(φ → ψ)` held before
-([yamada-2012]'s reduction axiom for the asserter's own commitments). -/
+/-- After the performative update by `k`'s commitment to `φ`, `k` is committed to `ψ` at the worlds
+where `k` was committed to `φᶜ ∪ ψ` ([yamada-2012]'s reduction axiom for the asserter's own
+commitments). -/
 theorem committed_perform : (k ⊢[perform O k φ] ψ) = (k ⊢[O] (φᶜ ∪ ψ)) :=
   Set.ext fun _ ↦ ⟨fun h _ hb ↦ or_iff_not_imp_left.2 fun ht ↦ h ⟨hb, fun _ ↦ not_not.1 ht⟩,
     fun h _ hb ↦ (h hb.1).resolve_left (not_not.2 (hb.2 rfl))⟩
@@ -103,7 +102,8 @@ theorem perform_comm : perform (perform O k φ) k' ψ = perform (perform O k' ψ
   funext fun _ ↦ Set.ext fun _ ↦
     ⟨fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩, fun h ↦ ⟨⟨h.1.1, h.2⟩, h.1.2⟩⟩
 
-/-- The performative update is the greatest family inside `O` in which `k⊢φ` holds everywhere. -/
+/-- A family of relations is contained in the performative update of `O` by `k`'s commitment to `φ`
+if and only if it is contained in `O` and, in it, `k` is committed to `φ` at every world. -/
 theorem le_perform_iff {O' : κ → SetRel W W} :
     O' ≤ perform O k φ ↔ O' ≤ O ∧ (k ⊢[O'] φ) = Set.univ :=
   ⟨fun h ↦ ⟨fun k' ↦ (h k').trans (perform_subset k'),
@@ -124,8 +124,8 @@ instance [IsK45Frame (O k')] : IsK45Frame (perform O k φ k') where
 
 variable (P : κ → Set W)
 
-/-- From every world, the accessibility of the public commitment sets `P` reaches exactly the
-worlds compatible with `k`'s commitments. -/
+/-- `ofSets P` is the family of relations in which every world is related by `k` to exactly the
+worlds in `P k`. -/
 def ofSets : κ → SetRel W W := fun k ↦ SetRel.cgraph fun _ ↦ P k
 
 instance : IsK45Frame (ofSets P k) where
@@ -150,40 +150,5 @@ theorem ofSets_commitmentSet_insert (K : State κ W) (k : κ) (φ : Set W) :
   · rw [State.commitmentSet_insert_of_ne h]
     ext
     simp [h]
-
-/-! ### Indices -/
-
-/-- An index fixes a fact and, for each holder, the non-empty set of facts its commitments leave
-open. -/
-structure Index (κ F : Type*) where
-  /-- The fact at the index. -/
-  fact : F
-  /-- The facts left open by `k`'s commitments. -/
-  commitmentSet : κ → Set F
-  commitmentSet_nonempty : ∀ k, (commitmentSet k).Nonempty
-
-namespace Index
-
-variable {F : Type*}
-
-/-- From an index, `k` reaches the indices with the same commitment sets whose fact is left open
-by `k`'s commitments. -/
-def access : κ → SetRel (Index κ F) (Index κ F) :=
-  fun k ↦ {p | p.2.fact ∈ p.1.commitmentSet k ∧ p.2.commitmentSet = p.1.commitmentSet}
-
-instance : IsSerial (access (F := F) k) where
-  serial w := ⟨⟨(w.commitmentSet_nonempty k).some, w.commitmentSet, w.commitmentSet_nonempty⟩,
-    (w.commitmentSet_nonempty k).some_mem, rfl⟩
-
-instance : IsK45Frame (access (F := F) k) where
-  trans _ _ _ h₁ h₂ := ⟨h₁.2 ▸ h₂.1, h₂.2.trans h₁.2⟩
-  eucl _ _ _ h₁ h₂ := ⟨h₁.2 ▸ h₂.1, h₂.2.trans h₁.2.symm⟩
-
-theorem committed_access_preimage (φ : Set F) :
-    (k ⊢[access] (fact ⁻¹' φ)) = {w : Index κ F | w.commitmentSet k ⊆ φ} :=
-  Set.ext fun w ↦ ⟨fun h x hx ↦ h (b := ⟨x, w.commitmentSet, w.commitmentSet_nonempty⟩) ⟨hx, rfl⟩,
-    fun h _ hv ↦ h hv.1⟩
-
-end Index
 
 end Commitment

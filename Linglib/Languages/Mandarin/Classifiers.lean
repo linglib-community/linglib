@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Classifier.Basic
+public import Linglib.Syntax.Category.Classifier
 public import Mathlib.Data.Finset.Insert
 
 /-!
@@ -22,12 +22,11 @@ no classifier.
 Measure words stand in the same position: standard measures such as *bàng* 'pound', aggregates such
 as *qún* 'flock', and containers such as *píng* 'bottle'. Container measures are nouns used as
 measures, an open class, and unlike a classifier, which takes no *de* before its noun, a container
-measure can always take *de*. The container measures below are examples.
+measure can always take *de*. Measure words are not entered here.
 
 ## Main definitions
 
 * `Mandarin.Classifiers.classifiers` — the individual classifiers entered here.
-* `Mandarin.Classifiers.containerMeasures` — the container measures entered here.
 
 Which nouns each classifier counts is recorded on the nouns (`Mandarin.Nouns`).
 
@@ -40,8 +39,6 @@ Which nouns each classifier counts is recorded on the nouns (`Mandarin.Nouns`).
 @[expose] public section
 
 namespace Mandarin.Classifiers
-
-/-! ### Individual classifiers -/
 
 /-- *gè* 个, the general classifier: *sān ge rén* 'three people'. -/
 def ge : Classifier := { toMorph := .free "gè", script := some "个" }
@@ -102,37 +99,11 @@ def men : Classifier := { toMorph := .free "mén", script := some "门" }
 
 /-- *xiē* 些, the classifier of plurality, 'several' after *yī* 'one': *yī xiē wánjù* 'some
 toys'. -/
-def xie : Classifier := { toMorph := .free "xiē", script := some "些", gloss := "PL" }
+def xie : Classifier := { toMorph := .free "xiē", script := some "些" }
 
 /-- The individual classifiers. -/
 def classifiers : Finset Classifier :=
   {ge, wei, zhi, jian, duo, jia, liang, zhan, pi, tou, ben, bu, zhang, ba, zhiBranch, ke, tiao,
     dao, men, xie}
-
-/-! ### Container measures -/
-
-/-- *píng* 瓶 'bottle': *yóu* 'oil', *cù* 'vinegar'. -/
-def ping : Classifier := { toMorph := .free "píng", script := some "瓶", gloss := "bottle" }
-
-/-- *bēi* 杯 'glass, cup': *jiǔ* 'wine', *chá* 'tea'. -/
-def bei : Classifier := { toMorph := .free "bēi", script := some "杯", gloss := "glass" }
-
-/-- *xiāng* 箱 'box, chest': *júzi* 'orange'. -/
-def xiang : Classifier := { toMorph := .free "xiāng", script := some "箱", gloss := "box" }
-
-/-- *hé* 盒 'small box': *táng* 'candy'. -/
-def he : Classifier := { toMorph := .free "hé", script := some "盒", gloss := "box" }
-
-/-- *guō* 锅 'pot': *fàn* 'cooked rice'. -/
-def guo : Classifier := { toMorph := .free "guō", script := some "锅", gloss := "pot" }
-
-/-- *gāng* 缸 'vat': *cù* 'vinegar'. -/
-def gang : Classifier := { toMorph := .free "gāng", script := some "缸", gloss := "vat" }
-
-/-- *wǎn* 碗 'bowl': *fàn* 'cooked rice'. -/
-def wan : Classifier := { toMorph := .free "wǎn", script := some "碗", gloss := "bowl" }
-
-/-- The container measures, examples of an open class. -/
-def containerMeasures : Finset Classifier := {ping, bei, xiang, he, guo, gang, wan}
 
 end Mandarin.Classifiers

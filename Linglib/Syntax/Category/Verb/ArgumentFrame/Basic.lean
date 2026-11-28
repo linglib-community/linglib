@@ -60,7 +60,7 @@ and T of its core slots are computed from their number and order.
 * `ArgumentFrame` is not under `Verb` because complement-taking is cross-categorial: Noonan's
   complement-taking predicates include adjectives and nouns.
 * A frame records positions and nothing of the dependencies between them: control is recorded on
-  a diathesis, and attitude and opacity on `Clause.Embedding.Reading`.
+  a diathesis, and attitude and factivity on `Clause.Embedding.Reading`.
 
 ## References
 

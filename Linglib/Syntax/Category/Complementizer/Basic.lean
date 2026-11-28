@@ -10,7 +10,6 @@ public import Linglib.Data.UD.Features
 public import Linglib.Syntax.Clause.Marker
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Morphology.Morph
-public import Linglib.Morphology.Word.Basic
 
 /-!
 # Complementizer

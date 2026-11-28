@@ -39,7 +39,3 @@ structure DemonstrativePronoun extends Pronoun where
 
 instance : DecidableEq DemonstrativePronoun :=
   fun _ _ ↦ decidable_of_iff _ DemonstrativePronoun.ext_iff.symm
-
-/-- A demonstrative's token is of UD pronoun type `Dem`. -/
-def DemonstrativePronoun.toWord (d : DemonstrativePronoun) : Morphology.Word :=
-  d.toPronoun.toWord (some .Dem)

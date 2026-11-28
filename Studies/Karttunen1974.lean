@@ -232,10 +232,9 @@ def Adverbial.connective : Adverbial → Option Tense.Connective
   | .to | .howLong | .forPhrase | .erst | .vasta => none
 
 /-- The polarity item a time expression is or doubles as. -/
-def Adverbial.polarityItem : Adverbial → Option PolarityItem
-  | .until => some English.PolarityItems.until_
-  | .erst => some German.PolarityItems.erst
-  | .vasta => some Finnish.PolarityItems.vasta
+def Adverbial.polarityItem : Adverbial → Option PolarityItem.Class
+  | .until => some (.npi .antiAdditive)
+  | .erst | .vasta => some (.ppi .antiMorphic)
   | _ => none
 
 /-- A time expression is durative when it measures the interval of a durative clause: a

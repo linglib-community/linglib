@@ -11,17 +11,26 @@ public import Linglib.Morphology.Word.Features
 /-!
 # Word tokens
 
-A word token is a surface form with its part of speech and its morphosyntactic features. It is
-the morphosyntactic word, which Kalin and colleagues distinguish from the prosodic word of
-`Phonology/Prosody/Word.lean`.
+A word token is a surface form with its part of speech and its morphosyntactic features, the
+unit of a Universal Dependencies annotation: the element that dependency relations connect, which
+has morphological properties and enters into syntactic relations. It is a word in the
+morphosyntactic sense, the unit that syntax treats as a word, which need not coincide with an
+orthographic word or with a prosodic word, the unit that phonology treats as one: a clitic can
+be a token of its own inside the prosodic word of its host.
 
 ## Main definitions
 
 * `Morphology.Word`: a word token.
-* `Morphology.Word.mk'`: the token with a form and a part of speech and no features.
+
+## Implementation notes
+
+A token records no internal structure. The words of a sequence of morphs, its maximal runs of
+morphs joined by affixation, are a separate construction on morphs, and a token's form is not
+derived from one.
 
 ## References
 
+* [de-marneffe-zeman-2021]
 * [kalin-bjorkman-etal-2026]
 -/
 
@@ -39,11 +48,5 @@ structure Word where
   /-- The features. -/
   features : Features := ⊥
   deriving Repr, DecidableEq
-
-/-- The featureless word with the given form and category. -/
-def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
-
-instance : ToString Word where
-  toString w := w.form
 
 end Morphology

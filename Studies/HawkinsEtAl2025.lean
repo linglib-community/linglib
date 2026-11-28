@@ -45,7 +45,7 @@ off than the exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 
 * A decision problem is an `Agent` that observes nothing (`problem`), and its policy is
   `Agent.policy`. The value is monotone in the rationality (`value_mono`) and at most the best
-  expected utility `decisionValue`, the value of a decision problem in [van-rooy-2003]
+  expected utility `decisionValue`, the value of a decision problem in [van-rooy-2003b]
   (`value_le_decisionValue`), to which it tends as the rationality grows
   (`tendsto_value_atTop`). It is not convex in the belief: `decisionValue` gives information
   nonnegative value (`valueOfInformation_decisionValue_nonneg`), and under `value` learning the
@@ -83,7 +83,7 @@ off than the exhaustive list does (`value_generalYes_lt_value_exhaustive`).
 ## References
 
 * [hawkins-etal-2025]
-* [van-rooy-2003]
+* [van-rooy-2003b]
 -/
 
 @[expose] public section
@@ -290,7 +290,7 @@ theorem value_mono [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
   rw [value_eq_sum, value_eq_sum]
   exact Real.monotone_sum_softmax_smul_mul (fun a ↦ ∫ w, U w a ∂π) h
 
--- [van-rooy-2003]
+-- [van-rooy-2003b]
 theorem tendsto_value_atTop [Nonempty A] (U : W → A → ℝ) (π : Measure W) :
     Filter.Tendsto (fun αℵ ↦ value U αℵ π) .atTop (nhds (decisionValue U π)) := by
   simp only [value_eq_sum]

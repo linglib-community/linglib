@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Word.Basic
 public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!

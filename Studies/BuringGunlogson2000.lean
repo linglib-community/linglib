@@ -1,9 +1,11 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Languages.English.PolarityItems
 public import Linglib.Languages.German.PolarityItems
+public import Mathlib.Data.Fintype.Option
 
 /-!
 # Büring and Gunlogson 2000: aren't positive and negative polar questions the same?
@@ -113,44 +115,66 @@ theorem outer_is_interrogative_only (d : Determiner) :
     d.polarity = .positive ↔ ¬ d.declarativeOK := by
   cases d <;> decide
 
-/-- A polar question as its two probes, a negative determiner and, optionally, a polarity item,
-English *either* or *too* or German *brauchen*. -/
+/-- The class of the paper's negative polarity items, English *either* and German *brauchen*. -/
+abbrev npi : PolarityItem.Class := .npi .weak
+
+/-- The class of the paper's positive polarity item, English *too*, which negation blocks. -/
+abbrev ppi : PolarityItem.Class := .ppi .antiMorphic
+
+/-- A polar question as its two probes, a negative determiner and, optionally, the class of a
+polarity item. -/
 structure Question where
   determiner : Determiner
-  item : Option PolarityItem
+  item : Option PolarityItem.Class
 
 /-- The probes agree on where the negation sits, since a negative polarity item must sit under it,
 so it requires the inner construal, and a positive polarity item must escape it, so it requires
 the outer one. -/
 def Question.WellFormed (q : Question) : Prop :=
-  ∀ e ∈ q.item, q.determiner.polarity.Admits e
+  ∀ k ∈ q.item, q.determiner.polarity.Admits k
 
 instance (q : Question) : Decidable q.WellFormed :=
-  inferInstanceAs (Decidable (∀ e ∈ q.item, _))
+  inferInstanceAs (Decidable (∀ k ∈ q.item, _))
 
--- (14a)
+-- (14a): *either* and *too*
 theorem no_takes_either_not_too :
-    (Question.mk .no (some either)).WellFormed ∧
-      ¬ (Question.mk .no (some too)).WellFormed := by decide
+    (Question.mk .no (some npi)).WellFormed ∧
+      ¬ (Question.mk .no (some ppi)).WellFormed := by decide
 
 -- (14b)
 theorem notSome_takes_too_not_either :
-    (Question.mk .notSome (some too)).WellFormed ∧
-      ¬ (Question.mk .notSome (some either)).WellFormed := by decide
+    (Question.mk .notSome (some ppi)).WellFormed ∧
+      ¬ (Question.mk .notSome (some npi)).WellFormed := by decide
 
--- (16)
+-- (16): *brauchen*
 theorem brauchen_takes_kein_not_nichtEin :
-    (Question.mk .kein (some brauchen)).WellFormed ∧
-      ¬ (Question.mk .nichtEin (some brauchen)).WellFormed := by decide
+    (Question.mk .kein (some npi)).WellFormed ∧
+      ¬ (Question.mk .nichtEin (some npi)).WellFormed := by decide
 
 /-- A negative polarity item forces the inner-negation reading (13a). -/
-theorem polarity_eq_negative_of_isNPI {d : Determiner} {e : PolarityItem} (he : e.IsNPI)
-    (h : (Question.mk d (some e)).WellFormed) : d.polarity = .negative :=
-  (h e rfl).2 he
+theorem polarity_eq_negative_of_isNPI {d : Determiner} {k : PolarityItem.Class} (hk : k.IsNPI)
+    (h : (Question.mk d (some k)).WellFormed) : d.polarity = .negative := by
+  have ha : d.polarity.Admits k := h k rfl
+  generalize d.polarity = s at ha ⊢
+  cases s
+  · obtain hle | ⟨⟨⟩, -⟩ := ha.1
+    exact absurd (hk.trans_le hle) (lt_irrefl _)
+  · rfl
 
 /-- A positive polarity item forces the outer-negation reading (13b). -/
-theorem polarity_eq_positive_of_isPPI {d : Determiner} {e : PolarityItem} (he : e.IsPPI)
-    (h : (Question.mk d (some e)).WellFormed) : d.polarity = .positive :=
-  (h e rfl).1 he
+theorem polarity_eq_positive_of_isPPI {d : Determiner} {k : PolarityItem.Class} (hk : k.IsPPI)
+    (h : (Question.mk d (some k)).WellFormed) : d.polarity = .positive := by
+  have ha : d.polarity.Admits k := h k rfl
+  generalize d.polarity = s at ha ⊢
+  cases s
+  · rfl
+  · exact absurd (PolarityItem.le_ofStrength_antiMorphic hk) ha.2
+
+-- (15): *brauchen* is out in a positive assertion and in a positive polar question and fine under
+-- *niemand*, which with its acceptability under *höchstens* is compatible with the weak class and
+-- with no stronger one.
+theorem brauchen_compatible :
+    brauchen.Compatible npi ∧ ¬ brauchen.Compatible (.npi .antiAdditive) := by
+  decide
 
 end BuringGunlogson2000
