@@ -175,14 +175,6 @@ structure FinitePredicate extends Predicate where
 
 attribute [instance] FinitePredicate.fin
 
-/-- A predicate that is true of something, as the restrictor of a negative quantifier is. -/
-structure NonemptyPredicate extends Predicate where
-  nonempty : A.Nonempty
-
-/-- A predicate that is false of something, as the scope of a universal is. -/
-structure NonuniversalPredicate extends Predicate where
-  nonuniversal : ∃ x, x ∉ A
-
 /-- A finite predicate together with a bound, as the restrictor of *at most n* is. -/
 structure BoundedPredicate extends FinitePredicate where
   /-- The bound. -/
@@ -222,10 +214,6 @@ structure Accessibility where
   R : SetRel W W
   /-- The evaluation world. -/
   w : W
-
-/-- An accessibility relation with a world accessible from the evaluation world. -/
-structure SerialAccessibility extends Accessibility where
-  serial : ∃ v, (w, v) ∈ R
 
 /-- The modal base of a neg-raising attitude and the alternatives into which the presupposition
 of its complement projects. -/
@@ -325,16 +313,16 @@ instance : DecidablePred HasLicenser := fun c ↦ by
 /-- The licenser that a construction places over the position of a polarity item. -/
 noncomputable def licenser : (c : LicensingContext) → (_ : c.HasLicenser := by decide) → Licenser
   | negation, _ => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ compl⟩
-  | nobody, _ => .classical ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.no p.A⟩
+  | nobody, _ => .classical ⟨Predicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.no p.A⟩
   | few, _ => .scalar ⟨⟨FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.few p.A⟩,
       fun p ↦ Det.exhaustified Det.few {Det.no} p.A⟩
   | atMost, _ => .scalar
       ⟨⟨BoundedPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.atMost p.n p.A⟩,
         fun p ↦ Det.exhaustified (Det.atMost p.n) {Det.atMost (p.n - 1)} p.A⟩
   | universalRestrictor, _ => .classical
-      ⟨NonuniversalPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.every R p.A⟩
+      ⟨Predicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.every R p.A⟩
   | noRestrictor, _ => .classical
-      ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.no R p.A⟩
+      ⟨Predicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.no R p.A⟩
   | withoutClause, _ => .classical
       ⟨Predicate, fun p ↦ Set p.ι, fun p ↦ Set p.ι, fun p V ↦ p.A \ V⟩
   | beforeClause, _ => .classical
@@ -343,7 +331,7 @@ noncomputable def licenser : (c : LicensingContext) → (_ : c.HasLicenser := by
   | doubtVerb, _ => .classical
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
   | denyVerb, _ => .classical
-      ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
+      ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
   | superordinateNegation, _ => .strawson
       ⟨Bases, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ NegRaising.negation p.R p.H⟩
   | onlyFocus, _ => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
@@ -409,8 +397,8 @@ theorem holds_negation (s : Negation.Strength) : negation.licenser.Holds s :=
 theorem holds_nobody_iff {s : Negation.Strength} :
     nobody.licenser.Holds s ↔ s ≤ .antiAdditive :=
   forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
-    (g := fun p : NonemptyPredicate ↦ Det.every p.A) (fun _ ↦ rfl) (fun p ↦ map_inf_every p.A)
-    ⟨⟨⟨Bool, .univ⟩, Set.univ_nonempty⟩,
+    (g := fun p : Predicate ↦ Det.every p.A) (fun _ ↦ rfl) (fun p ↦ map_inf_every p.A)
+    ⟨⟨Bool, .univ⟩,
       not_map_sup_every (a := true) (b := false) trivial trivial (by decide)⟩
 
 theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s ↔ s ≤ .monotoneDecreasing := by
@@ -437,9 +425,9 @@ applied after negation. -/
 theorem holds_universalRestrictor_iff {s : Negation.Strength} :
     universalRestrictor.licenser.Holds s ↔ s ≤ .antiAdditive :=
   forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
-    (g := fun p : NonuniversalPredicate ↦ Det.every p.Aᶜ)
+    (g := fun p : Predicate ↦ Det.every p.Aᶜ)
     (fun _ ↦ funext fun _ ↦ propext Set.compl_subset_compl.symm) (fun p ↦ map_inf_every p.Aᶜ)
-    ⟨⟨⟨Bool, ∅⟩, ⟨true, Set.notMem_empty true⟩⟩, not_map_sup_every (a := true) (b := false)
+    ⟨⟨Bool, ∅⟩, not_map_sup_every (a := true) (b := false)
       (Set.notMem_empty _) (Set.notMem_empty _) (by decide)⟩
 
 /-- Since *no* is symmetric, the restrictor of *no* is the scope of a universal over the scope,
@@ -447,9 +435,9 @@ applied after negation. -/
 theorem holds_noRestrictor_iff {s : Negation.Strength} :
     noRestrictor.licenser.Holds s ↔ s ≤ .antiAdditive :=
   forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
-    (g := fun p : NonemptyPredicate ↦ Det.every p.A)
+    (g := fun p : Predicate ↦ Det.every p.A)
     (fun _ ↦ funext fun _ ↦ propext Set.subset_compl_comm) (fun p ↦ map_inf_every p.A)
-    ⟨⟨⟨Bool, .univ⟩, Set.univ_nonempty⟩,
+    ⟨⟨Bool, .univ⟩,
       not_map_sup_every (a := true) (b := false) trivial trivial (by decide)⟩
 
 theorem holds_withoutClause_iff {s : Negation.Strength} :
@@ -495,8 +483,8 @@ theorem holds_doubtVerb_iff {s : Negation.Strength} :
 theorem holds_denyVerb_iff {s : Negation.Strength} :
     denyVerb.licenser.Holds s ↔ s ≤ .antiAdditive :=
   forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
-    (g := fun p : SerialAccessibility ↦ fun P ↦ p.w ∈ p.R.core P) (fun _ ↦ rfl)
-    (fun _ ↦ map_inf_mem_core) ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, not_map_sup_mem_core⟩
+    (g := fun p : Accessibility ↦ fun P ↦ p.w ∈ p.R.core P) (fun _ ↦ rfl)
+    (fun _ ↦ map_inf_mem_core) ⟨⟨Bool, .univ, true⟩, not_map_sup_mem_core⟩
 
 /-- Negation over a neg-raising attitude is anti-additive. It is not antimorphic, since it is
 false of every complement where the modal base is empty. -/
@@ -516,7 +504,7 @@ theorem not_isStrawsonUE_negation : ¬ negation.licenser.IsStrawsonUE :=
   not_forall.2 ⟨Unit, fun h ↦ h (bot_le (a := ⊤)) () id trivial⟩
 
 theorem not_isStrawsonUE_nobody : ¬ nobody.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, Set.univ⟩, Set.univ_nonempty⟩,
+  not_forall.2 ⟨⟨Unit, Set.univ⟩,
     fun h ↦ h (bot_le (a := ⊤)) (fun _ _ hx ↦ hx) (Set.mem_univ ()) trivial⟩
 
 theorem not_isStrawsonUE_few : ¬ few.licenser.IsStrawsonUE :=
@@ -528,11 +516,11 @@ theorem not_isStrawsonUE_atMost : ¬ atMost.licenser.IsStrawsonUE :=
     (h (a := ∅) (b := Set.univ) (Set.empty_subset _) (by decide)) (by decide)⟩
 
 theorem not_isStrawsonUE_universalRestrictor : ¬ universalRestrictor.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, ∅⟩, ⟨(), Set.notMem_empty ()⟩⟩,
+  not_forall.2 ⟨⟨Unit, ∅⟩,
     fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) (Set.mem_univ ())⟩
 
 theorem not_isStrawsonUE_noRestrictor : ¬ noRestrictor.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, Set.univ⟩, Set.univ_nonempty⟩,
+  not_forall.2 ⟨⟨Unit, Set.univ⟩,
     fun h ↦ h (bot_le (a := ⊤)) (Set.empty_subset _) (Set.mem_univ ()) (Set.mem_univ ())⟩
 
 theorem not_isStrawsonUE_withoutClause : ¬ withoutClause.licenser.IsStrawsonUE :=
@@ -554,7 +542,7 @@ theorem not_isStrawsonUE_doubtVerb : ¬ doubtVerb.licenser.IsStrawsonUE :=
     (fun hc ↦ Set.notMem_empty _ (hc (Set.mem_univ (true, true)))) fun _ _ ↦ trivial⟩
 
 theorem not_isStrawsonUE_denyVerb : ¬ denyVerb.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, fun h ↦
+  not_forall.2 ⟨⟨Bool, .univ, true⟩, fun h ↦
     h (bot_le (a := ⊤)) (fun _ _ ↦ Set.notMem_empty _) (Set.mem_univ (true, true))
       (Set.mem_univ true)⟩
 
