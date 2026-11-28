@@ -25,6 +25,11 @@ asymmetry of stacked neg-raising predicates that Horn reports. With each environ
 licenser of the library's licensing theory, the theory [admits the strict NPI of each example
 exactly where the paper accepts it](##Gajewski2007.judgments_predicted), superlatives aside.
 
+Entailment here is standard entailment, not entailment modulo presupposition. *Only DP*,
+adversatives and conditional antecedents are anti-additive modulo presupposition and do not license
+strict NPIs, so anti-additivity modulo presupposition is not the licensing condition. Superlatives
+are anti-additive modulo presupposition in the same way and do license them, which is left open.
+
 ## Implementation notes
 
 * The neg-raising predicate of Appendix 2 is the library's `NegRaising.box`, over a modal base
@@ -468,6 +473,30 @@ theorem superlative_exception :
       p.1.judgment = .acceptable ∧ ¬ p.2.environment.licenser.Carries .antiAdditive := by
     decide +kernel
   exact fun p hp he ↦ ⟨(h p hp he).1, LicensingContext.isStrawsonDE_superlative, (h p hp he).2⟩
+
+/-- *Only DP*, adversatives, conditional antecedents and superlatives are anti-additive modulo
+presupposition and not downward entailing outright. Strict NPIs are out under the first three,
+(123), (126) and (127), so Strawson anti-additivity does not license them, and acceptable in a
+superlative, (132). -/
+theorem strawsonAntiAdditive_rows :
+    (LicensingContext.onlyFocus.licenser.IsStrawsonAntiAdditive ∧
+      LicensingContext.adversative.licenser.IsStrawsonAntiAdditive ∧
+      LicensingContext.conditionalAntecedent.licenser.IsStrawsonAntiAdditive ∧
+      LicensingContext.superlative.licenser.IsStrawsonAntiAdditive) ∧
+    (¬ LicensingContext.onlyFocus.licenser.Holds .monotoneDecreasing ∧
+      ¬ LicensingContext.adversative.licenser.Holds .monotoneDecreasing ∧
+      ¬ LicensingContext.conditionalAntecedent.licenser.Holds .monotoneDecreasing ∧
+      ¬ LicensingContext.superlative.licenser.Holds .monotoneDecreasing) ∧
+    ∀ p ∈ links, ∀ c ∈ [LicensingContext.onlyFocus, .adversative, .conditionalAntecedent,
+      .superlative], p.2.environment = .named c →
+        (p.1.judgment = .acceptable ↔ c = .superlative) :=
+  ⟨⟨LicensingContext.isStrawsonAntiAdditive_onlyFocus,
+      LicensingContext.isStrawsonAntiAdditive_adversative,
+      LicensingContext.isStrawsonAntiAdditive_conditionalAntecedent,
+      LicensingContext.isStrawsonAntiAdditive_superlative⟩,
+    ⟨LicensingContext.not_holds_onlyFocus, LicensingContext.not_holds_adversative,
+      LicensingContext.not_holds_conditionalAntecedent, LicensingContext.not_holds_superlative⟩,
+    by decide +kernel⟩
 
 -- (74), (73)
 theorem finite_boundary :

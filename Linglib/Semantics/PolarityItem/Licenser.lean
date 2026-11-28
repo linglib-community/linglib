@@ -36,8 +36,9 @@ does not admit the negative ones.
 * `PolarityItem.Licenser.exhaustified`: the meaning of a licenser above the exhaustivity operator,
   with its direct implicature added.
 * `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsStrawsonDE`,
-  `PolarityItem.Licenser.IsStrawsonUE`: a strength that a licenser holds outright, and downward
-  and upward entailment modulo presupposition.
+  `PolarityItem.Licenser.IsStrawsonUE`, `PolarityItem.Licenser.IsStrawsonAntiAdditive`: a strength
+  that a licenser holds outright, and downward entailment, upward entailment and
+  anti-additivity modulo presupposition.
 * `PolarityItem.Licenser.Carries`: a strength of negation that a licenser carries. Von Fintel
   requires the plain meaning to be downward entailing modulo presupposition, and Bylinina and
   Nouwen add that it must not be upward entailing as well. A strength above the monotone decreasing
@@ -176,6 +177,14 @@ def IsStrawsonDE : Licenser → Prop
   | .strawson F => ∀ p, Presupposition.IsStrawsonDE (F.op p)
   | .modal F => ∀ p, Antitone (F.op p)
 
+/-- A licenser is Strawson anti-additive when every operator in its family is anti-additive
+modulo its presupposition ([gajewski-2007]). An operator without a presupposition is Strawson
+anti-additive exactly when it is anti-additive. -/
+def IsStrawsonAntiAdditive : Licenser → Prop
+  | .classical F | .scalar ⟨F, _⟩ => ∀ p, Negation.HasStrength (F.op p) .antiAdditive
+  | .strawson F => ∀ p, Presupposition.IsStrawsonAntiAdditive (F.op p)
+  | .modal F => ∀ p, Negation.HasStrength (F.op p) .antiAdditive
+
 /-- A licenser is Strawson upward entailing when every operator in its family is upward entailing
 modulo its presupposition. A constant operator is both upward and downward entailing. -/
 def IsStrawsonUE : Licenser → Prop
@@ -238,6 +247,14 @@ theorem Holds.of_le (h : L.Holds t) (hst : s ≤ t) : L.Holds s := by
   cases L with
   | classical F | strawson F | modal F => exact fun p ↦ (h p).of_le hst
   | scalar F => exact fun p ↦ (h p).of_le hst
+
+/-- A Strawson anti-additive licenser is Strawson downward entailing. -/
+theorem IsStrawsonAntiAdditive.isStrawsonDE (h : L.IsStrawsonAntiAdditive) : L.IsStrawsonDE := by
+  cases L with
+  | classical F => exact fun p ↦ Negation.HasStrength.of_le (s := .monotoneDecreasing) (h p) (by decide)
+  | scalar F => exact fun p ↦ Negation.HasStrength.of_le (s := .monotoneDecreasing) (h p) (by decide)
+  | strawson F => exact fun p ↦ (h p).isStrawsonDE
+  | modal F => exact fun p ↦ Negation.HasStrength.of_le (s := .monotoneDecreasing) (h p) (by decide)
 
 theorem isStrawsonDE_of_holds_monotoneDecreasing (h : L.Holds .monotoneDecreasing) :
     L.IsStrawsonDE := by

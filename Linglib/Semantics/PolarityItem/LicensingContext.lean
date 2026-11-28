@@ -600,36 +600,52 @@ theorem not_holds_exhaustified_atMost :
 
 /-! ### Strawson licensers -/
 
-theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦
-  Focus.isStrawsonDE_only_eq p.x
+theorem isStrawsonAntiAdditive_onlyFocus : onlyFocus.licenser.IsStrawsonAntiAdditive := fun p ↦
+  Focus.isStrawsonAntiAdditive_only_eq p.x
+
+theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_onlyFocus.isStrawsonDE
 
 theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .monotoneDecreasing := fun h ↦
   Focus.not_antitone_posExt_only_eq
     ((h ⟨Bool, Unit, true⟩))
 
-theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
-  Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g
+theorem isStrawsonAntiAdditive_adversative : adversative.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ Desire.BestWorlds.isStrawsonAntiAdditive_regret p.dox p.base p.g
+
+theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_adversative.isStrawsonDE
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .monotoneDecreasing := fun h ↦
   Desire.BestWorlds.not_antitone_posExt_regret fun _ _ hab ↦
     h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {{false}}⟩ hab
 
-theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
-  isStrawsonDE_trivalentSuperlative p.μ p.x
+theorem isStrawsonAntiAdditive_superlative : superlative.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ isStrawsonAntiAdditive_trivalentSuperlative p.μ p.x
+
+theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_superlative.isStrawsonDE
 
 theorem not_holds_superlative : ¬ superlative.licenser.Holds .monotoneDecreasing := fun h ↦
   not_antitone_posExt_trivalentSuperlative ((h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
 
+theorem isStrawsonAntiAdditive_conditionalAntecedent :
+    conditionalAntecedent.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ Conditional.isStrawsonAntiAdditive_horizonCounterfactual p.horizon p.q
+
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=
-  fun p ↦ Conditional.isStrawsonDE_horizonCounterfactual p.horizon p.q
+  isStrawsonAntiAdditive_conditionalAntecedent.isStrawsonDE
 
 theorem not_holds_conditionalAntecedent :
     ¬ conditionalAntecedent.licenser.Holds .monotoneDecreasing := fun h ↦
   Conditional.not_antitone_posExt_horizonCounterfactual
     ((h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
 
-theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE := fun p ↦
-  isStrawsonDE_since p.ago
+theorem isStrawsonAntiAdditive_sinceTemporal : sinceTemporal.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ isStrawsonAntiAdditive_since p.ago
+
+theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_sinceTemporal.isStrawsonDE
 
 theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .monotoneDecreasing := fun h ↦
   not_antitone_posExt_since ((h ⟨ℤ, (· - 5)⟩))
