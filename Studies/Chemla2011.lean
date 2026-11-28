@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Lattice
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Filter
 public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Tactic.DeriveFintype
 

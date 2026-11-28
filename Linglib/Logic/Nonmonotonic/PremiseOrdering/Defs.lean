@@ -13,6 +13,7 @@ in the same members, and the complements of the members induce the reverse order
 
 ## Main definitions
 
+* `Preorder.ofCriterion`: the ordering of a single predicate.
 * `Preorder.ofLowerSets`, with notation `≤[A]`, `w ≤[A] z`, `w <[A] z` in the scope
   `PremiseOrdering`: the ordering a family of sets induces.
 
@@ -105,5 +106,22 @@ theorem antisymmRel_ofLowerSets_iff :
     AntisymmRel (≤[A]).le a b ↔ {s ∈ A | a ∈ s} = {s ∈ A | b ∈ s} :=
   ((ofLowerSets_le_iff_subset A a b).and (ofLowerSets_le_iff_subset A b a))
     |>.trans (and_comm.trans Set.Subset.antisymm_iff.symm)
+
+/-! ### A single predicate -/
+
+/-- The preorder of a single predicate ranks `a` below `b` when `a` satisfies the predicate
+whenever `b` does. It is defined directly rather than as the ordering of a singleton, so that its
+meet with another preorder unfolds to a conjunction. -/
+@[reducible] def ofCriterion (P : α → Prop) : Preorder α where
+  le a b := P b → P a
+  le_refl _ := id
+  le_trans _ _ _ hab hbc h := hab (hbc h)
+  lt a b := (P b → P a) ∧ ¬ (P a → P b)
+  lt_iff_le_not_ge _ _ := Iff.rfl
+
+instance {C : Type*} (sat : α → C → Prop) (l : List C) [∀ a c, Decidable (sat a c)] (a b : α) :
+    Decidable ({c ∈ {c | c ∈ l} | sat a c} ⊆ {c ∈ {c | c ∈ l} | sat b c}) :=
+  decidable_of_iff (∀ c ∈ l, sat a c → sat b c)
+    ⟨fun h _ hc ↦ ⟨hc.1, h _ hc.1 hc.2⟩, fun h _ hc ha ↦ (h ⟨hc, ha⟩).2⟩
 
 end Preorder

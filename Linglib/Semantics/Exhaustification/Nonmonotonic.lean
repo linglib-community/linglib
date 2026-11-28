@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Nonmonotonic.Preferential
+public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
 public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Mathlib.Order.SymmDiff
 
@@ -12,8 +13,9 @@ Exhaustification and premise semantics describe the same structure. The order of
 the other direction, and the ordering that their negations induce as premises. The minimal-world
 exhaustifier therefore keeps the best worlds of the prejacent, with the prejacent as modal base
 and the negated alternatives as ordering source. Read as a relation between a prejacent and what
-its exhaustification entails, `exhMW ALT φ ⊆ ψ`, minimal-world exhaustification over finitely many
-alternatives is a preferential consequence relation.
+its exhaustification entails, `exhMW ALT φ ⊆ ψ`, minimal-world exhaustification is a preferential
+consequence relation exactly when the order of the alternatives is well-founded, as it is over
+finitely many alternatives.
 
 A property `P : W → Set E` of individuals that varies with the world gives two families of
 propositions for a set `s` of individuals: that an individual of `s` lacks the property, and that
@@ -24,10 +26,11 @@ the property, and the second when more do.
 
 * `Exhaustification.exhMW_eq_minimals`: the minimal worlds are the best worlds of the prejacent
   under the premise set of the negated alternatives.
-* `Exhaustification.atBotOn_satisfied`: over finitely many alternatives, what holds toward the
-  bottom of the prejacent is what holds at its minimal worlds.
-* `Exhaustification.isPreferential_exhMW`: minimal-world exhaustification over finitely many
-  alternatives is a preferential consequence relation.
+* `Exhaustification.atBotOn_satisfied_iff`: what holds toward the bottom of the prejacent is what
+  holds at its minimal worlds exactly when every world of the prejacent lies above a minimal one.
+* `Exhaustification.isPreferential_exhMW_iff`: minimal-world exhaustification is a preferential
+  consequence relation exactly when the order of the alternatives is well-founded.
+* `Exhaustification.isPreferential_exhMW`: over finitely many alternatives it is.
 * `Exhaustification.ofLowerSets_image_union_le_iff`: under the premises that some individuals lack
   a property and others have it, a world is at least as good as another when fewer of the first
   and more of the second have the property in it.
@@ -63,13 +66,31 @@ theorem exhMW_eq_minimals : exhᵐʷ ALT φ = (≤[compl '' ALT]).minimals φ :=
 
 /-! ### Exhaustification as a consequence relation -/
 
-/-- Over finitely many alternatives, what holds toward the bottom of the prejacent, ranked by the
-alternatives true at a world, is what holds at its minimal worlds. -/
+/-- What holds toward the bottom of the prejacent, ranked by the alternatives true at a world, is
+what holds at its minimal worlds exactly when every world of the prejacent lies above a minimal
+one. -/
+theorem atBotOn_satisfied_iff :
+    Filter.atBotOn (satisfied ALT) φ = Filter.principal (exhᵐʷ ALT φ) ↔
+      ∀ u ∈ φ, ∃ v ∈ exhᵐʷ ALT φ, v ≤ₐ[ALT] u :=
+  Filter.atBotOn_eq_principal_iff.trans <| forall₂_congr fun _ _ ↦ exists_congr fun _ ↦
+    and_congr_right fun _ ↦ satisfied_subset_satisfied
+
+/-- Over finitely many alternatives, what holds toward the bottom of the prejacent is what holds
+at its minimal worlds. -/
 theorem atBotOn_satisfied (hfin : ALT.Finite) (φ : Set W) :
     Filter.atBotOn (satisfied ALT) φ = Filter.principal (exhᵐʷ ALT φ) :=
-  Filter.atBotOn_eq_principal fun _ hu ↦
-    let ⟨v, hv, hvu⟩ := exists_mem_exhMW_le hfin hu
-    ⟨v, hv, satisfied_subset_satisfied.2 hvu⟩
+  atBotOn_satisfied_iff.2 fun _ hu ↦ exists_mem_exhMW_le hfin hu
+
+variable (ALT) in
+/-- Minimal-world exhaustification, read as the relation between a prejacent and what its
+exhaustification entails, is a preferential consequence relation exactly when the order of the
+alternatives is well-founded. -/
+theorem isPreferential_exhMW_iff :
+    (Nonmonotonic.IsPreferential fun φ ψ ↦ exhᵐʷ ALT φ ⊆ ψ) ↔
+      WellFounded (≤[compl '' ALT]).lt := by
+  rw [show (fun φ ψ ↦ exhᵐʷ ALT φ ⊆ ψ) = fun φ ψ ↦ (≤[compl '' ALT]).minimals φ ⊆ ψ from
+    funext₂ fun φ ψ ↦ by rw [exhMW_eq_minimals]]
+  exact Nonmonotonic.isPreferential_minimals_iff
 
 /-- Minimal-world exhaustification over finitely many alternatives, read as the relation between
 a prejacent and what its exhaustification entails, is a preferential consequence relation. -/
