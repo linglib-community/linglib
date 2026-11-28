@@ -10,7 +10,7 @@ public import Linglib.Core.Order.OrdConnected
 
 Minimal selection takes the first applicable rule of a rule set that no applicable rule strictly
 undercuts under a specificity key, and so returns an Elsewhere winner. Where Stump's Pāṇinian
-Determinism holds, the Elsewhere winners being pairwise comparable, it keeps its choice when the
+Determinism holds, the Elsewhere winners being equally specific, it keeps its choice when the
 competition shrinks around the winner, so rules applicable on upper sets of ordered contexts realize
 contiguous patterns. Selection by a score in a linear order is minimal selection under the key that
 reverses the score; a linear key is always deterministic, so its contraction and contiguity hold
@@ -152,11 +152,11 @@ theorem realizeMinimal_congr (h : v.applicable c = v.applicable c') :
 
 /-! ### Contraction under Pāṇinian Determinism -/
 
-/-- Minimal selection is consistent under contraction where the Elsewhere winners of the smaller
-context form a chain, Stump's Pāṇinian Determinism. The rule selected at `c'` is then selected
-at any context whose applicable rules are among those at `c'`, as long as it applies there. -/
+/-- Minimal selection is consistent under contraction where the rule set is Pāṇinian at the smaller
+context. The rule selected at `c'` is then selected at any context whose applicable rules are among
+those at `c'`, as long as it applies there. -/
 theorem selectMinimal_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hc : v.IsPaninian key c)
     (hr : v.selectMinimal key c' = some r)
     (hrc : Applies r c) : v.selectMinimal key c = some r := by
   have hwr' := selectMinimal_isElsewhereWinner hr
@@ -170,10 +170,7 @@ theorem selectMinimal_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Appli
   obtain ⟨hxc, hxmin⟩ := hpx
   have hwx : v.IsElsewhereWinner key c x := minimalFor_iff_forall_lt.mpr
     ⟨⟨(mem_applicable.mp hx).1, hxc⟩, fun s hlt hs ↦ hxmin s (mem_applicable.mpr hs) hlt⟩
-  have hxr : key x ≤ key r := by
-    by_contra hxr
-    exact hxmin r (mem_applicable.mpr hwr.prop)
-      (lt_of_le_not_ge ((hc.total hwx hwr).resolve_left hxr) hxr)
+  have hxr : key x ≤ key r := hc hwx hwr
   simpa using fun s hs hlt ↦ hwr'.not_lt (mem_applicable.mp hs) (lt_of_lt_of_le hlt hxr)
 
 theorem selectMinimal_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
@@ -182,7 +179,7 @@ theorem selectMinimal_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Appli
     List.filter_nil]
 
 theorem realizeMinimal_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c₂ s})
+    (hc : v.IsPaninian key c₂)
     (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₃ → Applies s c₂)
     (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
     (h : v.realizeMinimal key c₁ = v.realizeMinimal key c₃) :
@@ -203,13 +200,13 @@ variable [Preorder Ctx]
 /-- Under Pāṇinian Determinism, rules applicable on upper sets of contexts realize contiguous
 patterns by minimal selection. -/
 theorem isContiguous_realizeMinimal_of_monotone (hv : v.Antihomophonous)
-    (hc : ∀ c, IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hc : ∀ c, v.IsPaninian key c)
     (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realizeMinimal key) :=
   fun _ _ _ hij hjk he ↦ (realizeMinimal_eq_of_applies hv (hc _)
     (fun s hs hi _ ↦ h s hs hij hi) (fun s hs ↦ h s hs hjk) he).symm
 
 theorem isContiguous_realizeMinimal_of_antitone (hv : v.Antihomophonous)
-    (hc : ∀ c, IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hc : ∀ c, v.IsPaninian key c)
     (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realizeMinimal key) :=
   fun _ _ _ hij hjk he ↦ he.trans (realizeMinimal_eq_of_applies hv (hc _)
     (fun s hs hk _ ↦ h s hs hjk hk) (fun s hs ↦ h s hs hij) he.symm).symm
@@ -306,7 +303,7 @@ linear key is deterministic, so this is the contraction of minimal selection. -/
 theorem selectBy_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
     (hr : v.selectBy f c' = some r) (hrc : Applies r c) : v.selectBy f c = some r := by
   rw [selectBy_eq_selectMinimal] at hr ⊢
-  exact selectMinimal_eq_some_of_applies h (isChain_isElsewhereWinner _ _ _) hr hrc
+  exact selectMinimal_eq_some_of_applies h (isPaninian_of_linearOrder _ _ _) hr hrc
 
 theorem selectBy_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
     (hr : v.selectBy f c' = none) : v.selectBy f c = none := by
@@ -321,7 +318,7 @@ theorem realize_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
     (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
     (h : v.realize f c₁ = v.realize f c₃) : v.realize f c₂ = v.realize f c₁ := by
   rw [realize_eq_realizeMinimal] at h ⊢
-  exact realizeMinimal_eq_of_applies hv (isChain_isElsewhereWinner _ _ _) h₁ h₂ h
+  exact realizeMinimal_eq_of_applies hv (isPaninian_of_linearOrder _ _ _) h₁ h₂ h
 
 section Contiguity
 
@@ -331,13 +328,13 @@ variable [Preorder Ctx]
 theorem isContiguous_realize_of_monotone (hv : v.Antihomophonous)
     (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realize f) :=
   realize_eq_realizeMinimal v f ▸
-    isContiguous_realizeMinimal_of_monotone hv (fun _ ↦ isChain_isElsewhereWinner _ _ _) h
+    isContiguous_realizeMinimal_of_monotone hv (fun _ ↦ isPaninian_of_linearOrder _ _ _) h
 
 /-- Rules applicable on lower sets of contexts realize contiguous patterns. -/
 theorem isContiguous_realize_of_antitone (hv : v.Antihomophonous)
     (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realize f) :=
   realize_eq_realizeMinimal v f ▸
-    isContiguous_realizeMinimal_of_antitone hv (fun _ ↦ isChain_isElsewhereWinner _ _ _) h
+    isContiguous_realizeMinimal_of_antitone hv (fun _ ↦ isPaninian_of_linearOrder _ _ _) h
 
 end Contiguity
 
@@ -384,7 +381,7 @@ variable [DecidableRel (· < · : κ → κ → Prop)]
 /-- Under Pāṇinian Determinism minimal selection over a coherent rule set realizes exactly what
 the Elsewhere winners carry, whatever the order of the rule set. -/
 theorem realizeMinimal_eq_some_iff (hv : v.Coherent key)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s}) :
+    (hc : v.IsPaninian key c) :
     v.realizeMinimal key c = some φ ↔ v.Realizes key c φ := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
@@ -398,7 +395,7 @@ theorem realizeMinimal_eq_some_iff (hv : v.Coherent key)
 /-- Under Pāṇinian Determinism a coherent rule set realizes by minimal selection what it
 realizes by selection on any score strictly reversing specificity. -/
 theorem realizeMinimal_eq_realize (hv : v.Coherent key)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hc : v.IsPaninian key c)
     (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r) :
     v.realizeMinimal key c = v.realize f c := by
   rcases hs : v.realize f c with - | φ
@@ -429,7 +426,7 @@ theorem realizeMinimalD_eq_fallback_of_selectMinimal_eq_none (h : v.selectMinima
 /-- Under Pāṇinian Determinism realization with a fallback over a coherent rule set returns the
 exponent of any Elsewhere winner, whatever the order of the rule set. -/
 theorem Realizes.realizeMinimalD_eq (hv : v.Coherent key)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hc : v.IsPaninian key c)
     (h : v.Realizes key c φ) : v.realizeMinimalD key fallback c = φ := by
   rw [realizeMinimalD, (realizeMinimal_eq_some_iff hv hc).mpr h, Option.getD_some]
 

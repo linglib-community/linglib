@@ -366,7 +366,7 @@ theorem czRules_coherent : ∀ l, ∀ r ∈ czRules l, ∀ s ∈ czRules l,
 theorem stemFor_eq_of_realizes {l : CzNoun} {σ : CzCell} {z : Stem}
     (h : RuleSet.Realizes (czRules l) (·.dom) σ z) : stemFor l σ = z :=
   h.realizeMinimalD_eq (fun r hr s hs hrs ↦ czRules_coherent l r hr s hs (le_antisymm hrs.1 hrs.2))
-    (DomainRule.isChain_of_nested (czRules_nested l) σ)
+    (DomainRule.isPaninian_of_nested (czRules_nested l) σ)
 
 -- where rules (14) and (17) both apply, in the locative plural, the narrower (17) gives the stem
 theorem stemFor_locPl_of_mem : ∀ l, ∀ r₁₄ ∈ rule14 l, ∀ r₁₇ ∈ rule17 l,

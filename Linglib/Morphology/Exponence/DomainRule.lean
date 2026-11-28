@@ -23,8 +23,8 @@ domain rules.
 * `DomainRule.le_iff`, `DomainRule.lt_iff`: specificity is domain inclusion.
 * `DomainRule.factorsThrough_applies_iff`: a rule's applicability factors through a map exactly
   when its domain is a union of the map's fibers.
-* `DomainRule.isChain_of_nested`: rules whose overlapping domains are nested satisfy Pāṇinian
-  Determinism, their Elsewhere winners forming a chain.
+* `DomainRule.isPaninian_of_nested`: rules whose overlapping domains are nested satisfy Pāṇinian
+  Determinism.
 
 ## References
 
@@ -61,13 +61,12 @@ theorem factorsThrough_applies_iff {V : Type*} {A : Ctx → V} :
     (Applies r).FactorsThrough A ↔ ∀ c c', A c = A c' → (c ∈ r.dom ↔ c' ∈ r.dom) :=
   ⟨fun h _ _ hA ↦ Iff.of_eq (h hA), fun h _ _ hA ↦ propext (h _ _ hA)⟩
 
-/-- Rules whose overlapping domains are nested satisfy Pāṇinian Determinism, their Elsewhere
-winners at any context forming a chain. -/
-theorem isChain_of_nested {v : RuleSet (DomainRule Ctx E)}
+/-- Rules whose overlapping domains are nested are Pāṇinian at every context. -/
+theorem isPaninian_of_nested {v : RuleSet (DomainRule Ctx E)}
     (h : ∀ r ∈ v, ∀ s ∈ v, ¬ Disjoint r.dom s.dom → r.dom ⊆ s.dom ∨ s.dom ⊆ r.dom) (c : Ctx) :
-    IsChain (fun r s ↦ r.dom ≤ s.dom) {r | v.IsElsewhereWinner (·.dom) c r} :=
-  fun r (hr : v.IsElsewhereWinner (·.dom) c r) s (hs : v.IsElsewhereWinner (·.dom) c s) _ ↦
-    h r hr.prop.1 s hs.prop.1 (Finset.not_disjoint_iff.mpr ⟨c, hr.prop.2, hs.prop.2⟩)
+    v.IsPaninian (·.dom) c :=
+  fun r hr s hs ↦ (h r hr.prop.1 s hs.prop.1
+    (Finset.not_disjoint_iff.mpr ⟨c, hr.prop.2, hs.prop.2⟩)).elim id (hr.le_of_le hs.prop)
 
 variable [DecidableEq Ctx]
 

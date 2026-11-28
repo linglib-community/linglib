@@ -2,7 +2,6 @@ module
 
 public import Linglib.Morphology.Exponence.Basic
 public import Mathlib.Order.Antisymmetrization
-public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Basic
 
@@ -19,14 +18,14 @@ prediction relation they induce.
 
 * `RuleSet.IsElsewhereWinner`: an applicable rule of a rule set at a context that no applicable
   rule is more specific than.
+* `RuleSet.IsPaninian`: the Elsewhere winners at a context are equally specific.
 * `RuleSet.Coherent`: rules equally specific carry the same exponent.
 * `RuleSet.Realizes`: some Elsewhere winner carries the given exponent.
 * `RuleSet.Antihomophonous`: distinct rules carry distinct exponents.
 
 ## Main results
 
-* `RuleSet.Realizes.eq`: where the Elsewhere winners are pairwise comparable, a coherent rule set
-  makes a unique prediction.
+* `RuleSet.Realizes.eq`: a coherent rule set makes a unique prediction where it is Pāṇinian.
 * `RuleSet.Realizes.of_applies`: no ABA pattern across a context that takes in the rules the outer
   two share and whose rules all reach one of them.
 
@@ -37,9 +36,9 @@ other and their structural changes are identical or incompatible. Two exponents 
 position are always one or the other, so only the inclusion of contexts is formalized.
 
 Stump's Pāṇinian Determinism Hypothesis requires that among the rules of a block applicable at a
-cell one be narrower than all the others. The hypothesis used here is that the Elsewhere winners at
-a context are pairwise comparable, which that rule ensures and which also holds where no rule
-applies.
+cell one be narrower than all the others. A rule set is here called Pāṇinian at a context when its
+Elsewhere winners there are equally specific, which that rule ensures and which also holds where no
+rule applies.
 
 ## References
 
@@ -66,16 +65,19 @@ abbrev IsElsewhereWinner (v : RuleSet R) (key : R → κ) (c : Ctx) (r : R) : Pr
 def Coherent (v : RuleSet R) (key : R → κ) : Prop :=
   ∀ r ∈ v, ∀ s ∈ v, AntisymmRel (· ≤ ·) (key r) (key s) → exponent r = exponent s
 
-/-- Comparable Elsewhere winners are equally specific. -/
-theorem IsElsewhereWinner.antisymmRel (hr : v.IsElsewhereWinner key c r)
-    (hs : v.IsElsewhereWinner key c s) (h : key s ≤ key r ∨ key r ≤ key s) :
-    AntisymmRel (· ≤ ·) (key r) (key s) :=
-  h.elim (fun h ↦ ⟨hr.le_of_le hs.1 h, h⟩) fun h ↦ ⟨h, hs.le_of_le hr.1 h⟩
+/-- A rule set is Pāṇinian at a context when its Elsewhere winners there are equally specific. -/
+def IsPaninian (v : RuleSet R) (key : R → κ) (c : Ctx) : Prop :=
+  ∀ ⦃r⦄, v.IsElsewhereWinner key c r → ∀ ⦃s⦄, v.IsElsewhereWinner key c s → key r ≤ key s
 
-/-- Under a linearly ordered key the Elsewhere winners are pairwise comparable. -/
-theorem isChain_isElsewhereWinner {κ : Type*} [LinearOrder κ] (v : RuleSet R) (key : R → κ)
-    (c : Ctx) : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s} :=
-  fun _ _ _ _ _ ↦ le_total _ _
+/-- A rule set whose rules are pairwise comparable in specificity is Pāṇinian at every context. -/
+theorem isPaninian_of_forall_le_or_le (h : ∀ r ∈ v, ∀ s ∈ v, key r ≤ key s ∨ key s ≤ key r)
+    (c : Ctx) : v.IsPaninian key c :=
+  fun r hr s hs ↦ (h r hr.1.1 s hs.1.1).elim id (hr.le_of_le hs.1)
+
+/-- Under a linearly ordered key every rule set is Pāṇinian. -/
+theorem isPaninian_of_linearOrder {κ : Type*} [LinearOrder κ] (v : RuleSet R) (key : R → κ)
+    (c : Ctx) : v.IsPaninian key c :=
+  isPaninian_of_forall_le_or_le (fun _ _ _ _ ↦ le_total _ _) c
 
 theorem exists_isElsewhereWinner (h : ∃ r ∈ v, Applies r c) :
     ∃ r, v.IsElsewhereWinner key c r :=
@@ -87,14 +89,13 @@ theorem exists_isElsewhereWinner (h : ∃ r ∈ v, Applies r c) :
 def Realizes (v : RuleSet R) (key : R → κ) (c : Ctx) (φ : E) : Prop :=
   ∃ r, v.IsElsewhereWinner key c r ∧ exponent r = φ
 
-/-- Over a coherent rule set whose Elsewhere winners are pairwise comparable, the prediction is
-unique. -/
+/-- A coherent rule set makes a unique prediction where it is Pāṇinian. -/
 theorem Realizes.eq {ψ : E} (hv : v.Coherent key)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hc : v.IsPaninian key c)
     (hφ : v.Realizes key c φ) (hψ : v.Realizes key c ψ) : φ = ψ := by
   obtain ⟨r, hr, rfl⟩ := hφ
   obtain ⟨s, hs, rfl⟩ := hψ
-  exact hv r hr.1.1 s hs.1.1 (hr.antisymmRel hs (hc.total hs hr))
+  exact hv r hr.1.1 s hs.1.1 ⟨hc hr hs, hc hs hr⟩
 
 /-! ### Containment -/
 
