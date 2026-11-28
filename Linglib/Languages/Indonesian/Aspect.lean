@@ -95,8 +95,6 @@ theorem telah_eq_sudah :
     { telah with morphs := sudah.morphs, register := sudah.register } = sudah :=
   rfl
 
-theorem register_sudah_lt_telah : sudah.register < telah.register := by decide
-
 /-- *Lagi* can replace *sedang* (§2.146). -/
 theorem lagi_eq_sedang : { lagi with morphs := sedang.morphs } = sedang := rfl
 

@@ -1,28 +1,34 @@
 module
 
-public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Register
 
-This file defines the register of a linguistic form. A register is a way of speaking that a
-speech community ties to a kind of situation, and variation in register is variation within
-one speaker across situations rather than between speakers. The formality of the situation is
-the dimension recorded here: a form belongs to careful or written language, to casual speech,
-or to neither. English *shall* is formal beside *will*, the German simple past is the narrative
-tense of writing, and Indonesian *telah* is the written counterpart of *sudah*.
+This file defines the register of a linguistic form. A register is a recurrent pattern of
+variation in linguistic behaviour that a speech community ties to the situation and the purpose
+of speech, and speakers move between registers from one situation to the next. Registers differ
+along many dimensions. The one recorded here is formality, on the three levels the Cambridge
+Grammar calls styles: a form belongs to formal style, to informal style, or is neutral between
+them. As a first-person future English *shall* is somewhat more formal than *will*, and the
+negative forms *can't* and *won't* are informal and avoided in the most formal styles.
 
-Register is a property of the form and of the situation of use. The deference a form presents
-toward a person it refers to or addresses is a separate property, its honorific grade, a
-coordinate of the language's own paradigms (`Syntax/Category/Pronoun/Personal.lean`). The Korean
-speech-style particles present the same grade to the addressee and differ in the formality of the
-discourse.
+Formality is a property of the situation of use. The deference a form presents toward a person
+it refers to or addresses is a separate property, its honorific grade, a coordinate of the
+language's own paradigms (`Syntax/Category/Pronoun/Personal.lean`). The Korean speech-style
+particles *-supnita* and *-eyo* both present the addressee as above the speaker and differ in
+the formality of the discourse.
 
 ## Main definitions
 
-* `SocialMeaning.Register`: the informal, neutral and formal registers, linearly ordered by
-  formality.
+* `SocialMeaning.Register`: the informal, neutral and formal styles.
+
+## Implementation notes
+
+The entries that carry a register are neutral unless they say otherwise, so the neutral value
+covers a form a grammar calls neutral and a form whose style it does not mention. A form a
+grammar confines to writing is entered as formal and one it confines to colloquial speech as
+informal, although the medium and the formality of a situation are separate parameters.
 
 ## References
 
@@ -37,26 +43,12 @@ namespace SocialMeaning
 
 /-- The register of a form is the formality of the situations in which speakers use it. -/
 inductive Register where
-  /-- Colloquial, casual speech, such as the negative forms *can't* and *won't*. -/
+  /-- Informal style, such as the negative forms *can't* and *won't*. -/
   | informal
-  /-- Unmarked for formality. -/
+  /-- Neutral between formal and informal style. -/
   | neutral
-  /-- Written, literary or careful language, such as *shall*. -/
+  /-- Formal style, such as *shall* beside *will*. -/
   | formal
   deriving DecidableEq, Fintype, Repr
-
-namespace Register
-
-/-- Registers are ordered by formality, `informal < neutral < formal`. -/
-instance : LinearOrder Register :=
-  LinearOrder.lift' Register.ctorIdx fun a b h ↦ by cases a <;> cases b <;> first | rfl | cases h
-
-instance : BoundedOrder Register where
-  top := formal
-  le_top := by decide
-  bot := informal
-  bot_le := by decide
-
-end Register
 
 end SocialMeaning
