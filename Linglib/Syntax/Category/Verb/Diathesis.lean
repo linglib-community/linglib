@@ -207,6 +207,25 @@ def basic? : Option (Diathesis V.arity) := V.diatheses.head?
 /-- The argument frames of the diatheses. -/
 def frames : List ArgumentFrame := V.diatheses.map (·.toArgumentFrame)
 
+/-- The complement positions of the frames. -/
+def complements : List ArgumentFrame.Position := V.frames.flatMap (·.complements)
+
+variable {V} in
+theorem mem_complements {p : ArgumentFrame.Position} :
+    p ∈ V.complements ↔ ∃ fr ∈ V.frames, p ∈ fr.complements :=
+  List.mem_flatMap
+
+/-- The [noonan-2007] complement types the frames restrict a complement to. -/
+def codings : Finset Clause.ComplementType :=
+  Finset.univ.filter fun c ↦ ∃ fr ∈ V.frames, c ∈ fr.codings
+
+/-- Some complement position is a spatial adpositional one, so a locative or directional phrase
+is selected as a complement. -/
+def TakesSpatial : Prop := ∃ p ∈ V.complements, p.relation = {.spatial}
+
+instance : Decidable V.TakesSpatial :=
+  inferInstanceAs (Decidable (∃ p ∈ V.complements, _))
+
 /-- The entailment profile of the participant in a slot of one of the diatheses. -/
 def profileAt (d : Diathesis V.arity) (s : Slot) : Option EntailmentProfile :=
   (d.participantAt s).bind V.profiles.get

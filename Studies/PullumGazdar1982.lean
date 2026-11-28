@@ -890,12 +890,12 @@ instance : DecidablePred IsVerbPhrase := fun w ↦ decidable_of_iff _ (isVerbPhr
 
 /-- A verb takes a bare infinitival if some frame of its entry has an infinitival complement. -/
 def TakesInfinitival (v : Dutch.Verbs.Verb) : Prop :=
-  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.selection.coding = {.infinitive}
+  ∃ p ∈ v.valency.complements, p.selection.coding = {.infinitive}
 
 /-- A verb comes with a noun phrase of its own beside its bare infinitival if the subject of the
 infinitival is an accusative noun phrase. -/
 def TakesAccusativeSubject (v : Dutch.Verbs.Verb) : Prop :=
-  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.selection.subject = {.overt (some .acc)}
+  ∃ p ∈ v.valency.complements, p.selection.subject = {.overt (some .acc)}
 
 instance : DecidablePred TakesInfinitival := fun _ ↦ inferInstanceAs (Decidable (∃ fr ∈ _, _))
 

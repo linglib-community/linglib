@@ -519,19 +519,19 @@ theorem acceptable_iff_dependsSomewhere :
 theorem takes_iff_not_trivial :
     ∀ l : Lexeme, ∀ v ∈ l.verb?, ∀ k ∈ l.class?,
       ∀ z ∈ [English.Complementizers.that, English.Complementizers.whether],
-        ∀ c ∈ Complement.ofMarkers [z] false, (v.Takes z ↔ ¬ Trivial k c) := by
+        ∀ c ∈ Complement.ofMarkers [z] false, (v.valency.Takes z ↔ ¬ Trivial k c) := by
   decide +kernel
 
 -- *depend on* takes *whether* and not *that*
 theorem dependOn_takes :
-    English.Verbs.depend_on.Takes English.Complementizers.whether ∧
-      ¬ English.Verbs.depend_on.Takes English.Complementizers.that := by
+    English.Verbs.depend_on.valency.Takes English.Complementizers.whether ∧
+      ¬ English.Verbs.depend_on.valency.Takes English.Complementizers.that := by
   decide +kernel
 
 -- (11): the neg-raising verbs with an entry take no interrogative complementizer
 theorem negRaisers_not_takes_whether :
     ∀ v ∈ [English.Verbs.believe, English.Verbs.think, English.Verbs.expect, English.Verbs.want,
-      English.Verbs.seem], ¬ v.Takes English.Complementizers.whether := by
+      English.Verbs.seem], ¬ v.valency.Takes English.Complementizers.whether := by
   decide +kernel
 
 /-- Words are a form of an English verb if the entry realizes them, spaced, in some cell. -/
