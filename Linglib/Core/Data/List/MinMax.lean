@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Data.List.Find
 public import Mathlib.Data.List.MinMax
 public import Mathlib.Order.MinMax
 public import Mathlib.Order.Prod.Lex.Basic
@@ -27,6 +28,7 @@ index, leaves the maximizer where it was, since `argmax` already takes the first
 * `List.argmax_map`: `argmax` commutes with `map`.
 * `List.argmax_congr`: scores that order `l` the same way have the same maximizer.
 * `List.argmax_eq_head?`: on a list sorted by decreasing score the maximizer is the head.
+* `List.argmax_eq_find?`: the maximizer is the first element whose score no element exceeds.
 * `List.maximum_map_of_monotone`: `maximum` commutes with a monotone `map`.
 * `List.argmax_toLex_toDual_snd`: on a list with increasing indices, breaking ties in favour of
   the smaller index does not change the maximizer.
@@ -94,6 +96,31 @@ theorem argmax_eq_head? (h : l.Pairwise fun a b ↦ f b ≤ f a) : argmax f l = 
     rcases t with - | ⟨b, t⟩
     · rfl
     · simp [not_lt.mpr ((pairwise_cons.mp h).1 b mem_cons_self)]
+
+/-- The maximizer of a list is its first element whose score no element exceeds. -/
+theorem argmax_eq_find? (f : α → β) (l : List α) :
+    argmax f l = l.find? fun a ↦ l.all fun b ↦ decide (f b ≤ f a) := by
+  induction l with
+  | nil => rfl
+  | cons a t ih =>
+    rw [argmax_cons, find?_cons]
+    by_cases ha : ∀ b ∈ t, f b ≤ f a
+    · have : ((a :: t).all fun b ↦ decide (f b ≤ f a)) = true := by simpa using ha
+      rw [this]
+      rcases hc : argmax f t with - | c
+      · rfl
+      · simp [not_lt.mpr (ha c (argmax_mem hc))]
+    · have : ((a :: t).all fun b ↦ decide (f b ≤ f a)) = false := by simpa using ha
+      rw [this]
+      push Not at ha
+      obtain ⟨b, hb, hab⟩ := ha
+      rcases hc : argmax f t with - | c
+      · simp [argmax_eq_none.mp hc] at hb
+      · have hac : f a < f c := hab.trans_le (le_of_mem_argmax hb hc)
+        simp only [hac, ite_true]
+        refine (find?_eq_some_of_imp (ih ▸ hc) ?_ fun x _ hx ↦ ?_).symm
+        · simpa [hac.le] using fun b hb ↦ le_of_mem_argmax hb hc
+        · simp only [all_cons, Bool.and_eq_true] at hx; exact hx.2
 
 /-- On a list of indexed elements with increasing indices, breaking ties of `f` in favour of the
 smaller index does not change `argmax`. -/

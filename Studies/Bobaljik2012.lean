@@ -850,8 +850,7 @@ def latinBonusNS : RuleSet (SupersetRule 3 String) := [⟨"bon", 0⟩, ⟨"mel",
 theorem latin_ns_spellout : spellout latinBonusNS = ![some "bon", some "mel", some "opt"] := by
   decide
 
-/-- The two frameworks realize Latin cell for cell — the concrete face of
-`SupersetRule.generable_iff_spanRule_generable`. -/
+/-- The two frameworks realize Latin cell for cell. -/
 theorem latin_ns_eq_dm : spellout latinBonusNS = realize latinBonus :=
   latin_ns_spellout.trans latin_bonus_realize.symm
 

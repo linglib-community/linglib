@@ -323,7 +323,6 @@ import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Tense.Perspective
 import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.CCG.Cat

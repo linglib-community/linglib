@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Clause.Alignment
-public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.Inflection.Paradigm.Agreement
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Data.UD.Features

@@ -9,6 +9,7 @@ public import Linglib.Languages.Slavic.Russian.Case
 public import Linglib.Languages.Slavic.Russian.Gender
 public import Linglib.Syntax.Feature.Number.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Logic.Function.DependsOn
@@ -349,6 +350,32 @@ theorem lexeme_stem_of_mem_czRules {l : CzNoun} {r : CellRule} (hr : r ∈ czRul
 theorem stemFor_lexeme (l : CzNoun) (σ : CzCell) : (stemFor l σ).lexeme = l :=
   RuleSet.realizeMinimalD_induction (fun z ↦ z.lexeme = l) rfl fun _ hr ↦
     lexeme_stem_of_mem_czRules hr
+
+-- the domains of rules (14), (15) and (17) that overlap are nested
+theorem czRules_nested : ∀ l, ∀ r ∈ czRules l, ∀ s ∈ czRules l,
+    ¬ Disjoint r.dom s.dom → r.dom ⊆ s.dom ∨ s.dom ⊆ r.dom := by
+  decide +kernel
+
+-- no two rules of a noun share a domain
+theorem czRules_coherent : ∀ l, ∀ r ∈ czRules l, ∀ s ∈ czRules l,
+    r.dom = s.dom → r.exponent = s.exponent := by
+  decide +kernel
+
+-- the stem of a cell is that of any rule Pāṇini's principle admits there, in whatever order the
+-- rules are listed
+theorem stemFor_eq_of_realizes {l : CzNoun} {σ : CzCell} {z : Stem}
+    (h : RuleSet.Realizes (czRules l) (·.dom) σ z) : stemFor l σ = z :=
+  h.realizeMinimalD_eq (fun r hr s hs hrs ↦ czRules_coherent l r hr s hs (le_antisymm hrs.1 hrs.2))
+    (DomainRule.isPaninian_of_nested (czRules_nested l) σ)
+
+-- where rules (14) and (17) both apply, in the locative plural, the narrower (17) gives the stem
+theorem stemFor_locPl_of_mem : ∀ l, ∀ r₁₄ ∈ rule14 l, ∀ r₁₇ ∈ rule17 l,
+    stemFor l (.of .loc .plural) = r₁₇.exponent := by
+  decide +kernel
+
+theorem exists_mem_rule14_mem_rule17 : ∃ l, ∃ r₁₄ ∈ rule14 l, ∃ r₁₇ ∈ rule17 l,
+    r₁₄.exponent ≠ r₁₇.exponent := by
+  decide +kernel
 
 /-! ### Realization -/
 
