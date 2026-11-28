@@ -9,7 +9,7 @@ public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Syntax.Feature.Person.Participants
+public import Linglib.Syntax.Feature.Person.Valued
 
 /-!
 # Accessibility marking
@@ -128,11 +128,11 @@ def full : AccessibilityLevel → Prop
   | .fullNameMod | .fullName => True
   | _ => False
 
-/-- The deictic content of a proximate demonstrative form is the participant sets containing the
-speaker, and that of a distal form is the others. -/
-def deixis : AccessibilityLevel → Option (Finset (Finset SpeechAct.Role))
-  | .distalDemMod | .distalDemNP | .distalDem => some Person.first.participantSetsᶜ
-  | .proxDemMod | .proxDemNP | .proxDem => some Person.first.participantSets
+/-- The deictic content of a proximate demonstrative form is [+speaker], and that of a distal
+form [−speaker]. -/
+def deixis : AccessibilityLevel → Option Person.ValuedFeature
+  | .distalDemMod | .distalDemNP | .distalDem => some ⟨.speaker, .minus⟩
+  | .proxDemMod | .proxDemNP | .proxDem => some ⟨.speaker, .plus⟩
   | _ => none
 
 /-- A form is a stressed pronoun. -/

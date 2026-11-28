@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.Atoms
+public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 
@@ -16,14 +17,13 @@ A definite article has one of two strengths, uniqueness and familiarity, after S
 uniqueness below familiarity since the strong article narrows the weak one. The strength a use of a
 definite calls for, after Hawkins and Schwarz, and the strength of a bridging relation are recorded
 as data here; which strengths a language's determiner inventory marks is derived in
-`Syntax/Category/Determiner/Basic.lean`, and the descriptions themselves denote in
+`Semantics/Reference/Strength.lean`, and the descriptions themselves denote in
 `Semantics/Reference/Description.lean`.
 
 ## Main definitions
 
 * `Definiteness`: the definiteness scale, whose definites are the cut `Set.Ici .definite`.
-* `Definite.Strength`, `NominalKind`: the strength of a definite article
-  and the kind of nominal an inventory realizes, with `Strength.toKind` and `NominalKind.strength`.
+* `Definite.Strength`: the strength of a definite article.
 * `Definite.Use`, `Definite.Bridging`: the uses of a definite
   description and the bridging relations, each with the strength it calls for.
 
@@ -91,7 +91,7 @@ play to its author ([schwarz-2013]). -/
 inductive Bridging where
   | partWhole
   | relational
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Part–whole bridging calls for the weak article and relational bridging for the strong one
 ([schwarz-2009]). -/
@@ -107,7 +107,7 @@ inductive Use where
   | immediateSituation
   | largerSituation
   | bridging (b : Bridging)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The anaphoric use calls for the strong article, the situational uses for the weak one, and a
 bridging use for the strength of its relation ([schwarz-2009], [schwarz-2013]). -/
@@ -117,30 +117,3 @@ def Use.strength : Use → Strength
   | .bridging b => b.strength
 
 end Definite
-
-/-- A kind of nominal that a determiner inventory may realize is one of the forms a definite
-description takes, or the indefinite, which denotes no partial individual. -/
-inductive NominalKind where
-  | bare
-  | indefinite
-  | unique
-  | anaphoric
-  | demonstrative
-  | possessive
-  deriving DecidableEq, Repr
-
-/-- The weak article realizes the unique description and the strong article the anaphoric
-one. -/
-def Definite.Strength.toKind : Definite.Strength → NominalKind
-  | .uniqueness  => .unique
-  | .familiarity => .anaphoric
-
-/-- The strength a kind of nominal presupposes, where it is definite. -/
-def NominalKind.strength : NominalKind → Option Definite.Strength
-  | .bare | .indefinite         => none
-  | .unique | .possessive       => some .uniqueness
-  | .anaphoric | .demonstrative => some .familiarity
-
-@[simp] theorem Definite.Strength.strength_toKind (p : Definite.Strength) :
-    p.toKind.strength = some p := by
-  cases p <;> rfl

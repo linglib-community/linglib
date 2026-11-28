@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Languages.English.Phonology
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # English determiners
@@ -21,8 +20,7 @@ a vowel sound, and the weak form of *the* varies in the same environment.
 * `allQuantifiers`: the quantificational determiners, with the six-word scale `scale` of van
   Tiel, Franke and Sauerland inside it.
 * `indefinite`, `theWeakForm`: the forms of the articles before each beginning of a word.
-* `inventory`: the English determiner inventory, whose *the* marks both strengths
-  (`isSyncretic_inventory`).
+* `inventory`: the English determiner inventory.
 
 ## References
 
@@ -34,6 +32,7 @@ a vowel sound, and the weak form of *the* varies in the same environment.
 * [harbour-2014]
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 * [schwarz-2009]
+* [hawkins-1978]
 * [moroney-2021]
 -/
 
@@ -113,10 +112,13 @@ def scale : List QuantificationalDeterminer := [none_, few, some_, half, most, a
 The articles and demonstratives are not quantifiers, since what they denote is definiteness and
 not a generalized quantifier. -/
 
-/-- *The* is the definite article, syncretic over both strengths of [schwarz-2009]. -/
+/-- *The* is the definite article, syncretic over both strengths of [schwarz-2009]: it has every
+use of [hawkins-1978], bridging to a part, as from a car to *the steering wheel*, and by a
+relation, as from a book to *the author*, included. -/
 def the : Article :=
   { form := "the", definiteness := {.definite}, exponent := .dedicatedMorpheme
-  , uses := {.immediateSituation, .largerSituation, .anaphoric} }
+  , uses := {.immediateSituation, .largerSituation, .anaphoric, .bridging .partWhole,
+      .bridging .relational} }
 
 /-- The weak form of *the*, /ðə/ before a consonant and /ði/ before a vowel, though some speakers
 use /ðə/ throughout ([huddleston-pullum-2002] ch. 18 §6.1, p. 1613). -/
@@ -143,16 +145,16 @@ example : [[smallCapitalI, d, i, schwa, t], [wedge, ŋ, k, l], [j, u, n, smallCa
   decide
 
 /-- *This* is the singular proximal demonstrative. -/
-def this : DemonstrativeDeterminer := { form := "this", deixis := Person.first.participantSets }
+def this : DemonstrativeDeterminer := { form := "this", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *That* is the singular distal demonstrative. -/
-def that : DemonstrativeDeterminer := { form := "that", deixis := Person.first.participantSetsᶜ }
+def that : DemonstrativeDeterminer := { form := "that", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- *These* is the plural proximal demonstrative. -/
-def these : DemonstrativeDeterminer := { form := "these", deixis := Person.first.participantSets }
+def these : DemonstrativeDeterminer := { form := "these", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *Those* is the plural distal demonstrative. -/
-def those : DemonstrativeDeterminer := { form := "those", deixis := Person.first.participantSetsᶜ }
+def those : DemonstrativeDeterminer := { form := "those", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- *My* is the first-person possessive determiner. -/
 def my : PossessiveDeterminer := { form := "my" }
@@ -179,8 +181,5 @@ def allPossessives : List PossessiveDeterminer := [my, your]
 def inventory : Determiner.Inventory :=
   allArticles.map .article ++ allDemonstratives.map .demonstrative ++
     allQuantifiers.map .quantifier ++ allPossessives.map .possessive
-
-/-- A single article marks both strengths. -/
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end English.Determiners

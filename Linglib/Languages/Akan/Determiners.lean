@@ -15,8 +15,7 @@ here.
 ## Main definitions
 
 * `Akan.Determiners.no`, `Akan.Determiners.bi`: the definite and the indefinite.
-* `Akan.Determiners.inventory`: the determiners, which mark familiarity only
-  (`strengths_inventory`).
+* `Akan.Determiners.inventory`: the determiners.
 
 ## References
 
@@ -24,16 +23,19 @@ here.
 * [arkoh-matthewson-2013]
 * [owusu-2022]
 * [moroney-2021]
+* [schwarz-2013]
 -/
 
 @[expose] public section
 
 namespace Akan.Determiners
 
-/-- The definite *nó* marks a familiar referent. -/
+/-- The definite *nó* marks a familiar referent, one mentioned before or bridged by a relation, as
+from a dance to its trainer; a part of an antecedent takes a possessive instead
+([schwarz-2013]). -/
 def no : Article :=
   { form := "nó", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-    uses := {.anaphoric} }
+    uses := {.anaphoric, .bridging .relational} }
 
 /-- The indefinite *bí* is translated 'a certain'. -/
 def bi : Article :=
@@ -41,8 +43,5 @@ def bi : Article :=
 
 /-- The determiners. -/
 def inventory : Determiner.Inventory := [.article no, .article bi]
-
-/-- Only familiarity is marked. -/
-theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Akan.Determiners

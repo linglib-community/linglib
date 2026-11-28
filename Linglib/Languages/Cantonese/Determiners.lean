@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Cantonese determiner inventory
@@ -35,17 +34,15 @@ def jatClfN : Article :=
     exponent := .numeralClassifier }
 
 /-- *nei* 'this', the proximal demonstrative, which stands before a classifier. -/
-def nei : DemonstrativeDeterminer := { form := "nei", deixis := Person.first.participantSets }
+def nei : DemonstrativeDeterminer := { form := "nei", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *go²* 'that', the distal demonstrative, which stands before a classifier; [jenks-2018]
 finds it restricted to particular anaphoric environments. -/
-def go : DemonstrativeDeterminer := { form := "go2", deixis := Person.first.participantSetsᶜ }
+def go : DemonstrativeDeterminer := { form := "go2", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- The Cantonese determiners are the syncretic [Clf-N] definite, the [jat-Clf-N] indefinite and
 the demonstratives. -/
 def inventory : Determiner.Inventory :=
   [.article clfN, .article jatClfN, .demonstrative nei, .demonstrative go]
-
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Cantonese.Determiners

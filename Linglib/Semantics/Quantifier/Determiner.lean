@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Semantics.Denotation
 
 /-!

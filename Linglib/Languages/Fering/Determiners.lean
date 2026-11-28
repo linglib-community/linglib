@@ -19,21 +19,19 @@ describes: the A-form (*a/at*), the weak article marking situational uniqueness,
 
 namespace Fering.Determiners
 
-/-- The A-form *a/at* expones the uses on which its referent is unique in the situation. -/
+/-- The A-form *a/at* expones the uses on which its referent is unique in the situation, and
+bridging to a part of an antecedent, as from a church to *a törem* 'the tower'. -/
 def aForm : Article :=
   { form := "a", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-    uses := {.immediateSituation, .largerSituation} }
+    uses := {.immediateSituation, .largerSituation, .bridging .partWhole} }
 
-/-- The D-form *di/det* expones the uses on which it refers back to an antecedent. -/
+/-- The D-form *di/det* expones the uses on which it refers back to an antecedent, and bridging by
+a relation, as from a painting to *di mooler* 'the painter'. -/
 def dForm : Article :=
   { form := "di", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-    uses := {.anaphoric} }
+    uses := {.anaphoric, .bridging .relational} }
 
 /-- The Fering determiners are the A-form and the D-form of the definite article. -/
 def inventory : Determiner.Inventory := [.article aForm, .article dForm]
-
-theorem strengths_inventory : inventory.strengths = Finset.univ := by decide
-
-theorem not_isSyncretic_inventory : ¬ inventory.IsSyncretic := by decide
 
 end Fering.Determiners

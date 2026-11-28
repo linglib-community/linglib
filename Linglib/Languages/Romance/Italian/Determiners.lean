@@ -4,7 +4,6 @@ public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Languages.Romance.Italian.Gender
 public import Linglib.Languages.Romance.Italian.Phonology
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Italian determiners
@@ -32,7 +31,6 @@ readings the literature makes available for it and the forms it takes in agreeme
 * `Italian.Determiners.QuantityWord.form_eq_agree`: a word's record form is its masculine form
   before a consonant.
 * `Italian.Determiners.QuantityWord.forall_agree_eq_iff`: *ogni* and *qualche* are invariant.
-* `Italian.Determiners.isSyncretic_inventory`: the definite article marks both strengths.
 
 ## Implementation notes
 
@@ -224,11 +222,9 @@ def inventory : Determiner.Inventory :=
     .article
       { form := partitive (.sg, .masculine) .consonant, definiteness := {.nonSpecific, .specific},
         exponent := .dedicatedMorpheme },
-    .demonstrative { form := questo (.sg, .masculine), deixis := Person.first.participantSets },
+    .demonstrative { form := questo (.sg, .masculine), deixis := some ⟨.speaker, .plus⟩ },
     .demonstrative
-      { form := quello (.sg, .masculine) .consonant, deixis := Person.first.participantSetsᶜ } ] ++
+      { form := quello (.sg, .masculine) .consonant, deixis := some ⟨.speaker, .minus⟩ } ] ++
     quantityWords.map (.quantifier ·.toQuantificationalDeterminer)
-
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Italian.Determiners

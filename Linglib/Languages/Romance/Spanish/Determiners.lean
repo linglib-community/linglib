@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Spanish demonstrative determiners
@@ -21,14 +20,14 @@ replace it wherever space rather than time is concerned. The articles are not re
 namespace Spanish.Determiners
 
 /-- *este* 'this', near to or associated with the speaker ([butt-benjamin-2019] §7.4.1). -/
-def este : DemonstrativeDeterminer := { form := "este", deixis := Person.first.participantSets }
+def este : DemonstrativeDeterminer := { form := "este", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *ese* 'that', at any distance from the speaker ([butt-benjamin-2019] §7.4.1). -/
-def ese : DemonstrativeDeterminer := { form := "ese", deixis := Person.first.participantSetsᶜ }
+def ese : DemonstrativeDeterminer := { form := "ese", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- *aquel* 'that over there', not used for things close to the hearer or the speaker
 ([butt-benjamin-2019] §7.4.1). -/
-def aquel : DemonstrativeDeterminer := { form := "aquel", deixis := Person.third.participantSets }
+def aquel : DemonstrativeDeterminer := { form := "aquel", deixis := some ⟨.participant, .minus⟩ }
 
 /-- The demonstrative determiners, masculine singular. -/
 def allDemonstratives : List DemonstrativeDeterminer := [este, ese, aquel]

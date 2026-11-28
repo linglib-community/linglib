@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantifier.Counting
+public import Linglib.Semantics.Quantifier.Symbol
 public import Mathlib.SetTheory.Cardinal.NatCard
 
 /-!
@@ -35,10 +36,7 @@ define the global denotations of the determiners of `Quantifier/Basic.lean` and
 
 ## Implementation notes
 
-The eight determiner symbols are a choice made here. The logical determiner symbols of
-[barwise-cooper-1981] are *some*, *every*, *no*, *both*, *neither*, the numerals and *the n*, their
-non-logical ones include *most* and *few*, and they have no *half*. Here every symbol has one
-denotation, the global determiner denotation of its tree.
+Every determiner symbol has one denotation, the global determiner denotation of its tree.
 
 A type is not a subset of another type, so extension is stated for a subset `M` of a universe
 `β` and the universe `↥M`. Extension therefore relates a universe only to its subtypes; it is
@@ -550,12 +548,6 @@ theorem compl_no : no.{u}ᶜ = some.{u} := by
 end Family
 
 /-! ### Determiner symbols -/
-
-/-- A determiner symbol names one of the canonical global determiner denotations, after the basic
-determiner symbols of the logic L(GQ) of [barwise-cooper-1981]. -/
-inductive Symbol where
-  | every | some | no | most | few | half | both | neither
-  deriving DecidableEq, Repr, Fintype
 
 namespace Symbol
 

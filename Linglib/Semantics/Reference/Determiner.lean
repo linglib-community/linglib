@@ -4,20 +4,16 @@ public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Reference.Strength
 public import Linglib.Semantics.Reference.Definite
+public import Linglib.Syntax.Feature.Person.Deixis
 
 /-!
 # The denotation of a determiner
 
-The determiner records of `Syntax/Category/Determiner/Basic.lean` denote `Definite`s, in parallel
-with the pronouns of `Semantics/Reference/Pronoun.lean`:
-
-| | pronoun | determiner |
-|---|---|---|
-| lexical record | `PersonalPronoun` | `Article`, `DemonstrativeDeterminer` |
-| referent | `g i` | `iota` of a restrictor (`Definite.unique`, `Definite.anaphoric`) |
-| defined where | `g i` is in the φ-domain (`phiDom`) | the restrictor has one member and `g d` is located at the deictic content |
+The determiner records of `Syntax/Category/Determiner/Basic.lean` denote `Definite`s: the referent
+of an article or a demonstrative is the `iota` of a restrictor, defined where the restrictor has
+one member and, for a demonstrative, where the indexed referent is located at its deictic content.
 
 A determiner denotes what its description does, so the two pick the same individual by
 construction. A demonstrative's deictic content narrows where it denotes, so deixis filters the
@@ -44,10 +40,11 @@ participants gives the personal pronoun's person
 ## Implementation notes
 
 Context is the entity assignment `ℕ → E` and the world coordinate is the resource situation
-`W`, as for `PersonalPronoun.denote`. A demonstrative also reads a relation
+`W`. A demonstrative also reads a relation
 `N : SetRel (Finset Role) E` locating referents at participant sets. Harbour leaves the anchoring
 referent free; `SpeechAct.Context.near` closes it existentially, his reading of English *here* as
-the vicinity of any group containing the speaker. A demonstrative without a deictic contrast covers
+the vicinity of any group containing the speaker. The participant sets a demonstrative covers are
+those of its person feature value. A demonstrative without a deictic contrast covers
 every participant set and so presupposes only that its referent is located somewhere: its deictic
 centre is the whole discourse space, as Terenghi puts it. Harbour's (16) and Moroney's (147)–(148)
 put the deictic condition inside the restriction, where it can select among the restrictor's
@@ -98,12 +95,18 @@ noncomputable def _root_.SpeechAct.Context.near {P T : Type} [PartialOrder E] (c
 
 variable (N : SetRel (Finset Role) E)
 
+/-- The participant sets a demonstrative covers: those of its feature value, and every set for a
+form that enters no deictic contrast. -/
+def _root_.DemonstrativeDeterminer.participantSets (dem : DemonstrativeDeterminer) :
+    Finset (Finset Role) :=
+  dem.deixis.elim Finset.univ (·.participantSets)
+
 /-- A demonstrative determiner denotes the referent of the demonstrative description at discourse
 index `d` where the indexed referent `g d` is located at one of its participant sets, and nothing
 elsewhere. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
     Definite (ℕ → E) W E :=
-  fun g w ↦ Part.assert (g d ∈ N.image dem.deixis)
+  fun g w ↦ Part.assert (g d ∈ N.image dem.participantSets)
     fun _ ↦ anaphoric R d g w
 
 /-- A demonstrative determiner denotes on every model, the restrictor, the index and the relation
@@ -119,7 +122,7 @@ located at one of its participant sets: deixis filters the referent and never se
 @[simp] theorem _root_.DemonstrativeDeterminer.mem_denote {dem : DemonstrativeDeterminer}
     {g : ℕ → E} {s : W} {x : E} :
     x ∈ dem.denote R d N g s ↔
-      g d ∈ N.image dem.deixis ∧ x ∈ anaphoric R d g s := by
+      g d ∈ N.image dem.participantSets ∧ x ∈ anaphoric R d g s := by
   simp only [DemonstrativeDeterminer.denote, Part.mem_assert_iff, exists_prop]
 
 variable {R d N} in
@@ -149,16 +152,6 @@ noncomputable instance : Denotes Article
       ((ℕ → E) → W → Set E) → ℕ → Set (Definite (ℕ → E) W E)) :=
   ⟨fun a _ _ _ ↦ a.denotations⟩
 
-/-- Each denotation of an article is the definite of a strength the article marks. -/
-theorem _root_.Article.denotations_realized [PartialOrder E] (a : Article) (idx : ℕ)
-    (nd : Definite (ℕ → E) W E) (h : nd ∈ a.denotations R idx) :
-    ∃ p : Strength,
-      Determiner.Inventory.Realizes [.article a] p.toKind ∧ nd = ofStrength p R idx := by
-  obtain ⟨p, hp, rfl⟩ := h
-  refine ⟨p, ?_, rfl⟩
-  rw [Determiner.Inventory.realizes_toKind, Determiner.Inventory.marks_singleton]
-  exact (Article.mem_strengths_iff_marks a p).mp hp
-
 /-! ### The possessive determiner's denotation -/
 
 /-- A possessive determiner denotes the possessive description, under which *my cat* is the unique
@@ -179,10 +172,6 @@ noncomputable instance : Denotes PossessiveDeterminer
 @[simp]
 theorem _root_.PossessiveDeterminer.denote_apply (p : PossessiveDeterminer) (g : ℕ → E) (w : W) :
     p.denote R possessor rel g w = possessive R possessor rel g w := rfl
-
-theorem _root_.PossessiveDeterminer.denote_realized (p : PossessiveDeterminer) :
-    Determiner.Inventory.Realizes [.possessive p] NominalKind.possessive :=
-  ⟨.possessive p, List.mem_singleton_self _, rfl⟩
 
 /-! ### The quantifiers of a determiner -/
 

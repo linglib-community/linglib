@@ -30,17 +30,15 @@ For example, when Ann says *I am hungry* to Bo, the content of *I* is Ann at eve
 
 ## Implementation notes
 
-These are the indexical constants of Kaplan's logic of demonstratives. The file
-`Semantics/Reference/Pronoun.lean` gives a personal pronoun a different denotation: a first
-person pronoun is a variable whose value is presupposed to include the agent of the context.
-
-## TODO
-
-The relation between these characters and the denotation of a first person pronoun is not stated.
+These are the indexical constants of Kaplan's logic of demonstratives. On Sauerland's account of
+the person features a first person pronoun is instead a variable whose value is presupposed to
+include the agent of the context, so its domain is the referents that include what *I* denotes,
+and a plural *we* is in it where *I* is not its value.
 
 ## References
 
 * [kaplan-1989]
+* [sauerland-2003]
 -/
 
 @[expose] public section

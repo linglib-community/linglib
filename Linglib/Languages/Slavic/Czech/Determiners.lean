@@ -6,8 +6,7 @@ public import Linglib.Semantics.Quantifier.Determiner
 # Czech determiner inventory
 
 Czech has neither a definite nor an indefinite article, so its inventory holds only the
-demonstrative *ten* and the quantificational determiners, and it marks neither strength of
-definiteness (`strengths_inventory`). The quantificational determiners are
+demonstrative *ten* and the quantificational determiners. The quantificational determiners are
 `QuantificationalDeterminer` records with the readings the literature makes available for them.
 Two of them are polarity sensitive, the concord item
 *žádný* 'no' and the positive polarity item *nějaký* 'some', and their entries in
@@ -34,12 +33,10 @@ Two of them are polarity sensitive, the concord item
 
 @[expose] public section
 
-
 namespace Czech.Determiners
 
-/-- *ten* 'that, the' is the distance-neutral demonstrative, so it covers every participant
-set. -/
-def ten : DemonstrativeDeterminer := { form := "ten", deixis := Finset.univ }
+/-- *ten* 'that, the' is the distance-neutral demonstrative. -/
+def ten : DemonstrativeDeterminer := { form := "ten", deixis := none }
 
 /-- *Každý* 'every', read as `every`, with a singular noun. -/
 def kazdy : QuantificationalDeterminer :=
@@ -64,7 +61,5 @@ def allQuantifiers : List QuantificationalDeterminer := [kazdy, zadny, nejaky, n
 /-- The Czech determiners are the demonstrative and the quantifiers, with no article. -/
 def inventory : Determiner.Inventory :=
   .demonstrative ten :: allQuantifiers.map .quantifier
-
-theorem strengths_inventory : inventory.strengths = ∅ := by decide
 
 end Czech.Determiners

@@ -336,20 +336,32 @@ features generate them. English *this* and *these* denote things in the speaker'
 person specification to the vicinity of the referents it denotes ((16), p. 180), so *this*
 denotes the vicinity of the first person's referents. -/
 
+theorem participantSets_this :
+    English.Determiners.this.participantSets = Person.first.participantSets := by
+  decide
+
+theorem participantSets_that :
+    English.Determiners.that.participantSets = Person.first.participantSetsᶜ := by
+  decide
+
 -- p. 171
 theorem english_demonstratives_author_bipartition :
-    English.Determiners.that.deixis = English.Determiners.this.deixisᶜ ∧
+    English.Determiners.that.participantSets = English.Determiners.this.participantSetsᶜ ∧
       ∀ s t, bundle {.speaker} s = bundle {.speaker} t ↔
-        (s ∈ English.Determiners.this.deixis ↔ t ∈ English.Determiners.this.deixis) := by
+        (s ∈ English.Determiners.this.participantSets ↔
+          t ∈ English.Determiners.this.participantSets) := by
+  rw [participantSets_that, participantSets_this]
   refine ⟨rfl, fun s t ↦ ?_⟩
   rw [bundle_eq_bundle_iff]; revert s t; decide
 
 -- (16), p. 180
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
     (c : SpeechAct.Context W E P T) :
-    c.participants ⁻¹' English.Determiners.this.deixis = Person.dom c (some .first) :=
-  Set.ext fun _ ↦ (Person.participants_mem_participantSets_first c _).trans
-    (Person.mem_dom_first c _).symm
+    c.participants ⁻¹' English.Determiners.this.participantSets = Person.dom c (some .first) := by
+  rw [show English.Determiners.this.participantSets =
+    (⟨.speaker, .plus⟩ : Person.ValuedFeature).participantSets from rfl,
+    Person.ValuedFeature.preimage_participants_plus]
+  ext x; simp
 
 namespace SpatialModel
 
@@ -371,7 +383,7 @@ def g₀ : ℕ → Finset (Fin 2) := fun _ ↦ ∅
 example : ∅ ∈ English.Determiners.this.denote (fun _ _ ↦ Set.univ) 0 (ctx.near near) g₀ () := by
   refine DemonstrativeDeterminer.mem_denote.2 ⟨?_, ?_⟩
   · rw [SpeechAct.Context.image_near]
-    exact ⟨{0}, by simp [English.Determiners.this,
+    exact ⟨{0}, by simp [participantSets_this,
       Person.participants_mem_participantSets_first, ctx], trivial⟩
   · exact (mem_iota (s := {x : Finset (Fin 2) | True ∧ x = g₀ 0})).2
       ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩
@@ -386,12 +398,12 @@ example (dem : DemonstrativeDeterminer) :
 
 /-- When a referent lies both in the speaker's vicinity and in the addressee's, *this* and *that*
 both hold of it, so the two cells' vicinities need not partition the space. -/
-example : g₀ 0 ∈ (ctx.near near).image English.Determiners.this.deixis ∧
-    g₀ 0 ∈ (ctx.near near).image English.Determiners.that.deixis := by
+example : g₀ 0 ∈ (ctx.near near).image English.Determiners.this.participantSets ∧
+    g₀ 0 ∈ (ctx.near near).image English.Determiners.that.participantSets := by
   simp only [SpeechAct.Context.image_near]
   refine ⟨⟨{0}, ?_, trivial⟩, ⟨{1}, ?_, trivial⟩⟩
-  · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
-  · simp only [English.Determiners.that, Set.mem_preimage, Finset.mem_coe, Finset.mem_compl,
+  · simp [participantSets_this, Person.participants_mem_participantSets_first, ctx]
+  · simp only [participantSets_that, Set.mem_preimage, Finset.mem_coe, Finset.mem_compl,
       Person.participants_mem_participantSets_first, ctx]
     decide
 

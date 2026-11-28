@@ -2,7 +2,6 @@ module
 
 public import Linglib.Languages.Dutch.Gender
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Dutch determiners
@@ -25,8 +24,7 @@ two genders of `Dutch.Gender`.
 * `Dutch.Determiners.injective_singular` shows that each agreeing determiner distinguishes the
   two genders, and `Dutch.Determiners.faithful` concludes that the two genders are faithful to the
   evidence.
-* `Dutch.Determiners.inventory` is the inventory, whose citation forms are the plural forms,
-  and `Dutch.Determiners.isSyncretic_inventory` says that its definite article marks both strengths.
+* `Dutch.Determiners.inventory` is the inventory, whose citation forms are the plural forms.
 
 ## Implementation notes
 
@@ -98,17 +96,14 @@ def geen : QuantificationalDeterminer := { form := "geen", selectsMass := true }
 
 /-- The proximate demonstrative is *deze* ~ *dit*. -/
 def deze : DemonstrativeDeterminer :=
-  { form := plural .proximate, deixis := Person.first.participantSets }
+  { form := plural .proximate, deixis := some ⟨.speaker, .plus⟩ }
 
 /-- The distal demonstrative is *die* ~ *dat*. -/
 def die : DemonstrativeDeterminer :=
-  { form := plural .distal, deixis := Person.first.participantSetsᶜ }
+  { form := plural .distal, deixis := some ⟨.speaker, .minus⟩ }
 
 /-- The inventory lists the two articles, *geen* and the two demonstratives. -/
 def inventory : Determiner.Inventory :=
   [.article de, .article een, .quantifier geen, .demonstrative deze, .demonstrative die]
-
-/-- A single article marks both strengths. -/
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Dutch.Determiners

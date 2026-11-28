@@ -43,9 +43,7 @@ not record that restriction to kinds.
 models are in the lowest universe. A quantificational determiner is not counted as denoting the
 quantifier of a shift: *some* leaves ∃ to the bare plural. An article's quantifiers are those of
 its definite and indefinite readings, so no entry lexicalizes ∩; a definite determiner that also
-forms kind terms, as Dayal analyses the Romance one, is a reading the entries do not record, and
-`Studies/Dayal2004.lean` states that analysis on its own record of what a determiner
-lexicalizes.
+forms kind terms, as Dayal analyses the Romance one, is a reading the entries do not record.
 
 ι^x, the anaphoric definite of Jenks, postdates both rankings, and Moroney is the first to make
 it a covert shift. It introduces no quantificational force, so Dayal's ranking puts it with ∩ and
@@ -214,26 +212,20 @@ theorem not_lexicalizes_quantifier (q : QuantificationalDeterminer) (τ : Covert
     ¬ (quantifier q).Lexicalizes τ :=
   fun h ↦ h Unit Unit (fun _ _ ↦ Set.univ) 0
 
-theorem lexicalizes_iota_iff (e : Entry) : e.Lexicalizes .iota ↔ e.Marks .uniqueness := by
+theorem lexicalizes_iota_iff (e : Entry) : e.Lexicalizes .iota ↔ .uniqueness ∈ e.strengths := by
   cases e with
   | article a => exact lexicalizes_article_iota_iff a
-  | demonstrative dem => exact iff_of_false (not_lexicalizes_demonstrative dem _) (by simp [Marks,
-      strengths, uses])
-  | quantifier q => exact iff_of_false (not_lexicalizes_quantifier q _) (by simp [Marks,
-      strengths, uses])
-  | possessive p => exact iff_of_false (not_lexicalizes_possessive p _) (by simp [Marks, strengths,
-      uses])
+  | demonstrative dem => exact iff_of_false (not_lexicalizes_demonstrative dem _) (by simp)
+  | quantifier q => exact iff_of_false (not_lexicalizes_quantifier q _) (by simp)
+  | possessive p => exact iff_of_false (not_lexicalizes_possessive p _) (by simp)
 
 theorem lexicalizes_iotaAnaphoric_iff (e : Entry) :
-    e.Lexicalizes .iotaAnaphoric ↔ e.Marks .familiarity := by
+    e.Lexicalizes .iotaAnaphoric ↔ .familiarity ∈ e.strengths := by
   cases e with
   | article a => exact lexicalizes_article_iotaAnaphoric_iff a
-  | demonstrative dem => exact iff_of_false (not_lexicalizes_demonstrative dem _) (by simp [Marks,
-      strengths, uses])
-  | quantifier q => exact iff_of_false (not_lexicalizes_quantifier q _) (by simp [Marks,
-      strengths, uses])
-  | possessive p => exact iff_of_false (not_lexicalizes_possessive p _) (by simp [Marks, strengths,
-      uses])
+  | demonstrative dem => exact iff_of_false (not_lexicalizes_demonstrative dem _) (by simp)
+  | quantifier q => exact iff_of_false (not_lexicalizes_quantifier q _) (by simp)
+  | possessive p => exact iff_of_false (not_lexicalizes_possessive p _) (by simp)
 
 theorem lexicalizes_exists_iff (e : Entry) :
     e.Lexicalizes .exists ↔ ∃ d ∈ e.definiteness, d < .definite := by
@@ -274,15 +266,17 @@ theorem not_lexicalizes_down (ds : Inventory) : ¬ ds.Lexicalizes .down :=
   fun ⟨e, _, h⟩ ↦ e.not_lexicalizes_down h
 
 theorem lexicalizes_exists_iff (ds : Inventory) :
-    ds.Lexicalizes .exists ↔ ds.Realizes .indefinite :=
+    ds.Lexicalizes .exists ↔ ∃ e ∈ ds, ∃ d ∈ e.definiteness, d < .definite :=
   exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_exists_iff
 
-theorem lexicalizes_iota_iff (ds : Inventory) : ds.Lexicalizes .iota ↔ ds.Realizes .unique :=
-  exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_iota_iff
+theorem lexicalizes_iota_iff (ds : Inventory) :
+    ds.Lexicalizes .iota ↔ .uniqueness ∈ ds.strengths :=
+  (exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_iota_iff).trans mem_strengths.symm
 
 theorem lexicalizes_iotaAnaphoric_iff (ds : Inventory) :
-    ds.Lexicalizes .iotaAnaphoric ↔ ds.Realizes .anaphoric :=
-  exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_iotaAnaphoric_iff
+    ds.Lexicalizes .iotaAnaphoric ↔ .familiarity ∈ ds.strengths :=
+  (exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_iotaAnaphoric_iff).trans
+    mem_strengths.symm
 
 /-- The Blocking Principle of [chierchia-1998], (39a) of [dayal-2004]: a covert shift is blocked
 for a nominal of number `num` when a determiner whose domain holds such nominals lexicalizes it.

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Semantics.Quantifier.Global
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Mandarin determiners
@@ -186,11 +185,11 @@ end QuantityWord
 /-! ## Demonstratives and the possessive -/
 
 /-- *zhè* 这 'this', the proximal demonstrative, which stands before a classifier. -/
-def zhe : DemonstrativeDeterminer := { form := "zhè", deixis := Person.first.participantSets }
+def zhe : DemonstrativeDeterminer := { form := "zhè", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *nà* 那 'that', the distal demonstrative, which [jenks-2018] finds required in anaphoric
 definites outside a continuing topic, donkey anaphora and producer–product bridging included. -/
-def na : DemonstrativeDeterminer := { form := "nà", deixis := Person.first.participantSetsᶜ }
+def na : DemonstrativeDeterminer := { form := "nà", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- *de* 的, the marker of possession and of nominal modification. -/
 def de : PossessiveDeterminer := { form := "de" }

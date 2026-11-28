@@ -12,7 +12,7 @@ rarer ([latrouite-van-valin-2014]; [ingham-2003b] §15.1 has *ki* "for new
 or previously mentioned items without distinction" and *k'uŋ* as an
 infrequent switch back to an earlier topic — endorsing [curl-1999]'s
 topic-marking account — or an emphatic marker of 'enforced reality').
-Because *kiŋ* covers anaphora it marks both strengths (`isSyncretic_inventory`);
+Because *kiŋ* covers anaphora it has the uses of both strengths;
 a weak and a strong article follow only under Schwarz's (2013, §4.2.1) tentative
 weak/strong construal of the pair, disputed also by [ingham-2003] (the
 element is basically a topic marker) and [ogorman-2011] (accessibility).
@@ -35,17 +35,17 @@ are not typed here.
 
 namespace Lakhota.Determiners
 
-/-- The Lakhota determiners are the general definite *kiŋ*, the
-    anaphoric-only definite *k'uŋ*, and the specific indefinite *waŋ*. -/
+/-- The Lakhota determiners are the general definite *kiŋ*, which also bridges to a part of an
+antecedent, as from a lake to its shore ([schwarz-2013]), the anaphoric-only definite *k'uŋ*, and
+the specific indefinite *waŋ*. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "kiŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
-               uses := {.immediateSituation, .largerSituation, .anaphoric} },
+               uses := {.immediateSituation, .largerSituation, .anaphoric,
+                 .bridging .partWhole} },
     .article { form := "k'uŋ", definiteness := {.definite}, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} },
     .article { form := "waŋ", definiteness := {.nonSpecific, .specific},
                exponent := .dedicatedMorpheme,
                numberRestriction := some .singular } ]
-
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Lakhota.Determiners

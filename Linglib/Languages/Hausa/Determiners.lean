@@ -18,8 +18,7 @@ consonant-final loanwords take *ɗîn* in place of *-n* ([schwarz-2013]).
 
 ## Main definitions
 
-* `Hausa.Determiners.inventory`: the determiners, whose two definite articles mark the two
-  strengths (`strengths_inventory`).
+* `Hausa.Determiners.inventory`: the determiners.
 
 ## References
 
@@ -59,10 +58,5 @@ def duk : QuantificationalDeterminer := { form := "duk", selectsMass := true }
 def inventory : Determiner.Inventory :=
   [.article n, .article din, .article wani, .quantifier kowane, .quantifier kowace,
     .quantifier duk]
-
-/-- Both strengths are marked, by distinct articles. -/
-theorem strengths_inventory : inventory.strengths = Finset.univ := by decide
-
-theorem not_isSyncretic_inventory : ¬ inventory.IsSyncretic := by decide
 
 end Hausa.Determiners

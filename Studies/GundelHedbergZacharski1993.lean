@@ -29,11 +29,11 @@ least](##familiar_mostFrequent).
 * The forms Table 1 aligns across languages are `Form.Kind`s. A printed form of Tables 2–6 has
   the kinds it may be: one, except a Spanish personal pronoun, which was not coded for stress, and
   which requires the weaker of the two statuses.
-* A demonstrative's deixis is the participant sets of its anchors, read off its language file entry
+* A demonstrative's deixis is its person feature value, read off its language file entry
   (Chinese *nèi* is *nà*, and the masculine singular stands for each paradigm). Spanish *ese*,
-  usable at any distance from the speaker, covers every participant set without the speaker, and
-  Japanese *so-* the listener's alone, its further reading slightly removed from both
-  participants unrecorded. Harbour takes Modern Japanese *ko–so–a* to have become distance-based,
+  usable at any distance from the speaker, is [−speaker], and Japanese *so-* is
+  [+addressee], its further reading slightly removed from both participants
+  unrecorded. Harbour takes Modern Japanese *ko–so–a* to have become distance-based,
   while Terenghi lists it as person-oriented and treats Spanish *ese* as also denoting
   intermediate distance from the speaker.
 * Japanese *kare*, listed under activated, is a stressed pronoun here, since the paper takes
@@ -96,10 +96,10 @@ inductive Form.Kind where
   | pronoun
   /-- A stressed personal pronoun. -/
   | stressedPronoun
-  /-- A demonstrative pronoun, with the participant sets of its anchors. -/
-  | demonstrative (deixis : Finset (Finset Role))
-  /-- A demonstrative determiner with a noun, with the participant sets of its anchors. -/
-  | demonstrativeN (deixis : Finset (Finset Role))
+  /-- A demonstrative pronoun, with its deictic content. -/
+  | demonstrative (deixis : Option Person.ValuedFeature)
+  /-- A demonstrative determiner with a noun, with its deictic content. -/
+  | demonstrativeN (deixis : Option Person.ValuedFeature)
   /-- The definite article with a noun. -/
   | definiteN
   /-- Indefinite *this* with a noun. -/
@@ -164,7 +164,7 @@ theorem required_eq_of_forall_ne_demonstrativeN :
 
 -- p. 287
 theorem required_demonstrativeN_proximal (l : Language) :
-    required l (.demonstrativeN Person.first.participantSets) = some .activated ↔
+    required l (.demonstrativeN (some ⟨.speaker, .plus⟩)) = some .activated ↔
       l ≠ .russian := by
   revert l
   decide +kernel

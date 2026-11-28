@@ -247,22 +247,22 @@ def interrogatives : Finset InterrogativePronoun := {who, whom, what, where_, wh
 /-- The singular proximal demonstrative *this*. -/
 def this_ : DemonstrativePronoun :=
   { form := "this", person := some .third, number := some .singular,
-    deixis := Person.first.participantSets }
+    deixis := some ⟨.speaker, .plus⟩ }
 
 /-- The singular distal demonstrative *that*. -/
 def that_ : DemonstrativePronoun :=
   { form := "that", person := some .third, number := some .singular,
-    deixis := Person.first.participantSetsᶜ }
+    deixis := some ⟨.speaker, .minus⟩ }
 
 /-- The plural proximal demonstrative *these*. -/
 def these : DemonstrativePronoun :=
   { form := "these", person := some .third, number := some .plural,
-    deixis := Person.first.participantSets }
+    deixis := some ⟨.speaker, .plus⟩ }
 
 /-- The plural distal demonstrative *those*. -/
 def those : DemonstrativePronoun :=
   { form := "those", person := some .third, number := some .plural,
-    deixis := Person.first.participantSetsᶜ }
+    deixis := some ⟨.speaker, .minus⟩ }
 
 /-- The demonstrative pronoun inventory. -/
 def demonstratives : Finset DemonstrativePronoun := {this_, that_, these, those}
