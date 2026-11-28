@@ -207,7 +207,7 @@ somewhat more formal ([huddleston-pullum-2002] ch. 3 §9.6). -/
 def shall : ModalAuxiliary where
   form := "shall"
   features := finite .Pres
-  register := .formal
+  register := some .formal
   meaning := {.necessity} ×ˢ {.deontic, .epistemic, .circumstantial}
 
 /-- *should*, the preterite of *shall*, whose most frequent uses are idiomatic: medium strength
@@ -350,13 +350,13 @@ person singular in inversion, *Aren't I?*, but not otherwise. -/
 ([huddleston-pullum-2002] ch. 3 §1.9). -/
 def contract (a : Auxiliary) (form : String) : Auxiliary :=
   { a with form := form, features := update a.features .polarity (some .Neg),
-           register := .informal }
+           register := some .informal }
 
 /-- *can't*. -/
 def cant : Auxiliary := contract can "can't"
-/-- *cannot*, a variant of *can't* with the whole of *not* attached, more formal in style
-([huddleston-pullum-2002] ch. 18 §5.5). -/
-def cannot : Auxiliary := { contract can "cannot" with register := .neutral }
+/-- *cannot*, a variant of *can't* with the whole of *not* attached, more formal in style than
+*can't* ([huddleston-pullum-2002] ch. 18 §5.5). -/
+def cannot : Auxiliary := { contract can "cannot" with register := none }
 /-- *couldn't*. -/
 def couldnt : Auxiliary := contract could "couldn't"
 /-- *won't*. -/
@@ -406,7 +406,7 @@ def didnt : Auxiliary := contract did "didn't"
 def aint : Auxiliary where
   form := "ain't"
   features := update (finite .Pres) .polarity (some .Neg)
-  register := .informal
+  register := some .informal
 
 /-- Each auxiliary paired with its negative forms, *can't* before *cannot*. -/
 def contractions : List (Auxiliary × Auxiliary) :=

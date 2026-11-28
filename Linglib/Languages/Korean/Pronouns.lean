@@ -134,22 +134,21 @@ def taekdeul : PersonalPronoun :=
 /-- The written-narrative masculine third person *geu*. -/
 def geu : PersonalPronoun :=
   { form := "geu", script := some "그", person := some .third, number := some .singular,
-    gender := some .Masc, register := .formal }
+    gender := some .Masc }
 
 /-- The written-narrative feminine third person *geunyeo*. -/
 def geunyeo : PersonalPronoun :=
   { form := "geunyeo", script := some "그녀", person := some .third, number := some .singular,
-    gender := some .Fem, register := .formal }
+    gender := some .Fem }
 
 /-- The colloquial third person *gyae*, neutral for gender. -/
 def gyae : PersonalPronoun :=
   { form := "gyae", script := some "걔", person := some .third, number := some .singular,
-    register := .informal }
+    register := some .informal }
 
 /-- The written-narrative third person plural *geudeul*. -/
 def geudeul : PersonalPronoun :=
-  { form := "geudeul", script := some "그들", person := some .third, number := some .plural,
-    register := .formal }
+  { form := "geudeul", script := some "그들", person := some .third, number := some .plural }
 
 /-- The second person singular at each grade. -/
 def addresseeSg : Grade → PersonalPronoun

@@ -25,10 +25,10 @@ the formality of the discourse.
 
 ## Implementation notes
 
-The entries that carry a register are neutral unless they say otherwise, so the neutral value
-covers a form a grammar calls neutral and a form whose style it does not mention. A form a
-grammar confines to writing is entered as formal and one it confines to colloquial speech as
-informal, although the medium and the formality of a situation are separate parameters.
+An entry carries a register only where its source states one, so a form whose source is silent
+has none, and neutral is a value the source asserts. The medium is not recorded: a form a grammar
+confines to writing carries no register on that ground, the medium and the formality of a
+situation being separate parameters.
 
 ## References
 

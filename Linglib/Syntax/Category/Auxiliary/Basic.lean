@@ -60,7 +60,8 @@ structure Auxiliary where
   form : String
   /-- The features the cells of the entry share. -/
   features : Features := ⊥
-  register : SocialMeaning.Register := .neutral
+  /-- The register, where the source states one. -/
+  register : Option SocialMeaning.Register := none
   deriving DecidableEq
 
 /-- A modal auxiliary: an auxiliary that is a modal item, with the force–flavor pairs it

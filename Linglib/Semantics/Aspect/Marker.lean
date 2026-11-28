@@ -34,8 +34,8 @@ structure Marker where
   gloss : String
   /-- The viewpoint the marker marks. -/
   viewpoint : ViewpointType
-  /-- The register, `.neutral` unless the marker is confined to formal or informal use. -/
-  register : SocialMeaning.Register := .neutral
+  /-- The register, where the source states one. -/
+  register : Option SocialMeaning.Register := none
   deriving DecidableEq, Repr
 
 end Aspect

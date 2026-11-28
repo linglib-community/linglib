@@ -33,8 +33,9 @@ it is singular, with *watashi-tachi* and *anata-tachi* among their examples, and
 is confined to humans, and a noun with it names a group that includes the noun's referent,
 *Yamada-sensei-tachi* being Professor Yamada and those with him; Iwasaki glosses *boku-tachi*
 likewise as the speaker and his friends. The registers follow the list Tsujimura takes from
-Ide, in which *boku* is plain and *ore* deprecatory; both are informal here, the register type
-making no finer distinction.
+Ide, whose levels of formality are formal, plain and deprecatory: plain *boku* is entered as
+neutral and deprecatory *ore* as informal, and *watashi*, formal in men's speech and plain in
+women's, carries none.
 
 ## References
 
@@ -62,20 +63,19 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 
 namespace Pronouns
 
-/-- 私 *watashi* 'I', of neutral register. -/
+/-- 私 *watashi* 'I', formal in men's speech and plain in women's. -/
 def watashi : PersonalPronoun :=
-  { form := "watashi", script := some "私", person := some .first, number := some .singular,
-    register := .neutral }
+  { form := "watashi", script := some "私", person := some .first, number := some .singular }
 
-/-- 僕 *boku* 'I', informal. -/
+/-- 僕 *boku* 'I', plain in men's speech. -/
 def boku : PersonalPronoun :=
   { form := "boku", script := some "僕", person := some .first, number := some .singular,
-    register := .informal }
+    register := some .neutral }
 
-/-- 俺 *ore* 'I', informal and deprecatory. -/
+/-- 俺 *ore* 'I', deprecatory in men's speech. -/
 def ore : PersonalPronoun :=
   { form := "ore", script := some "俺", person := some .first, number := some .singular,
-    register := .informal }
+    register := some .informal }
 
 /-- 私たち *watashitachi* 'we'. -/
 def watashitachi : PersonalPronoun :=

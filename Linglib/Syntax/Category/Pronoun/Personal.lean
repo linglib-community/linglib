@@ -54,9 +54,8 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 the pronoun paradigm it is used for. -/
 @[ext]
 structure PersonalPronoun extends Pronoun where
-  /-- The register. Japanese *boku* is an informal first person, and Korean *geu* a third person
-  of written narrative. -/
-  register : SocialMeaning.Register := .neutral
+  /-- The register, where the source states one. Japanese *ore* is an informal first person. -/
+  register : Option SocialMeaning.Register := none
   /-- The person, number and gender the form has formally, those a verb, a clitic or a
   reflexive takes from it, by default its own. Italian *Lei*, used for the second person
   singular, is formally a third person feminine singular, and K'iche' *alaq*, used for the

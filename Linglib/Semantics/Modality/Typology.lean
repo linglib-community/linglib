@@ -38,7 +38,8 @@ structure ModalItem where
   item confined to non-affirmative contexts, as English auxiliary *need* and *dare* are, in the
   contexts that admit it. -/
   meaning : Finset ForceFlavor
-  register : SocialMeaning.Register := .neutral
+  /-- The register, where the source states one. -/
+  register : Option SocialMeaning.Register := none
   deriving DecidableEq
 
 namespace ModalItem
