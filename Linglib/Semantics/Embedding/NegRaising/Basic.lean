@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.AntiAdditive
+public import Linglib.Semantics.Negation.Strength
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Logic.Trivalent.Proposition
 
@@ -131,7 +131,7 @@ theorem posExt_negation_univ (R H : SetRel W W) :
 
 /-- A negated neg-raising predicate is anti-additive in its complement. -/
 theorem isAntiAdditive_posExt_negation (R H : SetRel W W) :
-    IsAntiAdditive fun p ↦ Trivalent.posExt (negation R H p) := fun p q ↦ by
+    Negation.HasStrength (fun p ↦ Trivalent.posExt (negation R H p)) .antiAdditive := fun p q ↦ by
   simp only [posExt_negation, Set.compl_union, core_inter]
   exact Set.inter_inter_distrib_left ..
 

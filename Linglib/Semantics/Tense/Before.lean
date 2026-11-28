@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.AntiAdditive
+public import Linglib.Semantics.Negation.Strength
 public import Linglib.Core.Order.StrictBounds
 public import Linglib.Logic.Temporal.IntervalProperty
 
@@ -100,7 +100,7 @@ theorem beforeEver_sup_right : beforeEver A (B ⊔ C) ↔ beforeEver A B ∧ bef
 /-- *Before ever* is anti-additive in its temporal clause, since the times before every time of a
 clause form a lower set and the lower sets of a linear order are nested. -/
 theorem isAntiAdditive_beforeEver (A : NonemptyInterval T → Prop) :
-    IsAntiAdditive (beforeEver A) :=
+    Negation.HasStrength (beforeEver A) .antiAdditive :=
   fun _ _ ↦ propext beforeEver_sup_right
 
 end Tense

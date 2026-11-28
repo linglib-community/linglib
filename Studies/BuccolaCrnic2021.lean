@@ -39,7 +39,7 @@ the sentence does not entail
 [destroys that downward entailment](##strongApply_andNode_wroteTogether).
 The condition the substrate places on the environment of a weak item, downward and not upward
 entailment, is the first clause of the revised condition without the second, and
-[holds of an environment that the revised condition rejects](##carries_weak_not_licensingCondition).
+holds of an environment that the revised condition rejects.
 
 ## Implementation notes
 
@@ -147,7 +147,8 @@ def Licensed (p : Path α (Set W)) (A : α → Set (Set W)) (n : α) : Prop :=
 /-- The path of the item in a clause `S` monotone in its restrictor, under negation. -/
 def negated (S : α → WithAlternatives (Set W)) (hS : Monotone fun x ↦ (S x).ordinary) :
     Path α (Set W) :=
-  ⟨⟨fun x ↦ (S x).ordinary, .mono, ProjectivitySignature.holdsFor_mono_iff.2 hS⟩, [negation]⟩
+  ⟨⟨fun x ↦ (S x).ordinary, .mono, ProjectivitySignature.holdsFor_mono_iff.2 hS⟩,
+    [Environment.compl]⟩
 
 -- a clause below negation that is not constant below the restrictor does not meet the condition
 theorem licensed_negated_iff {S : α → WithAlternatives (Set W)}
@@ -157,10 +158,10 @@ theorem licensed_negated_iff {S : α → WithAlternatives (Set W)}
       LicensingCondition (compl <$> S ·) n := by
   have h0 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S) [] = S :=
     funext fun _ ↦ by simp [negated]
-  have h1 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S) [negation] =
-      (compl <$> S ·) :=
-    funext fun _ ↦ by simp [negated, negation]
-  refine ⟨fun ⟨t, ht, hc⟩ ↦ ?_, fun hc ↦ ⟨[negation], by simp [negated], h1 ▸ hc⟩⟩
+  have h1 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S)
+      [Environment.compl] = (compl <$> S ·) :=
+    funext fun _ ↦ by simp [negated]
+  refine ⟨fun ⟨t, ht, hc⟩ ↦ ?_, fun hc ↦ ⟨[Environment.compl], by simp [negated], h1 ▸ hc⟩⟩
   simp [negated] at ht
   rcases ht with rfl | rfl
   · exact h1 ▸ hc
@@ -572,8 +573,8 @@ def haveBlueEyesEnvironment : PolarityItem.Licenser :=
 /-- The environment of (26) meets the substrate's condition on a weak item, downward and not upward
 entailment, which is the first clause of the Revised NPI Licensing Condition without the second,
 though it fails the revised condition. -/
-theorem carries_weak_not_licensingCondition :
-    haveBlueEyesEnvironment.Carries .weak ∧ ¬LicensingCondition sentence26 boys := by
+theorem carries_monotoneDecreasing_not_licensingCondition :
+    haveBlueEyesEnvironment.Carries .monotoneDecreasing ∧ ¬LicensingCondition sentence26 boys := by
   refine ⟨⟨fun _ _ _ h ↦ compl_subset_compl.2 (monotone_andSome h), fun h ↦ ?_⟩,
     not_licensingCondition_sentence26⟩
   have hm := h PUnit.unit (bot_le : (⊥ : Finset (Fin 4)) ≤ boys)

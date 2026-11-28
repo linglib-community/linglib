@@ -7,9 +7,9 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Algebra.Group.Units.Hom
 public import Mathlib.Algebra.GroupWithZero.Hom
 public import Mathlib.Basic.Sign.Defs
-public import Linglib.Core.Order.AntiAdditive
-public import Linglib.Logic.Natural.Relation
-public import Linglib.Semantics.Negation.Polarity
+public import Mathlib.Algebra.GroupWithZero.Defs
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Hom.Basic
 
 /-!
 # Projectivity signatures
@@ -33,7 +33,6 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 * `ProjectivitySignature.HoldsFor`: `σ.HoldsFor f` says that `f` has every property `σ` asserts.
 * `ProjectivitySignature.compose`: composition of signatures, the multiplication of the monoid.
 * `signHom`: the sign of a signature, as a homomorphism of monoids with zero.
-* `unitsEquiv`: the invertible signatures are the two polarities.
 
 ## Main results
 
@@ -52,7 +51,7 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 * MacCartney and Manning introduce projectivity as the generalization of monotonicity from
   inclusion to the exclusion relations, and a projectivity signature as a map from relations to
   relations that says how a function projects each relation. The nine signatures here are Icard's:
-  each names a class of maps, and it determines such a map, its row of the projection table.
+  each names a class of maps. The relations and their projection are not formalized.
 * Icard states the definitions for maps between Boolean lattices. Only the bounded lattice
   structure is used here.
 * An additive map is a homomorphism of what Icard calls ∨-1-semilattices, a join-semilattice with
@@ -76,6 +75,26 @@ for an antitone class and `0` for `•`, is a homomorphism to the three signs.
 @[expose] public section
 
 namespace NaturalLogic
+
+/-- Chaining two partial operations gives the same results in either bracketing when the operations
+agree pointwise. -/
+theorem exists_bind_comm {α β γ δ ζ ε : Type*} {f : α → β → Option γ}
+    {g : γ → δ → Option ε} {f' : β → δ → Option ζ} {g' : α → ζ → Option ε}
+    (h : ∀ a b d, (f a b).bind (g · d) = (f' b d).bind (g' a ·))
+    {s : α → Prop} {t : β → Prop} {u : δ → Prop} {e : ε} :
+    (∃ c, (∃ a, s a ∧ ∃ b, t b ∧ f a b = some c) ∧ ∃ d, u d ∧ g c d = some e) ↔
+      ∃ a, s a ∧ ∃ z, (∃ b, t b ∧ ∃ d, u d ∧ f' b d = some z) ∧ g' a z = some e := by
+  constructor
+  · rintro ⟨c, ⟨a, ha, b, hb, hab⟩, d, hd, hcd⟩
+    have := h a b d
+    rw [hab, Option.bind_some, hcd] at this
+    obtain ⟨z, hz, hze⟩ := Option.bind_eq_some_iff.1 this.symm
+    exact ⟨a, ha, z, ⟨b, hb, d, hd, hz⟩, hze⟩
+  · rintro ⟨a, ha, z, ⟨b, hb, d, hd, hbd⟩, hze⟩
+    have := h a b d
+    rw [hbd, Option.bind_some, hze] at this
+    obtain ⟨c, hc, hce⟩ := Option.bind_eq_some_iff.1 this
+    exact ⟨c, ⟨a, ha, b, hb, hc⟩, d, hd, hce⟩
 
 /-! ### Projectivity signatures -/
 
@@ -279,37 +298,6 @@ instance : NoZeroDivisors ProjectivitySignature where
 @[simp] theorem mul_eq_top {φ ψ : ProjectivitySignature} : φ * ψ = ⊤ ↔ φ = ⊤ ∨ ψ = ⊤ :=
   mul_eq_zero
 
-/-- A polarity as a signature, the positive one the morphism signature `⊕` and the negative one
-the anti-morphism `⊖`. -/
-def ofPolarity : Polarity →* ProjectivitySignature := Polarity.lift ⟨.antiAddMult, rfl⟩
-
-@[simp] theorem ofPolarity_positive : ofPolarity .positive = addMult := rfl
-
-@[simp] theorem ofPolarity_negative : ofPolarity .negative = antiAddMult := rfl
-
-@[simp] theorem sign_ofPolarity (p : Polarity) : (ofPolarity p).sign = p := by
-  cases p <;> decide
-
-theorem isUnit_iff {σ : ProjectivitySignature} : IsUnit σ ↔ σ ∈ Set.range ofPolarity := by
-  rw [isUnit_iff_exists, Set.mem_range]
-  revert σ
-  decide
-
-/-- The invertible signatures are the two polarities. -/
-def unitsEquiv : Polarity ≃* ProjectivitySignatureˣ where
-  toFun := ofPolarity.toHomUnits
-  invFun u := if u.val.sign = 1 then .positive else .negative
-  left_inv p := by cases p <;> rfl
-  right_inv u := Units.ext <| by
-    obtain ⟨p, hp⟩ := isUnit_iff.1 u.isUnit
-    change ofPolarity (if u.val.sign = 1 then .positive else .negative) = u.val
-    rw [← hp]
-    cases p <;> rfl
-  map_mul' := map_mul _
-
-@[simp] theorem val_unitsEquiv (p : Polarity) :
-    (unitsEquiv p : ProjectivitySignature) = ofPolarity p := rfl
-
 /-! ### The function class of a signature -/
 
 section HoldsFor
@@ -322,8 +310,8 @@ def Property.HoldsFor : Property → (α → β) → Prop
   | .antitone => Antitone
   | .additive => fun f ↦ (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤
   | .multiplicative => fun f ↦ (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥
-  | .antiAdditive => fun f ↦ IsAntiAdditive f ∧ f ⊤ = ⊥
-  | .antiMultiplicative => fun f ↦ IsAntiMultiplicative f ∧ f ⊥ = ⊤
+  | .antiAdditive => fun f ↦ (∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥
+  | .antiMultiplicative => fun f ↦ (∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤
 
 /-- `σ.HoldsFor f` says that `f` has every property `σ` asserts; [icard-2012] calls such an `f` a
 σ-function. -/
@@ -360,16 +348,16 @@ theorem holdsFor_mult_iff {f : α → β} :
   exact ⟨fun h ↦ h.2, fun h ↦ ⟨.of_map_inf h.1, h⟩⟩
 
 theorem holdsFor_antiAdd_iff {f : α → β} :
-    HoldsFor .antiAdd f ↔ IsAntiAdditive f ∧ f ⊤ = ⊥ := by
+    HoldsFor .antiAdd f ↔ (∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥ := by
   simp only [HoldsFor, properties, Finset.mem_insert, Finset.mem_singleton,
     forall_eq_or_imp, forall_eq, Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.antitone, h⟩⟩
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨Monotone.of_map_sup (β := βᵒᵈ) h.1, h⟩⟩
 
 theorem holdsFor_antiMult_iff {f : α → β} :
-    HoldsFor .antiMult f ↔ IsAntiMultiplicative f ∧ f ⊥ = ⊤ := by
+    HoldsFor .antiMult f ↔ (∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤ := by
   simp only [HoldsFor, properties, Finset.mem_insert, Finset.mem_singleton,
     forall_eq_or_imp, forall_eq, Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.antitone, h⟩⟩
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨Monotone.of_map_inf (β := βᵒᵈ) h.1, h⟩⟩
 
 theorem holdsFor_addMult_iff {f : α → β} :
     HoldsFor .addMult f ↔
@@ -380,10 +368,10 @@ theorem holdsFor_addMult_iff {f : α → β} :
 
 theorem holdsFor_antiAddMult_iff {f : α → β} :
     HoldsFor .antiAddMult f ↔
-      (IsAntiAdditive f ∧ f ⊤ = ⊥) ∧ IsAntiMultiplicative f ∧ f ⊥ = ⊤ := by
+      ((∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥) ∧ (∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤ := by
   simp only [HoldsFor, properties, Finset.mem_insert, Finset.mem_singleton,
     forall_eq_or_imp, forall_eq, Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.1.antitone, h⟩⟩
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨Monotone.of_map_sup (β := βᵒᵈ) h.1.1, h⟩⟩
 
 /-! #### Homomorphisms -/
 
@@ -416,7 +404,7 @@ theorem holdsFor_addMult_id : HoldsFor .addMult (id : α → α) :=
 theorem holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
     HoldsFor .antiAddMult (compl : γ → γ) :=
   holdsFor_antiAddMult_iff.2
-    ⟨⟨isAntiAdditive_compl, compl_top⟩, isAntiMultiplicative_compl, compl_bot⟩
+    ⟨⟨fun _ _ ↦ compl_sup, compl_top⟩, fun _ _ ↦ compl_inf, compl_bot⟩
 
 theorem holdsFor_antiAddMult_toDual : HoldsFor .antiAddMult (OrderDual.toDual : α → αᵒᵈ) :=
   holdsFor_antiAddMult_iff.2 ⟨⟨fun _ _ ↦ rfl, rfl⟩, fun _ _ ↦ rfl, rfl⟩
@@ -436,7 +424,7 @@ theorem Property.HoldsFor.compose {p q r : Property} {f : β → γ} {g : α →
     (h : p.compose q = some r) (hf : p.HoldsFor f) (hg : q.HoldsFor g) : r.HoldsFor (f ∘ g) := by
   cases p <;> cases q <;> simp only [Property.compose, reduceCtorEq,
     Option.some.injEq] at h <;> subst h <;>
-    simp only [Property.HoldsFor, IsAntiAdditive, IsAntiMultiplicative] at hf hg ⊢
+    simp only [Property.HoldsFor] at hf hg ⊢
   all_goals first
     | exact Monotone.comp hf hg
     | exact Antitone.comp hf hg

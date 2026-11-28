@@ -48,14 +48,14 @@ lexical entries cite.
   operator that a construction other than a question places over the item, and the function of
   Haspelmath's map that the construction realizes.
 * `Quantifier.Det.exhaustified`: a determiner exhaustified against its scale-mates.
-* `PolarityItem.LicensingContext.profile`: the strengths that a construction carries and holds,
-  as a table, with `PolarityItem.LicensingContext.profile_eq` that it is the profile of the
-  licenser.
-* `PolarityItem.Class.region`, `PolarityItem.Compatible`: the contexts in which a class is
-  predicted to be possible, and an entry whose contexts agree with that prediction.
+* `PolarityItem.LicensingContext.negativity`: the strengths that a construction carries and
+  holds, as a table, with `PolarityItem.LicensingContext.negativity_eq` that it is the negativity
+  of the licenser.
+* `PolarityItem.Distribution.region`, `PolarityItem.Compatible`: the named contexts that lie in a
+  distribution, and an entry whose contexts agree with it.
 * `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
   `not_holds_exhaustified_few`, …: the certificates of the licenser of each context, from which
-  its profile is proved.
+  its negativity is proved.
 
 ## Implementation notes
 
@@ -175,14 +175,6 @@ structure FinitePredicate extends Predicate where
 
 attribute [instance] FinitePredicate.fin
 
-/-- A predicate that is true of something, as the restrictor of a negative quantifier is. -/
-structure NonemptyPredicate extends Predicate where
-  nonempty : A.Nonempty
-
-/-- A predicate that is false of something, as the scope of a universal is. -/
-structure NonuniversalPredicate extends Predicate where
-  nonuniversal : ∃ x, x ∉ A
-
 /-- A finite predicate together with a bound, as the restrictor of *at most n* is. -/
 structure BoundedPredicate extends FinitePredicate where
   /-- The bound. -/
@@ -222,10 +214,6 @@ structure Accessibility where
   R : SetRel W W
   /-- The evaluation world. -/
   w : W
-
-/-- An accessibility relation with a world accessible from the evaluation world. -/
-structure SerialAccessibility extends Accessibility where
-  serial : ∃ v, (w, v) ∈ R
 
 /-- The modal base of a neg-raising attitude and the alternatives into which the presupposition
 of its complement projects. -/
@@ -325,16 +313,16 @@ instance : DecidablePred HasLicenser := fun c ↦ by
 /-- The licenser that a construction places over the position of a polarity item. -/
 noncomputable def licenser : (c : LicensingContext) → (_ : c.HasLicenser := by decide) → Licenser
   | negation, _ => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ compl⟩
-  | nobody, _ => .classical ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.no p.A⟩
+  | nobody, _ => .classical ⟨Predicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.no p.A⟩
   | few, _ => .scalar ⟨⟨FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.few p.A⟩,
       fun p ↦ Det.exhaustified Det.few {Det.no} p.A⟩
   | atMost, _ => .scalar
       ⟨⟨BoundedPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.atMost p.n p.A⟩,
         fun p ↦ Det.exhaustified (Det.atMost p.n) {Det.atMost (p.n - 1)} p.A⟩
   | universalRestrictor, _ => .classical
-      ⟨NonuniversalPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.every R p.A⟩
+      ⟨Predicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.every R p.A⟩
   | noRestrictor, _ => .classical
-      ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.no R p.A⟩
+      ⟨Predicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.no R p.A⟩
   | withoutClause, _ => .classical
       ⟨Predicate, fun p ↦ Set p.ι, fun p ↦ Set p.ι, fun p V ↦ p.A \ V⟩
   | beforeClause, _ => .classical
@@ -343,7 +331,7 @@ noncomputable def licenser : (c : LicensingContext) → (_ : c.HasLicenser := by
   | doubtVerb, _ => .classical
       ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
   | denyVerb, _ => .classical
-      ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
+      ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
   | superordinateNegation, _ => .strawson
       ⟨Bases, fun p ↦ Set p.W, fun p ↦ p.W, fun p ↦ NegRaising.negation p.R p.H⟩
   | onlyFocus, _ => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W,
@@ -367,70 +355,66 @@ restrictor of a universal, the clausal comparative, and *too … to* are the sco
 applied after negation, over individuals or degrees. *Deny* is necessity applied after negation,
 *without* is a meet applied after negation, and *doubt* is negation applied after necessity. Each
 holds the strengths dual to the classes of its positive operator
-(`Negation.Strength.forall_holdsFor_iff_le_antiAdditive`). Since the scope of a universal,
+(`Negation.Strength.forall_hasStrength_iff_le_antiAdditive`). Since the scope of a universal,
 necessity, and a meet are multiplicative and not additive, each of these licensers is
 anti-additive and no stronger, except *doubt*, which is downward entailing and no stronger. -/
 
-private theorem holdsFor_mult_mem_core {W : Type} {R : SetRel W W} {w : W} (h : ∃ v, (w, v) ∈ R) :
-    ProjectivitySignature.mult.HoldsFor fun P ↦ w ∈ R.core P :=
-  ProjectivitySignature.holdsFor_mult_iff.2
-    ⟨fun _ _ ↦ by simp [SetRel.core_inter], eq_false fun hw ↦ h.elim fun _ hv ↦ hw hv⟩
+private theorem monotone_mem_core {W : Type} {R : SetRel W W} {w : W} :
+    Monotone fun P ↦ w ∈ R.core P :=
+  fun _ _ hPQ hP ↦ SetRel.core_mono hPQ hP
 
-private theorem holdsFor_mono_mem_core {W : Type} {R : SetRel W W} {w : W} :
-    ProjectivitySignature.mono.HoldsFor fun P ↦ w ∈ R.core P :=
-  ProjectivitySignature.holdsFor_mono_iff.2 fun _ _ hPQ hP ↦ SetRel.core_mono hPQ hP
+private theorem map_inf_mem_core {W : Type} {R : SetRel W W} {w : W} (P Q : Set W) :
+    (w ∈ R.core (P ⊓ Q)) = ((w ∈ R.core P) ⊓ (w ∈ R.core Q)) := by
+  simp [SetRel.core_inter]
 
-/-- Necessity is not additive at a world that accesses two worlds. -/
-private theorem not_holdsFor_additive_mem_core :
-    ¬ ProjectivitySignature.additive.HoldsFor
-      fun P ↦ true ∈ SetRel.core (.univ : SetRel Bool Bool) P :=
-  fun h ↦ by
-    have := eq_iff_iff.1 ((ProjectivitySignature.holdsFor_additive_iff.1 h).1 {true} {false})
-    simp only [SetRel.mem_core, Set.mem_union, Set.mem_singleton_iff,
-      sup_Prop_eq] at this
-    exact (this.1 fun b _ ↦ by cases b <;> simp).elim
-      (fun h ↦ absurd (h (b := false) trivial) (by decide))
-      fun h ↦ absurd (h (b := true) trivial) (by decide)
+/-- Necessity does not preserve joins at a world that accesses two worlds. -/
+private theorem not_map_sup_mem_core :
+    ¬∀ P Q : Set Bool, (true ∈ SetRel.core (.univ : SetRel Bool Bool) (P ⊔ Q)) =
+      ((true ∈ SetRel.core (.univ : SetRel Bool Bool) P) ⊔
+        (true ∈ SetRel.core (.univ : SetRel Bool Bool) Q)) := fun h ↦ by
+  have := eq_iff_iff.1 (h {true} {false})
+  simp only [SetRel.mem_core, Set.mem_union, Set.mem_singleton_iff, sup_Prop_eq] at this
+  exact (this.1 fun b _ ↦ by cases b <;> simp).elim
+    (fun h ↦ absurd (h (b := false) trivial) (by decide))
+    fun h ↦ absurd (h (b := true) trivial) (by decide)
 
-private theorem holdsFor_mult_inf_left {ι : Type} (A : Set ι) :
-    ProjectivitySignature.mult.HoldsFor (A ⊓ ·) :=
-  ProjectivitySignature.holdsFor_mult_iff.2 ⟨fun _ _ ↦ inf_inf_distrib_left _ _ _, inf_bot_eq A⟩
+private theorem map_inf_every {ι : Type} (A P Q : Set ι) :
+    Det.every A (P ⊓ Q) = (Det.every A P ⊓ Det.every A Q) :=
+  propext Set.subset_inter_iff
 
-open Licenser
+/-- The scope of a universal over a restrictor with two members does not preserve joins. -/
+private theorem not_map_sup_every {ι : Type} {A : Set ι} {a b : ι} (ha : a ∈ A) (hb : b ∈ A)
+    (hab : a ≠ b) : ¬∀ P Q : Set ι, Det.every A (P ⊔ Q) = (Det.every A P ⊔ Det.every A Q) :=
+  fun h ↦ not_holdsFor_additive_every ha hb hab
+    (ProjectivitySignature.holdsFor_additive_iff.2 ⟨h, eq_true (Set.subset_univ A)⟩)
 
-theorem holds_negation (s : Negation.Strength) :
-    negation.licenser.Holds s.toProjectivitySignature :=
-  (show negation.licenser.Holds .antiAddMult from fun _ ↦
-    ProjectivitySignature.holdsFor_antiAddMult_compl).toProjectivitySignature_of_le
-      (s := s) (t := .antiMorphic) le_top
+open Licenser Negation
+
+theorem holds_negation (s : Negation.Strength) : negation.licenser.Holds s :=
+  (show negation.licenser.Holds .antimorphic from fun _ ↦
+    ⟨fun _ _ ↦ compl_sup, fun _ ↦ rfl⟩).of_le le_top
 
 theorem holds_nobody_iff {s : Negation.Strength} :
-    nobody.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
-  Negation.Strength.forall_holdsFor_iff_le_antiAdditive (g := fun p : NonemptyPredicate ↦
-    Det.every p.A) (fun _ ↦ rfl) (fun p ↦ holdsFor_mult_every p.nonempty)
-    ⟨⟨⟨Bool, .univ⟩, Set.univ_nonempty⟩, not_holdsFor_additive_every (a := true) (b := false)
-      trivial trivial (by decide)⟩
+    nobody.licenser.Holds s ↔ s ≤ .antiAdditive :=
+  forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
+    (g := fun p : Predicate ↦ Det.every p.A) (fun _ ↦ rfl) (fun p ↦ map_inf_every p.A)
+    ⟨⟨Bool, .univ⟩,
+      not_map_sup_every (a := true) (b := false) trivial trivial (by decide)⟩
 
-theorem holds_few_iff {s : Negation.Strength} :
-    few.licenser.Holds s.toProjectivitySignature ↔ s ≤ .weak := by
-  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mpr
-    (scopeAntitone_few p.A))
-    fun s hs h ↦ ?_
-  have := (ProjectivitySignature.holdsFor_antiAdd_iff.mp
-    ((h.toProjectivitySignature_of_le (s := .antiAdditive)
-    (by revert hs; cases s <;> decide)) ⟨⟨Fin 3, Set.univ⟩⟩)).1 {0} {1}
+theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s ↔ s ≤ .monotoneDecreasing := by
+  refine holds_iff_le (fun p ↦ scopeAntitone_few p.A) fun s hs h ↦ ?_
+  have := (h.of_le (s := .antiAdditive) (by revert hs; cases s <;> decide))
+    ⟨⟨Fin 3, Set.univ⟩⟩ {0} {1}
   revert this
   show Det.few (Set.univ : Set (Fin 3)) ({0} ∪ {1}) = (_ ∧ _) → False
   rw [eq_iff_iff]
   decide
 
 theorem holds_atMost_iff {s : Negation.Strength} :
-    atMost.licenser.Holds s.toProjectivitySignature ↔ s ≤ .weak := by
-  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_anti_iff.mpr
-    (scopeAntitone_atMost p.n p.A)) fun s hs h ↦ ?_
-  have := (ProjectivitySignature.holdsFor_antiAdd_iff.mp
-    ((h.toProjectivitySignature_of_le (s := .antiAdditive)
-    (by revert hs; cases s <;> decide)) ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)).1 {true} {false}
+    atMost.licenser.Holds s ↔ s ≤ .monotoneDecreasing := by
+  refine holds_iff_le (fun p ↦ scopeAntitone_atMost p.n p.A) fun s hs h ↦ ?_
+  have := (h.of_le (s := .antiAdditive) (by revert hs; cases s <;> decide))
+    ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩ {true} {false}
   revert this
   show Det.atMost 1 (Set.univ : Set Bool) ({true} ∪ {false}) = (_ ∧ _) → False
   rw [eq_iff_iff]
@@ -439,86 +423,77 @@ theorem holds_atMost_iff {s : Negation.Strength} :
 /-- The restrictor of a universal is the scope of a universal over the complement of its scope,
 applied after negation. -/
 theorem holds_universalRestrictor_iff {s : Negation.Strength} :
-    universalRestrictor.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
-  Negation.Strength.forall_holdsFor_iff_le_antiAdditive
-    (g := fun p : NonuniversalPredicate ↦ Det.every p.Aᶜ)
-    (fun _ ↦ funext fun _ ↦ propext Set.compl_subset_compl.symm)
-    (fun p ↦ holdsFor_mult_every (Set.nonempty_compl.2 fun h ↦ p.nonuniversal.elim
-      fun x hx ↦ hx (h ▸ Set.mem_univ x)))
-    ⟨⟨⟨Bool, ∅⟩, ⟨true, Set.notMem_empty true⟩⟩, not_holdsFor_additive_every (a := true)
-      (b := false) (Set.notMem_empty _) (Set.notMem_empty _) (by decide)⟩
+    universalRestrictor.licenser.Holds s ↔ s ≤ .antiAdditive :=
+  forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
+    (g := fun p : Predicate ↦ Det.every p.Aᶜ)
+    (fun _ ↦ funext fun _ ↦ propext Set.compl_subset_compl.symm) (fun p ↦ map_inf_every p.Aᶜ)
+    ⟨⟨Bool, ∅⟩, not_map_sup_every (a := true) (b := false)
+      (Set.notMem_empty _) (Set.notMem_empty _) (by decide)⟩
 
 /-- Since *no* is symmetric, the restrictor of *no* is the scope of a universal over the scope,
 applied after negation. -/
 theorem holds_noRestrictor_iff {s : Negation.Strength} :
-    noRestrictor.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
-  Negation.Strength.forall_holdsFor_iff_le_antiAdditive (g := fun p : NonemptyPredicate ↦
-    Det.every p.A) (fun _ ↦ funext fun _ ↦ propext Set.subset_compl_comm)
-    (fun p ↦ holdsFor_mult_every p.nonempty)
-    ⟨⟨⟨Bool, .univ⟩, Set.univ_nonempty⟩, not_holdsFor_additive_every (a := true) (b := false)
-      trivial trivial (by decide)⟩
+    noRestrictor.licenser.Holds s ↔ s ≤ .antiAdditive :=
+  forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
+    (g := fun p : Predicate ↦ Det.every p.A)
+    (fun _ ↦ funext fun _ ↦ propext Set.subset_compl_comm) (fun p ↦ map_inf_every p.A)
+    ⟨⟨Bool, .univ⟩,
+      not_map_sup_every (a := true) (b := false) trivial trivial (by decide)⟩
 
 theorem holds_withoutClause_iff {s : Negation.Strength} :
-    withoutClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
-  Negation.Strength.forall_holdsFor_iff_le_antiAdditive (g := fun p : Predicate ↦ (p.A ⊓ ·))
-    (fun _ ↦ funext fun _ ↦ sdiff_eq) (fun p ↦ holdsFor_mult_inf_left p.A)
-    ⟨⟨Unit, ∅⟩, fun h ↦ Set.empty_ne_univ
-      ((ProjectivitySignature.holdsFor_additive_iff.1 h).2.symm.trans (Set.empty_inter _)).symm⟩
+    withoutClause.licenser.Holds s ↔ s ≤ .antiAdditive :=
+  forall_hasStrength_iff_le_antiAdditive (g := fun p : Predicate ↦ (p.A ⊓ ·))
+    (fun _ ↦ funext fun _ ↦ sdiff_eq) (fun _ _ _ ↦ inf_inf_distrib_left _ _ _)
+    ⟨⟨Unit, ∅⟩, fun h ↦ Set.empty_ne_univ (by simpa using h ∅)⟩
 
 theorem holds_beforeClause_iff {s : Negation.Strength} :
-    beforeClause.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive := by
-  refine holds_toProjectivitySignature_iff (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.mpr
-    ⟨isAntiAdditive_beforeEver p.A, eq_bot_iff.2 not_beforeEver_top⟩)
-    fun s hs h ↦ ?_
-  obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (ProjectivitySignature.holdsFor_antiAddMult_iff.mp (h ⟨ℕ, ⊥⟩)).2.2
+    beforeClause.licenser.Holds s ↔ s ≤ .antiAdditive := by
+  refine holds_iff_le (fun p ↦ isAntiAdditive_beforeEver p.A) fun s hs h ↦ ?_
+  obtain rfl : s = .antimorphic := by revert hs; cases s <;> decide
+  have := (h ⟨ℕ, ⊥⟩).map_bot
   simp [beforeEver] at this
 
 /-- The operator placing the compared individual above the degrees of a clause is the scope of a
 universal over the degrees from the degree of the individual upward, applied after negation. -/
 theorem holds_exceedsFamily_iff {s : Negation.Strength} :
-    (classical exceedsFamily).Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
-  Negation.Strength.forall_holdsFor_iff_le_antiAdditive
-    (g := fun p : Measured ↦ Det.every (Set.Ici (p.μ p.x)))
-    (fun _ ↦ funext fun _ ↦ propext ⟨fun h _ hd hd' ↦ (h hd').not_ge hd,
-      fun h _ hd ↦ not_le.1 fun hd' ↦ h hd' hd⟩)
-    (fun _ ↦ holdsFor_mult_every Set.nonempty_Ici)
-    ⟨⟨ℕ, ℕ, id, 0⟩, not_holdsFor_additive_every (a := 0) (b := 1) (Set.mem_Ici.2 le_rfl)
+    (classical exceedsFamily).Holds s ↔ s ≤ .antiAdditive :=
+  have hfg (p : Measured) : (fun Δ : Set p.D ↦ p.μ p.x ∈ strictUpperBounds Δ) =
+      Det.every (Set.Ici (p.μ p.x)) ∘ compl :=
+    funext fun _ ↦ propext ⟨fun h _ hd hd' ↦ (h hd').not_ge hd,
+      fun h _ hd ↦ not_le.1 fun hd' ↦ h hd' hd⟩
+  forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
+    (g := fun p : Measured ↦ Det.every (Set.Ici (p.μ p.x))) hfg
+    (fun p ↦ map_inf_every (Set.Ici (p.μ p.x)))
+    ⟨⟨ℕ, ℕ, id, 0⟩, not_map_sup_every (a := 0) (b := 1) (Set.mem_Ici.2 le_rfl)
       (Set.mem_Ici.2 zero_le_one) zero_ne_one⟩
 
 theorem holds_clausalComparative_iff {s : Negation.Strength} :
-    clausalComparative.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
+    clausalComparative.licenser.Holds s ↔ s ≤ .antiAdditive :=
   holds_exceedsFamily_iff
 
-theorem holds_tooTo_iff {s : Negation.Strength} :
-    tooTo.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
+theorem holds_tooTo_iff {s : Negation.Strength} : tooTo.licenser.Holds s ↔ s ≤ .antiAdditive :=
   holds_exceedsFamily_iff
 
 theorem holds_doubtVerb_iff {s : Negation.Strength} :
-    doubtVerb.licenser.Holds s.toProjectivitySignature ↔ s ≤ .weak :=
-  Negation.Strength.forall_holdsFor_iff_le_weak
+    doubtVerb.licenser.Holds s ↔ s ≤ .monotoneDecreasing :=
+  forall_hasStrength_iff_le_monotoneDecreasing
     (g := fun p : Accessibility ↦ fun P ↦ p.w ∈ p.R.core P) (fun _ ↦ rfl)
-    (fun _ ↦ holdsFor_mono_mem_core) ⟨⟨Bool, .univ, true⟩, not_holdsFor_additive_mem_core⟩
+    (fun _ ↦ monotone_mem_core) ⟨⟨Bool, .univ, true⟩, not_map_sup_mem_core⟩
 
 theorem holds_denyVerb_iff {s : Negation.Strength} :
-    denyVerb.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
-  Negation.Strength.forall_holdsFor_iff_le_antiAdditive
-    (g := fun p : SerialAccessibility ↦ fun P ↦ p.w ∈ p.R.core P) (fun _ ↦ rfl)
-    (fun p ↦ holdsFor_mult_mem_core p.serial)
-    ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, not_holdsFor_additive_mem_core⟩
+    denyVerb.licenser.Holds s ↔ s ≤ .antiAdditive :=
+  forall_hasStrength_iff_le_antiAdditive_of_not_map_sup
+    (g := fun p : Accessibility ↦ fun P ↦ p.w ∈ p.R.core P) (fun _ ↦ rfl)
+    (fun _ ↦ map_inf_mem_core) ⟨⟨Bool, .univ, true⟩, not_map_sup_mem_core⟩
 
-/-- Negation over a neg-raising attitude is anti-additive. It is not anti-morphic, since it is
+/-- Negation over a neg-raising attitude is anti-additive. It is not antimorphic, since it is
 false of every complement where the modal base is empty. -/
 theorem holds_superordinateNegation_iff {s : Negation.Strength} :
-    superordinateNegation.licenser.Holds s.toProjectivitySignature ↔ s ≤ .antiAdditive :=
-  holds_toProjectivitySignature_iff
-    (fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.2
-      ⟨NegRaising.isAntiAdditive_posExt_negation p.R p.H,
-        NegRaising.posExt_negation_univ p.R p.H⟩)
-    fun s hs h ↦ by
-      obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-      have := (ProjectivitySignature.holdsFor_antiAddMult_iff.1 (h ⟨Unit, ∅, ∅⟩)).2.2
-      simpa [NegRaising.posExt_negation] using congrArg (() ∈ ·) this
+    superordinateNegation.licenser.Holds s ↔ s ≤ .antiAdditive :=
+  holds_iff_le (fun p ↦ NegRaising.isAntiAdditive_posExt_negation p.R p.H) fun s hs h ↦ by
+    obtain rfl : s = .antimorphic := by revert hs; cases s <;> decide
+    have := (h ⟨Unit, ∅, ∅⟩).map_bot
+    simpa [NegRaising.posExt_negation] using congrArg (() ∈ ·) this
 
 /-! ### Non-triviality
 
@@ -529,7 +504,7 @@ theorem not_isStrawsonUE_negation : ¬ negation.licenser.IsStrawsonUE :=
   not_forall.2 ⟨Unit, fun h ↦ h (bot_le (a := ⊤)) () id trivial⟩
 
 theorem not_isStrawsonUE_nobody : ¬ nobody.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, Set.univ⟩, Set.univ_nonempty⟩,
+  not_forall.2 ⟨⟨Unit, Set.univ⟩,
     fun h ↦ h (bot_le (a := ⊤)) (fun _ _ hx ↦ hx) (Set.mem_univ ()) trivial⟩
 
 theorem not_isStrawsonUE_few : ¬ few.licenser.IsStrawsonUE :=
@@ -541,11 +516,11 @@ theorem not_isStrawsonUE_atMost : ¬ atMost.licenser.IsStrawsonUE :=
     (h (a := ∅) (b := Set.univ) (Set.empty_subset _) (by decide)) (by decide)⟩
 
 theorem not_isStrawsonUE_universalRestrictor : ¬ universalRestrictor.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, ∅⟩, ⟨(), Set.notMem_empty ()⟩⟩,
+  not_forall.2 ⟨⟨Unit, ∅⟩,
     fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) (Set.mem_univ ())⟩
 
 theorem not_isStrawsonUE_noRestrictor : ¬ noRestrictor.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, Set.univ⟩, Set.univ_nonempty⟩,
+  not_forall.2 ⟨⟨Unit, Set.univ⟩,
     fun h ↦ h (bot_le (a := ⊤)) (Set.empty_subset _) (Set.mem_univ ()) (Set.mem_univ ())⟩
 
 theorem not_isStrawsonUE_withoutClause : ¬ withoutClause.licenser.IsStrawsonUE :=
@@ -567,7 +542,7 @@ theorem not_isStrawsonUE_doubtVerb : ¬ doubtVerb.licenser.IsStrawsonUE :=
     (fun hc ↦ Set.notMem_empty _ (hc (Set.mem_univ (true, true)))) fun _ _ ↦ trivial⟩
 
 theorem not_isStrawsonUE_denyVerb : ¬ denyVerb.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, fun h ↦
+  not_forall.2 ⟨⟨Bool, .univ, true⟩, fun h ↦
     h (bot_le (a := ⊤)) (fun _ _ ↦ Set.notMem_empty _) (Set.mem_univ (true, true))
       (Set.mem_univ true)⟩
 
@@ -600,21 +575,23 @@ theorem not_isStrawsonUE_sinceTemporal : ¬ sinceTemporal.licenser.IsStrawsonUE 
 Once *few* and *at most n* are exhaustified against their stronger scale-mates, they assert
 *some*, and so they are not downward entailing ([gajewski-2011]'s (45), (48)). -/
 
-theorem not_holds_exhaustified_few : ¬ few.licenser.exhaustified.Holds .anti := fun h ↦ by
+theorem not_holds_exhaustified_few :
+    ¬ few.licenser.exhaustified.Holds .monotoneDecreasing := fun h ↦ by
   have hA : ¬ Det.few (Set.univ : Set (Fin 3)) ≤ Det.no Set.univ := fun hle ↦
     absurd (hle {0} (by decide)) (by decide)
   have hanti : Antitone (Det.exhaustified Det.few {Det.no} (Set.univ : Set (Fin 3))) :=
-    ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨⟨Fin 3, Set.univ⟩⟩)
+    (h ⟨⟨Fin 3, Set.univ⟩⟩)
   refine Det.not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hx ↦ hx) hA
     (hanti (a := ∅) (b := {0}) (Set.empty_subset _) (Det.exhaustified_iff.2 ⟨by decide, ?_⟩))
   rintro _ rfl hno
   exact absurd hno (by decide)
 
-theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .anti := fun h ↦ by
+theorem not_holds_exhaustified_atMost :
+    ¬ atMost.licenser.exhaustified.Holds .monotoneDecreasing := fun h ↦ by
   have hA : ¬ Det.atMost 1 (Set.univ : Set Bool) ≤ Det.atMost 0 Set.univ := fun hle ↦
     absurd (hle {true} (by decide)) (by decide)
   have hanti : Antitone (Det.exhaustified (Det.atMost 1) {Det.atMost 0} (Set.univ : Set Bool)) :=
-    ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)
+    (h ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)
   refine Det.not_exhaustified_of_not_le (Set.mem_singleton _)
     (show Det.atMost 0 (Set.univ : Set Bool) ∅ by decide) hA
     (hanti (a := ∅) (b := {true}) (Set.empty_subset _) (Det.exhaustified_iff.2 ⟨by decide, ?_⟩))
@@ -623,40 +600,55 @@ theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .a
 
 /-! ### Strawson licensers -/
 
-theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦
-  Focus.isStrawsonDE_only_eq p.x
+theorem isStrawsonAntiAdditive_onlyFocus : onlyFocus.licenser.IsStrawsonAntiAdditive := fun p ↦
+  Focus.isStrawsonAntiAdditive_only_eq p.x
 
-theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .anti := fun h ↦
+theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_onlyFocus.isStrawsonDE
+
+theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .monotoneDecreasing := fun h ↦
   Focus.not_antitone_posExt_only_eq
-    (ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
+    ((h ⟨Bool, Unit, true⟩))
 
-theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
-  Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g
+theorem isStrawsonAntiAdditive_adversative : adversative.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ Desire.BestWorlds.isStrawsonAntiAdditive_regret p.dox p.base p.g
 
-theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
-  Desire.BestWorlds.not_antitone_posExt_regret (ProjectivitySignature.holdsFor_anti_iff.mp
-    (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {{false}}⟩))
+theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_adversative.isStrawsonDE
 
-theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
-  isStrawsonDE_trivalentSuperlative p.μ p.x
+theorem not_holds_adversative : ¬ adversative.licenser.Holds .monotoneDecreasing := fun h ↦
+  Desire.BestWorlds.not_antitone_posExt_regret fun _ _ hab ↦
+    h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {{false}}⟩ hab
 
-theorem not_holds_superlative : ¬ superlative.licenser.Holds .anti := fun h ↦
-  not_antitone_posExt_trivalentSuperlative (ProjectivitySignature.holdsFor_anti_iff.mp
-    (h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
+theorem isStrawsonAntiAdditive_superlative : superlative.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ isStrawsonAntiAdditive_trivalentSuperlative p.μ p.x
+
+theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_superlative.isStrawsonDE
+
+theorem not_holds_superlative : ¬ superlative.licenser.Holds .monotoneDecreasing := fun h ↦
+  not_antitone_posExt_trivalentSuperlative ((h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
+
+theorem isStrawsonAntiAdditive_conditionalAntecedent :
+    conditionalAntecedent.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ Conditional.isStrawsonAntiAdditive_horizonCounterfactual p.horizon p.q
 
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=
-  fun p ↦ Conditional.isStrawsonDE_horizonCounterfactual p.horizon p.q
+  isStrawsonAntiAdditive_conditionalAntecedent.isStrawsonDE
 
-theorem not_holds_conditionalAntecedent : ¬ conditionalAntecedent.licenser.Holds .anti := fun h ↦
+theorem not_holds_conditionalAntecedent :
+    ¬ conditionalAntecedent.licenser.Holds .monotoneDecreasing := fun h ↦
   Conditional.not_antitone_posExt_horizonCounterfactual
-    (ProjectivitySignature.holdsFor_anti_iff.mp
-    (h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
+    ((h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
 
-theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE := fun p ↦
-  isStrawsonDE_since p.ago
+theorem isStrawsonAntiAdditive_sinceTemporal : sinceTemporal.licenser.IsStrawsonAntiAdditive :=
+  fun p ↦ isStrawsonAntiAdditive_since p.ago
 
-theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .anti := fun h ↦
-  not_antitone_posExt_since (ProjectivitySignature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
+theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE :=
+  isStrawsonAntiAdditive_sinceTemporal.isStrawsonDE
+
+theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .monotoneDecreasing := fun h ↦
+  not_antitone_posExt_since ((h ⟨ℤ, (· - 5)⟩))
 
 /-! ### Modal licensers and questions -/
 
@@ -692,197 +684,208 @@ theorem isStrawsonUE_modalPossibility : modalPossibility.licenser.IsStrawsonUE :
 
 /-- Necessity is not downward entailing, since it is the identity at a world that accesses
 itself. -/
-theorem not_holds_anti_necessityFamily : ¬ (Licenser.modal necessityFamily).Holds .anti :=
+theorem not_holds_anti_necessityFamily :
+    ¬ (Licenser.modal necessityFamily).Holds .monotoneDecreasing :=
   fun h ↦ by
-    have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
+    have := (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
     simp [Set.subset_def, SetRel.core] at this
 
 /-- Possibility is not downward entailing, since it is the identity at a world that accesses
 itself. -/
-theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .anti :=
+theorem not_holds_anti_modalPossibility : ¬ modalPossibility.licenser.Holds .monotoneDecreasing :=
   fun h ↦ by
-    have := ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
+    have := (h ⟨Unit, .univ⟩) (Set.empty_subset .univ)
     simp [Set.subset_def, SetRel.preimage] at this
 
 /-- The identity is not downward entailing. -/
-theorem not_holds_anti_positiveAssertion : ¬ positiveAssertion.licenser.Holds .anti := fun h ↦
-  ProjectivitySignature.holdsFor_anti_iff.1 (h Unit) (bot_le (a := ⊤)) () trivial
+theorem not_holds_anti_positiveAssertion :
+    ¬ positiveAssertion.licenser.Holds .monotoneDecreasing := fun h ↦
+  (h Unit) (bot_le (a := ⊤)) () trivial
 
-/-! ### The profiles of the contexts
+/-! ### The negativity of the contexts
 
-The profile of a context is a table. It is the profile of the licenser of the context, so a claim
-about what a context licenses is decided on the table and rests on the theorems above. A question
-has no profile. -/
+The negativity of a context is a table. It is the negativity of the licenser of the context, so a
+claim about which distributions contain a context is decided on the table and rests on the
+theorems above. A question has no negativity. -/
 
-/-- What the strengths of negation say of a construction: the greatest strength it carries, the
-greatest strength it holds outright, and whether it licenses free choice. A question has no
-profile. -/
-def profile : LicensingContext → Option Profile
-  | negation => some ⟨ofStrength .antiMorphic, ofStrength .antiMorphic, false⟩
+/-- The degrees of negativity of a construction: the greatest strength it carries and the
+greatest strength it holds outright. A question has none. -/
+def negativity : LicensingContext → Option Negativity
+  | negation => some (.ofStrength .antimorphic)
   | nobody | universalRestrictor | noRestrictor | withoutClause | beforeClause
   | clausalComparative | tooTo | denyVerb | superordinateNegation =>
-    some ⟨ofStrength .antiAdditive, ofStrength .antiAdditive, false⟩
-  | few | atMost | doubtVerb => some ⟨ofStrength .weak, ofStrength .weak, false⟩
+    some (.ofStrength .antiAdditive)
+  | few | atMost | doubtVerb => some (.ofStrength .monotoneDecreasing)
   | onlyFocus | adversative | superlative | conditionalAntecedent | sinceTemporal =>
-    some ⟨ofStrength .weak, ⊥, false⟩
-  | modalPossibility | modalNecessity | imperative | generic | freeRelative => some ⟨⊥, ⊥, true⟩
-  | positiveAssertion => some ⟨⊥, ⊥, false⟩
+    some ⟨(Negation.Strength.monotoneDecreasing : Negation.Strength), ⊥⟩
+  | modalPossibility | modalNecessity | imperative | generic | freeRelative
+  | positiveAssertion => some ⊥
   | polarQuestion | constituentQuestion => none
 
-private theorem profile_eq_of {L : Licenser} {a b : WithBot (WithTop Negation.Strength)}
-    {fc : Bool} (hc : L.carried = a) (hh : L.held = b) (hf : L.LicensesFreeChoice ↔ fc = true) :
-    some (⟨a, b, fc⟩ : Profile) = some L.profile :=
-  congrArg some (Licenser.profile_eq_mk hc hh hf).symm
+/-- The constructions that license free choice: the modal ones. -/
+def LicensesFreeChoice : LicensingContext → Prop
+  | modalPossibility | modalNecessity | imperative | generic | freeRelative => True
+  | _ => False
+
+instance : DecidablePred LicensesFreeChoice := fun c ↦ by
+  cases c <;> first | exact isTrue trivial | exact isFalse id
+
+private theorem negativity_eq_of {L : Licenser} {a b : WithBot Negation.Strength}
+    (hc : L.carried = a) (hh : L.held = b) : some (⟨a, b⟩ : Negativity) = some L.negativity := by
+  subst hc hh
+  rfl
 
 private theorem carried_of_holds_iff {F : Licenser.OperatorFamily} {s₀ : Negation.Strength}
     (hn : ¬ (classical F).IsStrawsonUE)
-    (h : ∀ {s : Negation.Strength}, (classical F).Holds s.toProjectivitySignature ↔ s ≤ s₀) :
-    (classical F).carried = ofStrength s₀ :=
+    (h : ∀ {s : Negation.Strength}, (classical F).Holds s ↔ s ≤ s₀) :
+    (classical F).carried = s₀ :=
   carried_eq_coe fun _ ↦ carries_classical_iff_le hn fun _ ↦ h
 
-private theorem carried_of_eq_weak {L : Licenser} (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
-    (h : ¬ L.exhaustified.Holds .anti) : L.carried = ofStrength .weak :=
-  carried_eq_coe fun _ ↦ (carries_iff_eq_weak hde hn h).trans Negation.Strength.le_weak_iff.symm
+private theorem carried_of_eq_monotoneDecreasing {L : Licenser} (hde : L.IsStrawsonDE)
+    (hn : ¬ L.IsStrawsonUE)
+    (h : ¬ L.exhaustified.Holds .monotoneDecreasing) :
+    L.carried = Negation.Strength.monotoneDecreasing :=
+  carried_eq_coe fun _ ↦ (carries_iff_eq_monotoneDecreasing hde hn h).trans
+    Negation.Strength.le_monotoneDecreasing_iff.symm
 
-private theorem held_strawson_eq_bot {L : Licenser} (h : ¬ L.Holds .anti) : L.held = ⊥ :=
-  held_eq_bot fun _ ↦ not_holds_toProjectivitySignature h
+private theorem held_strawson_eq_bot {L : Licenser} (h : ¬ L.Holds .monotoneDecreasing) :
+    L.held = ⊥ :=
+  held_eq_bot fun _ ↦ not_holds_of_not_holds_monotoneDecreasing h
 
-private theorem not_fc {b : Prop} (h : ¬ b) : b ↔ false = true := iff_of_false h Bool.false_ne_true
-
-/-- The profile of a context is the profile of its licenser. -/
-theorem profile_eq :
-    ∀ (c : LicensingContext) (h : c.HasLicenser), c.profile = some (c.licenser h).profile
-  | negation, _ => profile_eq_of
-      (carried_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antiMorphic, fun _ ↦
+/-- The negativity of a context is the negativity of its licenser. -/
+theorem negativity_eq :
+    ∀ (c : LicensingContext) (h : c.HasLicenser), c.negativity = some (c.licenser h).negativity
+  | negation, _ => negativity_eq_of
+      (carried_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antimorphic, fun _ ↦
         carries_classical_iff.2 ⟨holds_negation _, not_isStrawsonUE_negation⟩⟩)
-      (held_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antiMorphic, fun _ ↦ holds_negation s⟩) (not_fc id)
-  | nobody, _ => profile_eq_of (carried_of_holds_iff not_isStrawsonUE_nobody holds_nobody_iff)
-      (held_eq_coe fun _ ↦ holds_nobody_iff) (not_fc id)
-  | universalRestrictor, _ => profile_eq_of
+      (held_eq_coe fun s ↦ ⟨fun _ ↦ s.le_antimorphic, fun _ ↦ holds_negation s⟩)
+  | nobody, _ => negativity_eq_of (carried_of_holds_iff not_isStrawsonUE_nobody holds_nobody_iff)
+      (held_eq_coe fun _ ↦ holds_nobody_iff)
+  | universalRestrictor, _ => negativity_eq_of
       (carried_of_holds_iff not_isStrawsonUE_universalRestrictor holds_universalRestrictor_iff)
-      (held_eq_coe fun _ ↦ holds_universalRestrictor_iff) (not_fc id)
-  | noRestrictor, _ => profile_eq_of
+      (held_eq_coe fun _ ↦ holds_universalRestrictor_iff)
+  | noRestrictor, _ => negativity_eq_of
       (carried_of_holds_iff not_isStrawsonUE_noRestrictor holds_noRestrictor_iff)
-      (held_eq_coe fun _ ↦ holds_noRestrictor_iff) (not_fc id)
-  | withoutClause, _ => profile_eq_of
+      (held_eq_coe fun _ ↦ holds_noRestrictor_iff)
+  | withoutClause, _ => negativity_eq_of
       (carried_of_holds_iff not_isStrawsonUE_withoutClause holds_withoutClause_iff)
-      (held_eq_coe fun _ ↦ holds_withoutClause_iff) (not_fc id)
-  | beforeClause, _ => profile_eq_of
+      (held_eq_coe fun _ ↦ holds_withoutClause_iff)
+  | beforeClause, _ => negativity_eq_of
       (carried_of_holds_iff not_isStrawsonUE_beforeClause holds_beforeClause_iff)
-      (held_eq_coe fun _ ↦ holds_beforeClause_iff) (not_fc id)
-  | clausalComparative, _ | tooTo, _ => profile_eq_of
+      (held_eq_coe fun _ ↦ holds_beforeClause_iff)
+  | clausalComparative, _ | tooTo, _ => negativity_eq_of
       (carried_of_holds_iff not_isStrawsonUE_exceedsFamily holds_exceedsFamily_iff)
-      (held_eq_coe fun _ ↦ holds_exceedsFamily_iff) (not_fc id)
-  | denyVerb, _ => profile_eq_of
+      (held_eq_coe fun _ ↦ holds_exceedsFamily_iff)
+  | denyVerb, _ => negativity_eq_of
       (carried_of_holds_iff not_isStrawsonUE_denyVerb holds_denyVerb_iff)
-      (held_eq_coe fun _ ↦ holds_denyVerb_iff) (not_fc id)
-  | superordinateNegation, _ => profile_eq_of
+      (held_eq_coe fun _ ↦ holds_denyVerb_iff)
+  | superordinateNegation, _ => negativity_eq_of
       (carried_eq_coe fun _ ↦ carries_iff_le
-        (isStrawsonDE_of_holds_anti (holds_superordinateNegation_iff.2 bot_le))
+        (isStrawsonDE_of_holds_monotoneDecreasing (holds_superordinateNegation_iff.2 bot_le))
         not_isStrawsonUE_superordinateNegation fun _ ↦ holds_superordinateNegation_iff)
-      (held_eq_coe fun _ ↦ holds_superordinateNegation_iff) (not_fc id)
-  | few, _ => profile_eq_of
-      (carried_of_eq_weak (isStrawsonDE_of_holds_anti (holds_few_iff.2 le_rfl))
+      (held_eq_coe fun _ ↦ holds_superordinateNegation_iff)
+  | few, _ => negativity_eq_of
+      (carried_of_eq_monotoneDecreasing
+        (isStrawsonDE_of_holds_monotoneDecreasing (holds_few_iff.2 le_rfl))
         not_isStrawsonUE_few not_holds_exhaustified_few)
-      (held_eq_coe fun _ ↦ holds_few_iff) (not_fc id)
-  | atMost, _ => profile_eq_of
-      (carried_of_eq_weak (isStrawsonDE_of_holds_anti (holds_atMost_iff.2 le_rfl))
+      (held_eq_coe fun _ ↦ holds_few_iff)
+  | atMost, _ => negativity_eq_of
+      (carried_of_eq_monotoneDecreasing
+        (isStrawsonDE_of_holds_monotoneDecreasing (holds_atMost_iff.2 le_rfl))
         not_isStrawsonUE_atMost not_holds_exhaustified_atMost)
-      (held_eq_coe fun _ ↦ holds_atMost_iff) (not_fc id)
-  | doubtVerb, _ => profile_eq_of
+      (held_eq_coe fun _ ↦ holds_atMost_iff)
+  | doubtVerb, _ => negativity_eq_of
       (carried_of_holds_iff not_isStrawsonUE_doubtVerb holds_doubtVerb_iff)
-      (held_eq_coe fun _ ↦ holds_doubtVerb_iff) (not_fc id)
-  | onlyFocus, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_onlyFocus not_isStrawsonUE_onlyFocus not_holds_onlyFocus)
-      (held_strawson_eq_bot not_holds_onlyFocus) (not_fc id)
-  | adversative, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_adversative not_isStrawsonUE_adversative
+      (held_eq_coe fun _ ↦ holds_doubtVerb_iff)
+  | onlyFocus, _ => negativity_eq_of
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_onlyFocus not_isStrawsonUE_onlyFocus
+        not_holds_onlyFocus)
+      (held_strawson_eq_bot not_holds_onlyFocus)
+  | adversative, _ => negativity_eq_of
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_adversative not_isStrawsonUE_adversative
         not_holds_adversative)
-      (held_strawson_eq_bot not_holds_adversative) (not_fc id)
-  | superlative, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_superlative not_isStrawsonUE_superlative
+      (held_strawson_eq_bot not_holds_adversative)
+  | superlative, _ => negativity_eq_of
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_superlative not_isStrawsonUE_superlative
         not_holds_superlative)
-      (held_strawson_eq_bot not_holds_superlative) (not_fc id)
-  | conditionalAntecedent, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_conditionalAntecedent
+      (held_strawson_eq_bot not_holds_superlative)
+  | conditionalAntecedent, _ => negativity_eq_of
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_conditionalAntecedent
         not_isStrawsonUE_conditionalAntecedent not_holds_conditionalAntecedent)
-      (held_strawson_eq_bot not_holds_conditionalAntecedent) (not_fc id)
-  | sinceTemporal, _ => profile_eq_of
-      (carried_of_eq_weak isStrawsonDE_sinceTemporal not_isStrawsonUE_sinceTemporal
+      (held_strawson_eq_bot not_holds_conditionalAntecedent)
+  | sinceTemporal, _ => negativity_eq_of
+      (carried_of_eq_monotoneDecreasing isStrawsonDE_sinceTemporal not_isStrawsonUE_sinceTemporal
         not_holds_sinceTemporal)
-      (held_strawson_eq_bot not_holds_sinceTemporal) (not_fc id)
-  | modalPossibility, _ => profile_eq_of
-      (carried_eq_bot fun _ h ↦ h.weak.2 isStrawsonUE_modalPossibility)
+      (held_strawson_eq_bot not_holds_sinceTemporal)
+  | modalPossibility, _ => negativity_eq_of
+      (carried_eq_bot fun _ h ↦ h.monotoneDecreasing.2 isStrawsonUE_modalPossibility)
       (held_strawson_eq_bot not_holds_anti_modalPossibility)
-      (iff_of_true licensesFreeChoice_modalPossibility rfl)
-  | modalNecessity, _ | imperative, _ | generic, _ | freeRelative, _ => profile_eq_of
-      (carried_eq_bot fun _ h ↦ h.weak.2 isStrawsonUE_necessityFamily)
+  | modalNecessity, _ | imperative, _ | generic, _ | freeRelative, _ => negativity_eq_of
+      (carried_eq_bot fun _ h ↦ h.monotoneDecreasing.2 isStrawsonUE_necessityFamily)
       (held_strawson_eq_bot not_holds_anti_necessityFamily)
-      (iff_of_true licensesFreeChoice_necessityFamily rfl)
-  | positiveAssertion, _ => profile_eq_of
-      (carried_eq_bot fun _ h ↦ h.weak.2 fun _ ↦ monotone_id)
-      (held_strawson_eq_bot not_holds_anti_positiveAssertion) (not_fc id)
+  | positiveAssertion, _ => negativity_eq_of
+      (carried_eq_bot fun _ h ↦ h.monotoneDecreasing.2 fun _ ↦ monotone_id)
+      (held_strawson_eq_bot not_holds_anti_positiveAssertion)
 
-/-! ### Licensing at the named contexts -/
+/-- A context licenses free choice exactly when its licenser does. -/
+theorem licensesFreeChoice_iff : ∀ (c : LicensingContext) (h : c.HasLicenser),
+    c.LicensesFreeChoice ↔ (c.licenser h).LicensesFreeChoice
+  | modalPossibility, _ => iff_of_true trivial licensesFreeChoice_modalPossibility
+  | modalNecessity, _ | imperative, _ | generic, _ | freeRelative, _ =>
+    iff_of_true trivial licensesFreeChoice_necessityFamily
+  | negation, _ | nobody, _ | universalRestrictor, _ | noRestrictor, _ | withoutClause, _
+  | beforeClause, _ | clausalComparative, _ | tooTo, _ | denyVerb, _ | superordinateNegation, _
+  | few, _ | atMost, _ | doubtVerb, _ | onlyFocus, _ | adversative, _ | superlative, _
+  | conditionalAntecedent, _ | sinceTemporal, _ | positiveAssertion, _ => Iff.rfl
 
-variable (c : LicensingContext) (k : Class)
+/-! ### The distributions that contain the named contexts -/
 
-/-- A context **licenses** a class when it has a profile that licenses the class. -/
-def Licenses : Prop := ∃ p ∈ c.profile, p.Licenses k
+variable (c : LicensingContext) (d : Distribution)
 
-/-- A context **anti-licenses** a class when it has a profile that anti-licenses the class. -/
-def AntiLicenses : Prop := ∃ p ∈ c.profile, p.AntiLicenses k
+/-- A context **admits** a distribution when it has a negativity and lies in the distribution. -/
+def Admits : Prop := ∃ n ∈ c.negativity, (n, decide c.LicensesFreeChoice) ∈ d
 
-/-- A context **admits** a class when it has a profile that admits the class. -/
-def Admits : Prop := ∃ p ∈ c.profile, p.Admits k
+instance : Decidable (c.Admits d) := inferInstanceAs (Decidable (∃ n ∈ _, _))
 
-instance : Decidable (c.Licenses k) := inferInstanceAs (Decidable (∃ p ∈ _, _))
+variable {c d}
 
-instance : Decidable (c.AntiLicenses k) := inferInstanceAs (Decidable (∃ p ∈ _, _))
+theorem admits_iff (h : c.HasLicenser) : c.Admits d ↔ (c.licenser h).Admits d := by
+  classical
+  have hf : decide c.LicensesFreeChoice = decide (c.licenser h).LicensesFreeChoice :=
+    decide_eq_decide.2 (licensesFreeChoice_iff c h)
+  simp [Admits, negativity_eq c h, Licenser.Admits, hf]
 
-instance : Decidable (c.Admits k) := inferInstanceAs (Decidable (∃ p ∈ _, _))
+/-- A context admits the negative polarity items of a strength exactly when its licenser carries
+the strength. -/
+theorem admits_npi_iff (h : c.HasLicenser) {s : Negation.Strength} :
+    c.Admits (.npi s) ↔ (c.licenser h).Carries s :=
+  (admits_iff h).trans Licenser.admits_npi_iff
 
-variable {c k}
-
-theorem licenses_iff (h : c.HasLicenser) : c.Licenses k ↔ (c.licenser h).Licenses k := by
-  simp [Licenses, profile_eq c h, Licenser.profile_licenses_iff]
-
-theorem antiLicenses_iff (h : c.HasLicenser) :
-    c.AntiLicenses k ↔ (c.licenser h).AntiLicenses k := by
-  simp [AntiLicenses, profile_eq c h, Licenser.profile_antiLicenses_iff]
-
-theorem admits_iff (h : c.HasLicenser) : c.Admits k ↔ (c.licenser h).Admits k := by
-  simp [Admits, profile_eq c h, Licenser.profile_admits_iff]
-
-/-- A context licenses a class of negative polarity items that are not free choice items exactly
-when its licenser carries the strength that the class requires. -/
-theorem licenses_npi_iff (h : c.HasLicenser) {s : Negation.Strength} :
-    c.Licenses (.npi s) ↔ (c.licenser h).Carries s :=
-  (licenses_iff h).trans (Licenser.licenses_npi_iff.trans (or_iff_left (by simp)))
-
-/-- A question licenses no class. -/
-theorem not_licenses_of_not_hasLicenser (h : ¬ c.HasLicenser) : ¬ c.Licenses k := by
-  cases c <;> first | exact absurd trivial h | simp [Licenses, profile]
+/-- A question admits no distribution. -/
+theorem not_admits_of_not_hasLicenser (h : ¬ c.HasLicenser) : ¬ c.Admits d := by
+  cases c <;> first | exact absurd trivial h | simp [Admits, negativity]
 
 /-- The contexts that the strengths of negation rank: all but the questions. -/
 def ranked : Finset LicensingContext := Finset.univ.filter HasLicenser
 
 end LicensingContext
 
-/-! ### The classes with which an entry is compatible -/
+/-! ### The distributions with which an entry is compatible -/
 
-/-- The contexts in which the strengths of negation predict a class to be possible: those whose
-profile admits the class. A question has no profile and lies in no region. -/
-def Class.region (k : Class) : Finset LicensingContext := Finset.univ.filter (·.Admits k)
+/-- The named contexts that lie in a distribution. A question has no negativity and lies in
+none. -/
+def Distribution.region (d : Distribution) : Finset LicensingContext :=
+  Finset.univ.filter (·.Admits d)
 
-/-- An entry and a class are **compatible** when the region of the class contains every ranked
+/-- An entry and a distribution are **compatible** when the distribution contains every ranked
 context in which the sources attest the item and no context from which they exclude it. The two
 agree wherever both say something: an entry on which the sources are silent is compatible with
-every class, and an entry may be compatible with several classes or with none. -/
-def Compatible (e : PolarityItem) (k : Class) : Prop :=
-  e.attested ∩ LicensingContext.ranked ⊆ k.region ∧ Disjoint e.excluded k.region
+every distribution, and an entry may be compatible with several distributions or with none. -/
+def Compatible (e : PolarityItem) (d : Distribution) : Prop :=
+  e.attested ∩ LicensingContext.ranked ⊆ Distribution.region d ∧
+    Disjoint e.excluded (Distribution.region d)
 
-instance (e : PolarityItem) (k : Class) : Decidable (e.Compatible k) :=
+instance (e : PolarityItem) (d : Distribution) : Decidable (e.Compatible d) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 end PolarityItem

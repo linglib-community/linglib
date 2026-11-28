@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.ImplicationSignature
+public import Linglib.Semantics.Embedding.ImplicationSignature
 public import Linglib.Semantics.Embedding.Attitude
 public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
@@ -56,8 +56,6 @@ a property of a predicate on a frame.
 
 @[expose] public section
 
-open NaturalLogic (ImplicationSignature)
-
 namespace Clause.Embedding
 
 /-- The reading of a predicate on one frame overrides the predicate's attitude and factivity
@@ -87,7 +85,7 @@ structure Embedding where
   /-- The [nairn-condoravdi-karttunen-2006] implication signature of the predicate, the polarity
   of the complement it implies in a positive and in a negative context; `⊥` for a predicate that
   implies nothing. -/
-  implicative : ImplicationSignature := ⊥
+  implicative : Embedding.ImplicationSignature := ⊥
   /-- The attitude the predicate expresses, doxastic or preferential, if it is an attitude
   predicate. -/
   attitude : Option Attitude := none

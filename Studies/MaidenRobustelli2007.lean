@@ -88,7 +88,8 @@ theorem contexts_linked :
 /-- The entries of the six words are compatible with the class of weak negative polarity
 items. -/
 theorem compatible_weak :
-    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], e.Compatible (.npi .weak) := by
+    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto],
+      e.Compatible (.npi .monotoneDecreasing) := by
   decide +kernel
 
 end MaidenRobustelli2007

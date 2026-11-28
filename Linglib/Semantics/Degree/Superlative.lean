@@ -94,7 +94,8 @@ theorem trivalentSuperlative_assertion_iff {s : Set α} :
 /-- The assertion is anti-additive in the comparison class, by the anti-additivity of the
 set-standard comparative ([hoeksema-1983]). -/
 theorem isAntiAdditive_trivalentSuperlative_assertion (μ : α → D) (x : α) :
-    IsAntiAdditive fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x :=
+    Negation.HasStrength (fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x)
+      .antiAdditive :=
   fun C C' ↦ funext fun w ↦ propext <| by
     simp only [Pi.inf_apply, inf_Prop_eq, trivalentSuperlative_assertion_iff, Pi.sup_apply,
       union_sdiff_distrib, image_union]
@@ -120,7 +121,8 @@ open Classical in
 /-- The superlative is Strawson anti-additive in its comparison class. -/
 theorem isStrawsonAntiAdditive_trivalentSuperlative :
     IsStrawsonAntiAdditive (trivalentSuperlative (W := W) μ · x) :=
-  .of_isAntiAdditive (isAntiAdditive_trivalentSuperlative_assertion μ x) fun _ _ ↦ condEvent_kLE
+  .of_map_sup (Negation.hasStrength_antiAdditive.1
+    (isAntiAdditive_trivalentSuperlative_assertion μ x)) fun _ _ ↦ condEvent_kLE
 
 theorem isStrawsonDE_trivalentSuperlative : IsStrawsonDE (trivalentSuperlative (W := W) μ · x) :=
   (isStrawsonAntiAdditive_trivalentSuperlative μ x).isStrawsonDE

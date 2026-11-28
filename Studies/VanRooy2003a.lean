@@ -232,11 +232,11 @@ A question is downward entailing only in the domain of its wh-phrase, so the str
 give it no profile, and no class is predicted to be possible in one. -/
 
 -- §3.1
-theorem question_notMem_region (k : PolarityItem.Class) :
-    PolarityItem.LicensingContext.polarQuestion ∉ k.region ∧
-      PolarityItem.LicensingContext.constituentQuestion ∉ k.region := by
-  simp [PolarityItem.Class.region, PolarityItem.LicensingContext.Admits,
-    PolarityItem.LicensingContext.profile]
+theorem question_notMem_region (k : PolarityItem.Distribution) :
+    PolarityItem.LicensingContext.polarQuestion ∉ PolarityItem.Distribution.region k ∧
+      PolarityItem.LicensingContext.constituentQuestion ∉ PolarityItem.Distribution.region k := by
+  simp [PolarityItem.Distribution.region, PolarityItem.LicensingContext.Admits,
+    PolarityItem.LicensingContext.negativity]
 
 -- (8b), (9b), (12)
 theorem mem_attested :

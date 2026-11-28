@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Order.AntiAdditive
 public import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -129,8 +128,9 @@ def IsStrawsonAntiAdditive (f : α → W → Trivalent) : Prop :=
 
 /-- An operator whose values have at most the information of an anti-additive assertion is
 Strawson anti-additive, whatever the presupposition. -/
-theorem IsStrawsonAntiAdditive.of_isAntiAdditive {a : α → W → Prop} [∀ p w, Decidable (a p w)]
-    (h : IsAntiAdditive a) (hf : ∀ p w, f p w ≤ₖ ofProp (a p w)) : IsStrawsonAntiAdditive f := by
+theorem IsStrawsonAntiAdditive.of_map_sup {a : α → W → Prop} [∀ p w, Decidable (a p w)]
+    (h : ∀ p q, a (p ⊔ q) = a p ⊓ a q) (hf : ∀ p w, f p w ≤ₖ ofProp (a p w)) :
+    IsStrawsonAntiAdditive f := by
   replace hf := fun p w ↦ kLE_ofProp_iff.1 (hf p w)
   refine fun p q ↦ ⟨fun w h₁ h₂ ↦ ?_, fun w h₁ h₂ ↦ ?_⟩
   · have ha := (hf _ w (by simp [h₁])).1 h₁
@@ -163,7 +163,8 @@ theorem isStrawsonAntiAdditive_iff :
 open Classical in
 /-- Without presuppositions, Strawson anti-additivity is anti-additivity. -/
 theorem isStrawsonAntiAdditive_ofProp_iff {g : α → W → Prop} :
-    IsStrawsonAntiAdditive (fun p w ↦ Trivalent.ofProp (g p w)) ↔ IsAntiAdditive g := by
+    IsStrawsonAntiAdditive (fun p w ↦ Trivalent.ofProp (g p w)) ↔
+      ∀ p q, g (p ⊔ q) = g p ⊓ g q := by
   refine forall₂_congr fun p q ↦ ?_
   simp only [strawsonEntails, Trivalent.ofProp_eq_true_iff, ne_eq, Trivalent.ofProp_ne_undefined,
       not_false_eq_true, forall_const, Trivalent.meetWeak_eq_true_iff,

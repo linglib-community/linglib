@@ -116,16 +116,16 @@ theorem outer_is_interrogative_only (d : Determiner) :
   cases d <;> decide
 
 /-- The class of the paper's negative polarity items, English *either* and German *brauchen*. -/
-abbrev npi : PolarityItem.Class := .npi .weak
+abbrev npi : PolarityItem.Distribution := .npi .monotoneDecreasing
 
 /-- The class of the paper's positive polarity item, English *too*, which negation blocks. -/
-abbrev ppi : PolarityItem.Class := .ppi .antiMorphic
+abbrev ppi : PolarityItem.Distribution := .ppi .antimorphic
 
 /-- A polar question as its two probes, a negative determiner and, optionally, the class of a
 polarity item. -/
 structure Question where
   determiner : Determiner
-  item : Option PolarityItem.Class
+  item : Option PolarityItem.Distribution
 
 /-- The probes agree on where the negation sits, since a negative polarity item must sit under it,
 so it requires the inner construal, and a positive polarity item must escape it, so it requires
@@ -152,23 +152,24 @@ theorem brauchen_takes_kein_not_nichtEin :
       ¬ (Question.mk .nichtEin (some npi)).WellFormed := by decide
 
 /-- A negative polarity item forces the inner-negation reading (13a). -/
-theorem polarity_eq_negative_of_isNPI {d : Determiner} {k : PolarityItem.Class} (hk : k.IsNPI)
+theorem polarity_eq_negative_of_isNPI {d : Determiner} {k : PolarityItem.Distribution}
+    (hk : k.IsNPI)
     (h : (Question.mk d (some k)).WellFormed) : d.polarity = .negative := by
   have ha : d.polarity.Admits k := h k rfl
   generalize d.polarity = s at ha ⊢
   cases s
-  · obtain hle | ⟨⟨⟩, -⟩ := ha.1
-    exact absurd (hk.trans_le hle) (lt_irrefl _)
+  · exact absurd ha hk
   · rfl
 
 /-- A positive polarity item forces the outer-negation reading (13b). -/
-theorem polarity_eq_positive_of_isPPI {d : Determiner} {k : PolarityItem.Class} (hk : k.IsPPI)
+theorem polarity_eq_positive_of_isPPI {d : Determiner} {k : PolarityItem.Distribution}
+    (hk : k.IsPPI)
     (h : (Question.mk d (some k)).WellFormed) : d.polarity = .positive := by
   have ha : d.polarity.Admits k := h k rfl
   generalize d.polarity = s at ha ⊢
   cases s
   · rfl
-  · exact absurd (PolarityItem.le_ofStrength_antiMorphic hk) ha.2
+  · exact absurd ha hk
 
 -- (15): *brauchen* is out in a positive assertion and in a positive polar question and fine under
 -- *niemand*, which with its acceptability under *höchstens* is compatible with the weak class and

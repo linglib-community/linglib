@@ -16,9 +16,9 @@ entry holds its form and what its sources say of single contexts: the contexts i
 attest the item, and the contexts from which they exclude it. A context that no source mentions
 for the item is in neither set, so an entry says nothing of it.
 
-An entry does not classify the item. The classes of the strengths of negation are the subject of
-`Semantics/PolarityItem/Class.lean`, and an entry is [compatible](##PolarityItem.Compatible) with
-a class when its contexts agree with what the class predicts.
+An entry does not classify the item. The distributions that the strengths of negation generate
+are the subject of `Semantics/PolarityItem/Distribution.lean`, and an entry is compatible with a
+distribution when its contexts agree with it.
 
 ## References
 

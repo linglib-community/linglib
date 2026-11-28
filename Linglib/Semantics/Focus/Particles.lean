@@ -480,7 +480,7 @@ theorem isStrawsonDE_only (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) :
 open Classical in
 /-- On the entailment scale *only* is Strawson anti-additive in its prejacent. -/
 theorem isStrawsonAntiAdditive_only_subset : IsStrawsonAntiAdditive (only (· ⊆ ·) C id) :=
-  .of_isAntiAdditive (a := fun p w ↦ w ∈ atMost (· ⊆ ·) C id p)
+  .of_map_sup (a := fun p w ↦ w ∈ atMost (· ⊆ ·) C id p)
     (fun p q ↦ funext fun w ↦ propext <| by
       show w ∈ Exhaustification.excludes C (p ∪ q) ↔
         w ∈ Exhaustification.excludes C p ∧ w ∈ Exhaustification.excludes C q
@@ -531,7 +531,7 @@ open Classical in
 /-- Over individuals on the identity scale, *only x* is Strawson anti-additive in its predicate. -/
 theorem isStrawsonAntiAdditive_only_eq :
     IsStrawsonAntiAdditive fun P : ι → Set W ↦ only (· = ·) univ P x :=
-  .of_isAntiAdditive (a := fun P w ↦ ∀ y, y ≠ x → w ∉ P y)
+  .of_map_sup (a := fun P w ↦ ∀ y, y ≠ x → w ∉ P y)
     (fun _ _ ↦ funext fun _ ↦ propext <| by
       simp only [Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.mem_union,
         not_or, imp_and, forall_and])

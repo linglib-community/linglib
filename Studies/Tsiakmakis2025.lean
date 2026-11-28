@@ -144,12 +144,12 @@ open Greek.StandardModern.PolarityItems in
 expletive *min*, (40), (46), (52). With canonical *dhen* added the clause denotes negative *min*,
 which licenses it as *dhen* does, (41). -/
 theorem licenses_expletive_tipota_iff {n : Negator} :
-    n.expletiveContext.Licenses (.npi .antiAdditive) ↔ n = neg1 := by
+    n.expletiveContext.Admits (.npi .antiAdditive) ↔ n = neg1 := by
   cases n <;> decide
 
 open Greek.StandardModern.PolarityItems in
 theorem licenses_negative_tipota (n : Negator) :
-    n.negativeContext.Licenses (.npi .antiAdditive) := by
+    n.negativeContext.Admits (.npi .antiAdditive) := by
   cases n <;> decide
 
 /-- NEG₁ is the negator of indicative clauses and NEG₂ that of subjunctive clauses. -/

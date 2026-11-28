@@ -34,21 +34,28 @@ admits ([ladd-1981]).
 
 @[expose] public section
 
-open NaturalLogic PolarityItem
+open PolarityItem
 
-/-- The profile of a clause of polarity `s`: a positive clause carries and holds no strength of
+/-- The negativity of a clause of polarity `s`: a positive clause carries and holds no strength of
 negation, and a negative clause carries and holds every strength. -/
-def Polarity.profile : Polarity → PolarityItem.Profile
-  | .positive => ⟨⊥, ⊥, false⟩
-  | .negative => ⟨PolarityItem.ofStrength .antiMorphic, PolarityItem.ofStrength .antiMorphic, false⟩
+def Polarity.negativity : Polarity → PolarityItem.Negativity
+  | .positive => ⊥
+  | .negative => .ofStrength .antimorphic
 
-/-- The polarity `s` admits the class `k` when its profile does. A positive clause admits the
-classes that require nothing, and a negative clause admits the classes that some strength of
-negation licenses and none blocks. -/
-def Polarity.Admits (s : Polarity) (k : PolarityItem.Class) : Prop := s.profile.Admits k
+/-- The polarity `s` admits a distribution when the distribution contains a clause of that
+polarity. A positive clause is in the distribution of no negative polarity item, and a negative
+clause is in the distribution of no positive polarity item. -/
+def Polarity.Admits (s : Polarity) (d : PolarityItem.Distribution) : Prop :=
+  (s.negativity, false) ∈ d
 
-instance (s : Polarity) (k : PolarityItem.Class) : Decidable (s.Admits k) :=
-  inferInstanceAs (Decidable (s.profile.Admits k))
+instance (s : Polarity) (d : PolarityItem.Distribution) : Decidable (s.Admits d) :=
+  inferInstanceAs (Decidable (_ ∈ d))
+
+theorem Polarity.not_admits_positive_iff {d : PolarityItem.Distribution} :
+    ¬ Polarity.positive.Admits d ↔ d.IsNPI := .rfl
+
+theorem Polarity.not_admits_negative_iff {d : PolarityItem.Distribution} :
+    ¬ Polarity.negative.Admits d ↔ d.IsPPI := .rfl
 
 namespace PolarityItem.Licenser
 
@@ -60,31 +67,33 @@ def ofPolarity : Licenser := .ofOperator fun q : Set W ↦ s • q
 
 variable {W s}
 
-/-- The profile of the licenser of a polarity is the profile of the polarity. -/
-theorem profile_ofPolarity [Nonempty W] : (ofPolarity W s).profile = s.profile := by
+private theorem negativity_eq_mk {L : Licenser} {a b : WithBot Negation.Strength}
+    (hc : L.carried = a) (hh : L.held = b) : L.negativity = ⟨a, b⟩ := by
+  subst hc hh
+  rfl
+
+/-- The negativity of the licenser of a polarity is the negativity of the polarity. -/
+theorem negativity_ofPolarity [Nonempty W] : (ofPolarity W s).negativity = s.negativity := by
   have hne : (Set.univ : Set W) ≠ ∅ := Set.univ_nonempty.ne_empty
   cases s
-  · have hH : ¬(ofPolarity W .positive).Holds .anti := fun h ↦
-      hne (Set.subset_empty_iff.1
-        (ProjectivitySignature.holdsFor_anti_iff.1 (h ⟨⟩) (Set.empty_subset Set.univ)))
-    exact profile_eq_mk
+  · have hH : ¬(ofPolarity W .positive).Holds .monotoneDecreasing := fun h ↦
+      hne (Set.subset_empty_iff.1 (h ⟨⟩ (Set.empty_subset Set.univ)))
+    exact negativity_eq_mk
       (carried_eq_bot fun _ hr ↦ (carries_ofOperator_iff.1 hr).2 fun _ _ h ↦ h)
-      (held_eq_bot fun _ ↦ not_holds_toProjectivitySignature hH)
-      (iff_of_false id Bool.false_ne_true)
-  · have hH (r : Negation.Strength) :
-        (ofPolarity W .negative).Holds r.toProjectivitySignature := fun _ ↦
-      ProjectivitySignature.holdsFor_antiAddMult_compl.of_le
-        (Negation.Strength.toProjectivitySignature_antitone le_top)
-    exact profile_eq_mk
-      (carried_eq_coe fun r ↦ ⟨fun _ ↦ r.le_antiMorphic, fun _ ↦ carries_ofOperator_iff.2
+      (held_eq_bot fun _ ↦ not_holds_of_not_holds_monotoneDecreasing hH)
+  · have hH (r : Negation.Strength) : (ofPolarity W .negative).Holds r := fun _ ↦
+      Negation.HasStrength.of_le (t := .antimorphic)
+        ⟨fun _ _ ↦ Set.compl_union _ _, fun _ ↦ rfl⟩ le_top
+    exact negativity_eq_mk
+      (carried_eq_coe fun r ↦ ⟨fun _ ↦ r.le_antimorphic, fun _ ↦ carries_ofOperator_iff.2
         ⟨hH r ⟨⟩, fun hm ↦ hne (Set.subset_empty_iff.1
           (by simpa using hm (Set.empty_subset Set.univ)))⟩⟩)
-      (held_eq_coe fun r ↦ ⟨fun _ ↦ r.le_antiMorphic, fun _ ↦ hH r⟩)
-      (iff_of_false id Bool.false_ne_true)
+      (held_eq_coe fun r ↦ ⟨fun _ ↦ r.le_antimorphic, fun _ ↦ hH r⟩)
 
-/-- The licenser of a polarity admits a class exactly when the polarity admits it. -/
-theorem admits_ofPolarity_iff [Nonempty W] {k : Class} :
-    (ofPolarity W s).Admits k ↔ s.Admits k := by
-  rw [← profile_admits_iff, profile_ofPolarity, Polarity.Admits]
+/-- The licenser of a polarity admits a distribution exactly when the polarity admits it. -/
+theorem admits_ofPolarity_iff [Nonempty W] {d : Distribution} :
+    (ofPolarity W s).Admits d ↔ s.Admits d := by
+  have hf : ¬(ofPolarity W s).LicensesFreeChoice := id
+  simp [Admits, negativity_ofPolarity, Polarity.Admits, hf]
 
 end PolarityItem.Licenser

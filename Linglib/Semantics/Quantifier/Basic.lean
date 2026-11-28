@@ -302,7 +302,7 @@ theorem monotone_some (A : Set α) : Monotone (Det.some A) := scopeMonotone_some
 theorem antitone_no (A : Set α) : Antitone (no A) := scopeAntitone_no A
 
 theorem rightAntiAdditive_no : (no : Det α).RightAntiAdditive := fun A ↦
-  isAntiAdditive_iff.2 fun B B' ↦ by rw [no, Set.compl_union, Set.subset_inter_iff]; rfl
+  hasStrength_antiAdditive_iff.2 fun B B' ↦ by rw [no, Set.compl_union, Set.subset_inter_iff]; rfl
 
 theorem scopeIntersective_every : (every : Det α).ScopeIntersective :=
   fun _ _ _ ↦ Set.subset_inter

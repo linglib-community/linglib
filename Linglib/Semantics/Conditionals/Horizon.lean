@@ -85,7 +85,7 @@ open Classical in
 Appendix 1). -/
 theorem isStrawsonAntiAdditive_horizonCounterfactual :
     IsStrawsonAntiAdditive (horizonCounterfactual horizon · q) :=
-  .of_isAntiAdditive (a := fun p i ↦ i ∈ strictImp horizon p q)
+  .of_map_sup (a := fun p i ↦ i ∈ strictImp horizon p q)
     (fun p p' ↦ funext fun i ↦ propext <| by
       show i ∈ strictImp horizon (p ∪ p') q ↔ i ∈ strictImp horizon p q ∧ i ∈ strictImp horizon p' q
       rw [strictImp_union_left]

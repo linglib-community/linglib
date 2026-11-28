@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Order.AntiAdditive
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Mereology.Basic
 
@@ -15,7 +14,8 @@ precedence by the run times of a trace that preserves sums is such a relation.
 
 ## Main definitions
 
-* `IsTemporalPrecedence`: an interval order on events that is anti-additive in each argument.
+* `IsTemporalPrecedence`: an interval order on events in which a sum precedes or follows an event
+  exactly when its summands do.
 
 ## Main statements
 
@@ -49,17 +49,17 @@ precedes an event exactly when its summands do, and follows one exactly when its
 class IsTemporalPrecedence (E : Type*) [SemilatticeSup E] (r : E → E → Prop) : Prop
     extends IsIntervalOrder E r where
   /-- A sum precedes an event exactly when its summands do. -/
-  left (c : E) : IsAntiAdditive (r · c)
+  left (a b c : E) : r (a ⊔ b) c ↔ r a c ∧ r b c
   /-- A sum follows an event exactly when its summands do. -/
-  right (c : E) : IsAntiAdditive (r c ·)
+  right (a b c : E) : r c (a ⊔ b) ↔ r c a ∧ r c b
 
 namespace IsTemporalPrecedence
 
 variable {E : Type*} [SemilatticeSup E] {r : E → E → Prop} [IsTemporalPrecedence E r] {a b c : E}
 
-theorem sup_left_iff : r (a ⊔ b) c ↔ r a c ∧ r b c := (left (r := r) c a b).to_iff
+theorem sup_left_iff : r (a ⊔ b) c ↔ r a c ∧ r b c := left a b c
 
-theorem sup_right_iff : r c (a ⊔ b) ↔ r c a ∧ r c b := (right (r := r) c a b).to_iff
+theorem sup_right_iff : r c (a ⊔ b) ↔ r c a ∧ r c b := right a b c
 
 /-- A part of an event that precedes `c` precedes `c`. -/
 theorem mono_left (hab : a ≤ b) (hb : r b c) : r a c := by
@@ -82,9 +82,9 @@ part structure of events. -/
 instance Event.isTemporalPrecedence_precedes {E T : Type*} [LinearOrder T] [SemilatticeSup E]
     [TemporalTrace E T] [TemporalTrace.IsSupHom E T] :
     IsTemporalPrecedence E (Event.Precedes : E → E → Prop) where
-  left c a b := propext <| by
+  left a b c := by
     simp only [Event.precedes_iff, Event.τ_sup]
     exact max_lt_iff
-  right c a b := propext <| by
+  right a b c := by
     simp only [Event.precedes_iff, Event.τ_sup]
     exact lt_min_iff

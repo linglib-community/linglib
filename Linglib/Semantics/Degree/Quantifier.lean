@@ -8,7 +8,7 @@ public import Linglib.Core.Order.StrictBounds
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Quantifier.Invariance
-public import Linglib.Core.Order.AntiAdditive
+public import Linglib.Semantics.Negation.Strength
 public import Mathlib.Order.Completion
 
 /-!
@@ -466,8 +466,10 @@ variable [Preorder D] (μ : α → D) {Δ : Set D}
 theorem mem_gtOverSet_iff_subset_Iio (y : α) : y ∈ μ ⁻¹' strictUpperBounds Δ ↔ Δ ⊆ Iio (μ y) :=
   Iff.rfl
 
-theorem gtOverSet_isAntiAdditive : IsAntiAdditive (μ ⁻¹' strictUpperBounds ·) :=
-  (isAntiAdditive_upperPolar (· < ·)).infHom_comp (CompleteLatticeHom.setPreimage μ)
+theorem gtOverSet_isAntiAdditive :
+    Negation.HasStrength (μ ⁻¹' strictUpperBounds ·) .antiAdditive :=
+  (Negation.hasStrength_antiAdditive_upperPolar (· < ·)).map_inf_comp
+    (map_inf (CompleteLatticeHom.setPreimage μ))
 
 theorem gtOverSet_eq_singleton_of_isGreatest {m : D} (hm : IsGreatest Δ m) :
     μ ⁻¹' strictUpperBounds Δ = μ ⁻¹' strictUpperBounds {m} := by

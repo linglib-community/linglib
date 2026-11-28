@@ -131,7 +131,8 @@ theorem box_eq_undefined_of_notMem_excludedMiddle (H : SetRel W W)
   exact hw (by simpa [Trivalent.posExt] using (box_ne_undefined_iff.1 hd).2)
 
 -- (116)
-theorem isAntiAdditive_exhNot (R : SetRel W W) : IsAntiAdditive (exhNot R) := fun p q ↦ by
+theorem isAntiAdditive_exhNot (R : SetRel W W) :
+    Negation.HasStrength (exhNot R) .antiAdditive := fun p q ↦ by
   simp only [exhNot_eq, dom_inter_core_compl_union]
 
 -- (124)
@@ -287,12 +288,11 @@ theorem carries_notThink : Environment.notThink.licenser.Carries .antiAdditive :
   ⟨⟨fun _ _ _ hab hb ha ↦ hb (core_mono hab ha),
       fun h ↦ h ⟨Unit, .univ, ()⟩ (Set.empty_subset Set.univ)
         (fun hc ↦ hc (Set.mem_univ ((), ()))) fun _ _ ↦ trivial⟩,
-    fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.2
-      ⟨fun P Q ↦ propext (Set.ext_iff.1 (dom_inter_core_compl_union p.R P Q) p.w),
-        eq_false fun ⟨⟨_, hu⟩, h⟩ ↦ h hu trivial⟩⟩
+    fun p P Q ↦ propext (Set.ext_iff.1 (dom_inter_core_compl_union p.R P Q) p.w)⟩
 
 theorem not_carries_notCertain : ¬ Environment.notCertain.licenser.Carries .antiAdditive :=
-  fun h ↦ ((ProjectivitySignature.holdsFor_antiAdd_iff.1 (h.2 ⟨Bool, .univ, true⟩)).1.antitone
+  fun h ↦ (Negation.hasStrength_monotoneDecreasing.1
+    (Negation.HasStrength.of_le (h.2 ⟨Bool, .univ, true⟩) (by decide))
     (Set.empty_subset {true})
     ⟨fun hc ↦ absurd (hc (Set.mem_univ (true, false))) (by simp), true, rfl, trivial⟩).2.elim
       fun _ hb ↦ hb.1
@@ -303,21 +303,15 @@ theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAddi
         (show () ∈ {w | ∀ x ∈ Set.univ, w ∉ SetRel.core (.univ : SetRel Unit Unit) ∅} from
           fun _ _ hc ↦ hc (Set.mem_univ ((), ())))
         () trivial fun _ _ ↦ trivial⟩,
-    fun p ↦ ProjectivitySignature.holdsFor_antiAdd_iff.2
-      ⟨Gajewski2007.isAntiAdditive_posExt_noOneNR p.O p.B, by
-        obtain ⟨x, hx⟩ := p.nonempty
-        refine Set.eq_empty_of_forall_notMem fun w hw ↦ ?_
-        have hw' : w ∈ Trivalent.posExt (Gajewski2007.noOneNR p.O p.B Set.univ) := hw
-        rw [Gajewski2007.posExt_noOneNR] at hw'
-        simpa using Set.mem_iInter₂.1 hw' x hx⟩⟩
+    fun p ↦ Gajewski2007.isAntiAdditive_posExt_noOneNR p.O p.B⟩
 
 theorem carries_named_iff (c : LicensingContext) :
-    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Licenses (.npi .antiAdditive) := by
+    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Admits (.npi .antiAdditive) := by
   by_cases h : c.HasLicenser
-  · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
+  · rw [Environment.licenser, dif_pos h, LicensingContext.admits_npi_iff h]
   · rw [Environment.licenser, dif_neg h]
-    exact iff_of_false (fun hc ↦ hc.weak.2 fun _ ↦ monotone_id)
-      (LicensingContext.not_licenses_of_not_hasLicenser h)
+    exact iff_of_false (fun hc ↦ hc.monotoneDecreasing.2 fun _ ↦ monotone_id)
+      (LicensingContext.not_admits_of_not_hasLicenser h)
 
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with

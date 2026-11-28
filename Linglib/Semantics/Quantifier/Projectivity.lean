@@ -6,18 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Quantifier.Counting
-public import Linglib.Logic.Natural.Projection
+public import Linglib.Logic.Natural.ProjectivitySignature
 
 /-!
 # Projectivity of the determiners
-
-The projectivity of a quantifier is what it does to a relation between two scopes: whether it
-keeps an inclusion or reverses it, and whether it takes disjoint, exhaustive or complementary
-scopes to truth values that are so related. Monotonicity is the inclusion part. The rest is the
-position of the quantifier relative to its dual: a monotone quantifier takes disjoint scopes to
-incompatible truth values exactly when it lies below its dual, and exhaustive scopes to exhaustive
-truth values exactly when it lies above it. Natural logic names the classes of maps by
-projectivity signatures and computes the signature of a composite from those of its parts.
 
 This file places the argument positions of *every*, *some* and *no* in the function classes of
 natural logic. A determiner is a map of its scope for each restrictor and a map of its restrictor
@@ -25,9 +17,7 @@ for each scope: *some* is additive in both arguments, *no* is anti-additive in b
 is anti-additive in its restrictor and multiplicative in its scope, so that *not every* is additive
 and anti-multiplicative by composition with negation. The unit condition of each class holds when
 the other argument is not trivial, a nonempty restrictor or a scope that is neither empty nor
-everything. The row of a function class is sound for more quantifiers than the class contains:
-*most* lies below its dual, so the multiplicative row is sound for it, though it does not preserve
-intersections.
+everything. The scope of *most* is monotone and not multiplicative.
 
 ## Main results
 
@@ -37,10 +27,7 @@ intersections.
 * `holdsFor_antiAdd_no_left`, `holdsFor_antiAdd_no`: *no* is anti-additive in both arguments.
 * `holdsFor_additive_not_every_left`, `holdsFor_antiMult_not_every`: *not every* is additive in
   its restrictor and anti-multiplicative in its scope, by composition with negation.
-* `Quantifier.soundFor_mult_iff_le_dual` and its two companions: the multiplicative, additive and
-  morphism rows are sound for the monotone quantifiers below, above and equal to their duals.
-* `soundFor_mult_most`, `not_holdsFor_mult_most`: the multiplicative row is sound for the scope of
-  *most*, which is not multiplicative.
+* `not_holdsFor_mult_most`: the scope of *most* is not multiplicative.
 
 ## References
 
@@ -49,33 +36,6 @@ intersections.
 -/
 
 @[expose] public section
-
-namespace Quantifier
-
-open NaturalLogic ProjectivitySignature
-
-variable {α : Type*} {Q : Quantifier α}
-
-/-! ### Quantifiers and their duals -/
-
-/-- The multiplicative row is sound for the monotone quantifiers that lie below their dual. -/
-theorem soundFor_mult_iff_le_dual : mult.SoundFor Q ↔ Monotone Q ∧ Q ≤ Q.dual :=
-  soundFor_mult_iff_map_compl_le.trans <| and_congr_right fun _ ↦
-    ⟨fun h B hB hB' ↦ h B hB' hB, fun h B hB hB' ↦ h B hB' hB⟩
-
-/-- The additive row is sound for the monotone quantifiers that lie above their dual. -/
-theorem soundFor_additive_iff_dual_le : additive.SoundFor Q ↔ Monotone Q ∧ Q.dual ≤ Q :=
-  soundFor_additive_iff_compl_map_le.trans <| and_congr_right fun _ ↦
-    ⟨fun h B hB ↦ by_contra fun hB' ↦ hB (h B hB'), fun h B hB ↦ by
-      simpa using h Bᶜ (by simpa using hB)⟩
-
-/-- The morphism row is sound for the monotone quantifiers that are their own dual. -/
-theorem soundFor_addMult_iff_dual_eq : addMult.SoundFor Q ↔ Monotone Q ∧ Q.dual = Q :=
-  soundFor_addMult_iff_map_compl.trans <| and_congr_right fun _ ↦
-    ⟨fun h ↦ funext fun B ↦ by simp [h B], fun h B ↦ by
-      rw [← congrFun h B, dual_apply]; simp⟩
-
-end Quantifier
 
 namespace Quantifier.Det
 
@@ -139,10 +99,6 @@ theorem holdsFor_antiAdd_no (hA : A.Nonempty) : antiAdd.HoldsFor (no A) :=
     eq_false fun h ↦ hA.ne_empty (Set.subset_empty_iff.1 (by simpa [no] using h))⟩
 
 /-! ### Most -/
-
-/-- The multiplicative row is sound for the scope of *most*, which lies below its dual. -/
-theorem soundFor_mult_most [Finite α] : mult.SoundFor (most A) :=
-  soundFor_mult_iff_le_dual.2 ⟨scopeMonotone_most A, most_le_dual A⟩
 
 /-- The scope of *most* is not multiplicative: most of three things are not the first and most
 are not the last, but not most are the middle one. -/

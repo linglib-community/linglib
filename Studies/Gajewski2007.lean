@@ -25,6 +25,11 @@ asymmetry of stacked neg-raising predicates that Horn reports. With each environ
 licenser of the library's licensing theory, the theory [admits the strict NPI of each example
 exactly where the paper accepts it](##Gajewski2007.judgments_predicted), superlatives aside.
 
+Entailment here is standard entailment, not entailment modulo presupposition. *Only DP*,
+adversatives and conditional antecedents are anti-additive modulo presupposition and do not license
+strict NPIs, so anti-additivity modulo presupposition is not the licensing condition. Superlatives
+are anti-additive modulo presupposition in the same way and do license them, which is left open.
+
 ## Implementation notes
 
 * The neg-raising predicate of Appendix 2 is the library's `NegRaising.box`, over a modal base
@@ -32,8 +37,8 @@ exactly where the paper accepts it](##Gajewski2007.judgments_predicted), superla
   presuppositionless complement is `NegRaising.negation`, the licenser of
   `LicensingContext.superordinateNegation`.
 * An environment is a sentence as a function of the proposition in the NPI's clause, and its
-  anti-additivity is `IsAntiAdditive` of the truth set (`Trivalent.posExt`): standard entailment,
-  which Appendix 1 argues is the relevant notion. This is how `PolarityItem.Licenser.Holds` reads a
+  anti-additivity is the anti-additive strength of the truth set (`Trivalent.posExt`): standard
+  entailment, which Appendix 1 argues is the relevant notion. This is how `PolarityItem.Licenser.Holds` reads a
   presupposing licenser, so each environment is a `Licenser` and licensing is the library's
   `Licenser.Admits`.
 * The schematic environments NOT(SOME(_)) and NOT(EVERY(_)) are the operators the library gives
@@ -97,8 +102,9 @@ theorem every_inter (R : SetRel W W) (p q : Set W) : every R (p ∩ q) = every R
   Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, hu⟩, h⟩ ↦ h hu
 
 -- (92a)
-theorem isAntiAdditive_every {V : Type*} {g : Set V → Set W} (hg : IsAntiAdditive g) :
-    IsAntiAdditive (every R ∘ g) :=
+theorem isAntiAdditive_every {V : Type*} {g : Set V → Set W}
+    (hg : Negation.HasStrength g .antiAdditive) :
+    Negation.HasStrength (every R ∘ g) .antiAdditive :=
   hg.map_inf_comp (every_inter R)
 
 -- (2)
@@ -109,8 +115,9 @@ theorem not_compl_core_subset :
 
 -- (51b), (53), (65)
 theorem not_isAntiAdditive_compl_core :
-    ¬ IsAntiAdditive fun p : Set Bool ↦ (SetRel.core (.univ : SetRel Bool Bool) p)ᶜ := by
-  rw [isAntiAdditive_iff_mem]
+    ¬ Negation.HasStrength (fun p : Set Bool ↦ (SetRel.core (.univ : SetRel Bool Bool) p)ᶜ)
+      .antiAdditive := by
+  rw [Negation.hasStrength_antiAdditive_iff_mem]
   intro h
   refine (h {true} {false} true).2 ⟨fun hb ↦ by simpa using @hb false trivial,
     fun hb ↦ by simpa using @hb true trivial⟩ fun v _ ↦ ?_
@@ -156,8 +163,9 @@ noncomputable def notKnow (R : SetRel W W) (p : Set W) : W → Trivalent :=
 
 -- (58b)
 theorem not_isAntiAdditive_posExt_notKnow :
-    ¬ IsAntiAdditive fun p : Set (Fin 3) ↦ Trivalent.posExt (notKnow .univ p) := by
-  rw [isAntiAdditive_iff_mem]
+    ¬ Negation.HasStrength (fun p : Set (Fin 3) ↦ Trivalent.posExt (notKnow .univ p))
+      .antiAdditive := by
+  rw [Negation.hasStrength_antiAdditive_iff_mem]
   intro h
   have := (h {0, 1} {0, 2} 0).2
   simp only [notKnow, Trivalent.mem_posExt, TwoDim.toTrivalent_eq_true_iff,
@@ -185,11 +193,12 @@ theorem posExt_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W
 
 -- (90)
 theorem isAntiAdditive_posExt_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) :
-    IsAntiAdditive fun p ↦ Trivalent.posExt (noOneNR O B p) := by
+    Negation.HasStrength (fun p ↦ Trivalent.posExt (noOneNR O B p)) .antiAdditive := by
   rw [show (fun p ↦ Trivalent.posExt (noOneNR O B p)) = fun p ↦ ⋂ x ∈ O, every (B x) pᶜ from
     funext (posExt_noOneNR O B)]
-  exact isAntiAdditive_iInf fun _ ↦ isAntiAdditive_iInf fun _ ↦
-    isAntiAdditive_every isAntiAdditive_compl
+  exact Negation.hasStrength_antiAdditive_iInf fun _ ↦
+    Negation.hasStrength_antiAdditive_iInf fun _ ↦
+    isAntiAdditive_every (Negation.hasStrength_compl _)
 
 /-! ### Stacked neg-raising predicates (§3.2–3.3, Appendix 2) -/
 
@@ -216,10 +225,10 @@ theorem posExt_notStack_self_subset (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
 
 -- (97a)
 theorem isAntiAdditive_posExt_notStack_self (R₁ R₂ H₂ : SetRel W W) :
-    IsAntiAdditive fun p ↦ Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p) := by
+    Negation.HasStrength (fun p ↦ Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p)) .antiAdditive := by
   rw [show (fun p ↦ Trivalent.posExt (notStack R₁ R₁ R₂ H₂ p)) = every R₁ ∘ (every R₂ ∘ compl) from
     funext (posExt_notStack_self R₁ R₂ H₂)]
-  exact isAntiAdditive_every (isAntiAdditive_every isAntiAdditive_compl)
+  exact isAntiAdditive_every (isAntiAdditive_every (Negation.hasStrength_compl _))
 
 -- (111), (113), Appendix 2, (3)
 theorem posExt_notStack (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
@@ -266,8 +275,9 @@ theorem not_posExt_notStack_subset :
 /-- *Not want think* is not anti-additive ((97b), Appendix 2 (6)–(8)): c wants a not to believe
 `p` and not to believe `q`, while a believes `p ∨ q` in each of c's desire worlds. -/
 theorem not_isAntiAdditive_posExt_notStack :
-    ¬ IsAntiAdditive fun p ↦ Trivalent.posExt (notStack desC belC belA belA p) := by
-  rw [isAntiAdditive_iff_mem]
+    ¬ Negation.HasStrength (fun p ↦ Trivalent.posExt (notStack desC belC belA belA p))
+      .antiAdditive := by
+  rw [Negation.hasStrength_antiAdditive_iff_mem]
   intro h
   have := (mem_posExt_notStack_iff _).1 ((h {3, 5} {4, 6} 0).2
     ⟨(mem_posExt_notStack_iff _).2 ⟨.inr (by simp), .inr (by simp)⟩,
@@ -348,11 +358,6 @@ noncomputable def Environment.licenser : Environment → Licenser
 
 theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAdditive :=
   Licenser.carries_strawson_antiAdditive (fun p ↦ isAntiAdditive_posExt_noOneNR p.O p.B)
-    (fun p ↦ by
-      obtain ⟨x, hx⟩ := p.nonempty
-      exact Set.eq_empty_of_forall_notMem fun w hw ↦ by
-        rw [posExt_noOneNR] at hw
-        simpa using Set.mem_iInter₂.1 hw x hx)
     ⟨⟨Unit, Unit, .univ, fun _ ↦ .univ, ⟨(), trivial⟩⟩,
       not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
         (by simp [noOneNR, box_eq_false_iff, Box]) (by simp [noOneNR, box, Box])⟩
@@ -360,7 +365,6 @@ theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAddi
 theorem carries_notThinkWant : Environment.notThinkWant.licenser.Carries .antiAdditive :=
   Licenser.carries_strawson_antiAdditive
     (fun p ↦ isAntiAdditive_posExt_notStack_self p.upper p.lower p.beliefs)
-    (fun p ↦ by simp [posExt_notStack_self])
     ⟨⟨Unit, .univ, .univ, .univ⟩, not_isStrawsonUE (w := ()) (Set.empty_subset Set.univ)
       (by simp [notStack, box, Box]) (by simp [notStack, box, Box])⟩
 
@@ -377,21 +381,21 @@ theorem not_carries_notWantThink : ¬ Environment.notWantThink.licenser.Carries 
     ⟨⟨Fin 8, desC, belA, belC⟩, not_isAntiAdditive_posExt_notStack⟩
 
 theorem carries_named_iff (c : LicensingContext) :
-    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Licenses (.npi .antiAdditive) := by
+    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Admits (.npi .antiAdditive) := by
   by_cases h : c.HasLicenser
-  · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
+  · rw [Environment.licenser, dif_pos h, LicensingContext.admits_npi_iff h]
   · rw [Environment.licenser, dif_neg h]
-    exact iff_of_false (fun hc ↦ hc.weak.2 fun _ ↦ monotone_id)
-      (LicensingContext.not_licenses_of_not_hasLicenser h)
+    exact iff_of_false (fun hc ↦ hc.monotoneDecreasing.2 fun _ ↦ monotone_id)
+      (LicensingContext.not_admits_of_not_hasLicenser h)
 
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with
   | .named c => decidable_of_iff _ (carries_named_iff c).symm
-  | .positive => isFalse fun h ↦ h.weak.2 fun _ ↦ monotone_id
-  | .notSome => decidable_of_iff (LicensingContext.nobody.Licenses (.npi .antiAdditive))
-      (LicensingContext.licenses_npi_iff (by decide))
-  | .notEvery => decidable_of_iff (LicensingContext.doubtVerb.Licenses (.npi .antiAdditive))
-      (LicensingContext.licenses_npi_iff (by decide))
+  | .positive => isFalse fun h ↦ h.monotoneDecreasing.2 fun _ ↦ monotone_id
+  | .notSome => decidable_of_iff (LicensingContext.nobody.Admits (.npi .antiAdditive))
+      (LicensingContext.admits_npi_iff (by decide))
+  | .notEvery => decidable_of_iff (LicensingContext.doubtVerb.Admits (.npi .antiAdditive))
+      (LicensingContext.admits_npi_iff (by decide))
   | .notThinkStressed => isFalse not_carries_notThinkStressed
   | .notKnow => isFalse not_carries_notKnow
   | .noOneThinks => isTrue carries_noOneThinks
@@ -469,6 +473,30 @@ theorem superlative_exception :
       p.1.judgment = .acceptable ∧ ¬ p.2.environment.licenser.Carries .antiAdditive := by
     decide +kernel
   exact fun p hp he ↦ ⟨(h p hp he).1, LicensingContext.isStrawsonDE_superlative, (h p hp he).2⟩
+
+/-- *Only DP*, adversatives, conditional antecedents and superlatives are anti-additive modulo
+presupposition and not downward entailing outright. Strict NPIs are out under the first three,
+(123), (126) and (127), so Strawson anti-additivity does not license them, and acceptable in a
+superlative, (132). -/
+theorem strawsonAntiAdditive_rows :
+    (LicensingContext.onlyFocus.licenser.IsStrawsonAntiAdditive ∧
+      LicensingContext.adversative.licenser.IsStrawsonAntiAdditive ∧
+      LicensingContext.conditionalAntecedent.licenser.IsStrawsonAntiAdditive ∧
+      LicensingContext.superlative.licenser.IsStrawsonAntiAdditive) ∧
+    (¬ LicensingContext.onlyFocus.licenser.Holds .monotoneDecreasing ∧
+      ¬ LicensingContext.adversative.licenser.Holds .monotoneDecreasing ∧
+      ¬ LicensingContext.conditionalAntecedent.licenser.Holds .monotoneDecreasing ∧
+      ¬ LicensingContext.superlative.licenser.Holds .monotoneDecreasing) ∧
+    ∀ p ∈ links, ∀ c ∈ [LicensingContext.onlyFocus, .adversative, .conditionalAntecedent,
+      .superlative], p.2.environment = .named c →
+        (p.1.judgment = .acceptable ↔ c = .superlative) :=
+  ⟨⟨LicensingContext.isStrawsonAntiAdditive_onlyFocus,
+      LicensingContext.isStrawsonAntiAdditive_adversative,
+      LicensingContext.isStrawsonAntiAdditive_conditionalAntecedent,
+      LicensingContext.isStrawsonAntiAdditive_superlative⟩,
+    ⟨LicensingContext.not_holds_onlyFocus, LicensingContext.not_holds_adversative,
+      LicensingContext.not_holds_conditionalAntecedent, LicensingContext.not_holds_superlative⟩,
+    by decide +kernel⟩
 
 -- (74), (73)
 theorem finite_boundary :

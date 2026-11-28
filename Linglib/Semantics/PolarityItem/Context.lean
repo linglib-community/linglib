@@ -41,7 +41,7 @@ inductive LicensingContext where
   | positiveAssertion
   /-- Clausal negation, as in *not*. -/
   | negation
-  /-- A negative quantifier, as in *nobody*, over a restrictor that is true of something. -/
+  /-- A negative quantifier, as in *nobody*. -/
   | nobody
   /-- *Few* NP, in the proportional reading of the English language file, which lies below the
   stronger
@@ -49,11 +49,9 @@ inductive LicensingContext where
   | few
   /-- *At most n* NP, which lies below the stronger *at most n − 1* on its scale. -/
   | atMost
-  /-- The restrictor of a universal, as in *everyone who*, over a scope that is false of
-  something. -/
+  /-- The restrictor of a universal, as in *everyone who*. -/
   | universalRestrictor
-  /-- The restrictor of a negative quantifier, as in *no one who*, over a scope that is true of
-  something. -/
+  /-- The restrictor of a negative quantifier, as in *no one who*. -/
   | noRestrictor
   /-- A *without*-phrase, in which the matrix predicate holds without the predicate of the
   phrase. -/

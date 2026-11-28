@@ -36,7 +36,7 @@ noncomputable def since (p : Set T) : T → Trivalent :=
 
 open Classical in
 theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
-  .of_isAntiAdditive (a := fun p t ↦ Disjoint (Set.Ioc (ago t) t) p)
+  .of_map_sup (a := fun p t ↦ Disjoint (Set.Ioc (ago t) t) p)
     (fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right) fun _ _ ↦ condEvent_kLE
 
 theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
