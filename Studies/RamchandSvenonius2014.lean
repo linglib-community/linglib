@@ -17,8 +17,13 @@ Along a composing spine the sorts rise, so a head that takes a higher sort is ne
 yields a lower sort. The perfect auxiliary, a situation head, is above the progressive, an event
 head; an epistemic modal, a head of the propositional zone, is above a root modal and above the
 perfect; and an adverb is above every adverb of a lower sort. Heads of one sort are not ordered by
-sort: a root modal and the perfect compose in either order. An English modal includes Fin*, which
-puts it above the perfect.
+sort: a root modal and the perfect compose in either order. 
+A verbal word spells out a stretch of the spine: the heads of its stem, then those of its
+inflection. The dummy *be* has no head of its own, the participle in *-en* is an Asp* over an event
+description and a head of the T-domain over a situation description, and an infinitive or finite
+form of an event stem includes a null Asp*. A finite form includes Fin*, so no finite form is below
+the perfect auxiliary; English modals, which have only finite forms, are therefore above the
+perfect, while a Norwegian root modal has a participle and composes below it.
 
 With *intentionally* a modifier of events and *already* a modifier of situations, an assignment of
 sorts to the heads of Cinque's hierarchy is not monotone, since the hierarchy has the volitional
@@ -30,10 +35,13 @@ head above anterior tense.
   progressive's dynamic complement, the passive's argument structure and the order of the heads of
   the event zone. The doubled progressive and the doubled perfect, which sorts do not exclude, are
   not rows, and the spine of the passive has no initiation head.
-* Tense is a head of the T-domain below Fin* in the tree of the full auxiliary sequence and a
-  property of Fin* in its denotation. The spine of that sequence has the head; the other spines have
-  finite tense on Fin*. Where no Asp* is named for a form, the simple past and the infinitive, a
-  spine has an unnamed Asp*, and a lexical verb with no decomposition is an eventuality description.
+* Finite tense is on Fin*, as in its denotation. In the tree of the full auxiliary sequence *could*
+  spells out Fin* and one head of the T-domain; that head is the modal's here. Where no Asp* is
+  named for a form, the simple past and the infinitive, a spine has an unnamed Asp*, and a lexical
+  verb with no decomposition is an eventuality description.
+* The reading of a modal in a row without judged readings is that of its translation.
+* The rows with adverbs are paired with spines and not with words, since word order does not fix
+  where an adverb before a finite verb is adjoined.
 * *Probably* modifies situations, so the starred order *once probably* composes; its star is
   pragmatic. An adverb here modifies one sort, so *easily*, which modifies either of two, is not a
   row.
@@ -84,9 +92,7 @@ inductive Head
   | tPerf
   /-- The participle in the T-domain (46). -/
   | tEn
-  /-- Past tense in the T-domain, (36). -/
-  | tPast
-  /-- A modal in the T-domain, root modality (47). -/
+  /-- A modal in the T-domain, root modality (47); the head under *could* in (36). -/
   | tModal
   /-- The transition to propositions (48), (49). -/
   | finStar
@@ -101,14 +107,14 @@ namespace Head
 /-- The sort of description a head combines with. -/
 def dom : Head → Zone
   | verb | vRes | vProc | vPass | vInit | vEvt | asp | aspEn | aspImp => .event
-  | tPerf | tEn | tPast | tModal | finStar => .situation
+  | tPerf | tEn | tModal | finStar => .situation
   | epistemic => .proposition
   | adverb z => z
 
 /-- The sort of description a head yields. -/
 def cod : Head → Zone
   | verb | vRes | vProc | vPass | vInit | vEvt => .event
-  | asp | aspEn | aspImp | tPerf | tEn | tPast | tModal => .situation
+  | asp | aspEn | aspImp | tPerf | tEn | tModal => .situation
   | finStar | epistemic => .proposition
   | adverb z => z
 
@@ -159,33 +165,7 @@ theorem not_composes_of_adverb {z z' : Zone} (h : List.Sublist [adverb z, adverb
     (hz : z' < z) : ¬ Composes s :=
   not_composes_of_sublist h hz
 
-theorem composes_tModal_tPerf :
-    Composes ⟨[vProc, asp, tModal, tEn, tPerf, finStar]⟩ ∧
-      Composes ⟨[vProc, aspEn, tPerf, tModal]⟩ := by
-  decide
-
-/-! ### The rows -/
-
-/-- The rows with their spines. -/
-def analyses : List (Datum × Spine Head) :=
-  [(Examples.ex_3a, ⟨[vProc, vPass, vEvt, aspEn, tPerf, tPast, finStar]⟩),
-    (Examples.ex_3b, ⟨[vProc, aspEn, tPerf, vEvt, asp, finStar]⟩),
-    (Examples.ex_20a, ⟨[vProc, aspEn, tPerf, finStar, epistemic]⟩),
-    (Examples.ex_20b, ⟨[vProc, aspEn, tPerf, finStar, epistemic]⟩),
-    (Examples.ex_21a, ⟨[vProc, asp, tModal, tEn, tPerf, finStar]⟩),
-    (Examples.ex_21b, ⟨[vProc, asp, tModal, tEn, tPerf, finStar]⟩),
-    (Examples.ex_24a, ⟨[vProc, asp, tModal, tModal, finStar]⟩),
-    (Examples.ex_24b, ⟨[vProc, asp, tModal, finStar, epistemic]⟩),
-    (Examples.ex_51a, ⟨[verb, asp, adverb .situation, finStar, adverb .proposition]⟩),
-    (Examples.ex_51b, ⟨[verb, asp, adverb .proposition, adverb .situation, finStar]⟩),
-    (Examples.ex_51c, ⟨[vProc, adverb .event, asp, adverb .situation, finStar]⟩),
-    (Examples.ex_51d, ⟨[vProc, asp, adverb .situation, adverb .event, finStar]⟩),
-    (Examples.ex_54a, ⟨[vProc, vPass, adverb .event, adverb .event, aspEn, tPerf, finStar]⟩),
-    (Examples.ex_60a, ⟨[verb, asp, adverb .situation, adverb .situation, finStar]⟩)]
-
-/-- A row is acceptable exactly when its spine composes. -/
-theorem analyses_judgment : ∀ p ∈ analyses, p.1.judgment = .acceptable ↔ Composes p.2 := by
-  decide
+/-! ### Words -/
 
 /-- The heads of a modal on a reading: a head of the T-domain on the root reading, and Fin* with a
 head of the propositional zone on the epistemic reading (§4.4). -/
@@ -193,12 +173,129 @@ def modal : Examples.Reading → List Head
   | .root => [tModal]
   | .epistemic => [finStar, epistemic]
 
-/-- The spine of a participial modal under the perfect auxiliary, as in (23). -/
-def modalUnderPerfect (r : Examples.Reading) : Spine Head :=
-  ⟨[vProc, asp] ++ modal r ++ [tEn, tPerf, finStar]⟩
+/-- The stems of the verbal words. -/
+inductive Stem
+  /-- A dynamic lexical verb. -/
+  | lexical
+  /-- The dummy *be*, inserted to carry an inflection (§4). -/
+  | be
+  /-- The perfect auxiliary. -/
+  | have
+  /-- A modal on a reading. -/
+  | modal (r : Examples.Reading)
 
-theorem modalUnderPerfect_judgment : ∀ e ∈ [Examples.ex_23a, Examples.ex_23b], ∀ r,
-    Examples.reading e r = some .acceptable ↔ Composes (modalUnderPerfect r) := by
+namespace Stem
+
+/-- The heads a stem spells out. -/
+def heads : Stem → List Head
+  | .lexical => [vProc]
+  | .be => []
+  | .have => [tPerf]
+  | .modal r => RamchandSvenonius2014.modal r
+
+/-- The sort of the description a stem yields, an event description if it has no head. -/
+def sort (s : Stem) : Zone := s.heads.getLast?.elim .event cod
+
+end Stem
+
+/-- The inflections of the verbal words. -/
+inductive Inflection
+  /-- The passive participle. -/
+  | passive
+  /-- The progressive participle in *-ing*. -/
+  | ing
+  /-- The participle in *-en* of the perfect. -/
+  | en
+  | infinitive
+  | finite
+  deriving DecidableEq
+
+/-- The null heads that take a description of a sort to a situation description: an Asp* over an
+event description (§4.2). -/
+def toSituation : Zone → List Head
+  | .event => [asp]
+  | _ => []
+
+/-- The heads an inflection spells out over a stem of a sort. The participle in *-en* is Asp* over
+an event description and a head of the T-domain otherwise, and a finite form adds Fin* below the
+propositional zone. -/
+def Inflection.heads : Inflection → Zone → List Head
+  | .passive, _ => [vPass]
+  | .ing, _ => [vEvt]
+  | .en, .event => [aspEn]
+  | .en, _ => [tEn]
+  | .infinitive, z => toSituation z
+  | .finite, .proposition => []
+  | .finite, z => toSituation z ++ [finStar]
+
+/-- A verbal word, a stem with an inflection. -/
+structure Word where
+  stem : Stem
+  inflection : Inflection
+
+/-- The heads a word spells out, those of its stem below those of its inflection. -/
+def Word.heads (w : Word) : List Head := w.stem.heads ++ w.inflection.heads w.stem.sort
+
+/-- The spine of a sequence of verbal words in their surface order, the first word highest. -/
+def spine (ws : List Word) : Spine Head := ⟨ws.reverse.flatMap Word.heads⟩
+
+theorem finStar_mem_heads {w : Word} (h : w.inflection = .finite) : finStar ∈ w.heads := by
+  rcases w with ⟨_ | _ | _ | _ | _, _⟩ <;> cases h <;> decide
+
+/-- No finite word is below the perfect auxiliary on a composing spine. -/
+theorem not_composes_of_finite_of_have {l₁ l₂ : List Word} {i : Inflection} {w : Word}
+    (hw : w ∈ l₂) (hf : w.inflection = .finite) :
+    ¬ Composes (spine (l₁ ++ ⟨.have, i⟩ :: l₂)) := by
+  have h₁ : [finStar].Sublist (l₂.reverse.flatMap Word.heads) :=
+    List.singleton_sublist.2 (List.mem_flatMap.2 ⟨w, List.mem_reverse.2 hw, finStar_mem_heads hf⟩)
+  have h₂ : [tPerf].Sublist (Word.heads ⟨.have, i⟩) :=
+    List.singleton_sublist.2 (List.mem_append_left _ List.mem_cons_self)
+  refine not_composes_of_finStar_tPerf ?_
+  simpa [spine] using (h₁.append h₂).trans (List.sublist_append_left _ (l₁.reverse.flatMap _))
+
+-- a root modal and the perfect auxiliary compose in either order
+theorem composes_modal_have :
+    Composes (spine [⟨.have, .finite⟩, ⟨.modal .root, .en⟩, ⟨.lexical, .infinitive⟩]) ∧
+      Composes (spine [⟨.modal .root, .finite⟩, ⟨.have, .infinitive⟩, ⟨.lexical, .en⟩]) := by
+  decide
+
+/-! ### The rows -/
+
+/-- The rows of the auxiliary sequences with their verbal words. -/
+def analyses : List (Datum × List Word) :=
+  [(Examples.ex_3a, [⟨.modal .root, .finite⟩, ⟨.have, .infinitive⟩, ⟨.be, .en⟩, ⟨.be, .ing⟩,
+      ⟨.lexical, .passive⟩]),
+    (Examples.ex_3b, [⟨.be, .finite⟩, ⟨.have, .ing⟩, ⟨.lexical, .en⟩]),
+    (Examples.ex_20a, [⟨.modal .epistemic, .finite⟩, ⟨.have, .infinitive⟩, ⟨.lexical, .en⟩]),
+    (Examples.ex_20b, [⟨.modal .epistemic, .finite⟩, ⟨.have, .infinitive⟩, ⟨.lexical, .en⟩]),
+    (Examples.ex_21a, [⟨.have, .finite⟩, ⟨.modal .root, .en⟩, ⟨.lexical, .infinitive⟩]),
+    (Examples.ex_21b, [⟨.have, .finite⟩, ⟨.modal .root, .en⟩, ⟨.lexical, .infinitive⟩]),
+    (Examples.ex_24a, [⟨.modal .root, .finite⟩, ⟨.modal .root, .infinitive⟩,
+      ⟨.lexical, .infinitive⟩]),
+    (Examples.ex_24b, [⟨.modal .epistemic, .finite⟩, ⟨.modal .root, .infinitive⟩,
+      ⟨.lexical, .infinitive⟩])]
+
+/-- A row is acceptable exactly when the spine of its words composes. -/
+theorem analyses_judgment :
+    ∀ p ∈ analyses, p.1.judgment = .acceptable ↔ Composes (spine p.2) := by
+  decide
+
+theorem modal_judgment : ∀ e ∈ [Examples.ex_23a, Examples.ex_23b], ∀ r,
+    Examples.reading e r = some .acceptable ↔
+      Composes (spine [⟨.have, .finite⟩, ⟨.modal r, .en⟩, ⟨.lexical, .infinitive⟩]) := by
+  decide
+
+/-- The rows with adverbs, with their spines. -/
+def adverbAnalyses : List (Datum × Spine Head) :=
+  [(Examples.ex_51a, ⟨[verb, asp, adverb .situation, finStar, adverb .proposition]⟩),
+    (Examples.ex_51b, ⟨[verb, asp, adverb .proposition, adverb .situation, finStar]⟩),
+    (Examples.ex_51c, ⟨[vProc, adverb .event, asp, adverb .situation, finStar]⟩),
+    (Examples.ex_51d, ⟨[vProc, asp, adverb .situation, adverb .event, finStar]⟩),
+    (Examples.ex_54a, ⟨[vProc, vPass, adverb .event, adverb .event, aspEn, tPerf, finStar]⟩),
+    (Examples.ex_60a, ⟨[verb, asp, adverb .situation, adverb .situation, finStar]⟩)]
+
+theorem adverbAnalyses_judgment :
+    ∀ p ∈ adverbAnalyses, p.1.judgment = .acceptable ↔ Composes p.2 := by
   decide
 
 /-- The two orders of *once* and *probably*, (60b) and (61), whose spines compose alike. -/
@@ -212,7 +309,7 @@ theorem composes_61_iff (z : Zone) :
     Composes ⟨[vProc, asp, adverb z, adverb .situation, finStar]⟩ ↔ z = .situation := by
   cases z <;> decide
 
-/-- Adverbs under passive *been* modify events. -/
+-- adverbs under passive *been* modify events
 theorem composes_54a_iff (z z' : Zone) :
     Composes ⟨[vProc, vPass, adverb z, adverb z', aspEn, tPerf, finStar]⟩ ↔
       z = .event ∧ z' = .event := by
