@@ -8,6 +8,7 @@ public import Linglib.Semantics.Reference.Gender
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Feature.Person.Decomposition
+public import Linglib.Syntax.Feature.Person.Deixis
 public import Linglib.Syntax.Feature.Gender.Bivalent
 
 /-!
@@ -33,6 +34,8 @@ no stronger one.
 ## Main results
 
 * `Person.mem_dom_feature_iff`: a person feature's domain is the pullback of `Person.Bears`.
+* `Person.ValuedFeature.preimage_participants_plus`: the referents whose participants have the
+  plus value of a feature are the feature's domain.
 * `Person.dom_eq_preimage_lowerPolar`: a person's domain holds the referents whose participants
   bear every feature of its bundle.
 * `Person.participants_mem_participantSets_iff`: a referent is of a person of the standard
@@ -141,6 +144,21 @@ variable {W E P T : Type*} [PartialOrder E] (c : SpeechAct.Context W E P T) (x :
 theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
   simp only [Feature.dom, Set.mem_iUnion₂, Set.mem_Ici, Bears, Finset.not_disjoint_iff,
     SpeechAct.Context.mem_participants, exists_prop, and_comm]
+
+/-- The referents whose participants have the plus value of a person feature are those the
+feature is defined of, so a demonstrative with the value is anchored on the domain a pronoun with
+the feature presupposes. -/
+theorem ValuedFeature.preimage_participants_plus (f : Feature) :
+    c.participants ⁻¹' ↑(⟨f, .plus⟩ : ValuedFeature).participantSets =
+      Feature.dom c f := by
+  ext x; simp [ValuedFeature.Holds, mem_dom_feature_iff]
+
+/-- The referents whose participants have the minus value of a person feature are those the
+feature is not defined of. -/
+theorem ValuedFeature.preimage_participants_minus (f : Feature) :
+    c.participants ⁻¹' ↑(⟨f, .minus⟩ : ValuedFeature).participantSets =
+      (Feature.dom c f)ᶜ := by
+  ext x; simp [ValuedFeature.Holds, mem_dom_feature_iff]
 
 /-- The referents whose participants bear every feature of `F` are those in each feature's
 domain. -/
