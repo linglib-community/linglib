@@ -25,7 +25,7 @@ gives the polarity of the complement that each context implies, if any: *manage*
 
 @[expose] public section
 
-namespace NaturalLogic
+namespace Clause.Embedding
 
 /-- The implication signature of a complement-taking operator gives the polarity of the complement
 it implies in a positive context and in a negative context, `⊥` where it implies nothing. -/
@@ -75,4 +75,4 @@ instance : OrderBot ImplicationSignature where
 
 end ImplicationSignature
 
-end NaturalLogic
+end Clause.Embedding
