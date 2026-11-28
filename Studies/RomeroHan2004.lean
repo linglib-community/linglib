@@ -8,8 +8,10 @@ public import Linglib.Logic.Modal.Definability
 public import Linglib.Semantics.PolarityItem.Polarity
 public import Linglib.Discourse.Bias
 public import Linglib.Semantics.Questions.Inquisitive.Polar
-public import Linglib.Syntax.Negation
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Data.Examples.Languages
+public import Mathlib.Data.Fintype.Sigma
 
 /-!
 # Romero and Han (2004): On negative yes/no questions
@@ -55,9 +57,21 @@ and evidence against a proposition is evidence for its complement. Conclusive ev
 an answer and the belief the Maxim of Quality requires of an assertion are all the second grade.
 
 A question with focused *NOT* has the logical form of the negative reading of preposed negation,
-`LF.ni`. The Principle of Economy, which makes a question over VERUM require a prior bias, and the
-polarity of the implicature in suggestion contexts are stated in the paper in prose and are not
-formalized.
+`LF.ni`.
+
+The logical forms of an example are read from its surface: where its negation sits, and whether it
+has *really* or focal stress on *NOT*. A question with preposed negation has both readings, and the
+reading the paper assigns to an example is not recorded; an example is predicted acceptable when
+one of its logical forms admits its polarity items and is felicitous in its context.
+
+## TODO
+
+* The Principle of Economy, by which a question over VERUM is used only to resolve an epistemic
+  conflict or to ensure Quality, is stated in the paper in prose and is not formalized. A question
+  without VERUM, among them the questions with non-preposed negation and neutral intonation, has
+  no logical form here, and the rows that record no implicature for such a question are paired
+  with no prediction.
+* The polarity of the implicature in suggestion contexts is not formalized.
 
 ## References
 
@@ -229,24 +243,27 @@ def LF.licenser : Licenser := .ofPolarity W l.inner
 
 variable {W}
 
-/-- The clause under VERUM admits positive polarity items when it is positive and negative
-polarity items when it is negative. -/
-theorem LF.admits_iff [Nonempty W] {e : PolarityItem} (hf : ¬e.IsFCI) :
-    (l.licenser W).Admits e ↔
-      (e.IsPPI → l.inner = .positive) ∧ (e.IsNPI → l.inner = .negative) :=
-  Licenser.admits_ofPolarity_iff hf
+/-- The clause under VERUM admits a class of polarity items exactly when its polarity does:
+positive polarity items when it is positive and negative polarity items when it is negative. -/
+theorem LF.admits_iff [Nonempty W] {k : PolarityItem.Class} :
+    (l.licenser W).Admits k ↔ l.inner.Admits k :=
+  Licenser.admits_ofPolarity_iff
 
 end Licensing
 
 /-! ### The paper's examples -/
 
-open Examples (all form scenario bias negation)
+open Examples (all emphasis scenario bias negation)
 
-/-- The logical form of each question the paper classes. -/
-def _root_.RomeroHan2004.Examples.Form.lf : Examples.Form → LF
-  | .pi => .pi
-  | .ni | .notFocus => .ni
-  | .really => .really
+/-- The logical forms of a row's question, by what brings VERUM into it. Preposed negation is one
+negation in either position, (64); *really* stands over a positive clause, and focal stress on
+*NOT* over a negative one. A question with none of the three has no logical form here. -/
+def candidates (e : Datum) : List LF :=
+  (if negation e = some .preposed then [.pi, .ni] else []) ++
+    match emphasis e with
+    | some .really => [.really]
+    | some .stressedNot => [.ni]
+    | none => []
 
 /-- The scenario a row records. -/
 def _root_.RomeroHan2004.Examples.Scenario.toScenario : Examples.Scenario → Scenario
@@ -261,55 +278,96 @@ def _root_.RomeroHan2004.Examples.Bias.toSign : Examples.Bias → SignType
   | .negative => -1
   | .absent => 0
 
-/-- The position of a question's negation, if it has one. -/
-def _root_.RomeroHan2004.Examples.NegationPlacement.position :
-    Examples.NegationPlacement → Option Negation.Position
-  | .preposed => some .preposed
-  | .nonPreposed => some .nonPreposed
-  | .absent => none
+/-- The language file entry that a lexeme of the data is. -/
+def _root_.RomeroHan2004.Examples.Lexeme.entry : Examples.Lexeme → PolarityItem
+  | .too => English.PolarityItems.too
+  | .either => English.PolarityItems.either
+  | .already => English.PolarityItems.already
+  | .yet => English.PolarityItems.yet
 
-/-- The polarity item a row tests. -/
-def item (e : Datum) : Option PolarityItem :=
-  e.parse? "item" [("too", English.PolarityItems.too), ("either", English.PolarityItems.either)]
+/-- The class of a lexeme of the data: *too* and *already* are positive polarity items, and
+*either* and *yet* are negative polarity items. -/
+def _root_.RomeroHan2004.Examples.Lexeme.cls : Examples.Lexeme → PolarityItem.Class
+  | .too => .ppi .antiMorphic
+  | .either => .npi .antiAdditive
+  | .already => .ppi .antiAdditive
+  | .yet => .npi .weak
 
-/-- The questions the paper judges in a contradiction or a suggestion context are acceptable
-exactly where their logical form is felicitous. -/
-theorem felicitous_iff_acceptable :
-    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ σ ∈ (scenario e).toList, ∀ (W : Type) [Nonempty W]
-      (p : Set W), f.lf.Felicitous p σ.toScenario ↔ e.judgment = .acceptable := by
-  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ σ ∈ (scenario e).toList,
-      (∀ s, σ.toScenario = .contradiction s →
-        (s = f.lf.implicature ↔ e.judgment = .acceptable)) ∧
-      ∀ a, σ.toScenario = .suggestion a →
-        (¬(f.lf.outer = .positive ∧ f.lf.inner = a) ↔ e.judgment = .acceptable) := by decide
-  intro e he f hf σ hσ W _ p
-  obtain ⟨h₁, h₂⟩ := h e he f hf σ hσ
-  cases hτ : σ.toScenario with
-  | contradiction s => rw [← h₁ s hτ, LF.felicitous_contradiction_iff]
-  | suggestion a => rw [← h₂ a hτ, LF.felicitous_suggestion_iff]
+/-- The polarity items of a row's question, by the classes of the lexemes its spans name. -/
+def items (e : Datum) : List PolarityItem.Class :=
+  (e.spans.filterMap Examples.lexeme?).map (·.cls)
 
--- (6), (7), (77)–(80)
-theorem admits_iff_acceptable :
-    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ i ∈ (item e).toList, ∀ (W : Type) [Nonempty W],
-      (f.lf.licenser W).Admits i ↔ e.judgment = .acceptable := by
-  have h : ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ i ∈ (item e).toList, ¬i.IsFCI ∧
-      (((i.IsPPI → f.lf.inner = .positive) ∧ (i.IsNPI → f.lf.inner = .negative)) ↔
-        e.judgment = .acceptable) := by decide
-  intro e he f hf i hi W _
-  rw [← (h e he f hf i hi).2, LF.admits_iff _ (h e he f hf i hi).1]
+/-- The entries of the polarity items of a row's question. -/
+def entries (e : Datum) : List PolarityItem :=
+  (e.spans.filterMap Examples.lexeme?).map (·.entry)
 
-example : Datum.ReadCount item all 6 := by decide
+-- every lexeme a row names is a polarity item of the English language file
+theorem entry_mem_items (l : Examples.Lexeme) : l.entry ∈ English.PolarityItems.items := by
+  cases l <;> simp [Examples.Lexeme.entry, English.PolarityItems.items]
 
--- (37), (110), (117)
+-- every span that names a lexeme is one word, printed as its entry is written
+theorem span_printed :
+    ∀ e ∈ all, ∀ s ∈ e.spans, ∀ l ∈ Examples.lexeme? s,
+      (s.words e).map (·.wordform) = [l.entry.form.toList] := by
+  decide
+
+-- no word of an English question that is written as a polarity item goes unmarked
+theorem exists_mem_items_of_written :
+    ∀ e ∈ all, e.language = .english → ∀ i ∈ English.PolarityItems.items,
+      i.form.toList ∈ Datum.wordsOf e.primaryText → ∃ j ∈ entries e, j.form = i.form := by
+  decide
+
+/-- What `LF.Felicitous` comes to in each scenario. -/
+private def LF.FelicitousIn (l : LF) : Scenario → Prop
+  | .contradiction s => s = l.implicature
+  | .suggestion a => ¬(l.outer = .positive ∧ l.inner = a)
+
+private instance (l : LF) : DecidablePred l.FelicitousIn
+  | .contradiction _ => inferInstanceAs (Decidable (_ = _))
+  | .suggestion _ => inferInstanceAs (Decidable (¬_))
+
+private theorem LF.felicitous_iff_felicitousIn {W : Type} [Nonempty W] (p : Set W) (l : LF)
+    (σ : Scenario) : l.Felicitous p σ ↔ l.FelicitousIn σ := by
+  cases σ with
+  | contradiction s => exact l.felicitous_contradiction_iff p s
+  | suggestion a => exact l.felicitous_suggestion_iff p a
+
+/-- A question over VERUM is acceptable exactly where one of its logical forms admits its polarity
+items in the clause under VERUM and, in a contradiction or a suggestion context, is felicitous. -/
+theorem acceptable_iff :
+    ∀ e ∈ all, candidates e ≠ [] → ∀ (W : Type) [Nonempty W] (p : Set W),
+      e.judgment = .acceptable ↔ ∃ l ∈ candidates e, (∀ i ∈ items e, (l.licenser W).Admits i) ∧
+        ∀ σ ∈ (scenario e).toList, l.Felicitous p σ.toScenario := by
+  have h : ∀ e ∈ all, candidates e ≠ [] →
+      (e.judgment = .acceptable ↔ ∃ l ∈ candidates e, (∀ i ∈ items e, l.inner.Admits i) ∧
+          ∀ σ ∈ (scenario e).toList, l.FelicitousIn σ.toScenario) := by decide
+  intro e he hc W _ p
+  rw [h e he hc]
+  refine exists_congr fun l ↦ and_congr_right fun _ ↦
+    and_congr (forall₂_congr fun i _ ↦ (LF.admits_iff _).symm)
+      (forall₂_congr fun σ _ ↦ (LF.felicitous_iff_felicitousIn p _ _).symm)
+
+example : (all.filter fun e ↦ candidates e ≠ []).length = 22 := by decide
+
+-- (6), (7), (105), (106): a polarity item settles the reading of preposed negation
+theorem admits_pi_iff_not_admits_ni :
+    ∀ e ∈ all, items e ≠ [] → ∀ (W : Type) [Nonempty W],
+      (∀ i ∈ items e, (LF.pi.licenser W).Admits i) ↔
+        ¬∀ i ∈ items e, (LF.ni.licenser W).Admits i := by
+  have h : ∀ e ∈ all, items e ≠ [] →
+      ((∀ i ∈ items e, LF.pi.inner.Admits i) ↔ ¬∀ i ∈ items e, LF.ni.inner.Admits i) := by
+    decide
+  intro e he hi W _
+  rw [forall₂_congr fun i _ ↦ LF.admits_iff (W := W) LF.pi,
+    forall₂_congr fun i _ ↦ LF.admits_iff (W := W) LF.ni]
+  exact h e he hi
+
+-- (1), (5), (14)–(18), (37), (110), (117): the implicature the paper reports is that of every
+-- logical form of the question, so preposed negation implicates the proposition on either reading
 theorem bias_eq_implicature :
-    ∀ e ∈ all, ∀ f ∈ (form e).toList, ∀ b ∈ (bias e).toList, b.toSign = f.lf.implicature := by
+    ∀ e ∈ all, ∀ b ∈ (bias e).toList, ∀ l ∈ candidates e, b.toSign = l.implicature := by
   decide
 
--- (1), (5), (14)–(18): Generalization 1 for preposed negation, under assumption (64)
-theorem bias_of_preposed :
-    ∀ e ∈ all, ∀ n ∈ (negation e).toList, n.position = some .preposed →
-      ∀ b ∈ (bias e).toList, ∀ l : LF, l.outer * l.inner = .negative →
-        b.toSign = l.implicature := by
-  decide
+example : (all.filter fun e ↦ (bias e).isSome ∧ candidates e ≠ []).length = 12 := by decide
 
 end RomeroHan2004

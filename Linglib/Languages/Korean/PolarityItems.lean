@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Languages.Korean.Indefinites
-public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Korean polarity items
@@ -26,21 +26,13 @@ namespace Korean.PolarityItems
 open PolarityItem
 
 /-- *nwukwu-to* 'anybody', 'nobody', the interrogative with the additive particle, used under
-indirect and direct negation and in comparatives ([haspelmath-1997] Fig. A.39, (A292)–(A294)), so
-needing an anti-additive context. -/
+indirect and direct negation and in comparatives ([haspelmath-1997] Fig. A.39, (A292)–(A294)). -/
 def nwukwuTo : PolarityItem :=
-  { form := Indefinites.nwukwuTo.form
-  , licensor := some .antiAdditive }
+  { form := Indefinites.nwukwuTo.form }
 
 /-- *nwukwu-na* 'anybody', the free-choice item ([haspelmath-1997] (A291)); *-na* is not an
 additive particle. -/
 def nwukwuNa : PolarityItem :=
-  { form := Indefinites.nwukwuNa.form
-  , freeChoice := true }
-
-/-- *Nwukwu-to* is licensed exactly by the contexts carrying anti-additive strength. -/
-theorem nwukwuTo_licensing_characterized (c : LicensingContext) :
-    c.licenser.Licenses nwukwuTo ↔ c.licenser.Carries .antiAdditive :=
-  Licenser.licenses_iff_carries rfl (by decide) (by decide)
+  { form := Indefinites.nwukwuNa.form }
 
 end Korean.PolarityItems

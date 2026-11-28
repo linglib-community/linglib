@@ -198,13 +198,6 @@ theorem carries_scopeLicenser_atMost_iff {r : Negation.Strength} :
         (by simp [toDet_sUnion_atMost, Det.atMost_apply])
       simp [toDet_sUnion_atMost, Det.atMost_apply] at this
 
-private theorem admits_hoeven_iff {F : Licenser.OperatorFamily} :
-    (Licenser.classical F).Admits Dutch.PolarityItems.hoeven ↔
-      (Licenser.classical F).Carries .weak := by
-  rw [Licenser.admits_iff_licenses rfl (Or.inl rfl)]
-  simp [Licenser.Licenses, Dutch.PolarityItems.hoeven, Licenser.LicensesFreeChoice,
-    Licenser.LicensesByRelevance]
-
 /-! ### The modifiers -/
 
 /-- The possibilities a modifier that sets an upper bound raises with the number `n`, on a scale
@@ -238,12 +231,10 @@ theorem mem_upperBounded {l : Glottocode} {w : Numerals.NumeralModifier}
 weak negative polarity item *hoeven*, while *tot n* asserts the upward entailing *at least s* and
 does not admit it (34). -/
 theorem admits_hoeven :
-    (scopeLicenser (raised Dutch.NumeralModifiers.maximaal s n)).Admits
-        Dutch.PolarityItems.hoeven ∧
-      ¬ (scopeLicenser (raised Dutch.NumeralModifiers.tot s n)).Admits
-        Dutch.PolarityItems.hoeven :=
-  ⟨admits_hoeven_iff.2 (carries_scopeLicenser_atMost_iff.2 rfl),
-    fun h ↦ not_carries_scopeLicenser_upTo .weak (admits_hoeven_iff.1 h)⟩
+    (scopeLicenser (raised Dutch.NumeralModifiers.maximaal s n)).Admits (.npi .weak) ∧
+      ¬ (scopeLicenser (raised Dutch.NumeralModifiers.tot s n)).Admits (.npi .weak) :=
+  ⟨Licenser.admits_npi_iff.2 (carries_scopeLicenser_atMost_iff.2 rfl),
+    fun h ↦ not_carries_scopeLicenser_upTo .weak (Licenser.admits_npi_iff.1 h)⟩
 
 /-! ### The judgments -/
 
@@ -307,8 +298,7 @@ instance (w : Numerals.NumeralModifier) (t : Diagnostic) :
 def modifier? (e : Datum) : Option Numerals.NumeralModifier :=
   (e.feature? "modifier").bind fun f ↦ (upperBounded e.language).find? (·.form = f)
 
-/-- The diagnostic a row names; a negative polarity item needs the strength its language file entry
-records. -/
+/-- The diagnostic a row names; the negative polarity item *hoeven* needs weak strength. -/
 def diagnostic? (e : Datum) : Option Diagnostic :=
   match e.feature? "test" with
   | some "ifAny" => some .ifAny
@@ -317,7 +307,7 @@ def diagnostic? (e : Datum) : Option Diagnostic :=
   | some "range" => some .range
   | some "precise" => (e.nat? "precise").map .precise
   | some "npi" =>
-      ((e.parse? "npi" [("hoeven", Dutch.PolarityItems.hoeven)]).bind (·.licensor)).map .npi
+      (e.parse? "npi" [(Dutch.PolarityItems.hoeven.form, Negation.Strength.weak)]).map .npi
   | _ => none
 
 /-- Every row is felicitous exactly when the account predicts it, for the modifier it names, read

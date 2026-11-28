@@ -84,7 +84,7 @@ theorem ue_widening_weakens {World Entity : Type*} {C : Set World → Set World}
 
 /-! ### Compatibility with Ladusaw 1979
 
-Each context's licensing mechanism is read off its licenser (`PolarityItem.Licenser.mechanism`),
+Whether a context licenses free choice is read off its profile,
 so this file's classification cannot drift from the semantics. K&L's classification refines
 [ladusaw-1979]'s: every Ladusaw-DE context is a strengthening context, but K&L additionally
 explain adversative predicates (DE on a constant perspective) and conditionals with implicit
@@ -177,7 +177,7 @@ is out. This is the paper's only genuinely non-DE licensing mechanism. -/
 K&L's component (FC): PS *any* is a regular indefinite, FC *any* a generic
 indefinite; the apparent universal force of FC *any* emerges from genericity
 plus widening (§4.3). The episodic/generic split below is projected from the
-substrate's mechanism classification. K&L themselves analyze only plain
+profiles of the contexts. K&L themselves analyze only plain
 generics like (10) and tentatively extend to modals; routing
 imperatives and free relatives through the generic mechanism follows the
 substrate, not K&L's text (they explicitly defer directives to later work and
@@ -190,17 +190,14 @@ inductive AnyInterpretation where
   | generic
   deriving DecidableEq, Repr
 
-/-- The interpretation of *any* in a licensing context is projected from the licensing
-mechanism, and is generic exactly when the substrate classifies the context as licensed by the
-generic indefinite. -/
-noncomputable def interpretationOf (c : LicensingContext) : AnyInterpretation :=
-  match c.licenser.mechanism with
-  | .genericIndefinite => .generic
-  | _ => .episodic
+/-- The interpretation of *any* in a licensing context is generic exactly when the profile of the
+context licenses free choice. -/
+def interpretationOf (c : LicensingContext) : AnyInterpretation :=
+  if ∃ p ∈ c.profile, p.freeChoice = true then .generic else .episodic
 
 theorem interpretationOf_eq_generic_iff (c : LicensingContext) :
-    interpretationOf c = .generic ↔ c.licenser.mechanism = .genericIndefinite := by
-  cases h : c.licenser.mechanism <;> simp only [interpretationOf, h] <;> decide
+    interpretationOf c = .generic ↔ ∃ p ∈ c.profile, p.freeChoice = true := by
+  revert c; decide
 
 /-! ### Vague restrictions and precisifications
 
@@ -500,7 +497,7 @@ strengthens, or it is read as settling for less under *glad*, or as a metalingui
 negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
-      (∃ c ∈ r.context, c.licenser.Licenses English.PolarityItems.any) ∨
+      (∃ c ∈ r.context, c.Licenses (.npi .weak true)) ∨
         r.localSignature.negationStrength ≠ ⊥ ∨ r.settleForLess = true ∨
           r.metalinguistic = true := by
   decide +kernel

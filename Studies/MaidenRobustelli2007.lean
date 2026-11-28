@@ -13,8 +13,10 @@ colloquial usage they mean 'anybody' and 'anything' in questions. *Mai* means 'n
 negation and 'ever' in questions, superlatives, and comparatives. In formal usage *alcuno* replaces
 *nessuno* in negative sentences, and *affatto* 'at all' occurs only in negative sentences. Each
 example is linked to the lexical entry of the word it prints and to the named context in which the
-word stands. The licensing theory [admits every
-example](##MaidenRobustelli2007.acceptable_admitted).
+word stands. [The entry lists that context among those in
+which the word is attested](##MaidenRobustelli2007.entries_agree), and [the entries of the six
+words are compatible with the class of weak negative polarity
+items](##MaidenRobustelli2007.compatible_weak).
 
 ## Implementation notes
 
@@ -46,14 +48,15 @@ structure Link where
 
 /-- The links of the examples. -/
 def links : List (Datum × Link) :=
-  [(haiDimenticato, ⟨niente, .question, "niente"⟩), (ceNessuno, ⟨nessuno, .question, "nessuno"⟩),
-    (ceNiente, ⟨niente, .question, "niente"⟩),
+  [(haiDimenticato, ⟨niente, .polarQuestion, "niente"⟩),
+    (ceNessuno, ⟨nessuno, .polarQuestion, "nessuno"⟩),
+    (ceNiente, ⟨niente, .polarQuestion, "niente"⟩),
     (nonCredo, ⟨nessuno, .superordinateNegation, "nessuno"⟩),
     (senzaNiente, ⟨niente, .withoutClause, "niente"⟩),
     (senzaDentroNessuno, ⟨nessuno, .withoutClause, "nessuno"⟩),
     (nonHaAlcun, ⟨alcuno, .negation, "alcun"⟩), (nonHoVistoAlcuno, ⟨alcuno, .negation, "alcuno"⟩),
     (senzaAlcuno, ⟨alcuno, .withoutClause, "alcuno"⟩), (nonGlieloDaro, ⟨mai, .negation, "mai"⟩),
-    (haiMaiLetto, ⟨mai, .question, "mai"⟩), (piuDolce, ⟨mai, .superlative, "mai"⟩),
+    (haiMaiLetto, ⟨mai, .polarQuestion, "mai"⟩), (piuDolce, ⟨mai, .superlative, "mai"⟩),
     (affattoSparito, ⟨affatto, .negation, "affatto"⟩),
     (affattoFascista, ⟨affatto, .negation, "affatto"⟩),
     (piuCheMai, ⟨mai, .clausalComparative, "mai"⟩),
@@ -70,9 +73,22 @@ theorem links_attested :
       p.2.word.toList <:+: p.2.item.form.toList := by
   decide +kernel
 
-/-- The licensing theory admits the item of every example in the context in which it stands. -/
-theorem acceptable_admitted :
-    ∀ p ∈ links, p.1.judgment = .acceptable ∧ p.2.context.licenser.Admits p.2.item := by
+/-- Every example is acceptable, and the entry of its item lists its context among those in which
+the item is attested. -/
+theorem entries_agree :
+    ∀ p ∈ links, p.1.judgment = .acceptable ∧ p.2.context ∈ p.2.item.attested := by
+  decide +kernel
+
+-- Each context that an entry lists is the context of an example of the item.
+theorem contexts_linked :
+    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], ∀ c ∈ e.attested ∪ e.excluded,
+      ∃ p ∈ links, p.2.item.form = e.form ∧ p.2.context = c := by
+  decide +kernel
+
+/-- The entries of the six words are compatible with the class of weak negative polarity
+items. -/
+theorem compatible_weak :
+    ∀ e ∈ [nessuno, niente, neanche, mai, alcuno, affatto], e.Compatible (.npi .weak) := by
   decide +kernel
 
 end MaidenRobustelli2007

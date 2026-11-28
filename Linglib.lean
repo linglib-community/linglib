@@ -358,7 +358,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Negation
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Tree.Basic
 import Linglib.Data.Examples.Svenonius2004

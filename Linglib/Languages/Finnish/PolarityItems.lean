@@ -33,16 +33,14 @@ open PolarityItem
 /-- *kukaan* 'anyone, no one', which is *kuka* 'who' with the scalar clitic -kAAn. It belongs to
 the *-kaan* series of [haspelmath-1997]. -/
 def kukaan : PolarityItem :=
-  { form := Indefinites.kukaan.form
-  , licensor := some .weak }
+  { form := Indefinites.kukaan.form }
 
 /-! ### FCI -/
 
 /-- *kuka hyvänsä* 'whoever, anyone at all', which is *kuka* 'who' with *hyvänsä* or with its
 equivalent *tahansa*. It belongs to the free-choice series of [haspelmath-1997]. -/
 def kukaHyvänsä : PolarityItem :=
-  { form := Indefinites.kukaHyvänsä.form
-  , freeChoice := true }
+  { form := Indefinites.kukaHyvänsä.form }
 
 /-! ### PPI -/
 
@@ -50,7 +48,6 @@ def kukaHyvänsä : PolarityItem :=
 yhdeksältä* 'the princess did not wake up until nine'. It is the counterpart of German *erst* and
 the positive counterpart of the negated *ennen kuin* ([karttunen-1974]). -/
 def vasta : PolarityItem :=
-  { form := "vasta"
-  , antiLicensor := some .antiMorphic }
+  { form := "vasta" }
 
 end Finnish.PolarityItems

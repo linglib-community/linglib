@@ -268,9 +268,10 @@ inductive Environment
   deriving DecidableEq, Repr
 
 open LicensingContext in
-/-- The licenser of an environment, with its exhaustified meaning as the enrichment. -/
+/-- The licenser of an environment, with its exhaustified meaning as the enrichment. A named
+context that places no operator over the item, a question, has the licenser of no licenser. -/
 noncomputable def Environment.licenser : Environment → Licenser
-  | .named c => c.licenser
+  | .named c => if h : c.HasLicenser then c.licenser h else .ofOperator (id : Prop → Prop)
   | .notThink => .scalar
       ⟨⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩,
         fun p P ↦ p.w ∈ p.R.dom ∩ p.R.core Pᶜ⟩
@@ -310,9 +311,17 @@ theorem carries_noOneThinks : Environment.noOneThinks.licenser.Carries .antiAddi
         rw [Gajewski2007.posExt_noOneNR] at hw'
         simpa using Set.mem_iInter₂.1 hw' x hx⟩⟩
 
+theorem carries_named_iff (c : LicensingContext) :
+    (Environment.named c).licenser.Carries .antiAdditive ↔ c.Licenses (.npi .antiAdditive) := by
+  by_cases h : c.HasLicenser
+  · rw [Environment.licenser, dif_pos h, LicensingContext.licenses_npi_iff h]
+  · rw [Environment.licenser, dif_neg h]
+    exact iff_of_false (fun hc ↦ hc.weak.2 fun _ ↦ monotone_id)
+      (LicensingContext.not_licenses_of_not_hasLicenser h)
+
 instance (e : Environment) : Decidable (e.licenser.Carries .antiAdditive) :=
   match e with
-  | .named c => inferInstanceAs (Decidable (c.licenser.Carries .antiAdditive))
+  | .named c => decidable_of_iff _ (carries_named_iff c).symm
   | .notThink => isTrue carries_notThink
   | .notCertain => isFalse not_carries_notCertain
   | .noOneThinks => isTrue carries_noOneThinks
@@ -344,17 +353,6 @@ theorem links_attested :
     ∀ p ∈ links, ∀ w ∈ Datum.wordsOf p.2.item.form, w ∈ Datum.wordsOf p.1.primaryText := by
   decide +kernel
 
-private theorem links_strict :
-    ∀ p ∈ links, p.2.item.licensor = some .antiAdditive ∧ p.2.item.antiLicensor = none ∧
-      ¬ p.2.item.IsFCI := by
-  decide +kernel
-
-private theorem admits_iff (l : Datum × Link) (hl : l ∈ links) :
-    l.2.environment.licenser.Admits l.2.item ↔
-      l.2.environment.licenser.Carries .antiAdditive :=
-  have ⟨hs, ha, hf⟩ := links_strict l hl
-  Licenser.admits_iff_carries hs (by decide) ha hf
-
 private theorem links_carries :
     ∀ p ∈ links, (p.2.environment ≠ .named .universalRestrictor →
         (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Carries .antiAdditive)) ∧
@@ -362,19 +360,21 @@ private theorem links_carries :
         p.1.judgment = .ungrammatical ∧ p.2.environment.licenser.Carries .antiAdditive) := by
   decide +kernel
 
-/-- The licensing theory admits the strict NPI of each example in its environment exactly when the
-paper judges the example acceptable, the restrictor of a universal aside: negated *think* is
+/-- The licenser of each example's environment admits the class of strict NPIs, which require
+anti-additive strength, exactly when the paper judges the example acceptable, the restrictor of a
+universal aside: negated *think* is
 anti-additive once enriched, and negated *be certain* is no longer downward entailing
 ((112), (123)–(127)). -/
 theorem judgments_predicted :
     ∀ p ∈ links, p.2.environment ≠ .named .universalRestrictor →
-      (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Admits p.2.item) :=
-  fun p hp hr ↦ ((links_carries p hp).1 hr).trans (admits_iff p hp).symm
+      (p.1.judgment = .acceptable ↔ p.2.environment.licenser.Admits (.npi .antiAdditive)) :=
+  fun p hp hr ↦ ((links_carries p hp).1 hr).trans Licenser.admits_npi_iff.symm
 
 -- (117a), (119)
 theorem restrictor_not_licensed :
     ∀ p ∈ links, p.2.environment = .named .universalRestrictor →
-      p.1.judgment = .ungrammatical ∧ p.2.environment.licenser.Admits p.2.item :=
-  fun p hp hr ↦ ⟨((links_carries p hp).2 hr).1, (admits_iff p hp).2 ((links_carries p hp).2 hr).2⟩
+      p.1.judgment = .ungrammatical ∧ p.2.environment.licenser.Admits (.npi .antiAdditive) :=
+  fun p hp hr ↦
+    ⟨((links_carries p hp).2 hr).1, Licenser.admits_npi_iff.2 ((links_carries p hp).2 hr).2⟩
 
 end Romoli2013b

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Negation
+public import Linglib.Morphology.Morph
 
 /-!
 # Japanese negation
@@ -28,22 +28,17 @@ each affirmative form keeps its own negative. Miestamo's examples, from Hinds's 
 
 @[expose] public section
 
-open Negation
-
 namespace Japanese.Negation
 
 open Morphology (Morph)
 
 /-- The plain negative suffix *-na-*, inflected as an adjective. -/
-def na : Marker := { pieces := [[.suff "na"]] }
+def na : Morph := .suff "na"
 
 /-- The polite negative suffix *-en*. -/
-def en : Marker := { pieces := [[.suff "en"]] }
+def en : Morph := .suff "en"
 
 /-- The adjectival tense endings, the non-past *-i* and the past *-katta*. -/
 def adjectivalEndings : List Morph := [.suff "i", .suff "katta"]
-
-/-- The standard negators. -/
-def standard : List Marker := [na, en]
 
 end Japanese.Negation
