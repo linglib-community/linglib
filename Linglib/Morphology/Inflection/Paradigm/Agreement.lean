@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Feature.Bundle
-public import Mathlib.Data.List.Find
+public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Order.Comparable
 
 /-!
@@ -14,24 +14,26 @@ public import Mathlib.Order.Comparable
 
 This file defines the agreement paradigm of a target, a table pairing cells, which are feature
 bundles, with the exponents realizing them, and realizes a bundle such as a controller's
-agreement bundle by the exponent of the first cell it extends.
+agreement bundle by the exponent of the most specific cell it extends.
 
 Since cells are partial, a target reads a controller only along the dimensions its cells
 specify: a verb whose cells give person and number realizes a controller bearing gender and case
 too by its person and number. Syncretism is two cells with one exponent, and a bundle extending
-no cell has no form. On a table of incomparable cells realization is
+no cell has no form. Cells may differ in how much they specify, as where gender is distinguished
+in some persons only, and a cell that specifies less than another is realized only where the other
+does not apply. On a table of incomparable cells realization is
 [looking the cell up](##realize_of_mem).
 
 ## Implementation notes
 
-Realization takes the first cell a bundle extends and holds no theory of competition between
-cells. A table in which no bundle extends two cells, such as one of fully specified person and
-number cells, is realized alike in any order of its entries.
+Each entry is a rule of exponence applying at the bundles that extend its cell, and realization is
+the Elsewhere selection of a `Morphology.RuleSet` under inclusion of cells, so that it does not
+depend on the order of the entries wherever the cells a bundle extends include a most specific one.
 
 ## Main definitions
 
 * `Agreement.Paradigm`: a table of cells and exponents.
-* `Agreement.Paradigm.realize`: the exponent of the first cell a bundle extends.
+* `Agreement.Paradigm.realize`: the exponent of the most specific cell a bundle extends.
 
 ## Main statements
 
@@ -43,6 +45,7 @@ number cells, is realized alike in any order of its entries.
 ## References
 
 * [corbett-1998]
+* [kiparsky-1973]
 -/
 
 @[expose] public section
@@ -54,11 +57,21 @@ abbrev Paradigm (Exp : Type*) := List (Bundle × Exp)
 
 namespace Paradigm
 
+open Morphology
+
 variable {Exp : Type*} {p q : Paradigm Exp} {x y c : Bundle} {e : Exp}
 
-/-- The exponent realizing a bundle, that of the first cell it extends. -/
+/-- An entry is a rule of exponence applying at the bundles that extend its cell. -/
+instance : ExponenceRule (Bundle × Exp) Bundle Exp := ⟨Prod.snd, fun e x ↦ e.1 ≤ x⟩
+
+@[simp] theorem applies_iff {e : Bundle × Exp} : Applies e x ↔ e.1 ≤ x := Iff.rfl
+
+instance : DecidableRel (Applies : Bundle × Exp → Bundle → Prop) :=
+  fun e x ↦ inferInstanceAs (Decidable (e.1 ≤ x))
+
+/-- The exponent realizing a bundle, that of the first of the most specific cells it extends. -/
 def realize (p : Paradigm Exp) (x : Bundle) : Option Exp :=
-  (p.find? fun e ↦ decide (e.1 ≤ x)).map (·.2)
+  RuleSet.realizeMinimal p (fun e ↦ OrderDual.toDual e.1) x
 
 /-- The cells of the paradigm, in the order of its entries. -/
 def cells (p : Paradigm Exp) : List Bundle := p.map (·.1)
@@ -67,12 +80,16 @@ def cells (p : Paradigm Exp) : List Bundle := p.map (·.1)
 morphology makes a construction ungrammatical rather than taking a default form
 ([corbett-1998] p. 199). -/
 theorem realize_eq_none_iff : p.realize x = none ↔ ∀ e ∈ p, ¬ e.1 ≤ x := by
-  simp [realize]
+  simp [realize, RuleSet.realizeMinimal_eq_none_iff, RuleSet.applicable]
 
-/-- The exponent realizing a bundle belongs to a cell the bundle extends. -/
-theorem exists_mem_of_realize_eq_some (h : p.realize x = some e) : ∃ c, (c, e) ∈ p ∧ c ≤ x := by
+/-- The exponent realizing a bundle belongs to a cell the bundle extends, and no cell the bundle
+extends is more specific. -/
+theorem exists_mem_of_realize_eq_some (h : p.realize x = some e) :
+    ∃ c, (c, e) ∈ p ∧ c ≤ x ∧ ∀ e' ∈ p, e'.1 ≤ x → ¬ c < e'.1 := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.1 h
-  exact ⟨r.1, List.mem_of_find?_eq_some hr, by simpa using List.find?_some hr⟩
+  have hw := RuleSet.selectMinimal_isElsewhereWinner hr
+  exact ⟨r.1, hw.prop.1, hw.prop.2, fun e' he' hle hlt ↦
+    hlt.not_ge (hw.le_of_le (j := e') ⟨he', hle⟩ hlt.le)⟩
 
 /-- Bundles that agree wherever some cell is specified are realized alike, so that a target
 reads a controller only along the dimensions its cells specify, as in Upper Sorbian *wón je
@@ -80,18 +97,18 @@ pisał* 'he wrote' the finite verb reads the person and number of its controller
 participle its number and gender ([corbett-1998] p. 201). -/
 theorem realize_congr (h : ∀ c ∈ p.cells, ∀ d, c d ≠ ⊥ → x d = y d) :
     p.realize x = p.realize y := by
-  have key : ∀ e ∈ p, (e.1 ≤ x ↔ e.1 ≤ y) := fun e he ↦ forall_congr' fun d ↦ by
-    by_cases hd : e.1 d = ⊥
-    · simp [hd]
-    · rw [h e.1 (List.mem_map_of_mem he) d hd]
-  rw [realize, realize, List.find?_congr fun e he ↦ decide_eq_decide.2 (key e he)]
+  refine RuleSet.realizeMinimal_congr (List.filter_congr fun e he ↦ decide_eq_decide.2 ?_)
+  refine forall_congr' fun d ↦ ?_
+  by_cases hd : e.1 d = ⊥
+  · simp [hd]
+  · rw [h e.1 (List.mem_map_of_mem he) d hd]
 
 /-- In a paradigm whose cells are pairwise incomparable, as in a table of fully specified cells,
 each cell is realized by its own exponent. -/
 theorem realize_of_mem (hp : p.cells.Pairwise (IncompRel (· ≤ ·))) (he : (c, e) ∈ p) :
     p.realize c = some e := by
   obtain ⟨r, hr⟩ := Option.ne_none_iff_exists'.1 fun h ↦ realize_eq_none_iff.1 h _ he le_rfl
-  obtain ⟨c', hc', hle⟩ := exists_mem_of_realize_eq_some hr
+  obtain ⟨c', hc', hle, -⟩ := exists_mem_of_realize_eq_some hr
   obtain rfl : c' = c := by
     by_contra hne
     exact (hp.forall (List.mem_map_of_mem hc') (List.mem_map_of_mem he) hne).1 hle
@@ -103,8 +120,9 @@ theorem realize_of_mem (hp : p.cells.Pairwise (IncompRel (· ≤ ·))) (he : (c,
 cells unchanged. -/
 theorem realize_append_of_forall_not_le (h : ∀ e ∈ q, ¬ e.1 ≤ x) :
     (p ++ q).realize x = p.realize x := by
-  have : (q.find? fun e ↦ decide (e.1 ≤ x)) = none := by simpa using h
-  simp [realize, List.find?_append, this]
+  have : RuleSet.applicable (p ++ q) x = RuleSet.applicable p x := by
+    simpa [RuleSet.applicable, List.filter_append] using h
+  simp only [realize, RuleSet.realizeMinimal, RuleSet.selectMinimal, this]
 
 end Paradigm
 
