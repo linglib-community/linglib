@@ -64,7 +64,7 @@ formalized.
 
 namespace Kratzer2002
 
-open Kratzer1989 Mereology Topology Set
+open Kratzer1989 Situation Mereology Topology Set
 
 /-! ### Facts that exemplify propositions -/
 
