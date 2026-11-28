@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Feature.Register
+public import Linglib.Syntax.Feature.Formality
 public import Linglib.Semantics.Aspect.Viewpoint.Defs
 
 /-!
 # Aspect markers
 
 A language's grammatical aspect morphemes are entered as aspect markers: the exponent as morphs,
-its spelling in a native script, its interlinear gloss, the viewpoint it marks and its register.
+its spelling in a native script, its interlinear gloss, the viewpoint it marks and its formality.
 
 ## Main definitions
 
@@ -24,7 +24,7 @@ its spelling in a native script, its interlinear gloss, the viewpoint it marks a
 namespace Aspect
 
 /-- A grammatical aspect marker is its exponent with its spelling in a native script, its gloss,
-the viewpoint it marks and its register. -/
+the viewpoint it marks and its formality. -/
 structure Marker where
   /-- The exponent, in surface order, a romanization where the language has a native script. -/
   morphs : List Morphology.Morph
@@ -34,8 +34,8 @@ structure Marker where
   gloss : String
   /-- The viewpoint the marker marks. -/
   viewpoint : ViewpointType
-  /-- The register, where the source states one. -/
-  register : Option Register := none
+  /-- The formality, where the source states one. -/
+  formality : Option Formality := none
   deriving DecidableEq, Repr
 
 end Aspect

@@ -44,7 +44,7 @@ suffix.
 ## Implementation notes
 
 The humble first person is chosen by the standing of the addressee. That is neither the
-formality of the situation, which a pronoun's register records, nor the grade at which a
+formality of the situation, which a pronoun's formality records, nor the grade at which a
 pronoun presents its own referent, so *jeo* and *jeohui* carry neither value and differ from
 *na* and *uri* in form alone.
 
@@ -144,7 +144,7 @@ def geunyeo : PersonalPronoun :=
 /-- The colloquial third person *gyae*, neutral for gender. -/
 def gyae : PersonalPronoun :=
   { form := "gyae", script := some "걔", person := some .third, number := some .singular,
-    register := some .informal }
+    formality := some .informal }
 
 /-- The written-narrative third person plural *geudeul*. -/
 def geudeul : PersonalPronoun :=

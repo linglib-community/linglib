@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Semantics.Modality.Basic
-public import Linglib.Syntax.Feature.Register
+public import Linglib.Syntax.Feature.Formality
 
 /-!
 # Modal items
 
 A modal item pairs a form with the force-flavor pairs it can express, the representation of a
 modal's meaning in Imel, Guo and Steinert-Threlkeld's analysis of modal typology, and records the
-register of the form. A modal auxiliary's entry extends it and a modal adverb's instantiates it
+formality of the form. A modal auxiliary's entry extends it and a modal adverb's instantiates it
 directly. Two items form a Horn scale when they differ in quantificational force and share a flavor.
 
 ## Main definitions
@@ -38,8 +38,8 @@ structure ModalItem where
   item confined to non-affirmative contexts, as English auxiliary *need* and *dare* are, in the
   contexts that admit it. -/
   meaning : Finset ForceFlavor
-  /-- The register, where the source states one. -/
-  register : Option Register := none
+  /-- The formality, where the source states one. -/
+  formality : Option Formality := none
   deriving DecidableEq
 
 namespace ModalItem
