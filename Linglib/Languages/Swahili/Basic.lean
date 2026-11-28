@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.Inflection.Paradigm.Agreement
 public import Linglib.Syntax.Feature.Gender.Basic
 public import Linglib.Morphology.Morph
 public import Linglib.Languages.Bantu.Params

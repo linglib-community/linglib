@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.Morph
-public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.Inflection.Paradigm.Agreement
 public import Linglib.Languages.Georgian.Case
 
 /-!

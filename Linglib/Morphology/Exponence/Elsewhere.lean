@@ -2,7 +2,6 @@ module
 
 public import Linglib.Morphology.Exponence.Basic
 public import Mathlib.Order.Antisymmetrization
-public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Basic
 
@@ -10,29 +9,41 @@ public import Mathlib.Data.Set.Finite.Basic
 # The Elsewhere Condition
 
 An Elsewhere winner of a rule set at a context is a rule that applies there and is minimal, among
-the rules that apply, in specificity. Specificity is read through a key into an ordered type, as
-closeness is for a probe: Kiparsky's specificity is the key `applySet`, a rule being more specific
-when it applies in fewer contexts, and other theories choose other keys. This file defines Elsewhere
-winners and the prediction relation they induce.
+the rules that apply, in specificity. Specificity is read through a key into a preordered type:
+Kiparsky's specificity is the key `applySet`, a rule being more specific when it applies in fewer
+contexts, and other theories choose other keys. This file defines Elsewhere winners and the
+prediction relation they induce.
 
 ## Main definitions
 
 * `RuleSet.IsElsewhereWinner`: an applicable rule of a rule set at a context that no applicable
   rule is more specific than.
+* `RuleSet.IsPaninian`: the Elsewhere winners at a context are equally specific.
 * `RuleSet.Coherent`: rules equally specific carry the same exponent.
 * `RuleSet.Realizes`: some Elsewhere winner carries the given exponent.
 * `RuleSet.Antihomophonous`: distinct rules carry distinct exponents.
 
 ## Main results
 
-* `RuleSet.Realizes.eq`: where the Elsewhere winners form a chain, Pāṇinian Determinism, a
-  coherent rule set makes a unique prediction.
-* `RuleSet.Realizes.of_realizes`: no ABA pattern across a context that takes in the rules the outer
+* `RuleSet.Realizes.eq`: a coherent rule set makes a unique prediction where it is Pāṇinian.
+* `RuleSet.Realizes.of_applies`: no ABA pattern across a context that takes in the rules the outer
   two share and whose rules all reach one of them.
+
+## Implementation notes
+
+Kiparsky's condition orders two rules disjunctively when the contexts of one are among those of the
+other and their structural changes are identical or incompatible. Two exponents competing for one
+position are always one or the other, so only the inclusion of contexts is formalized.
+
+Stump's Pāṇinian Determinism Hypothesis requires that among the rules of a block applicable at a
+cell one be narrower than all the others. A rule set is here called Pāṇinian at a context when its
+Elsewhere winners there are equally specific, which that rule ensures and which also holds where no
+rule applies.
 
 ## References
 
 * [kiparsky-1973]
+* [stump-2001]
 * [bobaljik-2012]
 -/
 
@@ -45,11 +56,6 @@ variable {v : RuleSet R} {c : Ctx} {r s : R} {φ : E}
 
 /-! ### Elsewhere winners -/
 
-theorem _root_.MinimalFor.antisymmRel {ι α : Type*} [Preorder α] {P : ι → Prop} {f : ι → α}
-    {i j : ι} (hi : MinimalFor P f i) (hj : MinimalFor P f j) (h : f j ≤ f i ∨ f i ≤ f j) :
-    AntisymmRel (· ≤ ·) (f i) (f j) :=
-  h.elim (fun h ↦ ⟨hi.le_of_le hj.1 h, h⟩) (fun h ↦ ⟨h, hj.le_of_le hi.1 h⟩)
-
 /-- An applicable rule of `v` at `c` that no applicable rule is more specific than, specificity
 read through `key`. -/
 abbrev IsElsewhereWinner (v : RuleSet R) (key : R → κ) (c : Ctx) (r : R) : Prop :=
@@ -59,10 +65,19 @@ abbrev IsElsewhereWinner (v : RuleSet R) (key : R → κ) (c : Ctx) (r : R) : Pr
 def Coherent (v : RuleSet R) (key : R → κ) : Prop :=
   ∀ r ∈ v, ∀ s ∈ v, AntisymmRel (· ≤ ·) (key r) (key s) → exponent r = exponent s
 
-theorem IsElsewhereWinner.exponent_eq (hv : v.Coherent key) (hr : v.IsElsewhereWinner key c r)
-    (hs : v.IsElsewhereWinner key c s) (h : key s ≤ key r ∨ key r ≤ key s) :
-    exponent r = exponent s :=
-  hv r hr.1.1 s hs.1.1 (hr.antisymmRel hs h)
+/-- A rule set is Pāṇinian at a context when its Elsewhere winners there are equally specific. -/
+def IsPaninian (v : RuleSet R) (key : R → κ) (c : Ctx) : Prop :=
+  ∀ ⦃r⦄, v.IsElsewhereWinner key c r → ∀ ⦃s⦄, v.IsElsewhereWinner key c s → key r ≤ key s
+
+/-- A rule set whose rules are pairwise comparable in specificity is Pāṇinian at every context. -/
+theorem isPaninian_of_forall_le_or_le (h : ∀ r ∈ v, ∀ s ∈ v, key r ≤ key s ∨ key s ≤ key r)
+    (c : Ctx) : v.IsPaninian key c :=
+  fun r hr s hs ↦ (h r hr.1.1 s hs.1.1).elim id (hr.le_of_le hs.1)
+
+/-- Under a linearly ordered key every rule set is Pāṇinian. -/
+theorem isPaninian_of_linearOrder {κ : Type*} [LinearOrder κ] (v : RuleSet R) (key : R → κ)
+    (c : Ctx) : v.IsPaninian key c :=
+  isPaninian_of_forall_le_or_le (fun _ _ _ _ ↦ le_total _ _) c
 
 theorem exists_isElsewhereWinner (h : ∃ r ∈ v, Applies r c) :
     ∃ r, v.IsElsewhereWinner key c r :=
@@ -74,14 +89,13 @@ theorem exists_isElsewhereWinner (h : ∃ r ∈ v, Applies r c) :
 def Realizes (v : RuleSet R) (key : R → κ) (c : Ctx) (φ : E) : Prop :=
   ∃ r, v.IsElsewhereWinner key c r ∧ exponent r = φ
 
-/-- Over a coherent rule set whose Elsewhere winners form a chain, Stump's Pāṇinian
-Determinism, the prediction is unique. -/
+/-- A coherent rule set makes a unique prediction where it is Pāṇinian. -/
 theorem Realizes.eq {ψ : E} (hv : v.Coherent key)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hc : v.IsPaninian key c)
     (hφ : v.Realizes key c φ) (hψ : v.Realizes key c ψ) : φ = ψ := by
   obtain ⟨r, hr, rfl⟩ := hφ
   obtain ⟨s, hs, rfl⟩ := hψ
-  exact hr.exponent_eq hv hs (hc.total hs hr)
+  exact hv r hr.1.1 s hs.1.1 ⟨hc hr hs, hc hs hr⟩
 
 /-! ### Containment -/
 
@@ -108,15 +122,15 @@ theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s ∈ v, Applies s c' �
     (hr : v.IsElsewhereWinner key c r) (hc' : Applies r c') : v.IsElsewhereWinner key c' r :=
   hr.anti (fun s hs ↦ ⟨hs.1, h s hs.1 hs.2⟩) ⟨hr.1.1, hc'⟩
 
-/-- There is no ABA across a middle context that takes in the rules the outer two share and whose
-rules all reach the second of them. Over an antihomophonous rule set, an exponent realized at the
-outer contexts is then realized at the middle one. Nested contexts are the case where every rule
-of the first reaches the middle; the first need not lie below it. -/
-theorem Realizes.of_realizes {c₁ c₂ : Ctx} (hv : v.Antihomophonous)
-    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c → Applies s c₂)
-    (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c)
-    (hr₁ : v.Realizes key c₁ φ) (hr : v.Realizes key c φ) : v.Realizes key c₂ φ := by
-  obtain ⟨t, ht, rfl⟩ := hr
+/-- There is no ABA across a middle context `c₂` that takes in the rules `c₁` and `c₃` share and
+whose rules all reach `c₃`. Over an antihomophonous rule set, an exponent realized at `c₁` and `c₃`
+is then realized at `c₂`. Nested contexts are the case where every rule of `c₁` reaches `c₂`; the
+rules of `c₁` need not all do so. -/
+theorem Realizes.of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₃ → Applies s c₂)
+    (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
+    (hr₁ : v.Realizes key c₁ φ) (hr₃ : v.Realizes key c₃ φ) : v.Realizes key c₂ φ := by
+  obtain ⟨t, ht, rfl⟩ := hr₃
   obtain ⟨u, hu, hut⟩ := hr₁
   obtain rfl := hv hu.1.1 ht.1.1 hut
   exact ⟨_, ht.of_applies h₂ (h₁ _ hu.1.1 hu.1.2 ht.1.2), rfl⟩

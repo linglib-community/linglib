@@ -3,7 +3,7 @@ module
 public import Linglib.Languages.Turkish.Case
 public import Linglib.Morphology.Morphotactics.Template.Basic
 public import Linglib.Phonology.Hiatus
-public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.Inflection.Paradigm.Agreement
 public import Linglib.Languages.Turkish.Phonology
 
 /-!

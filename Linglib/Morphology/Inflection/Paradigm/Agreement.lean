@@ -18,11 +18,17 @@ agreement bundle by the exponent of the most specific cell it extends.
 
 Since cells are partial, a target reads a controller only along the dimensions its cells
 specify: a verb whose cells give person and number realizes a controller bearing gender and case
-too by its person and number. Syncretism is two cells with one exponent, a bundle extending no
-cell has no form, and a default form is an entry whose cell is `⊥`. Each entry is a rule of
-exponence applying at the bundles that extend its cell, so realization is the Elsewhere selection
-of a `Morphology.RuleSet`, and on a table of incomparable cells it is
+too by its person and number. Syncretism is two cells with one exponent, and a bundle extending
+no cell has no form. Cells may differ in how much they specify, as where gender is distinguished
+in some persons only, and a cell that specifies less than another is realized only where the other
+does not apply. On a table of incomparable cells realization is
 [looking the cell up](##realize_of_mem).
+
+## Implementation notes
+
+Each entry is a rule of exponence applying at the bundles that extend its cell, and realization is
+the Elsewhere selection of a `Morphology.RuleSet` under inclusion of cells, so that it does not
+depend on the order of the entries wherever the cells a bundle extends include a most specific one.
 
 ## Main definitions
 
