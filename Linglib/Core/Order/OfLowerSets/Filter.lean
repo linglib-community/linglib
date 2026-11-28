@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Filter.AtBotOn
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
+public import Linglib.Core.Order.OfLowerSets.Defs
 
 /-!
 # The bottom filter of the ordering a family of sets induces

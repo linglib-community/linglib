@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.Antichain
 public import Linglib.Semantics.Questions.Hamblin.Basic
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Lattice
+public import Linglib.Core.Order.OfLowerSets.Lattice
 
 /-!
 # The strongest true answer

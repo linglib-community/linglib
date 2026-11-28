@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Nonmonotonic.Preferential
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
+public import Linglib.Core.Order.OfLowerSets.Defs
 public import Linglib.Semantics.Exhaustification.MinimalWorlds
 public import Mathlib.Order.SymmDiff
 

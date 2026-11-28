@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Core.Order.Minimals
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Lattice
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Minimals
+public import Linglib.Core.Order.OfLowerSets.Lattice
+public import Linglib.Core.Order.OfLowerSets.Minimals
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.Preorder.Finite

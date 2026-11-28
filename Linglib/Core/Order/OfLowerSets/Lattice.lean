@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.PreorderLattice
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
+public import Linglib.Core.Order.OfLowerSets.Defs
 public import Mathlib.Order.Concept
 
 /-!

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.CategoryTheory.Category.Preorder
 public import Mathlib.Order.Category.Preord
-public import Linglib.Logic.Natural.Marking
+public import Mathlib.Basic.Sign.Defs
 
 /-!
 # Marked types and their domains in the monotonicity calculus
@@ -28,17 +28,24 @@ domains form a functor from the types to the preorders.
 
 ## Main definitions
 
+* `IcardMossTune2017.MonoBy`: a function is monotone under the marking `+`, antitone under `−`,
+  and arbitrary under `·`.
 * `IcardMossTune2017.Ty`: the marked types, with the subtyping order.
-* `IcardMossTune2017.Ty.sup?`: the join of two types that differ only in the markings along their
-  codomains.
 * `IcardMossTune2017.Ty.Dom`: the domain of a type over preorders for the base types.
 * `IcardMossTune2017.Ty.castLE`: the coercion along a subtyping.
 * `IcardMossTune2017.Ty.domFunctor`: the domains and coercions as a functor to preorders.
+
+## Implementation notes
+
+Markings are `SignType`, so that the composition of markings is the multiplication of signs. The
+information order is a relation of its own, since `SignType` carries the order `-1 < 0 < 1`.
 
 ## TODO
 
 * The terms of the calculus and their typing, the valence of a variable occurrence, and the
   theorem that a term in which a variable occurs only positively is monotone in that variable.
+* The join of two types that differ only in the markings along their codomains, and the erasure
+  of those markings, which the equivalence of terms is stated with.
 * The proof system and its completeness.
 
 ## References
@@ -50,7 +57,69 @@ domains form a functor from the types to the preorders.
 
 namespace IcardMossTune2017
 
-open NaturalLogic
+/-! ### Markings -/
+
+/-- The information order on markings: `m ⊑ m'` when `m = m'` or `m'` is `·`. -/
+def MarkingLE (m m' : SignType) : Prop := m = m' ∨ m' = 0
+
+instance : DecidableRel MarkingLE := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+theorem MarkingLE.refl (m : SignType) : MarkingLE m m := .inl rfl
+
+theorem MarkingLE.trans {a b c : SignType} (h₁ : MarkingLE a b) (h₂ : MarkingLE b c) :
+    MarkingLE a c := by
+  revert h₁ h₂; decide +revert
+
+theorem MarkingLE.antisymm {a b : SignType} (h₁ : MarkingLE a b) (h₂ : MarkingLE b a) : a = b := by
+  revert h₁ h₂; decide +revert
+
+theorem markingLE_zero (m : SignType) : MarkingLE m 0 := .inr rfl
+
+section MonoBy
+
+variable {α β γ δ : Type*} [Preorder α] [Preorder β] [Preorder γ] [Preorder δ] {m m' : SignType}
+
+/-- A function behaves as the marking `m` says when it is monotone for `m = +` and antitone for
+`m = −`; every function behaves as `·` says. -/
+def MonoBy : SignType → (α → β) → Prop
+  | .zero, _ => True
+  | .pos, f => Monotone f
+  | .neg, f => Antitone f
+
+@[simp] theorem monoBy_zero {f : α → β} : MonoBy 0 f := trivial
+
+@[simp] theorem monoBy_one {f : α → β} : MonoBy 1 f ↔ Monotone f := .rfl
+
+/-- The composition of a function that behaves as `m` with one that behaves as `m'` behaves as
+their product. -/
+theorem MonoBy.comp {g : β → γ} {f : α → β} (hg : MonoBy m g) (hf : MonoBy m' f) :
+    MonoBy (m * m') (g ∘ f) := by
+  cases m <;> cases m'
+  exacts [trivial, trivial, trivial, trivial, Antitone.comp (g := g) hg hf,
+    Antitone.comp_monotone (g := g) hg hf, trivial, Monotone.comp_antitone (g := g) hg hf,
+    Monotone.comp (g := g) hg hf]
+
+theorem MonoBy.mono {f : α → β} (h : MarkingLE m m') (hf : MonoBy m f) : MonoBy m' f := by
+  rcases h with rfl | rfl
+  exacts [hf, trivial]
+
+theorem MonoBy.conj {k : β → γ} {g : γ → δ} {f : α → β} (hk : MonoBy m k) (hg : Monotone g)
+    (hf : Monotone f) : MonoBy m (g ∘ k ∘ f) := by
+  simpa using (monoBy_one.2 hg).comp (hk.comp (monoBy_one.2 hf))
+
+/-- The marking `m` lies below `m'` in the information order exactly when every function that
+behaves as `m` says behaves as `m'` says. -/
+theorem markingLE_iff_forall_monoBy :
+    MarkingLE m m' ↔ ∀ f : Prop → Prop, MonoBy m f → MonoBy m' f := by
+  refine ⟨fun h _ ↦ .mono h, fun h ↦ ?_⟩
+  have hid : ¬Antitone (id : Prop → Prop) := fun h ↦ h (show False ≤ True from False.elim) trivial
+  have hnot : ¬Monotone Not := fun h ↦ h (show False ≤ True from False.elim) id trivial
+  have anti : Antitone Not := fun _ _ h hn ha ↦ hn (h ha)
+  cases m <;> cases m'
+  exacts [.inl rfl, absurd (h id trivial) hid, absurd (h Not trivial) hnot, .inr rfl, .inl rfl,
+    absurd (h Not anti) hnot, .inr rfl, absurd (h id monotone_id) hid, .inl rfl]
+
+end MonoBy
 
 /-! ### Marked types -/
 
@@ -132,70 +201,6 @@ def decidableLEAux [DecidableEq B] :
             decidable_of_iff _ arr_le_arr.symm)
 
 instance [DecidableEq B] : DecidableLE (Ty B) := fun σ τ ↦ (decidableLEAux σ).1 τ
-
-/-! ### The join of compatible types and the erasure of markings -/
-
-/-- The join of two types, defined when they have the same domains and differ only in the markings
-along their codomains, which it joins. -/
-def sup? [DecidableEq B] : Ty B → Ty B → Option (Ty B)
-  | .base b, .base b' => if b = b' then some (.base b) else none
-  | .arr σ m τ, .arr σ' m' τ' =>
-      if σ = σ' then (sup? τ τ').map (.arr σ (markingSup m m')) else none
-  | _, _ => none
-
-/-- The type with the markings along its codomains erased. -/
-def unmark : Ty B → Ty B
-  | .base b => .base b
-  | .arr σ _ τ => .arr σ 0 (unmark τ)
-
-theorem le_unmark : ∀ σ : Ty B, σ ≤ unmark σ
-  | .base b => .base b
-  | .arr σ m τ => .arr (Ty.LE.refl σ) (le_unmark τ) (markingLE_zero m)
-
-variable [DecidableEq B]
-
-@[simp] theorem sup?_self : ∀ σ : Ty B, sup? σ σ = some σ
-  | .base b => by simp [sup?]
-  | .arr σ m τ => by simp [sup?, sup?_self τ]
-
-/-- The join of two types, where it is defined, is their least upper bound in the subtyping
-order. -/
-theorem isLUB_of_sup?_eq_some : ∀ {σ τ μ : Ty B}, sup? σ τ = some μ → IsLUB {σ, τ} μ
-  | .base b, .base b', _, h => by
-      rw [sup?] at h
-      split at h
-      · subst_vars; cases h; simp [isLUB_singleton]
-      · exact absurd h (by simp)
-  | .arr σ m τ, .arr σ' m' τ', _, h => by
-      rw [sup?] at h
-      split at h
-      · subst_vars
-        obtain ⟨κ, hκ, rfl⟩ := Option.map_eq_some_iff.mp h
-        have ih := isLUB_of_sup?_eq_some hκ
-        refine ⟨?_, fun ν hν ↦ ?_⟩
-        · rintro _ (rfl | rfl)
-          · exact .arr (Ty.LE.refl _) (ih.1 (.inl rfl)) (markingLE_markingSup_left m m')
-          · exact .arr (Ty.LE.refl _) (ih.1 (.inr rfl)) (markingLE_markingSup_right m m')
-        · have h₁ := hν (Set.mem_insert _ _)
-          have h₂ := hν (Set.mem_insert_of_mem _ rfl)
-          cases ν with
-          | base => exact absurd h₁ not_arr_le_base
-          | arr σ'' m'' τ'' =>
-              rw [arr_le_arr] at h₁ h₂ ⊢
-              exact ⟨h₁.1, ih.2 (by rintro _ (rfl | rfl); exacts [h₁.2.1, h₂.2.1]),
-                markingSup_le h₁.2.2 h₂.2.2⟩
-      · exact absurd h (by simp)
-  | .base _, .arr .., _, h => by simp [sup?] at h
-  | .arr .., .base _, _, h => by simp [sup?] at h
-
-/-- Two types have a join exactly when erasing their markings gives the same type. -/
-theorem isSome_sup?_iff : ∀ {σ τ : Ty B}, (sup? σ τ).isSome ↔ unmark σ = unmark τ
-  | .base b, .base b' => by simp [sup?, unmark]
-  | .arr σ m τ, .arr σ' m' τ' => by
-      simp only [sup?, unmark, arr.injEq, true_and]
-      split <;> simp_all [isSome_sup?_iff (σ := τ) (τ := τ')]
-  | .base _, .arr .. => by simp [sup?, unmark]
-  | .arr .., .base _ => by simp [sup?, unmark]
 
 end Ty
 
@@ -282,10 +287,6 @@ def domFunctor (Db : B → Preord.{u}) : Ty B ⥤ Preord.{u} where
 section Examples
 
 private abbrev r : Ty Unit := .base ()
-
-example : sup? (.arr r (-1) r) (.arr r 1 r) = some (.arr r 0 r) := by decide
-
-example : sup? (.arr r 1 r) (.arr (.arr r 1 r) 1 r) = none := by decide
 
 example : Ty.arr (.arr r 0 r) 1 r ≤ .arr (.arr r (-1) r) 0 r := by decide
 

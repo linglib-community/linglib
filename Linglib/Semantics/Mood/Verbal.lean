@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.Filter.AtBotOn
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Lattice
+public import Linglib.Core.Order.OfLowerSets.Lattice
 public import Linglib.Semantics.Mood.Grammatical
 public import Linglib.Semantics.Mood.State
 
