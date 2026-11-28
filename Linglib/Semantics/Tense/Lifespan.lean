@@ -32,8 +32,8 @@ Individual-level predicates such as *tall* are taken to be permanent.
 
 ## Implementation notes
 
-Life spans are given by a function `τ` into `NonemptyInterval`, as an event's run time is
-(`Event.τ`), so a description denotes the property of being the life span of one of its
+Life spans are given by a function `τ` into `NonemptyInterval`, as an event's run time is,
+so a description denotes the property of being the life span of one of its
 individuals, an interval property (`Logic/Temporal/IntervalProperty.lean`). `Permanent` takes
 life spans of any type with a membership relation, such as intervals or sets of times, and
 `Permanent.precedes_pure` takes them as intervals, since it needs them convex.

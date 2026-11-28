@@ -54,11 +54,9 @@ predicate](##ArgumentStructure.exists_affectednessRole_eq).
 
 namespace Beavers2011
 
-open Event (τ)
-
 open ArgumentStructure HayKennedyLevin1999 Set
 
-variable {α S D T E : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {α S D T E : Type*} [LinearOrder T] {τ : E → NonemptyInterval T}
 
 /-! ### Scalar change (§4.1) -/
 
@@ -66,28 +64,29 @@ section Result
 
 variable [LinearOrder D]
 
-/-- `Result m b x s g e` holds when the theme `x` starts the event `e` at the contextual source `b`
-on the scale `s` and ends it at the higher goal `g`, the result relation of (48). -/
-def Result (m : S → α → T → D) (b : D) (x : α) (s : S) (g : D) (e : E) : Prop :=
+/-- `Result τ m b x s g e` holds when the theme `x` starts the event `e` at the contextual source
+`b` on the scale `s` and ends it at the higher goal `g`, the result relation of (48). -/
+def Result (τ : E → NonemptyInterval T) (m : S → α → T → D) (b : D) (x : α) (s : S) (g : D)
+    (e : E) : Prop :=
   m s x (τ e).fst = b ∧ b < g ∧ m s x (τ e).snd = g
 
 variable {m : S → α → T → D} {b : D} {θ : α → S → E → Prop} {φ : α → E → Prop}
 
 -- (59)
-theorem exists_lt_of_nonQuantizedChange (h : NonQuantizedChange θ (Result m b) φ) {x : α}
+theorem exists_lt_of_nonQuantizedChange (h : NonQuantizedChange θ (Result τ m b) φ) {x : α}
     {e : E} (hx : φ x e) : ∃ s, θ x s e ∧ m s x (τ e).fst < m s x (τ e).snd :=
   let ⟨s, hs, _, h₁, h₂, h₃⟩ := h x e hx
   ⟨s, hs, h₁ ▸ h₃ ▸ h₂⟩
 
 theorem snd_eq_of_quantizedChange {s₀ : S} {g : D} (hθ : ∀ x s e, θ x s e → s = s₀)
-    (h : QuantizedChange θ (Result m b) φ g) {x : α} {e : E} (hx : φ x e) :
+    (h : QuantizedChange θ (Result τ m b) φ g) {x : α} {e : E} (hx : φ x e) :
     m s₀ x (τ e).snd = g :=
   h.eq_of_result (f := fun x e ↦ m s₀ x (τ e).snd) (fun x s e hs hr ↦ hθ x s e hs ▸ hr.2.2) hx
 
 -- p. 357
 theorem not_quantizedChange_of_snd_ne {s₀ : S} (hθ : ∀ x s e, θ x s e → s = s₀) {x x' : α}
     {e e' : E} (hx : φ x e) (hx' : φ x' e') (hne : m s₀ x (τ e).snd ≠ m s₀ x' (τ e').snd) :
-    ¬ ∃ g, QuantizedChange θ (Result m b) φ g := fun ⟨_, h⟩ ↦
+    ¬ ∃ g, QuantizedChange θ (Result τ m b) φ g := fun ⟨_, h⟩ ↦
   hne ((snd_eq_of_quantizedChange hθ h hx).trans (snd_eq_of_quantizedChange hθ h hx').symm)
 
 end Result
@@ -101,7 +100,7 @@ variable [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D] {m : S → α �
 
 -- (58a) [hay-kennedy-levin-1999]
 theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
-    QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ (b + n) ↔
+    QuantizedChange (fun _ s _ ↦ s = s₀) (Result τ m b) φ (b + n) ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
         Describes (m s₀) x (measurePhrase n) (τ e).fst (τ e).snd := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
@@ -115,7 +114,7 @@ theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
 
 -- (58b) [hay-kennedy-levin-1999]
 theorem nonQuantizedChange_iff_describes_someAmount :
-    NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
+    NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result τ m b) φ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
         Describes (m s₀) x someAmount (τ e).fst (τ e).snd := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
@@ -139,7 +138,7 @@ variable [LinearOrder D] {m : S → α → T → D} {b : D} {s₀ : S} {φ : α 
 
 -- [kennedy-levin-2008]
 theorem quantizedChange_top_iff_maxStandard [OrderTop D] (hb : b ≠ ⊤) :
-    QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ⊤ ↔
+    QuantizedChange (fun _ s _ ↦ s = s₀) (Result τ m b) φ ⊤ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
         (τ e).snd ∈ measureOfChange (m s₀) x (τ e).fst ⁻¹' Set.Ici ⊤ := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
@@ -148,7 +147,7 @@ theorem quantizedChange_top_iff_maxStandard [OrderTop D] (hb : b ≠ ⊤) :
 
 -- [kennedy-levin-2008]
 theorem nonQuantizedChange_iff_minStandard :
-    NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
+    NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result τ m b) φ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
         (τ e).snd ∈ measureOfChange (m s₀) x (τ e).fst ⁻¹' Set.Ioi ⊥ := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_

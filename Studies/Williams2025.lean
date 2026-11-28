@@ -86,10 +86,9 @@ tests](##began_rows) and the [five-language survey](##table1_rows) follow.
 
 namespace Williams2025
 
-open Event (τ)
 open ModalLogic
 
-variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {W T E : Type*} [LinearOrder T] {τ : E → NonemptyInterval T}
 
 /-! ### Complements -/
 
@@ -101,11 +100,11 @@ def Complement.closure (C : Complement W E T) : W → NonemptyInterval T → Pro
   fun w t ↦ Event.closure (fun v ↦ C v t) w
 
 /-- In AspP, (26), perfective aspect locates the event within the reference time. -/
-def aspP (P : W → E → Prop) : Complement W E T :=
+def aspP (τ : E → NonemptyInterval T) (P : W → E → Prop) : Complement W E T :=
   fun w t e ↦ (τ e) ≤ t ∧ P w e
 
 theorem closure_aspP (P : W → E → Prop) (w : W) :
-    (aspP P).closure w = Aspect.perfective (T := T) (P w) :=
+    (aspP τ P).closure w = Aspect.perfective (T := T) τ (P w) :=
   funext fun _ ↦ propext Aspect.perfective_iff.symm
 
 /-- The heads of (29) above the AspP of a non-finite complement. -/
@@ -136,8 +135,9 @@ def Head.denote (h : Head) (C : Complement W E T) : Complement W E T :=
 /-- The non-finite complement whose AspP is under the heads `hs`, outermost first, (30): the plain
 infinitive `den []`, the gerund `den [.past]`, the perfect infinitive `den [.perf]` and the perfect
 gerund `den [.past, .perf]`. -/
-def den (hs : List Head) (P : W → E → Prop) : Complement W E T :=
-  hs.foldr Head.denote (aspP P)
+def den (τ : E → NonemptyInterval T) (hs : List Head) (P : W → E → Prop) :
+    Complement W E T :=
+  hs.foldr Head.denote (aspP τ P)
 
 /-- Under the plan modal, (37), the plan state `s` is the complement's event, and in every world of
 its plan the complement holds at a time from `t` on. -/
@@ -149,18 +149,18 @@ variable {P : W → E → Prop} {C : Complement W E T}
   {plan : E → NonemptyInterval T → W → Set W} {h : Head} {hs : List Head} {w : W}
   {t : NonemptyInterval T} {e : E}
 
-@[simp] theorem den_nil (P : W → E → Prop) : den [] P = (aspP P : Complement W E T) := rfl
+@[simp] theorem den_nil (P : W → E → Prop) : den τ [] P = (aspP τ P : Complement W E T) := rfl
 
-@[simp] theorem den_cons : den (h :: hs) P = h.denote (den hs P : Complement W E T) := rfl
+@[simp] theorem den_cons : den τ (h :: hs) P = h.denote (den τ hs P : Complement W E T) := rfl
 
-theorem pred_of_den (hd : den hs P w t e) : P w e := by
+theorem pred_of_den (hd : den τ hs P w t e) : P w e := by
   induction hs generalizing t with
   | nil => exact hd.2
   | cons _ _ ih =>
     obtain ⟨_, -, hd⟩ := hd
     exact ih hd
 
-theorem snd_le_of_den (hd : den hs P w t e) : (τ e).snd ≤ t.snd := by
+theorem snd_le_of_den (hd : den τ hs P w t e) : (τ e).snd ≤ t.snd := by
   induction hs generalizing t with
   | nil => exact hd.1.2
   | cons h _ ih =>
@@ -168,14 +168,14 @@ theorem snd_le_of_den (hd : den hs P w t e) : (τ e).snd ≤ t.snd := by
     exact (ih hd).trans ((h.relation_mem_cell.1 ht).le.trans t.fst_le_snd)
 
 -- (32), (34)
-theorem precedes_of_den_cons (hd : den (h :: hs) P w t e) : (τ e).Precedes t :=
+theorem precedes_of_den_cons (hd : den τ (h :: hs) P w t e) : (τ e).Precedes t :=
   let ⟨_, ht, hd⟩ := hd
   (snd_le_of_den hd).trans_lt (h.relation_mem_cell.1 ht)
 
 -- (32), (34): with dense time, a complement under any heads closes to Kratzer's perfect, its event
 -- over by the reference time
 theorem closure_den_cons [DenselyOrdered T] (h : Head) (hs : List Head) (P : W → E → Prop)
-    (w : W) : (den (h :: hs) P).closure w = Kratzer1998.AspectHead.perfect.denote (P w) := by
+    (w : W) : (den τ (h :: hs) P).closure w = Kratzer1998.AspectHead.perfect.denote τ (P w) := by
   ext t
   rw [Kratzer1998.AspectHead.denote_iff]
   refine ⟨fun ⟨e, hd⟩ ↦ ⟨e, Kratzer1998.AspectHead.relation_mem_cell_perfect.2
@@ -193,30 +193,30 @@ theorem closure_den_cons [DenselyOrdered T] (h : Head) (hs : List Head) (P : W �
 
 /-- Pre-existence, (28b), holds at the forgetting `e` when the complement describes an event at the
 subjective now, the run time of `e`, that starts before `e` does. -/
-def PreEx (C : Complement W E T) (e : E) (w : W) : Prop :=
+def PreEx (τ : E → NonemptyInterval T) (C : Complement W E T) (e : E) (w : W) : Prop :=
   Tense.PreExists τ (C w (τ e)) (τ e)
 
-theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
+theorem PreEx.closure (h : PreEx τ C e w) : C.closure w (τ e) :=
   Tense.PreExists.exists h
 
 -- (32), (34): the presupposition of an anterior complement is its truth at the subjective now
 theorem preEx_den_cons_iff :
-    PreEx (den (h :: hs) P) e w ↔ (den (h :: hs) P).closure w (τ e) :=
+    PreEx τ (den τ (h :: hs) P) e w ↔ (den τ (h :: hs) P).closure w (τ e) :=
   Tense.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_den_cons
 
 -- (36)
-theorem not_preEx_aspP : ¬ PreEx (aspP P) e w :=
+theorem not_preEx_aspP : ¬ PreEx τ (aspP τ P) e w :=
   Tense.not_preExists_of_le fun _ h ↦ h.1
 
 -- (39), (40)
 theorem preEx_mod_iff :
-    PreEx (mod plan C) e w ↔ ∃ s, mod plan C w (τ e) s ∧ (τ s).fst < (τ e).fst :=
+    PreEx τ (mod plan C) e w ↔ ∃ s, mod plan C w (τ e) s ∧ (τ s).fst < (τ e).fst :=
   Tense.preExists_iff
 
 -- (37): over a plain infinitive the plan modal is the prospective over the plan state's modal
 -- domain, as the imperfective is inclusion over its own
-theorem mod_aspP_iff {s : E} : mod plan (aspP P) w t s ↔
-    □[{p | p.2 ∈ plan s t p.1}] (fun v ↦ Aspect.ViewpointType.prospective.denote (P v) t) w :=
+theorem mod_aspP_iff {s : E} : mod plan (aspP τ P) w t s ↔
+    □[{p | p.2 ∈ plan s t p.1}] (fun v ↦ Aspect.ViewpointType.prospective.denote τ (P v) t) w :=
   ⟨fun h w' hw ↦ let ⟨_, ht, e, he, hP⟩ := h w' hw
       Aspect.denote_prospective_iff.2 ⟨e, ht.trans he.1, hP⟩,
     fun h w' hw ↦ let ⟨e, he, hP⟩ := Aspect.denote_prospective_iff.1 (h w' hw)
@@ -226,17 +226,17 @@ theorem mod_aspP_iff {s : E} : mod plan (aspP P) w t s ↔
 
 /-- A complement needs the modal when it contradicts pre-existence at every forgetting, so that
 without the modal the sentence is a presupposition failure (§5). -/
-def NeedsMod (C : Complement W E T) : Prop :=
-  ∀ e w, ¬ PreEx C e w
+def NeedsMod (τ : E → NonemptyInterval T) (C : Complement W E T) : Prop :=
+  ∀ e w, ¬ PreEx τ C e w
 
-theorem needsMod_aspP (P : W → E → Prop) : NeedsMod (aspP P) :=
+theorem needsMod_aspP (P : W → E → Prop) : NeedsMod τ (aspP τ P) :=
   fun _ _ ↦ not_preEx_aspP
 
 /-- The selectivity of modal insertion, (15): whatever its predicate, a non-finite complement needs
 the modal exactly when it is a plain infinitive. -/
 theorem forall_needsMod_den_iff [DenselyOrdered T] [Nonempty W]
     (hE : ∃ e f : E, (τ e).Precedes (τ f)) :
-    (∀ P : W → E → Prop, NeedsMod (den hs P)) ↔ hs = [] := by
+    (∀ P : W → E → Prop, NeedsMod τ (den τ hs P)) ↔ hs = [] := by
   refine ⟨fun H ↦ ?_, fun h P ↦ by subst h; exact needsMod_aspP P⟩
   obtain _ | ⟨_, _⟩ := hs
   · rfl
@@ -249,16 +249,16 @@ theorem forall_needsMod_den_iff [DenselyOrdered T] [Nonempty W]
 open Classical in
 /-- At LF the modal heads the complement of *forget* as a last resort, where its form contradicts
 pre-existence whatever its predicate (§5). -/
-noncomputable def lf (plan : E → NonemptyInterval T → W → Set W) (hs : List Head)
-    (P : W → E → Prop) : Complement W E T :=
-  if ∀ P' : W → E → Prop, NeedsMod (den hs P') then mod plan (den hs P) else den hs P
+noncomputable def lf (τ : E → NonemptyInterval T) (plan : E → NonemptyInterval T → W → Set W)
+    (hs : List Head) (P : W → E → Prop) : Complement W E T :=
+  if ∀ P' : W → E → Prop, NeedsMod τ (den τ hs P') then mod plan (den τ hs P) else den τ hs P
 
-@[simp] theorem lf_nil : lf plan [] P = mod plan (aspP P) := by
+@[simp] theorem lf_nil : lf τ plan [] P = mod plan (aspP τ P) := by
   simp [lf, needsMod_aspP]
 
 theorem lf_cons [DenselyOrdered T] [Nonempty W] (hE : ∃ e f : E, (τ e).Precedes (τ f)) :
-    lf plan (h :: hs) P = den (h :: hs) P := by
-  have : ¬ ∀ P' : W → E → Prop, NeedsMod (den (h :: hs) P') :=
+    lf τ plan (h :: hs) P = den τ (h :: hs) P := by
+  have : ¬ ∀ P' : W → E → Prop, NeedsMod τ (den τ (h :: hs) P') :=
     (forall_needsMod_den_iff hE).not.2 (List.cons_ne_nil h hs)
   simp only [lf, this, ↓reduceIte]
 
@@ -278,7 +278,7 @@ theorem mca_overgenerates [DenselyOrdered T] [Nonempty W]
     (∃ fr ∈ English.Verbs.forget.valency.frames, fr ≤ frame []) ∧
       (∃ fr ∈ English.Verbs.forget_rog.valency.frames, fr ≤ frame [.past]) ∧
       (∀ hs, White2014.Modalized (frame hs)) ∧
-      ∀ hs, (∀ P : W → E → Prop, NeedsMod (den hs P)) ↔ hs = [] :=
+      ∀ hs, (∀ P : W → E → Prop, NeedsMod τ (den τ hs P)) ↔ hs = [] :=
   ⟨by decide, by decide, fun _ ↦ by unfold frame; split <;> decide,
     fun _ ↦ forall_needsMod_den_iff hE⟩
 
@@ -287,37 +287,38 @@ theorem mca_overgenerates [DenselyOrdered T] [Nonempty W]
 variable (W E) in
 /-- *Forget* with a complement of the form `hs` presupposes `q` when every forgetting meeting
 pre-existence makes `q` true, whatever the predicate and the plans. -/
-def Presupposes (hs : List Head)
+def Presupposes (τ : E → NonemptyInterval T) (hs : List Head)
     (q : (W → E → Prop) → (E → NonemptyInterval T → W → Set W) → W → Prop) : Prop :=
-  ∀ P plan e w, PreEx (lf plan hs P) e w → q P plan w
+  ∀ P plan e w, PreEx τ (lf τ plan hs P) e w → q P plan w
 
 /-- Some state plans the predicate, which *…but he did not have to stop by the flower shop*
 denies. -/
-def Planned (P : W → E → Prop) (plan : E → NonemptyInterval T → W → Set W) (w : W) : Prop :=
-  ∃ t, (mod plan (aspP P)).closure w t
+def Planned (τ : E → NonemptyInterval T) (P : W → E → Prop)
+    (plan : E → NonemptyInterval T → W → Set W) (w : W) : Prop :=
+  ∃ t, (mod plan (aspP τ P)).closure w t
 
 -- (5a), (12a)
-theorem presupposes_nil_planned : Presupposes W E [] Planned :=
+theorem presupposes_nil_planned : Presupposes W E τ [] (Planned τ) :=
   fun _ _ e _ h ↦ by rw [lf_nil] at h; exact ⟨τ e, h.closure⟩
 
 -- (9a), (10a), (14a): an anterior complement presupposes that an event of its predicate occurs,
 -- which *…but he didn't stop by the flower shop* denies
 theorem presupposes_cons_closure [DenselyOrdered T] [Nonempty W]
     (hE : ∃ e f : E, (τ e).Precedes (τ f)) :
-    Presupposes W E (h :: hs) fun P _ ↦ Event.closure P := by
+    Presupposes W E τ (h :: hs) fun P _ ↦ Event.closure P := by
   intro P plan e w hp
   rw [lf_cons hE, preEx_den_cons_iff, closure_den_cons] at hp
   obtain ⟨e', -, he'⟩ := Kratzer1998.AspectHead.denote_iff.1 hp
   exact ⟨e', he'⟩
 
 private theorem exists_precedes_rat :
-    ∃ e f : NonemptyInterval ℚ, (τ e).Precedes (τ f) :=
+    ∃ e f : NonemptyInterval ℚ, (id e).Precedes (id f) :=
   ⟨.pure 0, .pure 1, show (0 : ℚ) < 1 by norm_num⟩
 
 -- (7a), (8a), (13a): John stopped by on day `0` and forgot on day `1`, in the world `true`, whose
 -- states all plan the world `false`, where nobody stops by
 theorem not_presupposes_cons_planned :
-    ¬ Presupposes Bool (NonemptyInterval ℚ) (h :: hs) Planned := by
+    ¬ Presupposes Bool (NonemptyInterval ℚ) id (h :: hs) (Planned id) := by
   intro H
   obtain ⟨_, _, hs'⟩ := H (fun w e ↦ w = true ∧ e = .pure 0) (fun _ _ _ ↦ {false}) (.pure 1) true
     (by
@@ -331,7 +332,7 @@ theorem not_presupposes_cons_planned :
 -- (2): John was told on day `0` to stop by, forgot on day `1` in the world `false` and stops by on
 -- day `2` in the plan world `true`
 theorem not_presupposes_nil_closure :
-    ¬ Presupposes Bool (NonemptyInterval ℚ) [] fun P _ ↦ Event.closure P := by
+    ¬ Presupposes Bool (NonemptyInterval ℚ) id [] fun P _ ↦ Event.closure P := by
   intro H
   obtain ⟨_, hf, -⟩ := H (fun w e ↦ w = true ∧ e = .pure 2) (fun _ _ _ ↦ {true}) (.pure 1) false
     (by
@@ -340,19 +341,19 @@ theorem not_presupposes_nil_closure :
         ⟨.pure 2, show (1 : ℚ) ≤ 2 by norm_num, hw, rfl⟩, show (0 : ℚ) < 1 by norm_num⟩)
   exact Bool.false_ne_true hf
 
-local notation "Presupposes'" => Presupposes Bool (NonemptyInterval ℚ)
+local notation "Presupposes'" => Presupposes Bool (NonemptyInterval ℚ) id
 
 /-- The contradiction tests of §3.1: continuing with a denial that John had to stop by, or that he
 stopped by, is a contradiction exactly when the sentence presupposes it, as the gerunds and the
 perfect infinitive presuppose the stopping and the plain infinitive the plan. -/
 theorem contradiction_rows :
-    (Presupposes' [.past] Planned ↔ Examples.ex_7a.judgment = .unacceptable) ∧
-      (Presupposes' [.past, .perf] Planned ↔ Examples.ex_8a.judgment = .unacceptable) ∧
+    (Presupposes' [.past] (Planned id) ↔ Examples.ex_7a.judgment = .unacceptable) ∧
+      (Presupposes' [.past, .perf] (Planned id) ↔ Examples.ex_8a.judgment = .unacceptable) ∧
       (Presupposes' [.past] (fun P _ ↦ Event.closure P) ↔ Examples.ex_9a.judgment = .unacceptable) ∧
       (Presupposes' [.past, .perf] (fun P _ ↦ Event.closure P) ↔
         Examples.ex_10a.judgment = .unacceptable) ∧
-      (Presupposes' [] Planned ↔ Examples.ex_12a.judgment = .unacceptable) ∧
-      (Presupposes' [.perf] Planned ↔ Examples.ex_13a.judgment = .unacceptable) ∧
+      (Presupposes' [] (Planned id) ↔ Examples.ex_12a.judgment = .unacceptable) ∧
+      (Presupposes' [.perf] (Planned id) ↔ Examples.ex_13a.judgment = .unacceptable) ∧
       (Presupposes' [.perf] (fun P _ ↦ Event.closure P) ↔
         Examples.ex_14a.judgment = .unacceptable) :=
   ⟨iff_of_false not_presupposes_cons_planned (by decide),
@@ -368,7 +369,7 @@ theorem contradiction_rows :
 -- (19), (20)
 theorem preEx_lf_cons_eq_iff [DenselyOrdered T] [Nonempty W]
     (hE : ∃ e f : E, (τ e).Precedes (τ f)) {e₀ f : E} :
-    PreEx (lf plan (h :: hs) fun (_ : W) e ↦ e = e₀) f w ↔ (τ e₀).Precedes (τ f) := by
+    PreEx τ (lf τ plan (h :: hs) fun (_ : W) e ↦ e = e₀) f w ↔ (τ e₀).Precedes (τ f) := by
   rw [lf_cons hE, preEx_den_cons_iff, closure_den_cons, Kratzer1998.AspectHead.denote_iff]
   simp
 
@@ -380,7 +381,7 @@ def twinPlan (d : ℚ) : NonemptyInterval ℚ → NonemptyInterval ℚ → Bool 
 
 -- (21)
 theorem preEx_twin_iff {d : ℚ} :
-    PreEx (lf (twinPlan d) [] fun w e ↦ w = true ∧ e = .pure 4) (.pure 2) false ↔ d < 2 := by
+    PreEx id (lf id (twinPlan d) [] fun w e ↦ w = true ∧ e = .pure 4) (.pure 2) false ↔ d < 2 := by
   rw [lf_nil, preEx_mod_iff]
   refine ⟨fun ⟨s, hs, hlt⟩ ↦ ?_, fun hd ↦ ⟨.pure d, mod_aspP_iff.2 fun _ hw ↦
     Aspect.denote_prospective_iff.2
@@ -396,17 +397,17 @@ theorem preEx_twin_iff {d : ℚ} :
 and the perfect infinitive (20), or the plan her twin started, under the plain infinitive (21),
 began before it, on Monday and not on Wednesday. -/
 theorem began_rows {plan : NonemptyInterval ℚ → NonemptyInterval ℚ → Bool → Set Bool} {w : Bool} :
-    (PreEx (lf plan [.past] fun _ e ↦ e = .pure 1) (.pure 2) w ↔
+    (PreEx id (lf id plan [.past] fun _ e ↦ e = .pure 1) (.pure 2) w ↔
         Examples.ex_19a.judgment = .acceptable) ∧
-      (PreEx (lf plan [.past] fun _ e ↦ e = .pure 3) (.pure 2) w ↔
+      (PreEx id (lf id plan [.past] fun _ e ↦ e = .pure 3) (.pure 2) w ↔
         Examples.ex_19b.judgment = .acceptable) ∧
-      (PreEx (lf plan [.perf] fun _ e ↦ e = .pure 1) (.pure 2) w ↔
+      (PreEx id (lf id plan [.perf] fun _ e ↦ e = .pure 1) (.pure 2) w ↔
         Examples.ex_20a.judgment = .acceptable) ∧
-      (PreEx (lf plan [.perf] fun _ e ↦ e = .pure 3) (.pure 2) w ↔
+      (PreEx id (lf id plan [.perf] fun _ e ↦ e = .pure 3) (.pure 2) w ↔
         Examples.ex_20b.judgment = .acceptable) ∧
-      (PreEx (lf (twinPlan 1) [] fun w e ↦ w = true ∧ e = .pure 4) (.pure 2) false ↔
+      (PreEx id (lf id (twinPlan 1) [] fun w e ↦ w = true ∧ e = .pure 4) (.pure 2) false ↔
         Examples.ex_21a.judgment = .acceptable) ∧
-      (PreEx (lf (twinPlan 3) [] fun w e ↦ w = true ∧ e = .pure 4) (.pure 2) false ↔
+      (PreEx id (lf id (twinPlan 3) [] fun w e ↦ w = true ∧ e = .pure 4) (.pure 2) false ↔
         Examples.ex_21b.judgment = .acceptable) := by
   simp only [preEx_lf_cons_eq_iff exists_precedes_rat, preEx_twin_iff]
   refine ⟨iff_of_true ?_ (by decide), iff_of_false ?_ (by decide), iff_of_true ?_ (by decide),
@@ -427,25 +428,25 @@ def table1Columns :
 complement is modalized exactly when the complement needs the modal. -/
 theorem table1_rows [DenselyOrdered T] [Nonempty W] (hE : ∃ e f : E, (τ e).Precedes (τ f)) :
     ∀ r ∈ StructureDataset.table1, ∀ x ∈ table1Columns, ∀ c ∈ x.2 r,
-      (c.code = .modalized ↔ ∀ P : W → E → Prop, NeedsMod (den x.1 P)) := by
+      (c.code = .modalized ↔ ∀ P : W → E → Prop, NeedsMod τ (den τ x.1 P)) := by
   simp only [forall_needsMod_den_iff hE]
   decide
 
 /-! ### Variants of pre-existence -/
 
 /-- Pre-existence as (28b) prints it, with the time of the complement bound existentially. -/
-def PreExPrinted (C : Complement W E T) (e : E) (w : W) : Prop :=
+def PreExPrinted (τ : E → NonemptyInterval T) (C : Complement W E T) (e : E) (w : W) : Prop :=
   ∃ t, Tense.PreExists τ (C w t) (τ e)
 
 -- (28b): as printed, a plain infinitive presupposes that an event of its predicate started first
-theorem preExPrinted_aspP_iff : PreExPrinted (aspP P) e w ↔ Tense.PreExists τ (P w) (τ e) := by
+theorem preExPrinted_aspP_iff : PreExPrinted τ (aspP τ P) e w ↔ Tense.PreExists τ (P w) (τ e) := by
   simp only [PreExPrinted, Tense.preExists_iff, aspP]
   exact ⟨fun ⟨_, e', ⟨_, hP⟩, hlt⟩ ↦ ⟨e', hP, hlt⟩,
     fun ⟨e', hP, hlt⟩ ↦ ⟨τ e', e', ⟨le_rfl, hP⟩, hlt⟩⟩
 
 -- (37): a state with an empty plan meets pre-existence under the modal
 theorem preEx_mod_of_plan_eq_empty {s : E} (hs : plan s (τ e) w = ∅)
-    (hlt : (τ s).fst < (τ e).fst) : PreEx (mod plan C) e w :=
+    (hlt : (τ s).fst < (τ e).fst) : PreEx τ (mod plan C) e w :=
   preEx_mod_iff.2 ⟨s, fun _ hw ↦ by simp [hs] at hw, hlt⟩
 
 end Williams2025

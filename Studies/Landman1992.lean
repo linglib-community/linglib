@@ -97,62 +97,65 @@ structure Model (E W : Type*) where
 
 namespace Model
 
-open Event (τ)
-
-variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [TemporalTrace E T]
+variable {E W T : Type*} [PartialOrder E] [LinearOrder T] {τ : E → NonemptyInterval T}
   (M : Model E W)
 
 /-- An event continues in a world when it goes on there and so does something of which it is a
 stage, with a later-ending run time. -/
-def Continues (e : E) (w : W) : Prop :=
+def Continues (τ : E → NonemptyInterval T) (e : E) (w : W) : Prop :=
   M.occurs e w ∧ ∃ f, e ≤ f ∧ M.occurs f w ∧ (τ e).snd < (τ f).snd
 
 /-- An event stops in a world (§2.2) when it goes on there and does not continue. -/
-def Stops (e : E) (w : W) : Prop := M.occurs e w ∧ ¬ M.Continues e w
+def Stops (τ : E → NonemptyInterval T) (e : E) (w : W) : Prop :=
+  M.occurs e w ∧ ¬ M.Continues τ e w
 
 /-- The closest world to `u` where `f` continues. -/
-noncomputable def next (f : E) (u : W) : W := M.closest.sel u {v | M.Continues f v}
+noncomputable def next (τ : E → NonemptyInterval T) (f : E) (u : W) : W :=
+  M.closest.sel u {v | M.Continues τ f v}
 
 /-- The continuation branch `C(e, w)` of `e` in `w` (§2.4). It follows `e` through the events of
 which it is a stage in `w`; when the last of them stops, it goes to the closest world where that
 event continues, if that world is a reasonable option for `e` in `w`, and follows the event
 there. -/
-inductive Branch (e : E) (w : W) : E → W → Prop
-  | self : M.occurs e w → Branch e w e w
-  | stretch {f g : E} {u : W} : Branch e w f u → M.occurs g u → f ≤ g → Branch e w g u
-  | jump {f : E} {u : W} : Branch e w f u → Maximal (M.occurs · u) f →
-      M.next f u ∈ M.reasonable e w → M.Continues f (M.next f u) → Branch e w f (M.next f u)
+inductive Branch (τ : E → NonemptyInterval T) (e : E) (w : W) : E → W → Prop
+  | self : M.occurs e w → Branch τ e w e w
+  | stretch {f g : E} {u : W} : Branch τ e w f u → M.occurs g u → f ≤ g → Branch τ e w g u
+  | jump {f : E} {u : W} : Branch τ e w f u → Maximal (M.occurs · u) f →
+      M.next τ f u ∈ M.reasonable e w → M.Continues τ f (M.next τ f u) →
+      Branch τ e w f (M.next τ f u)
 
 /-- `PROG(e, P)` (§2.4): some event on the continuation branch of `e` is of type `P` in its
 world. -/
-def Prog (e : E) (P : W → E → Prop) (w : W) : Prop := ∃ f v, M.Branch e w f v ∧ P v f
+def Prog (τ : E → NonemptyInterval T) (e : E) (P : W → E → Prop) (w : W) : Prop :=
+  ∃ f v, M.Branch τ e w f v ∧ P v f
 
 /-- The progressive of `P` at a world as a property of intervals, those of the events in progress
 toward `P` there. -/
-def progAt (P : W → E → Prop) (w : W) : NonemptyInterval T → Prop :=
-  Event.runTimes fun e ↦ M.occurs e w ∧ M.Prog e P w
+def progAt (τ : E → NonemptyInterval T) (P : W → E → Prop) (w : W) :
+    NonemptyInterval T → Prop :=
+  Event.runTimes τ fun e ↦ M.occurs e w ∧ M.Prog τ e P w
 
 variable {M} {e f : E} {w u v : W} {P : W → E → Prop}
 
-theorem stops_of_maximal (h : Maximal (M.occurs · u) f) : M.Stops f u := by
+theorem stops_of_maximal (h : Maximal (M.occurs · u) f) : M.Stops τ f u := by
   refine ⟨h.1, fun ⟨_, g, hfg, hg, hlt⟩ ↦ ?_⟩
   obtain rfl := le_antisymm (h.2 hg hfg) hfg
   exact lt_irrefl _ hlt
 
-theorem Branch.occurs (h : M.Branch e w f v) : M.occurs f v := by
+theorem Branch.occurs (h : M.Branch τ e w f v) : M.occurs f v := by
   induction h with
   | self h => exact h
   | stretch _ hg => exact hg
   | jump _ _ _ hc => exact hc.1
 
-theorem Branch.occurs_root (h : M.Branch e w f v) : M.occurs e w := by
+theorem Branch.occurs_root (h : M.Branch τ e w f v) : M.occurs e w := by
   induction h with
   | self h => exact h
   | stretch _ _ _ ih => exact ih
   | jump _ _ _ _ ih => exact ih
 
 -- p. 27
-theorem Branch.le (h : M.Branch e w f v) : e ≤ f := by
+theorem Branch.le (h : M.Branch τ e w f v) : e ≤ f := by
   induction h with
   | self => exact le_rfl
   | stretch _ _ hfg ih => exact ih.trans hfg
@@ -161,15 +164,15 @@ theorem Branch.le (h : M.Branch e w f v) : e ≤ f := by
 /-- Whatever gets completed was in progress during its development, however unlikely its
 completion ((15), (16)): a stage of an actual event of type `P` is in progress toward `P`. -/
 theorem prog_of_le (he : M.occurs e w) (hf : M.occurs f w) (hef : e ≤ f) (hP : P w f) :
-    M.Prog e P w :=
+    M.Prog τ e P w :=
   ⟨f, w, .stretch (.self he) hf hef, hP⟩
 
-theorem Prog.occurs (h : M.Prog e P w) : M.occurs e w :=
+theorem Prog.occurs (h : M.Prog τ e P w) : M.occurs e w :=
   let ⟨_, _, hb, _⟩ := h; hb.occurs_root
 
 -- (1) entails (2): a process stage of an activity event is an event of the activity
 theorem activity_of_prog (hP : ∀ f v, P v f → e ≤ f → M.occurs e w → P w e)
-    (h : M.Prog e P w) : P w e :=
+    (h : M.Prog τ e P w) : P w e :=
   let ⟨f, v, hb, hf⟩ := h; hP f v hf hb.le hb.occurs_root
 
 end Model
@@ -177,7 +180,7 @@ end Model
 open Model Event
 
 /-- An event type as a sentence of interval semantics, true at the run times of its events. -/
-def sentenceOf {E W T : Type*} [LE T] [TemporalTrace E T] (P : W → E → Prop) :
+def sentenceOf {E W T : Type*} [LE T] (τ : E → NonemptyInterval T) (P : W → E → Prop) :
     Dowty1979.Sentence W T :=
   fun v ↦ τ '' {e | P v e}
 
@@ -186,12 +189,12 @@ inside the run time of an actual event of its type, like Bennett and Partee's pr
 wherever it holds the perfective holds too: it validates the inference from (3) to (4) that the
 imperfective paradox rejects. -/
 theorem exists_perfective_of_exists_imperfective {E W T : Type*} [LinearOrder T]
-    [TemporalTrace E T] {P : W → E → Prop} {w : W}
-    (h : ∃ t, Aspect.imperfective (T := T) (fun _ ↦ SetRel.id) P w t) :
-    ∃ t, Aspect.perfective (T := T) (P w) t :=
+    {τ : E → NonemptyInterval T} {P : W → E → Prop} {w : W}
+    (h : ∃ t, Aspect.imperfective (T := T) τ (fun _ ↦ SetRel.id) P w t) :
+    ∃ t, Aspect.perfective (T := T) τ (P w) t :=
   let ⟨_, ht⟩ := h
   let ⟨e, _, he⟩ := Aspect.imperfective_iff.1 ht w rfl
-  ⟨Event.τ e, Aspect.perfective_iff.2 ⟨e, le_rfl, he⟩⟩
+  ⟨τ e, Aspect.perfective_iff.2 ⟨e, le_rfl, he⟩⟩
 
 /-! ### Interrupted processes -/
 
@@ -257,8 +260,8 @@ theorem occurs_interrupted : (interrupted n R).occurs e k ↔ e.fst = 0 ∧ e.sn
   Iff.rfl
 
 theorem continues_interrupted :
-    (interrupted n R).Continues e k ↔ e.fst = 0 ∧ e.snd < reach n k := by
-  simp only [Continues, occurs_interrupted, τ_nonemptyInterval]
+    (interrupted n R).Continues id e k ↔ e.fst = 0 ∧ e.snd < reach n k := by
+  simp only [Continues, occurs_interrupted, id_eq]
   constructor
   · rintro ⟨⟨he, -⟩, g, -, ⟨-, hg⟩, hlt⟩
     exact ⟨he, hlt.trans_le hg⟩
@@ -278,13 +281,13 @@ theorem maximal_interrupted :
     refine ⟨hu, fun g hg _ ↦ NonemptyInterval.le_def.2 ⟨Nat.zero_le _, ?_⟩⟩
     exact (occurs_interrupted.1 hg).2
 
-theorem next_interrupted (h : k < n) : (interrupted n R).next (upto k) k = k + 1 := by
+theorem next_interrupted (h : k < n) : (interrupted n R).next id (upto k) k = k + 1 := by
   refine forward_sel_eq ?_ k.le_succ fun m hkm hm hmA ↦ ?_
   · exact continues_interrupted.2 ⟨rfl, (Nat.lt_succ_self k).trans_le (le_reach_succ h)⟩
   · obtain rfl : m = k := by omega
     exact (continues_interrupted.1 hmA).2.ne (reach_of_lt h).symm
 
-theorem branch_interrupted (h : (interrupted n R).Branch (upto 0) 0 f k) :
+theorem branch_interrupted (h : (interrupted n R).Branch id (upto 0) 0 f k) :
     k ≤ n ∧ Set.Icc 1 k ⊆ R ∧ f.snd ≤ reach n k := by
   induction h with
   | self => exact ⟨Nat.zero_le n, fun m hm ↦ absurd (hm.1.trans hm.2) (by decide), Nat.zero_le _⟩
@@ -304,7 +307,7 @@ theorem branch_interrupted (h : (interrupted n R).Branch (upto 0) 0 f k) :
     · exact (le_antisymm hm.2 hm') ▸ hR
 
 theorem branch_upto (hk : k ≤ n) (hR : Set.Icc 1 k ⊆ R) :
-    (interrupted n R).Branch (upto 0) 0 (upto k) k := by
+    (interrupted n R).Branch id (upto 0) 0 (upto k) k := by
   induction k with
   | zero => exact .self (occurs_interrupted.2 ⟨rfl, Nat.zero_le _⟩)
   | succ k ih =>
@@ -323,7 +326,7 @@ theorem branch_upto (hk : k ≤ n) (hR : Set.Icc 1 k ⊆ R) :
 /-- A process interrupted `n` times is in progress toward its completion exactly when each of
 the `n` counterfactual continuations the branch needs is a reasonable option for it. -/
 theorem prog_interrupted_iff :
-    (interrupted n R).Prog (upto 0) (complete n) 0 ↔ Set.Icc 1 n ⊆ R := by
+    (interrupted n R).Prog id (upto 0) (complete n) 0 ↔ Set.Icc 1 n ⊆ R := by
   constructor
   · rintro ⟨f, v, hb, rfl, hnv⟩
     obtain ⟨hvn, hR, -⟩ := branch_interrupted hb
@@ -334,7 +337,7 @@ theorem prog_interrupted_iff :
     · exact NonemptyInterval.le_def.2 ⟨le_rfl, n.le_succ⟩
 
 theorem exists_progAt_interrupted_iff (hn : 0 < n) :
-    (∃ t, (interrupted n R).progAt (complete n) 0 t) ↔ Set.Icc 1 n ⊆ R := by
+    (∃ t, (interrupted n R).progAt id (complete n) 0 t) ↔ Set.Icc 1 n ⊆ R := by
   constructor
   · rintro ⟨_, e, -, ⟨h0, hr⟩, hp⟩
     rw [reach_of_lt hn] at hr
@@ -343,24 +346,25 @@ theorem exists_progAt_interrupted_iff (hn : 0 < n) :
   · intro hR
     exact ⟨upto 0, upto 0, rfl, ⟨rfl, Nat.zero_le _⟩, prog_interrupted_iff.2 hR⟩
 
-theorem exists_progAt_interrupted_zero : ∃ t, (interrupted 0 R).progAt (complete 0) 0 t :=
+theorem exists_progAt_interrupted_zero : ∃ t, (interrupted 0 R).progAt id (complete 0) 0 t :=
   ⟨upto 0, upto 0, rfl, ⟨rfl, Nat.zero_le _⟩, prog_of_le (f := upto 1) ⟨rfl, Nat.zero_le _⟩
     ⟨rfl, (reach_of_le le_rfl).ge⟩ (NonemptyInterval.le_def.2 ⟨le_rfl, Nat.zero_le _⟩)
     ⟨rfl, le_rfl⟩⟩
 
 theorem imperfective_complete_eq_bot (hn : 0 < n) :
-    Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) (complete n) 0 = ⊥ := by
+    Aspect.imperfective (T := ℕ) id (fun _ ↦ SetRel.id) (complete n) 0 = ⊥ := by
   rw [Aspect.imperfective_id]
   exact eq_bot_iff.2 fun _ h ↦ let ⟨_, _, _, h⟩ := Aspect.unbounded_iff.1 h; hn.not_ge h
 
-theorem perfective_complete_eq_bot (hn : 0 < n) : Aspect.perfective (T := ℕ) (complete n 0) = ⊥ :=
+theorem perfective_complete_eq_bot (hn : 0 < n) :
+    Aspect.perfective (T := ℕ) id (complete n 0) = ⊥ :=
   eq_bot_iff.2 fun _ h ↦ let ⟨_, _, _, h⟩ := Aspect.perfective_iff.1 h; hn.not_ge h
 
 /-- Dowty's progressive makes *Mary was crossing the street* false when the truck hits her (13):
 the truck's hitting her is the normal course of events, so the actual world is the inertia world,
 and there she does not get across. -/
 theorem not_dowtyProg_truck :
-    upto 0 ∉ Dowty1979.prog (fun _ _ ↦ {0}) (sentenceOf (complete 1)) 0 :=
+    upto 0 ∉ Dowty1979.prog (fun _ _ ↦ {0}) (sentenceOf id (complete 1)) 0 :=
   fun ⟨_, _, h⟩ ↦ let ⟨_, ⟨_, h1⟩, _⟩ := h 0 rfl; absurd h1 (by decide)
 
 end Interrupted
@@ -385,21 +389,21 @@ noncomputable abbrev miracle : Model (NonemptyInterval ℕ) ℕ := interrupted 0
 /-- The continuation branch decides the paper's judgments in context, where the imperfective of
 the event semantics makes the interrupted drawing (3) false. -/
 theorem truthValue_rows :
-    ((∃ t, once.progAt (complete 1) 0 t) ↔
+    ((∃ t, once.progAt id (complete 1) 0 t) ↔
         Examples.ex3.verdict = some true) ∧
-      ((∃ t, Aspect.perfective (T := ℕ) (complete 1 0) t) ↔
+      ((∃ t, Aspect.perfective (T := ℕ) id (complete 1 0) t) ↔
         Examples.ex4.verdict = some true) ∧
-      ((∃ t, once.progAt (complete 1) 0 t) ↔
+      ((∃ t, once.progAt id (complete 1) 0 t) ↔
         Examples.ex13.verdict = some true) ∧
-      ((∃ t, hopeless.progAt (complete 5) 0 t) ↔
+      ((∃ t, hopeless.progAt id (complete 5) 0 t) ↔
         Examples.ex17_sink.verdict = some true) ∧
-      ((∃ t, miracle.progAt (complete 0) 0 t) ↔
+      ((∃ t, miracle.progAt id (complete 0) 0 t) ↔
         Examples.ex17_miracle.verdict = some true) ∧
-      ((∃ t, twoTrucks.progAt (complete 2) 0 t) ↔
+      ((∃ t, twoTrucks.progAt id (complete 2) 0 t) ↔
         Examples.ex18.verdict = some true) ∧
-      ((∃ t, hopeless.progAt (complete 5) 0 t) ↔
+      ((∃ t, hopeless.progAt id (complete 5) 0 t) ↔
         Examples.ex20.verdict = some true) ∧
-      ¬ ((∃ t, Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) (complete 1) 0 t) ↔
+      ¬ ((∃ t, Aspect.imperfective (T := ℕ) id (fun _ ↦ SetRel.id) (complete 1) 0 t) ↔
         Examples.ex3.verdict = some true) := by
   have hu (n : ℕ) : Set.Icc 1 n ⊆ (Set.univ : Set ℕ) := Set.subset_univ _
   have hh : ¬ Set.Icc 1 5 ⊆ Set.Iic (2 : ℕ) := fun h ↦ absurd (h ⟨by decide, by decide⟩ :

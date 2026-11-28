@@ -88,28 +88,28 @@ end Number
 
 section Imp
 
-variable {E W T : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {E W T : Type*} [LinearOrder T] {τ : E → NonemptyInterval T}
 
 /-- `IMP` (111), with Portner's `BEST` (52), (53): in every best world of the circumstantial base
 for the description `P` at the reference interval, ranked by the ordering source, the reference
 interval lies within the run time of an event of type `N (P v)`. -/
-def IMP (N : Set E → Set E)
+def IMP (τ : E → NonemptyInterval T) (N : Set E → Set E)
     (circ ord : (W → E → Prop) → NonemptyInterval T → Background W) (P : W → E → Prop) :
     W → NonemptyInterval T → Prop :=
-  Aspect.imperfective (fun t ↦ {p | p.2 ∈ (circ P t).bestWorlds (ord P t) p.1})
+  Aspect.imperfective τ (fun t ↦ {p | p.2 ∈ (circ P t).bestWorlds (ord P t) p.1})
     fun v ↦ (· ∈ N {e | P v e})
 
 variable {N : Set E → Set E} {circ ord : (W → E → Prop) → NonemptyInterval T → Background W}
   {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
-theorem IMP_iff : IMP N circ ord P w t ↔
+theorem IMP_iff : IMP τ N circ ord P w t ↔
     ∀ v ∈ (circ P t).bestWorlds (ord P t) w, ∃ e, t ≤ τ e ∧ e ∈ N {e | P v e} :=
   Aspect.imperfective_iff
 
 /-- Over a modal base that admits only the world of evaluation, the imperfective is Kratzer's
 extensional one: the reference interval lies within the run time of an actual event. -/
 theorem IMP_eq_unbounded_of_isTotallyRealistic (h : ∀ P t, (circ P t).IsTotallyRealistic) :
-    IMP N circ ord P w = Aspect.unbounded (· ∈ N {e | P w e}) := by
+    IMP τ N circ ord P w = Aspect.unbounded τ (· ∈ N {e | P w e}) := by
   ext t
   rw [IMP_iff, (h P t).bestWorlds_eq_singleton (ord P t) w, Aspect.unbounded_iff]
   simp
@@ -117,7 +117,7 @@ theorem IMP_eq_unbounded_of_isTotallyRealistic (h : ∀ P t, (circ P t).IsTotall
 /-- A non-atomic description, every event of which has a proper part of the same description, as
 statives are (94), has no progressive imperfective wherever the modal base has a best world. -/
 theorem not_IMP_atomize_of_nonatomic [PartialOrder E] (hP : ∀ v e, P v e → ∃ e' < e, P v e')
-    (hne : ((circ P t).bestWorlds (ord P t) w).Nonempty) : ¬ IMP atomize circ ord P w t := by
+    (hne : ((circ P t).bestWorlds (ord P t) w).Nonempty) : ¬ IMP τ atomize circ ord P w t := by
   intro h
   obtain ⟨v, hv⟩ := hne
   obtain ⟨e, -, hmin⟩ := IMP_iff.1 h v hv
@@ -169,7 +169,7 @@ def atlanticBase : (Crossing → NonemptyInterval ℕ → Prop) → NonemptyInte
     Background Crossing :=
   fun _ _ _ ↦ {{.crosses}ᶜ}
 
-theorem IMP_street : IMP atomize streetBase notInterrupted cross .stopped now := by
+theorem IMP_street : IMP id atomize streetBase notInterrupted cross .stopped now := by
   rw [IMP_iff]
   intro v hv
   have hacc : v ∈ Background.accessibleWorlds
@@ -183,7 +183,7 @@ theorem IMP_street : IMP atomize streetBase notInterrupted cross .stopped now :=
     · simp [Background.accessibleWorlds_sup, streetBase, notInterrupted] at hacc
   exact ⟨crossing, now_le_crossing, atomize_cross⟩
 
-theorem not_IMP_atlantic : ¬ IMP atomize atlanticBase notInterrupted cross .stopped now := by
+theorem not_IMP_atlantic : ¬ IMP id atomize atlanticBase notInterrupted cross .stopped now := by
   rw [IMP_iff]
   intro h
   have hbest : Crossing.stopped ∈ (atlanticBase cross now).bestWorlds (notInterrupted cross now)
@@ -203,8 +203,6 @@ legs after time `2`. The sentence is uttered at time `3`. -/
 /-- The run time of a set of games, from its first game to its last. -/
 def hull (s : Finset ℕ) : NonemptyInterval ℕ :=
   if h : s.Nonempty then ⟨(s.min' h, s.max' h), Finset.min'_le_max' _ h⟩ else ⟨(0, 0), le_rfl⟩
-
-local instance : TemporalTrace (Finset ℕ) ℕ := ⟨hull⟩
 
 /-- The worlds of the soccer scenario. -/
 inductive Soccer
@@ -249,17 +247,15 @@ theorem pl_playSoccer : ({0, 2, 4, 6} : Finset ℕ) ∈ PL {e | playSoccer .play
     rw [Set.mem_singleton_iff.1 hy]
     exact ⟨hdisj, hdisj.symm⟩
 
-theorem utterance_le_hull : utterance ≤ τ ({0, 2, 4, 6} : Finset ℕ) := by
-  change utterance ≤ hull _
+theorem utterance_le_hull : utterance ≤ hull ({0, 2, 4, 6} : Finset ℕ) := by
   unfold hull
   split_ifs with h
   · exact NonemptyInterval.le_def.2 ⟨by simp, by simp [utterance]⟩
   · exact absurd ⟨0, by decide⟩ h
 
 theorem not_utterance_le_hull {e : Finset ℕ} (he : playSoccer .accident e) :
-    ¬ utterance ≤ τ e := by
+    ¬ utterance ≤ hull e := by
   intro h
-  change utterance ≤ hull e at h
   unfold hull at h
   split_ifs at h with hne
   swap
@@ -269,7 +265,7 @@ theorem not_utterance_le_hull {e : Finset ℕ} (he : playSoccer .accident e) :
   simp only [Finset.mem_insert, Finset.mem_singleton] at hmax
   omega
 
-theorem IMP_soccer : IMP PL soccerBase keepsPlaying playSoccer .plays utterance := by
+theorem IMP_soccer : IMP hull PL soccerBase keepsPlaying playSoccer .plays utterance := by
   rw [IMP_iff]
   intro v hv
   have hacc : v ∈ Background.accessibleWorlds
@@ -284,7 +280,7 @@ theorem IMP_soccer : IMP PL soccerBase keepsPlaying playSoccer .plays utterance 
   exact ⟨_, utterance_le_hull, pl_playSoccer⟩
 
 theorem not_IMP_accident :
-    ¬ IMP PL accidentBase keepsPlaying playSoccer .plays utterance := by
+    ¬ IMP hull PL accidentBase keepsPlaying playSoccer .plays utterance := by
   rw [IMP_iff]
   intro h
   have hbest : Soccer.accident ∈ (accidentBase playSoccer utterance).bestWorlds
@@ -300,13 +296,13 @@ theorem not_IMP_accident :
 /-- The imperfective decides the paper's judgments: the street and a regular player's habit are
 true, the Atlantic and the habit after the accident false. -/
 theorem truthValue_rows :
-    (IMP atomize streetBase notInterrupted cross .stopped now ↔
+    (IMP id atomize streetBase notInterrupted cross .stopped now ↔
         Examples.ex45.verdict = some true) ∧
-      (IMP atomize atlanticBase notInterrupted cross .stopped now ↔
+      (IMP id atomize atlanticBase notInterrupted cross .stopped now ↔
         Examples.ex46.verdict = some true) ∧
-      (IMP PL soccerBase keepsPlaying playSoccer .plays utterance ↔
+      (IMP hull PL soccerBase keepsPlaying playSoccer .plays utterance ↔
         Examples.ex54.verdict = some true) ∧
-      (IMP PL accidentBase keepsPlaying playSoccer .plays utterance ↔
+      (IMP hull PL accidentBase keepsPlaying playSoccer .plays utterance ↔
         Examples.ex54_accident.verdict = some true) :=
   ⟨iff_of_true IMP_street (by decide), iff_of_false not_IMP_atlantic (by decide),
     iff_of_true IMP_soccer (by decide), iff_of_false not_IMP_accident (by decide)⟩

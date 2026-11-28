@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schema
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # `RamchandSvenonius2014` — typed example data
@@ -266,5 +267,22 @@ def ex_61 : Datum :=
     paperFeatures := [] }
 
 def all : List Datum := [ex_3a, ex_3b, ex_20a, ex_20b, ex_21a, ex_21b, ex_23a, ex_23b, ex_24a, ex_24b, ex_51a, ex_51b, ex_51c, ex_51d, ex_54a, ex_60a, ex_60b, ex_61]
+
+/-- The readings of a modal that the paper judges under the perfect. -/
+inductive Reading where
+  /-- root: ability, permission or obligation -/
+  | root
+  /-- epistemic: possibility or necessity given what the speaker knows -/
+  | epistemic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The name the rows give the reading. -/
+def Reading.label : Reading → String
+  | .root => "root"
+  | .epistemic => "epistemic"
+
+/-- The judgment a row records for the reading, if it records one. -/
+def reading (e : Datum) (r : Reading) : Option Judgment :=
+  e.readings.lookup r.label
 
 end RamchandSvenonius2014.Examples

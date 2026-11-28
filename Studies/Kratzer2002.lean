@@ -1,7 +1,7 @@
 module
 
 public import Studies.Kratzer1989
-public import Linglib.Semantics.Mereology.Exemplification
+public import Linglib.Semantics.Situation.Exemplification
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Logic.Relation
@@ -12,7 +12,7 @@ public import Mathlib.Logic.Relation
 Situations are parts of worlds and carry the lower set topology, and a proposition is a set of
 situations. A fact that exemplifies a proposition `p` is a situation that contains nothing that does
 not contribute to the truth of `p`: every part of it is in `p`, or it is a minimal member of `p`.
-This is `Mereology.Exemplifies`.
+This is `Situation.Exemplifies`.
 
 Knowing `p` requires a belief about a fact that exemplifies `p`. In a world where `q` is nowhere
 true, the facts that exemplify `q ∪ r` are those that exemplify `r`, so a belief in the disjunction
@@ -64,7 +64,7 @@ formalized.
 
 namespace Kratzer2002
 
-open Kratzer1989 Mereology Topology Set
+open Kratzer1989 Situation Topology Set
 
 /-! ### Facts that exemplify propositions -/
 

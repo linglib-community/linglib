@@ -92,13 +92,11 @@ open Event
 /-- An event of the model is a set of participants with a run time. -/
 abbrev Ev : Type := Finset (Fin 2) × NonemptyInterval ℕ
 
-local instance : TemporalTrace Ev ℕ := ⟨Prod.snd⟩
-
 -- A telic predicate need not be quantized.
 theorem exists_isTelic_not_qua :
-    ∃ s : Set Ev, IsTelic (Precedes : Ev → Ev → Prop) s ∧ ¬ QUA s ∧
-      ¬ IsTelic (Precedes : Ev → Ev → Prop) Set.univ := by
-  refine ⟨{e | τ e = ⟨(3, 4), by decide⟩}, isTelic_runTime_eq monotone_snd _, fun h ↦ ?_,
+    ∃ s : Set Ev, IsTelic (Precedes Prod.snd : Ev → Ev → Prop) s ∧ ¬ QUA s ∧
+      ¬ IsTelic (Precedes Prod.snd : Ev → Ev → Prop) Set.univ := by
+  refine ⟨{e | e.2 = ⟨(3, 4), by decide⟩}, isTelic_runTime_eq monotone_snd _, fun h ↦ ?_,
     fun h ↦ ?_⟩
   · exact h (x := ({0}, ⟨(3, 4), by decide⟩)) rfl (y := ({0, 1}, ⟨(3, 4), by decide⟩)) rfl
       (fun hxy ↦ absurd (congrArg Prod.fst hxy) (by decide))

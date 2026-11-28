@@ -21,25 +21,30 @@ proposition `p`.
 
 ## Main definitions
 
-* `Mereology.Exemplifies`: `x` exemplifies `p` if `x` is an interior point or an isolated point
+* `Situation.Exemplifies`: `x` exemplifies `p` if `x` is an interior point or an isolated point
   of `p`.
 
 ## Main statements
 
-* `Mereology.exemplifies_congr`: whether `x` exemplifies `p` depends only on the germ of `p` at
+* `Situation.exemplifies_congr`: whether `x` exemplifies `p` depends only on the germ of `p` at
   `x`.
-* `Mereology.exemplifies_iff`: in the lower set topology of a partial order, `x` exemplifies `p`
+* `Situation.exemplifies_iff`: in the lower set topology of a partial order, `x` exemplifies `p`
   iff every part of `x` is in `p` or `x` is a minimal member of `p`.
-* `Mereology.closure_setOf_exemplifies`: in a well-founded order, a closed set is the closure of
+* `Situation.closure_setOf_exemplifies`: in a well-founded order, a closed set is the closure of
   its exemplifiers.
-* `Mereology.minimal_mem_iff_maximal_isIrreducible`: the minimal members of a closed set are the
+* `Situation.setOf_exemplifies_eq`: the exemplifiers of a proposition are the situations all of
+  whose parts are in it together with its minimal members.
+* `Situation.minimal_mem_iff_maximal_isIrreducible`: the minimal members of a closed set are the
   generic points of its irreducible components.
 
 ## Implementation notes
 
-The characterization `Mereology.exemplifies_iff` is the definition of [kratzer-2012]. The
-conjunctive form of [deigan-2020] and [bondarenko-2022] is `Mereology.exemplifies_iff_mem_and`.
+The characterization `Situation.exemplifies_iff` is the definition of [kratzer-2012]. The
+conjunctive form of [deigan-2020] and [bondarenko-2022] is `Situation.exemplifies_iff_mem_and`.
 Both need a partial order: in a preorder an isolated point need not be minimal.
+
+Of the two sets whose union is the exemplifiers of a proposition, the first is homogeneous, closed
+under parthood, and the second quantized, an antichain. Their union need be neither.
 
 The set is the first argument, as the predicate is the first argument of `Minimal`, so that
 `Exemplifies p` is the predicate of exemplifying `p`.
@@ -47,6 +52,7 @@ The set is the first argument, as the predicate is the first argument of `Minima
 ## References
 
 * [kratzer-2012]
+* [kratzer-2023]
 * [deigan-2020]
 * [bondarenko-2022]
 -/
@@ -55,7 +61,7 @@ The set is the first argument, as the predicate is the first argument of `Minima
 
 open Set Topology
 
-namespace Mereology
+namespace Situation
 
 variable {α : Type*} [TopologicalSpace α]
 
@@ -142,6 +148,23 @@ theorem not_exemplifies_of_lt (hy : y < x) (hyp : y ∈ p) (hz : z ≤ x) (hzp :
     ¬ Exemplifies p x :=
   fun h ↦ (exemplifies_iff.1 h).elim (fun hs ↦ hzp (hs hz)) fun hm ↦ hm.not_prop_of_lt hy hyp
 
+/-! ### Homogeneous and quantized exemplifiers -/
+
+omit [TopologicalSpace α] [Topology.IsLowerSet α] in
+/-- The situations all of whose parts are in `p` are closed under parthood. -/
+theorem isLowerSet_setOf_Iic_subset (p : Set α) : IsLowerSet {x | Iic x ⊆ p} :=
+  fun _ _ hyx hx ↦ (Iic_subset_Iic.2 hyx).trans hx
+
+/-- A part of a situation all of whose parts are in `p` exemplifies `p`. -/
+theorem exemplifies_of_Iic_subset (h : Iic x ⊆ p) (hyx : y ≤ x) : Exemplifies p y :=
+  exemplifies_iff.2 (.inl ((Iic_subset_Iic.2 hyx).trans h))
+
+/-- The exemplifiers of a proposition are the situations all of whose parts are in it, which are
+closed under parthood, together with its minimal members, no one of which is part of another. -/
+theorem setOf_exemplifies_eq :
+    {x | Exemplifies p x} = {x | Iic x ⊆ p} ∪ {x | Minimal (· ∈ p) x} :=
+  Set.ext fun _ ↦ exemplifies_iff
+
 /-! ### Closures -/
 
 /-- `x` exemplifies the upper closure of `s` iff every part of `x` is in the upper closure or `x` is
@@ -156,7 +179,7 @@ theorem exemplifies_upperClosure_iff :
 are the members of `s`. -/
 theorem _root_.IsAntichain.exemplifies_upperClosure_iff (hs : IsAntichain (· ≤ ·) s)
     (hmin : ∀ a ∈ s, ¬ IsMin a) : Exemplifies (upperClosure s : Set α) x ↔ x ∈ s := by
-  rw [Mereology.exemplifies_upperClosure_iff]
+  rw [Situation.exemplifies_upperClosure_iff]
   refine ⟨fun h ↦ h.elim (fun hsub ↦ ?_) fun h ↦ h.prop, fun h ↦ .inr ⟨h, fun y hy hyx ↦ ?_⟩⟩
   · obtain ⟨a, ha, hax⟩ := hsub self_mem_Iic
     obtain ⟨b, hba⟩ := not_isMin_iff.1 (hmin a ha)
@@ -196,4 +219,4 @@ theorem not_exemplifies_sup [SemilatticeSup α] [Topology.IsLowerSet α] {p : Se
     (hy : y ∈ p) (hz : z ∉ p) (hzy : ¬ z ≤ y) : ¬ Exemplifies p (y ⊔ z) :=
   not_exemplifies_of_lt (left_lt_sup.2 hzy) hy le_sup_right hz
 
-end Mereology
+end Situation

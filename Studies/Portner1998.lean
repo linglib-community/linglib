@@ -59,7 +59,7 @@ open Modality Event Aspect
 open Dowty1979 (iv)
 
 theorem nonfinalPart_iv {b d : ℕ} (hb : 0 ≤ b) (hd : 0 ≤ d) (hbd : b < d) :
-    NonfinalPart (iv 0 b hb) (iv 0 d hd) :=
+    NonfinalPart id (iv 0 b hb) (iv 0 d hd) :=
   ⟨NonemptyInterval.le_def.2 ⟨le_rfl, hbd.le⟩, le_rfl, hbd⟩
 
 /-! ### The bus (11), (39)
@@ -97,7 +97,7 @@ theorem crossing_ne_walkIntoBus : crossing ≠ walkIntoBus := fun h ↦ by
   have := congrFun (congrFun h .crosses) (iv 0 3)
   simp [crossing, walkIntoBus] at this
 
-theorem prog_crossing : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit := by
+theorem prog_crossing : InProgress id circ (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit := by
   have hbest : Background.bestWorlds ⊥ notInterrupted Bus.hit = {.crosses} := by
     have hacc : ((⊥ : Background Bus) ⊔ notInterrupted).accessibleWorlds .hit = {.crosses} := by
       ext v; cases v <;> simp [notInterrupted]
@@ -107,7 +107,8 @@ theorem prog_crossing : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) cros
   rintro v rfl
   exact ⟨iv 0 3, nonfinalPart_iv _ _ (by decide), rfl, rfl⟩
 
-theorem prog_walkIntoBus : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit := by
+theorem prog_walkIntoBus :
+    InProgress id circ (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit := by
   rw [InProgress, circ, ite_eq_left rfl]
   intro v hv
   have hacc : withBus.accessibleWorlds Bus.hit = {.hit} := by ext u; cases u <;> simp [withBus]
@@ -118,8 +119,8 @@ theorem prog_walkIntoBus : InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) w
 depend on the description (p. 779). -/
 theorem not_prog_crossing_and_walkIntoBus (f : Background Bus)
     (hne : (f.bestWorlds notInterrupted .hit).Nonempty) :
-    ¬ (InProgress (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit ∧
-      InProgress (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit) := by
+    ¬ (InProgress id (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit ∧
+      InProgress id (fun _ _ ↦ f) (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit) := by
   rintro ⟨h₁, h₂⟩
   obtain ⟨u, hu⟩ := hne
   obtain ⟨_, -, rfl, -⟩ := h₁ u hu
@@ -129,11 +130,11 @@ theorem not_prog_crossing_and_walkIntoBus (f : Background Bus)
 /-- Dowty's progressive makes (11) false: the bus's hitting Max is the normal course of events,
 so the actual world is the inertia world, and there he does not cross (p. 764). -/
 theorem not_dowtyProg_bus :
-    iv 0 1 ∉ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf crossing) .hit :=
+    iv 0 1 ∉ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf id crossing) .hit :=
   fun ⟨_, _, h⟩ ↦ let ⟨_, ⟨h1, _⟩, _⟩ := h .hit rfl; absurd h1 (by decide)
 
 theorem imperfective_crossing_eq_bot :
-    Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) crossing Bus.hit = ⊥ := by
+    Aspect.imperfective (T := ℕ) id (fun _ ↦ SetRel.id) crossing Bus.hit = ⊥ := by
   rw [Aspect.imperfective_id]
   exact eq_bot_iff.2 fun _ h ↦ let ⟨_, _, h, _⟩ := unbounded_iff.1 h; absurd h (by decide)
 
@@ -160,7 +161,7 @@ def defeatsSoldiers : Background Army := fun _ ↦ {{.killedEarly}ᶜ, {.wipesOu
 def ordinary : Background Army := fun _ ↦ {{.wipesOut}ᶜ}
 
 theorem not_prog_ordinary (w : Army) :
-    ¬ InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut w := by
+    ¬ InProgress id (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut w := by
   rw [InProgress]
   intro h
   have hbest : Army.killsDozens ∈ ordinary.bestWorlds defeatsSoldiers w := by
@@ -174,7 +175,7 @@ theorem not_prog_ordinary (w : Army) :
   exact absurd h1 (by decide)
 
 theorem prog_hero :
-    InProgress (fun _ _ ↦ ⊥) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .wipesOut := by
+    InProgress id (fun _ _ ↦ ⊥) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .wipesOut := by
   have hacc : ((⊥ : Background Army) ⊔ defeatsSoldiers).accessibleWorlds .wipesOut =
       {.wipesOut} := by
     ext v; cases v <;> simp [defeatsSoldiers]
@@ -188,17 +189,17 @@ theorem prog_hero :
 /-- The progressive decides the paper's judgments, where Dowty's inertia worlds and the
 imperfective of the event semantics make (11) false. -/
 theorem truthValue_rows :
-    (InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit ↔
+    (InProgress id circ (fun _ ↦ notInterrupted) (iv 0 1) crossing .hit ↔
         Examples.ex11.verdict = some true) ∧
-      (InProgress circ (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit ↔
+      (InProgress id circ (fun _ ↦ notInterrupted) (iv 0 1) walkIntoBus .hit ↔
         Examples.ex39.verdict = some true) ∧
-      (InProgress (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .killedEarly ↔
+      (InProgress id (fun _ _ ↦ ordinary) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .killedEarly ↔
         Examples.ex18_ordinary.verdict = some true) ∧
-      (InProgress (fun _ _ ↦ ⊥) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .wipesOut ↔
+      (InProgress id (fun _ _ ↦ ⊥) (fun _ ↦ defeatsSoldiers) (iv 0 1) wipeOut .wipesOut ↔
         Examples.ex18_hero.verdict = some true) ∧
-      ¬ (iv 0 1 ∈ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf crossing) .hit ↔
+      ¬ (iv 0 1 ∈ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf id crossing) .hit ↔
         Examples.ex11.verdict = some true) ∧
-      ¬ ((∃ t, Aspect.imperfective (T := ℕ) (fun _ ↦ SetRel.id) crossing Bus.hit t) ↔
+      ¬ ((∃ t, Aspect.imperfective (T := ℕ) id (fun _ ↦ SetRel.id) crossing Bus.hit t) ↔
         Examples.ex11.verdict = some true) := by
   refine ⟨iff_of_true prog_crossing (by decide), iff_of_true prog_walkIntoBus (by decide),
     iff_of_false (not_prog_ordinary _) (by decide), iff_of_true prog_hero (by decide),

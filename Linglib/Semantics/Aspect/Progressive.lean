@@ -36,50 +36,53 @@ requires an actual event of the type, and the inference from progressive to perf
 
 namespace Aspect
 
-open Event (τ runTimes runTimes_τ)
+open Event (runTimes runTimes_τ)
 open Modality
 
-variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [TemporalTrace E T]
+variable {E W T : Type*} [PartialOrder E] [LinearOrder T] {τ : E → NonemptyInterval T}
 
 /-- `e'` includes `e` as a nonfinal part: `e` is part of `e'`, and the run time of `e` is a
 nonfinal subinterval of that of `e'`. -/
-def NonfinalPart (e e' : E) : Prop := e ≤ e' ∧ (τ e).NonfinalSubinterval (τ e')
+def NonfinalPart (τ : E → NonemptyInterval T) (e e' : E) : Prop :=
+  e ≤ e' ∧ (τ e).NonfinalSubinterval (τ e')
 
 /-- `e` is in progress toward the event type `P` at `w` when in every best world of the
 circumstantial base `circ e P` under the ordering source `ni e`, the propositions that `e` is not
 interrupted, some event of type `P` includes `e` as a nonfinal part. -/
-def InProgress (circ : E → (W → E → Prop) → Background W) (ni : E → Background W) (e : E)
+def InProgress (τ : E → NonemptyInterval T) (circ : E → (W → E → Prop) → Background W)
+    (ni : E → Background W) (e : E)
     (P : W → E → Prop) (w : W) : Prop :=
-  ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e'
+  ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart τ e e' ∧ P v e'
 
 /-- The progressive of `P` holds at the run times of the events in progress toward `P`. -/
-def progressive (circ : E → (W → E → Prop) → Background W) (ni : E → Background W)
+def progressive (τ : E → NonemptyInterval T) (circ : E → (W → E → Prop) → Background W)
+    (ni : E → Background W)
     (P : W → E → Prop) (w : W) : NonemptyInterval T → Prop :=
-  runTimes fun e ↦ InProgress circ ni e P w
+  runTimes τ fun e ↦ InProgress τ circ ni e P w
 
 variable {circ : E → (W → E → Prop) → Background W} {ni : E → Background W} {e e' : E}
   {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
 theorem inProgress_iff :
-    InProgress circ ni e P w ↔
-      ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart e e' ∧ P v e' :=
+    InProgress τ circ ni e P w ↔
+      ∀ v ∈ (circ e P).bestWorlds (ni e) w, ∃ e', NonfinalPart τ e e' ∧ P v e' :=
   .rfl
 
 theorem progressive_iff :
-    progressive circ ni P w t ↔ ∃ e, τ e = t ∧ InProgress circ ni e P w := .rfl
+    progressive τ circ ni P w t ↔ ∃ e, τ e = t ∧ InProgress τ circ ni e P w := .rfl
 
-theorem NonfinalPart.lt (h : NonfinalPart e e') : τ e < τ e' := h.2.lt
+theorem NonfinalPart.lt (h : NonfinalPart τ e e') : τ e < τ e' := h.2.lt
 
 /-- Over a totally realistic modal base, an event in progress toward `P` is part of an actual
 event of type `P`. -/
 theorem InProgress.exists_of_isTotallyRealistic (hf : (circ e P).IsTotallyRealistic)
-    (h : InProgress circ ni e P w) : ∃ e', NonfinalPart e e' ∧ P w e' :=
+    (h : InProgress τ circ ni e P w) : ∃ e', NonfinalPart τ e e' ∧ P w e' :=
   h w (hf.bestWorlds_eq_singleton (ni e) w ▸ rfl)
 
 /-- Over totally realistic modal bases the progressive entails the imperfective over the world of
 evaluation alone. -/
 theorem progressive_le_imperfective (hf : ∀ e, (circ e P).IsTotallyRealistic) :
-    progressive circ ni P w ≤ imperfective (fun _ ↦ SetRel.id) P w := by
+    progressive τ circ ni P w ≤ imperfective τ (fun _ ↦ SetRel.id) P w := by
   intro t ht
   obtain ⟨e, rfl, he⟩ := progressive_iff.1 ht
   obtain ⟨e', he', hP⟩ := he.exists_of_isTotallyRealistic (hf e)

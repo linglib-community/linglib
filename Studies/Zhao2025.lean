@@ -199,37 +199,37 @@ end LinearOrder
 
 section Time
 
-variable {W T : Type*} [LinearOrder T] [TemporalTrace E T] {P : W → E → Prop} {w : W}
+variable {W T : Type*} [LinearOrder T] {τ : E → NonemptyInterval T} {P : W → E → Prop} {w : W}
   {a : NonemptyInterval T}
 
 /-- (3.40): *le* is not defined of the existential quantifier of a predicate with the subinterval
 property, the bare stative. -/
-theorem not_le_dom_of_hasSubintervalProperty (hP : Aspect.HasSubintervalProperty (P w)) :
-    ¬ (le Event.τ (Det.some {e | P w e}) a).Dom :=
+theorem not_le_dom_of_hasSubintervalProperty (hP : Aspect.HasSubintervalProperty τ (P w)) :
+    ¬ (le τ (Det.some {e | P w e}) a).Dom :=
   not_not_intro (hasSubintervalProperty_iff_atomDist.1 hP)
 
 -- in time this is the perfect operator: the evaluation time is preceded by an event
-theorem le_get_some_iff_perfect (h : (le Event.τ (Det.some {e | P w e}) a).Dom) :
-    (le Event.τ (Det.some {e | P w e}) a).get h ↔
-      Aspect.ViewpointType.perfect.denote (P w) a :=
+theorem le_get_some_iff_perfect (h : (le τ (Det.some {e | P w e}) a).Dom) :
+    (le τ (Det.some {e | P w e}) a).get h ↔
+      Aspect.ViewpointType.perfect.denote τ (P w) a :=
   le_get_some_iff_diamond h
 
 -- the language file's perfective holds at no point of evaluation of a predicate without point
 -- events
-theorem not_denote_le_pure (hP : ∀ e, P w e → ¬ (Event.τ e).IsPoint) (t : T) :
-    ¬ Mandarin.Aspect.le.viewpoint.denote (P w) (.pure t) := fun h ↦
+theorem not_denote_le_pure (hP : ∀ e, P w e → ¬ (τ e).IsPoint) (t : T) :
+    ¬ Mandarin.Aspect.le.viewpoint.denote τ (P w) (.pure t) := fun h ↦
   let ⟨e, hle, he⟩ := ViewpointType.denote_iff.1 h
   have hle := NonemptyInterval.le_def.1 (ViewpointType.relation_mem_cell_perfective.1 hle)
-  hP e he <| le_antisymm (Event.τ e).fst_le_snd (hle.2.trans hle.1)
+  hP e he <| le_antisymm (τ e).fst_le_snd (hle.2.trans hle.1)
 
 /-- A predicate with the stratified subinterval reference of [champollion-2017] has no event at a
 point, a point having no proper subinterval, so *le* is defined of its existential quantifier. -/
 theorem le_dom_of_subintervalReferenceUniv [SemilatticeSup E] {Q : E → Prop} (hne : ∃ e, Q e)
-    (h : Champollion2017.SubintervalReferenceUniv Q) :
-    (le Event.τ (Det.some {e | Q e}) a).Dom :=
+    (h : Champollion2017.SubintervalReferenceUniv τ Q) :
+    (le τ (Det.some {e | Q e}) a).Dom :=
   not_atomDist_some hne fun e he hp ↦ by
-    have hSR : e ∈ supClosure {y | Q y ∧ Event.τ y < Event.τ e} := h e he
-    rw [show {y | Q y ∧ Event.τ y < Event.τ e} = ∅ from
+    have hSR : e ∈ supClosure {y | Q y ∧ τ y < τ e} := h e he
+    rw [show {y | Q y ∧ τ y < τ e} = ∅ from
       eq_empty_of_forall_notMem fun y hy ↦ hp.isMin.not_lt hy.2, supClosure_empty] at hSR
     exact hSR
 
