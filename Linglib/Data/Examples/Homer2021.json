@@ -1,682 +1,860 @@
-[
+{
+ "features": [
   {
-    "id": "homer2021_ex18",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(18)"
+   "key": "item",
+   "lean": "item",
+   "type": "Item",
+   "doc": "The polarity item a sentence with one item is judged for.",
+   "levels": [
+    {
+     "name": "quoiQueCeSoit",
+     "label": "quoi que ce soit",
+     "doc": "French *quoi que ce soit*"
     },
-    "language": "stan1290",
-    "primaryText": "Il n'est pas impossible que Jean ait fait quoi que ce soit pour aider la Mafia.",
-    "glossedTokens": [],
-    "translation": "It is not impossible that Jean did anything to help the Mafia.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "paperFeatures": [
-      [
-        "item",
-        "quoi que ce soit"
-      ],
-      [
-        "clause",
-        "none"
-      ],
-      [
-        "superordinate",
-        "not impossible"
-      ]
-    ],
-    "comment": "The translation is the intended reading.",
-    "verified": "page-image"
+    {
+     "name": "any",
+     "label": "any",
+     "doc": "English *any*"
+    },
+    {
+     "name": "some",
+     "label": "some",
+     "doc": "English *some*"
+    }
+   ]
   },
   {
-    "id": "homer2021_ex19",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(19)"
+   "key": "clause",
+   "lean": "clause",
+   "type": "ClausePolarity",
+   "doc": "The polarity of the clause that contains the item.",
+   "levels": [
+    {
+     "name": "positive",
+     "label": "positive",
+     "doc": "no negation in the clause of the item"
     },
-    "language": "stan1290",
-    "primaryText": "Il est impossible que Jean n'ait pas fait quoi que ce soit pour aider…",
-    "glossedTokens": [],
-    "translation": "It is impossible that Jean didn't do anything to help the Mafia.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "item",
-        "quoi que ce soit"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "superordinate",
-        "impossible"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
+    {
+     "name": "negative",
+     "label": "negative",
+     "doc": "sentential negation in the clause of the item"
+    }
+   ]
   },
   {
-    "id": "homer2021_ex24",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(24)"
+   "key": "superordinate",
+   "lean": "superordinate",
+   "type": "Superordinate",
+   "doc": "The expressions above the clause of the item.",
+   "levels": [
+    {
+     "name": "impossible",
+     "label": "impossible",
+     "doc": "*it is impossible that*"
     },
-    "language": "stan1290",
-    "primaryText": "S'il est impossible que Jean ait fait quoi que ce soit pour aider la Mafia, je lui présenterai mes excuses.",
-    "glossedTokens": [],
-    "translation": "If it is impossible that Jean did anything to help the Mafia, I will apologize to him.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "item",
-        "quoi que ce soit"
-      ],
-      [
-        "clause",
-        "none"
-      ],
-      [
-        "superordinate",
-        "if impossible"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
+    {
+     "name": "notImpossible",
+     "label": "not impossible",
+     "doc": "*it is not impossible that*"
+    },
+    {
+     "name": "ifImpossible",
+     "label": "if impossible",
+     "doc": "the item below *impossible* in a conditional clause"
+    },
+    {
+     "name": "notClaim",
+     "label": "not claim",
+     "doc": "*I don't claim that*"
+    },
+    {
+     "name": "notSure",
+     "label": "not sure",
+     "doc": "*I'm not sure that*"
+    },
+    {
+     "name": "conditional",
+     "label": "if",
+     "doc": "the item in a conditional clause"
+    },
+    {
+     "name": "notThatImpossible",
+     "label": "not that impossible",
+     "doc": "*not that it is impossible that*"
+    }
+   ]
   },
   {
-    "id": "homer2021_ex32",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(32)"
+   "key": "connective",
+   "lean": "connective",
+   "type": "Connective",
+   "doc": "The connective that joins the item's noun phrase to another below negation.",
+   "levels": [
+    {
+     "name": "and",
+     "label": "and",
+     "doc": "conjunction"
     },
-    "language": "stan1290",
-    "primaryText": "Il n'est pas impossible que Jean n'ait pas fait quoi que ce soit pour aider la Mafia.",
-    "glossedTokens": [],
-    "translation": "It is not impossible that Jean didn't do anything to help the Mafia.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "item",
-        "quoi que ce soit"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "superordinate",
-        "not impossible"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
+    {
+     "name": "or",
+     "label": "or",
+     "doc": "disjunction"
+    }
+   ]
   },
   {
-    "id": "homer2021_ex41a",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(41a)"
+   "key": "subject",
+   "lean": "subject",
+   "type": "Subject",
+   "doc": "The subject of a sentence with two polarity items.",
+   "levels": [
+    {
+     "name": "someone",
+     "label": "someone",
+     "doc": "*someone*"
     },
-    "language": "stan1293",
-    "primaryText": "When Fred speaks French, Jean-Paul doesn't understand something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
+    {
+     "name": "anyone",
+     "label": "anyone",
+     "doc": "*anyone*"
+    }
+   ]
   },
   {
-    "id": "homer2021_ex42a",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(42a)"
+   "key": "object",
+   "lean": "object",
+   "type": "Object",
+   "doc": "The object of a sentence with two polarity items.",
+   "levels": [
+    {
+     "name": "anything",
+     "label": "anything",
+     "doc": "*anything*"
     },
-    "language": "stan1293",
-    "primaryText": "I don't claim that Jean-Paul understands something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "none"
-      ],
-      [
-        "superordinate",
-        "not claim"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex42b",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(42b)"
-    },
-    "language": "stan1293",
-    "primaryText": "It is impossible that Jean-Paul understands something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "none"
-      ],
-      [
-        "superordinate",
-        "impossible"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex46a",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(46a)"
-    },
-    "language": "stan1293",
-    "primaryText": "I'm not sure that Jean-Paul doesn't understand something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "superordinate",
-        "not sure"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex46b",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(46b)"
-    },
-    "language": "stan1293",
-    "primaryText": "If Jean-Paul doesn't understand something, he has no notion of French at all.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "superordinate",
-        "if"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex48a",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(48a)"
-    },
-    "language": "stan1293",
-    "primaryText": "It is impossible that John doesn't understand something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "superordinate",
-        "impossible"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex48b",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(48b)"
-    },
-    "language": "stan1293",
-    "primaryText": "It is not impossible that John doesn't understand something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "superordinate",
-        "not impossible"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex48c",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(48c)"
-    },
-    "language": "stan1293",
-    "primaryText": "Not that it is impossible that John doesn't understand something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "superordinate",
-        "not that impossible"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex50e",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(50e)"
-    },
-    "language": "stan1293",
-    "primaryText": "John didn't drink wine and any coffee.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "paperFeatures": [
-      [
-        "item",
-        "any"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "connective",
-        "and"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex51b",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(51b)"
-    },
-    "language": "stan1293",
-    "primaryText": "John didn't drink wine or any coffee.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "item",
-        "any"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "connective",
-        "or"
-      ]
-    ],
-    "comment": "",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex56d",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(56d)"
-    },
-    "language": "stan1293",
-    "primaryText": "John didn't drink wine and some coffee.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "connective",
-        "and"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex56e",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(56e)"
-    },
-    "language": "stan1293",
-    "primaryText": "John didn't drink wine or some coffee.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "narrowest scope of some",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "item",
-        "some"
-      ],
-      [
-        "clause",
-        "negation"
-      ],
-      [
-        "connective",
-        "or"
-      ]
-    ],
-    "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex92b",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(92b)"
-    },
-    "language": "stan1293",
-    "primaryText": "It is impossible that someone stole anything.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "IMPOS.≫SOME",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "subject",
-        "someone"
-      ],
-      [
-        "object",
-        "anything"
-      ],
-      [
-        "superordinate",
-        "impossible"
-      ],
-      [
-        "clause",
-        "none"
-      ]
-    ],
-    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex98",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(98)"
-    },
-    "language": "stan1293",
-    "primaryText": "It's impossible that someone isn't eating anything.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "IMPOS.≫NEG≫SOME≫ANY",
-        "judgment": "ungrammatical"
-      },
-      {
-        "name": "IMPOS.≫SOME≫NEG≫ANY",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "subject",
-        "someone"
-      ],
-      [
-        "object",
-        "anything"
-      ],
-      [
-        "superordinate",
-        "impossible"
-      ],
-      [
-        "clause",
-        "negation"
-      ]
-    ],
-    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex103b",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(103b)"
-    },
-    "language": "stan1293",
-    "primaryText": "It is impossible that anyone stole something.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "IMPOS.≫SOME",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "subject",
-        "anyone"
-      ],
-      [
-        "object",
-        "something"
-      ],
-      [
-        "superordinate",
-        "impossible"
-      ],
-      [
-        "clause",
-        "none"
-      ]
-    ],
-    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
-    "verified": "page-image"
-  },
-  {
-    "id": "homer2021_ex122b",
-    "source": {
-      "bibkey": "homer-2021",
-      "paperLabel": "(122b)"
-    },
-    "language": "stan1293",
-    "primaryText": "I'm not sure that someone understood anything.",
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "readings": [
-      {
-        "name": "NEG≫SOME",
-        "judgment": "ungrammatical"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "subject",
-        "someone"
-      ],
-      [
-        "object",
-        "anything"
-      ],
-      [
-        "superordinate",
-        "not sure"
-      ],
-      [
-        "clause",
-        "none"
-      ]
-    ],
-    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
-    "verified": "page-image"
+    {
+     "name": "something",
+     "label": "something",
+     "doc": "*something*"
+    }
+   ]
   }
-]
+ ],
+ "readings": {
+  "lean": "reading",
+  "type": "Reading",
+  "doc": "The scope readings the sentences are judged on.",
+  "levels": [
+   {
+    "name": "narrowestScope",
+    "label": "narrowest scope of some",
+    "doc": "*some* takes scope below every other operator"
+   },
+   {
+    "name": "imposSome",
+    "label": "IMPOS.≫SOME",
+    "doc": "*some* takes scope below *impossible*"
+   },
+   {
+    "name": "imposNegSomeAny",
+    "label": "IMPOS.≫NEG≫SOME≫ANY",
+    "doc": "the subject *someone* is reconstructed below the negation"
+   },
+   {
+    "name": "imposSomeNegAny",
+    "label": "IMPOS.≫SOME≫NEG≫ANY",
+    "doc": "the subject *someone* takes scope above the negation"
+   },
+   {
+    "name": "negSome",
+    "label": "NEG≫SOME",
+    "doc": "*some* takes scope below the negation"
+   }
+  ]
+ },
+ "examples": [
+  {
+   "id": "homer2021_ex18",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(18)"
+   },
+   "method": "unclassified",
+   "language": "stan1290",
+   "primaryText": "Il n'est pas impossible que Jean ait fait quoi que ce soit pour aider la Mafia.",
+   "glossedTokens": [],
+   "translation": "It is not impossible that Jean did anything to help the Mafia.",
+   "context": "",
+   "judgment": "ungrammatical",
+   "paperFeatures": [
+    [
+     "item",
+     "quoi que ce soit"
+    ],
+    [
+     "clause",
+     "positive"
+    ],
+    [
+     "superordinate",
+     "not impossible"
+    ]
+   ],
+   "comment": "The translation is the intended reading.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex19",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(19)"
+   },
+   "method": "unclassified",
+   "language": "stan1290",
+   "primaryText": "Il est impossible que Jean n'ait pas fait quoi que ce soit pour aider…",
+   "glossedTokens": [],
+   "translation": "It is impossible that Jean didn't do anything to help the Mafia.",
+   "context": "",
+   "judgment": "acceptable",
+   "paperFeatures": [
+    [
+     "item",
+     "quoi que ce soit"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "superordinate",
+     "impossible"
+    ]
+   ],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex24",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(24)"
+   },
+   "method": "unclassified",
+   "language": "stan1290",
+   "primaryText": "S'il est impossible que Jean ait fait quoi que ce soit pour aider la Mafia, je lui présenterai mes excuses.",
+   "glossedTokens": [],
+   "translation": "If it is impossible that Jean did anything to help the Mafia, I will apologize to him.",
+   "context": "",
+   "judgment": "acceptable",
+   "paperFeatures": [
+    [
+     "item",
+     "quoi que ce soit"
+    ],
+    [
+     "clause",
+     "positive"
+    ],
+    [
+     "superordinate",
+     "if impossible"
+    ]
+   ],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex32",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(32)"
+   },
+   "method": "unclassified",
+   "language": "stan1290",
+   "primaryText": "Il n'est pas impossible que Jean n'ait pas fait quoi que ce soit pour aider la Mafia.",
+   "glossedTokens": [],
+   "translation": "It is not impossible that Jean didn't do anything to help the Mafia.",
+   "context": "",
+   "judgment": "acceptable",
+   "paperFeatures": [
+    [
+     "item",
+     "quoi que ce soit"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "superordinate",
+     "not impossible"
+    ]
+   ],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex41a",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(41a)"
+   },
+   "language": "stan1293",
+   "primaryText": "When Fred speaks French, Jean-Paul doesn't understand something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "ungrammatical"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex42a",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(42a)"
+   },
+   "language": "stan1293",
+   "primaryText": "I don't claim that Jean-Paul understands something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "positive"
+    ],
+    [
+     "superordinate",
+     "not claim"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex42b",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(42b)"
+   },
+   "language": "stan1293",
+   "primaryText": "It is impossible that Jean-Paul understands something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "positive"
+    ],
+    [
+     "superordinate",
+     "impossible"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex46a",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(46a)"
+   },
+   "language": "stan1293",
+   "primaryText": "I'm not sure that Jean-Paul doesn't understand something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "superordinate",
+     "not sure"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex46b",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(46b)"
+   },
+   "language": "stan1293",
+   "primaryText": "If Jean-Paul doesn't understand something, he has no notion of French at all.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "superordinate",
+     "if"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex48a",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(48a)"
+   },
+   "language": "stan1293",
+   "primaryText": "It is impossible that John doesn't understand something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "superordinate",
+     "impossible"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex48b",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(48b)"
+   },
+   "language": "stan1293",
+   "primaryText": "It is not impossible that John doesn't understand something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "ungrammatical"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "superordinate",
+     "not impossible"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex48c",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(48c)"
+   },
+   "language": "stan1293",
+   "primaryText": "Not that it is impossible that John doesn't understand something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "superordinate",
+     "not that impossible"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex50e",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(50e)"
+   },
+   "language": "stan1293",
+   "primaryText": "John didn't drink wine and any coffee.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "ungrammatical",
+   "paperFeatures": [
+    [
+     "item",
+     "any"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "connective",
+     "and"
+    ]
+   ],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex51b",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(51b)"
+   },
+   "language": "stan1293",
+   "primaryText": "John didn't drink wine or any coffee.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "paperFeatures": [
+    [
+     "item",
+     "any"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "connective",
+     "or"
+    ]
+   ],
+   "comment": "",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex56d",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(56d)"
+   },
+   "language": "stan1293",
+   "primaryText": "John didn't drink wine and some coffee.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "connective",
+     "and"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex56e",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(56e)"
+   },
+   "language": "stan1293",
+   "primaryText": "John didn't drink wine or some coffee.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "narrowest scope of some",
+     "judgment": "ungrammatical"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "item",
+     "some"
+    ],
+    [
+     "clause",
+     "negative"
+    ],
+    [
+     "connective",
+     "or"
+    ]
+   ],
+   "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex92b",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(92b)"
+   },
+   "language": "stan1293",
+   "primaryText": "It is impossible that someone stole anything.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "IMPOS.≫SOME",
+     "judgment": "ungrammatical"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "subject",
+     "someone"
+    ],
+    [
+     "object",
+     "anything"
+    ],
+    [
+     "superordinate",
+     "impossible"
+    ],
+    [
+     "clause",
+     "positive"
+    ]
+   ],
+   "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex98",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(98)"
+   },
+   "language": "stan1293",
+   "primaryText": "It's impossible that someone isn't eating anything.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "IMPOS.≫NEG≫SOME≫ANY",
+     "judgment": "ungrammatical"
+    },
+    {
+     "name": "IMPOS.≫SOME≫NEG≫ANY",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "subject",
+     "someone"
+    ],
+    [
+     "object",
+     "anything"
+    ],
+    [
+     "superordinate",
+     "impossible"
+    ],
+    [
+     "clause",
+     "negative"
+    ]
+   ],
+   "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex103b",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(103b)"
+   },
+   "language": "stan1293",
+   "primaryText": "It is impossible that anyone stole something.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "IMPOS.≫SOME",
+     "judgment": "acceptable"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "subject",
+     "anyone"
+    ],
+    [
+     "object",
+     "something"
+    ],
+    [
+     "superordinate",
+     "impossible"
+    ],
+    [
+     "clause",
+     "positive"
+    ]
+   ],
+   "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+   "verified": "page-image"
+  },
+  {
+   "id": "homer2021_ex122b",
+   "source": {
+    "bibkey": "homer-2021",
+    "paperLabel": "(122b)"
+   },
+   "language": "stan1293",
+   "primaryText": "I'm not sure that someone understood anything.",
+   "glossedTokens": [],
+   "translation": "",
+   "context": "",
+   "judgment": "acceptable",
+   "readings": [
+    {
+     "name": "NEG≫SOME",
+     "judgment": "ungrammatical"
+    }
+   ],
+   "paperFeatures": [
+    [
+     "subject",
+     "someone"
+    ],
+    [
+     "object",
+     "anything"
+    ],
+    [
+     "superordinate",
+     "not sure"
+    ],
+    [
+     "clause",
+     "positive"
+    ]
+   ],
+   "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+   "verified": "page-image"
+  }
+ ]
+}
