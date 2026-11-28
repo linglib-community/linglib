@@ -107,7 +107,7 @@ theorem did_top : did ⊤ = univ :=
 /-! ### Layers -/
 
 /-- A layer of meaning between two domains. -/
-abbrev Layer := ProjectivitySignature.classPairs (Set World)
+abbrev Layer := Environment (Set World) (Set World)
 
 /-- The modal base: the worlds in which the subject did something. -/
 def modalBase : Set World := {w | w.2.Nonempty}
@@ -118,17 +118,17 @@ theorem modalBase_ne_empty : modalBase ≠ ∅ :=
 
 /-- *It is impossible that `p`*: no world of the modal base is a `p`-world. -/
 def impossible : Layer :=
-  ⟨(fun p ↦ {_w | Disjoint modalBase p}, .antiAdd), ProjectivitySignature.holdsFor_antiAdd_iff.2
+  ⟨fun p ↦ {_w | Disjoint modalBase p}, .antiAdd, ProjectivitySignature.holdsFor_antiAdd_iff.2
     ⟨fun _ _ ↦ by ext; simp, by simp⟩⟩
 
 /-- *I am sure that `p`*, *I claim that `p`*: every world of the modal base is a `p`-world. -/
 def necessity : Layer :=
-  ⟨(fun p ↦ {_w | modalBase ⊆ p}, .mono),
+  ⟨fun p ↦ {_w | modalBase ⊆ p}, .mono,
     ProjectivitySignature.holdsFor_mono_iff.2 fun _ _ h _ hp ↦ (hp : modalBase ⊆ _).trans h⟩
 
 /-- *If `p`, `q`*, the material conditional with the consequent fixed. -/
 def conditional (q : Set World) : Layer :=
-  ⟨(fun p ↦ pᶜ ∪ q, .anti),
+  ⟨fun p ↦ pᶜ ∪ q, .anti,
     ProjectivitySignature.holdsFor_anti_iff.2 fun _ _ h ↦ union_subset_union_left _
       (compl_subset_compl.2 h)⟩
 
@@ -146,7 +146,7 @@ def path (pol : Layer) (t : List Layer) : Path (Quantifier (Fin 2)) (Set World) 
 /-- The layer of the polarity head of a clause. -/
 def polarity : Examples.ClausePolarity → Layer
   | .positive => 1
-  | .negative => negation
+  | .negative => Environment.compl
 
 /-- The layers above the minimal domain of an item whose clause is below the expressions `s`,
 outermost first. An unembedded clause adds its TP. A clause embedded under a polarity phrase adds
@@ -155,11 +155,11 @@ the matrix TP. -/
 def above : Option Examples.Superordinate → List Layer
   | none => [1]
   | some .impossible => [1, impossible, 1, 1]
-  | some .notImpossible => [1, negation * impossible, 1, 1]
-  | some .notClaim | some .notSure => [1, negation * necessity, 1, 1]
+  | some .notImpossible => [1, Environment.compl * impossible, 1, 1]
+  | some .notClaim | some .notSure => [1, Environment.compl * necessity, 1, 1]
   | some .conditional => [1, conditional consequent, 1]
   | some .ifImpossible => [1, conditional consequent, 1, impossible, 1, 1]
-  | some .notThatImpossible => [negation, 1, impossible, 1, 1]
+  | some .notThatImpossible => [Environment.compl, 1, impossible, 1, 1]
 
 /-- The path of the indefinite in a clause of polarity `c` below the expressions `s`. -/
 def sentence (c : Examples.ClausePolarity) (s : Option Examples.Superordinate) :
@@ -224,9 +224,8 @@ abbrev someoneItem : PolarityItem.Class := .ppi .antiAdditive
 
 section FlipFlop
 
-attribute [local simp] path sentence polarity above negation impossible necessity
+attribute [local simp] path sentence polarity above impossible necessity
   ProjectivitySignature.sign_mul
-  Function.End.one_def Function.End.mul_def
 
 theorem not_licenses_notImpossible : ¬notImpossible.Licenses quoiQueCeSoit :=
   notImpossible.not_licenses_npi fun t ht ↦ by
@@ -270,7 +269,7 @@ theorem licenses_impossibleBare : impossibleBare.Licenses someItem :=
         (by simp [impossibleBare]; exact Set.empty_ne_univ)⟩
 
 theorem licenses_notSureNot : notSureNot.Licenses someItem :=
-  ⟨[negation * necessity, 1, 1], by simp [notSureNot],
+  ⟨[Environment.compl * necessity, 1, 1], by simp [notSureNot],
     Licenser.admits_ppi_iff.2 <|
       Environment.not_holds_of_sign_eq_one _ (by simp [notSureNot]; decide)
         (by simp [notSureNot]; exact Set.empty_ne_univ)⟩

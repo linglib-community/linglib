@@ -147,7 +147,8 @@ def Licensed (p : Path α (Set W)) (A : α → Set (Set W)) (n : α) : Prop :=
 /-- The path of the item in a clause `S` monotone in its restrictor, under negation. -/
 def negated (S : α → WithAlternatives (Set W)) (hS : Monotone fun x ↦ (S x).ordinary) :
     Path α (Set W) :=
-  ⟨⟨fun x ↦ (S x).ordinary, .mono, ProjectivitySignature.holdsFor_mono_iff.2 hS⟩, [negation]⟩
+  ⟨⟨fun x ↦ (S x).ordinary, .mono, ProjectivitySignature.holdsFor_mono_iff.2 hS⟩,
+    [Environment.compl]⟩
 
 -- a clause below negation that is not constant below the restrictor does not meet the condition
 theorem licensed_negated_iff {S : α → WithAlternatives (Set W)}
@@ -157,10 +158,10 @@ theorem licensed_negated_iff {S : α → WithAlternatives (Set W)}
       LicensingCondition (compl <$> S ·) n := by
   have h0 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S) [] = S :=
     funext fun _ ↦ by simp [negated]
-  have h1 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S) [negation] =
-      (compl <$> S ·) :=
-    funext fun _ ↦ by simp [negated, negation]
-  refine ⟨fun ⟨t, ht, hc⟩ ↦ ?_, fun hc ↦ ⟨[negation], by simp [negated], h1 ▸ hc⟩⟩
+  have h1 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S)
+      [Environment.compl] = (compl <$> S ·) :=
+    funext fun _ ↦ by simp [negated]
+  refine ⟨fun ⟨t, ht, hc⟩ ↦ ?_, fun hc ↦ ⟨[Environment.compl], by simp [negated], h1 ▸ hc⟩⟩
   simp [negated] at ht
   rcases ht with rfl | rfl
   · exact h1 ▸ hc
