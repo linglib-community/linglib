@@ -64,7 +64,8 @@ does not admit the negative ones.
 * A constant map is downward entailing, and a constantly true map is anti-additive. The
   requirement that a licenser of the monotone decreasing strength not be upward entailing as well
   excludes them, since a map that is monotone in both directions modulo presupposition takes a
-  single value at comparable arguments where it is defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
+  single value at comparable arguments where it is defined
+  (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
 * A question is not a licenser. It is downward entailing only in the domain of a wh-phrase, and
   whether it hosts an item does not follow the strength that the item requires. Van Rooy ties the
   use of an item in a question to the expectations of the questioner, through the entropy of the
@@ -183,8 +184,8 @@ def IsStrawsonUE : Licenser → Prop
   | .modal F => ∀ p, Monotone (F.op p)
 
 /-- A licenser *carries* the monotone decreasing strength when it is downward entailing and not
-upward entailing modulo presupposition. This is the condition that [von-fintel-1999], [gajewski-2011]'s Condition
-1, and [bylinina-nouwen-2018]'s (53) place on the meaning below the exhaustivity operator. A
+upward entailing modulo presupposition. This is the condition that [von-fintel-1999],
+[gajewski-2011]'s Condition 1, and [bylinina-nouwen-2018]'s (53) place on the meaning below the exhaustivity operator. A
 licenser carries a stronger strength when, in addition, its exhaustified meaning holds that
 strength outright. -/
 def Carries (L : Licenser) : Negation.Strength → Prop
@@ -303,14 +304,14 @@ theorem carries_iff_le {s₀ : Negation.Strength} (hde : L.IsStrawsonDE) (hn : �
 /-- A presupposing licenser carries anti-additive strength when its truth sets are anti-additive
 and one of its operators is not upward entailing. -/
 theorem carries_strawson_antiAdditive {F : PresupposingFamily}
-    (h : ∀ p, IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x))
+    (h : ∀ p, Negation.HasStrength (fun x ↦ Trivalent.posExt (F.op p x)) .antiAdditive)
     (hn : ∃ p, ¬ Presupposition.IsStrawsonUE (F.op p)) : (strawson F).Carries .antiAdditive :=
   have hh : (strawson F).Holds .antiAdditive := fun p ↦ h p
   ⟨⟨isStrawsonDE_of_holds_monotoneDecreasing (hh.of_le (by decide)),
     fun hu ↦ hn.elim fun p hp ↦ hp (hu p)⟩, hh⟩
 
 theorem not_carries_strawson_antiAdditive {F : PresupposingFamily}
-    (h : ∃ p, ¬ IsAntiAdditive fun x ↦ Trivalent.posExt (F.op p x)) :
+    (h : ∃ p, ¬ Negation.HasStrength (fun x ↦ Trivalent.posExt (F.op p x)) .antiAdditive) :
     ¬ (strawson F).Carries .antiAdditive :=
   fun hc ↦ h.elim fun p hp ↦ hp (hc.2 p)
 

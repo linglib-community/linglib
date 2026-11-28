@@ -118,6 +118,18 @@ namespace Negation
 
 open NaturalLogic Strength
 
+/-- Between Boolean algebras, an anti-additive map commutes with complement exactly when it
+sends `⊤` to `⊥`, sends meets to joins, and sends `⊥` to `⊤`. -/
+private theorem map_compl_iff {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β] {f : α → β}
+    (h : ∀ p q, f (p ⊔ q) = f p ⊓ f q) :
+    (∀ x, f xᶜ = (f x)ᶜ) ↔ f ⊤ = ⊥ ∧ (∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤ := by
+  refine ⟨fun hc ↦ ?_, fun ⟨ht, hm, hb⟩ x ↦ ?_⟩
+  · have ht : f ⊤ = ⊥ := by rw [← sup_compl_eq_top (x := ⊥), h, hc, inf_compl_self]
+    refine ⟨ht, fun p q ↦ ?_, by rw [← compl_top, hc, ht, compl_bot]⟩
+    rw [← compl_compl (p ⊓ q), compl_inf, hc, h, hc, hc, compl_inf, compl_compl, compl_compl]
+  · exact (IsCompl.of_eq (by rw [← h, compl_sup_eq_top, ht])
+      (by rw [← hm, compl_inf_eq_bot, hb])).eq_compl
+
 /-- A map in the function class of a strength has the strength. -/
 theorem HasStrength.of_toProjectivitySignature {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β]
     {s : Strength} {f : α → β} (h : s.toProjectivitySignature.HoldsFor f) : HasStrength f s := by
@@ -125,14 +137,14 @@ theorem HasStrength.of_toProjectivitySignature {α β : Type*} [BooleanAlgebra �
   · exact ProjectivitySignature.holdsFor_anti_iff.1 h
   · exact (ProjectivitySignature.holdsFor_antiAdd_iff.1 h).1
   · obtain ⟨⟨ha, ht⟩, hm, hb⟩ := ProjectivitySignature.holdsFor_antiAddMult_iff.1 h
-    exact ⟨ha, (IsAntiAdditive.map_compl_iff ha).2 ⟨ht, hm, hb⟩⟩
+    exact ⟨ha, (map_compl_iff ha).2 ⟨ht, hm, hb⟩⟩
 
 /-- The antimorphic maps are the maps in the function class of the anti-morphism signature. -/
 theorem hasStrength_antimorphic_iff_holdsFor {α β : Type*} [BooleanAlgebra α] [BooleanAlgebra β]
     {f : α → β} :
     HasStrength f antimorphic ↔ ProjectivitySignature.antiAddMult.HoldsFor f :=
   ⟨fun h ↦ ProjectivitySignature.holdsFor_antiAddMult_iff.2
-      (have hc := (IsAntiAdditive.map_compl_iff (f := f) h.1).1 h.2
+      (have hc := (map_compl_iff (f := f) h.1).1 h.2
        ⟨⟨h.1, hc.1⟩, hc.2.1, hc.2.2⟩),
     HasStrength.of_toProjectivitySignature (s := antimorphic)⟩
 

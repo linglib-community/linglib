@@ -131,7 +131,8 @@ theorem box_eq_undefined_of_notMem_excludedMiddle (H : SetRel W W)
   exact hw (by simpa [Trivalent.posExt] using (box_ne_undefined_iff.1 hd).2)
 
 -- (116)
-theorem isAntiAdditive_exhNot (R : SetRel W W) : IsAntiAdditive (exhNot R) := fun p q ↦ by
+theorem isAntiAdditive_exhNot (R : SetRel W W) :
+    Negation.HasStrength (exhNot R) .antiAdditive := fun p q ↦ by
   simp only [exhNot_eq, dom_inter_core_compl_union]
 
 -- (124)

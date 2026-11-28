@@ -873,7 +873,7 @@ theorem antitone_notSureSubjObj_env_one (k : ℕ) :
 -- modal base the first person or the second did something, but in some the first did nothing and
 -- in some the second did nothing
 theorem not_isAntiAdditive_notSureSubjObj_env :
-    ¬IsAntiAdditive ((notSureSubjObj obj subj).env 1 3) := fun h ↦ by
+    ¬Negation.HasStrength ((notSureSubjObj obj subj).env 1 3) .antiAdditive := fun h ↦ by
   have := congrArg (fun c ↦ (∅ : World₂) ∈ c 0)
     (h (Quantifier.Det.some {0}) (Quantifier.Det.some {1}))
   simp [LF.env, notSureSubjObj, notSure, subject, did₂, modalBase₂, someOne,

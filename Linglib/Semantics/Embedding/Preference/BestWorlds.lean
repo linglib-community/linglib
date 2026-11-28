@@ -208,7 +208,7 @@ open Classical in
 /-- *Sorry* is Strawson anti-additive in its complement, since wanting a disjunction false is
 wanting each disjunct false. -/
 theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base g) :=
-  .of_isAntiAdditive (a := fun p w ↦ Want (g w) (base w) pᶜ)
+  .of_map_sup (a := fun p w ↦ Want (g w) (base w) pᶜ)
     (fun p q ↦ funext fun w ↦ propext <| by
       show Want (g w) (base w) (p ∪ q)ᶜ ↔ Want (g w) (base w) pᶜ ∧ Want (g w) (base w) qᶜ
       rw [Set.compl_union]

@@ -7,7 +7,6 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Algebra.Group.Units.Hom
 public import Mathlib.Algebra.GroupWithZero.Hom
 public import Mathlib.Basic.Sign.Defs
-public import Linglib.Core.Order.AntiAdditive
 public import Mathlib.Algebra.GroupWithZero.Defs
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Hom.Basic
@@ -311,8 +310,8 @@ def Property.HoldsFor : Property → (α → β) → Prop
   | .antitone => Antitone
   | .additive => fun f ↦ (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤
   | .multiplicative => fun f ↦ (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥
-  | .antiAdditive => fun f ↦ IsAntiAdditive f ∧ f ⊤ = ⊥
-  | .antiMultiplicative => fun f ↦ IsAntiMultiplicative f ∧ f ⊥ = ⊤
+  | .antiAdditive => fun f ↦ (∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥
+  | .antiMultiplicative => fun f ↦ (∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤
 
 /-- `σ.HoldsFor f` says that `f` has every property `σ` asserts; [icard-2012] calls such an `f` a
 σ-function. -/
@@ -349,16 +348,16 @@ theorem holdsFor_mult_iff {f : α → β} :
   exact ⟨fun h ↦ h.2, fun h ↦ ⟨.of_map_inf h.1, h⟩⟩
 
 theorem holdsFor_antiAdd_iff {f : α → β} :
-    HoldsFor .antiAdd f ↔ IsAntiAdditive f ∧ f ⊤ = ⊥ := by
+    HoldsFor .antiAdd f ↔ (∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥ := by
   simp only [HoldsFor, properties, Finset.mem_insert, Finset.mem_singleton,
     forall_eq_or_imp, forall_eq, Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.antitone, h⟩⟩
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨Monotone.of_map_sup (β := βᵒᵈ) h.1, h⟩⟩
 
 theorem holdsFor_antiMult_iff {f : α → β} :
-    HoldsFor .antiMult f ↔ IsAntiMultiplicative f ∧ f ⊥ = ⊤ := by
+    HoldsFor .antiMult f ↔ (∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤ := by
   simp only [HoldsFor, properties, Finset.mem_insert, Finset.mem_singleton,
     forall_eq_or_imp, forall_eq, Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.antitone, h⟩⟩
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨Monotone.of_map_inf (β := βᵒᵈ) h.1, h⟩⟩
 
 theorem holdsFor_addMult_iff {f : α → β} :
     HoldsFor .addMult f ↔
@@ -369,10 +368,10 @@ theorem holdsFor_addMult_iff {f : α → β} :
 
 theorem holdsFor_antiAddMult_iff {f : α → β} :
     HoldsFor .antiAddMult f ↔
-      (IsAntiAdditive f ∧ f ⊤ = ⊥) ∧ IsAntiMultiplicative f ∧ f ⊥ = ⊤ := by
+      ((∀ p q, f (p ⊔ q) = f p ⊓ f q) ∧ f ⊤ = ⊥) ∧ (∀ p q, f (p ⊓ q) = f p ⊔ f q) ∧ f ⊥ = ⊤ := by
   simp only [HoldsFor, properties, Finset.mem_insert, Finset.mem_singleton,
     forall_eq_or_imp, forall_eq, Property.HoldsFor]
-  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.1.antitone, h⟩⟩
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨Monotone.of_map_sup (β := βᵒᵈ) h.1.1, h⟩⟩
 
 /-! #### Homomorphisms -/
 
@@ -405,7 +404,7 @@ theorem holdsFor_addMult_id : HoldsFor .addMult (id : α → α) :=
 theorem holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
     HoldsFor .antiAddMult (compl : γ → γ) :=
   holdsFor_antiAddMult_iff.2
-    ⟨⟨isAntiAdditive_compl, compl_top⟩, isAntiMultiplicative_compl, compl_bot⟩
+    ⟨⟨fun _ _ ↦ compl_sup, compl_top⟩, fun _ _ ↦ compl_inf, compl_bot⟩
 
 theorem holdsFor_antiAddMult_toDual : HoldsFor .antiAddMult (OrderDual.toDual : α → αᵒᵈ) :=
   holdsFor_antiAddMult_iff.2 ⟨⟨fun _ _ ↦ rfl, rfl⟩, fun _ _ ↦ rfl, rfl⟩
@@ -425,7 +424,7 @@ theorem Property.HoldsFor.compose {p q r : Property} {f : β → γ} {g : α →
     (h : p.compose q = some r) (hf : p.HoldsFor f) (hg : q.HoldsFor g) : r.HoldsFor (f ∘ g) := by
   cases p <;> cases q <;> simp only [Property.compose, reduceCtorEq,
     Option.some.injEq] at h <;> subst h <;>
-    simp only [Property.HoldsFor, IsAntiAdditive, IsAntiMultiplicative] at hf hg ⊢
+    simp only [Property.HoldsFor] at hf hg ⊢
   all_goals first
     | exact Monotone.comp hf hg
     | exact Antitone.comp hf hg

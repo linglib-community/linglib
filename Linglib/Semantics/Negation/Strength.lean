@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Order.BooleanAlgebra.Set
+public import Mathlib.Order.CompleteBooleanAlgebra
+public import Mathlib.Order.Concept
 public import Mathlib.Order.Hom.Lattice
 public import Mathlib.Order.Nat
 public import Mathlib.Order.PrimeIdeal
@@ -37,8 +39,9 @@ of form a lower set, and anti-additive when that lower set is also closed under 
 * `Negation.hasStrength_antiAdditive_iff_supClosed`: a truth-valued map is anti-additive exactly
   when the elements it holds of form a lower set closed under joins.
 * `Negation.hasStrength_antiAdditive_iff_isIdeal`,
-  `Negation.hasStrength_antimorphic_iff_exists_isPrime`: an anti-additive truth-valued map that holds of the least element is membership in an ideal,
-  and the antimorphic maps are membership in the prime ideals.
+  `Negation.hasStrength_antimorphic_iff_exists_isPrime`: an anti-additive truth-valued map that
+  holds of the least element is membership in an ideal, and the antimorphic maps are membership
+  in the prime ideals.
 
 ## Implementation notes
 
@@ -141,6 +144,33 @@ theorem HasStrength.of_le (h : HasStrength f t) (hst : s ≤ t) : HasStrength f 
   · exact absurd hst (by decide)
   · exact absurd hst (by decide)
   · exact h
+
+/-- Complement has every strength. -/
+theorem hasStrength_compl (s : Strength) : HasStrength (compl : α → α) s :=
+  HasStrength.of_le (t := antimorphic) ⟨fun _ _ ↦ compl_sup, fun _ ↦ rfl⟩ le_top
+
+/-- A meet-preserving map after an anti-additive map is anti-additive. -/
+theorem HasStrength.map_inf_comp {γ : Type*} [BooleanAlgebra γ] {g : β → γ}
+    (hf : HasStrength f antiAdditive) (hg : ∀ a b, g (a ⊓ b) = g a ⊓ g b) :
+    HasStrength (g ∘ f) antiAdditive :=
+  fun p q ↦ (congrArg g (hf p q)).trans (hg _ _)
+
+/-- Anti-additive maps are closed under pointwise infima, generalizing the binary case of
+[icard-2012] Lemma 1.12. -/
+theorem hasStrength_antiAdditive_iInf {ι : Sort*} {β : Type*} [CompleteBooleanAlgebra β]
+    {f : ι → α → β} (h : ∀ i, HasStrength (f i) antiAdditive) :
+    HasStrength (fun a ↦ ⨅ i, f i a) antiAdditive :=
+  fun p q ↦ (iInf_congr fun i ↦ h i p q).trans iInf_inf_eq
+
+theorem hasStrength_antiAdditive_iff_mem {γ δ : Type*} {f : Set γ → Set δ} :
+    HasStrength f antiAdditive ↔ ∀ p q x, x ∈ f (p ∪ q) ↔ x ∈ f p ∧ x ∈ f q := by
+  simp only [hasStrength_antiAdditive, Set.ext_iff, Set.mem_inter_iff]
+
+/-- The polar of a relation is anti-additive: what is related to everything in a union is
+related to everything in each part. -/
+theorem hasStrength_antiAdditive_upperPolar {γ δ : Type*} (r : γ → δ → Prop) :
+    HasStrength (upperPolar r) antiAdditive :=
+  upperPolar_union r
 
 /-- An antimorphic map sends `⊤` to `⊥`. -/
 theorem HasStrength.map_top (h : HasStrength f antimorphic) : f ⊤ = ⊥ := by

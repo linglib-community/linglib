@@ -6,7 +6,7 @@ public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Order.Monotone.Defs
-public import Linglib.Core.Order.AntiAdditive
+public import Linglib.Semantics.Negation.Strength
 
 /-!
 # Quantifiers and determiner denotations
@@ -20,7 +20,7 @@ algebra of the Pi type, whose `ᶜ`, `⊓` and `⊔` are outer negation, conjunc
 
 The properties are stated in the lattice of sets: conservativity `d A B ↔ d A (A ∩ B)`, the
 monotonicities as `Monotone` and `Antitone` of the sections and the anti-additivities as
-`IsAntiAdditive` of the sections, Peters and Westerståhl's left monotonicities, van Benthem's
+anti-additivity of the sections, Peters and Westerståhl's left monotonicities, van Benthem's
 relational properties. Invariance under the permutations of the universe is in
 `Quantifier/Invariance.lean`, and quantifiers with a value on every finite universe are in
 `Quantifier/Global.lean`.
@@ -71,9 +71,9 @@ abbrev Det (α : Type*) := Set α → Quantifier α
 
 variable {α : Type*}
 
-theorem isAntiAdditive_iff {q : Quantifier α} :
-    IsAntiAdditive q ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
-  simp only [IsAntiAdditive, inf_Prop_eq, eq_iff_iff]
+theorem hasStrength_antiAdditive_iff {q : Quantifier α} :
+    Negation.HasStrength q .antiAdditive ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
+  simp only [Negation.hasStrength_antiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
 
 namespace Det
 
@@ -162,12 +162,12 @@ structure CoSmooth (d : Det α) : Prop where
 
 /-- A determiner denotation is left anti-additive when every section `d · B` is anti-additive,
 `d (A ∪ A') B ↔ d A B ∧ d A' B` ([peters-westerstahl-2006] §5.9). -/
-def LeftAntiAdditive (d : Det α) : Prop := ∀ B, IsAntiAdditive (d · B)
+def LeftAntiAdditive (d : Det α) : Prop := ∀ B, Negation.HasStrength (d · B) .antiAdditive
 
 /-- A determiner denotation is right anti-additive when every section `d A` is anti-additive,
 `d A (B ∪ B') ↔ d A B ∧ d A B'`, so that its scope is an anti-additive context in the sense of
 [zwarts-1998]. -/
-def RightAntiAdditive (d : Det α) : Prop := ∀ A, IsAntiAdditive (d A)
+def RightAntiAdditive (d : Det α) : Prop := ∀ A, Negation.HasStrength (d A) .antiAdditive
 
 /-! ### Relational properties
 
