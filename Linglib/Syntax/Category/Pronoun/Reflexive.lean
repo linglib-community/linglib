@@ -10,7 +10,7 @@ public import Linglib.Syntax.Category.Pronoun.Basic
 /-!
 # Reflexive pronouns
 
-A reflexive pronoun is a pronoun of the reflexive kind, whose token is marked reflexive. Some
+A reflexive pronoun is a pronoun of the reflexive kind. Some
 reflexives, as Japanese *zibun* and Icelandic *sig*, also take an
 antecedent outside that domain; what licenses the distant antecedent is a matter of analysis and
 is not recorded on the entry.
@@ -18,7 +18,6 @@ is not recorded on the entry.
 ## Main definitions
 
 * `ReflexivePronoun`: a pronoun of the reflexive kind.
-* `ReflexivePronoun.toWord`: its token, marked reflexive.
 
 ## References
 
@@ -32,11 +31,3 @@ structure ReflexivePronoun extends Pronoun
 
 instance : DecidableEq ReflexivePronoun :=
   fun _ _ ↦ decidable_of_iff _ ReflexivePronoun.ext_iff.symm
-
-namespace ReflexivePronoun
-
-/-- A reflexive's token is of UD pronoun type `Prs` and marked reflexive. -/
-def toWord (p : ReflexivePronoun) : Morphology.Word := p.toPronoun.toWord (some .Prs) (some ())
-
-
-end ReflexivePronoun

@@ -44,8 +44,4 @@ instance : DecidableEq ReciprocalPronoun :=
 def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
   { morphs := [.free p.form], script := p.script, strategy := p.strategy }
 
-/-- A reciprocal's word is of UD pronoun type `Rcp`. -/
-def ReciprocalPronoun.toWord (p : ReciprocalPronoun) : Morphology.Word :=
-  p.toPronoun.toWord (some .Rcp)
-
 

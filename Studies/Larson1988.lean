@@ -11,6 +11,7 @@ public import Linglib.Syntax.Tree.Cat
 public import Linglib.Languages.English.Nouns
 public import Linglib.Languages.English.Determiners
 public import Linglib.Languages.English.Verbs.Levin
+public import Linglib.Languages.English.Word
 public import Linglib.Syntax.Category.Adposition.Word
 public import Linglib.Syntax.Category.Determiner.Word
 public import Linglib.Syntax.Category.Noun.Word
@@ -374,7 +375,7 @@ abbrev john := word .N Nouns.john.toWord
 abbrev mary := word .N Nouns.mary.toWord
 abbrev sent := word .V (Verbs.send.toWord .past)
 abbrev aLetter : Tree Cat Word :=
-  .node .N [word .Det Determiners.a.toWord, word .N (.mk' "letter" .NOUN)]
+  .node .N [word .Det Determiners.a.toWord, word .N Nouns.letter.toWordSg]
 abbrev to_ := word .P Adpositions.to_.toWord
 
 theorem yield_oblique :

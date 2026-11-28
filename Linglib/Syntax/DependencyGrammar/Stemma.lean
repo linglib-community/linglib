@@ -7,7 +7,6 @@ module
 
 public import Linglib.Syntax.DependencyGrammar.Basic
 public import Linglib.Syntax.WordOrder.Projectivity
-public import Linglib.Morphology.Word.Basic
 
 /-!
 # Stemmas
@@ -23,7 +22,7 @@ position of the stemma's head (`Stemma.isArborescence_toGraph`), and it is proje
 
 ## Main definitions
 
-* `DependencyGrammar.Stemma`: the stemmas with relations in `L`.
+* `DependencyGrammar.Stemma`: the stemmas with relations in `L` and words in `W`.
 * `Stemma.yield`: the sentence a stemma spells out.
 * `Stemma.toGraph`, `Stemma.root`: the dependency graph on the positions of the sentence, and
   the position of the stemma's head.
@@ -46,28 +45,26 @@ The converse: every projective tree is the graph of a stemma.
 
 namespace DependencyGrammar
 
-open Morphology (Word)
-
 /-- A stemma is a head word with its dependents to its left and to its right, in order, each
-attached by a relation in `L` and heading a stemma of its own. -/
-inductive Stemma (L : Type*) where
-  | node (head : Word) (left right : List (L × Stemma L))
+attached by a relation in `L` and heading a stemma of its own, the words being of type `W`. -/
+inductive Stemma (L W : Type*) where
+  | node (head : W) (left right : List (L × Stemma L W))
 
 namespace Stemma
 
-variable {L : Type*}
+variable {L W : Type*}
 
 /-- The stemma of a word with no dependents. -/
-abbrev leaf (w : Word) : Stemma L := node w [] []
+abbrev leaf (w : W) : Stemma L W := node w [] []
 
 mutual
 
 /-- The sentence a stemma spells out: its left dependents, its head, its right dependents. -/
-def yield : Stemma L → List Word
+def yield : Stemma L W → List W
   | node w l r => yieldDeps l ++ w :: yieldDeps r
 
 /-- The words a list of dependents spells out. -/
-def yieldDeps : List (L × Stemma L) → List Word
+def yieldDeps : List (L × Stemma L W) → List W
   | [] => []
   | (_, d) :: ds => yield d ++ yieldDeps ds
 
@@ -76,32 +73,32 @@ end
 mutual
 
 /-- The number of words of a stemma. -/
-def size : Stemma L → ℕ
+def size : Stemma L W → ℕ
   | node _ l r => sizeDeps l + 1 + sizeDeps r
 
 /-- The number of words of a list of dependents. -/
-def sizeDeps : List (L × Stemma L) → ℕ
+def sizeDeps : List (L × Stemma L W) → ℕ
   | [] => 0
   | (_, d) :: ds => size d + sizeDeps ds
 
 end
 
 /-- The position of a stemma's head in its sentence. -/
-def headIndex : Stemma L → ℕ
+def headIndex : Stemma L W → ℕ
   | node _ l _ => sizeDeps l
 
 mutual
 
 /-- The head and relation of each word of a stemma laid out from position `o`, the head word's
 being `up`. -/
-def heads (o : ℕ) (up : Option (ℕ × L)) : Stemma L → List (Option (ℕ × L))
+def heads (o : ℕ) (up : Option (ℕ × L)) : Stemma L W → List (Option (ℕ × L))
   | node _ l r =>
     let h := o + sizeDeps l
     headsDeps h o l ++ up :: headsDeps h (h + 1) r
 
 /-- The head and relation of each word of a list of dependents of the head at `h`, laid out from
 position `o`. -/
-def headsDeps (h o : ℕ) : List (L × Stemma L) → List (Option (ℕ × L))
+def headsDeps (h o : ℕ) : List (L × Stemma L W) → List (Option (ℕ × L))
   | [] => []
   | (rel, d) :: ds => heads o (some (h, rel)) d ++ headsDeps h (o + size d) ds
 
@@ -109,44 +106,44 @@ end
 
 mutual
 
-theorem length_yield : ∀ s : Stemma L, s.yield.length = s.size
+theorem length_yield : ∀ s : Stemma L W, s.yield.length = s.size
   | node _ l r => by simp [yield, size, length_yieldDeps l, length_yieldDeps r]; omega
 
-theorem length_yieldDeps : ∀ ds : List (L × Stemma L), (yieldDeps ds).length = sizeDeps ds
+theorem length_yieldDeps : ∀ ds : List (L × Stemma L W), (yieldDeps ds).length = sizeDeps ds
   | [] => rfl
   | (_, d) :: ds => by simp [yieldDeps, sizeDeps, length_yield d, length_yieldDeps ds]
 
 end
 
-theorem headIndex_lt_size (s : Stemma L) : s.headIndex < s.size := by
+theorem headIndex_lt_size (s : Stemma L W) : s.headIndex < s.size := by
   cases s; simp only [headIndex, size]; omega
 
 /-- A stemma has at least one word. -/
-instance (s : Stemma L) : NeZero s.size := ⟨by cases s; simp [size]⟩
+instance (s : Stemma L W) : NeZero s.size := ⟨by cases s; simp [size]⟩
 
 /-- The word at each position of a stemma's sentence. -/
-def word (s : Stemma L) (v : Fin s.size) : Word :=
+def word (s : Stemma L W) (v : Fin s.size) : W :=
   s.yield[v.val]'(by rw [length_yield]; exact v.isLt)
 
 /-- The position of a stemma's head in its sentence. -/
-def root (s : Stemma L) : Fin s.size := ⟨s.headIndex, s.headIndex_lt_size⟩
+def root (s : Stemma L W) : Fin s.size := ⟨s.headIndex, s.headIndex_lt_size⟩
 
 /-- The dependency graph on the positions of a stemma's sentence: an arc from each word's head to
 the word, labelled with its relation. -/
-def toGraph (s : Stemma L) : DependencyGraph L (Fin s.size) :=
+def toGraph (s : Stemma L W) : DependencyGraph L (Fin s.size) :=
   ⟨fun v w ↦ ((s.heads 0 none)[w.val]?.bind id).bind fun p ↦
     if p.1 = v.val then some p.2 else none⟩
 
 mutual
 
-theorem length_heads : ∀ (s : Stemma L) (o : ℕ) (up : Option (ℕ × L)),
+theorem length_heads : ∀ (s : Stemma L W) (o : ℕ) (up : Option (ℕ × L)),
     (s.heads o up).length = s.size
   | node _ l r, o, up => by
     simp only [heads, size, List.length_append, List.length_cons, length_headsDeps l _ o,
       length_headsDeps r _ (o + sizeDeps l + 1)]
     omega
 
-theorem length_headsDeps : ∀ (ds : List (L × Stemma L)) (h o : ℕ),
+theorem length_headsDeps : ∀ (ds : List (L × Stemma L W)) (h o : ℕ),
     (headsDeps h o ds).length = sizeDeps ds
   | [], _, _ => rfl
   | (rel, d) :: ds, h, o => by
@@ -155,13 +152,13 @@ theorem length_headsDeps : ∀ (ds : List (L × Stemma L)) (h o : ℕ),
 
 end
 
-theorem getElem?_heads_headIndex (s : Stemma L) (o : ℕ) (up : Option (ℕ × L)) :
+theorem getElem?_heads_headIndex (s : Stemma L W) (o : ℕ) (up : Option (ℕ × L)) :
     (s.heads o up)[s.headIndex]? = some up := by
   cases s with
   | node w l r =>
     simp [heads, headIndex, length_headsDeps]
 
-theorem toGraph_adj {s : Stemma L} {v w : Fin s.size} :
+theorem toGraph_adj {s : Stemma L W} {v w : Fin s.size} :
     s.toGraph.unlabelled.Adj v w ↔ ∃ r, (s.heads 0 none)[w.val]? = some (some (v.val, r)) := by
   simp only [DependencyGraph.unlabelled_adj, toGraph]
   rcases h : (s.heads 0 none)[w.val]? with _ | _ | ⟨u, r⟩ <;> simp
@@ -202,7 +199,7 @@ mutual
 
 /-- Laid out from `o`, a stemma's head dominates its block, and every arc into the block other
 than the head's stays inside the block, its head dominating every position it spans. -/
-private theorem layout : ∀ (s : Stemma L) (o : ℕ) (up : Option (ℕ × L)),
+private theorem layout : ∀ (s : Stemma L W) (o : ℕ) (up : Option (ℕ × L)),
     Occurs H o (s.heads o up) →
       (∀ p, o ≤ p → p < o + s.size → ReflTransGen (HeadIn H) (o + s.headIndex) p) ∧
       ∀ v w, o ≤ w → w < o + s.size → w ≠ o + s.headIndex → HeadIn H v w →
@@ -235,7 +232,7 @@ private theorem layout : ∀ (s : Stemma L) (o : ℕ) (up : Option (ℕ × L)),
 /-- Laid out from `o` under the head at `h`, a list of dependents is dominated by `h`, and every
 arc into its block comes from `h` or stays inside the block, its head dominating every position
 it spans. -/
-private theorem layoutDeps : ∀ (ds : List (L × Stemma L)) (h o : ℕ),
+private theorem layoutDeps : ∀ (ds : List (L × Stemma L W)) (h o : ℕ),
     Occurs H o (headsDeps h o ds) →
       (∀ p, o ≤ p → p < o + sizeDeps ds → ReflTransGen (HeadIn H) h p) ∧
       ∀ v w, o ≤ w → w < o + sizeDeps ds → HeadIn H v w →
@@ -271,7 +268,7 @@ private theorem layoutDeps : ∀ (ds : List (L × Stemma L)) (h o : ℕ),
 
 end
 
-private theorem reachable_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s.size)
+private theorem reachable_of_reflTransGen {s : Stemma L W} {a b : ℕ} (ha : a < s.size)
     (h : ReflTransGen (HeadIn (s.heads 0 none)) a b) :
     ∃ hb : b < s.size, s.toGraph.unlabelled.Reachable ⟨a, ha⟩ ⟨b, hb⟩ := by
   induction h with
@@ -285,14 +282,14 @@ private theorem reachable_of_reflTransGen {s : Stemma L} {a b : ℕ} (ha : a < s
 
 private theorem occurs_self {α : Type*} (H : List α) : Occurs H 0 H := fun _ _ ↦ by simp
 
-private theorem not_adj_root {s : Stemma L} {v : Fin s.size} :
+private theorem not_adj_root {s : Stemma L W} {v : Fin s.size} :
     ¬ s.toGraph.unlabelled.Adj v s.root :=
   fun hv ↦ by
     obtain ⟨r, hr⟩ := toGraph_adj.1 hv
     simp [root, getElem?_heads_headIndex] at hr
 
 /-- The graph of a stemma is an arborescence rooted at the stemma's head. -/
-theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.unlabelled.IsArborescence s.root := by
+theorem isArborescence_toGraph (s : Stemma L W) : s.toGraph.unlabelled.IsArborescence s.root := by
   refine Digraph.isArborescence_iff_leftUnique_adj.2
     ⟨fun u v w hu hv ↦ ?_, fun _ ↦ not_adj_root, fun v ↦ ?_⟩
   · obtain ⟨r, hr⟩ := toGraph_adj.1 hu
@@ -305,7 +302,7 @@ theorem isArborescence_toGraph (s : Stemma L) : s.toGraph.unlabelled.IsArboresce
     exact (reachable_of_reflTransGen s.headIndex_lt_size this).2
 
 /-- The graph of a stemma is projective. -/
-theorem isProjective_toGraph (s : Stemma L) : s.toGraph.unlabelled.IsProjective := by
+theorem isProjective_toGraph (s : Stemma L W) : s.toGraph.unlabelled.IsProjective := by
   refine (Digraph.isProjective_iff_forall_adj _).2 fun h d hhd p hp ↦ ?_
   obtain ⟨r, hr⟩ := toGraph_adj.1 hhd
   have hne : d.val ≠ 0 + s.headIndex := fun he ↦ not_adj_root (s := s) (v := h) <| by

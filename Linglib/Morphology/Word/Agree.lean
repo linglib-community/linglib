@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Feature.Bundle
 public import Linglib.Morphology.Word.Basic
+public import Linglib.Morphology.Word.Bundle
 
 /-!
 # φ-agreement between word tokens

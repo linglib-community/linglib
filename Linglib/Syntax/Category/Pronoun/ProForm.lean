@@ -86,13 +86,3 @@ structure ProForm extends Pronoun where
   cat : UD.UPOS := ontology.upos
 
 instance : DecidableEq ProForm := fun _ _ ↦ decidable_of_iff _ ProForm.ext_iff.symm
-
-namespace ProForm
-
-variable (p : ProForm)
-
-/-- The token of a proform has its word class and the pronoun type `t` of its function. -/
-def toWord (t : UD.PronType) : Morphology.Word := p.toPronoun.toWord (some t) (cat := p.cat)
-
-
-end ProForm
