@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Agreement.Hierarchy

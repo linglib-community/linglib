@@ -32,6 +32,4 @@ def la : Article :=
 /-- The determiners are the single syncretic definite *la*. -/
 def inventory : Determiner.Inventory := [.article la]
 
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
-
 end HaitianCreole.Determiners

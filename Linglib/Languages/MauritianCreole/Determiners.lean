@@ -29,6 +29,4 @@ def la : Article :=
 /-- The determiners are the single strong definite *la*. -/
 def inventory : Determiner.Inventory := [.article la]
 
-theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
-
 end MauritianCreole.Determiners

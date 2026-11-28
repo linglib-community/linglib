@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Syntax.Category.Determiner.Strength
 public import Linglib.Languages.German.Determiners
 public import Linglib.Languages.Fering.Determiners
 public import Linglib.Languages.Akan.Determiners
@@ -51,9 +51,8 @@ theorem german_fering_two_articles :
     (German.Determiners.inventory.strengths = Finset.univ ∧
       ¬ German.Determiners.inventory.IsSyncretic) ∧
     (Fering.Determiners.inventory.strengths = Finset.univ ∧
-      ¬ Fering.Determiners.inventory.IsSyncretic) :=
-  ⟨⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
-    ⟨Fering.Determiners.strengths_inventory, Fering.Determiners.not_isSyncretic_inventory⟩⟩
+      ¬ Fering.Determiners.inventory.IsSyncretic) := by
+  decide
 
 /-! ### Bridging (§3.2, §4.1, §4.3) -/
 
@@ -73,16 +72,16 @@ theorem mem_uses_iff_strength_mem_strengths :
 
 theorem exclusively_anaphoric :
     Akan.Determiners.inventory.strengths = {.familiarity} ∧
-    MauritianCreole.Determiners.inventory.strengths = {.familiarity} :=
-  ⟨Akan.Determiners.strengths_inventory, MauritianCreole.Determiners.strengths_inventory⟩
+    MauritianCreole.Determiners.inventory.strengths = {.familiarity} := by
+  decide
 
 /-! ### Languages with two articles (§4.2) -/
 
 -- §4.2.2
 theorem hausa_two_articles :
     Hausa.Determiners.inventory.strengths = Finset.univ ∧
-      ¬ Hausa.Determiners.inventory.IsSyncretic :=
-  ⟨Hausa.Determiners.strengths_inventory, Hausa.Determiners.not_isSyncretic_inventory⟩
+      ¬ Hausa.Determiners.inventory.IsSyncretic := by
+  decide
 
 /-- The tentative construal of Lakhota in §4.2.1 takes *kiŋ* as weak only, for globally and
 situationally unique referents ((30), (31)) and part-whole bridging (34), and *k'uŋ* as the
@@ -100,13 +99,13 @@ theorem construal_two_articles :
 
 /-- Granting [ingham-2003]'s anaphoric *kiŋ*, as footnote 16 does, *kiŋ* marks both strengths. -/
 theorem anaphoric_kin_syncretic :
-    ¬ lakhotaWeakStrongConstrual.IsSyncretic ∧ Lakhota.Determiners.inventory.IsSyncretic :=
-  ⟨construal_two_articles.2, Lakhota.Determiners.isSyncretic_inventory⟩
+    ¬ lakhotaWeakStrongConstrual.IsSyncretic ∧ Lakhota.Determiners.inventory.IsSyncretic := by
+  decide
 
 /-! ### Haitian Creole: a different type of contrast (§4.3) -/
 
 -- (39), (42), §4.1, §4.2
-theorem haitian_one_article : HaitianCreole.Determiners.inventory.IsSyncretic :=
-  HaitianCreole.Determiners.isSyncretic_inventory
+theorem haitian_one_article : HaitianCreole.Determiners.inventory.IsSyncretic := by
+  decide
 
 end Schwarz2013

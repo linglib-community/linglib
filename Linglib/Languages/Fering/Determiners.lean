@@ -34,8 +34,4 @@ def dForm : Article :=
 /-- The Fering determiners are the A-form and the D-form of the definite article. -/
 def inventory : Determiner.Inventory := [.article aForm, .article dForm]
 
-theorem strengths_inventory : inventory.strengths = Finset.univ := by decide
-
-theorem not_isSyncretic_inventory : ¬ inventory.IsSyncretic := by decide
-
 end Fering.Determiners

@@ -21,8 +21,7 @@ a vowel sound, and the weak form of *the* varies in the same environment.
 * `allQuantifiers`: the quantificational determiners, with the six-word scale `scale` of van
   Tiel, Franke and Sauerland inside it.
 * `indefinite`, `theWeakForm`: the forms of the articles before each beginning of a word.
-* `inventory`: the English determiner inventory, whose *the* marks both strengths
-  (`isSyncretic_inventory`).
+* `inventory`: the English determiner inventory.
 
 ## References
 
@@ -183,8 +182,5 @@ def allPossessives : List PossessiveDeterminer := [my, your]
 def inventory : Determiner.Inventory :=
   allArticles.map .article ++ allDemonstratives.map .demonstrative ++
     allQuantifiers.map .quantifier ++ allPossessives.map .possessive
-
-/-- A single article marks both strengths. -/
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end English.Determiners

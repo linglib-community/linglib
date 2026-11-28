@@ -32,7 +32,6 @@ readings the literature makes available for it and the forms it takes in agreeme
 * `Italian.Determiners.QuantityWord.form_eq_agree`: a word's record form is its masculine form
   before a consonant.
 * `Italian.Determiners.QuantityWord.forall_agree_eq_iff`: *ogni* and *qualche* are invariant.
-* `Italian.Determiners.isSyncretic_inventory`: the definite article marks both strengths.
 
 ## Implementation notes
 
@@ -228,7 +227,5 @@ def inventory : Determiner.Inventory :=
     .demonstrative
       { form := quello (.sg, .masculine) .consonant, deixis := Person.first.participantSetsᶜ } ] ++
     quantityWords.map (.quantifier ·.toQuantificationalDeterminer)
-
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Italian.Determiners

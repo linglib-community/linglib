@@ -4,7 +4,7 @@ public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Syntax.Category.Determiner.Strength
 public import Linglib.Semantics.Reference.Definite
 
 /-!

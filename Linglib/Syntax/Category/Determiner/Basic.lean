@@ -6,12 +6,10 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Finset.Image
-public import Mathlib.Data.Finset.Union
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Discourse.SpeechAct.Role
 public import Linglib.Syntax.Feature.Number.Basic
-public import Linglib.Semantics.Quantifier.Counting
-public import Linglib.Semantics.Quantifier.Global
+public import Linglib.Semantics.Quantifier.Symbol
 
 /-!
 # Determiners
@@ -20,35 +18,27 @@ This file defines the determiner as a lexical record and the determiner inventor
 A determiner is an article, a demonstrative, a quantificational determiner or a possessive, and
 an inventory is a list of them.
 
-An article records the uses of a definite description it expones, among the anaphoric use, the
-two situational uses and the two bridging uses that Hawkins distinguishes. Schwarz sorts these
-uses under two strengths: the weak article of German and Fering, which presupposes uniqueness,
-has the situational uses and part-whole bridging, and the strong article, which presupposes
-familiarity, has the anaphoric use and relational bridging. The strengths an article marks are
-those its uses call for, and an article that marks both, as English *the* does, is syncretic.
-Whether every use an article has follows from its strengths in this way is an empirical question
-about the article, which a study states of the articles it treats.
-
-A demonstrative marks no strength. Whether a language's demonstrative is obligatory in a definite
-use is not lexical: it follows from a theory of competition between forms, as in Jenks's account
-of Mandarin.
+The records hold what a descriptive grammar states of a form. An article records the degrees of
+definiteness it marks, the number it selects and the uses of a definite description it expones,
+among the anaphoric use, the two situational uses and the two bridging uses that Hawkins
+distinguishes. A quantificational determiner records the number it selects, whether it takes mass
+nouns and the determiner symbols that name its readings.
 
 ## Main definitions
 
 * `Determiner`: the base record, a surface form.
 * `Article`, `DemonstrativeDeterminer`, `QuantificationalDeterminer`, `PossessiveDeterminer`: the
   four kinds of determiner.
-* `Article.strengths`: the strengths an article marks.
-* `Determiner.Entry`: a determiner of one of the four kinds, with `Determiner.Entry.kind`,
-  `Determiner.Entry.strengths` and `Determiner.Entry.Selects`.
-* `Determiner.Inventory`: the determiners of a language, with `Determiner.Inventory.strengths`
-  and `Determiner.Inventory.IsSyncretic`.
+* `Determiner.Entry`: a determiner of one of the four kinds, with `Determiner.Entry.kind` and
+  `Determiner.Entry.Selects`.
+* `Determiner.Inventory`: the determiners of a language.
 
 ## Implementation notes
 
-The records carry no denotation. Articles, demonstratives and possessives denote definite
-descriptions, and a quantificational determiner records its readings as determiner symbols, which
-denote generalized quantifiers; both are defined in files that import this one.
+The records carry no denotation and no classification by a theory of definiteness. Articles,
+demonstratives and possessives denote definite descriptions, a determiner symbol denotes a
+generalized quantifier, and the strengths of Schwarz are read off an article's uses; each is
+defined in a file that imports this one.
 
 An inventory is a type synonym of `List Determiner.Entry` and not an abbreviation, so that its
 operations resolve by dot notation; its membership is the list's.
@@ -56,16 +46,13 @@ operations resolve by dot notation; its membership is the list's.
 ## References
 
 * [hawkins-1978]
-* [schwarz-2009]
-* [schwarz-2013]
-* [jenks-2018]
 -/
 
 @[expose] public section
 
 
-/-- A determiner is a D head with a surface form, a representative morpheme or a construction
-label. The specializations extend it. -/
+/-- A determiner has a surface form, a representative morpheme or a construction label. The
+specializations extend it. -/
 structure Determiner where
   /-- The surface form. -/
   form : String
@@ -127,11 +114,6 @@ structure QuantificationalDeterminer extends Determiner where
 structure PossessiveDeterminer extends Determiner
   deriving DecidableEq, Repr
 
-/-- The strengths an article marks are those its uses call for. A syncretic article such as
-English *the* marks both, and a weak or strong article marks one. -/
-def Article.strengths (a : Article) : Finset Definite.Strength :=
-  a.uses.image Definite.Use.strength
-
 namespace Determiner
 
 /-! ### Entries -/
@@ -188,26 +170,6 @@ def Selects (num : Number) : Prop := ∀ n ∈ e.numberRestriction, n = num
 instance (num : Number) : Decidable (e.Selects num) :=
   inferInstanceAs (Decidable (∀ n ∈ e.numberRestriction, n = num))
 
-/-- The strengths an entry marks are an article's; a demonstrative, quantifier or possessive
-marks none by its lexicon. -/
-def strengths : Finset Definite.Strength := e.uses.image Definite.Use.strength
-
-@[simp] theorem strengths_article (a : Article) : (article a).strengths = a.strengths := rfl
-
-@[simp] theorem strengths_demonstrative (d : DemonstrativeDeterminer) :
-    (demonstrative d).strengths = ∅ := rfl
-
-@[simp] theorem strengths_quantifier (q : QuantificationalDeterminer) :
-    (quantifier q).strengths = ∅ := rfl
-
-@[simp] theorem strengths_possessive (p : PossessiveDeterminer) :
-    (possessive p).strengths = ∅ := rfl
-
-/-- An entry is syncretic when it marks both strengths, as English *the* does. -/
-def IsSyncretic : Prop := e.strengths = Finset.univ
-
-instance : Decidable e.IsSyncretic := inferInstanceAs (Decidable (_ = _))
-
 end Entry
 
 /-! ### Inventories -/
@@ -223,21 +185,6 @@ instance (ds : Inventory) (p : Entry → Prop) [DecidablePred p] : Decidable (�
   List.decidableBEx p ds
 instance (ds : Inventory) (p : Entry → Prop) [DecidablePred p] : Decidable (∀ e ∈ ds, p e) :=
   List.decidableBAll p ds
-
-variable (ds : Inventory)
-
-/-- The strengths an inventory marks are those its entries mark. -/
-def strengths : Finset Definite.Strength := (ds.map Entry.strengths).toFinset.biUnion id
-
-variable {ds} in
-theorem mem_strengths {p : Definite.Strength} :
-    p ∈ ds.strengths ↔ ∃ e ∈ ds, p ∈ e.strengths := by
-  simp [strengths]
-
-/-- An inventory is syncretic when a single entry marks both strengths. -/
-def IsSyncretic : Prop := ∃ e ∈ ds, e.IsSyncretic
-
-instance : Decidable ds.IsSyncretic := inferInstanceAs (Decidable (∃ e ∈ ds, e.IsSyncretic))
 
 end Inventory
 

@@ -17,7 +17,7 @@ A definite article has one of two strengths, uniqueness and familiarity, after S
 uniqueness below familiarity since the strong article narrows the weak one. The strength a use of a
 definite calls for, after Hawkins and Schwarz, and the strength of a bridging relation are recorded
 as data here; which strengths a language's determiner inventory marks is derived in
-`Syntax/Category/Determiner/Basic.lean`, and the descriptions themselves denote in
+`Syntax/Category/Determiner/Strength.lean`, and the descriptions themselves denote in
 `Semantics/Reference/Description.lean`.
 
 ## Main definitions

@@ -25,8 +25,7 @@ two genders of `Dutch.Gender`.
 * `Dutch.Determiners.injective_singular` shows that each agreeing determiner distinguishes the
   two genders, and `Dutch.Determiners.faithful` concludes that the two genders are faithful to the
   evidence.
-* `Dutch.Determiners.inventory` is the inventory, whose citation forms are the plural forms,
-  and `Dutch.Determiners.isSyncretic_inventory` says that its definite article marks both strengths.
+* `Dutch.Determiners.inventory` is the inventory, whose citation forms are the plural forms.
 
 ## Implementation notes
 
@@ -107,8 +106,5 @@ def die : DemonstrativeDeterminer :=
 /-- The inventory lists the two articles, *geen* and the two demonstratives. -/
 def inventory : Determiner.Inventory :=
   [.article de, .article een, .quantifier geen, .demonstrative deze, .demonstrative die]
-
-/-- A single article marks both strengths. -/
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Dutch.Determiners

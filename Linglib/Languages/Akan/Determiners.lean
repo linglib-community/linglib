@@ -15,8 +15,7 @@ here.
 ## Main definitions
 
 * `Akan.Determiners.no`, `Akan.Determiners.bi`: the definite and the indefinite.
-* `Akan.Determiners.inventory`: the determiners, which mark familiarity only
-  (`strengths_inventory`).
+* `Akan.Determiners.inventory`: the determiners.
 
 ## References
 
@@ -44,8 +43,5 @@ def bi : Article :=
 
 /-- The determiners. -/
 def inventory : Determiner.Inventory := [.article no, .article bi]
-
-/-- Only familiarity is marked. -/
-theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Akan.Determiners

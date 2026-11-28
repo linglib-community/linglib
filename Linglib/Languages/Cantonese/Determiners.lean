@@ -46,6 +46,4 @@ the demonstratives. -/
 def inventory : Determiner.Inventory :=
   [.article clfN, .article jatClfN, .demonstrative nei, .demonstrative go]
 
-theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
-
 end Cantonese.Determiners
