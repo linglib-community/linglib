@@ -5,13 +5,12 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Feature.Formality
 public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Personal pronouns
 
-A personal pronoun is a pronoun with its formality, the labels it agrees as and the cells of the
+A personal pronoun is a pronoun with the labels it agrees as and the cells of the
 pronoun paradigm it is used for. Its own person, number and gender name the cell it fills, where
 a grammar's table lists it, and by default it agrees as that and is used for that one cell. A
 polite pronoun departs from the default: Italian *Lei* fills the second person singular and
@@ -34,7 +33,7 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 
 ## Main definitions
 
-* `PersonalPronoun`: a pronoun with its formality, the labels it agrees as and the cells it is
+* `PersonalPronoun`: a pronoun with the labels it agrees as and the cells it is
   used for.
 * `PersonalPronoun.forms I c`: the forms of the pronouns of `I` used for a cell at least as
   specific as `c`.
@@ -50,12 +49,10 @@ that function, its syncretisms the kernel, and paradigms are compared across lan
 
 @[expose] public section
 
-/-- A personal pronoun is a `Pronoun` with its formality, the labels it agrees as and the cells of
+/-- A personal pronoun is a `Pronoun` with the labels it agrees as and the cells of
 the pronoun paradigm it is used for. -/
 @[ext]
 structure PersonalPronoun extends Pronoun where
-  /-- The formality, where the source states one. Japanese *ore* is an informal first person. -/
-  formality : Option Formality := none
   /-- The person, number and gender the form has formally, those a verb, a clitic or a
   reflexive takes from it, by default its own. Italian *Lei*, used for the second person
   singular, is formally a third person feminine singular, and K'iche' *alaq*, used for the

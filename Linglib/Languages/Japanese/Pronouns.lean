@@ -32,10 +32,8 @@ it is singular, with *watashi-tachi* and *anata-tachi* among their examples, and
 *kimi-tachi*. Tsujimura notes that *-tachi* is not a plural marker like the English ending: it
 is confined to humans, and a noun with it names a group that includes the noun's referent,
 *Yamada-sensei-tachi* being Professor Yamada and those with him; Iwasaki glosses *boku-tachi*
-likewise as the speaker and his friends. The levels follow the list Tsujimura takes from
-Ide, whose levels of formality are formal, plain and deprecatory: plain *boku* is entered as
-neutral and deprecatory *ore* as informal, and *watashi*, formal in men's speech and plain in
-women's, carries none.
+likewise as the speaker and his friends. The first-person forms are described by the list Tsujimura takes
+from Ide, whose levels of formality are formal, plain and deprecatory; no entry records a level.
 
 ## References
 
@@ -69,13 +67,11 @@ def watashi : PersonalPronoun :=
 
 /-- 僕 *boku* 'I', plain in men's speech. -/
 def boku : PersonalPronoun :=
-  { form := "boku", script := some "僕", person := some .first, number := some .singular,
-    formality := some .neutral }
+  { form := "boku", script := some "僕", person := some .first, number := some .singular }
 
 /-- 俺 *ore* 'I', deprecatory in men's speech. -/
 def ore : PersonalPronoun :=
-  { form := "ore", script := some "俺", person := some .first, number := some .singular,
-    formality := some .informal }
+  { form := "ore", script := some "俺", person := some .first, number := some .singular }
 
 /-- 私たち *watashitachi* 'we'. -/
 def watashitachi : PersonalPronoun :=
