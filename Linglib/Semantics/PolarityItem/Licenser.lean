@@ -40,8 +40,8 @@ does not admit the negative ones.
   and upward entailment modulo presupposition.
 * `PolarityItem.Licenser.Carries`: a strength of negation that a licenser carries. Von Fintel
   requires the plain meaning to be downward entailing modulo presupposition, and Bylinina and
-  Nouwen add that it must not be upward entailing as well. A strength above weak must in addition
-  hold outright of the exhaustified meaning.
+  Nouwen add that it must not be upward entailing as well. A strength above the monotone decreasing
+  one must in addition hold outright of the exhaustified meaning.
 * `PolarityItem.Licenser.LicensesByStrengthening`, `PolarityItem.Licenser.LicensesFreeChoice`:
   the two routes of licensing. A downward-entailing licenser licenses by strengthening, after
   Kadmon and Landman, and a modal licenser licenses by free choice, after Chierchia.
@@ -56,15 +56,15 @@ does not admit the negative ones.
 ## Implementation notes
 
 * Licensing is evaluated on the meaning modulo presupposition and with its direct implicature,
-  following von Fintel and Gajewski. Anti-licensing is evaluated on the plain meaning, as van der
-  Wouden and Szabolcsi state it. On their account, presuppositional operators such as *only* and
-  *regret* rescue a positive polarity item instead of blocking it.
+  following von Fintel and Gajewski. What excludes a positive polarity item is evaluated on the
+  plain meaning, as van der Wouden and Szabolcsi state it. On their account, presuppositional
+  operators such as *only* and *regret* rescue a positive polarity item instead of blocking it.
 * Gajewski requires only that the exhaustified meaning be downward entailing. Zwarts's strengths
   are retained here, and they agree with Gajewski's condition at the endpoints of the scale.
 * A constant map is downward entailing, and a constantly true map is anti-additive. The
-  requirement that weak strength not be upward entailing as well excludes them, since a map that
-  is monotone in both directions modulo presupposition takes a single value at comparable
-  arguments where it is defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
+  requirement that a licenser of the monotone decreasing strength not be upward entailing as well
+  excludes them, since a map that is monotone in both directions modulo presupposition takes a
+  single value at comparable arguments where it is defined (`Presupposition.isStrawsonUE_and_isStrawsonDE_iff`).
 * A question is not a licenser. It is downward entailing only in the domain of a wh-phrase, and
   whether it hosts an item does not follow the strength that the item requires. Van Rooy ties the
   use of an item in a question to the expectations of the questioner, through the entropy of the
@@ -182,8 +182,8 @@ def IsStrawsonUE : Licenser → Prop
   | .strawson F => ∀ p, Presupposition.IsStrawsonUE (F.op p)
   | .modal F => ∀ p, Monotone (F.op p)
 
-/-- A licenser *carries* weak strength when it is downward entailing and not upward entailing
-modulo presupposition. This is the condition that [von-fintel-1999], [gajewski-2011]'s Condition
+/-- A licenser *carries* the monotone decreasing strength when it is downward entailing and not
+upward entailing modulo presupposition. This is the condition that [von-fintel-1999], [gajewski-2011]'s Condition
 1, and [bylinina-nouwen-2018]'s (53) place on the meaning below the exhaustivity operator. A
 licenser carries a stronger strength when, in addition, its exhaustified meaning holds that
 strength outright. -/
@@ -324,8 +324,8 @@ theorem not_holds_of_not_holds_monotoneDecreasing (h : ¬ L.Holds .monotoneDecre
   fun hs ↦ h (hs.of_le bot_le)
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition, but not downward
-entailing outright once its direct implicature is added, carries exactly weak strength
-([gajewski-2011]). -/
+entailing outright once its direct implicature is added, carries exactly the monotone decreasing
+strength ([gajewski-2011]). -/
 theorem carries_iff_eq_monotoneDecreasing (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
     (h : ¬ L.exhaustified.Holds .monotoneDecreasing) : L.Carries s ↔ s = .monotoneDecreasing := by
   cases s with

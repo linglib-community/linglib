@@ -26,9 +26,9 @@ environments into that lattice.
 
 Along the chain of domains from the item to the sentence, each environment is the environment
 below it under a layer, and its sign is the product of the signs below it. An environment of
-negative sign carries weak strength, and an environment of positive sign carries no strength. An
-item that is licensed in one domain can therefore be anti-licensed in the next domain and licensed
-again in the domain after that.
+negative sign carries the monotone decreasing strength, and an environment of positive sign carries
+no strength. A domain can therefore admit an item where the next domain does not and the one
+after that does again.
 
 ## Main definitions
 
@@ -43,7 +43,7 @@ again in the domain after that.
 * `PolarityItem.Path.environment_cons`: the environment of each domain is the environment of the
   domain below it under a layer.
 * `PolarityItem.Environment.carries_monotoneDecreasing_of_sign_eq_neg_one`: a non-constant
-  environment of negative sign carries weak strength.
+  environment of negative sign carries the monotone decreasing strength.
 * `PolarityItem.Environment.not_carries_of_sign_eq_one`: an environment of positive sign carries
   no strength.
 
@@ -237,7 +237,7 @@ theorem carries_of_le_negationStrength
     (hf.of_le (Negation.Strength.toProjectivitySignature_antitone bot_le))
     bot_le
 
-/-- A non-constant environment of negative sign carries weak strength. -/
+/-- A non-constant environment of negative sign carries the monotone decreasing strength. -/
 theorem carries_monotoneDecreasing_of_sign_eq_neg_one (h : e.signature.sign = -1)
     (hne : e ⊥ ≠ e ⊤) :
     (Licenser.ofOperator e).Carries .monotoneDecreasing := by
@@ -316,7 +316,7 @@ namespace Environment
 variable {σ P : Type} [BooleanAlgebra σ] [BooleanAlgebra P]
   (e : Environment σ P) {s : Negation.Strength}
 
-/-- An environment of negative sign holds weak strength outright. -/
+/-- An environment of negative sign holds the monotone decreasing strength outright. -/
 theorem holds_monotoneDecreasing_of_sign_eq_neg_one (h : e.signature.sign = -1) :
     (Licenser.ofOperator e).Holds .monotoneDecreasing :=
   fun _ ↦ e.antitone_of_sign_eq_neg_one h

@@ -51,11 +51,11 @@ lexical entries cite.
 * `PolarityItem.LicensingContext.negativity`: the strengths that a construction carries and
   holds, as a table, with `PolarityItem.LicensingContext.negativity_eq` that it is the negativity
   of the licenser.
-* `PolarityItem.Distribution.region`, `PolarityItem.Compatible`: the contexts in which a class is
-  predicted to be possible, and an entry whose contexts agree with that prediction.
+* `PolarityItem.Distribution.region`, `PolarityItem.Compatible`: the named contexts that lie in a
+  distribution, and an entry whose contexts agree with it.
 * `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
   `not_holds_exhaustified_few`, …: the certificates of the licenser of each context, from which
-  its profile is proved.
+  its negativity is proved.
 
 ## Implementation notes
 
