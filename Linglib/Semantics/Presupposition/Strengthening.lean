@@ -111,11 +111,10 @@ theorem strengthen_eq_self (h : ∀ ψ ∈ alts φ, ¬ content ψ ⊂ content φ
 presupposition. -/
 theorem strengthen_eq_sdiff (hψ : ψ ∈ alts φ) (hss : content ψ ⊂ content φ)
     (hother : ∀ χ ∈ alts φ, content χ ⊂ content φ → content χ ⊆ content ψ) :
-    strengthen alts content φ = content φ \ content ψ := by
-  ext w
-  rw [mem_strengthen_iff, Set.mem_sdiff]
-  exact and_congr_right fun _ ↦
-    ⟨fun h hw ↦ h ψ hψ hw hss, fun h χ hχ hw hss' ↦ h (hother χ hχ hss' hw)⟩
+    strengthen alts content φ = content φ \ content ψ :=
+  Exhaustification.exh_eq_sdiff_of_forall ⟨Set.mem_image_of_mem _ hψ, hss⟩ hss.not_subset <| by
+    rintro _ ⟨⟨χ, hχ, rfl⟩, hlt⟩
+    exact .inr (hother χ hχ hlt)
 
 /-- A strictly stronger alternative's presupposition is disjoint from the strengthening. -/
 theorem disjoint_strengthen_of_ssubset (hψ : ψ ∈ alts φ) (h : content ψ ⊂ content φ) :

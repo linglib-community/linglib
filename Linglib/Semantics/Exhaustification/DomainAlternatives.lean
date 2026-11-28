@@ -43,7 +43,7 @@ enrichment of the possibility of the claim.
   anti-exhaustivity for every proper subdomain.
 * `mem_exhIE_biUnion_subdomain_iff` — for any separated family of sets, innocently exhaustifying
   the union of a subfamily against the unions of the proper subfamilies denies the rest.
-* `exhIEII_singletons_eq_freeChoice` — innocent exclusion and inclusion yields free choice.
+* `exhII_singletons_eq_freeChoice` — innocent exclusion and inclusion yields free choice.
 
 ## References
 
@@ -119,7 +119,7 @@ The possibility of the claim is the disjunction of the possibilities of the memb
 so when those are separated, each possible alone at some world and all together at some world,
 the theorems on exhaustifying a disjunction against its disjuncts apply: innocent exclusion is
 vacuous (`exhIE_singletons_eq`) and innocent inclusion yields free choice without
-pre-exhaustification (`exhIEII_singletons_eq_freeChoice`). -/
+pre-exhaustification (`exhII_singletons_eq_freeChoice`). -/
 
 section Witnessing
 
@@ -141,18 +141,18 @@ theorem diamond_claim_iff {S : Finset E} {v : W'} :
     Set.ext_iff.1 (setOf_diamond_claim S) v
 
 theorem exhIE_singletons_eq (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v}) :
-    exhIE ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
+    exhᴵᴱ ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {v | ◇[R] (claim Q D) v} := by
   rw [setOf_diamond_claim]
   exact exhIE_image h.single
 
 /-- Against the possibility of each member, innocent exclusion and inclusion strengthens the
 possibility of the claim exactly to free choice, without pre-exhaustification. -/
-theorem exhIEII_singletons_eq_freeChoice (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
+theorem exhII_singletons_eq_freeChoice (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hD : D.Nonempty) :
-    exhIEII ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
+    exhᴵᴱ⁺ᴵᴵ ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {w | FreeChoice R w D Q} := by
-  rw [setOf_diamond_claim, exhIEII_image h hD]
+  rw [setOf_diamond_claim, exhII_image h hD]
   ext w
   simp [FreeChoice]
 
@@ -266,7 +266,7 @@ variable {p : E → Set W'}
 denies the rest of the family, when the family is separated. -/
 theorem mem_exhIE_biUnion_subdomain_iff (h : Separating D p)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
-    w ∈ exhIE ((fun S : Finset E ↦ ⋃ x ∈ S, p x) '' ↑(subdomainAlternatives .proper D))
+    w ∈ exhᴵᴱ ((fun S : Finset E ↦ ⋃ x ∈ S, p x) '' ↑(subdomainAlternatives .proper D))
         (⋃ x ∈ S₀, p x) ↔
       w ∈ ⋃ x ∈ S₀, p x ∧ w ∉ ⋃ x ∈ D \ S₀, p x := by
   set A : Finset E → Set W' := fun S : Finset E ↦ ⋃ x ∈ S, p x
@@ -274,10 +274,10 @@ theorem mem_exhIE_biUnion_subdomain_iff (h : Separating D p)
   have hP : ∀ {S}, S ∈ P → S ⊆ D := fun h ↦ (mem_subdomainAlternatives_proper.1 h).1
   have hS₀D := hP hS₀
   have hAsing : ∀ {y v}, y ∈ D → v ∈ p y →
-      A {y} ∈ {a ∈ (A '' P) | v ∈ a} := fun {y} {_} hy hyv ↦
+      A {y} ∈ satisfied (A '' P) v := fun {y} {_} hy hyv ↦
     ⟨⟨{y}, singleton_mem_subdomainAlternatives_proper hS₀ hy, rfl⟩,
       Set.mem_iUnion₂.2 ⟨_, Finset.mem_singleton_self _, hyv⟩⟩
-  have key : ∀ S ∈ P, A S ∈ ⋃₀ {M | Minimal (· ∈ (fun w ↦ {a ∈ (A '' P) | w ∈ a}) '' A S₀) M} ↔
+  have key : ∀ S ∈ P, A S ∈ ⋃₀ {M | Minimal (· ∈ (satisfied (A '' P)) '' A S₀) M} ↔
       ∃ x ∈ S, x ∈ S₀ := by
     intro S hS
     constructor
@@ -333,7 +333,7 @@ theorem exh_biUnion_subdomain_eq_empty (h : Separating D p)
   obtain ⟨_, ⟨v, hvφ, rfl⟩, hleast⟩ := exh_nonempty_iff.1 hne
   obtain ⟨x, hx, y, hy, hxy⟩ := Finset.one_lt_card.1 h2
   obtain ⟨z, hzS₀, hzv⟩ := Set.mem_iUnion₂.1 hvφ
-  have hz : A {z} ∈ {a ∈ A '' ↑(subdomainAlternatives .proper D) | v ∈ a} :=
+  have hz : A {z} ∈ satisfied (A '' ↑(subdomainAlternatives .proper D)) v :=
     ⟨⟨{z}, singleton_mem_subdomainAlternatives_proper hS₀ (hS₀D hzS₀), rfl⟩,
       Set.mem_iUnion₂.2 ⟨z, Finset.mem_singleton_self z, hzv⟩⟩
   have only : ∀ t ∈ S₀, z = t := fun t ht ↦ by
@@ -348,7 +348,7 @@ end Family
 
 theorem mem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
-    w ∈ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
+    w ∈ exhᴵᴱ ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
         {v | ◇[R] (claim Q S₀) v} ↔
       ◇[R] (claim Q S₀) w ∧ ¬ ◇[R] (claim Q (D \ S₀)) w := by
   have key := mem_exhIE_biUnion_subdomain_iff (w := w) h hS₀
@@ -371,7 +371,7 @@ theorem freeChoice_iff_forall_antiExhaustivity (h : ◇[R] (claim Q D) w) :
 when the possibilities of the members are separated. -/
 theorem notMem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
-    w ∉ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
+    w ∉ exhᴵᴱ ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
         {v | ◇[R] (claim Q S₀) v} ↔ AntiExhaustivity R w D Q S₀ := by
   rw [mem_exhIE_subdomain_iff h hS₀, AntiExhaustivity]
   tauto
@@ -379,7 +379,7 @@ theorem notMem_exhIE_subdomain_iff (h : Separating D fun x ↦ {v | ◇[R] (Q ·
 theorem freeChoice_of_forall_notMem_exhIE (h : Separating D fun x ↦ {v | ◇[R] (Q · x) v})
     (hw : ◇[R] (claim Q D) w)
     (hs : ∀ S ∈ subdomainAlternatives .proper D,
-      w ∉ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
+      w ∉ exhᴵᴱ ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
         {v | ◇[R] (claim Q S) v}) :
     FreeChoice R w D Q :=
   (freeChoice_iff_forall_antiExhaustivity hw).2 fun S hS ↦

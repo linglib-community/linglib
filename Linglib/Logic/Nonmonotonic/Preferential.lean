@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Order.Filter.AtBotOn
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Linglib.Core.Order.Minimals
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.Powerset
@@ -28,7 +27,8 @@ the relation of a total preorder.
 
 * `Nonmonotonic.isPreferential_atBotOn`: every ranking defines a preferential relation.
 * `Nonmonotonic.isRational_atBotOn`: every total ranking defines a rational relation.
-* `Nonmonotonic.exists_not_isPreferential_minimals`: the minimal worlds need well-foundedness.
+* `Nonmonotonic.isPreferential_minimals_iff`: the relation of the minimal worlds is preferential
+  exactly when the strict order is well-founded.
 * `Nonmonotonic.exists_minimals_eq_iff`: rational choice is choice of the most normal worlds.
 * `Nonmonotonic.isRational_and_iff_exists_atBotOn_eq`: completeness on finite worlds.
 
@@ -164,6 +164,23 @@ theorem isRational_minimals {p : Preorder W} (hp : WellFounded p.lt) [Std.Total 
   have h := isRational_atBotOn (id : W → W)
   simp only [atBotOn_eq_principal_of_wellFoundedLT, mem_principal, minimalFor_id] at h
   exact h
+
+/-- The relation of the minimal worlds is preferential exactly when the strict order is
+well-founded: a nonempty set without a minimal world violates cautious monotonicity. -/
+theorem isPreferential_minimals_iff {p : Preorder W} :
+    (IsPreferential fun φ ψ ↦ p.minimals φ ⊆ ψ) ↔ WellFounded p.lt := by
+  refine ⟨fun h ↦ WellFounded.wellFounded_iff_has_min.2 ?_, isPreferential_minimals⟩
+  intro D hne
+  obtain ⟨u, hu⟩ := hne
+  by_contra hD
+  have hmin : p.minimals D = ∅ := Set.eq_empty_of_forall_notMem fun m hm ↦
+    hD ⟨m, hm.1, fun x hx hlt ↦
+      have h' := (@lt_iff_le_not_ge W p x m).1 hlt
+      h'.2 (hm.2 hx h'.1)⟩
+  have h₁ : p.minimals D ⊆ {u} := by rw [hmin]; exact Set.empty_subset _
+  have hu' : u ∈ p.minimals (D ∩ {u}) :=
+    ⟨⟨hu, rfl⟩, fun b hb _ ↦ (Set.mem_singleton_iff.1 hb.2) ▸ @le_refl W p u⟩
+  exact h.cautiousMonotonicity h₁ hmin.subset hu'
 
 /-- Well-foundedness cannot be dropped from the relation of the minimal worlds. Let the integers
 descend without a least element beside a world comparable to no other, which is then the only

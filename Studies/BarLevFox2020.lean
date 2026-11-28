@@ -64,25 +64,25 @@ theorem isMinimalCover_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : w₁ ∈ φ �
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
   refine ⟨by rintro v (rfl | rfl) <;> assumption, fun w hw ↦ ?_, ?_⟩
   · rcases hcov hw with h | h
-    · refine ⟨w₁, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+    · refine ⟨w₁, by simp, fun q hq hq' ↦ ?_⟩
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
       rcases hq with rfl | rfl | rfl | rfl
       exacts [hw, h, absurd hq' hw₁'.1, absurd hq' hw₁'.2]
-    · refine ⟨w₂, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+    · refine ⟨w₂, by simp, fun q hq hq' ↦ ?_⟩
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
       rcases hq with rfl | rfl | rfl | rfl
       exacts [hw, absurd hq' hw₂'.1, h, absurd hq' hw₂'.2]
   · intro v hv u hu huv
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hv hu
     rcases hv with rfl | rfl <;> rcases hu with rfl | rfl
-    · exact subset_rfl
-    · exact absurd (huv ⟨by simp, hw₂₂⟩).2 hw₁'.1
-    · exact absurd (huv ⟨by simp, hw₁₁⟩).2 hw₂'.1
-    · exact subset_rfl
+    · exact huv
+    · exact absurd (huv _ (by simp) hw₂₂) hw₁'.1
+    · exact absurd (huv _ (by simp) hw₁₁) hw₂'.1
+    · exact huv
 
-theorem exhIEII_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
+theorem exhII_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) :
-    exhIEII {φ, d₁, d₂, c} φ = (φ ∩ d₁ ∩ d₂) \ c := by
+    exhᴵᴱ⁺ᴵᴵ {φ, d₁, d₂, c} φ = (φ ∩ d₁ ∩ d₂) \ c := by
   obtain ⟨w₁, hw₁⟩ := h₁
   obtain ⟨w₂, hw₂⟩ := h₂
   obtain ⟨w₀, ⟨⟨hw₀, hw₀₁⟩, hw₀₂⟩, hw₀c⟩ := h
@@ -90,29 +90,29 @@ theorem exhIEII_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁
   obtain ⟨⟨hw₁, hw₁₁⟩, hw₁'⟩ := hw₁
   obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := hw₂
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
-  rw [hM.exhIEII_eq ⟨w₀, hw₀, ?_⟩]
+  rw [hM.exhII_eq ⟨w₀, hw₀, ?_⟩]
   · ext w
     simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁'.1, hw₁'.2, hw₂'.1, hw₂'.2]
     tauto
   · simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁'.1, hw₁'.2, hw₂'.1, hw₂'.2, hw₀, hw₀₁, hw₀₂, hw₀c]
 
-theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂)
-    (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁) : exhIEII {φ, d₁, d₂, d₁ ∩ d₂} φ = φ \ (d₁ ∩ d₂) := by
+theorem exhII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂)
+    (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁) : exhᴵᴱ⁺ᴵᴵ {φ, d₁, d₂, d₁ ∩ d₂} φ = φ \ (d₁ ∩ d₂) := by
   obtain ⟨w₁, ⟨hw₁, hw₁₁⟩, hw₁'⟩ := h₁
   obtain ⟨w₂, ⟨hw₂, hw₂₂⟩, hw₂'⟩ := h₂
   have hM := isMinimalCover_pair hcov (c := d₁ ∩ d₂)
     ⟨⟨hw₁, hw₁₁⟩, fun h ↦ hw₁' (h.elim id And.right)⟩
     ⟨⟨hw₂, hw₂₂⟩, fun h ↦ hw₂' (h.elim id And.left)⟩
-  have hIE : ∀ q, IsInnocentlyExcludable {φ, d₁, d₂, d₁ ∩ d₂} φ q ↔ q = d₁ ∩ d₂ := by
+  have hIE : ∀ q, q ∈ IE {φ, d₁, d₂, d₁ ∩ d₂} φ ↔ q = d₁ ∩ d₂ := by
     intro q
     constructor
     · intro hq
-      have := (hM.isInnocentlyExcludable_iff hq.1).1 hq
+      have := (hM.mem_IE_iff hq.1).1 hq
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq] at this
       rcases hq.1 with rfl | rfl | rfl | rfl
       exacts [absurd hw₁ this.1, absurd hw₁₁ this.1, absurd hw₂₂ this.2, rfl]
     · rintro rfl
-      exact (hM.isInnocentlyExcludable_iff (by simp)).2 (by simp [hw₁', hw₂'])
+      exact (hM.mem_IE_iff (by simp)).2 (by simp [hw₁', hw₂'])
   have hMI : ∀ d ∈ ({d₁, d₂} : Set (Set World)), ∀ w ∈ φ ∩ d, w ∉ d₁ ∩ d₂ →
       Maximal (IsConsistentInclusion {φ, d₁, d₂, d₁ ∩ d₂} φ) {φ, d} := by
     intro d hd w ⟨hw, hwd⟩ hw'
@@ -157,9 +157,9 @@ theorem cell_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d
   simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁', hw₂']
   tauto
 
-theorem isInnocentlyIncludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
+theorem mem_II_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) {r : Set World} :
-    IsInnocentlyIncludable {φ, d₁, d₂, c} φ r ↔ r = φ ∨ r = d₁ ∨ r = d₂ := by
+    r ∈ II {φ, d₁, d₂, c} φ ↔ r = φ ∨ r = d₁ ∨ r = d₂ := by
   obtain ⟨w₁, hw₁⟩ := h₁
   obtain ⟨w₂, hw₂⟩ := h₂
   obtain ⟨w₀, ⟨⟨hw₀, hw₀₁⟩, hw₀₂⟩, hw₀c⟩ := h
@@ -167,7 +167,7 @@ theorem isInnocentlyIncludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : �
   obtain ⟨⟨hw₁, hw₁₁⟩, hw₁'⟩ := hw₁
   obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := hw₂
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
-  rw [hM.isInnocentlyIncludable_iff ⟨w₀, hw₀, by
+  rw [hM.mem_II_iff ⟨w₀, hw₀, by
     simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁'.1, hw₁'.2, hw₂'.1, hw₂'.2, hw₀, hw₀₁, hw₀₂, hw₀c]⟩]
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp, exists_eq_left]
   constructor
@@ -178,9 +178,9 @@ theorem isInnocentlyIncludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : �
     · exact absurd h (not_or.2 ⟨hw₁'.2, hw₂'.2⟩)
   · rintro (rfl | rfl | rfl) <;> simp [hw₁, hw₂, hw₁₁, hw₂₂]
 
-theorem isInnocentlyExcludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
+theorem mem_IE_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) {q : Set World} :
-    IsInnocentlyExcludable {φ, d₁, d₂, c} φ q ↔ q = c := by
+    q ∈ IE {φ, d₁, d₂, c} φ ↔ q = c := by
   obtain ⟨w₁, hw₁⟩ := h₁
   obtain ⟨w₂, hw₂⟩ := h₂
   have hM := isMinimalCover_pair hcov hw₁ hw₂
@@ -188,12 +188,12 @@ theorem isInnocentlyExcludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : �
   obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := hw₂
   simp only [Set.mem_union, not_or] at hw₁' hw₂'
   refine ⟨fun hq ↦ ?_, ?_⟩
-  · have := (hM.isInnocentlyExcludable_iff hq.1).1 hq
+  · have := (hM.mem_IE_iff hq.1).1 hq
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq] at this
     rcases hq.1 with rfl | rfl | rfl | rfl
     exacts [absurd hw₁ this.1, absurd hw₁₁ this.1, absurd hw₂₂ this.2, rfl]
   · rintro rfl
-    exact (hM.isInnocentlyExcludable_iff (by simp)).2 (by simp [hw₁'.2, hw₂'.2])
+    exact (hM.mem_IE_iff (by simp)).2 (by simp [hw₁'.2, hw₂'.2])
 
 end Pair
 
@@ -201,17 +201,16 @@ section Cover
 
 variable {φ : Set World} {x : ι → Set World}
 
-theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
+theorem exhII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     (hsep : ∀ i, ∃ w ∈ φ ∩ x i, ∀ j, j ≠ i → w ∉ x j) (h : ∃ w ∈ φ, ∀ i, w ∈ x i) :
-    exhIEII (insert φ (Set.range x)) φ = φ ∩ ⋂ i, x i := by
+    exhᴵᴱ⁺ᴵᴵ (insert φ (Set.range x)) φ = φ ∩ ⋂ i, x i := by
   have hM : IsMinimalCover (insert φ (Set.range x)) φ
       {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j} := by
     refine ⟨fun v ⟨i, hv, _⟩ ↦ hv.1, fun w hw ↦ ?_, ?_⟩
     · obtain ⟨i, hi⟩ := Set.mem_iUnion.1 (hcov hw)
       obtain ⟨v, hv, hv'⟩ := hsep i
       refine ⟨v, ⟨i, hv, hv'⟩, ?_⟩
-      rintro q ⟨hq, hvq⟩
-      refine ⟨hq, ?_⟩
+      rintro q hq hvq
       rcases hq with rfl | ⟨j, rfl⟩
       · exact hw
       · by_cases hji : j = i
@@ -220,14 +219,13 @@ theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     · rintro v ⟨i, hv, hv'⟩ u ⟨j, hu, hu'⟩ huv
       by_cases hji : j = i
       · subst hji
-        rintro q ⟨hq, hvq⟩
-        refine ⟨hq, ?_⟩
+        rintro q hq hvq
         rcases hq with rfl | ⟨k, rfl⟩
         · exact hu.1
         · by_cases hkj : k = j
           · exact hkj ▸ hu.2
           · exact absurd hvq (hv' k hkj)
-      · exact absurd (huv ⟨Or.inr ⟨j, rfl⟩, hu.2⟩).2 (hv' j hji)
+      · exact absurd (huv _ (Or.inr ⟨j, rfl⟩) hu.2) (hv' j hji)
   have hφ : ∀ w ∈ φ, ∃ v ∈ {w | ∃ i, w ∈ φ ∩ x i ∧ ∀ j, j ≠ i → w ∉ x j}, v ∈ φ := fun w hw ↦ by
     obtain ⟨i, -⟩ := Set.mem_iUnion.1 (hcov hw)
     obtain ⟨v, hv, hv'⟩ := hsep i
@@ -236,7 +234,7 @@ theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     obtain ⟨v, hv, hv'⟩ := hsep i
     exact ⟨v, ⟨i, hv, hv'⟩, hv.2⟩
   obtain ⟨w₀, hw₀, hw₀x⟩ := h
-  rw [hM.exhIEII_eq ⟨w₀, hw₀, ?_⟩]
+  rw [hM.exhII_eq ⟨w₀, hw₀, ?_⟩]
   · ext w
     simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
     constructor
@@ -262,14 +260,14 @@ three patterns (either disjunct's strong alternative with the weak alternatives,
 alternatives alone), each pattern is realized exactly, and asserting both strong disjunct
 alternatives while denying the conjunctive ones is consistent, exhaustification does exactly
 that. -/
-theorem exhIEII_quantified
+theorem exhII_quantified
     (hcov : ∀ w ∈ φ, (w ∈ s₁ ∧ w ∈ e ∧ w ∈ e₁) ∨ (w ∈ s₂ ∧ w ∈ e ∧ w ∈ e₂) ∨
       (w ∈ e ∧ w ∈ e₁ ∧ w ∈ e₂))
     (h₁ : ∃ w ∈ φ, w ∈ s₁ ∧ w ∈ e ∧ w ∈ e₁ ∧ w ∉ s₂ ∧ w ∉ sb ∧ w ∉ e₂ ∧ w ∉ eb)
     (h₂ : ∃ w ∈ φ, w ∈ s₂ ∧ w ∈ e ∧ w ∈ e₂ ∧ w ∉ s₁ ∧ w ∉ sb ∧ w ∉ e₁ ∧ w ∉ eb)
     (h₃ : ∃ w ∈ φ, w ∈ e ∧ w ∈ e₁ ∧ w ∈ e₂ ∧ w ∉ s₁ ∧ w ∉ s₂ ∧ w ∉ sb ∧ w ∉ eb)
     (h : ∃ w ∈ φ, w ∈ s₁ ∧ w ∈ s₂ ∧ w ∈ e ∧ w ∈ e₁ ∧ w ∈ e₂ ∧ w ∉ sb ∧ w ∉ eb) :
-    exhIEII {φ, s₁, s₂, sb, e, e₁, e₂, eb} φ = (φ ∩ s₁ ∩ s₂ ∩ e ∩ e₁ ∩ e₂) \ (sb ∪ eb) := by
+    exhᴵᴱ⁺ᴵᴵ {φ, s₁, s₂, sb, e, e₁, e₂, eb} φ = (φ ∩ s₁ ∩ s₂ ∩ e ∩ e₁ ∩ e₂) \ (sb ∪ eb) := by
   obtain ⟨w₁, hw₁, hw₁s₁, hw₁e, hw₁e₁, hw₁s₂, hw₁sb, hw₁e₂, hw₁eb⟩ := h₁
   obtain ⟨w₂, hw₂, hw₂s₂, hw₂e, hw₂e₂, hw₂s₁, hw₂sb, hw₂e₁, hw₂eb⟩ := h₂
   obtain ⟨w₃, hw₃, hw₃e, hw₃e₁, hw₃e₂, hw₃s₁, hw₃s₂, hw₃sb, hw₃eb⟩ := h₃
@@ -277,17 +275,17 @@ theorem exhIEII_quantified
   have hM : IsMinimalCover {φ, s₁, s₂, sb, e, e₁, e₂, eb} φ {w₁, w₂, w₃} := by
     refine ⟨by rintro v (rfl | rfl | rfl) <;> assumption, fun w hw ↦ ?_, ?_⟩
     · rcases hcov w hw with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩
-      · refine ⟨w₁, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+      · refine ⟨w₁, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, h1, absurd hq' hw₁s₂, absurd hq' hw₁sb, h2, h3, absurd hq' hw₁e₂,
           absurd hq' hw₁eb]
-      · refine ⟨w₂, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+      · refine ⟨w₂, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, absurd hq' hw₂s₁, h1, absurd hq' hw₂sb, h2, absurd hq' hw₂e₁, h3,
           absurd hq' hw₂eb]
-      · refine ⟨w₃, by simp, fun q ⟨hq, hq'⟩ ↦ ⟨hq, ?_⟩⟩
+      · refine ⟨w₃, by simp, fun q hq hq' ↦ ?_⟩
         simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
         rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
         exacts [hw, absurd hq' hw₃s₁, absurd hq' hw₃s₂, absurd hq' hw₃sb, h1, h2, h3,
@@ -295,16 +293,16 @@ theorem exhIEII_quantified
     · intro v hv u hu huv
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hv hu
       rcases hv with rfl | rfl | rfl <;> rcases hu with rfl | rfl | rfl
-      · exact subset_rfl
-      · exact absurd (huv ⟨by simp, hw₂s₂⟩).2 hw₁s₂
-      · exact absurd (huv ⟨by simp, hw₃e₂⟩).2 hw₁e₂
-      · exact absurd (huv ⟨by simp, hw₁s₁⟩).2 hw₂s₁
-      · exact subset_rfl
-      · exact absurd (huv ⟨by simp, hw₃e₁⟩).2 hw₂e₁
-      · exact absurd (huv ⟨by simp, hw₁s₁⟩).2 hw₃s₁
-      · exact absurd (huv ⟨by simp, hw₂s₂⟩).2 hw₃s₂
-      · exact subset_rfl
-  rw [hM.exhIEII_eq ⟨w₀, hw₀, ?_⟩]
+      · exact huv
+      · exact absurd (huv _ (by simp) hw₂s₂) hw₁s₂
+      · exact absurd (huv _ (by simp) hw₃e₂) hw₁e₂
+      · exact absurd (huv _ (by simp) hw₁s₁) hw₂s₁
+      · exact huv
+      · exact absurd (huv _ (by simp) hw₃e₁) hw₂e₁
+      · exact absurd (huv _ (by simp) hw₁s₁) hw₃s₁
+      · exact absurd (huv _ (by simp) hw₂s₂) hw₃s₂
+      · exact huv
+  rw [hM.exhII_eq ⟨w₀, hw₀, ?_⟩]
   · ext w
     simp [hw₁, hw₁s₁, hw₁e, hw₁e₁, hw₁s₂, hw₁sb, hw₁e₂, hw₁eb, hw₂, hw₂s₂, hw₂e, hw₂e₂, hw₂s₁,
       hw₂sb, hw₂e₁, hw₂eb, hw₃, hw₃e, hw₃e₁, hw₃e₂, hw₃s₁, hw₃s₂, hw₃sb, hw₃eb]
@@ -352,24 +350,24 @@ private theorem FreeChoiceWitnesses.exists_both :
   hF.not_both.imp fun _ h ↦ ⟨⟨⟨preimage_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩
 
 /-- Given the witnesses, `◇(a ∨ b)` strengthens to `◇a ∧ ◇b ∧ ¬◇(a ∧ b)`, free choice. -/
-theorem freeChoice : exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) =
+theorem freeChoice : exhᴵᴱ⁺ᴵᴵ (fcAlts R a b) (R.preimage (a ∪ b)) =
     (R.preimage a ∩ R.preimage b) \ R.preimage (a ∩ b) := by
-  rw [fcAlts, exhIEII_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both,
+  rw [fcAlts, exhII_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both,
     Set.inter_assoc,
     Set.inter_eq_right.2 (Set.inter_subset_left.trans (preimage_mono Set.subset_union_left))]
 
 /-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
 alternatives. -/
-theorem isInnocentlyIncludable_fcAlts_iff {q : Set W} :
-    IsInnocentlyIncludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔
+theorem mem_II_fcAlts_iff {q : Set W} :
+    q ∈ II (fcAlts R a b) (R.preimage (a ∪ b)) ↔
       q = R.preimage (a ∪ b) ∨ q = R.preimage a ∨ q = R.preimage b :=
-  isInnocentlyIncludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
+  mem_II_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
     hF.exists_both
 
 /-- The only excludable alternative of `◇(a ∨ b)` is the conjunctive one. -/
-theorem isInnocentlyExcludable_fcAlts_iff {q : Set W} :
-    IsInnocentlyExcludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔ q = R.preimage (a ∩ b) :=
-  isInnocentlyExcludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
+theorem mem_IE_fcAlts_iff {q : Set W} :
+    q ∈ IE (fcAlts R a b) (R.preimage (a ∪ b)) ↔ q = R.preimage (a ∩ b) :=
+  mem_IE_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
 
 end FreeChoice
 
@@ -380,8 +378,8 @@ variable {a b : Set W}
 /-- Without the modal the conjunctive alternative is the conjunction of the disjunct
 alternatives, so exhaustification denies it and includes neither disjunct. -/
 theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
-    exhIEII {a ∪ b, a, b, a ∩ b} (a ∪ b) = (a ∪ b) \ (a ∩ b) :=
-  exhIEII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
+    exhᴵᴱ⁺ᴵᴵ {a ∪ b, a, b, a ∩ b} (a ∪ b) = (a ∪ b) \ (a ∩ b) :=
+  exhII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
     (h₂.imp fun _ h ↦ ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
 theorem simpleDisjunction_cell (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
@@ -397,8 +395,8 @@ open Classical in
 /-- `only` presupposes the innocently includable alternatives and asserts that the innocently
 excludable ones are false (32). -/
 noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → Trivalent :=
-  Trivalent.condEvent (fun w ↦ ∀ r, IsInnocentlyIncludable ALT φ r → w ∈ r)
-    (fun w ↦ ∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q)
+  Trivalent.condEvent (fun w ↦ ∀ r, r ∈ II ALT φ → w ∈ r)
+    (fun w ↦ ∀ q, q ∈ IE ALT φ → w ∉ q)
 
 /-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
 theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
@@ -407,14 +405,14 @@ theorem compl_gapExt_only_fcAlts {R : SetRel W W} {a b : Set W}
       R.preimage a ∩ R.preimage b := by
   ext w
   simp only [Trivalent.mem_compl_gapExt, ne_eq, only, Trivalent.condEvent_eq_undefined_iff, not_not,
-    isInnocentlyIncludable_fcAlts_iff hF, forall_eq_or_imp, forall_eq]
+    mem_II_fcAlts_iff hF, forall_eq_or_imp, forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
 /-- Where the prejacent is the only includable alternative and exactly the non-entailed ones are
 excludable, `only` agrees with the exclusive entry (29b) on the entailment scale. -/
 theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
-    (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q)
-    (hII : ∀ r, IsInnocentlyIncludable ALT φ r ↔ r = φ) :
+    (hIE : ∀ q, q ∈ IE ALT φ ↔ q ∈ ALT ∧ ¬ φ ⊆ q)
+    (hII : ∀ r, r ∈ II ALT φ ↔ r = φ) :
     Trivalent.posExt (only ALT φ) =
       Trivalent.posExt (Focus.only (· ⊆ ·) ALT id φ) := by
   rw [Focus.posExt_only_subset hφ]
@@ -450,13 +448,13 @@ theorem sda [∀ w, Std.Total (ord w).le]
       w ∉ closestImp ord p r ∪ closestImp ord (p ∩ q) r)
     (h : ∃ w ∈ closestImp ord p r ∩ closestImp ord q r,
       w ∉ closestImp ord (p ∩ q) r) :
-    exhIEII (sdaAlts ord p q r) (closestImp ord (p ∪ q) r) =
+    exhᴵᴱ⁺ᴵᴵ (sdaAlts ord p q r) (closestImp ord (p ∪ q) r) =
       (closestImp ord p r ∩ closestImp ord q r) \ closestImp ord (p ∩ q) r := by
   have hsub : closestImp ord p r ∩ closestImp ord q r ⊆ closestImp ord (p ∪ q) r :=
     fun _ h ↦ mem_closestImp_union h.1 h.2
   have hcov : closestImp ord (p ∪ q) r ⊆ closestImp ord p r ∪ closestImp ord q r :=
     fun _ h ↦ mem_closestImp_or_of_mem_union h
-  rw [sdaAlts, exhIEII_pair hcov
+  rw [sdaAlts, exhII_pair hcov
     (h₁.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_right fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
     (h₂.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_left fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
     (h.imp fun w h ↦ ⟨⟨⟨hsub h.1, h.1.1⟩, h.1.2⟩, h.2⟩), Set.inter_assoc, Set.inter_eq_right.2 hsub]
@@ -465,9 +463,9 @@ theorem sda [∀ w, Std.Total (ord w).le]
 simplification is the only contingent alternative and so is excluded. -/
 theorem sda_consequent_disjunct
     (h : ∃ w ∈ closestImp ord (p ∪ q) p, w ∉ closestImp ord q p) :
-    exhIEII (sdaAlts ord p q p) (closestImp ord (p ∪ q) p) =
+    exhᴵᴱ⁺ᴵᴵ (sdaAlts ord p q p) (closestImp ord (p ∪ q) p) =
       closestImp ord (p ∪ q) p \ closestImp ord q p := by
-  refine exhIEII_eq_diff_of_forall_subset (by simp [sdaAlts]) (fun x hx hne ↦ ?_) h
+  refine exhII_eq_diff_of_forall_subset (by simp [sdaAlts]) (fun x hx hne ↦ ?_) h
   simp only [sdaAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
   rcases hx with rfl | rfl | rfl | rfl
   · exact le_rfl
@@ -493,7 +491,7 @@ theorem orBoth [∀ w, Std.Total (ord w).le]
       w ∉ closestImp ord (p \ q) r ∪ closestImp ord (q \ p) r)
     (h : ∃ w ∈ closestImp ord (p ∪ q) r, w ∈ closestImp ord (p \ q) r ∧
       w ∈ closestImp ord (q \ p) r ∧ w ∈ closestImp ord (p ∩ q) r) :
-    exhIEII (orBothAlts ord p q r) (closestImp ord (p ∪ q) r) =
+    exhᴵᴱ⁺ᴵᴵ (orBothAlts ord p q r) (closestImp ord (p ∪ q) r) =
       closestImp ord (p ∪ q) r ∩ closestImp ord (p \ q) r ∩
         closestImp ord (q \ p) r ∩ closestImp ord (p ∩ q) r := by
   have hcov : closestImp ord (p ∪ q) r ⊆
@@ -513,7 +511,7 @@ theorem orBoth [∀ w, Std.Total (ord w).le]
         closestImp ord (p ∩ q) r]) := by
     simp only [orBothAlts, Matrix.range_cons, Matrix.range_empty, Set.singleton_union,
       Set.union_empty]
-  rw [hA, exhIEII_insert_range hcov ?_ ?_]
+  rw [hA, exhII_insert_range hcov ?_ ?_]
   · ext w
     simp [Set.mem_iInter, Fin.forall_fin_succ, and_assoc]
   · intro i
@@ -574,7 +572,7 @@ def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
 
 -- (76)
 theorem sda_actual :
-    actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
+    actual ∈ exhᴵᴱ⁺ᴵᴵ (sdaAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
   rw [sda ⟨⟨false, true, fun x y ↦ !x && !y⟩, by decide⟩
     ⟨⟨true, false, fun x y ↦ !x && !y⟩, by decide⟩ ⟨actual, by decide⟩]
@@ -582,7 +580,7 @@ theorem sda_actual :
 
 -- (78)
 theorem orBoth_actual :
-    actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
+    actual ∉ exhᴵᴱ⁺ᴵᴵ (orBothAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
   rw [orBoth ⟨⟨false, true, fun x y ↦ x || !y⟩, by decide⟩
     ⟨⟨true, false, fun x y ↦ y || !x⟩, by decide⟩ ⟨⟨false, false, fun x y ↦ x || y⟩, by decide⟩
@@ -610,9 +608,9 @@ theorem universalFreeChoice (hB : ∀ x, B x ⊆ P x ∩ Q x)
     (h₁ : ∃ w, (∀ x, w ∈ P x) ∧ ∀ x, w ∉ Q x) (h₂ : ∃ w, (∀ x, w ∈ Q x) ∧ ∀ x, w ∉ P x)
     (h₃ : ∃ w, (∀ x, w ∈ P x ↔ w ∉ Q x) ∧ (∃ x, w ∈ P x) ∧ ∃ x, w ∈ Q x)
     (h : ∃ w, (∀ x, w ∈ P x) ∧ (∀ x, w ∈ Q x) ∧ ∀ x, w ∉ B x) :
-    exhIEII (universalAlts P Q B) (⋂ x, P x ∪ Q x) = ((⋂ x, P x) ∩ ⋂ x, Q x) \ ⋃ x, B x := by
+    exhᴵᴱ⁺ᴵᴵ (universalAlts P Q B) (⋂ x, P x ∪ Q x) = ((⋂ x, P x) ∩ ⋂ x, Q x) \ ⋃ x, B x := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
-  rw [universalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  rw [universalAlts, exhII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_iInter, Set.mem_iUnion, Set.mem_union,
       not_or, not_exists]
@@ -678,14 +676,14 @@ theorem negativeUniversalFreeChoice
       (∃ x, w ∈ R.core (p x)) ∧ (∃ x, w ∈ R.core (q x)) ∧ (∃ x, w ∉ R.core (p x)) ∧
       ∃ x, w ∉ R.core (q x))
     (h : ∃ w, (∀ x, w ∉ R.core (p x)) ∧ (∀ x, w ∉ R.core (q x)) ∧ ∀ x, w ∈ R.core (p x ∪ q x)) :
-    exhIEII (negativeUniversalAlts R p q) (⋃ x, R.core (p x ∩ q x))ᶜ =
+    exhᴵᴱ⁺ᴵᴵ (negativeUniversalAlts R p q) (⋃ x, R.core (p x ∩ q x))ᶜ =
       ((⋃ x, R.core (p x))ᶜ ∩ (⋃ x, R.core (q x))ᶜ) ∩ ⋂ x, R.core (p x ∪ q x) := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
   have hpq : ∀ {w : W} {x : D}, w ∉ R.core (p x) → w ∉ R.core (p x ∩ q x) :=
     fun h h' ↦ h fun v hv ↦ (h' hv).1
   have hqp : ∀ {w : W} {x : D}, w ∉ R.core (q x) → w ∉ R.core (p x ∩ q x) :=
     fun h h' ↦ h fun v hv ↦ (h' hv).2
-  rw [negativeUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  rw [negativeUniversalAlts, exhII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_compl_iff,
       Set.mem_iInter, Set.mem_iUnion, not_or, not_exists, not_forall, not_not]
@@ -751,7 +749,7 @@ theorem freeChoiceOverUniversal
     (h₃ : ∃ w ∈ R.preimage (⋂ x, p x ∪ q x) ∩ R.preimage (⋃ x, p x) ∩ R.preimage (⋃ x, q x),
       w ∉ R.preimage (⋂ x, p x) ∪ R.preimage (⋂ x, q x) ∪ R.preimage (⋃ x, p x ∩ q x))
     (h : ∃ w ∈ R.preimage (⋂ x, p x) ∩ R.preimage (⋂ x, q x), w ∉ R.preimage (⋃ x, p x ∩ q x)) :
-    exhIEII (overUniversalAlts R p q) (R.preimage (⋂ x, p x ∪ q x)) =
+    exhᴵᴱ⁺ᴵᴵ (overUniversalAlts R p q) (R.preimage (⋂ x, p x ∪ q x)) =
       (R.preimage (⋂ x, p x) ∩ R.preimage (⋂ x, q x)) \ R.preimage (⋃ x, p x ∩ q x) := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
   have hφ : R.preimage (⋂ x, p x) ⊆ R.preimage (⋂ x, p x ∪ q x) :=
@@ -770,7 +768,7 @@ theorem freeChoiceOverUniversal
     preimage_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_left)
   have hbq : R.preimage (⋃ x, p x ∩ q x) ⊆ R.preimage (⋃ x, q x) :=
     preimage_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_right)
-  rw [overUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  rw [overUniversalAlts, exhII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, not_or]
     exact ⟨fun h ↦ ⟨⟨h.1.1.1.1.1.2, h.1.1.1.1.2⟩, h.2.2⟩,
@@ -866,10 +864,10 @@ theorem simplificationMost
       Overlaps (P w) (S w) ∧ Overlaps (Q w) (S w) ∧ ¬ Overlaps (P w ∩ Q w) (S w))
     (h : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (P w) (S w) ∧ Most (Q w) (S w) ∧
       ¬ Overlaps (P w ∩ Q w) (S w)) :
-    exhIEII (mostAlts P Q S) {w | Most (P w ∪ Q w) (S w)} =
+    exhᴵᴱ⁺ᴵᴵ (mostAlts P Q S) {w | Most (P w ∪ Q w) (S w)} =
       ({w | Most (P w ∪ Q w) (S w)} ∩ {w | Most (P w) (S w)} ∩ {w | Most (Q w) (S w)}) \
         {w | Overlaps (P w ∩ Q w) (S w)} := by
-  rw [mostAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
+  rw [mostAlts, exhII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_ofPred_eq, not_or]
     exact ⟨fun h ↦ ⟨⟨⟨h.1.1.1.1.1.1, h.1.1.1.1.1.2⟩, h.1.1.1.1.2⟩, h.2.2⟩,

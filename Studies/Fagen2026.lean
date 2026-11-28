@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Quantifier.Restriction
-public import Linglib.Semantics.Exhaustification.MinimalWorlds
+public import Linglib.Semantics.Exhaustification.Nonmonotonic
 public import Studies.Spector2007
 
 /-!
@@ -164,7 +164,7 @@ open Exhaustification in
 /-- Under the default order, exhaustive interpretation is the minimal-worlds exhaustifier over the
 propositions that the question-property holds of each individual ((83)). -/
 theorem exh_ltDefault :
-    exh P T (ltDefault P) = exhMW (range fun x ↦ {w | x ∈ P w}) {w | T (P w)} := by
+    exh P T (ltDefault P) = exhᵐʷ (range fun x ↦ {w | x ∈ P w}) {w | T (P w)} := by
   have h : ∀ v w, {a ∈ (range fun x ↦ {w | x ∈ P w}) | v ∈ a} ⊆
       {a ∈ (range fun x ↦ {w | x ∈ P w}) | w ∈ a} ↔ P v ⊆ P w := fun v w ↦ by
     simp only [subset_def, Set.mem_ofPred_eq, mem_range, forall_exists_index, and_imp,

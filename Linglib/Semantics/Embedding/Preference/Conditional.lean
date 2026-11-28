@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Order.Minimals
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering
 public import Mathlib.Data.Set.Finite.Basic
 
 /-!

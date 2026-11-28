@@ -114,11 +114,11 @@ theorem StronglyStable.weaklyStable {A : Set (Set W)} (h : StronglyStable A)
 /-! ### Strong stability and exhaustification -/
 
 private theorem isStrongestTrueAnswer_of_exhMW_subset {B : Set (Set W)} {φ : Set W} {w : W}
-    (hB : B.Finite) (hφ : φ ∈ B) (hw : w ∈ φ) (h : exhMW B φ ⊆ strongAnswer B w) :
+    (hB : B.Finite) (hφ : φ ∈ B) (hw : w ∈ φ) (h : exhᵐʷ B φ ⊆ strongAnswer B w) :
     IsStrongestTrueAnswer B w φ :=
   ⟨⟨hφ, hw⟩, fun ψ ⟨hψ, hwψ⟩ _ hv ↦
     let ⟨_, hu, huv⟩ := exists_mem_exhMW_le hB hv
-    (huv ⟨hψ, (h hu ψ hψ).1 hwψ⟩).2⟩
+    huv ψ hψ ((h hu ψ hψ).1 hwψ)⟩
 
 /-- (26), with its extension in the appendix: for finitely many alternatives, they are strongly
 stable iff exhaustifying them yields every cell of the partition they induce, iff exhaustifying
@@ -128,10 +128,10 @@ theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
     List.TFAE [StronglyStable A,
       (Setoid.ofProps A).classes ⊆ exh A '' A,
       exh {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (Setoid.ofProps A).classes,
-      (Setoid.ofProps A).classes ⊆ exhIE A '' A,
-      exhIE {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (Setoid.ofProps A).classes,
-      (Setoid.ofProps A).classes ⊆ exhMW A '' A,
-      exhMW {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} =
+      (Setoid.ofProps A).classes ⊆ exhᴵᴱ A '' A,
+      exhᴵᴱ {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (Setoid.ofProps A).classes,
+      (Setoid.ofProps A).classes ⊆ exhᵐʷ A '' A,
+      exhᵐʷ {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} =
         (Setoid.ofProps A).classes] := by
   rw [classes_ofProps]
   tfae_have 1 ↔ 2 := by

@@ -96,9 +96,9 @@ theorem mem_exh_Ici (X : Finset α) : X ∈ exh (Ici '' F) (Ici X) :=
 
 variable {F} in
 -- (6b)
-theorem isInnocentlyExcludable_Ici_iff {X Y : Finset α} (hY : Y ∈ F) :
-    IsInnocentlyExcludable (Ici '' F) (Ici X) (Ici Y) ↔ ¬ Y ⊆ X := by
-  rw [isInnocentlyExcludable_iff_not_subset ⟨X, mem_exh_Ici X⟩ (mem_image_of_mem _ hY),
+theorem mem_IE_Ici_iff {X Y : Finset α} (hY : Y ∈ F) :
+    (Ici Y) ∈ IE (Ici '' F) (Ici X) ↔ ¬ Y ⊆ X := by
+  rw [mem_IE_iff_not_subset ⟨X, mem_exh_Ici X⟩ (mem_image_of_mem _ hY),
     Ici_subset_Ici]
 
 variable {F C} {X Y w : Finset α}
@@ -124,9 +124,9 @@ theorem mem_exh_only : X ∈ exh (only F C '' F) (only F C X) :=
   ⟨self_mem_only, by rintro _ ⟨Y, -, rfl⟩ hY; exact only_subset_only_iff.2 hY⟩
 
 -- (12b)
-theorem isInnocentlyExcludable_only_iff (hY : Y ∈ F) :
-    IsInnocentlyExcludable (only F C '' F) (only F C X) (only F C Y) ↔ X ∉ only F C Y := by
-  rw [isInnocentlyExcludable_iff_not_subset ⟨X, mem_exh_only⟩ (mem_image_of_mem _ hY),
+theorem mem_IE_only_iff (hY : Y ∈ F) :
+    (only F C Y) ∈ IE (only F C '' F) (only F C X) ↔ X ∉ only F C Y := by
+  rw [mem_IE_iff_not_subset ⟨X, mem_exh_only⟩ (mem_image_of_mem _ hY),
     only_subset_only_iff]
 
 open Classical in
@@ -286,11 +286,10 @@ theorem but_some_univ_erase : but Det.some Finset.univ (Finset.univ.erase g) = I
   exact Finset.singleton_subset_iff.2 hxw
 
 -- (110b) with the plural alternatives of (12): *someone but everyone except `g`* is excludable
-theorem isInnocentlyExcludable_but_some (hF : Finset.univ.erase g ∈ F) :
-    IsInnocentlyExcludable (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g})
-      (Ici {g}) := by
+theorem mem_IE_but_some (hF : Finset.univ.erase g ∈ F) :
+    (Ici {g}) ∈ IE (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g}) := by
   have ha : Ici {g} ∈ but Det.some Finset.univ '' F := ⟨_, hF, but_some_univ_erase⟩
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ ha]
+  rw [mem_IE_iff_exhMW_subset_compl _ _ _ ha]
   rintro u ⟨hu, hmin⟩ hgu
   have hv : u.erase g ∈ but Det.some Finset.univ {g} := by
     obtain ⟨x, ⟨-, hx⟩, hxu⟩ := hu
@@ -303,12 +302,12 @@ theorem isInnocentlyExcludable_but_some (hF : Finset.univ.erase g ∈ F) :
   exact Finset.notMem_erase g u ((h ⟨ha, hgu⟩).2 (Finset.mem_singleton_self g))
 
 theorem exhIE_but_some_ne {a : α} (hag : a ≠ g) (hF : Finset.univ.erase g ∈ F) :
-    exhIE (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g}) ≠
+    exhᴵᴱ (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g}) ≠
       but Det.some Finset.univ {g} := by
   intro h
   have hw : ({g, a} : Finset α) ∈ but Det.some Finset.univ {g} :=
     ⟨a, ⟨Finset.mem_univ a, by simpa using hag⟩, by simp⟩
-  exact (isInnocentlyExcludable_but_some hF).exhIE_subset_compl (h.ge hw) (by simp)
+  exact exhIE_subset_compl_of_mem_IE (mem_IE_but_some hF) (h.ge hw) (by simp)
 
 end Someone
 
@@ -335,9 +334,9 @@ theorem partyOnly_subset : partyOnly ⊆ party := by
   rintro _ (rfl | rfl | rfl) <;> exact Finset.singleton_nonempty _
 
 -- (6b): *Gal and Tal were at the party* is excludable
-theorem isInnocentlyExcludable_galTal :
-    IsInnocentlyExcludable (Ici '' party) (Ici {gal}) (Ici {gal, tal}) :=
-  (isInnocentlyExcludable_Ici_iff (Finset.insert_nonempty _ _)).2 (by decide)
+theorem mem_IE_galTal :
+    (Ici {gal, tal}) ∈ IE (Ici '' party) (Ici {gal}) :=
+  (mem_IE_Ici_iff (Finset.insert_nonempty _ _)).2 (by decide)
 
 -- (1), (13)
 theorem exhOnly_gal : exhOnly party partyOnly party {gal} =
@@ -375,7 +374,7 @@ theorem table_1 :
 
 -- (107)–(110)
 theorem judgment_107 : Examples.ex_107.judgment = .unacceptable ∧
-    exhIE (but Quantifier.Det.some Finset.univ '' party)
+    exhᴵᴱ (but Quantifier.Det.some Finset.univ '' party)
         (but Quantifier.Det.some Finset.univ {gal}) ≠
       but Quantifier.Det.some Finset.univ {gal} :=
   ⟨rfl, exhIE_but_some_ne (a := tal) (by decide) ⟨tal, by decide⟩⟩

@@ -105,7 +105,7 @@ variable (s) in
 /-- Exhaustified against the exclusive readings of the determinate values of its system, the
 inclusive reading is the exclusive reading of the plural. -/
 theorem exhIE_inclusive :
-    exhIE (exclusiveAlternatives s) inclusive = exclusive s .plural := by
+    exhᴵᴱ (exclusiveAlternatives s) inclusive = exclusive s .plural := by
   have h : (exh (exclusiveAlternatives s) inclusive).Nonempty := by
     rw [exh_inclusive]
     exact ⟨4, 4, ofCard_of_three_lt (by decide), rfl⟩
