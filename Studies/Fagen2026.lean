@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantifier.Basic
 public import Linglib.Semantics.Quantifier.Restriction
-public import Linglib.Semantics.Exhaustification.MinimalWorlds
+public import Linglib.Semantics.Exhaustification.Nonmonotonic
 public import Studies.Spector2007
 
 /-!

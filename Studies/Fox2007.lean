@@ -125,8 +125,7 @@ def anEx : Set W :=
 
 theorem anEx_eq : anEx C p = exhᴵᴱ C p ∩ ⋂ q ∈ C \ {p}, (exhᴵᴱ C q)ᶜ := by
   ext u
-  simp only [anEx, mem_inter_iff, mem_iInter₂, mem_sdiff, mem_singleton_iff, mem_ofPred_eq,
-    mem_compl_iff]
+  simp only [anEx, mem_inter_iff, mem_iInter₂, mem_sdiff, mem_singleton_iff, mem_compl_iff]
   refine and_congr_right fun hu ↦ ⟨fun h q hq ↦ ?_, fun h q hq ↦ h q ⟨hq.1.1, hq.2⟩⟩
   by_cases hIE : q ∈ IE C p
   · exact (exhIE_subset_compl_exhIE_of_mem_IE hIE) hu
@@ -192,8 +191,8 @@ theorem notMem : w ∉ ({s, n, e} : Set (Set W)) := by
 theorem exhMW_eq : exhᵐʷ {w, s, n, e} w = symmDiff s n := by
   obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, -⟩ := h
   ext u
-  simp only [mem_exhMW, MinimalFor, ← Preorder.ofLowerSets_le_iff_subset]
-  simp only [Preorder.ofLowerSets_le_iff,
+  simp only [mem_exhMW, MinimalFor, satisfied_subset_satisfied]
+  simp only [AltLE,
     mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq, Set.mem_symmDiff, mem_union]
   refine ⟨fun ⟨hu, hmin⟩ ↦ by_contra fun hc ↦ han ((hmin (Or.inl has) ⟨fun _ ↦ hu,
     fun _ ↦ by tauto, fun h' ↦ (han h').elim, fun h' ↦ (han (hn h')).elim⟩).2.2.1 (by tauto)), ?_⟩

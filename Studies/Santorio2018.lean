@@ -141,10 +141,6 @@ theorem minimalStable_iff_maximal_isConsistentExclusion :
 
 /-! ### Truthmakers -/
 
-theorem satisfied_subset_satisfied :
-    satisfied ALT u ⊆ satisfied ALT v ↔ ∀ A ∈ ALT, u ∈ A → v ∈ A :=
-  (Preorder.ofLowerSets_le_iff_subset ALT v u).symm
-
 theorem mem_sInter_satisfied :
     v ∈ ⋂₀ (satisfied ALT u) ↔ satisfied ALT u ⊆ satisfied ALT v :=
   ⟨fun h A hA ↦ ⟨hA.left, h A hA⟩, fun h _ hA ↦ (h hA).right⟩
@@ -191,16 +187,16 @@ theorem sUnion_truthmakers (hfin : ALT.Finite) (hS : S ∈ ALT) : ⋃₀ truthma
   refine sUnion_truthmakers_subset.antisymm fun w hw ↦ ?_
   obtain ⟨u, hu, huw⟩ := exists_mem_exhMW_le hfin hw
   exact ⟨_, truthmakers_eq_image hS ▸ mem_image_of_mem _ hu,
-    mem_sInter_satisfied.mpr ((Preorder.ofLowerSets_le_iff_subset ALT w u).1 huw)⟩
+    mem_sInter_satisfied.mpr ((satisfied_subset_satisfied (u := u) (v := w)).2 huw)⟩
 
 theorem truthmakers_singleton (hS : S.Nonempty) : truthmakers {S} S = {S} := by
   obtain ⟨s, hs⟩ := hS
   have le (u v : W) : {a ∈ ({S} : Set (Set W)) | u ∈ a} ⊆ {a ∈ ({S} : Set (Set W)) | v ∈ a} ↔
       (u ∈ S → v ∈ S) := by
-    rw [satisfied_subset_satisfied, forall_mem_singleton]
+    rw [satisfied_subset_satisfied, AltLE, forall_mem_singleton]
   have hM : IsMinimalCover {S} S {s} :=
     ⟨fun _ hv ↦ hv ▸ hs, fun w hw ↦ ⟨s, rfl,
-        (Preorder.ofLowerSets_le_iff_subset _ w s).2 ((le s w).mpr fun _ ↦ hw)⟩,
+        (satisfied_subset_satisfied (u := s) (v := w)).1 ((le s w).mpr fun _ ↦ hw)⟩,
       by rintro v rfl u rfl h; exact h⟩
   have hs' : ⋂₀ {a ∈ ({S} : Set (Set W)) | s ∈ a} = S :=
     Set.ext fun v ↦ mem_sInter_satisfied.trans ((le s v).trans ⟨fun h ↦ h hs, fun h _ ↦ h⟩)
@@ -222,14 +218,14 @@ theorem truthmakers_disjunction (hA : ¬ A ⊆ B) (hB : ¬ B ⊆ A) :
     · rintro v (rfl | rfl)
       exacts [.inl haA, .inr hbB]
     · rintro w (hw | hw)
-      exacts [⟨a, .inl rfl, (Preorder.ofLowerSets_le_iff_subset _ w a).2
+      exacts [⟨a, .inl rfl, (satisfied_subset_satisfied (u := a) (v := w)).1
           ((le a w).mpr ⟨fun _ ↦ hw, fun h ↦ (haB h).elim⟩)⟩,
-        ⟨b, .inr rfl, (Preorder.ofLowerSets_le_iff_subset _ w b).2
+        ⟨b, .inr rfl, (satisfied_subset_satisfied (u := b) (v := w)).1
           ((le b w).mpr ⟨fun h ↦ (hbA h).elim, fun _ ↦ hw⟩)⟩]
     · rintro v (rfl | rfl) u (rfl | rfl) h
       exacts [h,
-        (haB (((le _ _).mp ((Preorder.ofLowerSets_le_iff_subset _ _ _).1 h)).right hbB)).elim,
-        (hbA (((le _ _).mp ((Preorder.ofLowerSets_le_iff_subset _ _ _).1 h)).left haA)).elim, h]
+        (haB (((le _ _).mp ((satisfied_subset_satisfied (u := _) (v := _)).2 h)).right hbB)).elim,
+        (hbA (((le _ _).mp ((satisfied_subset_satisfied (u := _) (v := _)).2 h)).left haA)).elim, h]
   have ha : ⋂₀ {b ∈ {A ∪ B, A, B, A ∩ B} | a ∈ b} = A :=
     Set.ext fun v ↦ mem_sInter_satisfied.trans ((le a v).trans
       ⟨fun h ↦ h.left haA, fun h ↦ ⟨fun _ ↦ h, fun h' ↦ (haB h').elim⟩⟩)
@@ -334,14 +330,14 @@ theorem karenina_truthmakers :
         alt .every .either ∩ alt .some .ak ∩ alt .some .wp} := by
   have le (u v : World) : satisfied readingAlts u ⊆ satisfied readingAlts v ↔
       ∀ q P, u ∈ alt q P → v ∈ alt q P := by
-    rw [satisfied_subset_satisfied, readingAlts, forall_mem_range, Prod.forall]
+    rw [satisfied_subset_satisfied, AltLE, readingAlts, forall_mem_range, Prod.forall]
     rfl
   have hM : IsMinimalCover readingAlts (alt .every .either)
       {⟨.ak, .ak⟩, ⟨.wp, .wp⟩, ⟨.ak, .wp⟩} :=
     by
-    refine ⟨by decide, by simp only [Preorder.ofLowerSets_le_iff_subset, le]; decide, ?_⟩
+    refine ⟨by decide, by simp only [← satisfied_subset_satisfied, le]; decide, ?_⟩
     rintro v (rfl | rfl | rfl) u (rfl | rfl | rfl) <;>
-      simp only [Preorder.ofLowerSets_le_iff_subset, le] <;> decide
+      simp only [← satisfied_subset_satisfied, le] <;> decide
   have h₁ : ⋂₀ {a ∈ readingAlts | ⟨.ak, .ak⟩ ∈ a} = alt .every .ak := by
     ext v; rw [mem_sInter_satisfied, le]; revert v; decide
   have h₂ : ⋂₀ {a ∈ readingAlts | ⟨.wp, .wp⟩ ∈ a} = alt .every .wp := by

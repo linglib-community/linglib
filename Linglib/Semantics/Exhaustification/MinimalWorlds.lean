@@ -4,9 +4,6 @@ public import Linglib.Semantics.Exhaustification.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Data.Set.Finite.Powerset
-public import Linglib.Core.Order.Minimals
-public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Defs
-public import Mathlib.Order.SymmDiff
 
 /-!
 # Minimal-world exhaustification
@@ -15,15 +12,15 @@ A set `ALT` of alternatives orders the worlds: `u ≤ₐ[ALT] v` when every alte
 is true at `v`, that is, when `satisfied ALT u ⊆ satisfied ALT v`. Exhaustification `exh ALT φ`
 keeps the least worlds of the prejacent `φ` in this order, those verifying only alternatives every
 world of `φ` verifies. The minimal-world exhaustifier `exhMW ALT φ` keeps the minimal ones. A
-least world is minimal, and where there is one the minimal worlds are the least. These are
-Kratzer's best worlds, with the prejacent as modal base and the negated alternatives as ordering
-source. Over finitely many alternatives every world of the prejacent lies above a minimal one, so
-a satisfiable prejacent has minimal worlds. A minimal cover is a set of worlds of the prejacent
+least world is minimal, and where there is one the minimal worlds are the least. Over finitely
+many alternatives every world of the prejacent lies above a minimal one, so a satisfiable
+prejacent has minimal worlds. A minimal cover is a set of worlds of the prejacent
 that represents the minimal worlds up to having the same true alternatives; the exhaustifiers by
 innocent exclusion and innocent inclusion are computed from one.
 
 ## Main definitions
 
+* `Exhaustification.AltLE`, with notation `u ≤ₐ[ALT] v`: the order of the alternatives.
 * `Exhaustification.exhMW`: the prejacent worlds whose set of true alternatives is minimal.
 * `Exhaustification.IsMinimalCover`: a set of prejacent worlds representing the minimal ones.
 
@@ -34,32 +31,24 @@ innocent exclusion and innocent inclusion are computed from one.
   the minimal ones.
 * `Exhaustification.exh_subset_exhMW`, `Exhaustification.exhMW_eq_exh_of_nonempty`: a least world
   is minimal, and where there is one the two exhaustifiers agree.
-* `Exhaustification.exhMW_eq_minimals`: the minimal worlds are the best worlds of the prejacent
-  under the premise set of the negated alternatives.
 * `Exhaustification.exists_mem_exhMW_le`: over finitely many alternatives, every world of the
   prejacent lies above a minimal world.
-* `Exhaustification.ofLowerSets_image_union_le_iff`: under the premises that some individuals lack a
-  property and others have it, a world is at least as good as another when fewer of the first and
-  more of the second have the property in it.
-* `Exhaustification.image_notMem_union_image_mem_symmDiff`: those premises are unchanged when the
-  property is flipped within a set `N` and the two sets of individuals are exchanged on `N`.
 
 ## References
 
 * [groenendijk-stokhof-1984]
 * [spector-2016]
-* [kratzer-1981]
 -/
 
 @[expose] public section
 
-open scoped PremiseOrdering
-
 namespace Exhaustification
 
-/-- `u ≤ₐ[ALT] v` says that every alternative of `ALT` true at `u` is true at `v`. -/
-scoped notation:50 u " ≤ₐ[" ALT "] " v =>
-  @LE.le _ (@Preorder.toLE _ (Preorder.ofLowerSets ALT)) v u
+/-- The order of the alternatives: `u` lies below `v` when every alternative true at `u` is true
+at `v`. -/
+abbrev AltLE {W : Type*} (ALT : Set (Set W)) (u v : W) : Prop := ∀ a ∈ ALT, u ∈ a → v ∈ a
+
+@[inherit_doc] scoped notation:50 u " ≤ₐ[" ALT "] " v => AltLE ALT u v
 
 variable {W : Type*} (ALT : Set (Set W)) (φ : Set W)
 
@@ -76,6 +65,10 @@ theorem mem_exhMW : u ∈ exhᵐʷ ALT φ ↔ MinimalFor (· ∈ φ) (satisfied 
 
 theorem exhMW_subset : exhᵐʷ ALT φ ⊆ φ := fun _ h ↦ h.1
 
+/-- The order of the alternatives is the pullback of inclusion along `satisfied`. -/
+theorem satisfied_subset_satisfied {u v : W} : satisfied ALT u ⊆ satisfied ALT v ↔ u ≤ₐ[ALT] v :=
+  ⟨fun h _ ha hu ↦ (h ⟨ha, hu⟩).2, fun h a ha ↦ ⟨ha.1, h a ha.1 ha.2⟩⟩
+
 /-- Exhaustification keeps the least worlds of the prejacent: those verifying only alternatives
 that every world of the prejacent verifies. -/
 theorem mem_exh_iff_forall_le : u ∈ exh ALT φ ↔ u ∈ φ ∧ ∀ v ∈ φ, u ≤ₐ[ALT] v :=
@@ -86,10 +79,10 @@ theorem mem_exh_iff_forall_le : u ∈ exh ALT φ ↔ u ∈ φ ∧ ∀ v ∈ φ, 
 world of the prejacent that lies below them. -/
 theorem mem_exhMW_iff_forall_le :
     u ∈ exhᵐʷ ALT φ ↔ u ∈ φ ∧ ∀ v ∈ φ, (v ≤ₐ[ALT] u) → (u ≤ₐ[ALT] v) :=
-  ⟨fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv huv ↦ (Preorder.ofLowerSets_le_iff_subset ALT v u).2
-      (h hv ((Preorder.ofLowerSets_le_iff_subset ALT u v).1 huv))⟩,
-    fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ (Preorder.ofLowerSets_le_iff_subset ALT v u).1
-      (h v hv ((Preorder.ofLowerSets_le_iff_subset ALT u v).2 hvu))⟩⟩
+  ⟨fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv huv ↦ (satisfied_subset_satisfied (u := u) (v := v)).1
+      (h hv ((satisfied_subset_satisfied (u := v) (v := u)).2 huv))⟩,
+    fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ (satisfied_subset_satisfied (u := u) (v := v)).2
+      (h v hv ((satisfied_subset_satisfied (u := v) (v := u)).1 hvu))⟩⟩
 
 variable (ALT φ) in
 /-- A least world of the prejacent is minimal. -/
@@ -112,18 +105,6 @@ theorem mem_exhMW_iff_minimal : u ∈ exhᵐʷ ALT φ ↔ u ∈ φ ∧
   refine ⟨fun h ↦ ⟨h.1, ⟨u, h.1, rfl⟩, ?_⟩, fun ⟨hu, h⟩ ↦ ⟨hu, fun v hv hvu ↦ h.2 ⟨v, hv, rfl⟩ hvu⟩⟩
   rintro _ ⟨v, hv, rfl⟩ hvu
   exact h.2 hv hvu
-
-variable (ALT φ) in
-/-- Minimal worlds are Kratzer's best worlds of the prejacent, with the negated alternatives as
-the premises. -/
-theorem exhMW_eq_minimals :
-    exhᵐʷ ALT φ = (≤[compl '' ALT]).minimals φ := by
-  have key (u v : W) : (≤[compl '' ALT]).le u v ↔
-      satisfied ALT u ⊆ satisfied ALT v :=
-    (Preorder.ofLowerSets_image_compl_le_iff ALT u v).trans
-      (Preorder.ofLowerSets_le_iff_subset ALT v u)
-  ext u
-  simp only [mem_exhMW, MinimalFor, Preorder.mem_minimals_iff, key]
 
 /-- Over finitely many alternatives, every world of the prejacent lies above a minimal world,
 one verifying only alternatives that it verifies. -/
@@ -182,75 +163,12 @@ theorem IsMinimalCover.exhMW_eq (hM : IsMinimalCover ALT φ M) :
   ext u
   refine ⟨fun ⟨hu, hmin⟩ ↦ ⟨hu, ?_⟩, fun ⟨hu, v, hv, hvu⟩ ↦ ⟨hu, fun x hx hxu ↦ ?_⟩⟩
   · obtain ⟨v, hv, hvu⟩ := hM.le u hu
-    have hvu := (Preorder.ofLowerSets_le_iff_subset ALT u v).1 hvu
+    have hvu := (satisfied_subset_satisfied (u := v) (v := u)).2 hvu
     exact ⟨v, hv, hvu.antisymm (hmin (hM.mem v hv) hvu)⟩
   · obtain ⟨v', hv', hv'x⟩ := hM.le x hx
-    have hv'x := (Preorder.ofLowerSets_le_iff_subset ALT x v').1 hv'x
-    exact hvu.ge.trans (((Preorder.ofLowerSets_le_iff_subset ALT v' v).1 (hM.antisymm v hv v' hv'
-      ((Preorder.ofLowerSets_le_iff_subset ALT v v').2 (hv'x.trans (hxu.trans hvu.ge))))).trans
+    have hv'x := (satisfied_subset_satisfied (u := v') (v := x)).2 hv'x
+    exact hvu.ge.trans (((satisfied_subset_satisfied (u := v) (v := v')).2 (hM.antisymm v hv v' hv'
+      ((satisfied_subset_satisfied (u := v') (v := v)).1 (hv'x.trans (hxu.trans hvu.ge))))).trans
         hv'x)
-
-/-! ### The orderings of a property
-
-A property `P : W → Set E` of individuals that varies with the world gives two families of
-propositions for a set `s` of individuals: that an individual of `s` lacks the property, and that
-it has it. As premises, the first family ranks a world lower when fewer individuals of `s` have
-the property, and the second when more do. The two families together rank worlds by both at
-once. -/
-
-section Property
-
-variable {E : Type*} (P : W → Set E) (s pos neg : Set E) (v w : W)
-
-theorem ofLowerSets_image_notMem_le_iff :
-    (v ≤[(fun x ↦ {u | x ∉ P u}) '' s] w) ↔ P v ∩ s ⊆ P w ∩ s := by
-  rw [Preorder.ofLowerSets_image_le_iff]
-  exact ⟨fun h x hx ↦ ⟨by_contra fun hw ↦ h x hx.2 hw hx.1, hx.2⟩,
-    fun h x hx hw hv ↦ hw (h ⟨hv, hx⟩).1⟩
-
-theorem ofLowerSets_image_mem_le_iff :
-    (v ≤[(fun x ↦ {u | x ∈ P u}) '' s] w) ↔ P w ∩ s ⊆ P v ∩ s := by
-  rw [Preorder.ofLowerSets_image_le_iff]
-  exact ⟨fun h x hx ↦ ⟨h x hx.2 hx.1, hx.2⟩, fun h x hx hw ↦ (h ⟨hw, hx⟩).1⟩
-
-/-- Under the premises that the individuals of `pos` lack the property and those of `neg` have it,
-a world is at least as good as another when fewer individuals of `pos` and more of `neg` have the
-property in it. -/
-theorem ofLowerSets_image_union_le_iff :
-    (v ≤[(fun x ↦ {u | x ∉ P u}) '' pos ∪ (fun x ↦ {u | x ∈ P u}) '' neg] w) ↔
-      P v ∩ pos ⊆ P w ∩ pos ∧ P w ∩ neg ⊆ P v ∩ neg := by
-  rw [← ofLowerSets_image_notMem_le_iff, ← ofLowerSets_image_mem_le_iff]
-  simp only [Preorder.ofLowerSets_le_iff, Set.mem_union]
-  exact ⟨fun h ↦ ⟨fun s hs ↦ h s (.inl hs), fun s hs ↦ h s (.inr hs)⟩,
-    fun h s hs ↦ hs.elim (h.1 s) (h.2 s)⟩
-
-open Set symmDiff in
-/-- The premises that the individuals of `pos` lack a property and those of `neg` have it are
-unchanged when the property is flipped within `N` and `pos` and `neg` are exchanged on `N`. -/
-theorem image_notMem_union_image_mem_symmDiff (N : Set E) :
-    (fun x ↦ {u | x ∉ N ∆ P u}) '' (pos \ N ∪ neg ∩ N) ∪
-        (fun x ↦ {u | x ∈ N ∆ P u}) '' (neg \ N ∪ pos ∩ N) =
-      (fun x ↦ {u | x ∉ P u}) '' pos ∪ (fun x ↦ {u | x ∈ P u}) '' neg := by
-  have hin {x : E} (hx : x ∈ N) (u : W) : x ∈ N ∆ P u ↔ x ∉ P u := by
-    simp only [mem_symmDiff]; tauto
-  have hout {x : E} (hx : x ∉ N) (u : W) : x ∈ N ∆ P u ↔ x ∈ P u := by
-    simp only [mem_symmDiff]; tauto
-  ext s
-  simp only [mem_union, mem_image, mem_sdiff, mem_inter_iff]
-  constructor
-  · rintro (⟨x, ⟨hp, hx⟩ | ⟨hn, hx⟩, rfl⟩ | ⟨x, ⟨hn, hx⟩ | ⟨hp, hx⟩, rfl⟩)
-    · exact .inl ⟨x, hp, by simp only [hout hx]⟩
-    · exact .inr ⟨x, hn, by simp only [hin hx, not_not]⟩
-    · exact .inr ⟨x, hn, by simp only [hout hx]⟩
-    · exact .inl ⟨x, hp, by simp only [hin hx]⟩
-  · rintro (⟨x, hp, rfl⟩ | ⟨x, hn, rfl⟩)
-    · by_cases hx : x ∈ N
-      · exact .inr ⟨x, .inr ⟨hp, hx⟩, by simp only [hin hx]⟩
-      · exact .inl ⟨x, .inl ⟨hp, hx⟩, by simp only [hout hx]⟩
-    · by_cases hx : x ∈ N
-      · exact .inl ⟨x, .inr ⟨hn, hx⟩, by simp only [hin hx, not_not]⟩
-      · exact .inr ⟨x, .inl ⟨hn, hx⟩, by simp only [hout hx]⟩
-
-end Property
 
 end Exhaustification
