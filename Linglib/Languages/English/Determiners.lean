@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Languages.English.Phonology
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # English determiners
@@ -146,16 +145,16 @@ example : [[smallCapitalI, d, i, schwa, t], [wedge, ŋ, k, l], [j, u, n, smallCa
   decide
 
 /-- *This* is the singular proximal demonstrative. -/
-def this : DemonstrativeDeterminer := { form := "this", deixis := Person.first.participantSets }
+def this : DemonstrativeDeterminer := { form := "this", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *That* is the singular distal demonstrative. -/
-def that : DemonstrativeDeterminer := { form := "that", deixis := Person.first.participantSetsᶜ }
+def that : DemonstrativeDeterminer := { form := "that", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- *These* is the plural proximal demonstrative. -/
-def these : DemonstrativeDeterminer := { form := "these", deixis := Person.first.participantSets }
+def these : DemonstrativeDeterminer := { form := "these", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *Those* is the plural distal demonstrative. -/
-def those : DemonstrativeDeterminer := { form := "those", deixis := Person.first.participantSetsᶜ }
+def those : DemonstrativeDeterminer := { form := "those", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- *My* is the first-person possessive determiner. -/
 def my : PossessiveDeterminer := { form := "my" }

@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Quantifier.Determiner
 
 /-!
@@ -36,9 +35,8 @@ Two of them are polarity sensitive, the concord item
 
 namespace Czech.Determiners
 
-/-- *ten* 'that, the' is the distance-neutral demonstrative, so it covers every participant
-set. -/
-def ten : DemonstrativeDeterminer := { form := "ten", deixis := Finset.univ }
+/-- *ten* 'that, the' is the distance-neutral demonstrative. -/
+def ten : DemonstrativeDeterminer := { form := "ten", deixis := none }
 
 /-- *Každý* 'every', read as `every`, with a singular noun. -/
 def kazdy : QuantificationalDeterminer :=

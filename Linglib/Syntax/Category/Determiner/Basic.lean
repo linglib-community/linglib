@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Finset.Image
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Discourse.SpeechAct.Role
+public import Linglib.Syntax.Feature.Person.Valued
 public import Linglib.Syntax.Feature.Number.Basic
 public import Linglib.Semantics.Quantifier.Symbol
 
@@ -21,7 +21,9 @@ an inventory is a list of them.
 The records hold what a descriptive grammar states of a form. An article records the degrees of
 definiteness it marks, the number it selects and the uses of a definite description it expones,
 among the anaphoric use, the two situational uses and the two bridging uses that Hawkins
-distinguishes. A quantificational determiner records the number it selects, whether it takes mass
+distinguishes. A demonstrative records the person feature value of the referents in whose
+vicinity it locates its referent, [+speaker] for English *this*. A quantificational determiner
+records the number it selects, whether it takes mass
 nouns and the determiner symbols that name its readings.
 
 ## Main definitions
@@ -89,11 +91,11 @@ structure Article extends Determiner where
   numberRestriction : Option Number := none
   deriving DecidableEq
 
-/-- A demonstrative determiner carries its deictic content, the participant sets of the referents
-in whose vicinity it locates its referent. -/
+/-- A demonstrative determiner carries its deictic content, the person feature value of the
+referents in whose vicinity it locates its referent. -/
 structure DemonstrativeDeterminer extends Determiner where
-  /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
-  deixis : Finset (Finset SpeechAct.Role)
+  /-- The deictic content, none for a form that enters no deictic contrast. -/
+  deixis : Option Person.ValuedFeature
   deriving DecidableEq
 
 /-- A quantificational determiner records its readings, the determiner symbols whose

@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Russian demonstrative determiners
@@ -20,10 +19,10 @@ are its determiners.
 namespace Russian.Determiners
 
 /-- *ètot* (этот) 'this' before a noun, for something close to hand ([wade-2020] §126). -/
-def ètot : DemonstrativeDeterminer := { form := "ètot", deixis := Person.first.participantSets }
+def ètot : DemonstrativeDeterminer := { form := "ètot", deixis := some ⟨.speaker, .plus⟩ }
 
 /-- *tot* (тот) 'that' before a noun, for something further removed ([wade-2020] §126). -/
-def tot : DemonstrativeDeterminer := { form := "tot", deixis := Person.first.participantSetsᶜ }
+def tot : DemonstrativeDeterminer := { form := "tot", deixis := some ⟨.speaker, .minus⟩ }
 
 /-- The demonstrative determiners, masculine singular. -/
 def allDemonstratives : List DemonstrativeDeterminer := [ètot, tot]

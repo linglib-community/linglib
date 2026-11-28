@@ -168,7 +168,7 @@ theorem mem_denote_near_iff {E W : Type} (V : Vectors E D) (k : Option DistanceC
     (dem : DemonstrativeDeterminer) {R : (ℕ → E) → W → Set E} {d : ℕ} {g : ℕ → E} {s : W}
     {x : E} :
     x ∈ dem.denote R d (V.near k) g s ↔
-      (⟨dem.deixis, k⟩ : DeicticTerm).Locates V (g d) ∧ x ∈ Definite.anaphoric R d g s :=
+      (⟨dem.participantSets, k⟩ : DeicticTerm).Locates V (g d) ∧ x ∈ Definite.anaphoric R d g s :=
   DemonstrativeDeterminer.mem_denote
 
 /-! ### The paradigms -/
@@ -248,9 +248,9 @@ speaker, *ese* at any distance from the speaker, *aquel* away from both particip
 *ese* covers the anchors of the second and third, as the *ese* of the Latin American binary system
 does. -/
 theorem spanish_anchors :
-    Spanish.Determiners.este.deixis = Term.dem1.anchors ∧
-      Spanish.Determiners.aquel.deixis = Term.dem3.anchors ∧
-        Spanish.Determiners.ese.deixis = Term.dem2.anchors ∪ Term.dem3.anchors := by
+    Spanish.Determiners.este.participantSets = Term.dem1.anchors ∧
+      Spanish.Determiners.aquel.participantSets = Term.dem3.anchors ∧
+        Spanish.Determiners.ese.participantSets = Term.dem2.anchors ∪ Term.dem3.anchors := by
   decide
 
 theorem mem_denote_ese_of_mem_denote_aquel {E W : Type} (N : SetRel (Finset Role) E)
@@ -268,8 +268,8 @@ def eseSpeaker : DeicticTerm := ⟨Term.dem1.anchors, some .nearer⟩
 
 /-- The hearer reading narrows the grammar's *ese*, and the speaker reading anchors outside it. -/
 theorem ese_anchors :
-    eseHearer.anchors ⊆ Spanish.Determiners.ese.deixis ∧
-      Disjoint eseSpeaker.anchors Spanish.Determiners.ese.deixis := by
+    eseHearer.anchors ⊆ Spanish.Determiners.ese.participantSets ∧
+      Disjoint eseSpeaker.anchors Spanish.Determiners.ese.participantSets := by
   decide
 
 /-- The vectors to one referent whose lengths from the speaker's atoms are `s`, from the hearer's
@@ -279,8 +279,8 @@ def config (s h o : ℕ) : Vectors Unit ℕ :=
     fun n ↦ 9 - 3 * n⟩
 
 theorem ese_not_aquel :
-    (⟨Spanish.Determiners.ese.deixis, none⟩ : DeicticTerm).Locates (config 12 1 12) () ∧
-      ¬ (⟨Spanish.Determiners.aquel.deixis, none⟩ : DeicticTerm).Locates (config 12 1 12) () := by
+    (⟨Spanish.Determiners.ese.participantSets, none⟩ : DeicticTerm).Locates (config 12 1 12) () ∧
+      ¬ (⟨Spanish.Determiners.aquel.participantSets, none⟩ : DeicticTerm).Locates (config 12 1 12) () := by
   decide
 
 /-- The two readings of *ese* overlap but differ: either may locate a referent the other does not,

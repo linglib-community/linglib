@@ -6,6 +6,7 @@ public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Syntax.Category.Determiner.Strength
 public import Linglib.Semantics.Reference.Definite
+public import Linglib.Syntax.Feature.Person.Deixis
 
 /-!
 # The denotation of a determiner
@@ -47,7 +48,8 @@ Context is the entity assignment `ℕ → E` and the world coordinate is the res
 `W`, as for `PersonalPronoun.denote`. A demonstrative also reads a relation
 `N : SetRel (Finset Role) E` locating referents at participant sets. Harbour leaves the anchoring
 referent free; `SpeechAct.Context.near` closes it existentially, his reading of English *here* as
-the vicinity of any group containing the speaker. A demonstrative without a deictic contrast covers
+the vicinity of any group containing the speaker. The participant sets a demonstrative covers are
+those of its person feature value. A demonstrative without a deictic contrast covers
 every participant set and so presupposes only that its referent is located somewhere: its deictic
 centre is the whole discourse space, as Terenghi puts it. Harbour's (16) and Moroney's (147)–(148)
 put the deictic condition inside the restriction, where it can select among the restrictor's
@@ -98,12 +100,18 @@ noncomputable def _root_.SpeechAct.Context.near {P T : Type} [PartialOrder E] (c
 
 variable (N : SetRel (Finset Role) E)
 
+/-- The participant sets a demonstrative covers: those of its feature value, and every set for a
+form that enters no deictic contrast. -/
+def _root_.DemonstrativeDeterminer.participantSets (dem : DemonstrativeDeterminer) :
+    Finset (Finset Role) :=
+  dem.deixis.elim Finset.univ (·.participantSets)
+
 /-- A demonstrative determiner denotes the referent of the demonstrative description at discourse
 index `d` where the indexed referent `g d` is located at one of its participant sets, and nothing
 elsewhere. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer) :
     Definite (ℕ → E) W E :=
-  fun g w ↦ Part.assert (g d ∈ N.image dem.deixis)
+  fun g w ↦ Part.assert (g d ∈ N.image dem.participantSets)
     fun _ ↦ anaphoric R d g w
 
 /-- A demonstrative determiner denotes on every model, the restrictor, the index and the relation
@@ -119,7 +127,7 @@ located at one of its participant sets: deixis filters the referent and never se
 @[simp] theorem _root_.DemonstrativeDeterminer.mem_denote {dem : DemonstrativeDeterminer}
     {g : ℕ → E} {s : W} {x : E} :
     x ∈ dem.denote R d N g s ↔
-      g d ∈ N.image dem.deixis ∧ x ∈ anaphoric R d g s := by
+      g d ∈ N.image dem.participantSets ∧ x ∈ anaphoric R d g s := by
   simp only [DemonstrativeDeterminer.denote, Part.mem_assert_iff, exists_prop]
 
 variable {R d N} in

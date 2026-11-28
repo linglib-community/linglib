@@ -6,7 +6,6 @@ public import Linglib.Syntax.Category.Pronoun.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Demonstrative
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Japanese pronouns
@@ -189,19 +188,19 @@ def ikutsu : ProForm :=
 /-- これ *kore* 'this one', near the speaker ([tsujimura-2014] (24)). -/
 def kore : DemonstrativePronoun :=
   { form := "kore", script := some "これ", person := some .third,
-    deixis := Person.first.participantSets }
+    deixis := some ⟨.speaker, .plus⟩ }
 
 /-- それ *sore* 'that one', removed from the speaker but close to the listener. Tsujimura also
-gives the so-series a reading slightly removed from both participants, which a cell of
-participant sets does not record ([tsujimura-2014] (24)). -/
+gives the so-series a reading slightly removed from both participants, a degree of distance, which
+is not recorded ([tsujimura-2014] (24)). -/
 def sore : DemonstrativePronoun :=
   { form := "sore", script := some "それ", person := some .third,
-    deixis := Person.second.participantSets }
+    deixis := some ⟨.addressee, .plus⟩ }
 
 /-- あれ *are* 'that one', far from both the speaker and the listener ([tsujimura-2014] (24)). -/
 def are : DemonstrativePronoun :=
   { form := "are", script := some "あれ", person := some .third,
-    deixis := Person.third.participantSets }
+    deixis := some ⟨.participant, .minus⟩ }
 
 /-- The demonstrative pronouns. -/
 def demonstratives : List DemonstrativePronoun := [kore, sore, are]

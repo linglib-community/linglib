@@ -4,7 +4,6 @@ public import Linglib.Semantics.Quantifier.Determiner
 public import Linglib.Semantics.Quantifier.Global
 public import Linglib.Languages.Romance.Italian.Gender
 public import Linglib.Languages.Romance.Italian.Phonology
-public import Linglib.Syntax.Feature.Person.Participants
 
 /-!
 # Italian determiners
@@ -223,9 +222,9 @@ def inventory : Determiner.Inventory :=
     .article
       { form := partitive (.sg, .masculine) .consonant, definiteness := {.nonSpecific, .specific},
         exponent := .dedicatedMorpheme },
-    .demonstrative { form := questo (.sg, .masculine), deixis := Person.first.participantSets },
+    .demonstrative { form := questo (.sg, .masculine), deixis := some ⟨.speaker, .plus⟩ },
     .demonstrative
-      { form := quello (.sg, .masculine) .consonant, deixis := Person.first.participantSetsᶜ } ] ++
+      { form := quello (.sg, .masculine) .consonant, deixis := some ⟨.speaker, .minus⟩ } ] ++
     quantityWords.map (.quantifier ·.toQuantificationalDeterminer)
 
 end Italian.Determiners

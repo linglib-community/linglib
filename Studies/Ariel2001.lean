@@ -116,8 +116,8 @@ theorem rigidity_lt_and_attenuation_lt :
 
 -- p. 51; Kirsner's Dutch demonstratives run the other way, p. 66
 theorem distal_lt_proximate (a b : AccessibilityLevel) (h : criteria a = criteria b)
-    (ha : a.deixis = some Person.first.participantSetsᶜ)
-    (hb : b.deixis = some Person.first.participantSets) : a < b := by
+    (ha : a.deixis = some ⟨.speaker, .minus⟩)
+    (hb : b.deixis = some ⟨.speaker, .plus⟩) : a < b := by
   revert a b
   decide
 
@@ -179,7 +179,8 @@ def givennessKind (l : AccessibilityLevel) : Option Form.Kind :=
   | .zero, _ => some .zero
   | .pronoun, _ =>
     if l.bound then none else if l.stressed then some .stressedPronoun else some .pronoun
-  | .demonstrative, some d => some (if l.lexical then .demonstrativeN d else .demonstrative d)
+  | .demonstrative, some d =>
+    some (if l.lexical then .demonstrativeN (some d) else .demonstrative (some d))
   | .description, _ => some .definiteN
   | _, _ => none
 

@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Languages.German.Case
 public import Linglib.Languages.German.Gender
 public import Linglib.Syntax.Category.Determiner.Basic
@@ -147,14 +146,14 @@ def nonContracted : Article :=
 
 /-- The inventory lists the two definite articles, the contracted and the non-contracted form; the
 indefinite article; the demonstrative *dieser*, which no longer contrasts with *jener* and is
-distance-neutral, so it covers every participant set; and the possessive *mein*. -/
+distance-neutral; and the possessive *mein*. -/
 def inventory : Determiner.Inventory :=
   [ .article contracted,
     .article nonContracted,
     .article { form := "ein", definiteness := {.nonSpecific, .specific},
                exponent := .dedicatedMorpheme,
                numberRestriction := some .singular },
-    .demonstrative { form := dieser (.sg .masc) .nom, deixis := Finset.univ },
+    .demonstrative { form := dieser (.sg .masc) .nom, deixis := none },
     .possessive { form := "mein" } ]
 
 end German.Determiners
