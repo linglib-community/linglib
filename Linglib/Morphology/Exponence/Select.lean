@@ -8,14 +8,15 @@ public import Linglib.Core.Order.OrdConnected
 /-!
 # Elsewhere selection
 
-This file defines selection by a specificity score (`selectBy`) and by minimality under a
-specificity key (`selectMinimal`), and proves that both produce Elsewhere
-winners. Selection by a score keeps its choice when the competition shrinks around the winner,
-so rules applicable on upper sets of ordered contexts realize contiguous patterns. Minimal
-selection does the same, and agrees with selection by a score, where Stump's Pāṇinian
-Determinism holds, the Elsewhere winners forming a chain. The exponent of the minimal selection,
-falling back on a default where no rule applies, is the shape shared by Stump's rules of
-paradigm linkage over a root and by Bonami and Stump's rules of basic stem choice.
+Minimal selection takes the first applicable rule of a rule set that no applicable rule strictly
+undercuts under a specificity key, and so returns an Elsewhere winner. Where Stump's Pāṇinian
+Determinism holds, the Elsewhere winners being pairwise comparable, it keeps its choice when the
+competition shrinks around the winner, so rules applicable on upper sets of ordered contexts realize
+contiguous patterns. Selection by a score in a linear order is minimal selection under the key that
+reverses the score; a linear key is always deterministic, so its contraction and contiguity hold
+outright. The exponent of the minimal selection, falling back on a default where no rule applies,
+is the shape shared by Stump's rules of paradigm linkage over a root and by Bonami and Stump's rules
+of basic stem choice.
 
 ## Main definitions
 
@@ -29,6 +30,8 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
 
 ## Main results
 
+* `RuleSet.selectBy_eq_selectMinimal`: selection by a score is minimal selection under the key
+  that reverses the score.
 * `RuleSet.selectBy_eq_some_of_applies`: selection by a score is consistent under
   contraction, so the rule selected in a context stays selected in any context with fewer
   applicable rules where it still applies.
@@ -71,7 +74,7 @@ variable {Ctx E : Type*} {R : Type*} [ExponenceRule R Ctx E]
 variable [DecidableRel (Applies : R → Ctx → Prop)]
 variable {v : RuleSet R} {c c' : Ctx} {r s : R} {φ : E}
 
-/-! ### Score selection -/
+/-! ### Applicable rules -/
 
 /-- The rules of `v` applicable at `c`, in the order of `v`. -/
 def applicable (v : RuleSet R) (c : Ctx) : List R :=
@@ -81,192 +84,18 @@ def applicable (v : RuleSet R) (c : Ctx) : List R :=
     r ∈ v.applicable c ↔ r ∈ v ∧ Applies r c := by
   simp only [applicable, List.mem_filter, decide_eq_true_eq]
 
-variable {α : Type*} [LinearOrder α] {f : R → α}
-
-/-- The applicable rule of greatest score `f`, ties broken by the order of
-the rule set; scores to be minimized pass through `OrderDual`. -/
-def selectBy (v : RuleSet R) (f : R → α) (c : Ctx) : Option R :=
-  (v.applicable c).argmax f
-
-theorem selectBy_mem (h : v.selectBy f c = some r) : r ∈ v :=
-  (mem_applicable.mp (List.argmax_mem h)).1
-
-theorem selectBy_applies (h : v.selectBy f c = some r) : Applies r c :=
-  (mem_applicable.mp (List.argmax_mem h)).2
-
-theorem selectBy_eq_none_iff : v.selectBy f c = none ↔ v.applicable c = [] :=
-  List.argmax_eq_none
-
-/-- On a rule set listed by non-increasing score, selection takes the first applicable rule. -/
-theorem selectBy_eq_head?_applicable (h : v.Pairwise fun r s ↦ f s ≤ f r) :
-    v.selectBy f c = (v.applicable c).head? :=
-  List.argmax_eq_head? (h.filter _)
-
-theorem selectBy_isSome_iff : (v.selectBy f c).isSome ↔ ∃ r ∈ v, Applies r c := by
-  simp [← Option.ne_none_iff_isSome, selectBy_eq_none_iff, applicable, List.filter_eq_nil_iff]
-
-theorem selectBy_congr (h : v.applicable c = v.applicable c') :
-    v.selectBy f c = v.selectBy f c' := by
-  rw [selectBy, selectBy, h]
-
-/-- The exponent of the rule selected by `selectBy`. -/
-def realize (v : RuleSet R) (f : R → α) (c : Ctx) : Option E :=
-  (v.selectBy f c).map exponent
-
-theorem realize_eq_none_iff : v.realize f c = none ↔ v.applicable c = [] :=
-  Option.map_eq_none_iff.trans selectBy_eq_none_iff
-
-theorem realize_congr (h : v.applicable c = v.applicable c') :
-    v.realize f c = v.realize f c' :=
-  congrArg (Option.map exponent) (selectBy_congr h)
-
-/-- A rule set sensitive only to what `A` sees selects the same rule by score in contexts that `A`
-identifies. -/
-theorem selectBy_factorsThrough {V : Type*} {A : Ctx → V}
-    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
-    (v.selectBy f).FactorsThrough A :=
-  fun _ _ hA ↦ selectBy_congr <| List.filter_congr fun r hr ↦ by simp [h r hr hA]
-
-/-- A rule set sensitive only to what `A` sees realizes the same exponent by score in contexts
-that `A` identifies. -/
-theorem realize_factorsThrough {V : Type*} {A : Ctx → V}
-    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
-    (v.realize f).FactorsThrough A :=
-  fun _ _ hA ↦ congrArg (Option.map exponent) (selectBy_factorsThrough h hA)
-
-theorem le_of_selectBy_eq_some (h : v.selectBy f c = some r) (hs : s ∈ v) (hsc : Applies s c) :
-    f s ≤ f r :=
-  List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsc⟩) h
-
-theorem realize_eq_of_forall_le (hr : r ∈ v) (hrc : Applies r c)
-    (hle : ∀ s ∈ v, Applies s c → f s ≤ f r)
-    (heq : ∀ s ∈ v, Applies s c → f s = f r → exponent s = exponent r) :
-    v.realize f c = some (exponent r) := by
-  obtain ⟨w, hw⟩ := Option.isSome_iff_exists.mp (selectBy_isSome_iff (f := f).mpr ⟨r, hr, hrc⟩)
-  have hw' := selectBy_mem hw
-  have hwc := selectBy_applies hw
-  rw [realize, hw, Option.map_some,
-    heq w hw' hwc ((hle w hw' hwc).antisymm (le_of_selectBy_eq_some hw hr hrc))]
-
-/-! ### Contraction -/
-
 theorem applicable_eq_filter (h : ∀ s ∈ v, Applies s c → Applies s c') :
     v.applicable c = (v.applicable c').filter (fun s ↦ Applies s c) := by
   rw [applicable, applicable, List.filter_filter]
   exact List.filter_congr fun s hs ↦ by by_cases hc : Applies s c <;> simp [hc, h s hs]
 
-/-- Selection by a score is consistent under contraction. The rule selected at `c'` is selected
-at any context whose applicable rules are among those at `c'`, as long as it applies there. -/
-theorem selectBy_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
-    (hr : v.selectBy f c' = some r) (hrc : Applies r c) : v.selectBy f c = some r := by
-  rw [selectBy, applicable_eq_filter h]
-  exact List.argmax_filter_of_mem hr (by simpa using hrc)
-
-theorem selectBy_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
-    (hr : v.selectBy f c' = none) : v.selectBy f c = none := by
-  rw [selectBy_eq_none_iff, applicable_eq_filter h, selectBy_eq_none_iff.mp hr, List.filter_nil]
-
-/-- An antihomophonous rule set realizing one exponent at `c₁` and `c₃` realizes it at `c₂`, if `c₂`
-takes in the rules `c₁` and `c₃` share and its rules all reach `c₃`. The rules of `c₁` need not all
-reach `c₂`. -/
-theorem realize_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
-    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₃ → Applies s c₂)
-    (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
-    (h : v.realize f c₁ = v.realize f c₃) : v.realize f c₂ = v.realize f c₁ := by
-  rcases h₃ : v.selectBy f c₃ with - | r
-  · rw [h, realize, realize, h₃, selectBy_eq_none_of_applies h₂ h₃]
-  · obtain ⟨r₁, hr₁, he⟩ : ∃ r₁, v.selectBy f c₁ = some r₁ ∧ exponent r₁ = exponent r := by
-      simpa [realize, h₃] using h
-    obtain rfl := hv (selectBy_mem hr₁) (selectBy_mem h₃) he
-    rw [realize, realize, hr₁, selectBy_eq_some_of_applies h₂ h₃
-      (h₁ _ (selectBy_mem hr₁) (selectBy_applies hr₁) (selectBy_applies h₃))]
-
-section Contiguity
-
-variable [Preorder Ctx]
-
-/-- Rules applicable on upper sets of contexts realize contiguous patterns. -/
-theorem isContiguous_realize_of_monotone (hv : v.Antihomophonous)
-    (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realize f) :=
-  fun _ _ _ hij hjk he ↦
-    (realize_eq_of_applies hv (fun s hs hi _ ↦ h s hs hij hi) (fun s hs ↦ h s hs hjk) he).symm
-
-/-- Rules applicable on lower sets of contexts realize contiguous patterns. -/
-theorem isContiguous_realize_of_antitone (hv : v.Antihomophonous)
-    (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realize f) :=
-  fun _ _ _ hij hjk he ↦ he.trans
-    (realize_eq_of_applies hv (fun s hs hk _ ↦ h s hs hjk hk) (fun s hs ↦ h s hs hij) he.symm).symm
-
-end Contiguity
-
-/-! ### Loss of rules -/
-
 theorem applicable_filter (p : R → Bool) :
     applicable (v.filter p) c = (v.applicable c).filter p := by
   simp only [applicable, List.filter_filter, Bool.and_comm]
 
-theorem selectBy_filter_of_mem {p : R → Bool} (h : v.selectBy f c = some r) (hp : p r) :
-    selectBy (v.filter p) f c = some r := by
-  rw [selectBy, applicable_filter]
-  exact List.argmax_filter_of_mem h hp
-
-theorem realize_filter_eq_some (hv : v.Antihomophonous) {p : R → Bool}
-    (h : v.realize f c = some φ) (h' : realize (v.filter p) f c' = some φ) :
-    realize (v.filter p) f c = some φ := by
-  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
-  obtain ⟨r', hr', he⟩ := Option.map_eq_some_iff.mp h'
-  have hm := List.mem_filter.mp (selectBy_mem hr')
-  obtain rfl := hv hm.1 (selectBy_mem hr) he
-  rw [realize, selectBy_filter_of_mem hr hm.2, Option.map_some]
-
-/-! ### Transport -/
-
-section Map
-
-variable {R' Ctx' E' : Type*} [ExponenceRule R' Ctx' E'] [DecidableRel (Applies : R' → Ctx' → Prop)]
-  {β : Type*} [LinearOrder β] {f' : R' → β} {g : R → R'} {c' : Ctx'}
-
-/-- Selection commutes with a map of rules that preserves applicability and the comparison of
-scores. -/
-theorem selectBy_map (happ : ∀ r ∈ v, Applies (g r) c' ↔ Applies r c)
-    (hf : ∀ r ∈ v, ∀ s ∈ v, f' (g r) ≤ f' (g s) ↔ f r ≤ f s) :
-    selectBy (v.map g) f' c' = (v.selectBy f c).map g := by
-  have happ' : applicable (v.map g) c' = (v.applicable c).map g := by
-    rw [applicable, applicable, List.filter_map]
-    exact congrArg _ (List.filter_congr fun r hr ↦ by simp [happ r hr])
-  rw [selectBy, happ', List.argmax_map, selectBy]
-  exact congrArg _ (List.argmax_congr fun r hr s hs ↦
-    hf r (mem_applicable.mp hr).1 s (mem_applicable.mp hs).1)
-
-end Map
-
-/-! ### Soundness -/
+/-! ### Elsewhere winners -/
 
 variable {κ : Type*} [Preorder κ] {key : R → κ}
-
-/-- A score that strictly reverses specificity on the applicable rules selects an Elsewhere
-winner. -/
-theorem selectBy_isElsewhereWinner
-    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r)
-    (h : v.selectBy f c = some r) : v.IsElsewhereWinner key c r := by
-  refine minimalFor_iff_forall_lt.2 ⟨mem_applicable.mp (List.argmax_mem h), fun s hsr hs ↦ ?_⟩
-  exact absurd (List.le_of_mem_argmax (mem_applicable.mpr hs) h)
-    (not_le_of_gt (hf _ (mem_applicable.mpr hs) _ (List.argmax_mem h) hsr))
-
-theorem realize_realizes
-    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r)
-    (h : v.realize f c = some φ) : v.Realizes key c φ := by
-  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
-  exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩
-
-/-- Where every exponent realized under the key reversing `f` is `φ`, selection by `f` returns `φ`,
-whatever the order of the rule set. -/
-theorem realize_eq_of_forall_realizes (hne : ∃ r ∈ v, Applies r c)
-    (h : ∀ ψ, v.Realizes (OrderDual.toDual ∘ f) c ψ → ψ = φ) : v.realize f c = some φ := by
-  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp (selectBy_isSome_iff (f := f).mpr hne)
-  have hψ : v.realize f c = some (exponent r) := by rw [realize, hr, Option.map_some]
-  rw [hψ, h _ (realize_realizes (key := OrderDual.toDual ∘ f)
-    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.1 h) hψ)]
 
 instance [DecidableEq R] [DecidableRel (· ≤ · : κ → κ → Prop)] :
     Decidable (v.IsElsewhereWinner key c r) :=
@@ -293,6 +122,8 @@ theorem HasMostSpecific.isChain (h : v.HasMostSpecific key c) :
     (hle t (mem_applicable.mpr ht.1)))
 
 /-! ### Order selection -/
+
+section Minimal
 
 variable [DecidableRel (· < · : κ → κ → Prop)]
 
@@ -369,30 +200,6 @@ theorem realizeMinimal_congr (h : v.applicable c = v.applicable c') :
     v.realizeMinimal key c = v.realizeMinimal key c' :=
   congrArg (Option.map exponent) (selectMinimal_congr h)
 
-/-- Under Pāṇinian Determinism minimal selection over a coherent rule set realizes exactly what
-the Elsewhere winners carry, whatever the order of the rule set. -/
-theorem realizeMinimal_eq_some_iff (hv : v.Coherent key)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s}) :
-    v.realizeMinimal key c = some φ ↔ v.Realizes key c φ := by
-  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-  · obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
-    exact ⟨r, selectMinimal_isElsewhereWinner hr, rfl⟩
-  · obtain ⟨r, hr, -⟩ := id h
-    obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp
-      (selectMinimal_isSome_iff (key := key).mpr ⟨r, hr.prop.1, hr.prop.2⟩)
-    rw [realizeMinimal, ht, Option.map_some,
-      Realizes.eq hv hc ⟨t, selectMinimal_isElsewhereWinner ht, rfl⟩ h]
-
-/-- Under Pāṇinian Determinism a coherent rule set realizes by minimal selection what it
-realizes by selection on any score strictly reversing specificity. -/
-theorem realizeMinimal_eq_realize (hv : v.Coherent key)
-    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
-    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r) :
-    v.realizeMinimal key c = v.realize f c := by
-  rcases hs : v.realize f c with - | φ
-  · rwa [realizeMinimal_eq_none_iff, ← realize_eq_none_iff (f := f)]
-  · exact (realizeMinimal_eq_some_iff hv hc).mpr (realize_realizes hf hs)
-
 /-! ### Contraction under Pāṇinian Determinism -/
 
 /-- Minimal selection is consistent under contraction where the Elsewhere winners of the smaller
@@ -458,6 +265,220 @@ theorem isContiguous_realizeMinimal_of_antitone (hv : v.Antihomophonous)
     (fun s hs hk _ ↦ h s hs hjk hk) (fun s hs ↦ h s hs hij) he.symm).symm
 
 end Contiguity
+
+end Minimal
+
+/-! ### Score selection -/
+
+variable {α : Type*} [LinearOrder α] {f : R → α}
+
+/-- The applicable rule of greatest score `f`, ties broken by the order of
+the rule set; scores to be minimized pass through `OrderDual`. -/
+def selectBy (v : RuleSet R) (f : R → α) (c : Ctx) : Option R :=
+  (v.applicable c).argmax f
+
+/-- Selection by a score is minimal selection under the key that reverses the score. -/
+theorem selectBy_eq_selectMinimal (v : RuleSet R) (f : R → α) :
+    v.selectBy f = v.selectMinimal (OrderDual.toDual ∘ f) := by
+  funext c
+  simp [selectBy, selectMinimal, List.argmax_eq_find?]
+
+theorem selectBy_mem (h : v.selectBy f c = some r) : r ∈ v :=
+  selectMinimal_mem (selectBy_eq_selectMinimal v f ▸ h)
+
+theorem selectBy_applies (h : v.selectBy f c = some r) : Applies r c :=
+  (selectMinimal_isElsewhereWinner (selectBy_eq_selectMinimal v f ▸ h)).prop.2
+
+theorem selectBy_eq_none_iff : v.selectBy f c = none ↔ v.applicable c = [] :=
+  selectBy_eq_selectMinimal v f ▸ selectMinimal_eq_none_iff
+
+/-- On a rule set listed by non-increasing score, selection takes the first applicable rule. -/
+theorem selectBy_eq_head?_applicable (h : v.Pairwise fun r s ↦ f s ≤ f r) :
+    v.selectBy f c = (v.applicable c).head? :=
+  List.argmax_eq_head? (h.filter _)
+
+theorem selectBy_isSome_iff : (v.selectBy f c).isSome ↔ ∃ r ∈ v, Applies r c :=
+  selectBy_eq_selectMinimal v f ▸ selectMinimal_isSome_iff
+
+theorem selectBy_congr (h : v.applicable c = v.applicable c') :
+    v.selectBy f c = v.selectBy f c' := by
+  rw [selectBy, selectBy, h]
+
+/-- The exponent of the rule selected by `selectBy`. -/
+def realize (v : RuleSet R) (f : R → α) (c : Ctx) : Option E :=
+  (v.selectBy f c).map exponent
+
+/-- Realization by a score is minimal realization under the key that reverses the score. -/
+theorem realize_eq_realizeMinimal (v : RuleSet R) (f : R → α) :
+    v.realize f = v.realizeMinimal (OrderDual.toDual ∘ f) :=
+  funext fun c ↦ congrArg (Option.map exponent) (congrFun (selectBy_eq_selectMinimal v f) c)
+
+theorem realize_eq_none_iff : v.realize f c = none ↔ v.applicable c = [] :=
+  Option.map_eq_none_iff.trans selectBy_eq_none_iff
+
+theorem realize_congr (h : v.applicable c = v.applicable c') :
+    v.realize f c = v.realize f c' :=
+  congrArg (Option.map exponent) (selectBy_congr h)
+
+/-- A rule set sensitive only to what `A` sees selects the same rule by score in contexts that `A`
+identifies. -/
+theorem selectBy_factorsThrough {V : Type*} {A : Ctx → V}
+    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
+    (v.selectBy f).FactorsThrough A :=
+  selectBy_eq_selectMinimal v f ▸ selectMinimal_factorsThrough h
+
+/-- A rule set sensitive only to what `A` sees realizes the same exponent by score in contexts
+that `A` identifies. -/
+theorem realize_factorsThrough {V : Type*} {A : Ctx → V}
+    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
+    (v.realize f).FactorsThrough A :=
+  realize_eq_realizeMinimal v f ▸ realizeMinimal_factorsThrough h
+
+theorem le_of_selectBy_eq_some (h : v.selectBy f c = some r) (hs : s ∈ v) (hsc : Applies s c) :
+    f s ≤ f r :=
+  List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsc⟩) h
+
+theorem realize_eq_of_forall_le (hr : r ∈ v) (hrc : Applies r c)
+    (hle : ∀ s ∈ v, Applies s c → f s ≤ f r)
+    (heq : ∀ s ∈ v, Applies s c → f s = f r → exponent s = exponent r) :
+    v.realize f c = some (exponent r) := by
+  obtain ⟨w, hw⟩ := Option.isSome_iff_exists.mp (selectBy_isSome_iff (f := f).mpr ⟨r, hr, hrc⟩)
+  have hw' := selectBy_mem hw
+  have hwc := selectBy_applies hw
+  rw [realize, hw, Option.map_some,
+    heq w hw' hwc ((hle w hw' hwc).antisymm (le_of_selectBy_eq_some hw hr hrc))]
+
+/-! ### Contraction -/
+
+/-- Selection by a score is consistent under contraction. The rule selected at `c'` is selected
+at any context whose applicable rules are among those at `c'`, as long as it applies there. A
+linear key is deterministic, so this is the contraction of minimal selection. -/
+theorem selectBy_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
+    (hr : v.selectBy f c' = some r) (hrc : Applies r c) : v.selectBy f c = some r := by
+  rw [selectBy_eq_selectMinimal] at hr ⊢
+  exact selectMinimal_eq_some_of_applies h (isChain_isElsewhereWinner _ _ _) hr hrc
+
+theorem selectBy_eq_none_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
+    (hr : v.selectBy f c' = none) : v.selectBy f c = none := by
+  rw [selectBy_eq_selectMinimal] at hr ⊢
+  exact selectMinimal_eq_none_of_applies h hr
+
+/-- An antihomophonous rule set realizing one exponent at `c₁` and `c₃` realizes it at `c₂`, if `c₂`
+takes in the rules `c₁` and `c₃` share and its rules all reach `c₃`. The rules of `c₁` need not all
+reach `c₂`. -/
+theorem realize_eq_of_applies {c₁ c₂ c₃ : Ctx} (hv : v.Antihomophonous)
+    (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₃ → Applies s c₂)
+    (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c₃)
+    (h : v.realize f c₁ = v.realize f c₃) : v.realize f c₂ = v.realize f c₁ := by
+  rw [realize_eq_realizeMinimal] at h ⊢
+  exact realizeMinimal_eq_of_applies hv (isChain_isElsewhereWinner _ _ _) h₁ h₂ h
+
+section Contiguity
+
+variable [Preorder Ctx]
+
+/-- Rules applicable on upper sets of contexts realize contiguous patterns. -/
+theorem isContiguous_realize_of_monotone (hv : v.Antihomophonous)
+    (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realize f) :=
+  realize_eq_realizeMinimal v f ▸
+    isContiguous_realizeMinimal_of_monotone hv (fun _ ↦ isChain_isElsewhereWinner _ _ _) h
+
+/-- Rules applicable on lower sets of contexts realize contiguous patterns. -/
+theorem isContiguous_realize_of_antitone (hv : v.Antihomophonous)
+    (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realize f) :=
+  realize_eq_realizeMinimal v f ▸
+    isContiguous_realizeMinimal_of_antitone hv (fun _ ↦ isChain_isElsewhereWinner _ _ _) h
+
+end Contiguity
+
+/-! ### Loss of rules -/
+
+theorem selectBy_filter_of_mem {p : R → Bool} (h : v.selectBy f c = some r) (hp : p r) :
+    selectBy (v.filter p) f c = some r := by
+  rw [selectBy, applicable_filter]
+  exact List.argmax_filter_of_mem h hp
+
+theorem realize_filter_eq_some (hv : v.Antihomophonous) {p : R → Bool}
+    (h : v.realize f c = some φ) (h' : realize (v.filter p) f c' = some φ) :
+    realize (v.filter p) f c = some φ := by
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+  obtain ⟨r', hr', he⟩ := Option.map_eq_some_iff.mp h'
+  have hm := List.mem_filter.mp (selectBy_mem hr')
+  obtain rfl := hv hm.1 (selectBy_mem hr) he
+  rw [realize, selectBy_filter_of_mem hr hm.2, Option.map_some]
+
+/-! ### Transport -/
+
+section Map
+
+variable {R' Ctx' E' : Type*} [ExponenceRule R' Ctx' E'] [DecidableRel (Applies : R' → Ctx' → Prop)]
+  {β : Type*} [LinearOrder β] {f' : R' → β} {g : R → R'} {c' : Ctx'}
+
+/-- Selection commutes with a map of rules that preserves applicability and the comparison of
+scores. -/
+theorem selectBy_map (happ : ∀ r ∈ v, Applies (g r) c' ↔ Applies r c)
+    (hf : ∀ r ∈ v, ∀ s ∈ v, f' (g r) ≤ f' (g s) ↔ f r ≤ f s) :
+    selectBy (v.map g) f' c' = (v.selectBy f c).map g := by
+  have happ' : applicable (v.map g) c' = (v.applicable c).map g := by
+    rw [applicable, applicable, List.filter_map]
+    exact congrArg _ (List.filter_congr fun r hr ↦ by simp [happ r hr])
+  rw [selectBy, happ', List.argmax_map, selectBy]
+  exact congrArg _ (List.argmax_congr fun r hr s hs ↦
+    hf r (mem_applicable.mp hr).1 s (mem_applicable.mp hs).1)
+
+end Map
+
+/-! ### Soundness -/
+
+/-- A score that strictly reverses specificity on the applicable rules selects an Elsewhere
+winner. -/
+theorem selectBy_isElsewhereWinner
+    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r)
+    (h : v.selectBy f c = some r) : v.IsElsewhereWinner key c r := by
+  refine minimalFor_iff_forall_lt.2 ⟨mem_applicable.mp (List.argmax_mem h), fun s hsr hs ↦ ?_⟩
+  exact absurd (List.le_of_mem_argmax (mem_applicable.mpr hs) h)
+    (not_le_of_gt (hf _ (mem_applicable.mpr hs) _ (List.argmax_mem h) hsr))
+
+theorem realize_realizes
+    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r)
+    (h : v.realize f c = some φ) : v.Realizes key c φ := by
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩
+
+/-- Where every exponent realized under the key reversing `f` is `φ`, selection by `f` returns `φ`,
+whatever the order of the rule set. -/
+theorem realize_eq_of_forall_realizes (hne : ∃ r ∈ v, Applies r c)
+    (h : ∀ ψ, v.Realizes (OrderDual.toDual ∘ f) c ψ → ψ = φ) : v.realize f c = some φ := by
+  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp (selectBy_isSome_iff (f := f).mpr hne)
+  have hψ : v.realize f c = some (exponent r) := by rw [realize, hr, Option.map_some]
+  rw [hψ, h _ (realize_realizes (key := OrderDual.toDual ∘ f)
+    (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.1 h) hψ)]
+
+variable [DecidableRel (· < · : κ → κ → Prop)]
+
+/-- Under Pāṇinian Determinism minimal selection over a coherent rule set realizes exactly what
+the Elsewhere winners carry, whatever the order of the rule set. -/
+theorem realizeMinimal_eq_some_iff (hv : v.Coherent key)
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s}) :
+    v.realizeMinimal key c = some φ ↔ v.Realizes key c φ := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+    exact ⟨r, selectMinimal_isElsewhereWinner hr, rfl⟩
+  · obtain ⟨r, hr, -⟩ := id h
+    obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp
+      (selectMinimal_isSome_iff (key := key).mpr ⟨r, hr.prop.1, hr.prop.2⟩)
+    rw [realizeMinimal, ht, Option.map_some,
+      Realizes.eq hv hc ⟨t, selectMinimal_isElsewhereWinner ht, rfl⟩ h]
+
+/-- Under Pāṇinian Determinism a coherent rule set realizes by minimal selection what it
+realizes by selection on any score strictly reversing specificity. -/
+theorem realizeMinimal_eq_realize (hv : v.Coherent key)
+    (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
+    (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r) :
+    v.realizeMinimal key c = v.realize f c := by
+  rcases hs : v.realize f c with - | φ
+  · rwa [realizeMinimal_eq_none_iff, ← realize_eq_none_iff (f := f)]
+  · exact (realizeMinimal_eq_some_iff hv hc).mpr (realize_realizes hf hs)
 
 /-! ### Realization with a fallback -/
 

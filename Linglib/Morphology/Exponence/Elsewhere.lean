@@ -72,6 +72,11 @@ theorem IsElsewhereWinner.antisymmRel (hr : v.IsElsewhereWinner key c r)
     AntisymmRel (· ≤ ·) (key r) (key s) :=
   h.elim (fun h ↦ ⟨hr.le_of_le hs.1 h, h⟩) fun h ↦ ⟨h, hs.le_of_le hr.1 h⟩
 
+/-- Under a linearly ordered key the Elsewhere winners are pairwise comparable. -/
+theorem isChain_isElsewhereWinner {κ : Type*} [LinearOrder κ] (v : RuleSet R) (key : R → κ)
+    (c : Ctx) : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s} :=
+  fun _ _ _ _ _ ↦ le_total _ _
+
 theorem exists_isElsewhereWinner (h : ∃ r ∈ v, Applies r c) :
     ∃ r, v.IsElsewhereWinner key c r :=
   (v.finite_toSet.sep _).exists_minimalFor key _ h
