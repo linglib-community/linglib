@@ -152,8 +152,8 @@ theorem _root_.IsTemporalPrecedence.isTelic_of_qua [SemilatticeSup β] (r : β �
 /-- A predicate that fixes the run time is telic: a part of an event runs within it, so it neither
 precedes nor follows a part with the event's run time. -/
 theorem isTelic_runTime_eq [PartialOrder β] {T : Type*} [LinearOrder T]
-    [TemporalTrace β T] (hτ : Monotone (τ : β → NonemptyInterval T))
-    (I : NonemptyInterval T) : IsTelic (Precedes : β → β → Prop) {e | τ e = I} := by
+    {τ : β → NonemptyInterval T} (hτ : Monotone τ) (I : NonemptyInterval T) :
+    IsTelic (Precedes τ) {e | τ e = I} := by
   refine isTelic_iff.mpr fun e e' he he' _ e'' h'' ↦ ⟨fun hp ↦ ?_, fun hp ↦ ?_⟩ <;>
     have hτe : τ e' = τ e := he'.trans he.symm
   · change (τ e'').snd < (τ e').fst at hp

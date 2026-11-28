@@ -45,9 +45,8 @@ namespace Matthewson2006
 
 open Allen IntervalAlgebra Aspect Set
 open Tense (pronoun mem_pronoun)
-open Event (τ)
 
-variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P Q : W → E → Prop}
+variable {W T E : Type*} [LinearOrder T] {τ : E → NonemptyInterval T} {P Q : W → E → Prop}
   {g : ℕ → NonemptyInterval T} {u : NonemptyInterval T} {w : W} {i : ℕ}
 
 /-! ### The tenses -/
@@ -75,7 +74,7 @@ theorem TENSE_dom_iff :
   simp [NonemptyInterval.forall_le_not_precedes_iff']
 
 -- (15)
-theorem exists_mem_TENSE_perfective : (∃ t ∈ TENSE i g w, perfective (P w) t) ↔
+theorem exists_mem_TENSE_perfective : (∃ t ∈ TENSE i g w, perfective τ (P w) t) ↔
     (g i).snd ≤ (g 0).snd ∧ ∃ e, τ e ≤ g i ∧ P w e := by
   simp [perfective_iff]
 
@@ -91,11 +90,11 @@ reference time and no present one does. -/
 theorem tense_and_not_past_or_present_of_split (hi : i ≠ 0) (hP : ∃ e, P w e) (hQ : ∃ e, Q w e)
     (hP' : ∀ e, P w e → (τ e).Precedes u) (hQ' : ∀ e, Q w e → τ e ≤ u) :
     (∃ g : ℕ → NonemptyInterval T, g 0 = u ∧
-        ∃ t ∈ TENSE i g w, (perfective (P w) ⊓ perfective (Q w)) t) ∧
+        ∃ t ∈ TENSE i g w, (perfective τ (P w) ⊓ perfective τ (Q w)) t) ∧
       (∀ g : ℕ → NonemptyInterval T, g 0 = u →
-        ¬ ∃ t ∈ PAST i g w, (perfective (P w) ⊓ perfective (Q w)) t) ∧
+        ¬ ∃ t ∈ PAST i g w, (perfective τ (P w) ⊓ perfective τ (Q w)) t) ∧
       ∀ g : ℕ → NonemptyInterval T, g 0 = u →
-        ¬ ∃ t ∈ PRESENT i g w, (perfective (P w) ⊓ perfective (Q w)) t := by
+        ¬ ∃ t ∈ PRESENT i g w, (perfective τ (P w) ⊓ perfective τ (Q w)) t := by
   obtain ⟨e₁, h₁⟩ := hP
   obtain ⟨e₂, h₂⟩ := hQ
   refine ⟨⟨Function.update (fun _ ↦ u) i (τ e₁ ⊔ τ e₂), by simp [Function.update_of_ne hi.symm],
@@ -120,14 +119,14 @@ theorem tense_and_not_past_or_present_of_split (hi : i ≠ 0) (hP : ∃ e, P w e
 /-! ### The future -/
 
 -- (38)
-theorem exists_mem_TENSE_kelh : (∃ t ∈ TENSE i g w, prospective (perfective (P w)) t) ↔
+theorem exists_mem_TENSE_kelh : (∃ t ∈ TENSE i g w, prospective (perfective τ (P w)) t) ↔
     (g i).snd ≤ (g 0).snd ∧ ∃ e, (g i).Precedes (τ e) ∧ P w e := by
   simp [prospective_perfective_iff]
 
 /-- With the utterance time for its reference time, a sentence with *kelh* is true only of an
 event after the utterance time (7). -/
 theorem precedes_of_mem_kelh (h : g i = g 0)
-    (ht : ∃ t ∈ TENSE i g w, prospective (perfective (P w)) t) :
+    (ht : ∃ t ∈ TENSE i g w, prospective (perfective τ (P w)) t) :
     ∃ e, (g 0).Precedes (τ e) ∧ P w e :=
   h ▸ (exists_mem_TENSE_kelh.1 ht).2
 
@@ -135,8 +134,8 @@ theorem precedes_of_mem_kelh (h : g i = g 0)
 time, the reading of *would* in (39). -/
 theorem exists_kelh_not_precedes :
     ∃ (P : Unit → NonemptyInterval ℤ → Prop) (g : ℕ → NonemptyInterval ℤ),
-      (∃ t ∈ TENSE 1 g (), prospective (perfective (P ())) t) ∧
-        ∀ e, P () e → (τ e).Precedes (g 0) := by
+      (∃ t ∈ TENSE 1 g (), prospective (perfective id (P ())) t) ∧
+        ∀ e, P () e → e.Precedes (g 0) := by
   refine ⟨fun _ e ↦ e = .pure 1, fun n ↦ if n = 0 then .pure 2 else .pure 0,
     ?_, ?_⟩
   · exact (exists_mem_TENSE_kelh (P := fun _ (e : NonemptyInterval ℤ) ↦ e = .pure 1)).2

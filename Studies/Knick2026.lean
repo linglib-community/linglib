@@ -71,10 +71,9 @@ prospective, [an eventuality to come](##mem_present_future_iff); the modal selec
 namespace Knick2026
 
 open Aspect Temporal Conditional ModalLogic Set
-open Event (τ)
 open scoped SetRel
 
-variable {W T E : Type*} [LinearOrder T] [TemporalTrace E T] {P Q : W → E → Prop}
+variable {W T E : Type*} [LinearOrder T] {τ : E → NonemptyInterval T} {P Q : W → E → Prop}
   {p : W → NonemptyInterval T → Prop} {u g : NonemptyInterval T} {w : W}
 
 /-! ### The present and the non-past -/
@@ -103,7 +102,7 @@ theorem mem_nonPast_iff_dual : w ∈ nonPast u p ↔
   simp [mem_nonPast]
 
 theorem nonPast_perfective :
-    nonPast u (fun w ↦ perfective (P w)) = {w | ∃ e, u.fst ≤ (τ e).fst ∧ P w e} := by
+    nonPast u (fun w ↦ perfective τ (P w)) = {w | ∃ e, u.fst ≤ (τ e).fst ∧ P w e} := by
   ext w
   rw [mem_nonPast]
   exact ⟨fun ⟨_, hp, h⟩ ↦ let ⟨e, hle, hP⟩ := perfective_iff.1 hp
@@ -112,8 +111,8 @@ theorem nonPast_perfective :
 
 -- a non-past reference time spans the eventualities of both subjects
 theorem nonPast_perfective_inter :
-    nonPast u (fun v ↦ perfective (P v) ⊓ perfective (Q v)) =
-      nonPast u (fun v ↦ perfective (P v)) ∩ nonPast u (fun v ↦ perfective (Q v)) := by
+    nonPast u (fun v ↦ perfective τ (P v) ⊓ perfective τ (Q v)) =
+      nonPast u (fun v ↦ perfective τ (P v)) ∩ nonPast u (fun v ↦ perfective τ (Q v)) := by
   ext w
   simp only [nonPast_perfective, mem_inter_iff, mem_ofPred_eq, mem_nonPast]
   constructor
@@ -127,7 +126,7 @@ theorem nonPast_perfective_inter :
       perfective_iff.2 ⟨e₂, le_sup_right, hQ⟩⟩, le_inf h₁ h₂⟩
 
 theorem not_perfective_of_forall_precedes (h : ∀ e, Q w e → u.Precedes (τ e)) :
-    ¬ perfective (Q w) u :=
+    ¬ perfective τ (Q w) u :=
   fun hp ↦ let ⟨e, hle, hQ⟩ := perfective_iff.1 hp
     (((τ e).fst_le_snd.trans (NonemptyInterval.le_def.1 hle).2).not_gt (h e hQ))
 
@@ -135,7 +134,7 @@ theorem not_perfective_of_forall_precedes (h : ∀ e, Q w e → u.Precedes (τ e
 future included (24), where the present perfect requires
 [an event over by the utterance time](##Aspect.perfect_perfective_iff). -/
 theorem nonPast_perfect_perfective :
-    nonPast u (fun w ↦ perfect (perfective (P w))) = {w | ∃ e, P w e} := by
+    nonPast u (fun w ↦ perfect (perfective τ (P w))) = {w | ∃ e, P w e} := by
   ext w
   rw [mem_nonPast]
   exact ⟨fun ⟨_, hp, _⟩ ↦ let ⟨e, _, hP⟩ := perfect_perfective_iff.1 hp; ⟨e, hP⟩, fun ⟨e, hP⟩ ↦
@@ -143,7 +142,7 @@ theorem nonPast_perfect_perfective :
 
 -- (13): the present perfect is false when the events all lie ahead
 theorem not_mem_present_perfect_perfective (h : ∀ e, P w e → u.Precedes (τ e)) :
-    w ∉ present u (fun w ↦ perfect (perfective (P w))) := fun hu ↦
+    w ∉ present u (fun w ↦ perfect (perfective τ (P w))) := fun hu ↦
   let ⟨e, hle, hP⟩ := perfect_perfective_iff.1 (present_subset hu)
   (((τ e).fst_le_snd.trans hle).not_gt (h e hP))
 
@@ -151,12 +150,12 @@ theorem not_mem_present_perfect_perfective (h : ∀ e, P w e → u.Precedes (τ 
 
 -- (35b): every moment of the utterance time is the run time of an eventuality
 theorem mem_present_perfective :
-    w ∈ present u (fun w ↦ perfective (P w)) ↔ ∀ a ∈ u, ∃ e, τ e = .pure a ∧ P w e :=
+    w ∈ present u (fun w ↦ perfective τ (P w)) ↔ ∀ a ∈ u, ∃ e, τ e = .pure a ∧ P w e :=
   durative_perfective_iff
 
 -- at an instant an instantaneous eventuality suffices, as for [bennett-partee-1972]
 theorem mem_present_pure_perfective {a : T} :
-    w ∈ present (.pure a) (fun w ↦ perfective (P w)) ↔ ∃ e, τ e = .pure a ∧ P w e := by
+    w ∈ present (.pure a) (fun w ↦ perfective τ (P w)) ↔ ∃ e, τ e = .pure a ∧ P w e := by
   simp [mem_present_perfective, NonemptyInterval.mem_pure]
 
 -- the rule (28) is the pointwise condition at every moment of the utterance time
@@ -167,21 +166,21 @@ theorem mem_present_iff_of_monotone (h : Monotone (p w)) :
 
 -- (41b)
 theorem not_mem_present_perfective_of_forall_lt (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
-    w ∉ present u (fun w ↦ perfective (P w)) := fun hw ↦
+    w ∉ present u (fun w ↦ perfective τ (P w)) := fun hw ↦
   let ⟨e, he, hP⟩ := mem_present_perfective.1 hw u.fst ⟨le_rfl, u.fst_le_snd⟩
   lt_irrefl u.fst (by simpa [he] using h e hP)
 
 -- (46a)
 theorem not_mem_present_perfective_of_subsingleton (hu : u.fst < u.snd)
     (h : ∀ e e', P w e → P w e' → τ e = τ e') :
-    w ∉ present u (fun w ↦ perfective (P w)) := fun hw ↦ by
+    w ∉ present u (fun w ↦ perfective τ (P w)) := fun hw ↦ by
   obtain ⟨e, he, hP⟩ := mem_present_perfective.1 hw u.fst ⟨le_rfl, u.fst_le_snd⟩
   obtain ⟨e', he', hP'⟩ := mem_present_perfective.1 hw u.snd ⟨u.fst_le_snd, le_rfl⟩
   exact hu.ne (by simpa [he, he'] using congrArg (·.fst) (h e e' hP hP'))
 
 -- (48b), (51)
-theorem mem_present_perfective_of_unbounded (h : HasSubintervalProperty (P w))
-    (hu : unbounded (P w) u) : w ∈ present u (fun w ↦ perfective (P w)) :=
+theorem mem_present_perfective_of_unbounded (h : HasSubintervalProperty τ (P w))
+    (hu : unbounded τ (P w) u) : w ∈ present u (fun w ↦ perfective τ (P w)) :=
   h.unbounded_le_durative_perfective u hu
 
 /-! ### The modal -/
@@ -228,7 +227,7 @@ def future (g : NonemptyInterval T) (p : W → NonemptyInterval T → Prop) :
   MOD s R fun v ↦ prospective ((· ≤ g) ⊓ p v)
 
 theorem prospective_inf_perfective_iff {P : E → Prop} :
-    prospective ((· ≤ g) ⊓ perfective P) u ↔ ∃ e, τ e ≤ g ∧ u.Precedes (τ e) ∧ P e := by
+    prospective ((· ≤ g) ⊓ perfective τ P) u ↔ ∃ e, τ e ≤ g ∧ u.Precedes (τ e) ∧ P e := by
   rw [prospective_iff]
   exact ⟨fun ⟨_, hj, hg, hp⟩ ↦ let ⟨e, hle, hP⟩ := perfective_iff.1 hp
       ⟨e, hle.trans hg, hj.trans_le (NonemptyInterval.le_def.1 hle).1, hP⟩,
@@ -238,14 +237,14 @@ variable [∀ t, (R t).IsRefl]
 
 /-- Over a realistic base the future holds where an eventuality of the predicate lies within the
 salient interval after the utterance time (42); the rule (28) is idle on it. -/
-theorem mem_present_future_iff : w ∈ present u (future s R g fun v ↦ perfective (P v)) ↔
+theorem mem_present_future_iff : w ∈ present u (future s R g fun v ↦ perfective τ (P v)) ↔
     ∃ e, τ e ≤ g ∧ u.Precedes (τ e) ∧ P w e := by
   rw [future, MOD_eq, present_eq_of_antitone fun _ ↦ antitone_prospective _]
   exact prospective_inf_perfective_iff
 
 -- (68) under the rule (28)
 theorem mem_present_compl_future_iff :
-    w ∈ present u (fun v ↦ (future s R g (fun v ↦ perfective (P v)) v)ᶜ) ↔
+    w ∈ present u (fun v ↦ (future s R g (fun v ↦ perfective τ (P v)) v)ᶜ) ↔
       ∀ e, τ e ≤ g → P w e → (τ e).fst ≤ u.fst := by
   rw [future, MOD_eq]
   refine ⟨fun h e hg hP ↦ not_lt.1 fun hlt ↦ ?_, fun h ↦ durative_iff.2 fun t ht hmem ↦ ?_⟩
@@ -256,8 +255,9 @@ theorem mem_present_compl_future_iff :
 
 -- (77): without the prospective the modal leaves the negated stative its present reading
 theorem present_compl_MOD_perfective :
-    present u (fun v ↦ (MOD s R (fun v ↦ perfective (P v)) v)ᶜ) = {w | ¬ perfective (P w) u} := by
-  rw [MOD_eq, present_eq_of_antitone (p := fun v ↦ (perfective (P v))ᶜ) fun w ↦
+    present u (fun v ↦ (MOD s R (fun v ↦ perfective τ (P v)) v)ᶜ) =
+      {w | ¬ perfective τ (P w) u} := by
+  rw [MOD_eq, present_eq_of_antitone (p := fun v ↦ (perfective τ (P v))ᶜ) fun w ↦
     antitone_not_perfective (P w)]
   rfl
 
@@ -266,9 +266,9 @@ the non-past sentence is true, and the sentence is false on the present structur
 future structure alike. -/
 theorem nonPast_and_not_present_of_split (hP : ∃ e, P w e) (hQ : ∃ e, Q w e)
     (hP' : ∀ e, P w e → τ e ≤ u) (hQ' : ∀ e, Q w e → u.Precedes (τ e)) :
-    w ∈ nonPast u (fun v ↦ perfective (P v) ⊓ perfective (Q v)) ∧
-      w ∉ present u (fun v ↦ perfective (P v) ⊓ perfective (Q v)) ∧
-      w ∉ present u (future s R g fun v ↦ perfective (P v) ⊓ perfective (Q v)) := by
+    w ∈ nonPast u (fun v ↦ perfective τ (P v) ⊓ perfective τ (Q v)) ∧
+      w ∉ present u (fun v ↦ perfective τ (P v) ⊓ perfective τ (Q v)) ∧
+      w ∉ present u (future s R g fun v ↦ perfective τ (P v) ⊓ perfective τ (Q v)) := by
   obtain ⟨e₁, h₁⟩ := hP
   obtain ⟨e₂, h₂⟩ := hQ
   refine ⟨?_, fun h ↦ not_perfective_of_forall_precedes hQ' (present_subset h).2, fun h ↦ ?_⟩
@@ -285,8 +285,8 @@ omit [∀ t, (R t).IsRefl] in
 -- negation beneath the prospective is consistent with the affirmative future
 theorem exists_prospective_compl_perfective :
     ∃ (P : Unit → NonemptyInterval ℤ → Prop) (u g : NonemptyInterval ℤ),
-      prospective ((· ≤ g) ⊓ perfective (P ())) u ∧
-        prospective ((· ≤ g) ⊓ (perfective (P ()))ᶜ) u := by
+      prospective ((· ≤ g) ⊓ perfective id (P ())) u ∧
+        prospective ((· ≤ g) ⊓ (perfective id (P ()))ᶜ) u := by
   refine ⟨fun _ e ↦ e = .pure 1, .pure 0, ⟨(1, 2), by decide⟩,
     prospective_inf_perfective_iff.2 ⟨.pure 1, by decide, by decide, rfl⟩,
     prospective_iff.2 ⟨.pure 2, by decide, by decide, fun hp ↦ ?_⟩⟩
@@ -298,15 +298,15 @@ theorem exists_prospective_compl_perfective :
 /-- A predicate is of an Aktionsart when it is stative and has the subinterval property, or
 eventive and its events take time. -/
 def Describes : Dynamicity → (Unit → NonemptyInterval ℤ → Prop) → Prop
-  | .stative, P => ∀ w, HasSubintervalProperty (P w)
-  | .dynamic, P => ∀ w e, P w e → (τ e).fst < (τ e).snd
+  | .stative, P => ∀ w, HasSubintervalProperty id (P w)
+  | .dynamic, P => ∀ w e, P w e → e.fst < e.snd
 
 /-- A bare verb of an Aktionsart has a present reading when some predicate of the Aktionsart
 verifies the present perfective, and a future reading when one verifies the prospective, the
 modal being the identity over a realistic base. -/
 def Available (c : Dynamicity) : Tense → Prop
-  | .present => ∃ P u, Describes c P ∧ () ∈ present u (fun w ↦ perfective (P w))
-  | .future => ∃ P u g, Describes c P ∧ prospective ((· ≤ g) ⊓ perfective (P ())) u
+  | .present => ∃ P u, Describes c P ∧ () ∈ present u (fun w ↦ perfective id (P w))
+  | .future => ∃ P u g, Describes c P ∧ prospective ((· ≤ g) ⊓ perfective id (P ())) u
   | .past => False
 
 -- the predicate true of every interval is stative

@@ -59,7 +59,7 @@ attitude alone cannot](##minimal_pair), if the interval it occupies depends on t
 * The second fragment is stated at its translations (64') and (69), which are premises here. The
   interval a state occupies depends on the world, which rule 16 (p. 334) allows and p. 332 does not
   settle; [with a rigid interval (64') cannot separate the cases of (24)](##doubleAccess_rigid_iff),
-  and `TemporalTrace`, which has no world, gives the times of events only.
+  and the temporal trace, which has no world, gives the times of events only.
 
 ## TODO
 
@@ -551,7 +551,8 @@ def past (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
 
 /-- The future restricted to the reference interval `n`. -/
 def fut (n : ℕ) (p : Index W T → Prop) : Index W T → Prop :=
-  fun i ↦ ◇[IntervalAlgebra.toSetRel (.ofPosition ⟦future⟧)] (fun t ↦ t ≤ M.ref n ∧ p ⟨i.world, t⟩) i.time
+  fun i ↦ ◇[IntervalAlgebra.toSetRel (.ofPosition ⟦future⟧)]
+    (fun t ↦ t ≤ M.ref n ∧ p ⟨i.world, t⟩) i.time
 
 /-- The English present, $\exists t[\mathrm{NOW}(t) \wedge \mathrm{AT}(t, p)]$: `p` at the speech
 time, wherever it is evaluated. -/
@@ -1012,9 +1013,7 @@ def Hypothesis2 (att : (Index W T → Prop) → E → Index W T → Prop) (p : I
     (σ R : NonemptyInterval T) (w : W) : Prop :=
   ∃ t, t.Precedes σ ∧ t ≤ R ∧ ∃ t', σ < t' ∧ t ≤ t' ∧ att (fun i ↦ p ⟨i.world, t'⟩) x ⟨w, t⟩
 
-variable [TemporalTrace Ev T]
-
-open Event (τ)
+variable {τ : Ev → NonemptyInterval T}
 
 /-- The proposition that a state obtains, (60b), and is of the kind `P`. A state occupies an
 interval in each world. -/
@@ -1024,13 +1023,14 @@ def obtains (occ : St → W → NonemptyInterval T) (P : St → W → Prop) (s :
 /-- (64'), the second fragment's translation of a present under a past: a state that obtains at the
 speech time and a past event of saying of that state that it obtains and is of the kind `P`, a
 report de re about the state. -/
-def DoubleAccess (occ : St → W → NonemptyInterval T) (say : Ev → E → (Index W T → Prop) → W → Prop)
-    (P : St → W → Prop) (x : E) (σ R : NonemptyInterval T) (w : W) : Prop :=
+def DoubleAccess (τ : Ev → NonemptyInterval T) (occ : St → W → NonemptyInterval T)
+    (say : Ev → E → (Index W T → Prop) → W → Prop) (P : St → W → Prop) (x : E)
+    (σ R : NonemptyInterval T) (w : W) : Prop :=
   ∃ s, σ ≤ occ s w ∧ ∃ e, (τ e).Precedes σ ∧ τ e ≤ R ∧ say e x (obtains occ P s) w
 
 /-- The attitude of the first fragment that a Davidsonian saying relation gives: a saying of the
 proposition at the time. -/
-def attOf (say : Ev → E → (Index W T → Prop) → W → Prop) :
+def attOf (τ : Ev → NonemptyInterval T) (say : Ev → E → (Index W T → Prop) → W → Prop) :
     (Index W T → Prop) → E → Index W T → Prop :=
   fun p x i ↦ ∃ e, τ e = i.time ∧ say e x p i.world
 
@@ -1042,8 +1042,8 @@ variable {occ : St → W → NonemptyInterval T} {say : Ev → E → (Index W T 
 theorem doubleAccess_not_hypothesis1 {e₀ : Ev} {s₀ : St} (he : (τ e₀).Precedes σ) (heR : τ e₀ ≤ R)
     (hsaid : say e₀ x (obtains occ P s₀) w) (hlast : σ ≤ occ s₀ w)
     (hm : ¬ ∃ s, σ ≤ occ s w ∧ P s w) :
-    DoubleAccess occ say P x σ R w ∧
-      ¬ Hypothesis1 (attOf say) (fun i ↦ ∃ s, i.time ≤ occ s i.world ∧ P s i.world) x σ R w := by
+    DoubleAccess τ occ say P x σ R w ∧
+      ¬ Hypothesis1 (attOf τ say) (fun i ↦ ∃ s, i.time ≤ occ s i.world ∧ P s i.world) x σ R w := by
   refine ⟨⟨s₀, hlast, e₀, he, heR, hsaid⟩, ?_⟩
   rintro ⟨t, -, -, -, t', hσ, -, s, hs, hP⟩
   exact hm ⟨s, hσ.le.trans hs, hP⟩
@@ -1056,8 +1056,8 @@ theorem minimal_pair {w₁ w₂ : W} {e₀ : Ev} {s₀ : St} {p : Index W T → 
     (honly : ∀ e s, say e x (obtains occ P s) w₂ → s = s₀)
     (he : (τ e₀).Precedes σ) (heR : τ e₀ ≤ R) (hsaid : say e₀ x (obtains occ P s₀) w₁)
     (h₁ : σ ≤ occ s₀ w₁) (h₂ : ¬ σ ≤ occ s₀ w₂) :
-    DoubleAccess occ say P x σ R w₁ ∧ ¬ DoubleAccess occ say P x σ R w₂ ∧
-      (Hypothesis2 (attOf say) p x σ R w₁ ↔ Hypothesis2 (attOf say) p x σ R w₂) := by
+    DoubleAccess τ occ say P x σ R w₁ ∧ ¬ DoubleAccess τ occ say P x σ R w₂ ∧
+      (Hypothesis2 (attOf τ say) p x σ R w₁ ↔ Hypothesis2 (attOf τ say) p x σ R w₂) := by
   refine ⟨⟨s₀, h₁, e₀, he, heR, hsaid⟩, ?_, ?_⟩
   · rintro ⟨s, hs, e, -, -, hsay⟩
     exact h₂ (honly e s hsay ▸ hs)
@@ -1070,7 +1070,7 @@ theorem minimal_pair {w₁ w₂ : W} {e₀ : Ev} {s₀ : St} {p : Index W T → 
 -- cannot separate the two cases of (24) either
 theorem doubleAccess_rigid_iff {w₁ w₂ : W} (hocc : ∀ s, occ s w₁ = occ s w₂)
     (hagree : ∀ e q, (τ e).Precedes σ → (say e x q w₁ ↔ say e x q w₂)) :
-    DoubleAccess occ say P x σ R w₁ ↔ DoubleAccess occ say P x σ R w₂ := by
+    DoubleAccess τ occ say P x σ R w₁ ↔ DoubleAccess τ occ say P x σ R w₂ := by
   constructor <;> rintro ⟨s, hs, e, he, heR, hsay⟩
   · exact ⟨s, hocc s ▸ hs, e, he, heR, (hagree e _ he).1 hsay⟩
   · exact ⟨s, (hocc s).symm ▸ hs, e, he, heR, (hagree e _ he).2 hsay⟩
@@ -1078,7 +1078,7 @@ theorem doubleAccess_rigid_iff {w₁ w₂ : W} (hocc : ∀ s, occ s w₁ = occ s
 -- p. 326: the claim is about a state there at the time of the saying, so a report of it by a
 -- present under a past needs the state to last from the claim through the speech time
 theorem DoubleAccess.exists_sup_le (hres : ∀ e s, say e x (obtains occ P s) w → τ e ≤ occ s w)
-    (h : DoubleAccess occ say P x σ R w) :
+    (h : DoubleAccess τ occ say P x σ R w) :
     ∃ (s : St) (e : Ev), (τ e).Precedes σ ∧ say e x (obtains occ P s) w ∧ τ e ⊔ σ ≤ occ s w := by
   obtain ⟨s, hs, e, he, -, hsaid⟩ := h
   exact ⟨s, e, he, hsaid, _root_.sup_le (hres _ _ hsaid) hs⟩
@@ -1086,7 +1086,7 @@ theorem DoubleAccess.exists_sup_le (hres : ∀ e s, say e x (obtains occ P s) w 
 -- (61)-(63), (49): with a factive verb the state is actual, so (63) entails the two conditions of
 -- (62''), one direction of what p. 325 calls virtually equivalent
 theorem factive_extended_now (hsay : ∀ e x p w, say e x p w → p ⟨w, τ e⟩)
-    (h : DoubleAccess occ say P x σ R w) :
+    (h : DoubleAccess τ occ say P x σ R w) :
     ∃ (s : St) (e : Ev), (τ e).Precedes σ ∧ say e x (obtains occ P s) w ∧ P s w ∧
       ∃ t', σ < t' ∧ τ e ≤ t' ∧ t' ≤ occ s w := by
   obtain ⟨s, hs, e, he, -, hsaid⟩ := h
@@ -1096,12 +1096,13 @@ theorem factive_extended_now (hsay : ∀ e x p w, say e x p w → p ⟨w, τ e�
     _root_.sup_le hes hs⟩
 
 /-- The worlds consistent with the attitude a saying reports are not empty (p. 284). -/
-def Consistent (say : Ev → E → (Index W T → Prop) → W → Prop) : Prop :=
+def Consistent (τ : Ev → NonemptyInterval T) (say : Ev → E → (Index W T → Prop) → W → Prop) :
+    Prop :=
   ∀ e x p w, say e x p w → ∃ w', p ⟨w', τ e⟩
 
 -- (67)-(69): given (69), the coming of *John said that Mary will come to Austin* follows the saying
 theorem future_double_access {P : Ev → W → Prop} {R₁ R₂ : NonemptyInterval T}
-    (hsay : Consistent say)
+    (hsay : Consistent τ say)
     (h : ∃ e : Ev, σ.Precedes (τ e) ∧ τ e ≤ R₁ ∧ ∃ e' : Ev, (τ e').Precedes σ ∧ τ e' ≤ R₂ ∧
       say e' x (fun i ↦ ∃ t, i.time.Precedes t ∧ t ≤ R₁ ∧ t = τ e ∧ P e i.world) w) :
     ∃ e e' : Ev, (τ e').Precedes (τ e) := by
@@ -1127,7 +1128,7 @@ def reportSaid (a b : T) (I : W → NonemptyInterval T) (c : W) (e : NonemptyInt
   e = .pure a ∧ p = obtains (reportOcc b I) (reportKind c) 0
 
 theorem doubleAccess_report_iff {a b : T} (hab : a < b) {I : W → NonemptyInterval T} {c : W} :
-    DoubleAccess (Ev := NonemptyInterval T) (reportOcc b I) (reportSaid a b I c) (reportKind c) x
+    DoubleAccess (Ev := NonemptyInterval T) id (reportOcc b I) (reportSaid a b I c) (reportKind c) x
       (.pure b) (.pure a ⊔ .pure b) w ↔ .pure b ≤ I w := by
   constructor
   · rintro ⟨s, hs, e, -, -, -, hp⟩
@@ -1151,9 +1152,9 @@ def endingReports : List Datum :=
 theorem rows_doubleAccess {a b : T} (hab : a < b) {I : W → NonemptyInterval T} {c : W} :
     (∀ row ∈ lastingReports, row.judgment = .acceptable) ∧
     (∀ row ∈ endingReports, row.judgment = .unacceptable) ∧
-    (I w = .pure a ⊔ .pure b → DoubleAccess (Ev := NonemptyInterval T) (reportOcc b I)
+    (I w = .pure a ⊔ .pure b → DoubleAccess (Ev := NonemptyInterval T) id (reportOcc b I)
       (reportSaid a b I c) (reportKind c) x (.pure b) (.pure a ⊔ .pure b) w) ∧
-    (I w = .pure a → ¬ DoubleAccess (Ev := NonemptyInterval T) (reportOcc b I)
+    (I w = .pure a → ¬ DoubleAccess (Ev := NonemptyInterval T) id (reportOcc b I)
       (reportSaid a b I c) (reportKind c) x (.pure b) (.pure a ⊔ .pure b) w) :=
   ⟨by decide, by decide, fun h ↦ (doubleAccess_report_iff hab).2 (h ▸ le_sup_right),
     fun h ↦ mt (doubleAccess_report_iff hab).1 (h ▸ by simp [NonemptyInterval.le_def, hab])⟩

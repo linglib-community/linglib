@@ -37,7 +37,6 @@ namespace Toosarvandani2016
 
 open Examples (Suffix)
 
-open Event (τ)
 open Aspect (Perfectivity)
 open scoped SetRel
 
@@ -95,13 +94,14 @@ end
 
 section
 
-variable {T : Type*} [LinearOrder T] {W E : Type*} [TemporalTrace E T]
+variable {T : Type*} [LinearOrder T] {W E : Type*} {τ : E → NonemptyInterval T}
 
 open ModalLogic in
 /-- The operator of an aspect: the reference times at which it places an event of the
 predicate. -/
-def denote (p : Perfectivity) (P : E → Prop) : NonemptyInterval T → Prop :=
-  ◇[IntervalAlgebra.toSetRel (cell p)] (Event.runTimes P)
+def denote (τ : E → NonemptyInterval T) (p : Perfectivity) (P : E → Prop) :
+    NonemptyInterval T → Prop :=
+  ◇[IntervalAlgebra.toSetRel (cell p)] (Event.runTimes τ P)
 
 /-- A marked clause: its suffix, its aspect and its predicate of events. -/
 structure Marked (W E : Type*) where
@@ -115,15 +115,15 @@ structure Marked (W E : Type*) where
 /-- A chain holds at world `w` and time `t` when its unmarked clause, of aspect `b` and predicate
 `Q`, holds at `t`, and each marked clause holds at the reference time the context gives it, which
 stands to `t` as the clause's suffix says (56). -/
-def Holds (cs : List (Marked W E × NonemptyInterval T)) (b : Perfectivity) (Q : W → E → Prop)
-    (w : W) (t : NonemptyInterval T) : Prop :=
-  (∀ c ∈ cs, denote c.1.aspect (c.1.pred w) c.2 ∧
-    (t, c.2) ∈ IntervalAlgebra.toSetRel c.1.suffix.timing) ∧ denote b (Q w) t
+def Holds (τ : E → NonemptyInterval T) (cs : List (Marked W E × NonemptyInterval T))
+    (b : Perfectivity) (Q : W → E → Prop) (w : W) (t : NonemptyInterval T) : Prop :=
+  (∀ c ∈ cs, denote τ c.1.aspect (c.1.pred w) c.2 ∧
+    (t, c.2) ∈ IntervalAlgebra.toSetRel c.1.suffix.timing) ∧ denote τ b (Q w) t
 
 /-- The truth of a chain does not depend on the order of its marked clauses. -/
 theorem holds_perm {cs cs' : List (Marked W E × NonemptyInterval T)} (h : cs.Perm cs')
     {b : Perfectivity} {Q : W → E → Prop} {w : W} {t : NonemptyInterval T} :
-    Holds cs b Q w t ↔ Holds cs' b Q w t := by
+    Holds τ cs b Q w t ↔ Holds τ cs' b Q w t := by
   simp only [Holds, h.mem_iff]
 
 end
@@ -228,13 +228,13 @@ end
 
 section
 
-variable {T : Type*} [LinearOrder T] {W E : Type*} [TemporalTrace E T] {s : Suffix}
+variable {T : Type*} [LinearOrder T] {W E : Type*} {τ : E → NonemptyInterval T} {s : Suffix}
   {a b : Perfectivity} {P Q : W → E → Prop} {w : W}
 
 /-- A chain with one marked clause holds for some reference times exactly when its events satisfy
 the truth condition of its suffix and aspects. -/
 theorem exists_holds_iff :
-    (∃ t₁ t : NonemptyInterval T, Holds [(⟨s, a, P⟩, t₁)] b Q w t) ↔
+    (∃ t₁ t : NonemptyInterval T, Holds τ [(⟨s, a, P⟩, t₁)] b Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e, τ e') ∈ eventRel s a b := by
   simp only [Holds, eventRel, denote, List.mem_singleton, forall_eq, Event.diamond_runTimes_iff,
     SetRel.mem_comp, SetRel.mem_inv]
@@ -249,14 +249,14 @@ variable [DenselyOrdered T]
 /-- A sequential chain of perfectives holds just in case the marked event precedes the unmarked
 one (59). -/
 theorem sequential_iff :
-    (∃ t₁ t : NonemptyInterval T, Holds [(⟨.seq, .perfective, P⟩, t₁)] .perfective Q w t) ↔
+    (∃ t₁ t : NonemptyInterval T, Holds τ [(⟨.seq, .perfective, P⟩, t₁)] .perfective Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e).Precedes (τ e') := by
   simp only [exists_holds_iff, mem_eventRel_iff, TruthCondition]
 
 /-- A simultaneous chain of progressives holds just in case the two events, neither a point,
 overlap in more than a point (57). -/
 theorem simultaneous_iff :
-    (∃ t₁ t : NonemptyInterval T, Holds [(⟨.sim, .imperfective, P⟩, t₁)] .imperfective Q w t) ↔
+    (∃ t₁ t : NonemptyInterval T, Holds τ [(⟨.sim, .imperfective, P⟩, t₁)] .imperfective Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e).fst < (τ e').snd ∧ (τ e').fst < (τ e).snd ∧
         (τ e).fst < (τ e).snd ∧ (τ e').fst < (τ e').snd := by
   simp only [exists_holds_iff, mem_eventRel_iff, TruthCondition]

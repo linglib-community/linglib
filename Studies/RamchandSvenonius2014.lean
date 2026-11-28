@@ -189,7 +189,7 @@ structure Model (E W T X L : Type u) [LinearOrder T] where
 
 section Denote
 
-variable {E W T X L : Type u} [LinearOrder T] [TemporalTrace E T] [PartialOrder E]
+variable {E W T X L : Type u} [LinearOrder T] (τ : E → NonemptyInterval T) [PartialOrder E]
   (M : Model E W T X L)
 
 /-- Possibility or necessity along a relation, by the force. -/
@@ -207,7 +207,7 @@ def Head.denote : {a b : Zone} → Head a b → Desc E W T X L a → Desc E W T 
   | _, _, .vEvt, P => M.inProgress P
   | _, _, .asp, P => fun s ↦ ◇[M.transition₀ s.world] (P s.world) s.time
   | _, _, .aspEn, P => fun s ↦ ◇[M.transition₁ s.world] (P s.world) s.time
-  | _, _, .aspImp, P => fun s ↦ unbounded (P s.world) s.time
+  | _, _, .aspImp, P => fun s ↦ unbounded τ (P s.world) s.time
   | _, _, .tPerf, Q => ◇[M.consequence] Q
   | _, _, .tEn, Q => ◇[M.transition₂] Q
   | _, _, .tModal f, Q => modalOp f M.acc Q
@@ -238,11 +238,11 @@ the sort of the description below it. -/
 def denoteFrom :
     List AnyHead → (z : Zone) → Desc E W T X L z → Part ((z : Zone) × Desc E W T X L z)
   | [], _, P => Part.some ⟨_, P⟩
-  | ⟨a, b, h⟩ :: l, z, P => Part.assert (a = z) fun e ↦ denoteFrom l b (h.denote M (e ▸ P))
+  | ⟨a, b, h⟩ :: l, z, P => Part.assert (a = z) fun e ↦ denoteFrom l b (h.denote τ M (e ▸ P))
 
 /-- The denotation of a spine over the event description of its verb phrase. -/
 def denote (s : Spine AnyHead) (P : W → E → Prop) : Part ((z : Zone) × Desc E W T X L z) :=
-  denoteFrom M s.heads .event P
+  denoteFrom τ M s.heads .event P
 
 /-- A list of heads composes over a sort when each head takes the sort yielded below it. -/
 def ComposesFrom : List AnyHead → Zone → Prop
@@ -260,7 +260,7 @@ instance (s : Spine AnyHead) : Decidable (Composes s) :=
   inferInstanceAs (Decidable (ComposesFrom _ _))
 
 theorem dom_denoteFrom_iff (l : List AnyHead) (z : Zone) (P : Desc E W T X L z) :
-    (denoteFrom M l z P).Dom ↔ ComposesFrom l z := by
+    (denoteFrom τ M l z P).Dom ↔ ComposesFrom l z := by
   induction l generalizing z with
   | nil => simp [denoteFrom, ComposesFrom]
   | cons h l ih =>
@@ -270,8 +270,8 @@ theorem dom_denoteFrom_iff (l : List AnyHead) (z : Zone) (P : Desc E W T X L z) 
 
 /-- A spine has a denotation exactly when it composes. -/
 theorem dom_denote_iff (s : Spine AnyHead) (P : W → E → Prop) :
-    (denote M s P).Dom ↔ Composes s :=
-  dom_denoteFrom_iff M _ _ _
+    (denote τ M s P).Dom ↔ Composes s :=
+  dom_denoteFrom_iff τ M _ _ _
 
 end Denote
 
@@ -321,7 +321,7 @@ theorem not_composes_of_adverb {z z' : Zone} {a : Adverb z} {b : Adverb z'}
 
 section Elaboration
 
-variable {E W T X L : Type u} [LinearOrder T] [TemporalTrace E T] [PartialOrder E]
+variable {E W T X L : Type u} [LinearOrder T] (τ : E → NonemptyInterval T) [PartialOrder E]
   (M : Model E W T X L)
 
 /-- A description is realized when it holds of something. -/
@@ -340,10 +340,10 @@ structure Model.Coherent : Prop where
   already : ∀ Q s, M.already Q s → ∃ s', Q s'
   fortunately : ∀ p c, M.fortunately p c → ∃ c', p c'
 
-variable {M}
+variable {τ M}
 
 theorem Head.realized (hM : M.Coherent) : ∀ {a b : Zone} (h : Head a b) {P : Desc E W T X L a},
-    Realized (h.denote M P) → Realized P
+    Realized (h.denote τ M P) → Realized P
   | _, _, .vInit, _, ⟨w, _, e, _, he⟩ => ⟨w, e, he⟩
   | _, _, .vPass, _, h => h
   | _, _, .vEvt, _, ⟨w, e, he⟩ => hM.inProgress _ w e he
@@ -369,7 +369,7 @@ theorem Head.realized (hM : M.Coherent) : ∀ {a b : Zone} (h : Head a b) {P : D
   | .proposition, _, .adverb .fortunately, _, ⟨c, hc⟩ => hM.fortunately _ c hc
 
 theorem realized_of_mem_denoteFrom (hM : M.Coherent) : ∀ (l : List AnyHead) (z : Zone)
-    (P : Desc E W T X L z) {d : (z : Zone) × Desc E W T X L z}, d ∈ denoteFrom M l z P →
+    (P : Desc E W T X L z) {d : (z : Zone) × Desc E W T X L z}, d ∈ denoteFrom τ M l z P →
     Realized d.2 → Realized P
   | [], _, _, _, hd, hr => by
     obtain rfl := Part.mem_some_iff.1 hd
@@ -381,7 +381,7 @@ theorem realized_of_mem_denoteFrom (hM : M.Coherent) : ∀ (l : List AnyHead) (z
 /-- In a coherent model, a description of any sort that a spine yields is realized only if the
 event description of its verb phrase holds of some event. -/
 theorem closure_of_mem_denote (hM : M.Coherent) {s : Spine AnyHead} {P : W → E → Prop}
-    {d : (z : Zone) × Desc E W T X L z} (hd : d ∈ denote M s P) (hr : Realized d.2) :
+    {d : (z : Zone) × Desc E W T X L z} (hd : d ∈ denote τ M s P) (hr : Realized d.2) :
     ∃ w, Event.closure P w :=
   realized_of_mem_denoteFrom hM _ _ _ hd hr
 
@@ -390,16 +390,16 @@ theorem closure_of_mem_denote (hM : M.Coherent) {s : Spine AnyHead} {P : W → E
 -- the modal imperfective is a necessity of the situation zone over the null imperfect Asp*
 theorem imperfective_iff_box_aspImp (M : Model E W T X L) (acc : NonemptyInterval T → SetRel W W)
     (P : W → E → Prop) (w : W) (t : NonemptyInterval T) :
-    imperfective acc P w t ↔ □[Index.modal acc] (aspImp.denote M P) ⟨w, t⟩ :=
-  (Index.box_modal (R := acc) (P := aspImp.denote M P) (i := ⟨w, t⟩)).symm
+    imperfective τ acc P w t ↔ □[Index.modal acc] (aspImp.denote τ M P) ⟨w, t⟩ :=
+  (Index.box_modal (R := acc) (P := aspImp.denote τ M P) (i := ⟨w, t⟩)).symm
 
 /-- The progressive holds at a time only if the null imperfect Asp* over the in-progress
 description holds there. -/
 theorem aspImp_vEvt_of_progressive (M : Model E W T X L)
     (circ : E → (W → E → Prop) → Modality.Background W) (ni : E → Modality.Background W)
-    (hM : M.inProgress = fun P w e ↦ InProgress circ ni e P w) (P : W → E → Prop) (w : W)
-    (t : NonemptyInterval T) (h : progressive circ ni P w t) :
-    aspImp.denote M (vEvt.denote M P) ⟨w, t⟩ := by
+    (hM : M.inProgress = fun P w e ↦ InProgress τ circ ni e P w) (P : W → E → Prop) (w : W)
+    (t : NonemptyInterval T) (h : progressive τ circ ni P w t) :
+    aspImp.denote τ M (vEvt.denote τ M P) ⟨w, t⟩ := by
   obtain ⟨e, rfl, he⟩ := progressive_iff.1 h
   exact unbounded_iff.2 ⟨e, le_rfl, by simpa [Head.denote, hM] using he⟩
 

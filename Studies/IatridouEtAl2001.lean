@@ -64,11 +64,9 @@ public section
 
 namespace IatridouEtAl2001
 
-open Event (τ)
-
 open Aspect Temporal
 
-variable {T E : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {T E : Type*} [LinearOrder T] {τ : E → NonemptyInterval T}
   {p : NonemptyInterval T → Prop} {P : E → Prop} {i : NonemptyInterval T} {t t₀ : T}
 
 /-! ### The four expansions of (43)
@@ -77,28 +75,28 @@ The perfect asserts a span in or throughout which there is a bounded or unbounde
 (43), and the four combinations are (44a–d). -/
 
 -- (44a)
-theorem durative_unbounded : durative (unbounded P) = unbounded P :=
+theorem durative_unbounded : durative (unbounded τ P) = unbounded τ P :=
   durative_diamond_le _
 
 -- (44b)
 theorem inclusive_unbounded_iff :
-    inclusive (unbounded P) i ↔ ∃ e, (τ e).Overlaps i ∧ P e :=
+    inclusive (unbounded τ P) i ↔ ∃ e, (τ e).Overlaps i ∧ P e :=
   Aspect.inclusive_unbounded_iff
 
 -- (44c)
-theorem inclusive_perfective : inclusive (perfective P) = perfective P :=
+theorem inclusive_perfective : inclusive (perfective τ P) = perfective τ P :=
   inclusive_inclusive _
 
 -- (44d)
 theorem not_durative_perfective (h : ∀ e, P e → (τ e).fst < (τ e).snd) :
-    ¬ durative (perfective P) i := fun hd ↦
+    ¬ durative (perfective τ P) i := fun hd ↦
   let ⟨e, hle, hP⟩ := perfective_iff.1 (durative_iff.1 hd (.pure i.fst)
     (NonemptyInterval.le_def.2 ⟨le_rfl, i.fst_le_snd⟩))
   (h e hP).not_ge ((NonemptyInterval.le_def.1 hle).2.trans (NonemptyInterval.le_def.1 hle).1)
 
 -- (44d)
-theorem durative_perfective_of_eq (hP : HasSubintervalProperty P) {e : E} (he : P e)
-    (hτ : τ e = i) : durative (perfective P) i :=
+theorem durative_perfective_of_eq (hP : HasSubintervalProperty τ P) {e : E} (he : P e)
+    (hτ : τ e = i) : durative (perfective τ P) i :=
   durative_iff.2 fun j hj ↦
     let ⟨e', hτ', hP'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e he j (hτ ▸ hj)
     perfective_iff.2 ⟨e', hτ'.le, hP'⟩
@@ -114,25 +112,26 @@ theorem durative_at_lb (h : perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative p
   let ⟨pts, _, hlb, hd⟩ := perfect_pure_iff.1 h
   durative_iff.1 hd _ (NonemptyInterval.le_def.2 ⟨hlb.le, hlb ▸ pts.fst_le_snd⟩)
 
-theorem unbounded_pure_iff : unbounded P (.pure t) ↔ ∃ e, P e ∧ t ∈ τ e :=
+theorem unbounded_pure_iff : unbounded τ P (.pure t) ↔ ∃ e, P e ∧ t ∈ τ e :=
   unbounded_iff.trans
     ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e, hP, NonemptyInterval.mem_def.2 (NonemptyInterval.le_def.1 hle)⟩,
       fun ⟨e, hP, ht⟩ ↦ ⟨e, NonemptyInterval.le_def.2 (NonemptyInterval.mem_def.1 ht), hP⟩⟩
 
 /-- The universal perfect asserts the eventuality at the right boundary, making (6a–b)
 contradictions, in the past and future perfect too (7). -/
-theorem universal_at_rb (h : perfect (durative (unbounded P)) (.pure t)) : ∃ e, P e ∧ t ∈ τ e :=
+theorem universal_at_rb (h : perfect (durative (unbounded τ P)) (.pure t)) : ∃ e, P e ∧ t ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_rb h)
 
 /-- With *since t₀* the universal perfect holds at `t₀`, the observation of [mittwoch-1988]. -/
 theorem universal_at_lb
-    (h : perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (unbounded P)) (.pure t)) :
+    (h : perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (unbounded τ P)) (.pure t)) :
     ∃ e, P e ∧ t₀ ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_lb h)
 
 -- (2a), (18a)
 theorem universal_of_covers {e : E} (he : P e) (h₀ : t₀ ≤ t) (h₁ : (τ e).fst ≤ t₀)
-    (h₂ : t ≤ (τ e).snd) : perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (unbounded P)) (.pure t) :=
+    (h₂ : t ≤ (τ e).snd) :
+    perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (unbounded τ P)) (.pure t) :=
   perfect_pure_iff.2 ⟨⟨(t₀, t), h₀⟩, rfl, rfl, durative_iff.2 fun _ hj ↦
     unbounded_iff.2 ⟨e, hj.trans (NonemptyInterval.le_def.2 ⟨h₁, h₂⟩), he⟩⟩
 
@@ -141,7 +140,7 @@ theorem universal_of_covers {e : E} (he : P e) (h₀ : t₀ ≤ t) (h₁ : (τ e
 /-- The inclusive perfect holds of an eventuality that ended before the time of tense, so *She has
 been sick, but she is fine now* is consistent ((9)–(12), (15)). -/
 theorem inclusive_silent_at_rb {e₀ : E} (h : (τ e₀).snd < t) :
-    perfect (inclusive (unbounded (· = e₀))) (.pure t) ∧ ∀ e, e = e₀ → t ∉ τ e :=
+    perfect (inclusive (unbounded τ (· = e₀))) (.pure t) ∧ ∀ e, e = e₀ → t ∉ τ e :=
   ⟨perfect_pure_iff.2 ⟨⟨((τ e₀).fst, t), (τ e₀).fst_le_snd.trans h.le⟩, rfl,
       inclusive_iff.2 ⟨τ e₀, NonemptyInterval.le_def.2 ⟨le_rfl, h.le⟩,
         unbounded_iff.2 ⟨e₀, le_rfl, rfl⟩⟩⟩,
@@ -150,8 +149,8 @@ theorem inclusive_silent_at_rb {e₀ : E} (h : (τ e₀).snd < t) :
 /-- An unmodified perfect does not entail the universal perfect, which is therefore never its
 reading. -/
 theorem unmodified_not_universal {e₀ : E} (h : (τ e₀).snd < t) :
-    ¬ ∀ P : E → Prop, perfect (inclusive (unbounded P)) (.pure t) →
-      perfect (durative (unbounded P)) (.pure t) :=
+    ¬ ∀ P : E → Prop, perfect (inclusive (unbounded τ P)) (.pure t) →
+      perfect (durative (unbounded τ P)) (.pure t) :=
   fun hall ↦
   let ⟨hperf, hnot⟩ := inclusive_silent_at_rb h
   let ⟨e, he, ht⟩ := universal_at_rb (hall _ hperf)
@@ -162,7 +161,7 @@ theorem unmodified_not_universal {e₀ : E} (h : (τ e₀).snd < t) :
 /-- With *since 1991* the span starts in 1991 though its only eventuality lies in the fall of 1993
 (28). -/
 theorem span_lb_before_event {lb : T} {e₀ : E} (h₁ : lb < (τ e₀).fst) (h₂ : (τ e₀).snd ≤ t) :
-    perfect ((fun pts ↦ pts.fst = lb) ⊓ inclusive (perfective (· = e₀))) (.pure t) :=
+    perfect ((fun pts ↦ pts.fst = lb) ⊓ inclusive (perfective τ (· = e₀))) (.pure t) :=
   perfect_pure_iff.2 ⟨⟨(lb, t), h₁.le.trans ((τ e₀).fst_le_snd.trans h₂)⟩, rfl, rfl,
     inclusive_iff.2 ⟨τ e₀, NonemptyInterval.le_def.2 ⟨h₁.le, h₂⟩,
       perfective_iff.2 ⟨e₀, le_rfl, rfl⟩⟩⟩
@@ -172,14 +171,14 @@ theorem span_lb_before_event {lb : T} {e₀ : E} (h₁ : lb < (τ e₀).fst) (h�
 /-- A perfective participle on a predicate whose eventualities take time has no universal perfect,
 in Greek (30) and (34), Bulgarian (35) and English (41). -/
 theorem no_universal_of_perfective (h : ∀ e, P e → (τ e).fst < (τ e).snd) :
-    ¬ perfect (durative (perfective P)) (.pure t) :=
+    ¬ perfect (durative (perfective τ P)) (.pure t) :=
   fun hp ↦ let ⟨_, _, hd⟩ := perfect_pure_iff.1 hp; not_durative_perfective h hd
 
 /-- A perfective activity with *apo 1990 mexri tora* 'from 1990 until now' is true when an
 eventuality fills the span exactly (45). -/
-theorem bounded_activity_fills {e : E} (hP : HasSubintervalProperty P) (he : P e)
+theorem bounded_activity_fills {e : E} (hP : HasSubintervalProperty τ P) (he : P e)
     (h₀ : t₀ ≤ t) (hτ : τ e = ⟨(t₀, t), h₀⟩) :
-    perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (perfective P)) (.pure t) ∧
+    perfect ((fun pts ↦ pts.fst = t₀) ⊓ durative (perfective τ P)) (.pure t) ∧
       ∃ e', P e' ∧ t ∈ τ e' :=
   have hd := durative_perfective_of_eq hP he hτ
   ⟨perfect_pure_iff.2 ⟨⟨(t₀, t), h₀⟩, rfl, rfl, hd⟩,
@@ -189,7 +188,7 @@ theorem bounded_activity_fills {e : E} (hP : HasSubintervalProperty P) (he : P e
 /-! ### Point 5: anteriority derived -/
 
 /-- An experiential perfect ends its eventuality by the time of tense (1). -/
-theorem experiential_ends_by_rb (h : perfect (inclusive (perfective P)) (.pure t)) :
+theorem experiential_ends_by_rb (h : perfect (inclusive (perfective τ P)) (.pure t)) :
     ∃ e, P e ∧ (τ e).snd ≤ t :=
   let ⟨_, hrb, hi⟩ := perfect_pure_iff.1 h
   let ⟨_, hj, hp⟩ := inclusive_iff.1 hi
@@ -198,7 +197,7 @@ theorem experiential_ends_by_rb (h : perfect (inclusive (perfective P)) (.pure t
 
 /-- The universal perfect is not anterior, since its eventuality has not ended at the time of
 tense, so an anteriority operator in the perfect would make it underivable. -/
-theorem universal_not_anterior (h : perfect (durative (unbounded P)) (.pure t)) :
+theorem universal_not_anterior (h : perfect (durative (unbounded τ P)) (.pure t)) :
     ∃ e, P e ∧ ¬ (τ e).snd < t :=
   let ⟨e, hP, ht⟩ := universal_at_rb h
   ⟨e, hP, (NonemptyInterval.mem_def.1 ht).2.not_gt⟩
@@ -207,10 +206,10 @@ theorem universal_not_anterior (h : perfect (durative (unbounded P)) (.pure t)) 
 eventuality may end before `now` or start after it. -/
 theorem future_perfect_underspecified {now : T} {e₁ e₂ : E} (h₁ : (τ e₁).snd < now)
     (h₂ : now < (τ e₂).fst) (h₂' : (τ e₂).snd ≤ t) :
-    (∃ P : E → Prop, perfect (inclusive (perfective P)) (.pure t) ∧ ∀ e, P e → (τ e).snd < now) ∧
-      ∃ P : E → Prop, perfect (inclusive (perfective P)) (.pure t) ∧ ∀ e, P e → now < (τ e).fst :=
+    (∃ P : E → Prop, perfect (inclusive (perfective τ P)) (.pure t) ∧ ∀ e, P e → (τ e).snd < now) ∧
+      ∃ P : E → Prop, perfect (inclusive (perfective τ P)) (.pure t) ∧ ∀ e, P e → now < (τ e).fst :=
   have hn : now < t := h₂.trans_le ((τ e₂).fst_le_snd.trans h₂')
-  have key : ∀ e₀ : E, (τ e₀).snd ≤ t → perfect (inclusive (perfective (· = e₀))) (.pure t) :=
+  have key : ∀ e₀ : E, (τ e₀).snd ≤ t → perfect (inclusive (perfective τ (· = e₀))) (.pure t) :=
     fun e₀ h ↦ perfect_pure_iff.2 ⟨⟨((τ e₀).fst, t), (τ e₀).fst_le_snd.trans h⟩, rfl,
       inclusive_iff.2 ⟨τ e₀, NonemptyInterval.le_def.2 ⟨le_rfl, h⟩,
         perfective_iff.2 ⟨e₀, le_rfl, rfl⟩⟩⟩

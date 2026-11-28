@@ -58,7 +58,6 @@ encoded, so neither is the derivation.
 
 namespace Kratzer1998
 
-open Event (τ)
 open scoped Assignment
 
 open scoped Denotes
@@ -117,16 +116,17 @@ inductive AspectHead where
 
 section Aspects
 
-variable {T W E : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {T W E : Type*} [LinearOrder T] {τ : E → NonemptyInterval T}
 
 /-- The operator of (38) turns a property of times into the property of eventualities that
 holds of `e`, at any world, iff the property of times holds of the running time of `e` at every
 world. -/
-def star (P : W → NonemptyInterval T → Prop) (_ : W) (e : E) : Prop :=
+def star (τ : E → NonemptyInterval T) (P : W → NonemptyInterval T → Prop) (_ : W) (e : E) :
+    Prop :=
   ∀ w', P w' (τ e)
 
 theorem star_congr (P : W → NonemptyInterval T → Prop) (e : E) (w w' : W) :
-    star P w e ↔ star P w' e := Iff.rfl
+    star τ P w e ↔ star τ P w' e := Iff.rfl
 
 /-- The cell of an aspect says how the event time stands to the reference time. The
 imperfective includes the reference time in the event time, the perfective includes the event
@@ -159,25 +159,26 @@ theorem cell_viewpointType :
 
 /-- An aspect maps a property of events to the property of times to which the time of some such
 event stands in the aspect's cell. -/
-def AspectHead.denote (a : AspectHead) (P : E → Prop) : NonemptyInterval T → Prop :=
-  ◇[IntervalAlgebra.toSetRel a.cell] (Event.runTimes P)
+def AspectHead.denote (a : AspectHead) (τ : E → NonemptyInterval T) (P : E → Prop) :
+    NonemptyInterval T → Prop :=
+  ◇[IntervalAlgebra.toSetRel a.cell] (Event.runTimes τ P)
 
 theorem AspectHead.denote_iff {a : AspectHead} {P : E → Prop} {r : NonemptyInterval T} :
-    a.denote P r ↔ ∃ e, Allen.relation (τ e) r ∈ a.cell ∧ P e := by
+    a.denote τ P r ↔ ∃ e, Allen.relation (τ e) r ∈ a.cell ∧ P e := by
   simp [denote, Event.diamond_runTimes_iff]
 
 theorem denote_imperfective (P : E → Prop) :
-    AspectHead.imperfective.denote (T := T) P = unbounded P := by
+    AspectHead.imperfective.denote (T := T) τ P = unbounded τ P := by
   rw [AspectHead.denote, AspectHead.cell]
   exact Aspect.unbounded_eq_diamond_toSetRel.symm
 
 theorem denote_perfective (P : E → Prop) :
-    AspectHead.perfective.denote (T := T) P = Aspect.perfective P := by
+    AspectHead.perfective.denote (T := T) τ P = Aspect.perfective τ P := by
   rw [AspectHead.denote, AspectHead.cell, IntervalAlgebra.toSetRel_le]
   rfl
 
 theorem perfect_viewpointType {P : E → Prop} {r : NonemptyInterval T} :
-    AspectHead.perfect.denote P r → ViewpointType.perfect.denote P r :=
+    AspectHead.perfect.denote τ P r → ViewpointType.perfect.denote τ P r :=
   diamond_le_diamond_iff.2 (IntervalAlgebra.toSetRel_mono cell_viewpointType.1.le) _ r
 
 variable (T) in
@@ -199,20 +200,20 @@ theorem AspectHead.isAnterior_iff [Nonempty T] (a : AspectHead) :
   · rfl
 
 theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
-    {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : a.denote (P w) r) :
+    {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : a.denote τ (P w) r) :
     ∃ e : E, (τ e).Precedes r ∧ P w e :=
   let ⟨e, he, hP⟩ := AspectHead.denote_iff.1 h
   ⟨e, ha _ _ he, hP⟩
 
 /-- Tense `C` on the variable `n` with aspect `a` is true of an event property when the tense is
 defined and the aspect holds of the property at the tense's reference. -/
-def denote (C : PointAlgebra) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
-    (g : ℕ → T) (w : W) : Prop :=
-  (tense C n g w).Dom ∧ a.denote (P w) (.pure (g n))
+def denote (τ : E → NonemptyInterval T) (C : PointAlgebra) (a : AspectHead) (n : ℕ)
+    (P : W → E → Prop) (g : ℕ → T) (w : W) : Prop :=
+  (tense C n g w).Dom ∧ a.denote τ (P w) (.pure (g n))
 
 theorem denote_iff_holdsAlong (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (g : ℕ → T) (w : W) :
-    denote C a n P g w ↔ ∃ e : E, P w e ∧
+    denote τ C a n P g w ↔ ∃ e : E, P w e ∧
       IntervalAlgebra.HoldsAlong [IntervalAlgebra.pure C, a.cell] (.pure (g 0)) [.pure (g n),
         τ e] := by
   simp only [IntervalAlgebra.HoldsAlong, and_true, IntervalAlgebra.mem_toSetRel,
@@ -222,12 +223,12 @@ theorem denote_iff_holdsAlong (C : PointAlgebra) (a : AspectHead) (n : ℕ)
 
 theorem denote_outOfTheBlue_iff (C : PointAlgebra) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (t₀ : T) (w : W) :
-    denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ a.denote (P w) (.pure t₀) := by
+    denote τ C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ a.denote τ (P w) (.pure t₀) := by
   rw [denote, tense_outOfTheBlue_iff]; rfl
 
 theorem denote_present_perfect_outOfTheBlue_iff (n : ℕ) (P : W → E → Prop) (t₀ : T)
     (w : W) :
-    denote ⟦present⟧ .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : E, (τ e).snd < t₀ ∧ P w e := by
+    denote τ ⟦present⟧ .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : E, (τ e).snd < t₀ ∧ P w e := by
   simp [denote_outOfTheBlue_iff, AspectHead.denote_iff, NonemptyInterval.Precedes,
     denote_present]
 

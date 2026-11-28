@@ -62,16 +62,16 @@ theorem mem_iff_exists_exemplifies_le [WellFoundedLT S] (hp : IsUpperSet p) :
 
 /-- An event that is part of a situation runs within the time of the situation. -/
 theorem perfective_of_exists_le {S T : Type*} [PartialOrder S] [LinearOrder T]
-    [TemporalTrace S T] (hτ : Monotone (τ : S → NonemptyInterval T)) {P : S → Prop} {s : S}
-    (h : ∃ e, P e ∧ e ≤ s) : perfective P (τ s) :=
+    {τ : S → NonemptyInterval T} (hτ : Monotone τ) {P : S → Prop} {s : S}
+    (h : ∃ e, P e ∧ e ≤ s) : perfective τ P (τ s) :=
   let ⟨e, hP, he⟩ := h
   perfective_iff.2 ⟨e, hτ he, hP⟩
 
 /-- Where a persistent proposition is true in a situation, the perfective of its events holds at
 the time of the situation. -/
-theorem perfective_exemplifies_of_mem {T : Type*} [LinearOrder T] [TemporalTrace S T]
-    [WellFoundedLT S] (hτ : Monotone (τ : S → NonemptyInterval T)) (hp : IsUpperSet p)
-    (hs : s ∈ p) : perfective (Exemplifies p) (τ s) :=
+theorem perfective_exemplifies_of_mem {T : Type*} [LinearOrder T] [WellFoundedLT S]
+    {τ : S → NonemptyInterval T} (hτ : Monotone τ) (hp : IsUpperSet p) (hs : s ∈ p) :
+    perfective τ (Exemplifies p) (τ s) :=
   perfective_of_exists_le hτ ((mem_iff_exists_exemplifies_le hp).1 hs)
 
 end Situation

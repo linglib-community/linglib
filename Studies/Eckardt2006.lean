@@ -18,7 +18,7 @@ content. This file follows the emergence of the English *going to* future.
 Movement *go* with an infinitive denotes the goings of `x` that prepare an event of the embedded
 predicate: `goTo go prepare P x w e` holds when `go x w e` and `prepare e e'` and `P x w e'` for
 some `e'`. Like any event predicate it takes a viewpoint, and in the progressive the reference
-time lies within the going. The reanalysed *be going to* is an interval property: `beGoingTo imm P
+time lies within the going. The reanalysed *be going to* is an interval property: `beGoingTo τ imm P
 x w` holds of a reference time `t` when `t` precedes an event `e` of `P x w` with `imm t e`, where
 `imm` says which events count as imminent at a time.
 
@@ -101,10 +101,9 @@ namespace Eckardt2006
 
 open Aspect ModalLogic PointAlgebra
 open scoped Denotes SetRel
-open Event (τ)
 open Examples (Example Verb Form Movement)
 
-variable {W X E T : Type*} [LinearOrder T] [TemporalTrace E T]
+variable {W X E T : Type*} [LinearOrder T] {τ : E → NonemptyInterval T}
   {go : X → W → E → Prop} {prepare : E → E → Prop} {P : X → W → E → Prop}
   {imm imm' : NonemptyInterval T → E → Prop} {x : X} {w : W} {t : NonemptyInterval T}
 
@@ -118,26 +117,26 @@ def goTo (go : X → W → E → Prop) (prepare : E → E → Prop) (P : X → W
 
 /-- (4.58): The reanalysed *be going to* holds of a reference time that precedes an imminent event
 of the embedded predicate. -/
-def beGoingTo (imm : NonemptyInterval T → E → Prop) (P : X → W → E → Prop) (x : X) (w : W) :
-    NonemptyInterval T → Prop :=
+def beGoingTo (τ : E → NonemptyInterval T) (imm : NonemptyInterval T → E → Prop)
+    (P : X → W → E → Prop) (x : X) (w : W) : NonemptyInterval T → Prop :=
   fun t ↦ ∃ e, t.Precedes (τ e) ∧ imm t e ∧ P x w e
 
 theorem beGoingTo_iff :
-    beGoingTo imm P x w t ↔ ∃ e, t.Precedes (τ e) ∧ imm t e ∧ P x w e := Iff.rfl
+    beGoingTo τ imm P x w t ↔ ∃ e, t.Precedes (τ e) ∧ imm t e ∧ P x w e := Iff.rfl
 
 theorem beGoingTo_mono (h : ∀ t e, imm t e → imm' t e) :
-    beGoingTo imm P x w ≤ beGoingTo imm' P x w :=
+    beGoingTo τ imm P x w ≤ beGoingTo τ imm' P x w :=
   fun _ ⟨e, ht, hi, hP⟩ ↦ ⟨e, ht, h _ _ hi, hP⟩
 
 theorem beGoingTo_le_prospective :
-    beGoingTo imm P x w ≤ ViewpointType.prospective.denote (P x w) :=
+    beGoingTo τ imm P x w ≤ ViewpointType.prospective.denote τ (P x w) :=
   fun _ ⟨e, ht, _, hP⟩ ↦ denote_prospective_iff.2 ⟨e, le_of_lt ht, hP⟩
 
 /-! ### From the inference to the literal content -/
 
 section Inference
 
-variable (hprep : ∀ e e', prepare e e' → Event.Precedes e e')
+variable (hprep : ∀ e e', prepare e e' → Event.Precedes τ e e')
   (himm : ∀ w t e e', go x w e → prepare e e' → t ≤ τ e → imm t e')
 
 include hprep himm
@@ -145,7 +144,7 @@ include hprep himm
 /-- (4.54): Where preparations precede what they prepare and a going in progress makes what it
 prepares imminent, the progressive of movement *go* entails the reanalysed *be going to*. -/
 theorem unbounded_goTo_le_beGoingTo :
-    unbounded (goTo go prepare P x w) ≤ beGoingTo imm P x w := by
+    unbounded τ (goTo go prepare P x w) ≤ beGoingTo τ imm P x w := by
   intro t ht
   obtain ⟨e, hte, hgo, e', hpr, hP⟩ := unbounded_iff.1 ht
   exact ⟨e', lt_of_le_of_lt (NonemptyInterval.le_def.1 hte).2 (hprep e e' hpr),
@@ -153,19 +152,19 @@ theorem unbounded_goTo_le_beGoingTo :
 
 -- (4.50f) and (4.56): the entailment under the present tense.
 theorem beGoingTo_pure_of_unbounded_goTo {a : T}
-    (h : unbounded (goTo go prepare P x w) (.pure a)) : beGoingTo imm P x w (.pure a) :=
+    (h : unbounded τ (goTo go prepare P x w) (.pure a)) : beGoingTo τ imm P x w (.pure a) :=
   unbounded_goTo_le_beGoingTo hprep himm _ h
 
 -- (4.51) and (4.60): the entailment under every tense.
 theorem diamond_goTo_le (tn : Tense) :
-    ◇[toSetRel ⟦tn⟧] (fun r ↦ unbounded (goTo go prepare P x w) (.pure r)) ≤
-      ◇[toSetRel ⟦tn⟧] (fun r ↦ beGoingTo imm P x w (.pure r)) :=
+    ◇[toSetRel ⟦tn⟧] (fun r ↦ unbounded τ (goTo go prepare P x w) (.pure r)) ≤
+      ◇[toSetRel ⟦tn⟧] (fun r ↦ beGoingTo τ imm P x w (.pure r)) :=
   diamond_mono _ fun _ hr ↦ beGoingTo_pure_of_unbounded_goTo hprep himm hr
 
 -- The entailment in each world accessible along the modal imperfective.
 theorem imperfective_goTo_le {acc : NonemptyInterval T → SetRel W W} :
-    imperfective acc (goTo go prepare P x) w ≤
-      fun t ↦ □[acc t] (fun v ↦ beGoingTo imm P x v t) w :=
+    imperfective τ acc (goTo go prepare P x) w ≤
+      fun t ↦ □[acc t] (fun v ↦ beGoingTo τ imm P x v t) w :=
   fun _ ht v hv ↦ unbounded_goTo_le_beGoingTo hprep himm _ (ht v hv)
 
 end Inference
@@ -179,17 +178,17 @@ theorem not_precedes_of_le {s : NonemptyInterval T} (h : t ≤ s) : ¬ t.Precede
 
 theorem diamond_runTimes_goTo_eq_bot (R : SetRel (NonemptyInterval T) (NonemptyInterval T))
     (h : ∀ e e', go x w e → prepare e e' → ¬ P x w e') :
-    ◇[R] (Event.runTimes (goTo go prepare P x w)) = ⊥ :=
+    ◇[R] (Event.runTimes τ (goTo go prepare P x w)) = ⊥ :=
   eq_bot_iff.2 fun _ ht ↦
     let ⟨e, _, hgo, e', hpr, hP⟩ := Event.diamond_runTimes_iff.1 ht; h e e' hgo hpr hP
 
 theorem unbounded_goTo_eq_bot (h : ∀ e, ¬ go x w e) :
-    unbounded (goTo go prepare P x w) = ⊥ :=
+    unbounded τ (goTo go prepare P x w) = ⊥ :=
   diamond_runTimes_goTo_eq_bot _ fun e _ hgo _ ↦ (h e hgo).elim
 
 -- A time at which something is going to happen though nothing moves.
 theorem beGoingTo_pure :
-    beGoingTo (E := NonemptyInterval ℕ) (fun _ _ ↦ True)
+    beGoingTo (E := NonemptyInterval ℕ) id (fun _ _ ↦ True)
       (fun (_ _ : Unit) e ↦ e = .pure 1) () () (.pure 0) :=
   ⟨.pure 1, Nat.zero_lt_one, trivial, rfl⟩
 

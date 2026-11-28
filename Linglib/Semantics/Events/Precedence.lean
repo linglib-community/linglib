@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.AntiAdditive
 public import Linglib.Semantics.Events.Basic
+public import Mathlib.Order.Hom.Lattice
 public import Linglib.Semantics.Mereology.Basic
 
 /-!
@@ -79,12 +80,11 @@ end IsTemporalPrecedence
 
 /-- Under a trace that preserves sums, precedence by run times is a temporal precedence on the
 part structure of events. -/
-instance Event.isTemporalPrecedence_precedes {E T : Type*} [LinearOrder T] [SemilatticeSup E]
-    [TemporalTrace E T] [TemporalTrace.IsSupHom E T] :
-    IsTemporalPrecedence E (Event.Precedes : E → E → Prop) where
+theorem Event.isTemporalPrecedence_precedes {E T : Type*} [LinearOrder T] [SemilatticeSup E]
+    (τ : SupHom E (NonemptyInterval T)) : IsTemporalPrecedence E (Event.Precedes τ) where
   left c a b := propext <| by
-    simp only [Event.precedes_iff, Event.τ_sup]
+    simp only [Event.precedes_iff, map_sup]
     exact max_lt_iff
   right c a b := propext <| by
-    simp only [Event.precedes_iff, Event.τ_sup]
+    simp only [Event.precedes_iff, map_sup]
     exact lt_min_iff
