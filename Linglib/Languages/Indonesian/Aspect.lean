@@ -41,7 +41,7 @@ def sudah : Aspect.Marker :=
 /-- *Telah* has the meaning of *sudah* and is almost entirely confined to writing and very formal
 speech, *Dia telah pergi* 'He has gone' (§2.144). -/
 def telah : Aspect.Marker :=
-  { morphs := [.free "telah"], gloss := "PERF", viewpoint := .perfect, register := .formal }
+  { morphs := [.free "telah"], gloss := "PERF", viewpoint := .perfect }
 
 /-- *Sedang* indicates that an action is in progress, *Mereka sedang makan* 'They are eating'
 (§2.145). -/
@@ -90,12 +90,9 @@ def pernah : Aspect.Marker :=
 def markers : List Aspect.Marker :=
   [sudah, telah, sedang, lagi, tengah, masih, akan, bakal, baru, pernah]
 
-/-- *Telah* has the meaning of *sudah* and differs from it in register alone (§2.144). -/
-theorem telah_eq_sudah :
-    { telah with morphs := sudah.morphs, register := sudah.register } = sudah :=
+/-- *Telah* has the meaning of *sudah* (§2.144). -/
+theorem telah_eq_sudah : { telah with morphs := sudah.morphs } = sudah :=
   rfl
-
-theorem register_sudah_lt_telah : sudah.register < telah.register := by decide
 
 /-- *Lagi* can replace *sedang* (§2.146). -/
 theorem lagi_eq_sedang : { lagi with morphs := sedang.morphs } = sedang := rfl

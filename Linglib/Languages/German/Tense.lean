@@ -4,7 +4,6 @@ public import Linglib.Languages.German.Verbs
 public import Linglib.Syntax.Category.Verb.Tense
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Pragmatics.SocialMeaning.Register
 
 /-!
 # German tense forms
@@ -19,7 +18,7 @@ change of state, and with *haben* otherwise; the auxiliaries *sein* and *haben* 
 own perfect with themselves.
 
 The past and the perfect overlap in meaning, and the choice between them is largely one of
-register: narration is in the past in written German and in the perfect in speech. In South
+medium: narration is in the past in written German and in the perfect in speech. In South
 Germany, Austria and Switzerland the past is practically never used in everyday speech. Colloquial
 speech, in the South and now more widely, forms the pluperfect with the perfect of the auxiliary,
 the double perfect *hat gesehen gehabt*, and sometimes with its pluperfect, *hatte gesehen
@@ -40,7 +39,6 @@ gehabt*; these complex pluperfects are not accepted as standard.
   standard language, the colloquial complex pluperfects, and the forms of southern speech;
   `German.PrincipalParts.tenseForm_isSome_iff` shows that the first two are exactly the forms
   that German realizes.
-* `German.register`: the register of a form as a narrative tense.
 
 ## Implementation notes
 
@@ -225,11 +223,6 @@ theorem PrincipalParts.tenseForm_isSome_iff (v : PrincipalParts) (f : Tense.Form
 
 theorem southernTenseForms_subset : southernTenseForms ⊆ tenseForms ++ complexPluperfects := by
   decide
-
-/-- As a narrative tense the past belongs to written German and the complex pluperfects to
-colloquial speech, and the other forms are unmarked. -/
-def register (f : Tense.Form) : SocialMeaning.Register :=
-  if f = .simplePast then .formal else if f ∈ complexPluperfects then .informal else .neutral
 
 open Verbs in
 theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty →

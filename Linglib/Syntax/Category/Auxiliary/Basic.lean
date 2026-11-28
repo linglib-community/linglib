@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Word.Features
-public import Linglib.Pragmatics.SocialMeaning.Register
 public import Linglib.Semantics.Evidentiality.Term
 public import Linglib.Semantics.Modality.Typology
 
@@ -20,7 +19,7 @@ independent criterion separates it from a lexical verb, so the class is drawn la
 language, English's by the constructions of negation, inversion, code and emphasis.
 
 This file provides the entry of a member of such a class, a word form in the cells it is entered
-for with the features those cells share and its register, and the entry of a modal auxiliary,
+for with the features those cells share, and the entry of a modal auxiliary,
 an auxiliary that is also a modal item, expressing force–flavor pairs. Per-language language files
 supply the entries. A modal auxiliary may also mark the source of information, as German *sollen*
 reports a rumour; since its main meaning is modal, that evidential extension makes it an
@@ -55,12 +54,11 @@ open Morphology (Features)
 open Modality (ModalItem)
 
 /-- An auxiliary: a word form in the cells it is entered for, with the features those cells
-share, at a register. -/
+share. -/
 structure Auxiliary where
   form : String
   /-- The features the cells of the entry share. -/
   features : Features := ⊥
-  register : SocialMeaning.Register := .neutral
   deriving DecidableEq
 
 /-- A modal auxiliary: an auxiliary that is a modal item, with the force–flavor pairs it

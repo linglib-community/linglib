@@ -43,10 +43,9 @@ suffix.
 
 ## Implementation notes
 
-The humble first person is chosen by the standing of the addressee. That is neither the
-formality of the situation, which a pronoun's register records, nor the grade at which a
-pronoun presents its own referent, so *jeo* and *jeohui* carry neither value and differ from
-*na* and *uri* in form alone.
+The humble first person is chosen by the standing of the addressee. That is not the grade at which a
+pronoun presents its own referent, so *jeo* and *jeohui* carry no grade and differ from *na* and
+*uri* in form alone.
 
 ## References
 
@@ -134,22 +133,20 @@ def taekdeul : PersonalPronoun :=
 /-- The written-narrative masculine third person *geu*. -/
 def geu : PersonalPronoun :=
   { form := "geu", script := some "그", person := some .third, number := some .singular,
-    gender := some .Masc, register := .formal }
+    gender := some .Masc }
 
 /-- The written-narrative feminine third person *geunyeo*. -/
 def geunyeo : PersonalPronoun :=
   { form := "geunyeo", script := some "그녀", person := some .third, number := some .singular,
-    gender := some .Fem, register := .formal }
+    gender := some .Fem }
 
 /-- The colloquial third person *gyae*, neutral for gender. -/
 def gyae : PersonalPronoun :=
-  { form := "gyae", script := some "걔", person := some .third, number := some .singular,
-    register := .informal }
+  { form := "gyae", script := some "걔", person := some .third, number := some .singular }
 
 /-- The written-narrative third person plural *geudeul*. -/
 def geudeul : PersonalPronoun :=
-  { form := "geudeul", script := some "그들", person := some .third, number := some .plural,
-    register := .formal }
+  { form := "geudeul", script := some "그들", person := some .third, number := some .plural }
 
 /-- The second person singular at each grade. -/
 def addresseeSg : Grade → PersonalPronoun

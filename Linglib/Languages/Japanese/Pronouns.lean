@@ -11,7 +11,7 @@ public import Linglib.Syntax.Category.Pronoun.Demonstrative
 # Japanese pronouns
 
 The personal pronouns of Japanese are the first-person forms *watashi*, *boku* and *ore*, which
-differ in register, the second-person
+differ in formality, the second-person
 *kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera*. A pronoun for several
 referents is the singular with *-tachi*, *watashitachi*, *kimitachi* and *anatatachi*, or with
 *-ra*, *karera*. With them are the reciprocal
@@ -32,9 +32,8 @@ it is singular, with *watashi-tachi* and *anata-tachi* among their examples, and
 *kimi-tachi*. Tsujimura notes that *-tachi* is not a plural marker like the English ending: it
 is confined to humans, and a noun with it names a group that includes the noun's referent,
 *Yamada-sensei-tachi* being Professor Yamada and those with him; Iwasaki glosses *boku-tachi*
-likewise as the speaker and his friends. The registers follow the list Tsujimura takes from
-Ide, in which *boku* is plain and *ore* deprecatory; both are informal here, the register type
-making no finer distinction.
+likewise as the speaker and his friends. The first-person forms are described by the list Tsujimura takes
+from Ide, whose levels of formality are formal, plain and deprecatory; no entry records a level.
 
 ## References
 
@@ -62,20 +61,17 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 
 namespace Pronouns
 
-/-- 私 *watashi* 'I', of neutral register. -/
+/-- 私 *watashi* 'I', formal in men's speech and plain in women's. -/
 def watashi : PersonalPronoun :=
-  { form := "watashi", script := some "私", person := some .first, number := some .singular,
-    register := .neutral }
+  { form := "watashi", script := some "私", person := some .first, number := some .singular }
 
-/-- 僕 *boku* 'I', informal. -/
+/-- 僕 *boku* 'I', plain in men's speech. -/
 def boku : PersonalPronoun :=
-  { form := "boku", script := some "僕", person := some .first, number := some .singular,
-    register := .informal }
+  { form := "boku", script := some "僕", person := some .first, number := some .singular }
 
-/-- 俺 *ore* 'I', informal and deprecatory. -/
+/-- 俺 *ore* 'I', deprecatory in men's speech. -/
 def ore : PersonalPronoun :=
-  { form := "ore", script := some "俺", person := some .first, number := some .singular,
-    register := .informal }
+  { form := "ore", script := some "俺", person := some .first, number := some .singular }
 
 /-- 私たち *watashitachi* 'we'. -/
 def watashitachi : PersonalPronoun :=
