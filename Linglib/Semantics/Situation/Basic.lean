@@ -12,33 +12,41 @@ public import Mathlib.Order.Max
 # Situations
 
 A situation is a part of a world. Situations are ordered by parthood, the worlds are the maximal
-situations, and a proposition is a set of situations, true in the situations that belong to it.
-This file defines the worlds of an order of situations, the classical logical relations between
-propositions, which depend only on the worlds in which the propositions are true, and lumping,
-which depends on the parts of a world.
+situations, and a proposition is a set of situations, true in the situations that belong to it. A
+proposition is persistent when it is true in every situation that a situation in which it is true
+is part of, that is, when it is an upper set.
 
-A set `A` of propositions implies `q` when `q` is true in every world in which every member of `A`
-is true, and is consistent when some world makes every member true. A proposition `p` lumps `q` in
-a situation `w` when `p` is true in `w` and `q` is true in every part of `w` in which `p` is true.
-In a situation without proper parts lumping is joint truth.
+This file defines the worlds of an order of situations and the classical logical relations
+between propositions, which depend only on the worlds in which the propositions are true. A set
+`A` of propositions implies `q` when `q` is true in every world in which every member of `A` is
+true, and is consistent when some world makes every member true.
+
+The other files of the directory build on this one. `Lumping.lean` has the lumping of one
+proposition by another in a situation, and `Exemplification.lean` the situations that exemplify a
+proposition, those that contain nothing that does not contribute to its truth. `World.lean` has
+the world of a situation, where each situation is part of exactly one world, and truth at a world
+for worlds given from outside the order. `Index.lean` has the world and the time of a situation
+as an index of evaluation.
 
 ## Main definitions
 
 * `Situation.worlds`: the maximal situations.
 * `Situation.Follows`, `Situation.IsConsistent`, `Situation.IsCompatible`: logical consequence,
   consistency and compatibility.
-* `Situation.Lumps`: lumping.
 
 ## Implementation notes
 
-The situations are any preorder. That every situation is part of exactly one world is not assumed
-here. Exemplification of a proposition by a situation is in
-`Linglib/Semantics/Situation/Exemplification.lean`.
+The situations are any preorder, and a persistent proposition is an `IsUpperSet`. That every
+situation is part of a world, or of exactly one, is not assumed here; the sum of two situations of
+a world is the join of the order where it has one. A state space of truthmaker semantics is an
+order of situations whose possible states form a lower set, and the propositions that its states
+inexactly verify are the persistent ones.
 
 ## References
 
 * [kratzer-1989]
 * [kratzer-2012]
+* [elbourne-2005]
 -/
 
 @[expose] public section
@@ -48,21 +56,6 @@ namespace Situation
 open Set
 
 variable {S : Type*} [Preorder S] {A B : Set (Set S)} {p q : Set S} {w : S}
-
-/-- `p` lumps `q` in `w` when `p` is true in `w` and `q` is true in every part of `w` in which `p`
-is true. -/
-structure Lumps (p q : Set S) (w : S) : Prop where
-  /-- `p` is true in `w`. -/
-  holds : w ∈ p
-  /-- `q` is true in every part of `w` in which `p` is true. -/
-  localImpl : ∀ ⦃s⦄, s ≤ w → s ∈ p → s ∈ q
-
-/-- At a minimal situation lumping is joint truth, so a possible-worlds semantics cannot separate it
-from material implication. -/
-theorem Lumps.iff_of_isMin {S : Type*} [PartialOrder S] {p q : Set S} {w : S} (hw : IsMin w) :
-    Lumps p q w ↔ w ∈ p ∧ w ∈ q :=
-  ⟨fun h ↦ ⟨h.holds, h.localImpl le_rfl h.holds⟩,
-    fun ⟨hp, hq⟩ ↦ ⟨hp, fun _ hs _ ↦ hw.eq_of_ge hs ▸ hq⟩⟩
 
 variable (S) in
 /-- The worlds, the maximal situations. -/

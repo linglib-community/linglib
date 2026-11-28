@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Nonmonotonic.PremiseOrdering.Filter
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Situation.Basic
+public import Linglib.Semantics.Situation.Lumping
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.Max
 public import Mathlib.Order.UpperLower.Basic
