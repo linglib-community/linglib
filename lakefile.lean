@@ -24,6 +24,10 @@ package linglib where
 require «doc-gen4» from git
   "https://github.com/leanprover/doc-gen4" @ "b3ed25bf7905565f793c47f2a13737d742d96f14"
 
+-- memo's models as Lean programs, for the studies that state them in linglib's vocabulary
+require minimemo from git
+  "https://github.com/linglib-community/minimemo" @ "01ddb971096fca95a1490000d617ad34ae74f246"
+
 -- Mathlib last so its dependency versions take precedence
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4" @ "fc4f59e577feb1a4956671bc04ac18aaaf8cd842"
