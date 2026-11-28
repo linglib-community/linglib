@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Basic
-public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Feature.Register
 
 /-!
 # Modal items
@@ -39,7 +39,7 @@ structure ModalItem where
   contexts that admit it. -/
   meaning : Finset ForceFlavor
   /-- The register, where the source states one. -/
-  register : Option SocialMeaning.Register := none
+  register : Option Register := none
   deriving DecidableEq
 
 namespace ModalItem

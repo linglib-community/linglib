@@ -4,7 +4,7 @@ public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
 public import Linglib.Languages.English.Nouns
 public import Linglib.Morphology.Word.Features
-public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Feature.Register
 public import Linglib.Semantics.Modality.Typology
 public import Linglib.Syntax.Agreement.Target
 public import Linglib.Syntax.Category.Auxiliary.Basic

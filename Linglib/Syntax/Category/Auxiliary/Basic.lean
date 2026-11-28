@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Word.Features
-public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Feature.Register
 public import Linglib.Semantics.Evidentiality.Term
 public import Linglib.Semantics.Modality.Typology
 
@@ -61,7 +61,7 @@ structure Auxiliary where
   /-- The features the cells of the entry share. -/
   features : Features := ⊥
   /-- The register, where the source states one. -/
-  register : Option SocialMeaning.Register := none
+  register : Option Register := none
   deriving DecidableEq
 
 /-- A modal auxiliary: an auxiliary that is a modal item, with the force–flavor pairs it

@@ -21,7 +21,7 @@ the formality of the discourse.
 
 ## Main definitions
 
-* `SocialMeaning.Register`: the informal, neutral and formal styles.
+* `Register`: the informal, neutral and formal styles.
 
 ## Implementation notes
 
@@ -39,8 +39,6 @@ situation being separate parameters.
 
 @[expose] public section
 
-namespace SocialMeaning
-
 /-- The register of a form is the formality of the situations in which speakers use it. -/
 inductive Register where
   /-- Informal style, such as the negative forms *can't* and *won't*. -/
@@ -50,5 +48,3 @@ inductive Register where
   /-- Formal style, such as *shall* beside *will*. -/
   | formal
   deriving DecidableEq, Fintype, Repr
-
-end SocialMeaning

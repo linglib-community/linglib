@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Morph
-public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Feature.Register
 public import Linglib.Semantics.Aspect.Viewpoint.Defs
 
 /-!
@@ -35,7 +35,7 @@ structure Marker where
   /-- The viewpoint the marker marks. -/
   viewpoint : ViewpointType
   /-- The register, where the source states one. -/
-  register : Option SocialMeaning.Register := none
+  register : Option Register := none
   deriving DecidableEq, Repr
 
 end Aspect

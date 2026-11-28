@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Feature.Register
 public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
@@ -55,7 +55,7 @@ the pronoun paradigm it is used for. -/
 @[ext]
 structure PersonalPronoun extends Pronoun where
   /-- The register, where the source states one. Japanese *ore* is an informal first person. -/
-  register : Option SocialMeaning.Register := none
+  register : Option Register := none
   /-- The person, number and gender the form has formally, those a verb, a clitic or a
   reflexive takes from it, by default its own. Italian *Lei*, used for the second person
   singular, is formally a third person feminine singular, and K'iche' *alaq*, used for the
