@@ -5,6 +5,7 @@ public import Linglib.Languages.German.PolarityItems
 public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Data.Examples.Zwarts1998
 public import Linglib.Data.Examples.Readers
+public import Linglib.Semantics.Negation.Strength
 
 /-!
 # Zwarts (1998): Three types of polarity
@@ -18,6 +19,14 @@ the weak items have the distribution of the monotone decreasing contexts, and th
 that of the anti-additive ones. Each example is linked to the lexical entry of its item and to
 the named context of its quantifier. Since *at most n* and *few* are monotone decreasing but not
 anti-additive, the two distributions contain exactly the contexts of the acceptable examples.
+
+The functions are classified through the quantifiers they are built from. A quantifier is a set of
+elements of a Boolean algebra. It is a *quasi-ideal* if it contains a join exactly when it contains
+both elements, *consistent* if it never contains an element together with its complement, and
+*complete* if it always contains one of the two. A *prime ideal* is a quasi-ideal that contains an
+element exactly when it does not contain the complement, which is to be consistent and complete.
+Membership in a quasi-ideal is an anti-additive function and membership in a prime ideal an
+antimorphic one, and the prime ideals in this sense are the prime ideals of the order.
 
 ## References
 
@@ -88,5 +97,52 @@ theorem entries_agree :
     ∀ p ∈ links, (p.1.judgment = .acceptable → p.2.context ∈ p.2.item.attested) ∧
       (p.1.judgment ≠ .acceptable → p.2.context ∈ p.2.item.excluded) := by
   decide +kernel
+
+/-! ### Quantifiers on a Boolean algebra
+
+Zwarts's quantifiers are sets of elements of a Boolean algebra, and his classes of them are the
+strengths of negation read on membership. -/
+
+section Quantifier
+
+open Negation Negation.Strength
+
+variable {B : Type*} [BooleanAlgebra B] {Q : Set B}
+
+/-- (44): a quasi-ideal contains a join exactly when it contains both elements. -/
+def IsQuasiIdeal (Q : Set B) : Prop := ∀ X Y, X ⊔ Y ∈ Q ↔ X ∈ Q ∧ Y ∈ Q
+
+/-- (62): a consistent quantifier does not contain an element together with its complement. -/
+def Consistent (Q : Set B) : Prop := ∀ X, Xᶜ ∈ Q → X ∉ Q
+
+/-- (76): a complete quantifier contains an element or its complement. -/
+def Complete (Q : Set B) : Prop := ∀ X, X ∉ Q → Xᶜ ∈ Q
+
+/-- (81): a prime ideal is a quasi-ideal that contains an element exactly when it does not contain
+the complement. -/
+def IsPrimeIdeal (Q : Set B) : Prop := IsQuasiIdeal Q ∧ ∀ X, X ∈ Q ↔ Xᶜ ∉ Q
+
+theorem isQuasiIdeal_iff_hasStrength : IsQuasiIdeal Q ↔ HasStrength (· ∈ Q) antiAdditive :=
+  forall₂_congr fun _ _ ↦ eq_iff_iff.symm
+
+-- the second clause of (81) is consistency together with completeness
+theorem forall_mem_iff_compl_notMem :
+    (∀ X, X ∈ Q ↔ Xᶜ ∉ Q) ↔ Consistent Q ∧ Complete Q :=
+  ⟨fun h ↦ ⟨fun X hc hX ↦ (h X).1 hX hc, fun X hX ↦ by_contra fun hc ↦ hX ((h X).2 hc)⟩,
+    fun ⟨hc, hk⟩ X ↦ ⟨fun hX hXc ↦ hc X hXc hX, fun h ↦ by_contra fun hX ↦ h (hk X hX)⟩⟩
+
+theorem isPrimeIdeal_iff_hasStrength : IsPrimeIdeal Q ↔ HasStrength (· ∈ Q) antimorphic :=
+  and_congr isQuasiIdeal_iff_hasStrength <| forall_congr' fun X ↦ by
+    rw [eq_iff_iff, compl_iff_not]
+    tauto
+
+/-- Zwarts's prime ideals are the prime ideals of the Boolean algebra. -/
+theorem isPrimeIdeal_iff_exists_isPrime :
+    IsPrimeIdeal Q ↔ ∃ I : Order.Ideal B, I.IsPrime ∧ ↑I = Q :=
+  isPrimeIdeal_iff_hasStrength.trans <| hasStrength_antimorphic_iff_exists_isPrime.trans <|
+    exists_congr fun _ ↦ and_congr_right fun _ ↦
+      ⟨fun h ↦ Set.ext fun X ↦ (h X).symm, fun h _ ↦ h ▸ Iff.rfl⟩
+
+end Quantifier
 
 end Zwarts1998

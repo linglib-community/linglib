@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Negation.Strength
-public import Mathlib.Data.SetLike.Basic
+public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.WithBot
 
