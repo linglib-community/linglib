@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.ProjectivitySignature
+public import Linglib.Semantics.Negation.Strength.ProjectivitySignature
 public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 public import Linglib.Semantics.PolarityItem.Class
