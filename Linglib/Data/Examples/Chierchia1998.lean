@@ -299,6 +299,81 @@ def ex38a : Datum :=
     readings := []
     paperFeatures := [("bare", "plural"), ("position", "subject"), ("predicate", "object")] }
 
+def ex72a : Datum :=
+  { id := "chierchia1998_ex72a"
+    source := ⟨"chierchia-1998", "(72a)"⟩
+    reportedIn := none
+    language := "ital1282"
+    primaryText := "Leo ha mangiato patate."
+    glossedTokens := [("Leo", "Leo"), ("ha", "PAST"), ("mangiato", "eat"), ("patate", "potatoes")]
+    glossedWords := [⟨['L', 'e', 'o'], ['L', 'e', 'o'], [⟨['L', 'e', 'o'], ['L', 'e', 'o'], none⟩]⟩, ⟨['h', 'a'], ['P', 'A', 'S', 'T'], [⟨['h', 'a'], ['P', 'A', 'S', 'T'], none⟩]⟩, ⟨['m', 'a', 'n', 'g', 'i', 'a', 't', 'o'], ['e', 'a', 't'], [⟨['m', 'a', 'n', 'g', 'i', 'a', 't', 'o'], ['e', 'a', 't'], none⟩]⟩, ⟨['p', 'a', 't', 'a', 't', 'e'], ['p', 'o', 't', 'a', 't', 'o', 'e', 's'], [⟨['p', 'a', 't', 'a', 't', 'e'], ['p', 'o', 't', 'a', 't', 'o', 'e', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("bare", "plural"), ("position", "governed"), ("predicate", "object")] }
+
+def ex72b : Datum :=
+  { id := "chierchia1998_ex72b"
+    source := ⟨"chierchia-1998", "(72b)"⟩
+    reportedIn := none
+    language := "ital1282"
+    primaryText := "Leo stermina ratti."
+    glossedTokens := [("Leo", "Leo"), ("stermina", "exterminates"), ("ratti", "rats")]
+    glossedWords := [⟨['L', 'e', 'o'], ['L', 'e', 'o'], [⟨['L', 'e', 'o'], ['L', 'e', 'o'], none⟩]⟩, ⟨['s', 't', 'e', 'r', 'm', 'i', 'n', 'a'], ['e', 'x', 't', 'e', 'r', 'm', 'i', 'n', 'a', 't', 'e', 's'], [⟨['s', 't', 'e', 'r', 'm', 'i', 'n', 'a'], ['e', 'x', 't', 'e', 'r', 'm', 'i', 'n', 'a', 't', 'e', 's'], none⟩]⟩, ⟨['r', 'a', 't', 't', 'i'], ['r', 'a', 't', 's'], [⟨['r', 'a', 't', 't', 'i'], ['r', 'a', 't', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("bare", "plural"), ("position", "governed"), ("predicate", "kind")] }
+
+def ex72c : Datum :=
+  { id := "chierchia1998_ex72c"
+    source := ⟨"chierchia-1998", "(72c)"⟩
+    reportedIn := none
+    language := "ital1282"
+    primaryText := "Leo è andato da amici."
+    glossedTokens := [("Leo", "Leo"), ("è", "PAST"), ("andato", "go"), ("da", "to"), ("amici", "friend")]
+    glossedWords := [⟨['L', 'e', 'o'], ['L', 'e', 'o'], [⟨['L', 'e', 'o'], ['L', 'e', 'o'], none⟩]⟩, ⟨['è'], ['P', 'A', 'S', 'T'], [⟨['è'], ['P', 'A', 'S', 'T'], none⟩]⟩, ⟨['a', 'n', 'd', 'a', 't', 'o'], ['g', 'o'], [⟨['a', 'n', 'd', 'a', 't', 'o'], ['g', 'o'], none⟩]⟩, ⟨['d', 'a'], ['t', 'o'], [⟨['d', 'a'], ['t', 'o'], none⟩]⟩, ⟨['a', 'm', 'i', 'c', 'i'], ['f', 'r', 'i', 'e', 'n', 'd'], [⟨['a', 'm', 'i', 'c', 'i'], ['f', 'r', 'i', 'e', 'n', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .acceptable
+    contrasts := []
+    readings := []
+    paperFeatures := [("bare", "plural"), ("position", "governed"), ("predicate", "object")] }
+
+def ex74a : Datum :=
+  { id := "chierchia1998_ex74a"
+    source := ⟨"chierchia-1998", "(74a)"⟩
+    reportedIn := none
+    language := "ital1282"
+    primaryText := "Studenti hanno telefonato."
+    glossedTokens := [("Studenti", "students"), ("hanno", "have"), ("telefonato", "phoned")]
+    glossedWords := [⟨['S', 't', 'u', 'd', 'e', 'n', 't', 'i'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], [⟨['S', 't', 'u', 'd', 'e', 'n', 't', 'i'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], none⟩]⟩, ⟨['h', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], [⟨['h', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], none⟩]⟩, ⟨['t', 'e', 'l', 'e', 'f', 'o', 'n', 'a', 't', 'o'], ['p', 'h', 'o', 'n', 'e', 'd'], [⟨['t', 'e', 'l', 'e', 'f', 'o', 'n', 'a', 't', 'o'], ['p', 'h', 'o', 'n', 'e', 'd'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("bare", "plural"), ("position", "subject"), ("predicate", "object")] }
+
+def ex74b : Datum :=
+  { id := "chierchia1998_ex74b"
+    source := ⟨"chierchia-1998", "(74b)"⟩
+    reportedIn := none
+    language := "ital1282"
+    primaryText := "Hanno telefonato studenti."
+    glossedTokens := [("Hanno", "have"), ("telefonato", "called"), ("studenti", "students")]
+    glossedWords := [⟨['H', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], [⟨['H', 'a', 'n', 'n', 'o'], ['h', 'a', 'v', 'e'], none⟩]⟩, ⟨['t', 'e', 'l', 'e', 'f', 'o', 'n', 'a', 't', 'o'], ['c', 'a', 'l', 'l', 'e', 'd'], [⟨['t', 'e', 'l', 'e', 'f', 'o', 'n', 'a', 't', 'o'], ['c', 'a', 'l', 'l', 'e', 'd'], none⟩]⟩, ⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'i'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], [⟨['s', 't', 'u', 'd', 'e', 'n', 't', 'i'], ['s', 't', 'u', 'd', 'e', 'n', 't', 's'], none⟩]⟩]
+    lgrConformance := some .wordAligned
+    context := ""
+    judgment := .ungrammatical
+    contrasts := []
+    readings := []
+    paperFeatures := [("bare", "plural"), ("position", "subject"), ("predicate", "object")] }
+
 def p356_water : Datum :=
   { id := "chierchia1998_p356_water"
     source := ⟨"chierchia-1998", "p. 356"⟩
@@ -325,7 +400,7 @@ def p356_table : Datum :=
     readings := []
     paperFeatures := [("bare", "singular"), ("position", "subject"), ("predicate", "object")] }
 
-def all : List Datum := [ex21a, ex21b, ex21c, ex21d, ex21e, ex22a, ex22b, ex23a, ex23b, ex27a, ex27b, ex27c, ex27d, ex27e, ex27e_sg, ex27f, ex29a, ex29b, ex32a, ex38a, p356_water, p356_table]
+def all : List Datum := [ex21a, ex21b, ex21c, ex21d, ex21e, ex22a, ex22b, ex23a, ex23b, ex27a, ex27b, ex27c, ex27d, ex27e, ex27e_sg, ex27f, ex29a, ex29b, ex32a, ex38a, ex72a, ex72b, ex72c, ex74a, ex74b, p356_water, p356_table]
 
 /-- The bare nominal argument of the example, by number. -/
 inductive Bare where
@@ -387,6 +462,11 @@ inductive Example where
   | ex29b
   | ex32a
   | ex38a
+  | ex72a
+  | ex72b
+  | ex72c
+  | ex74a
+  | ex74b
   | p356_water
   | p356_table
   deriving DecidableEq, Repr, Fintype
@@ -394,8 +474,8 @@ inductive Example where
 /-- Every example of the file, in its order. -/
 def Example.all : List Example :=
   [.ex21a, .ex21b, .ex21c, .ex21d, .ex21e, .ex22a, .ex22b, .ex23a, .ex23b, .ex27a, .ex27b,
-    .ex27c, .ex27d, .ex27e, .ex27e_sg, .ex27f, .ex29a, .ex29b, .ex32a, .ex38a, .p356_water,
-    .p356_table]
+    .ex27c, .ex27d, .ex27e, .ex27e_sg, .ex27f, .ex29a, .ex29b, .ex32a, .ex38a, .ex72a, .ex72b,
+    .ex72c, .ex74a, .ex74b, .p356_water, .p356_table]
 
 /-- The row of an example. -/
 def Example.datum : Example → Datum
@@ -419,6 +499,11 @@ def Example.datum : Example → Datum
   | .ex29b => _root_.Chierchia1998.Examples.ex29b
   | .ex32a => _root_.Chierchia1998.Examples.ex32a
   | .ex38a => _root_.Chierchia1998.Examples.ex38a
+  | .ex72a => _root_.Chierchia1998.Examples.ex72a
+  | .ex72b => _root_.Chierchia1998.Examples.ex72b
+  | .ex72c => _root_.Chierchia1998.Examples.ex72c
+  | .ex74a => _root_.Chierchia1998.Examples.ex74a
+  | .ex74b => _root_.Chierchia1998.Examples.ex74b
   | .p356_water => _root_.Chierchia1998.Examples.p356_water
   | .p356_table => _root_.Chierchia1998.Examples.p356_table
 
@@ -447,6 +532,11 @@ def Example.bare : Example → Option Bare
   | .ex29b => some .plural
   | .ex32a => some .plural
   | .ex38a => some .plural
+  | .ex72a => some .plural
+  | .ex72b => some .plural
+  | .ex72c => some .plural
+  | .ex74a => some .plural
+  | .ex74b => some .plural
   | .p356_water => some .mass
   | .p356_table => some .singular
 
@@ -476,6 +566,11 @@ def Example.position : Example → Option Position
   | .ex29b => some .subject
   | .ex32a => some .subject
   | .ex38a => some .subject
+  | .ex72a => some .governed
+  | .ex72b => some .governed
+  | .ex72c => some .governed
+  | .ex74a => some .subject
+  | .ex74b => some .subject
   | .p356_water => some .subject
   | .p356_table => some .subject
 
@@ -505,6 +600,11 @@ def Example.predicate : Example → Option Predicate
   | .ex29b => some .kind
   | .ex32a => some .object
   | .ex38a => some .object
+  | .ex72a => some .object
+  | .ex72b => some .kind
+  | .ex72c => some .object
+  | .ex74a => some .object
+  | .ex74b => some .object
   | .p356_water => some .object
   | .p356_table => some .object
 
